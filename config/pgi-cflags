@@ -1,0 +1,5 @@
+DEBUG_CFLAGS="-O0 -Wall -g --exceptions"
+PROFILE_CFLAGS="-g -pfi"
+CFLAGS="$CFLAGS"
+CLDFLAGS=
+REL_CFLAGS="-O3 -fastsse -Mipa=fast --exceptions -Wl,-s"

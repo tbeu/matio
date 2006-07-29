@@ -1,0 +1,79 @@
+LIBMATIO Matlab MAT file I/O library
+
+libmatio is an open-source library for reading/writing Matlab MAT files.  This
+library is designed for use by programs/libraries that do not have access or
+do not want to rely on Matlab's libmat shared library.
+
+Contact:
+    You can contact me (Christopher Hulbert) through email at cch@isl-inc.com
+
+Acknowledgements:
+    Thank you to Jacco van Beek for helping me get the software running under
+solaris and for providing test files to get byteswapping verified.
+
+Contributing:
+    Part of my reason for releasing this software is I have many other projects
+to work on and have many features I would still like to implement.  If you
+make changes, I would appreciate your contributions and more than likely will
+include them in future releases.  If you are interested in collaborations,
+contact me via email at cch@isl-inc.com.
+
+Building:
+    Four of the builds currently supported make use of the GNU autotools,
+and thus you should have them.  There is a build script in the top-level
+directory for the four builds including the following supported platforms:
+cygwin, mingw, linux, and solaris.  You can of course configure and build
+your own way.  A Visual C 7 Solution has been created in the build-vc7
+direcotry and a Visual C 6 workspace in the build-vc6 directory.
+These should be self containing, just open and build.  There are multiple
+configurations supported, but I recommend the LIB Release or the
+DLL Release.  The build-windows directory contains a batch file to build using
+nmake.  This makes it easier to set variables and install the software.
+Doxygen is required to build the documentation.  Since not all platforms
+support doxygen (mingw and Visual C come to mind) I have included the API
+documentation in the top-level directory as a pdf.
+
+ZLIB:
+    To support compressed MAT files, zlib 1.2.2 or greater is required.  If zlib
+1.2.2 is used, there is a bug in inflate.c.  A patch file (inflate.patch) is
+included in the patches directory and should be applied before creating the zlib
+library or libmatio will likely crash at some point.  The latest release of zlib
+already has this patch applied. A minimal zlib 1.2.3 has been included.  This
+does not have ALL build targets and does not include the contrib directory.
+This is simply because of size requirements on the File Exchange.
+    Due to some linking problems under linux/solaris, when shared libraries are
+compiled against the static zlib and a program (like Matlab) loads in zlib
+symbols, it uses those symbols instead of the static ones.  This should not
+affect stand-alone programs or static libraries (unless linked against from
+something like a mex file).  Therefore, when building libmatio, it is
+recommended to use the built-in zlib 1.2.3 or to compile the zlib with
+-DZ_PREFIX which only changes the symbol names to add z_ to external symbols.
+This eliminates the possibility of using zlib symbols from a shared library.  To
+build zlib with the z prefix, you can use:
+CFLAGS=-DZ_PREFIX ./configure;make;make install
+
+the build scripts provided already make the zlib that is included with this
+distribution and set the flags to use that as appropriate.
+
+Targets:
+    The library has been tested/used on linux and windows little-endian
+architectures, as well as solarix big-endian.  Again, thanks to Jacco for using
+a big-endian system and providing some test files for that as well as testing
+reading little-endian files on a big-endian system.
+
+Copyright Notice:
+    Copyright (C) 2005-2006   Christopher C. Hulbert
+
+     This library is free software; you can redistribute it and/or
+     modify it under the terms of the GNU Lesser General Public
+     License as published by the Free Software Foundation; either
+     version 2.1 of the License, or (at your option) any later version.
+
+     This library is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     Lesser General Public License for more details.
+
+     You should have received a copy of the GNU Lesser General Public
+     License along with this library; if not, write to the Free Software
+     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA

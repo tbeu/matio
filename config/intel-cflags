@@ -1,0 +1,5 @@
+DEBUG_CFLAGS="-O0 -Wall -g -debug all -fexceptions"
+PROFILE_CFLAGS="-g -p"
+CFLAGS="-i-static $CFLAGS"
+CLDFLAGS=""
+REL_CFLAGS="-O3 -fexceptions -Wl,-s"

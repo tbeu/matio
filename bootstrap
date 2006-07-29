@@ -1,0 +1,10 @@
+#! /bin/sh
+
+bootstrap() {
+  libtoolize -f -c && \
+  aclocal -I config -I /apps/share/aclocal && \
+  automake -a -c && \
+  autoconf
+}
+
+bootstrap

@@ -1,0 +1,16 @@
+case $build_os in
+*cygwin*)
+    DEBUG_FCFLAGS=""
+    PROFILE_FCFLAGS=""
+    FCFLAGS="-recursive $FCFLAGS"
+    FCLDFLAGS=""
+    REL_FCFLAGS=""
+    ;;
+*)
+    DEBUG_FCFLAGS="-O0 -Wall -g -debug all"
+    PROFILE_FCFLAGS="-g -p"
+    FCFLAGS="-i-static -recursive $FCFLAGS"
+    FCLDFLAGS=""
+    REL_FCFLAGS="-O3 -Wl,-s"
+    ;;
+esac

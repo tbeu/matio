@@ -1,0 +1,48 @@
+#! /bin/sh
+#  reconfig
+#    Runs configure scripts
+
+m=`uname -m`
+case $m in
+    x86_64)
+        ARCH=64
+        LIBDIR_SUFFIX=64
+        ;;
+    *)
+        ARCH=32
+        LIBDIR_SUFFIX=
+        ;;
+esac
+# ARCH=32
+
+PREFIX=$HOME
+
+# Uncomment to build the zlib library
+
+cd zlib
+CC=gcc \
+CFLAGS='-O2 -DZ_PREFIX -fpic' \
+./configure --prefix=$PREFIX --libdir=$PREFIX/lib
+make && make install && make clean
+cd ..
+
+cd build-linux
+
+DEFAULT_OPTS="--prefix=$PREFIX --exec-prefix=$PREFIX --with-libdir-suffix=$LIBDIR_SUFFIX --with-pic"
+DEBUG="--enable-debug"
+ZLIB_OPTS="--with-zlib=$PREFIX"
+DOCS_OPTS="--enable-docs"
+FORTRAN="--enable-fortran=no"
+../configure CC=gcc CFLAGS= $DEFAULT_OPTS $DEBUG $FORTRAN $ZLIB_OPTS $DOCS_OPTS
+
+if test $? = 0
+then
+    make > matio.build 2>&1
+fi
+
+if test $? = 0
+then
+    make install > matio.instl 2>&1
+fi
+
+cd ..
