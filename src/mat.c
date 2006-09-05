@@ -189,12 +189,14 @@ Mat_Open(const char *matname,int mode)
 
         if ( mat->byteswap < 0 ) {
             Mat_Critical("%s does not seem to be a valid MAT file",matname);
+            fclose(mat->fp);
             free(mat->header);
             free(mat->subsys_offset);
             free(mat);
             mat=NULL;
         } else if ( mat->version != 0x0100 ) {
             Mat_Critical("%s is not a version 5 MAT file", matname);
+            fclose(mat->fp);
             free(mat->header);
             free(mat->subsys_offset);
             free(mat);
