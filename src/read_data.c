@@ -38,6 +38,18 @@
  * --------------------------------------------------------------------------
  */
 
+/** @brief Reads data of type @c data_type into a double type
+ *
+ * Reads from the MAT file @c len elements of data type @c data_type storing
+ * them as double's in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output double values (len*sizeof(double))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
 {
@@ -192,8 +204,18 @@ ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
 }
 
 #if defined(HAVE_ZLIB)
-/*
- * Converts data of any type to data in double precision format
+/** @brief Reads data of type @c data_type into a double type
+ *
+ * Reads from the MAT file @c len compressed elements of data type @c data_type
+ * storing them as double's in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z Pointer to the zlib stream for inflation
+ * @param data Pointer to store the output double values (len*sizeof(double))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
  */
 int
 ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
@@ -447,6 +469,18 @@ ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
 }
 #endif
 
+/** @brief Reads data of type @c data_type into a float type
+ *
+ * Reads from the MAT file @c len elements of data type @c data_type storing
+ * them as float's in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output float values (len*sizeof(float))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadSingleData(mat_t *mat,float *data,int data_type,int len)
 {
@@ -606,6 +640,19 @@ ReadSingleData(mat_t *mat,float *data,int data_type,int len)
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type into a float type
+ *
+ * Reads from the MAT file @c len compressed elements of data type @c data_type
+ * storing them as float's in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z Pointer to the zlib stream for inflation
+ * @param data Pointer to store the output float values (len*sizeof(float))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
     int data_type,int len)
@@ -751,6 +798,19 @@ ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
 }
 #endif
 
+/** @brief Reads data of type @c data_type into a signed 32-bit integer type
+ *
+ * Reads from the MAT file @c len elements of data type @c data_type storing
+ * them as signed 32-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output signed 32-bit integer values
+ *             (len*sizeof(mat_int32_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
 {
@@ -910,6 +970,20 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type into a signed 32-bit integer type
+ *
+ * Reads from the MAT file @c len compressed elements of data type @c data_type
+ * storing them as signed 32-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z Pointer to the zlib stream for inflation
+ * @param data Pointer to store the output signed 32-bit integer values
+ *             (len*sizeof(mat_int32_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
     int data_type,int len)
@@ -1056,6 +1130,19 @@ ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
 }
 #endif
 
+/** @brief Reads data of type @c data_type into an unsigned 32-bit integer type
+ *
+ * Reads from the MAT file @c len elements of data type @c data_type storing
+ * them as unsigned 32-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output unsigned 32-bit integer values
+ *             (len*sizeof(mat_uint32_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
 {
@@ -1215,6 +1302,20 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type into an unsigned 32-bit integer type
+ *
+ * Reads from the MAT file @c len compressed elements of data type @c data_type
+ * storing them as unsigned 32-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z Pointer to the zlib stream for inflation
+ * @param data Pointer to store the output unsigned 32-bit integer values
+ *             (len*sizeof(mat_uint32_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
     int data_type,int len)
@@ -1361,6 +1462,19 @@ ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
 }
 #endif
 
+/** @brief Reads data of type @c data_type into a signed 16-bit integer type
+ *
+ * Reads from the MAT file @c len elements of data type @c data_type storing
+ * them as signed 16-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output signed 16-bit integer values
+ *             (len*sizeof(mat_int16_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
 {
@@ -1520,6 +1634,20 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type into a signed 16-bit integer type
+ *
+ * Reads from the MAT file @c len compressed elements of data type @c data_type
+ * storing them as signed 16-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z Pointer to the zlib stream for inflation
+ * @param data Pointer to store the output signed 16-bit integer values
+ *             (len*sizeof(mat_int16_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
     int data_type,int len)
@@ -1666,6 +1794,19 @@ ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
 }
 #endif
 
+/** @brief Reads data of type @c data_type into an unsigned 16-bit integer type
+ *
+ * Reads from the MAT file @c len elements of data type @c data_type storing
+ * them as unsigned 16-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output unsigned 16-bit integer values
+ *             (len*sizeof(mat_uint16_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
 {
@@ -1825,6 +1966,20 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type into an unsigned 16-bit integer type
+ *
+ * Reads from the MAT file @c len compressed elements of data type @c data_type
+ * storing them as unsigned 16-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z Pointer to the zlib stream for inflation
+ * @param data Pointer to store the output n unsigned 16-bit integer values
+ *             (len*sizeof(mat_uint16_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
     int data_type,int len)
@@ -1971,6 +2126,19 @@ ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
 }
 #endif
 
+/** @brief Reads data of type @c data_type into a signed 8-bit integer type
+ *
+ * Reads from the MAT file @c len elements of data type @c data_type storing
+ * them as signed 8-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output signed 8-bit integer values
+ *             (len*sizeof(mat_int8_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
 {
@@ -2130,6 +2298,20 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type into a signed 8-bit integer type
+ *
+ * Reads from the MAT file @c len compressed elements of data type @c data_type
+ * storing them as signed 8-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z Pointer to the zlib stream for inflation
+ * @param data Pointer to store the output signed 8-bit integer values
+ *             (len*sizeof(mat_int8_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
     int data_type,int len)
@@ -2276,6 +2458,19 @@ ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
 }
 #endif
 
+/** @brief Reads data of type @c data_type into an unsigned 8-bit integer type
+ *
+ * Reads from the MAT file @c len elements of data type @c data_type storing
+ * them as unsigned 8-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output unsigned 8-bit integer values
+ *             (len*sizeof(mat_uint8_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
 {
@@ -2435,6 +2630,20 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type into an unsigned 8-bit integer type
+ *
+ * Reads from the MAT file @c len compressed elements of data type @c data_type
+ * storing them as unsigned 8-bit integers in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z Pointer to the zlib stream for inflation
+ * @param data Pointer to store the output 8-bit integer values
+ *             (len*sizeof(mat_uint8_t))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
     int data_type,int len)
@@ -2582,6 +2791,19 @@ ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
 #endif
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type into a char type
+ *
+ * Reads from the MAT file @c len compressed elements of data type @c data_type
+ * storing them as char's in @c data.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z Pointer to the zlib stream for inflation
+ * @param data Pointer to store the output char values (len*sizeof(char))
+ * @param data_type one of the @c matio_types enumerations which is the source
+ *                  data type in the file
+ * @param len Number of elements of type @c data_type to read from the file
+ * @retval Number of bytes read from the file
+ */
 int
 ReadCompressedCharData(mat_t *mat,z_stream *z,char *data,int data_type,int len)
 {
@@ -2680,6 +2902,20 @@ ReadCharData(mat_t *mat,char *data,int data_type,int len)
  *-------------------------------------------------------------------
  */
 
+/** @brief Reads data of type @c data_type by user-defined dimensions
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output data
+ * @param class_type Type of data class (matio_classes enumerations)
+ * @param data_type Datatype of the stored data (matio_types enumerations)
+ * @param rank Number of dimensions in the data
+ * @param dims Dimensions of the data
+ * @param start Index to start reading data in each dimension
+ * @param stride Read every @c stride elements in each dimension
+ * @param edge Number of elements to read in each dimension
+ * @retval Number of bytes read from the file, or -1 on error
+ */
 int
 ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
     int *dims,int *start,int *stride,int *edge)
@@ -2689,9 +2925,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
-        return 1;
+        return -1;
     } else if ( rank > 10 ) {
-        return 1; 
+        return -1; 
     }
 
     switch ( class_type ) {
@@ -3063,6 +3299,21 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type by user-defined dimensions
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z zlib compression stream
+ * @param data Pointer to store the output data
+ * @param class_type Type of data class (matio_classes enumerations)
+ * @param data_type Datatype of the stored data (matio_types enumerations)
+ * @param rank Number of dimensions in the data
+ * @param dims Dimensions of the data
+ * @param start Index to start reading data in each dimension
+ * @param stride Read every @c stride elements in each dimension
+ * @param edge Number of elements to read in each dimension
+ * @retval Number of bytes read from the file, or -1 on error
+ */
 int
 ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
     int data_type,int rank,int *dims,int *start,int *stride,int *edge)
@@ -3488,6 +3739,20 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
 }
 #endif
 
+/** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
+ *         data
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output data
+ * @param class_type Type of data class (matio_classes enumerations)
+ * @param data_type Datatype of the stored data (matio_types enumerations)
+ * @param dims Dimensions of the data
+ * @param start Index to start reading data in each dimension
+ * @param stride Read every @c stride elements in each dimension
+ * @param edge Number of elements to read in each dimension
+ * @retval Number of bytes read from the file, or -1 on error
+ */
 int
 ReadDataSlab2(mat_t *mat,void *data,int class_type,int data_type,
     int *dims,int *start,int *stride,int *edge)
@@ -3678,6 +3943,21 @@ ReadDataSlab2(mat_t *mat,void *data,int class_type,int data_type,
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
+ *         data
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z zlib compression stream
+ * @param data Pointer to store the output data
+ * @param class_type Type of data class (matio_classes enumerations)
+ * @param data_type Datatype of the stored data (matio_types enumerations)
+ * @param dims Dimensions of the data
+ * @param start Index to start reading data in each dimension
+ * @param stride Read every @c stride elements in each dimension
+ * @param edge Number of elements to read in each dimension
+ * @retval Number of bytes read from the file, or -1 on error
+ */
 int
 ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,int class_type,
     int data_type,int *dims,int *start,int *stride,int *edge)

@@ -53,54 +53,6 @@ static const char *data_type_desc[23] = {"Unknown","8-bit, signed integer",
  * -------------------------------------------------------------
  */
 
-#if 0
-/*----------- Functions to read data into type-specified arrays -----------*/
-static int ReadDoubleData(mat_t *mat,double  *data,int data_type,int len);
-static int ReadSingleData(mat_t *mat,float   *data,int data_type,int len);
-static int ReadInt32Data (mat_t *mat,mat_int32_t *data,int data_type,int len);
-static int ReadInt16Data (mat_t *mat,mat_int16_t *data,int data_type,int len);
-static int ReadInt8Data  (mat_t *mat,mat_int8_t  *data,int data_type,int len);
-static int ReadCompressedDoubleData(mat_t *mat,z_stream *z,double  *data,
-               int data_type,int len);
-static int ReadCompressedSingleData(mat_t *mat,z_stream *z,float   *data,
-               int data_type,int len);
-static int ReadCompressedInt32Data (mat_t *mat,z_stream *z,mat_int32_t *data,
-               int data_type,int len);
-static int ReadCompressedInt16Data (mat_t *mat,z_stream *z,mat_int16_t *data,
-               int data_type,int len);
-static int ReadCompressedInt8Data  (mat_t *mat,z_stream *z,mat_int8_t  *data,
-               int data_type,int len);
-/*-------------------------------------------------------------------------*/
-
-/*----------- Functions to do partial I/O (slabs) ------------------------*/
-static int ReadDataSlabN(mat_t *mat,void *data,int class_type,
-               int data_type,int rank,int *dims,int *start,int *stride,
-               int *edge);
-static int ReadDataSlab2(mat_t *mat,void *data,int class_type,
-               int data_type,int *dims,int *start,int *stride,int *edge);
-static int ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,
-               int class_type,int data_type,int rank,int *dims,int *start,
-               int *stride,int *edge);
-static int ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
-               int class_type,int data_type,int *dims,int *start,int *stride,
-               int *edge);
-/*-------------------------------------------------------------------------*/
-
-static int WriteCellArrayField( mat_t *mat, matvar_t *matvar, 
-                                int compress );
-static int WriteStructField( mat_t *mat, matvar_t *matvar, 
-                             int compress );
-static int ReadNextStructField( mat_t *mat, matvar_t *matvar );
-static int ReadNextCell( mat_t *mat, matvar_t *matvar );
-static int WriteEmptyCharData(mat_t *mat, int N, int data_type);
-#endif
-
-/*
- *-------------------------------------------------------------------
- *
- *-------------------------------------------------------------------
- */
-
 size_t
 GetMatrixMaxBufSize(matvar_t *matvar)
 {
@@ -870,9 +822,12 @@ WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,int data_type)
 }
 #endif
 
-/*
- * Reads the next struct fields (fieldname length,names,data headers for all
- * the fields
+/** @brief Reads the next cell of the cell array in @c matvar
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar MAT variable pointer
+ * @return Number of bytes read
  */
 int
 ReadNextCell( mat_t *mat, matvar_t *matvar )
@@ -1089,9 +1044,14 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
     return bytesread;
 }
 
-/*
+/** @brief Reads the next struct field of the structure in @c matvar
+ *
  * Reads the next struct fields (fieldname length,names,data headers for all
  * the fields
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar MAT variable pointer
+ * @return Number of bytes read
  */
 int
 ReadNextStructField( mat_t *mat, matvar_t *matvar )
@@ -1377,9 +1337,12 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
     return bytesread;
 }
 
-/*
- * Reads the next struct fields (fieldname length,names,data headers for all
- * the fields
+/** @brief Reads the function handle data of the function handle in @c matvar
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar MAT variable pointer
+ * @return Number of bytes read
  */
 int
 ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
@@ -2130,8 +2093,11 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
 }
 #endif
 
-/*
- * FIXME: Check the tag of the complex variables
+/** @brief Reads the data of a version 5 MAT variable
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar MAT variable pointer to read the data
  */
 void
 Read5(mat_t *mat, matvar_t *matvar)

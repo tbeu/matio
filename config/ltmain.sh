@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2273 2006/02/24 19:45:48) 2.1a
+# ltmain.sh (GNU libtool 1.2323 2006/08/25 15:08:13) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -64,7 +64,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2273 2006/02/24 19:45:48) 2.1a
+#       $progname:		(GNU libtool 1.2323 2006/08/25 15:08:13) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,22 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2273 2006/02/24 19:45:48"
-package_revision=1.2273
-
-# NLS nuisances: We save the old values to restore during execute mode.
-# AS_SHELL_SANITIZE will take care of unsetting.
-for lt_var in \
-  LANG LANGUAGE LC_ADDRESS LC_ALL LC_COLLATE LC_CTYPE LC_IDENTIFICATION \
-  LC_MEASUREMENT LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER \
-  LC_TELEPHONE LC_TIME
-do
-  eval "test \"\${$lt_var+set}\" = set && save_$lt_var=\$$lt_var"
-done
-
-## --------------------- ##
-## M4sh Initialization.  ##
-## --------------------- ##
+TIMESTAMP=" 1.2323 2006/08/25 15:08:13"
+package_revision=1.2323
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -97,74 +83,35 @@ if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
   # Zsh 3.x and 4.x performs word splitting on ${1+"$@"}, which
   # is contrary to our usage.  Disable this feature.
   alias -g '${1+"$@"}'='"$@"'
-elif test -n "${BASH_VERSION+set}" && (set -o posix) >/dev/null 2>&1; then
-  set -o posix
+  setopt NO_GLOB_SUBST
+else
+  case `(set -o) 2>/dev/null` in *posix*) set -o posix;; esac
 fi
+BIN_SH=xpg4; export BIN_SH # for Tru64
 DUALCASE=1; export DUALCASE # for MKS sh
 
-# Support unset when possible.
-if ( (MAIL=60; unset MAIL) || exit) >/dev/null 2>&1; then
-  as_unset=unset
-else
-  as_unset=false
-fi
-
-
-# Work around bugs in pre-3.0 UWIN ksh.
-$as_unset ENV MAIL MAILPATH
-PS1='$ '
-PS2='> '
-PS4='+ '
-
-# NLS nuisances.
-for as_var in \
-  LANG LANGUAGE LC_ADDRESS LC_ALL LC_COLLATE LC_CTYPE LC_IDENTIFICATION \
-  LC_MEASUREMENT LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER \
-  LC_TELEPHONE LC_TIME
+# NLS nuisances: We save the old values to restore during execute mode.
+# Only set LANG and LC_ALL to C if already set.
+# These must not be set unconditionally because not all systems understand
+# e.g. LANG=C (notably SCO).
+for lt_var in LANG LC_ALL LC_CTYPE LC_COLLATE LC_MESSAGES
 do
-  if (set +x; test -z "`(eval $as_var=C; export $as_var) 2>&1`"); then
-    eval $as_var=C; export $as_var
-  else
-    $as_unset $as_var
-  fi
+  eval "if test \"\${$lt_var+set}\" = set; then
+          save_$lt_var=\$$lt_var
+          $lt_var=C
+	  export $lt_var
+	fi"
 done
 
-# Required to use basename.
-if expr a : '\(a\)' >/dev/null 2>&1; then
-  as_expr=expr
-else
-  as_expr=false
-fi
-
-if (basename /) >/dev/null 2>&1 && test "X`basename / 2>&1`" = "X/"; then
-  as_basename=basename
-else
-  as_basename=false
-fi
-
-
-# Name of the executable.
-as_me=`$as_basename "$0" ||
-$as_expr X/"$0" : '.*/\([^/][^/]*\)/*$' \| \
-	 X"$0" : 'X\(//\)$' \| \
-	 X"$0" : 'X\(/\)$' \| \
-	 .     : '\(.\)' 2>/dev/null ||
-echo X/"$0" |
-    sed '/^.*\/\([^/][^/]*\)\/*$/{ s//\1/; q; }
-  	  /^X\/\(\/\/\)$/{ s//\1/; q; }
-  	  /^X\/\(\/\).*/{ s//\1/; q; }
-  	  s/.*/./; q'`
-
-
-$as_unset CDPATH
+$lt_unset CDPATH
 
 
 
 : ${CP="cp -f"}
 : ${ECHO="echo"}
-: ${EGREP="grep -E"}
-: ${FGREP="grep -F"}
-: ${GREP="grep"}
+: ${EGREP="/bin/grep -E"}
+: ${FGREP="/bin/grep -F"}
+: ${GREP="/bin/grep"}
 : ${LN_S="ln -s"}
 : ${MAKE="make"}
 : ${MKDIR="mkdir"}
@@ -239,19 +186,6 @@ double_quote_subst='s/\(["`\\]\)/\\\1/g'
 # that the embedded single quotes serve only to enhance readability.
 sed_double_backslash='s/^\(\(''\\\\''\\\\''\)*''\\\\''\)\$/\1\\$/;
                 s/\([^\\]\(''\\\\''\\\\''\)*''\\\\''\)\$/\1\\$/g'
-
-# test EBCDIC or ASCII
-case `echo X|tr X '\101'` in
- A) # ASCII based system
-    # \n is not interpreted correctly by Solaris 8 /usr/ucb/tr
-  SP2NL='tr \040 \012'
-  NL2SP='tr \015\012 \040\040'
-  ;;
- *) # EBCDIC based system
-  SP2NL='tr \100 \n'
-  NL2SP='tr \r\n \100\100'
-  ;;
-esac
 
 # Standard options:
 opt_dry_run=false
@@ -793,9 +727,9 @@ The following components of LINK-COMMAND are treated specially:
   -dlpreopen FILE   link in FILE and add its symbols to lt_preloaded_symbols
   -export-dynamic   allow symbols from OUTPUT-FILE to be resolved with dlsym(3)
   -export-symbols SYMFILE
-		    try to export only the symbols listed in SYMFILE
+                    try to export only the symbols listed in SYMFILE
   -export-symbols-regex REGEX
-		    try to export only the symbols matching REGEX
+                    try to export only the symbols matching REGEX
   -LLIBDIR          search LIBDIR for required installed libraries
   -lNAME            OUTPUT-FILE requires the installed library libNAME
   -module           build a library that can dlopened
@@ -811,9 +745,11 @@ The following components of LINK-COMMAND are treated specially:
   -R[ ]LIBDIR       add LIBDIR to the runtime path of programs and libraries
   -shared           only do dynamic linking of libtool libraries
   -shrext SUFFIX    override the standard shared library file extension
-  -static           do not do any dynamic linking of libtool libraries
+  -static           do not do any dynamic linking of uninstalled libtool libraries
+  -static-libtool-libs
+                    do not do any dynamic linking of libtool libraries
   -version-info CURRENT[:REVISION[:AGE]]
-		    specify library version info [each variable defaults to 0]
+                    specify library version info [each variable defaults to 0]
   -weak LIBNAME     declare that the target provides the LIBNAME interface
 
 All other options (arguments beginning with \`-') are ignored.
@@ -1584,6 +1520,44 @@ func_extract_archives ()
 }
 
 
+
+# func_write_libtool_object output_name pic_name nonpic_name
+# Create a libtool object file (analogous to a ".la" file),
+# but don't create it if we're doing a dry run.
+func_write_libtool_object ()
+{
+    write_libobj=${1}
+    if test "$build_libtool_libs" = yes; then
+      write_lobj=\'${2}\'
+    else
+      write_lobj=none
+    fi
+
+    if test "$build_old_libs" = yes; then
+      write_oldobj=\'${3}\'
+    else
+      write_oldobj=none
+    fi
+
+    $opt_dry_run || {
+      cat >${write_libobj}T <<EOF
+# $write_libobj - a libtool object file
+# Generated by $PROGRAM (GNU $PACKAGE$TIMESTAMP) $VERSION
+#
+# Please DO NOT delete this file!
+# It is necessary for linking the library.
+
+# Name of the PIC object.
+pic_object=$write_lobj
+
+# Name of the non-PIC object
+non_pic_object=$write_oldobj
+
+EOF
+      mv -f "${write_libobj}T" "${write_libobj}"
+    }
+}
+
 # func_mode_compile arg...
 func_mode_compile ()
 {
@@ -1833,18 +1807,6 @@ compiler."
 
     $opt_dry_run || $RM "$libobj" "${libobj}T"
 
-    # Create a libtool object file (analogous to a ".la" file),
-    # but don't create it if we're doing a dry run.
-    $opt_dry_run || cat > ${libobj}T <<EOF
-# $libobj - a libtool object file
-# Generated by $PROGRAM (GNU $PACKAGE$TIMESTAMP) $VERSION
-#
-# Please DO NOT delete this file!
-# It is necessary for linking the library.
-
-# Name of the PIC object.
-EOF
-
     # Only build a PIC object if we are building libtool libraries.
     if test "$build_libtool_libs" = yes; then
       # Without this assignment, base_compile gets emptied.
@@ -1895,23 +1857,10 @@ compiler."
 	  'error=$?; $opt_dry_run || $RM $removelist; exit $error'
       fi
 
-      # Append the name of the PIC object to the libtool object file.
-      $opt_dry_run || cat >> ${libobj}T <<EOF
-pic_object='$objdir/$objname'
-
-EOF
-
       # Allow error messages only from the first compilation.
       if test "$suppress_opt" = yes; then
 	suppress_output=' >/dev/null 2>&1'
       fi
-    else
-      # No PIC object so indicate it doesn't exist in the libtool
-      # object file.
-      $opt_dry_run || cat >> ${libobj}T <<EOF
-pic_object=none
-
-EOF
     fi
 
     # Only build a position-dependent object if we build old libraries.
@@ -1957,26 +1906,10 @@ compiler."
 	func_show_eval '$MV "$output_obj" "$obj"' \
 	  'error=$?; $opt_dry_run || $RM $removelist; exit $error'
       fi
-
-      # Append the name of the non-PIC object the libtool object file.
-      # Only append if the libtool object file exists.
-      $opt_dry_run || cat >> ${libobj}T <<EOF
-# Name of the non-PIC object.
-non_pic_object='$objname'
-
-EOF
-    else
-      # Append the name of the non-PIC object the libtool object file.
-      # Only append if the libtool object file exists.
-      $opt_dry_run || cat >> ${libobj}T <<EOF
-# Name of the non-PIC object.
-non_pic_object=none
-
-EOF
     fi
 
     $opt_dry_run || {
-      $MV "${libobj}T" "${libobj}"
+      func_write_libtool_object "$libobj" "$objdir/$objname" "$objname"
 
       # Unlock the critical section if it was locked
       if test "$need_locks" != no; then
@@ -2028,7 +1961,9 @@ func_mode_execute ()
 	if test -f "$dir/$objdir/$dlname"; then
 	  dir="$dir/$objdir"
 	else
-	  func_fatal_error "cannot find \`$dlname' in \`$dir' or \`$dir/$objdir'"
+	  if test ! -f "$dir/$dlname"; then
+	    func_fatal_error "cannot find \`$dlname' in \`$dir' or \`$dir/$objdir'"
+	  fi
 	fi
 	;;
 
@@ -2088,15 +2023,12 @@ func_mode_execute ()
       fi
 
       # Restore saved environment variables
-      for lt_var in \
-	LANG LANGUAGE LC_ADDRESS LC_ALL LC_COLLATE LC_CTYPE LC_IDENTIFICATION \
-	LC_MEASUREMENT LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER \
-	LC_TELEPHONE LC_TIME
+      for lt_var in LANG LC_ALL LC_CTYPE LC_COLLATE LC_MESSAGES
       do
 	eval "if test \"\${save_$lt_var+set}\" = set; then
                 $lt_var=\$save_$lt_var; export $lt_var
 	      else
-		$as_unset $lt_var
+		$lt_unset $lt_var
 	      fi"
       done
 
@@ -2646,10 +2578,10 @@ func_mode_link ()
       allow_undefined=yes
       ;;
     esac
-    libtool_args="$nonopt"
+    libtool_args=$nonopt
     base_compile="$nonopt $@"
-    compile_command="$nonopt"
-    finalize_command="$nonopt"
+    compile_command=$nonopt
+    finalize_command=$nonopt
 
     compile_rpath=
     finalize_rpath=
@@ -2707,24 +2639,33 @@ func_mode_link ()
 	build_old_libs=no
 	break
 	;;
-      -all-static | -static)
-	if test "X$arg" = "X-all-static"; then
+      -all-static | -static | -static-libtool-libs)
+	case $arg in
+	-all-static)
 	  if test "$build_libtool_libs" = yes && test -z "$link_static_flag"; then
 	    func_warning "complete static linking is impossible in this configuration"
 	  fi
 	  if test -n "$link_static_flag"; then
 	    dlopen_self=$dlopen_self_static
 	    # See comment for -static flag below, for more details.
-	    compile_command="$compile_command $link_static_flag"
-	    finalize_command="$finalize_command $link_static_flag"
+	    func_append compile_command " $link_static_flag"
+	    func_append finalize_command " $link_static_flag"
 	  fi
 	  prefer_static_libs=yes
-	else
+	  ;;
+	-static)
 	  if test -z "$pic_flag" && test -n "$link_static_flag"; then
 	    dlopen_self=$dlopen_self_static
 	  fi
 	  prefer_static_libs=built
-	fi
+	  ;;
+	-static-libtool-libs)
+	  if test -z "$pic_flag" && test -n "$link_static_flag"; then
+	    dlopen_self=$dlopen_self_static
+	  fi
+	  prefer_static_libs=yes
+	  ;;
+	esac
 	build_libtool_libs=no
 	build_old_libs=yes
 	break
@@ -2740,15 +2681,15 @@ func_mode_link ()
       arg="$1"
       shift
       func_quote_for_eval "$arg"
-      qarg="$func_quote_for_eval_unquoted_result"
-      libtool_args="$libtool_args $func_quote_for_eval_result"
+      qarg=$func_quote_for_eval_unquoted_result
+      func_append libtool_args " $func_quote_for_eval_result"
 
       # If the previous option needs an argument, assign it.
       if test -n "$prev"; then
 	case $prev in
 	output)
-	  compile_command="$compile_command @OUTPUT@"
-	  finalize_command="$finalize_command @OUTPUT@"
+	  func_append compile_command " @OUTPUT@"
+	  func_append finalize_command " @OUTPUT@"
 	  ;;
 	esac
 
@@ -2756,8 +2697,8 @@ func_mode_link ()
 	dlfiles|dlprefiles)
 	  if test "$preload" = no; then
 	    # Add the symbol object into the linking commands.
-	    compile_command="$compile_command @SYMFILE@"
-	    finalize_command="$finalize_command @SYMFILE@"
+	    func_append compile_command " @SYMFILE@"
+	    func_append finalize_command " @SYMFILE@"
 	    preload=yes
 	  fi
 	  case $arg in
@@ -2875,7 +2816,7 @@ func_mode_link ()
 		  fi
 
 		  # A PIC object.
-		  libobjs="$libobjs $pic_object"
+		  func_append libobjs " $pic_object"
 		  arg="$pic_object"
 		fi
 
@@ -2885,7 +2826,7 @@ func_mode_link ()
 		  non_pic_object="$xdir$non_pic_object"
 
 		  # A standard non-PIC object
-		  non_pic_objects="$non_pic_objects $non_pic_object"
+		  func_append non_pic_objects " $non_pic_object"
 		  if test -z "$pic_object" || test "$pic_object" = none ; then
 		    arg="$non_pic_object"
 		  fi
@@ -2893,7 +2834,7 @@ func_mode_link ()
 		  # If the PIC object exists, use it instead.
 		  # $xdir was prepended to $pic_object above.
 		  non_pic_object="$pic_object"
-		  non_pic_objects="$non_pic_objects $non_pic_object"
+		  func_append non_pic_objects " $non_pic_object"
 		fi
 	      else
 		# Only an error if not doing a dry-run.
@@ -2904,8 +2845,8 @@ func_mode_link ()
 
 		  pic_object=`$ECHO "X${xdir}${objdir}/${arg}" | $Xsed -e "$lo2o"`
 		  non_pic_object=`$ECHO "X${xdir}${arg}" | $Xsed -e "$lo2o"`
-		  libobjs="$libobjs $pic_object"
-		  non_pic_objects="$non_pic_objects $non_pic_object"
+		  func_append libobjs " $pic_object"
+		  func_append non_pic_objects " $non_pic_object"
 	        else
 		  func_fatal_error "\`$arg' is not a valid libtool object"
 		fi
@@ -2964,23 +2905,23 @@ func_mode_link ()
 	  linker_flags="$linker_flags $qarg"
 	  compiler_flags="$compiler_flags $qarg"
 	  prev=
-	  compile_command="$compile_command $qarg"
-	  finalize_command="$finalize_command $qarg"
+	  func_append compile_command " $qarg"
+	  func_append finalize_command " $qarg"
 	  continue
 	  ;;
 	xcompiler)
 	  compiler_flags="$compiler_flags $qarg"
 	  prev=
-	  compile_command="$compile_command $qarg"
-	  finalize_command="$finalize_command $qarg"
+	  func_append compile_command " $qarg"
+	  func_append finalize_command " $qarg"
 	  continue
 	  ;;
 	xlinker)
 	  linker_flags="$linker_flags $qarg"
 	  compiler_flags="$compiler_flags $wl$qarg"
 	  prev=
-	  compile_command="$compile_command $wl$qarg"
-	  finalize_command="$finalize_command $wl$qarg"
+	  func_append compile_command " $wl$qarg"
+	  func_append finalize_command " $wl$qarg"
 	  continue
 	  ;;
 	*)
@@ -3051,8 +2992,8 @@ func_mode_link ()
       -L[A-Z][A-Z]*:*)
 	case $with_gcc/$host in
 	no/*-*-irix* | /*-*-irix*)
-	  compile_command="$compile_command $arg"
-	  finalize_command="$finalize_command $arg"
+	  func_append compile_command " $arg"
+	  func_append finalize_command " $arg"
 	  ;;
 	esac
 	continue
@@ -3144,17 +3085,17 @@ func_mode_link ()
       # classes, name mangling, and exception handling.
       # Darwin uses the -arch flag to determine output architecture.
       -model|-arch|-isysroot)
-	compile_command="$compile_command $arg"
 	compiler_flags="$compiler_flags $arg"
-	finalize_command="$finalize_command $arg"
+	func_append compile_command " $arg"
+	func_append finalize_command " $arg"
 	prev=xcompiler
 	continue
 	;;
 
-      -mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe)
+      -mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe|-threads)
 	compiler_flags="$compiler_flags $arg"
-	compile_command="$compile_command $arg"
-	finalize_command="$finalize_command $arg"
+	func_append compile_command " $arg"
+	func_append finalize_command " $arg"
 	case "$new_inherited_linker_flags " in
 	    *" $arg "*) ;;
 	    * ) new_inherited_linker_flags="$new_inherited_linker_flags $arg" ;;
@@ -3245,7 +3186,7 @@ func_mode_link ()
 	continue
 	;;
 
-      -static)
+      -static | -static-libtool-libs)
 	# The effects of -static are defined in a previous loop.
 	# We used to do the same as -all-static on platforms that
 	# didn't have a PIC flag, but the assumption that the effects
@@ -3330,13 +3271,14 @@ func_mode_link ()
       # -q* pass through compiler args for the IBM compiler
       # -m*, -t[45]*, -txscale* pass through architecture-specific
       # compiler args for GCC
+      # -pg, --coverage pass through profiling flag for GCC
       # @file GCC response files
       -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
-      -t[45]*|-txscale*|@*)
+      -t[45]*|-txscale*|-pg|--coverage|@*)
         func_quote_for_eval "$arg"
 	arg="$func_quote_for_eval_result"
-        compile_command="$compile_command $arg"
-        finalize_command="$finalize_command $arg"
+        func_append compile_command " $arg"
+        func_append finalize_command " $arg"
         compiler_flags="$compiler_flags $arg"
         continue
         ;;
@@ -3397,7 +3339,7 @@ func_mode_link ()
 	    fi
 
 	    # A PIC object.
-	    libobjs="$libobjs $pic_object"
+	    func_append libobjs " $pic_object"
 	    arg="$pic_object"
 	  fi
 
@@ -3407,7 +3349,7 @@ func_mode_link ()
 	    non_pic_object="$xdir$non_pic_object"
 
 	    # A standard non-PIC object
-	    non_pic_objects="$non_pic_objects $non_pic_object"
+	    func_append non_pic_objects " $non_pic_object"
 	    if test -z "$pic_object" || test "$pic_object" = none ; then
 	      arg="$non_pic_object"
 	    fi
@@ -3415,7 +3357,7 @@ func_mode_link ()
 	    # If the PIC object exists, use it instead.
 	    # $xdir was prepended to $pic_object above.
 	    non_pic_object="$pic_object"
-	    non_pic_objects="$non_pic_objects $non_pic_object"
+	    func_append non_pic_objects " $non_pic_object"
 	  fi
 	else
 	  # Only an error if not doing a dry-run.
@@ -3426,8 +3368,8 @@ func_mode_link ()
 
 	    pic_object=`$ECHO "X${xdir}${objdir}/${arg}" | $Xsed -e "$lo2o"`
 	    non_pic_object=`$ECHO "X${xdir}${arg}" | $Xsed -e "$lo2o"`
-	    libobjs="$libobjs $pic_object"
-	    non_pic_objects="$non_pic_objects $non_pic_object"
+	    func_append libobjs " $pic_object"
+	    func_append non_pic_objects " $non_pic_object"
 	  else
 	    func_fatal_error "\`$arg' is not a valid libtool object"
 	  fi
@@ -3469,8 +3411,8 @@ func_mode_link ()
 
       # Now actually substitute the argument into the commands.
       if test -n "$arg"; then
-	compile_command="$compile_command $arg"
-	finalize_command="$finalize_command $arg"
+	func_append compile_command " $arg"
+	func_append finalize_command " $arg"
       fi
     done # argument parsing loop
 
@@ -3479,8 +3421,8 @@ func_mode_link ()
 
     if test "$export_dynamic" = yes && test -n "$export_dynamic_flag_spec"; then
       eval arg=\"$export_dynamic_flag_spec\"
-      compile_command="$compile_command $arg"
-      finalize_command="$finalize_command $arg"
+      func_append compile_command " $arg"
+      func_append finalize_command " $arg"
     fi
 
     oldlibs=
@@ -3633,7 +3575,7 @@ func_mode_link ()
 	lib=
 	found=no
 	case $deplib in
-	-mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe)
+	-mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe|-threads)
 	  if test "$linkmode,$pass" = "prog,link"; then
 	    compile_deplibs="$deplib $compile_deplibs"
 	    finalize_deplibs="$deplib $finalize_deplibs"
@@ -4274,7 +4216,8 @@ func_mode_link ()
 	      fi
 	      ;;
 	    relink)
-	      if test "$hardcode_direct" = yes; then
+	      if test "$hardcode_direct" = yes &&
+	         test "$hardcode_direct_absolute" = no; then
 		add="$dir/$linklib"
 	      elif test "$hardcode_minus_L" = yes; then
 		add_dir="-L$dir"
@@ -4329,7 +4272,8 @@ func_mode_link ()
 	    add_dir=
 	    add=
 	    # Finalize command for both is simple: just hardcode it.
-	    if test "$hardcode_direct" = yes; then
+	    if test "$hardcode_direct" = yes &&
+	       test "$hardcode_direct_absolute" = no; then
 	      add="$libdir/$linklib"
 	    elif test "$hardcode_minus_L" = yes; then
 	      add_dir="-L$libdir"
@@ -4741,7 +4685,7 @@ func_mode_link ()
 	  # which has an extra 1 added just for fun
 	  #
 	  case $version_type in
-	  darwin|linux|osf|windows)
+	  darwin|linux|osf|windows|none)
 	    current=`expr $number_major + $number_minor`
 	    age="$number_minor"
 	    revision="$number_revision"
@@ -4966,11 +4910,11 @@ func_mode_link ()
       fi
 
       # Eliminate all temporary directories.
-      for path in $notinst_path; do
-	lib_search_path=`$ECHO "X$lib_search_path " | $Xsed -e 's% $path % %g'`
-	deplibs=`$ECHO "X$deplibs " | $Xsed -e 's% -L$path % %g'`
-	dependency_libs=`$ECHO "X$dependency_libs " | $Xsed -e 's% -L$path % %g'`
-      done
+      #for path in $notinst_path; do
+      #	lib_search_path=`$ECHO "X$lib_search_path " | $Xsed -e "s% $path % %g"`
+      #	deplibs=`$ECHO "X$deplibs " | $Xsed -e "s% -L$path % %g"`
+      #	dependency_libs=`$ECHO "X$dependency_libs " | $Xsed -e "s% -L$path % %g"`
+      #done
 
       if test -n "$xrpath"; then
 	# If the user specified any rpath flags, then add them.
@@ -5656,7 +5600,7 @@ EOF
 	    $ECHO 'INPUT (' > $output
 	    for obj in $save_libobjs
 	    do
-	      $ECHO \""$obj"\" >> $output
+	      $ECHO "$obj" >> $output
 	    done
 	    $ECHO ')' >> $output
 	    delfiles="$delfiles $output"
@@ -6235,7 +6179,7 @@ EOF
 	# Preserve any variables that may affect compiler behavior
 	for var in $variables_saved_for_relink; do
 	  if eval test -z \"\${$var+set}\"; then
-	    relink_command="{ test -z \"\${$var+set}\" || unset $var || { $var=; export $var; }; }; $relink_command"
+	    relink_command="{ test -z \"\${$var+set}\" || $lt_unset $var || { $var=; export $var; }; }; $relink_command"
 	  elif eval var_value=\$$var; test -z "$var_value"; then
 	    relink_command="$var=; export $var; $relink_command"
 	  else
@@ -6810,7 +6754,7 @@ else
 	  ;;
 	esac
 	$ECHO >> $output "\
-      \$ECHO \"\$0: cannot exec \$program \${1+\"\$@\"}\"
+      \$ECHO \"\$0: cannot exec \$program \$*\"
       exit 1
     fi
   else
@@ -6976,7 +6920,7 @@ fi\
       # Preserve any variables that may affect compiler behavior
       for var in $variables_saved_for_relink; do
 	if eval test -z \"\${$var+set}\"; then
-	  relink_command="{ test -z \"\${$var+set}\" || unset $var || { $var=; export $var; }; }; $relink_command"
+	  relink_command="{ test -z \"\${$var+set}\" || $lt_unset $var || { $var=; export $var; }; }; $relink_command"
 	elif eval var_value=\$$var; test -z "$var_value"; then
 	  relink_command="$var=; export $var; $relink_command"
 	else

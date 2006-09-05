@@ -23,8 +23,14 @@
 #include "matio.h"
 #include "matio_private.h"
 
-/* InflateSkip
- * Inflate the data until nbytes of uncompressed data has been inflated
+/** @brief Inflate the data until @c nbytes of uncompressed data has been
+ *         inflated
+ *
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param z zlib compression stream
+ * @param nbytes Number of uncompressed bytes to skip
+ * @return Number of bytes read from the file
  */
 int 
 InflateSkip(mat_t *mat, z_stream *z, int nbytes)
@@ -83,8 +89,14 @@ InflateSkip(mat_t *mat, z_stream *z, int nbytes)
     return bytesread;
 }
 
-/*
- * Inflate the data until nbytes of compressed data has been inflated
+/** @brief Inflate the data until @c nbytes of compressed data has been
+ *         inflated
+ *
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param z zlib compression stream
+ * @param nbytes Number of uncompressed bytes to skip
+ * @return Number of bytes read from the file
  */
 int
 InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes)
@@ -135,6 +147,16 @@ InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes)
     return bytesread;
 }
 
+/** @brief Inflate the data until @c len elements of compressed data with data
+ *         type @c data_type has been inflated
+ *
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param z zlib compression stream
+ * @param data_type Data type (matio_types enumerations)
+ * @param len Number of elements of datatype @c data_type to skip
+ * @return Number of bytes read from the file
+ */
 int
 InflateSkipData(mat_t *mat,z_stream *z,int data_type,int len)
 {
@@ -175,8 +197,14 @@ InflateSkipData(mat_t *mat,z_stream *z,int data_type,int len)
     return len;
 }
 
-/*
- * Inflates the variable's tag.  buf must hold at least 8 bytes
+/** @brief Inflates the variable's tag.
+ *
+ * @c buf must hold at least 8 bytes
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the 8-byte variable tag 
+ * @return Number of bytes read from the file
  */
 int
 InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf)
@@ -219,9 +247,14 @@ InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf)
     return bytesread;
 }
 
-/*
- * Inflates the Array Flags Tag and the Array Flags data.  buf must hold at
- * least 16 bytes
+/** @brief Inflates the Array Flags Tag and the Array Flags data.
+ *
+ * @c buf must hold at least 16 bytes
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the 16-byte array flags tag and data 
+ * @return Number of bytes read from the file
  */
 int
 InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf)
@@ -263,11 +296,16 @@ InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf)
     return bytesread;
 }
 
-/*
- * Inflates the Dimensions Tag and the Dimensions data.  buf must hold at
- * least (8+4*rank) bytes.  If the end of the dimensions data is not aligned
- * on an 8-byte boundary, this function eats up those bytes and are stored in
- * buf.
+/** @brief Inflates the dimensions tag and the dimensions data
+ *
+ * @c buf must hold at least (8+4*rank) bytes where rank is the number of
+ * dimensions. If the end of the dimensions data is not aligned on an 8-byte
+ * boundary, this function eats up those bytes and stores then in @c buf.
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the dimensions flag and data 
+ * @return Number of bytes read from the file
  */
 int
 InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf)
@@ -350,6 +388,14 @@ InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf)
     return bytesread;
 }
 
+/** @brief Inflates the variable name tag
+ *
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the variables name tag 
+ * @return Number of bytes read from the file
+ */
 int
 InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf)
 {
@@ -391,6 +437,15 @@ InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf)
     return bytesread;
 }
 
+/** @brief Inflates the variable name
+ *
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the variables name 
+ * @param N Number of characters in the name
+ * @return Number of bytes read from the file
+ */
 int
 InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
 {
@@ -432,8 +487,14 @@ InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
     return bytesread;
 }
 
-/*
- * Inflates the data's tag.  buf must hold at least 8 bytes
+/** @brief Inflates the data's tag
+ *
+ * buf must hold at least 8 bytes
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the data tag 
+ * @return Number of bytes read from the file
  */
 int
 InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf)
@@ -480,8 +541,14 @@ InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf)
     return bytesread;
 }
 
-/*
- * Inflates the data's type.  buf must hold at least 4 bytes
+/** @brief Inflates the data's type
+ *
+ * buf must hold at least 4 bytes
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the data type 
+ * @return Number of bytes read from the file
  */
 int
 InflateDataType(mat_t *mat, matvar_t *matvar, void *buf)
@@ -524,9 +591,15 @@ InflateDataType(mat_t *mat, matvar_t *matvar, void *buf)
     return bytesread;
 }
 
-/*
- * Inflates the Dimensions Tag and the Dimensions data.  buf must hold at
- * least nBytes bytes
+/** @brief Inflates the data
+ *
+ * buf must hold at least @c nBytes bytes
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param z zlib compression stream
+ * @param buf Pointer to store the data type 
+ * @param nBytes Number of bytes to inflate
+ * @return Number of bytes read from the file
  */
 int
 InflateData(mat_t *mat, z_stream *z, void *buf, int nBytes)
@@ -594,8 +667,14 @@ InflateData(mat_t *mat, z_stream *z, void *buf, int nBytes)
     return bytesread;
 }
 
-/*
- * Inflates the structure's fieldname length.  buf must hold at least 8 bytes
+/** @brief Inflates the structure's fieldname length
+ *
+ * buf must hold at least 8 bytes
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the fieldname length 
+ * @return Number of bytes read from the file
  */
 int
 InflateFieldNameLength(mat_t *mat, matvar_t *matvar, void *buf)
@@ -638,8 +717,14 @@ InflateFieldNameLength(mat_t *mat, matvar_t *matvar, void *buf)
     return bytesread;
 }
 
-/*
- * Inflates the structure's fieldname tag.  buf must hold at least 8 bytes
+/** @brief Inflates the structure's fieldname tag
+ *
+ * buf must hold at least 8 bytes
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the fieldname tag 
+ * @return Number of bytes read from the file
  */
 int
 InflateFieldNamesTag(mat_t *mat, matvar_t *matvar, void *buf)
@@ -685,6 +770,18 @@ InflateFieldNamesTag(mat_t *mat, matvar_t *matvar, void *buf)
 /*
  * Inflates the structure's fieldname length.  buf must hold at least
  * nfields*fieldname_length bytes
+ */
+/** @brief Inflates the structure's fieldnames
+ *
+ * buf must hold at least @c nfields * @c fieldname_length bytes
+ * @ingroup mat_internal
+ * @param mat Pointer to the MAT file
+ * @param matvar Pointer to the MAT variable
+ * @param buf Pointer to store the fieldnames 
+ * @param nfields Number of fields
+ * @param fieldname_length Maximum length in bytes of each field
+ * @param padding Number of padding bytes
+ * @return Number of bytes read from the file
  */
 int
 InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,

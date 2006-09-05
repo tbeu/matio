@@ -19,12 +19,12 @@ PREFIX=$HOME
 
 # Uncomment to build the zlib library
 
-cd zlib
-CC=gcc \
-CFLAGS='-O2 -DZ_PREFIX -fpic' \
-./configure --prefix=$PREFIX --libdir=$PREFIX/lib
-make && make install && make clean
-cd ..
+# cd zlib
+# CC=gcc \
+# CFLAGS='-O2 -DZ_PREFIX -fpic' \
+# ./configure --prefix=$PREFIX --libdir=$PREFIX/lib
+# make && make install && make clean
+# cd ..
 
 cd build-linux
 

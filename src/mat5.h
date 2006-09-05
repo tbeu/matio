@@ -26,22 +26,6 @@
 #   define EXTERN extern
 #endif
 
-/*----------- Functions to do partial I/O (slabs) ------------------------*/
-EXTERN int ReadDataSlabN(mat_t *mat,void *data,int class_type,
-               int data_type,int rank,int *dims,int *start,int *stride,
-               int *edge);
-EXTERN int ReadDataSlab2(mat_t *mat,void *data,int class_type,
-               int data_type,int *dims,int *start,int *stride,int *edge);
-#if defined(HAVE_ZLIB)
-EXTERN int ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,
-               int class_type,int data_type,int rank,int *dims,int *start,
-               int *stride,int *edge);
-EXTERN int ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
-               int class_type,int data_type,int *dims,int *start,int *stride,
-               int *edge);
-#endif
-/*-------------------------------------------------------------------------*/
-
 EXTERN int WriteCellArrayField( mat_t *mat, matvar_t *matvar,
                                 int compress );
 #if defined(HAVE_ZLIB)

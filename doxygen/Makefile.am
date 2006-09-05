@@ -7,7 +7,7 @@
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 VPATH = @srcdir@
 
-docdir = $(prefix)/doc
+docdir = $(prefix)/doc/matio
 doc_DATA = $(top_builddir)/doxygen/latex/libmatio.pdf
 
 doc: $(doc_DATA)

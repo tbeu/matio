@@ -80,6 +80,7 @@ typedef unsigned char   mat_uint8_t;
 #endif
 
 /** @defgroup MAT Matlab MAT File I/O Library */
+/** @defgroup mat_internal Internal Functions */
 
 /** @brief MAT file access types
  *
