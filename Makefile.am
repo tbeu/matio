@@ -5,9 +5,8 @@ VPATH = @srcdir@
 
 ACLOCAL_AMFLAGS = -Iconfig
 
-
+datadir = $(prefix)/share/matio
 EXTRA_DIST = matio.pc.in
-data_DATA  = share/test_file.mat share/test_file_v6.mat
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = matio.pc
@@ -19,6 +18,7 @@ DOCS=doxygen
 endif
 
 if BUILD_TEST
+data_DATA  = share/test_file.mat share/test_file_v6.mat
 TEST=test
 endif
 

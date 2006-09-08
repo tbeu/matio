@@ -15,7 +15,7 @@ case $m in
 esac
 # ARCH=32
 
-PREFIX=$HOME
+PREFIX=/tmp/matio
 
 # Uncomment to build the zlib library
 
