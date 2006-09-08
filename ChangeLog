@@ -4,6 +4,7 @@ Changes in 1.3.1 (7 Spetempber 2006)
 * Disabled the building of test programs by default and added a configure
   option to build them
 * Fixed installation path of data and documentation
+* Fixed bugs where file pointers were left open if allocating memory failed in Mat_Open and Mat_Create
 
 Changes in 1.3.0 (30 June 2006)
 * Cleaned out matio.h and made most preproccessor define's into enum's.
