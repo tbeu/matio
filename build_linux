@@ -32,8 +32,10 @@ DEFAULT_OPTS="--prefix=$PREFIX --exec-prefix=$PREFIX --with-libdir-suffix=$LIBDI
 DEBUG="--enable-debug"
 ZLIB_OPTS="--with-zlib=$PREFIX"
 DOCS_OPTS="--enable-docs"
+TEST_OPTS="--enable-test"
 FORTRAN="--enable-fortran=no"
-../configure CC=gcc CFLAGS= $DEFAULT_OPTS $DEBUG $FORTRAN $ZLIB_OPTS $DOCS_OPTS
+../configure CC=gcc CFLAGS= $DEFAULT_OPTS $DEBUG $FORTRAN $ZLIB_OPTS \
+    $DOCS_OPTS $TEST_OPTS
 
 if test $? = 0
 then

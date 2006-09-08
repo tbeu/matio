@@ -22,8 +22,16 @@
 #include "matio.h"
 #include "matio_private.h"
 
+/** @brief swap the bytes @c a and @c b
+ * @ingroup mat_internal
+ */
 #define swap(a,b)   a^=b;b^=a;a^=b
 
+/** @brief swap the bytes of a 32-bit signed integer
+ * @ingroup mat_internal
+ * @param a pointer to integer to swap
+ * @return the swapped integer
+ */
 mat_int32_t
 int32Swap( mat_int32_t *a )
 {
@@ -44,6 +52,11 @@ int32Swap( mat_int32_t *a )
 
 }
 
+/** @brief swap the bytes of a 32-bit unsigned integer
+ * @ingroup mat_internal
+ * @param a pointer to integer to swap
+ * @return the swapped integer
+ */
 mat_uint32_t
 uint32Swap( mat_uint32_t *a )
 {
@@ -64,6 +77,11 @@ uint32Swap( mat_uint32_t *a )
 
 }
 
+/** @brief swap the bytes of a 16-bit signed integer
+ * @ingroup mat_internal
+ * @param a pointer to integer to swap
+ * @return the swapped integer
+ */
 mat_int16_t
 int16Swap( mat_int16_t *a ) 
 {
@@ -82,6 +100,11 @@ int16Swap( mat_int16_t *a )
 
 }
 
+/** @brief swap the bytes of a 16-bit unsigned integer
+ * @ingroup mat_internal
+ * @param a pointer to integer to swap
+ * @return the swapped integer
+ */
 mat_uint16_t
 uint16Swap( mat_uint16_t *a ) 
 {
@@ -100,6 +123,11 @@ uint16Swap( mat_uint16_t *a )
 
 }
 
+/** @brief swap the bytes of a 4 byte single-precision float
+ * @ingroup mat_internal
+ * @param a pointer to integer to swap
+ * @return the swapped integer
+ */
 float
 floatSwap( float *a )
 {
@@ -119,6 +147,11 @@ floatSwap( float *a )
 
 }
 
+/** @brief swap the bytes of a 4 or 8 byte double-precision float
+ * @ingroup mat_internal
+ * @param a pointer to integer to swap
+ * @return the swapped integer
+ */
 double
 doubleSwap( double *a )
 {

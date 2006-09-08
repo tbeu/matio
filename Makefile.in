@@ -98,6 +98,8 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BUILD_TEST_FALSE = @BUILD_TEST_FALSE@
+BUILD_TEST_TRUE = @BUILD_TEST_TRUE@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -218,7 +220,8 @@ data_DATA = share/test_file.mat share/test_file_v6.mat
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = matio.pc
 @DOCS_INSTALL_TRUE@DOCS = doxygen
-SUBDIRS = src test $(DOCS)
+@BUILD_TEST_TRUE@TEST = test
+SUBDIRS = src $(TEST) $(DOCS)
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \
               -e 's,\/,\\,g'

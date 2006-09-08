@@ -134,6 +134,20 @@ GetMatrixMaxBufSize(matvar_t *matvar)
     return nBytes;
 }
 
+/** @brief Writes @c data as character data
+ *
+ * This function uses the knowledge that the data is part of a character class
+ * to avoid some pitfalls with Matlab listed below.
+ *   @li Matlab character data cannot be unsigned 8-bit integers, it needs at
+ *       least unsigned 16-bit integers
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data character data to write
+ * @param N Number of elements to write
+ * @param data_type character data type (enum matio_types)
+ * @return number of bytes written
+ */ 
 int
 WriteCharData(mat_t *mat, void *data, int N,int data_type)
 {
@@ -193,6 +207,19 @@ WriteCharData(mat_t *mat, void *data, int N,int data_type)
     return bytesread;
 }
 
+/** @brief Writes empty characters to the MAT file
+ *
+ * This function uses the knowledge that the data is part of a character class
+ * to avoid some pitfalls with Matlab listed below.
+ *   @li Matlab character data cannot be unsigned 8-bit integers, it needs at
+ *       least unsigned 16-bit integers
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data character data to write
+ * @param N Number of elements to write
+ * @param data_type character data type (enum matio_types)
+ * @return number of bytes written
+ */ 
 int
 WriteEmptyCharData(mat_t *mat, int N, int data_type)
 {
@@ -234,9 +261,15 @@ WriteEmptyCharData(mat_t *mat, int N, int data_type)
     return bytesread;
 }
 
-/*
+/* @brief Writes the data tags and empty data to the file
+ *
  * Writes the data tags and empty data to the file to save space for the
  * variable when the actual data is written
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param N number of elements to write
+ * @param data_type data type to write
+ * @return Number of bytes written
  */
 int
 WriteEmptyData(mat_t *mat,int N,int data_type)
@@ -476,6 +509,19 @@ WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,int data_type)
 }
 #endif
 
+/** @param Writes a 2-D slab of data to the MAT file
+ *
+ * @ingroup mat_internal
+ * @fixme should return the number of bytes written, but currently returns 0
+ * @param mat MAT file pointer
+ * @param data pointer to the slab of data
+ * @param data_type data type of the data (enum matio_types)
+ * @param dims dimensions of the dataset
+ * @param start index to start writing the data in each dimension
+ * @param stride write data every @c stride elements
+ * @param edge number of elements to write in each dimension
+ * @return number of byteswritten
+ */
 int
 WriteDataSlab2(mat_t *mat,void *data,int data_type,int *dims,int *start,
               int *stride,int *edge)
@@ -671,6 +717,23 @@ WriteDataSlab2(mat_t *mat,void *data,int data_type,int *dims,int *start,
     return nBytes;
 }
 
+/** @param Writes a 2-D slab of character data to the MAT file
+ *
+ * This function uses the knowledge that the data is part of a character class
+ * to avoid some pitfalls with Matlab listed below.
+ *   @li Matlab character data cannot be unsigned 8-bit integers, it needs at
+ *       least unsigned 16-bit integers
+ * @ingroup mat_internal
+ * @fixme should return the number of bytes written, but currently returns 0
+ * @param mat MAT file pointer
+ * @param data pointer to the slab of data
+ * @param data_type data type of the data (enum matio_types)
+ * @param dims dimensions of the dataset
+ * @param start index to start writing the data in each dimension
+ * @param stride write data every @c stride elements
+ * @param edge number of elements to write in each dimension
+ * @return number of byteswritten
+ */
 int
 WriteCharDataSlab2(mat_t *mat,void *data,int data_type,int *dims,int *start,
               int *stride,int *edge)
@@ -760,7 +823,14 @@ WriteCharDataSlab2(mat_t *mat,void *data,int data_type,int *dims,int *start,
     return nBytes;
 }
 
-/* Writes the data buffer to the file */
+/** @brief Writes the data buffer to the file
+ *
+ * @param mat MAT file pointer
+ * @param data pointer to the data to write
+ * @param N number of elements to write
+ * @param data_type data type of the data
+ * @return number of bytes written
+ */
 int
 WriteData(mat_t *mat,void *data,int N,int data_type)
 {
@@ -1369,10 +1439,13 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
     return bytesread;
 }
 
-/*
- * ----------------------------------------
- *  Write routines for struct/cell fields
- * ----------------------------------------
+/** @brief Writes the header and blank data for a cell array
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @param compress option to write the data compressed (not used)
+ * @return number of bytes written
  */
 int
 WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar,int compress )
@@ -1501,6 +1574,14 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar,int compress )
     return 0;
 }
 
+/** @brief Writes the header and data for an element of a cell array
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @param compress option to write the data compressed (not used)
+ * @retval 0 on success
+ */
 int
 WriteCellArrayField(mat_t *mat,matvar_t *matvar,int compress )
 {
@@ -1513,7 +1594,7 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar,int compress )
     long     start = 0, end = 0;
 
     if ((matvar == NULL) || (mat == NULL))
-        return 0;
+        return 1;
 
 #if 0
     nBytes = GetMatrixMaxBufSize(matvar);
@@ -1695,6 +1776,13 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar,int compress )
     return 0;
 }
 
+/** @brief Writes the header and data for a field of a struct array
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @retval 0 on success
+ */
 int
 WriteStructField(mat_t *mat,matvar_t *matvar)
 {
@@ -1860,6 +1948,14 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Writes the header and data for a field of a compressed struct array
+ *
+ * @ingroup mat_internal
+ * @fixme Currently does not work
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @retval 0 on success
+ */
 int
 WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
 {
@@ -4067,7 +4163,18 @@ Read5(mat_t *mat, matvar_t *matvar)
     return;
 }
 
-/* Reads a slab of data from the variable */
+/** @brief Reads a slab of data from the mat variable @c matvar
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @param data pointer to store the read data in (must be of size
+ *             edge[0]*...edge[rank-1]*Mat_SizeOfClass(matvar->class_type))
+ * @param start index to start reading data in each dimension
+ * @param stride write data every @c stride elements in each dimension
+ * @param edge number of elements to read in each dimension
+ * @retval 0 on success
+ */
 int 
 ReadData5(mat_t *mat,matvar_t *matvar,void *data, 
     int *start,int *stride,int *edge)
@@ -4254,7 +4361,15 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
     return err;
 }
 
-/* Writes a matlab variable to a version 5 matlab file */
+/** @brief Writes a matlab variable to a version 5 matlab file
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @param compress option to compress the variable
+ *                 (only works for numeric types)
+ * @retval 0 on success
+ */
 int
 Write5(mat_t *mat,matvar_t *matvar,int compress)
 {
@@ -4733,7 +4848,12 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
     return 0;
 }
 
-/* Writes the variable information and empty data */
+/** @brief Writes the variable information and empty data
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ */
 void
 WriteInfo5(mat_t *mat, matvar_t *matvar)
 {
@@ -5032,6 +5152,12 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
     fseek(mat->fp,end,SEEK_SET);
 }
 
+/** @brief Prints the mat variable
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ */
 void
 Mat_VarPrint5( matvar_t *matvar, int printdata )
 {
@@ -5546,6 +5672,12 @@ Mat_VarPrint5( matvar_t *matvar, int printdata )
     return;
 }
 
+/** @brief Reads the header information for the next MAT variable
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @retuen pointer to the MAT variable or NULL
+ */
 matvar_t *
 Mat_VarReadNextInfo5( mat_t *mat )
 {

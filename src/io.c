@@ -54,7 +54,7 @@
 #    define asprintf mat_asprintf
 #endif
 
-/** @if NO_DOC */
+/** @cond 0 */
 #define LOG_LEVEL_ERROR    1
 #define LOG_LEVEL_CRITICAL 1 << 1
 #define LOG_LEVEL_WARNING  1 << 2
@@ -102,7 +102,7 @@ strdup_printf(const char* format, ...)
 }
 
 static void
-scats_error_func( int log_level, char *message )
+matio_error_func( int log_level, char *message )
 {
 
     if ( progname ) {
@@ -308,38 +308,6 @@ void Mat_Error( const char *format, ... )
     va_end(ap);
 }
 
-#if 0
-/** @brief Determines the format of a file
- *
- * Determines what kind of file name referes to.
- * @ingroup libscatsio
- * @param name name of file to determine format of
- * @return The file format
- */
-int Mat_GetFileFormat( char *name )
-{
-    FILE *fp = NULL;
-    int16_t tmp, version;
-    int     err;
-
-    fp = fopen( name, "rb" );
-    if ( fp ) {
-        err = fseek(fp,124,SEEK_SET);
-        err = fread(&tmp,2,1,fp);
-        version = (int)tmp;
-        fread (&tmp,1,2,fp);
-        fclose(fp);
-        if ( (tmp == 0x4d49 || tmp == 0x494d) && version == 0x0100 )
-            return MAT_FT_MAT5;
-        else
-            printf("version %d\n tmp %d\n", version, tmp);
-    } else {
-        Mat_Error("Scats_GetFileFormat couldn't open %s\n", name);
-    }
-    return MAT_FT_UNKNOWN;
-}
-#endif
-
 /** @brief Prints a helpstring to stdout and exits with status 1
  *
  * Prints the array of strings to stdout and exits with status 1.  The array
@@ -359,7 +327,12 @@ void Mat_Help( const char *helpstr[] )
     exit(EXIT_SUCCESS);
 }
 
-int Mat_LogClose( )
+/** @brief Closes the logging system
+ *
+ * @retval 1
+ */
+int
+Mat_LogClose( )
 {
     logfunc = NULL;
     return 1;
@@ -374,7 +347,7 @@ int Mat_LogClose( )
 int
 Mat_LogInit( char *prog_name )
 {
-    logfunc = &scats_error_func;
+    logfunc = &matio_error_func;
 
     verbose = 0;
     silent  = 0;

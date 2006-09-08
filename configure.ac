@@ -2,19 +2,19 @@ dnl  conFigure.ac
 dnl
 dnl  NOTE:  Process this file with GNU autoconf to produce a configure script.
 
-AC_INIT([MATIO],[1.3.0],[cch@isl-inc.com],[])
+AC_INIT([MATIO],[1.3.1],[cch@isl-inc.com],[])
 AC_CONFIG_SRCDIR([src/matio.h])
 AC_CONFIG_AUX_DIR(config)
 dnl AM_INIT_AUTOMAKE([-no-undefined])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
-AC_PREREQ(2.54)
+AC_PREREQ(2.59)
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED(MATIO_PLATFORM,"${host}")
 AC_DEFINE_UNQUOTED(MATIO_MAJOR_VERSION,1)
-AC_DEFINE_UNQUOTED(MATIO_MINOR_VERSION,4)
-AC_DEFINE_UNQUOTED(MATIO_RELEASE_LEVEL,0)
-PACKAGE_RELEASE_DATE="1 July 2006"
+AC_DEFINE_UNQUOTED(MATIO_MINOR_VERSION,3)
+AC_DEFINE_UNQUOTED(MATIO_RELEASE_LEVEL,1)
+PACKAGE_RELEASE_DATE=""
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
 AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])
@@ -333,12 +333,26 @@ AM_CONDITIONAL(WINNT, test "x$winnt" = "xyes")
 AM_CONDITIONAL(SUN,   test "x$sun"   = "xyes")
 
 dnl
+dnl Check whether to build test programs
+dnl
+AC_ARG_ENABLE(test,AS_HELP_STRING([--enable-test=yes],[build test programs]),
+build_test=$enableval,build_test=no)
+AC_MSG_CHECKING(whether to build test programs)
+if test "x$build_test" = "xno"
+then
+    AC_MSG_RESULT(no)
+else
+    AC_MSG_RESULT(yes)
+    build_test=yes
+fi  
+AM_CONDITIONAL(BUILD_TEST, test "x$build_test" = "xyes")
+
+dnl
 dnl Check whether to build documentation
 dnl
 AC_ARG_ENABLE(docs,AS_HELP_STRING([--enable-docs=yes],[install documentation]),
 docs_install=$enableval,docs_install=no)
 AC_MSG_CHECKING(install docs)
-echo $docs_install
 if test "$docs_install" = "no"
 then
     AC_MSG_RESULT(no)
@@ -375,6 +389,7 @@ AC_MSG_RESULT([     Static Libraries: $enable_static])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Features --------------------------------------------])
 AC_MSG_RESULT([    Fortran Interface: $enable_fortran])
+AC_MSG_RESULT([        test programs: $build_test])
 AC_MSG_RESULT([        Documentation: $docs_install])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Packages --------------------------------------------])

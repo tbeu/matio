@@ -18,7 +18,11 @@ if DOCS_INSTALL
 DOCS=doxygen
 endif
 
-SUBDIRS = src test $(DOCS)
+if BUILD_TEST
+TEST=test
+endif
+
+SUBDIRS = src $(TEST) $(DOCS)
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \
