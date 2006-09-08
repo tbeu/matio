@@ -192,17 +192,11 @@ Mat_Open(const char *matname,int mode)
 
         if ( mat->byteswap < 0 ) {
             Mat_Critical("%s does not seem to be a valid MAT file",matname);
-            fclose(mat->fp);
-            free(mat->header);
-            free(mat->subsys_offset);
-            free(mat);
+            Mat_Close(mat);
             mat=NULL;
         } else if ( mat->version != 0x0100 ) {
             Mat_Critical("%s is not a version 5 MAT file", matname);
-            fclose(mat->fp);
-            free(mat->header);
-            free(mat->subsys_offset);
-            free(mat);
+            Mat_Close(mat);
             mat=NULL;
         } else {
             mat->filename = strdup_printf("%s",matname);
@@ -223,7 +217,8 @@ Mat_Open(const char *matname,int mode)
 int
 Mat_Close( mat_t *mat )
 {
-    fclose(mat->fp);
+    if ( mat->fp )
+        fclose(mat->fp);
     if ( mat->header )
         free(mat->header);
     if ( mat->subsys_offset )
