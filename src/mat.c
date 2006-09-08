@@ -77,8 +77,10 @@ Mat_Create(const char *matname,const char *hdr_str)
         return NULL;
 
     mat = malloc(sizeof(*mat));
-    if ( !mat )
+    if ( !mat ) {
+        fclose(fp);
         return NULL;
+    }
 
     mat->fp            = NULL;
     mat->header        = NULL;
@@ -156,6 +158,7 @@ Mat_Open(const char *matname,int mode)
     mat = malloc(sizeof(mat_t));
     if ( !mat ) {
         Mat_Critical("Couldn't allocate memory for the MAT file");
+        fclose(fp);
         return NULL;
     }
 
@@ -1036,7 +1039,7 @@ Mat_VarGetSize(matvar_t *matvar)
 int
 Mat_VarAddStructField(matvar_t *matvar,matvar_t **fields)
 {
-    int       i, f, err = 0, nfields, nmemb, cnt = 0;
+    int       i, f, nfields, nmemb, cnt = 0;
     matvar_t **new_data,**old_data;
 
     if ( matvar == NULL || fields == NULL )
