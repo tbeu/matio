@@ -295,6 +295,138 @@ WriteCharData(mat_t *mat, void *data, int N,int data_type)
     return bytesread;
 }
 
+#if defined(HAVE_ZLIB)
+/** @brief Writes @c data as compressed character data
+ *
+ * This function uses the knowledge that the data is part of a character class
+ * to avoid some pitfalls with Matlab listed below.
+ *   @li Matlab character data cannot be unsigned 8-bit integers, it needs at
+ *       least unsigned 16-bit integers
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z pointer to the zlib compression stream
+ * @param data character data to write
+ * @param N Number of elements to write
+ * @param data_type character data type (enum matio_types)
+ * @return number of bytes written
+ */ 
+size_t
+WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,int data_type)
+{
+    int nBytes = 0, data_size, data_tag[2], err, byteswritten = 0;
+    int buf_size = 1024, i;
+    mat_uint8_t   buf[1024], pad[8] = {0,};
+
+    if ((mat == NULL) || (data == NULL) || (mat->fp == NULL))
+        return 0;
+
+    switch ( data_type ) {
+        case MAT_T_UINT16:
+        {
+            data_size = 2;
+            data_tag[0]  = MAT_T_UINT16;
+            data_tag[1]  = N*data_size;
+            z->next_in   = data_tag;
+            z->avail_in  = 8;
+            z->next_out  = buf;
+            z->avail_out = buf_size;
+            err = deflate(z,Z_NO_FLUSH);
+            byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+            z->next_in   = data;
+            z->avail_in  = data_size*N;
+            do {
+                z->next_out  = buf;
+                z->avail_out = buf_size;
+                err = deflate(z,Z_NO_FLUSH);
+                byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+            } while ( z->avail_out == 0 );
+            /* Add/Compress padding to pad to 8-byte boundary */
+            if ( N*data_size % 8 ) {
+                z->next_in   = pad;
+                z->avail_in  = 8 - (N*data_size % 8);
+                z->next_out  = buf;
+                z->avail_out = buf_size;
+                err = deflate(z,Z_NO_FLUSH);
+                byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+            }
+            break;
+        }
+        case MAT_T_INT8:
+        case MAT_T_UINT8:
+        {
+            mat_uint8_t *ptr;
+            mat_uint16_t c;
+
+            /* Matlab can't read MAT_C_CHAR as uint8, needs uint16 */
+            data_size    = 2;
+            data_tag[0]  = MAT_T_UINT16;
+            data_tag[1]  = N*data_size;
+            z->next_in   = data_tag;
+            z->avail_in  = 8;
+            z->next_out  = buf;
+            z->avail_out = buf_size;
+            err = deflate(z,Z_NO_FLUSH);
+            byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+            z->next_in   = data;
+            z->avail_in  = data_size*N;
+            ptr = data;
+            for ( i = 0; i < N; i++ ) {
+                c = (mat_uint16_t)*(char *)ptr;
+                z->next_in   = &c;
+                z->avail_in  = 2;
+                z->next_out  = buf;
+                z->avail_out = buf_size;
+                err = deflate(z,Z_NO_FLUSH);
+                byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+                ptr++;
+            }
+            /* Add/Compress padding to pad to 8-byte boundary */
+            if ( N*data_size % 8 ) {
+                z->next_in   = pad;
+                z->avail_in  = 8 - (N*data_size % 8);
+                z->next_out  = buf;
+                z->avail_out = buf_size;
+                err = deflate(z,Z_NO_FLUSH);
+                byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+            }
+            break;
+        }
+        case MAT_T_UTF8:
+        {
+            data_size = 1;
+            data_tag[0]  = MAT_T_UTF8;
+            data_tag[1]  = N*data_size;
+            z->next_in   = data_tag;
+            z->avail_in  = 8;
+            z->next_out  = buf;
+            z->avail_out = buf_size;
+            err = deflate(z,Z_NO_FLUSH);
+            byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+            z->next_in   = data;
+            z->avail_in  = data_size*N;
+            do {
+                z->next_out  = buf;
+                z->avail_out = buf_size;
+                err = deflate(z,Z_NO_FLUSH);
+                byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+            } while ( z->avail_out == 0 );
+            /* Add/Compress padding to pad to 8-byte boundary */
+            if ( N*data_size % 8 ) {
+                z->next_in   = pad;
+                z->avail_in  = 8 - (N*data_size % 8);
+                z->next_out  = buf;
+                z->avail_out = buf_size;
+                err = deflate(z,Z_NO_FLUSH);
+                byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+            }
+            break;
+        }
+    }
+    return byteswritten;
+}
+#endif
+
 /** @brief Writes empty characters to the MAT file
  *
  * This function uses the knowledge that the data is part of a character class
@@ -938,7 +1070,7 @@ WriteData(mat_t *mat,void *data,int N,int data_type)
 
 #if defined(HAVE_ZLIB)
 /* Compresses the data buffer and writes it to the file */
-int
+size_t
 WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,int data_type)
 {
     int nBytes = 0, data_size, data_tag[2], err, byteswritten = 0;
@@ -2148,6 +2280,14 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 byteswritten += WriteCompressedData(mat,z,
                     matvar->data,nmemb,matvar->data_type);
             }
+            break;
+        }
+        case MAT_C_CHAR:
+        {
+            /* Check for a NULL character array */
+            if ( matvar->data != NULL && nmemb > 0 )
+                byteswritten += WriteCompressedCharData(mat,z,matvar->data,
+                    nmemb,matvar->data_type);
             break;
         }
         case MAT_C_CELL:
@@ -4781,6 +4921,14 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
                     byteswritten += WriteCompressedData(mat,matvar->z,
                         matvar->data,nmemb,matvar->data_type);
                 }
+                break;
+            }
+            case MAT_C_CHAR:
+            {
+                /* Check for a NULL character array */
+                if ( matvar->data != NULL && nmemb > 0 )
+                    byteswritten += WriteCompressedCharData(mat,matvar->z,
+                        matvar->data,nmemb,matvar->data_type);
                 break;
             }
 #if 0

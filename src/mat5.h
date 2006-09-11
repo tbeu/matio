@@ -46,7 +46,9 @@ int       Write5(mat_t *mat,matvar_t *matvar,int compress);
 int       WriteCharDataSlab2(mat_t *mat,void *data,int data_type,int *dims,
               int *start,int *stride,int *edge);
 #if defined(HAVE_ZLIB)
-int       WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
+size_t    WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
+              int data_type);
+size_t    WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
               int data_type);
 #endif
 int       WriteData(mat_t *mat,void *data,int N,int data_type);

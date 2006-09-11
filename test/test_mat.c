@@ -152,7 +152,8 @@ static const char *helptest_write_struct[] = {
     " 1,1     Double      2      5x10         reshape(1:50,5,10)",
     " 2,1     Single      2      5x10         single(reshape(1:50,5,10))",
     " 3,1     Int 32      2      5x10         int32(reshape(1:50,5,10))",
-    " 4,1     Struct      2      3x1          structure(1:3,1)",
+    " 4,1     Char        2      1x16         'This is a string'",
+    " 5,1     Struct      2      4x1          structure(1:4,1)",
     "",
     NULL
 };
@@ -170,7 +171,8 @@ static const char *helptest_write_compressed_struct[] = {
     " 1,1     Double      2      5x10         reshape(1:50,5,10)",
     " 2,1     Single      2      5x10         single(reshape(1:50,5,10))",
     " 3,1     Int 32      2      5x10         int32(reshape(1:50,5,10))",
-    " 4,1     Struct      2      3x1          structure(1:3,1)",
+    " 4,1     Char        2      1x16         'This is a string'",
+    " 5,1     Struct      2      4x1          structure(1:4,1)",
     "",
     NULL
 };
@@ -469,13 +471,11 @@ test_write_compressed( void )
         matvar = Mat_VarCreate("i8",MAT_C_INT8,MAT_T_INT8,2,dims,i8,0);
         Mat_VarWrite( mat, matvar,COMPRESSION_ZLIB);
         Mat_VarFree(matvar);
-#if 0
         dims[0] = 1;
         dims[1] = strlen(str);
         matvar = Mat_VarCreate("str",MAT_C_CHAR,MAT_T_INT8,2,dims,str,0);
-        Mat_VarWrite( mat, matvar, 0);
+        Mat_VarWrite(mat,matvar,COMPRESSION_ZLIB);
         Mat_VarFree(matvar);
-#endif
         Mat_Close(mat);
     } else {
         err = 1;
@@ -571,6 +571,7 @@ test_write_struct()
     double  data[50]={0.0,};
     float  fdata[50]={0.0,};
     int    idata[50]={0.0,};
+    char  *str = "This is a string";
     int    err = 0, i;
     mat_t     *mat;
     matvar_t **matvar, *struct_matvar, *substruct_matvar;
@@ -583,21 +584,26 @@ test_write_struct()
 
     mat = Mat_Create("test_mat_write_struct.mat",NULL);
     if ( mat ) {
-        matvar = malloc(5*sizeof(matvar_t *));
+        matvar = malloc(6*sizeof(matvar_t *));
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
         matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
                        dims,fdata,MEM_CONSERVE);
         matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
                        dims,idata,MEM_CONSERVE);
-        matvar[3] = NULL;
-        dims[0] = 3;
+        dims[0]   = 1;
+        dims[1]   = strlen(str);
+        matvar[3] = Mat_VarCreate("data",MAT_C_CHAR,MAT_T_UINT8,2,
+                       dims,str,MEM_CONSERVE);
+        matvar[4] = NULL;
+        dims[0] = 4;
         dims[1] = 1;
         substruct_matvar = Mat_VarCreate("data",MAT_C_STRUCT,MAT_T_STRUCT,
                             2,dims,matvar,0);
-        matvar[3] = substruct_matvar;
-        matvar[4] = NULL;
-        dims[0] = 4;
+        matvar[4] = substruct_matvar;
+        matvar[5] = NULL;
+
+        dims[0] = 5;
         dims[1] = 1;
         struct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,2,
                             dims,matvar,0);
@@ -605,6 +611,7 @@ test_write_struct()
         free(matvar[0]);
         free(matvar[1]);
         free(matvar[2]);
+        free(matvar[3]);
         free(matvar);
         free(struct_matvar);
         free(substruct_matvar);
@@ -620,6 +627,7 @@ test_write_compressed_struct()
     double  data[50]={0.0,};
     float  fdata[50]={0.0,};
     int    idata[50]={0.0,};
+    char  *str = "This is a string";
     int    err = 0, i;
     mat_t     *mat;
     matvar_t **matvar, *struct_matvar, *substruct_matvar;
@@ -632,15 +640,19 @@ test_write_compressed_struct()
 
     mat = Mat_Create("test_mat_write_compressed_struct.mat",NULL);
     if ( mat ) {
-        matvar = malloc(5*sizeof(matvar_t *));
+        matvar = malloc(6*sizeof(matvar_t *));
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
         matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
                        dims,fdata,MEM_CONSERVE);
         matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
                        dims,idata,MEM_CONSERVE);
-        matvar[3] = NULL;
-        dims[0] = 3;
+        dims[0]   = 1;
+        dims[1]   = strlen(str);
+        matvar[3] = Mat_VarCreate("data",MAT_C_CHAR,MAT_T_UINT8,2,
+                       dims,str,MEM_CONSERVE);
+        matvar[4] = NULL;
+        dims[0] = 4;
         dims[1] = 1;
         substruct_matvar = Mat_VarCreate("data",MAT_C_STRUCT,MAT_T_STRUCT,
                             2,dims,matvar,0);
@@ -652,9 +664,14 @@ test_write_compressed_struct()
                        dims,fdata,MEM_CONSERVE);
         matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
                        dims,idata,MEM_CONSERVE);
-        matvar[3] = substruct_matvar;
-        matvar[4] = NULL;
-        dims[0] = 4;
+        dims[0]   = 1;
+        dims[1]   = strlen(str);
+        matvar[3] = Mat_VarCreate("data",MAT_C_CHAR,MAT_T_UINT8,2,
+                       dims,str,MEM_CONSERVE);
+        matvar[4] = substruct_matvar;
+        matvar[5] = NULL;
+
+        dims[0] = 5;
         dims[1] = 1;
         struct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,2,
                             dims,matvar,0);
