@@ -44,37 +44,39 @@ static const char *helpstr[] = {
 };
 
 static const char *helptestsstr[] = {
-    "   Version 5 MAT File tests",
-    "================================================================",
-    "copy           - Copies one matlab file to another",
-    "write          - Writes a matlab file",
-    "writecompressed- Writes a compressed matlab file",
-    "readvar        - Reads a specific variable from a file",
-    "writestruct    - Writes a structure",
-    "writecell      - Writes a Cell Array",
-    "getstructfield - Tests Mat_VarGetStructField getting fields from a"
-                      " structure",
-    "readvarinfo    - Reads a variables header information only",
-    "readslab       - Tests reading a part of a dataset",
-    "writeslab      - Tests writing a part of a dataset",
-    "writesparse    - Tests writing a sparse matrix",
-    "writenull      - Tests writing empty variables",
-    "writenan       - Tests writing NaN (Not A Number) values",
-    "writeinf       - Tests writing inf (Infinity) values",
-    "",
-    "",
-    "   Version 4 MAT File tests",
-    "================================================================",
-    "readvar4       - Reads a specific variable from a file",
-    "readslab4      - Tests reading a part of a dataset",
-    "",
-    "",
-    "   Other Tests",
-    "================================================================",
-    "ind2sub - Calculates a set of subscripts from a linear index",
-    "sub2ind - Calculates the linear index from subscript values",
-    "",
-    NULL
+"   Version 5 MAT File tests",
+"================================================================",
+"copy                    - Copies one matlab file to another",
+"write                   - Writes a matlab file",
+"writecompressed         - Writes a compressed matlab file",
+"readvar                 - Reads a specific variable from a file",
+"write_struct            - Writes a structure",
+"writecell               - Writes a Cell Array",
+"getstructfield          - Tests Mat_VarGetStructField getting fields from a",
+"                          structure",
+"readvarinfo             - Reads a variables header information only",
+"readslab                - Tests reading a part of a dataset",
+"writeinf                - Tests writing inf (Infinity) values",
+"writenan                - Tests writing NaN (Not A Number) values",
+"writenull               - Tests writing empty variables",
+"writeslab               - Tests writing a part of a dataset",
+"writesparse             - Tests writing a sparse matrix",
+"write_struct            - Test writing structures",
+"write_compressed_struct - Test writing compressed structures",
+"",
+"",
+"   Version 4 MAT File tests",
+"================================================================",
+"readvar4       - Reads a specific variable from a file",
+"readslab4      - Tests reading a part of a dataset",
+"",
+"",
+"   Other Tests",
+"================================================================",
+"ind2sub - Calculates a set of subscripts from a linear index",
+"sub2ind - Calculates the linear index from subscript values",
+"",
+NULL
 };
 
 static const char *helptest_copy[] = {
@@ -137,19 +139,37 @@ static const char *helptest_readvar[] = {
     NULL
 };
 
-static const char *helptest_writestruct[] = {
-    "TEST: writestruct",
+static const char *helptest_write_struct[] = {
+    "TEST: write_struct",
     "",
-    "Usage: test_mat writestruct",
+    "Usage: test_mat write_struct",
     "",
     "Writes a structure of size 4x1 with one field (data) of various types to",
-    "file test_mat_writestruct.mat",
+    "file test_mat_write_struct.mat",
     "",
     "Index    Data Type   Rank   Dimensions   Data",
     "---------------------------------------------------------------",
     " 1,1     Double      2      5x10         reshape(1:50,5,10)",
     " 2,1     Single      2      5x10         single(reshape(1:50,5,10))",
-    " 3,1     Double      2      5x10         int32(reshape(1:50,5,10))",
+    " 3,1     Int 32      2      5x10         int32(reshape(1:50,5,10))",
+    " 4,1     Struct      2      3x1          structure(1:3,1)",
+    "",
+    NULL
+};
+
+static const char *helptest_write_compressed_struct[] = {
+    "TEST: write_compressed_struct",
+    "",
+    "Usage: test_mat write_compressed_struct",
+    "",
+    "Writes a compressed structure of size 4x1 with one field (data) of",
+    "various types to file test_mat_write_compressed_struct.mat",
+    "",
+    "Index    Data Type   Rank   Dimensions   Data",
+    "---------------------------------------------------------------",
+    " 1,1     Double      2      5x10         reshape(1:50,5,10)",
+    " 2,1     Single      2      5x10         single(reshape(1:50,5,10))",
+    " 3,1     Int 32      2      5x10         int32(reshape(1:50,5,10))",
     " 4,1     Struct      2      3x1          structure(1:3,1)",
     "",
     NULL
@@ -182,10 +202,10 @@ static const char *helptest_getstructfield[] = {
     "  a structure. FILE is the name of the input file containing a Matlab",
     "  structure named structure_name and either the field name or",
     "  1-relative field index. i.e. to read the data field of the structure",
-    "  created by the writestruct test, use:",
-    "    test_mat getstructfield test_mat_writestruct.mat structure data",
+    "  created by the write_struct test, use:",
+    "    test_mat getstructfield test_mat_write_struct.mat structure data",
     "  OR",
-    "    test_mat getstructfield test_mat_writestruct.mat structure 1",
+    "    test_mat getstructfield test_mat_write_struct.mat structure 1",
     "",
     NULL
 };
@@ -331,8 +351,10 @@ help_test(const char *test)
         Mat_Help(helptest_writecompressed);
     else if ( !strcmp(test,"readvar") )
         Mat_Help(helptest_readvar);
-    else if ( !strcmp(test,"writestruct") )
-        Mat_Help(helptest_writestruct);
+    else if ( !strcmp(test,"write_struct") )
+        Mat_Help(helptest_write_struct);
+    else if ( !strcmp(test,"write_compressed_struct") )
+        Mat_Help(helptest_write_compressed_struct);
     else if ( !strcmp(test,"writecell") )
         Mat_Help(helptest_writecell);
     else if ( !strcmp(test,"readvarinfo") )
@@ -559,7 +581,7 @@ test_write_struct()
         idata[i] = i+1;
     }
 
-    mat = Mat_Create("test_mat_writestruct.mat",NULL);
+    mat = Mat_Create("test_mat_write_struct.mat",NULL);
     if ( mat ) {
         matvar = malloc(5*sizeof(matvar_t *));
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
@@ -608,12 +630,11 @@ test_write_compressed_struct()
         idata[i] = i+1;
     }
 
-    mat = Mat_Create("test_mat_writestruct.mat",NULL);
+    mat = Mat_Create("test_mat_write_compressed_struct.mat",NULL);
     if ( mat ) {
         matvar = malloc(5*sizeof(matvar_t *));
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
-#if 1
         matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
                        dims,fdata,MEM_CONSERVE);
         matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
@@ -623,28 +644,21 @@ test_write_compressed_struct()
         dims[1] = 1;
         substruct_matvar = Mat_VarCreate("data",MAT_C_STRUCT,MAT_T_STRUCT,
                             2,dims,matvar,0);
+        dims[0] = 5;
+        dims[1] = 10;
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
         matvar[3] = substruct_matvar;
         matvar[4] = NULL;
         dims[0] = 4;
         dims[1] = 1;
         struct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,2,
                             dims,matvar,0);
-#else
-        matvar[1] = NULL;
-        dims[0] = 1;
-        dims[1] = 1;
-        struct_matvar = Mat_VarCreate("s",MAT_C_STRUCT,MAT_T_STRUCT,2,
-                            dims,matvar,0);
-        printf("buf_size = %u\n",(unsigned)GetMatrixMaxBufSize(struct_matvar));
-#endif
         Mat_VarWrite(mat,struct_matvar,COMPRESSION_ZLIB);
-#if 1
-        free(matvar[0]);
-        free(matvar[1]);
-        free(matvar[2]);
-        free(struct_matvar);
-        free(substruct_matvar);
-#endif
         free(matvar);
         Mat_VarFree(struct_matvar);
         Mat_Close(mat);
@@ -1075,7 +1089,7 @@ int main (int argc, char *argv[])
                 k+=2;
             }
             ntests++;
-        } else if ( !strcasecmp(argv[k],"writestruct") ) {
+        } else if ( !strcasecmp(argv[k],"write_struct") ) {
             k++;
             err += test_write_struct();
             ntests++;

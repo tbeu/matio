@@ -29,7 +29,7 @@
 EXTERN int WriteCellArrayField( mat_t *mat, matvar_t *matvar,
                                 int compress );
 #if defined(HAVE_ZLIB)
-EXTERN int WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z);
+EXTERN size_t WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z);
 #endif
 EXTERN int WriteStructField(mat_t *mat,matvar_t *matvar);
 EXTERN int ReadNextStructField( mat_t *mat, matvar_t *matvar );

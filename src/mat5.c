@@ -53,7 +53,95 @@ static const char *data_type_desc[23] = {"Unknown","8-bit, signed integer",
  * -------------------------------------------------------------
  */
 
-size_t
+static size_t GetMatrixMaxBufSize(matvar_t *matvar);
+static size_t GetStructFieldBufSize(matvar_t *matvar);
+
+/** @brief determines the number of bytes needed to store the given struct field
+ *
+ * @ingroup mat_internal
+ * @param matvar field of a structure
+ * @return the number of bytes needed to store the struct field
+ */
+static size_t
+GetStructFieldBufSize(matvar_t *matvar)
+{
+    size_t nBytes = 0,len;
+    size_t tag_size = 8, array_flags_size = 8;
+    int    nmemb = 1, i;
+
+    if ( matvar == NULL )
+        return nBytes;
+
+    /* Have to account for the matrix tag in a struct field */
+    nBytes += tag_size;
+
+    /* Add the Array Flags tag and space to the number of bytes */
+    nBytes += tag_size + array_flags_size;
+
+    /* In a struct field, the name is just a tag with 0 bytes */
+    nBytes += tag_size;
+
+    /* Add rank and dimensions, padded to an 8 byte block */
+    for ( i = 0, len = 0; i < matvar->rank; i++ )
+        nmemb *= matvar->dims[i];
+    if ( matvar->rank % 2 )
+        nBytes += tag_size + matvar->rank*4 + 4;
+    else
+        nBytes += tag_size + matvar->rank*4;
+
+    if ( matvar->class_type == MAT_C_STRUCT ) {
+        matvar_t **fields = matvar->data;
+        int i, nfields;
+        size_t maxlen = 0;
+
+        nfields = matvar->nbytes / (nmemb*matvar->data_size);
+        for ( i = 0; i < nfields; i++ ) {
+            if ( NULL != fields[i]->name && strlen(fields[i]->name) > maxlen )
+                maxlen = strlen(fields[i]->name);
+        }
+        maxlen++;
+        while ( nfields*maxlen % 8 != 0 )
+            maxlen++;
+
+        nBytes += tag_size + tag_size + maxlen*nfields;
+
+        /* FIXME: Add bytes for the fieldnames */
+        if ( NULL != fields && nfields > 0 ) {
+            for ( i = 0; i < nfields*nmemb; i++ )
+                nBytes += GetStructFieldBufSize(fields[i]);
+        }
+    } else if ( matvar->class_type == MAT_C_CELL ) {
+        matvar_t **cells = matvar->data;
+        int i, ncells = matvar->nbytes / matvar->data_size;
+
+        if ( NULL != cells && ncells > 0 ) {
+            for ( i = 0; i < ncells; i++ )
+                nBytes += GetMatrixMaxBufSize(cells[i]);
+        }
+    } else if ( matvar->class_type == MAT_C_SPARSE ) {
+        sparse_t *sparse = matvar->data;
+
+        nBytes += tag_size + sparse->njc*sizeof(mat_int32_t) +
+                  tag_size + sparse->nir*sizeof(mat_int32_t) +
+                  tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
+        if ( matvar->isComplex )
+            nBytes += tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
+    } else {
+        nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
+        if ( matvar->isComplex )
+            nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
+    }
+    
+    return nBytes;
+}
+
+/** @brief determines the number of bytes needed to store the given variable
+ *
+ * @ingroup mat_internal
+ * @param matvar MAT variable
+ * @return the number of bytes needed to store the variable
+ */
+static size_t
 GetMatrixMaxBufSize(matvar_t *matvar)
 {
     size_t nBytes = 0,len;
@@ -102,12 +190,12 @@ GetMatrixMaxBufSize(matvar_t *matvar)
         while ( nfields*maxlen % 8 != 0 )
             maxlen++;
 
-        nBytes += tag_size + maxlen*nfields;
+        nBytes += tag_size + tag_size + maxlen*nfields;
 
         /* FIXME: Add bytes for the fieldnames */
         if ( NULL != fields && nfields > 0 ) {
             for ( i = 0; i < nfields*nmemb; i++ )
-                nBytes += GetMatrixMaxBufSize(fields[i]);
+                nBytes += GetStructFieldBufSize(fields[i]);
         }
     } else if ( matvar->class_type == MAT_C_CELL ) {
         matvar_t **cells = matvar->data;
@@ -1951,12 +2039,12 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
 /** @brief Writes the header and data for a field of a compressed struct array
  *
  * @ingroup mat_internal
- * @fixme Currently does not work
+ * @fixme Currently does not work for cell arrays or sparse data
  * @param mat MAT file pointer
  * @param matvar pointer to the mat variable
- * @retval 0 on success
+ * @return number of bytes written to the MAT file
  */
-int
+size_t
 WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
 {
     mat_uint32_t array_flags = 0x0; 
@@ -2082,26 +2170,25 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
             unsigned char *padzero;
             int        fieldname_size, nfields;
             size_t     maxlen = 0;
-            matvar_t **fields = matvar->data;
-            unsigned   fieldname;
+            mat_int32_t array_name_type = MAT_T_INT8;
+            matvar_t **fields = (matvar_t **)matvar->data;
 
             /* Check for a structure with no fields */
             if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
                  matvar->data   == NULL ) {
                 fieldname_size = 1;
-#if 0
-                fwrite(&fieldname_type,2,1,mat->fp);
-                fwrite(&fieldname_data_size,2,1,mat->fp);
-#else
-                fieldname = (fieldname_data_size<<16) | fieldname_type;
-                fwrite(&fieldname,4,1,mat->fp);
-#endif
-                fwrite(&fieldname_size,4,1,mat->fp);
-                fwrite(&array_name_type,2,1,mat->fp);
-                fwrite(&pad1,1,1,mat->fp);
-                fwrite(&pad1,1,1,mat->fp);
-                nBytes = 0;
-                fwrite(&nBytes,4,1,mat->fp);
+                uncomp_buf[0] = (fieldname_data_size << 16) | 
+                                 fieldname_type;
+                uncomp_buf[1] = 1;
+                uncomp_buf[2] = array_name_type;
+                uncomp_buf[3] = 0;
+                z->next_out  = comp_buf;
+                z->next_in   = uncomp_buf;
+                z->avail_out = buf_size*sizeof(*comp_buf);
+                z->avail_in  = 32;
+                err = deflate(z,Z_NO_FLUSH);
+                byteswritten += fwrite(comp_buf,1,buf_size*
+                    sizeof(*comp_buf)-z->avail_out,mat->fp);
                 break;
             }
             nfields = matvar->nbytes / (nmemb*matvar->data_size);
@@ -2115,9 +2202,9 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
             fieldname_size = maxlen;
             while ( nfields*fieldname_size % 8 != 0 )
                 fieldname_size++;
-            uncomp_buf[0] = (fieldname_type << 16) | fieldname_data_size;
+            uncomp_buf[0] = (fieldname_data_size << 16) | fieldname_type;
             uncomp_buf[1] = fieldname_size;
-            uncomp_buf[2] = (array_name_type << 16) | 0x0000;
+            uncomp_buf[2] = array_name_type;
             uncomp_buf[3] = nfields*fieldname_size;
 
             padzero = calloc(fieldname_size,1);
@@ -2137,13 +2224,13 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 z->avail_in  = fieldname_size;
                 err = deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,
-                        buf_size*sizeof(*comp_buf)-z->avail_out,
-                        mat->fp);
+                        buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
             }
             free(fieldnames);
             free(padzero);
             for ( i = 0; i < nmemb*nfields; i++ )
-                WriteCompressedStructField(mat,fields[i],z);
+                byteswritten +=
+                    WriteCompressedStructField(mat,fields[i],z);
             break;
         }
         case MAT_C_SPARSE:
@@ -2167,25 +2254,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
             break;
         }
     }
-#if 0
-        z->avail_in  = 0;
-        z->next_in   = NULL;
-        z->next_out  = comp_buf;
-        z->avail_out = buf_size*sizeof(*comp_buf);
-
-        err = deflate(z,Z_FINISH);
-        byteswritten += fwrite(comp_buf,1,
-            buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
-        while ( err != Z_STREAM_END && !z->avail_out ) {
-            z->next_out  = comp_buf;
-            z->avail_out = buf_size*sizeof(*comp_buf);
-
-            err = deflate(z,Z_FINISH);
-            byteswritten += fwrite(comp_buf,1,
-                buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
-        }
-#endif
-    return 0;
+    return byteswritten;
 }
 #endif
 
@@ -4420,11 +4489,16 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
             fwrite(&pad4,4,1,mat->fp);
         /* Name of variable */
         if ( strlen(matvar->name) <= 4 ) {
-            mat_int16_t  array_name_type = MAT_T_INT8;
-            mat_int16_t array_name_len = (mat_int16_t)strlen(matvar->name);
+            mat_int32_t  array_name_type = MAT_T_INT8;
+            mat_int32_t array_name_len   = strlen(matvar->name);
             mat_int8_t  pad1 = 0;
+#if 0
             fwrite(&array_name_type,2,1,mat->fp);
             fwrite(&array_name_len,2,1,mat->fp);
+#else
+            array_name_type = (array_name_len << 16) | array_name_type;
+            fwrite(&array_name_type,4,1,mat->fp);
+#endif
             fwrite(matvar->name,1,array_name_len,mat->fp);
             for ( i = array_name_len; i < 4; i++ )
                 fwrite(&pad1,1,1,mat->fp);
@@ -4724,26 +4798,32 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
                     WriteCellArrayField(mat,cells[i],compress);
                 break;
             }
+#endif
             case MAT_C_STRUCT:
             {
                 char     **fieldnames;
                 unsigned char *padzero;
                 int        fieldname_size, nfields;
                 size_t     maxlen = 0;
+                mat_int32_t array_name_type = MAT_T_INT8;
                 matvar_t **fields = (matvar_t **)matvar->data;
 
                 /* Check for a structure with no fields */
                 if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
                      matvar->data   == NULL ) {
                     fieldname_size = 1;
-                    fwrite(&fieldname_type,2,1,mat->fp);
-                    fwrite(&fieldname_data_size,2,1,mat->fp);
-                    fwrite(&fieldname_size,4,1,mat->fp);
-                    fwrite(&array_name_type,2,1,mat->fp);
-                    fwrite(&pad1,1,1,mat->fp);
-                    fwrite(&pad1,1,1,mat->fp);
-                    nBytes = 0;
-                    fwrite(&nBytes,4,1,mat->fp);
+                    uncomp_buf[0] = (fieldname_data_size << 16) | 
+                                     fieldname_type;
+                    uncomp_buf[1] = 1;
+                    uncomp_buf[2] = array_name_type;
+                    uncomp_buf[3] = 0;
+                    matvar->z->next_out  = comp_buf;
+                    matvar->z->next_in   = uncomp_buf;
+                    matvar->z->avail_out = buf_size*sizeof(*comp_buf);
+                    matvar->z->avail_in  = 32;
+                    err = deflate(matvar->z,Z_NO_FLUSH);
+                    byteswritten += fwrite(comp_buf,1,buf_size*
+                        sizeof(*comp_buf)-matvar->z->avail_out,mat->fp);
                     break;
                 }
                 nfields = matvar->nbytes / (nmemb*matvar->data_size);
@@ -4757,9 +4837,9 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
                 fieldname_size = maxlen;
                 while ( nfields*fieldname_size % 8 != 0 )
                     fieldname_size++;
-                uncomp_buf[0] = (fieldname_type << 16) | fieldname_data_size;
+                uncomp_buf[0] = (fieldname_data_size << 16) | fieldname_type;
                 uncomp_buf[1] = fieldname_size;
-                uncomp_buf[2] = (array_name_type << 16);
+                uncomp_buf[2] = array_name_type;
                 uncomp_buf[3] = nfields*fieldname_size;
 
                 padzero = calloc(fieldname_size,1);
@@ -4785,9 +4865,11 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
                 free(fieldnames);
                 free(padzero);
                 for ( i = 0; i < nmemb*nfields; i++ )
-                    WriteCompressedStructField(mat,fields[i],matvar->z);
+                    byteswritten +=
+                        WriteCompressedStructField(mat,fields[i],matvar->z);
                 break;
             }
+#if 0
             case MAT_C_SPARSE:
             {
                 sparse_t *sparse = matvar->data;
