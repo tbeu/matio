@@ -47,22 +47,23 @@ static const char *helptestsstr[] = {
 "   Version 5 MAT File tests",
 "================================================================",
 "copy                    - Copies one matlab file to another",
-"write                   - Writes a matlab file",
-"writecompressed         - Writes a compressed matlab file",
 "readvar                 - Reads a specific variable from a file",
-"write_struct            - Writes a structure",
-"writecell               - Writes a Cell Array",
 "getstructfield          - Tests Mat_VarGetStructField getting fields from a",
 "                          structure",
 "readvarinfo             - Reads a variables header information only",
 "readslab                - Tests reading a part of a dataset",
+"write                   - Writes a matlab file",
+"writecompressed         - Writes a compressed matlab file",
+"writesparse             - Tests writing a sparse matrix",
+"write_compressed_sparse - Tests writing a compressed sparse matrix",
+"write_struct            - Test writing structures",
+"write_compressed_struct - Test writing compressed structures",
+"writecell               - Writes a Cell Array",
+"write_compressed_cell   - Writes a compressed Cell Array",
 "writeinf                - Tests writing inf (Infinity) values",
 "writenan                - Tests writing NaN (Not A Number) values",
 "writenull               - Tests writing empty variables",
 "writeslab               - Tests writing a part of a dataset",
-"writesparse             - Tests writing a sparse matrix",
-"write_struct            - Test writing structures",
-"write_compressed_struct - Test writing compressed structures",
 "",
 "",
 "   Version 4 MAT File tests",
@@ -168,11 +169,12 @@ static const char *helptest_write_compressed_struct[] = {
     "",
     "Index    Data Type   Rank   Dimensions   Data",
     "---------------------------------------------------------------",
-    " 1,1     Double      2      5x10         reshape(1:50,5,10)",
-    " 2,1     Single      2      5x10         single(reshape(1:50,5,10))",
-    " 3,1     Int 32      2      5x10         int32(reshape(1:50,5,10))",
-    " 4,1     Char        2      1x16         'This is a string'",
-    " 5,1     Struct      2      4x1          structure(1:4,1)",
+    " 1,1     double      2      5x10         reshape(1:50,5,10)",
+    " 2,1     single      2      5x10         single(reshape(1:50,5,10))",
+    " 3,1     int32       2      5x10         int32(reshape(1:50,5,10))",
+    " 4,1     char        2      1x16         'This is a string'",
+    " 5,1     cell        2      4x1          {structure(1:4).data}'",
+    " 6,1     struct      2      5x1          structure(1:5,1)",
     "",
     NULL
 };
@@ -182,15 +184,35 @@ static const char *helptest_writecell[] = {
     "",
     "Usage: test_mat writecell",
     "",
-    "Writes a cell array of size 4x1 with various data types to",
+    "Writes a cell array of size 5x1 with various data types to",
     "file test_mat_writecell.mat",
     "",
     "Index    Data Type   Rank   Dimensions   Data",
     "---------------------------------------------------------------",
-    " 1,1     Double      2      5x10         reshape(1:50,5,10)",
-    " 2,1     Single      2      5x10         single(reshape(1:50,5,10))",
-    " 3,1     Double      2      5x10         int32(reshape(1:50,5,10))",
-    " 4,1     Struct      2      3x1          structure(1,1).data=cell{1},etc",
+    " 1,1     double      2      5x10         reshape(1:50,5,10)",
+    " 2,1     single      2      5x10         single(reshape(1:50,5,10))",
+    " 3,1     int32       2      5x10         int32(reshape(1:50,5,10))",
+    " 4,1     struct      2      3x1          structure(1,1).data=cell{1},etc",
+    " 5,1     cell        2      4x1          cell{5}={cell{1:4}}.'",
+    "",
+    NULL
+};
+
+static const char *helptest_write_compressed_cell[] = {
+    "TEST: write_compressed_cell",
+    "",
+    "Usage: test_mat write_compressed_cell",
+    "",
+    "Writes a cell array of size 5x1 with various data types to",
+    "file test_mat_write_compressed_cell.mat",
+    "",
+    "Index    Data Type   Rank   Dimensions   Data",
+    "---------------------------------------------------------------",
+    " 1,1     double      2      5x10         reshape(1:50,5,10)",
+    " 2,1     single      2      5x10         single(reshape(1:50,5,10))",
+    " 3,1     int32       2      5x10         int32(reshape(1:50,5,10))",
+    " 4,1     struct      2      3x1          structure(1,1).data=cell{1},etc",
+    " 5,1     cell        2      4x1          cell{5}={cell{1:4}}.'",
     "",
     NULL
 };
@@ -282,6 +304,44 @@ static const char *helptest_writesparse[] = {
     NULL
 };
 
+static const char *helptest_write_compressed_sparse[] = {
+    "TEST: write_compressed_sparse",
+    "",
+    "Usage: test_mat write_compressed_sparse",
+    "",
+    "Writes a compressed sparse matrix variable with name sparse_matrix to ",
+    "test_mat_write_compressedsparse.mat.",
+    "",
+    "When loaded into matlab, the data should be:",
+    "    (1,1)        1",
+    "    (5,1)        5",
+    "    (2,2)        7",
+    "    (3,2)        8",
+    "    (4,2)        9",
+    "    (1,3)       11",
+    "    (5,3)       15",
+    "    (2,4)       17",
+    "    (3,4)       18",
+    "    (4,4)       19",
+    "    (1,5)       21",
+    "    (5,5)       25",
+    "    (2,6)       27",
+    "    (3,6)       28",
+    "    (4,6)       29",
+    "    (1,7)       31",
+    "    (5,7)       35",
+    "    (2,8)       37",
+    "    (3,8)       38",
+    "    (4,8)       39",
+    "    (1,9)       41",
+    "    (5,9)       45",
+    "    (2,10)      47",
+    "    (3,10)      48",
+    "    (4,10)      49",
+    "",
+    NULL
+};
+
 static const char *helptest_writenull[] = {
     "TEST: writenull",
     "",
@@ -312,6 +372,28 @@ static const char *helptest_writeinf[] = {
     "",
     "Writes to the file test_writeinf.mat a 5x5 double precision matrix",
     "with Inf's down the diagonal.",
+    "",
+    NULL
+};
+
+static const char *helptest_readvar4[] = {
+    "TEST: readvar4",
+    "",
+    "Usage: test_mat readvar4 FILE variable_name",
+    "",
+    "Reads variable_name from the Matlab v4 MAT file FILE and prints out it's",
+    "information and data if possible to the screen.",
+    "",
+    NULL
+};
+
+static const char *helptest_readvarinfo4[] = {
+    "TEST: readvarinfo4",
+    "",
+    "Usage: test_mat readvarinfo4 FILE variable_name",
+    "",
+    "Reads header information for variable_name from the Matlab v4 MAT file"
+    "FILE and prints it out to the screen.",
     "",
     NULL
 };
@@ -347,38 +429,46 @@ help_test(const char *test)
 {
     if ( !strcmp(test,"copy") )
         Mat_Help(helptest_copy);
+    else if ( !strcmp(test,"readvar") )
+        Mat_Help(helptest_readvar);
+    else if ( !strcmp(test,"readvarinfo") )
+        Mat_Help(helptest_readvarinfo);
+    else if ( !strcmp(test,"readslab") )
+        Mat_Help(helptest_readslab);
     else if ( !strcmp(test,"write") )
         Mat_Help(helptest_write);
     else if ( !strcmp(test,"writecompressed") )
         Mat_Help(helptest_writecompressed);
-    else if ( !strcmp(test,"readvar") )
-        Mat_Help(helptest_readvar);
+    else if ( !strcmp(test,"writesparse") )
+        Mat_Help(helptest_writesparse);
+    else if ( !strcmp(test,"write_compressed_sparse") )
+        Mat_Help(helptest_writesparse);
     else if ( !strcmp(test,"write_struct") )
         Mat_Help(helptest_write_struct);
     else if ( !strcmp(test,"write_compressed_struct") )
         Mat_Help(helptest_write_compressed_struct);
     else if ( !strcmp(test,"writecell") )
         Mat_Help(helptest_writecell);
-    else if ( !strcmp(test,"readvarinfo") )
-        Mat_Help(helptest_readvarinfo);
-    else if ( !strcmp(test,"readslab") )
-        Mat_Help(helptest_readslab);
-    else if ( !strcmp(test,"writeslab") )
-        Mat_Help(helptest_writeslab);
-    else if ( !strcmp(test,"writesparse") )
-        Mat_Help(helptest_writesparse);
+    else if ( !strcmp(test,"write_compressed_cell") )
+        Mat_Help(helptest_write_compressed_cell);
+    else if ( !strcmp(test,"writeinf") )
+        Mat_Help(helptest_writeinf);
+    else if ( !strcmp(test,"writenan") )
+        Mat_Help(helptest_writenan);
     else if ( !strcmp(test,"writenull") )
         Mat_Help(helptest_writenull);
+    else if ( !strcmp(test,"writeslab") )
+        Mat_Help(helptest_writeslab);
     else if ( !strcmp(test,"getstructfield") )
         Mat_Help(helptest_getstructfield);
+    else if ( !strcmp(test,"readvar4") )
+        Mat_Help(helptest_readvar4);
+    else if ( !strcmp(test,"readvarinfo4") )
+        Mat_Help(helptest_readvarinfo4);
     else if ( !strcmp(test,"ind2sub") )
         Mat_Help(helptest_ind2sub);
     else if ( !strcmp(test,"sub2ind") )
         Mat_Help(helptest_sub2ind);
-    else if ( !strcmp(test,"writenan") )
-        Mat_Help(helptest_writenan);
-    else if ( !strcmp(test,"writeinf") )
-        Mat_Help(helptest_writeinf);
 }
 
 static int
@@ -640,7 +730,10 @@ test_write_compressed_struct()
 
     mat = Mat_Create("test_mat_write_compressed_struct.mat",NULL);
     if ( mat ) {
-        matvar = malloc(6*sizeof(matvar_t *));
+        matvar = malloc(7*sizeof(matvar_t *));
+        /*--------------------------------------------------------------*/
+        /*  Create some variables for the cell array                    */
+        /*--------------------------------------------------------------*/
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
         matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
@@ -651,11 +744,15 @@ test_write_compressed_struct()
         dims[1]   = strlen(str);
         matvar[3] = Mat_VarCreate("data",MAT_C_CHAR,MAT_T_UINT8,2,
                        dims,str,MEM_CONSERVE);
-        matvar[4] = NULL;
         dims[0] = 4;
         dims[1] = 1;
-        substruct_matvar = Mat_VarCreate("data",MAT_C_STRUCT,MAT_T_STRUCT,
-                            2,dims,matvar,0);
+        matvar[4] = Mat_VarCreate("data",MAT_C_CELL,MAT_T_CELL,2,dims,
+                                    matvar,0);
+        /*--------------------------------------------------------------*/
+
+        /*--------------------------------------------------------------*/
+        /*  Create some variables for the structure                     */
+        /*--------------------------------------------------------------*/
         dims[0] = 5;
         dims[1] = 10;
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
@@ -668,13 +765,57 @@ test_write_compressed_struct()
         dims[1]   = strlen(str);
         matvar[3] = Mat_VarCreate("data",MAT_C_CHAR,MAT_T_UINT8,2,
                        dims,str,MEM_CONSERVE);
-        matvar[4] = substruct_matvar;
         matvar[5] = NULL;
-
         dims[0] = 5;
+        dims[1] = 1;
+        substruct_matvar = Mat_VarCreate("data",MAT_C_STRUCT,MAT_T_STRUCT,
+                            2,dims,matvar,0);
+        /*--------------------------------------------------------------*/
+
+        /*--------------------------------------------------------------*/
+        /*  Create some variables for a cell array                      */
+        /*--------------------------------------------------------------*/
+        dims[0] = 5;
+        dims[1] = 10;
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
+        dims[0]   = 1;
+        dims[1]   = strlen(str);
+        matvar[3] = Mat_VarCreate("data",MAT_C_CHAR,MAT_T_UINT8,2,
+                       dims,str,MEM_CONSERVE);
+        dims[0] = 4;
+        dims[1] = 1;
+        matvar[4] = Mat_VarCreate("data",MAT_C_CELL,MAT_T_CELL,2,dims,
+                                    matvar,0);
+        /*--------------------------------------------------------------*/
+
+        /*--------------------------------------------------------------*/
+        /*  Create some variables for the main structure                */
+        /*--------------------------------------------------------------*/
+        dims[0] = 5;
+        dims[1] = 10;
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
+        dims[0]   = 1;
+        dims[1]   = strlen(str);
+        matvar[3] = Mat_VarCreate("data",MAT_C_CHAR,MAT_T_UINT8,2,
+                       dims,str,MEM_CONSERVE);
+        matvar[5] = substruct_matvar;
+        matvar[6] = NULL;
+
+        dims[0] = 6;
         dims[1] = 1;
         struct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,2,
                             dims,matvar,0);
+        /*--------------------------------------------------------------*/
         Mat_VarWrite(mat,struct_matvar,COMPRESSION_ZLIB);
         free(matvar);
         Mat_VarFree(struct_matvar);
@@ -692,7 +833,7 @@ test_write_cell()
     int    idata[50]={0.0,};
     int    err = 0, i;
     mat_t     *mat;
-    matvar_t **matvar, *struct_matvar, *substruct_matvar;
+    matvar_t **matvar, *cell_matvar, *substruct_matvar;
     
     for ( i = 0; i < 50; i++ ) {
          data[i] = i+1;
@@ -714,18 +855,125 @@ test_write_cell()
         dims[1] = 1;
         substruct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,
                             2,dims,matvar,0);
+
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
         matvar[3] = substruct_matvar;
         dims[0] = 4;
         dims[1] = 1;
-        struct_matvar = Mat_VarCreate("cell",MAT_C_CELL,MAT_T_CELL,2,
+        cell_matvar = Mat_VarCreate("cell",MAT_C_CELL,MAT_T_CELL,2,
                             dims,matvar,0);
-        Mat_VarWrite(mat,struct_matvar,0);
-        free(matvar[0]);
-        free(matvar[1]);
-        free(matvar[2]);
+
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
+        matvar[3] = NULL;
+        dims[0] = 3;
+        dims[1] = 1;
+        substruct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,
+                            2,dims,matvar,0);
+
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
+        matvar[3] = substruct_matvar;
+        matvar[4] = cell_matvar;
+        dims[0] = 5;
+        dims[1] = 1;
+        cell_matvar = Mat_VarCreate("cell",MAT_C_CELL,MAT_T_CELL,2,
+                            dims,matvar,0);
+
+        Mat_VarWrite(mat,cell_matvar,COMPRESSION_NONE);
         free(matvar);
-        free(struct_matvar);
-        free(substruct_matvar);
+        Mat_VarFree(cell_matvar);
+        Mat_Close(mat);
+    }
+    return err;
+}
+
+static int
+test_write_compressed_cell()
+{
+    int     dims[2] = {5,10};
+    double  data[50]={0.0,};
+    float  fdata[50]={0.0,};
+    int    idata[50]={0.0,};
+    int    err = 0, i;
+    mat_t     *mat;
+    matvar_t **matvar, *cell_matvar, *substruct_matvar;
+    
+    for ( i = 0; i < 50; i++ ) {
+         data[i] = i+1;
+        fdata[i] = i+1;
+        idata[i] = i+1;
+    }
+
+    mat = Mat_Create("test_mat_write_compressed_cell.mat",NULL);
+    if ( mat ) {
+        matvar = malloc(5*sizeof(*matvar));
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
+        matvar[3] = NULL;
+        dims[0] = 3;
+        dims[1] = 1;
+        substruct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,
+                            2,dims,matvar,0);
+
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
+        matvar[3] = substruct_matvar;
+        dims[0] = 4;
+        dims[1] = 1;
+        cell_matvar = Mat_VarCreate("cell",MAT_C_CELL,MAT_T_CELL,2,
+                            dims,matvar,0);
+
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
+        matvar[3] = NULL;
+        dims[0] = 3;
+        dims[1] = 1;
+        substruct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,
+                            2,dims,matvar,0);
+
+        matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                       dims,data,MEM_CONSERVE);
+        matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
+                       dims,fdata,MEM_CONSERVE);
+        matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
+                       dims,idata,MEM_CONSERVE);
+        matvar[3] = substruct_matvar;
+        matvar[4] = cell_matvar;
+        dims[0] = 5;
+        dims[1] = 1;
+        cell_matvar = Mat_VarCreate("cell",MAT_C_CELL,MAT_T_CELL,2,
+                            dims,matvar,0);
+
+        Mat_VarWrite(mat,cell_matvar,COMPRESSION_ZLIB);
+
+        free(matvar);
+        Mat_VarFree(cell_matvar);
         Mat_Close(mat);
     }
     return err;
@@ -1005,6 +1253,45 @@ test_writesparse( void )
 }
 
 static int
+test_write_compressed_sparse( void )
+{
+    int dims[2] = {5,10}, err = 0, i;
+    double    d[50] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,38,39,
+                       41,45,47,48,49};
+    mat_int32_t  ir[25] = {0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3};
+    mat_int32_t  jc[11] = {0,2,5,7,10,12,15,17,20,22,25};
+    mat_t *mat;
+    matvar_t *matvar;
+    sparse_t  sparse = {0,};
+
+    sparse.nzmax = 25;
+    sparse.nir   = 25;
+    sparse.ir    = ir;
+    sparse.njc   = 11;
+    sparse.jc    = jc;
+    sparse.ndata = 25;
+    sparse.data  = d;
+    mat = Mat_Open("test_mat_write_compressed_sparse.mat",MAT_ACC_RDWR);
+    if ( mat ) {
+        matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,
+                       MAT_T_DOUBLE,2,dims,&sparse,MEM_CONSERVE);
+        if ( matvar != NULL ) {
+            Mat_VarWrite(mat,matvar,COMPRESSION_ZLIB);
+            Mat_VarFree(matvar);
+        } else {
+            Mat_Critical("test_write_compressed_sparse: Couldn't create "
+                         "matlab variable");
+            err = 1;
+        }
+        Mat_Close(mat);
+    } else {
+        err = 1;
+    }
+
+    return err;
+}
+
+static int
 test_delete(char *file,char *name)
 {
     int err = 0;
@@ -1118,6 +1405,10 @@ int main (int argc, char *argv[])
             k++;
             err += test_write_cell();
             ntests++;
+        } else if ( !strcasecmp(argv[k],"write_compressed_cell") ) {
+            k++;
+            err += test_write_compressed_cell();
+            ntests++;
         } else if ( !strcasecmp(argv[k],"getstructfield") ) {
             k++;
             if ( argc-k < 3 ) {
@@ -1203,6 +1494,10 @@ int main (int argc, char *argv[])
         } else if ( !strcasecmp(argv[k],"writesparse") ) {
             k++;
             err += test_writesparse();
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"write_compressed_sparse") ) {
+            k++;
+            err += test_write_compressed_sparse();
             ntests++;
         } else if ( !strcasecmp(argv[k],"ind2sub") ) {
             int *subs, dims[3] = {256,256,124};
