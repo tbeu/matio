@@ -2745,7 +2745,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 fseek(mat->fp,matvar->datapos,SEEK_SET);
 
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( byteswap )
                     (void)uint32Swap(tag);
 
@@ -2755,7 +2755,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    InflateDataType(mat,matvar,tag+1);
+                    InflateDataType(mat,matvar->z,tag+1);
                     if ( byteswap )
                         (void)uint32Swap(tag+1);
                     nBytes = tag[1];
@@ -2841,7 +2841,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         InflateSkip(mat,matvar->z,8-(nBytes % 8));
 
                     /* Complex Data Tag */
-                    InflateDataType(mat,matvar,tag);
+                    InflateDataType(mat,matvar->z,tag);
                     if ( byteswap )
                         (void)uint32Swap(tag);
 
@@ -2851,7 +2851,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        InflateDataType(mat,matvar,tag+1);
+                        InflateDataType(mat,matvar->z,tag+1);
                         if ( byteswap )
                             (void)uint32Swap(tag+1);
                         nBytes = tag[1];
@@ -2909,7 +2909,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 fseek(mat->fp,matvar->datapos,SEEK_SET);
 
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( byteswap )
                     (void)uint32Swap(tag);
 
@@ -2919,7 +2919,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    InflateDataType(mat,matvar,tag+1);
+                    InflateDataType(mat,matvar->z,tag+1);
                     if ( byteswap )
                         (void)uint32Swap(tag+1);
                     nBytes = tag[1];
@@ -3005,7 +3005,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         InflateSkip(mat,matvar->z,8-(nBytes % 8));
 
                     /* Complex Data Tag */
-                    InflateDataType(mat,matvar,tag);
+                    InflateDataType(mat,matvar->z,tag);
                     if ( byteswap )
                         (void)uint32Swap(tag);
 
@@ -3015,7 +3015,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        InflateDataType(mat,matvar,tag+1);
+                        InflateDataType(mat,matvar->z,tag+1);
                         if ( byteswap )
                             (void)uint32Swap(tag+1);
                         nBytes = tag[1];
@@ -3073,7 +3073,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 fseek(mat->fp,matvar->datapos,SEEK_SET);
 
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( byteswap )
                     (void)uint32Swap(tag);
 
@@ -3083,7 +3083,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    InflateDataType(mat,matvar,tag+1);
+                    InflateDataType(mat,matvar->z,tag+1);
                     if ( byteswap )
                         (void)uint32Swap(tag+1);
                     nBytes = tag[1];
@@ -3169,7 +3169,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         InflateSkip(mat,matvar->z,8-(nBytes % 8));
 
                     /* Complex Data Tag */
-                    InflateDataType(mat,matvar,tag);
+                    InflateDataType(mat,matvar->z,tag);
                     if ( byteswap )
                         (void)uint32Swap(tag);
 
@@ -3179,7 +3179,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        InflateDataType(mat,matvar,tag+1);
+                        InflateDataType(mat,matvar->z,tag+1);
                         if ( byteswap )
                             (void)uint32Swap(tag+1);
                         nBytes = tag[1];
@@ -3237,7 +3237,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 fseek(mat->fp,matvar->datapos,SEEK_SET);
 
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( byteswap )
                     (void)uint32Swap(tag);
                 packed_type = tag[0] & 0x000000ff;
@@ -3246,7 +3246,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    InflateDataType(mat,matvar,tag+1);
+                    InflateDataType(mat,matvar->z,tag+1);
                     if ( byteswap )
                         (void)uint32Swap(tag+1);
                     nBytes = tag[1];
@@ -3332,7 +3332,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         InflateSkip(mat,matvar->z,8-(nBytes % 8));
 
                     /* Complex Data Tag */
-                    InflateDataType(mat,matvar,tag);
+                    InflateDataType(mat,matvar->z,tag);
                     if ( byteswap )
                         (void)uint32Swap(tag);
 
@@ -3342,7 +3342,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        InflateDataType(mat,matvar,tag+1);
+                        InflateDataType(mat,matvar->z,tag+1);
                         if ( byteswap )
                             (void)uint32Swap(tag+1);
                         nBytes = tag[1];
@@ -3400,7 +3400,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 fseek(mat->fp,matvar->datapos,SEEK_SET);
 
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( byteswap )
                     (void)uint32Swap(tag);
                 packed_type = tag[0] & 0x000000ff;
@@ -3409,7 +3409,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    InflateDataType(mat,matvar,tag+1);
+                    InflateDataType(mat,matvar->z,tag+1);
                     if ( byteswap )
                         (void)uint32Swap(tag+1);
                     nBytes = tag[1];
@@ -3495,7 +3495,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         InflateSkip(mat,matvar->z,8-(nBytes % 8));
 
                     /* Complex Data Tag */
-                    InflateDataType(mat,matvar,tag);
+                    InflateDataType(mat,matvar->z,tag);
                     if ( byteswap )
                         (void)uint32Swap(tag);
 
@@ -3505,7 +3505,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        InflateDataType(mat,matvar,tag+1);
+                        InflateDataType(mat,matvar->z,tag+1);
                         if ( byteswap )
                             (void)uint32Swap(tag+1);
                         nBytes = tag[1];
@@ -3563,7 +3563,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 fseek(mat->fp,matvar->datapos,SEEK_SET);
 
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( byteswap )
                     (void)uint32Swap(tag);
                 packed_type = tag[0] & 0x000000ff;
@@ -3572,7 +3572,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    InflateDataType(mat,matvar,tag+1);
+                    InflateDataType(mat,matvar->z,tag+1);
                     if ( byteswap )
                         (void)uint32Swap(tag+1);
                     nBytes = tag[1];
@@ -3658,7 +3658,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         InflateSkip(mat,matvar->z,8-(nBytes % 8));
 
                     /* Complex Data Tag */
-                    InflateDataType(mat,matvar,tag);
+                    InflateDataType(mat,matvar->z,tag);
                     if ( byteswap )
                         (void)uint32Swap(tag);
 
@@ -3668,7 +3668,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        InflateDataType(mat,matvar,tag+1);
+                        InflateDataType(mat,matvar->z,tag+1);
                         if ( byteswap )
                             (void)uint32Swap(tag+1);
                         nBytes = tag[1];
@@ -3726,7 +3726,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 fseek(mat->fp,matvar->datapos,SEEK_SET);
 
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( byteswap )
                     (void)uint32Swap(tag);
                 packed_type = tag[0] & 0x000000ff;
@@ -3735,7 +3735,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    InflateDataType(mat,matvar,tag+1);
+                    InflateDataType(mat,matvar->z,tag+1);
                     if ( byteswap )
                         (void)uint32Swap(tag+1);
                     nBytes = tag[1];
@@ -3821,7 +3821,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         InflateSkip(mat,matvar->z,8-(nBytes % 8));
 
                     /* Complex Data Tag */
-                    InflateDataType(mat,matvar,tag);
+                    InflateDataType(mat,matvar->z,tag);
                     if ( byteswap )
                         (void)uint32Swap(tag);
 
@@ -3831,7 +3831,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        InflateDataType(mat,matvar,tag+1);
+                        InflateDataType(mat,matvar->z,tag+1);
                         if ( byteswap )
                             (void)uint32Swap(tag+1);
                         nBytes = tag[1];
@@ -3889,7 +3889,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 fseek(mat->fp,matvar->datapos,SEEK_SET);
 
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( byteswap )
                     (void)uint32Swap(tag);
                 packed_type = tag[0] & 0x000000ff;
@@ -3898,7 +3898,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    InflateDataType(mat,matvar,tag+1);
+                    InflateDataType(mat,matvar->z,tag+1);
                     if ( byteswap )
                         (void)uint32Swap(tag+1);
                     nBytes = tag[1];
@@ -3984,7 +3984,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         InflateSkip(mat,matvar->z,8-(nBytes % 8));
 
                     /* Complex Data Tag */
-                    InflateDataType(mat,matvar,tag);
+                    InflateDataType(mat,matvar->z,tag);
                     if ( byteswap )
                         (void)uint32Swap(tag);
 
@@ -3994,7 +3994,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        InflateDataType(mat,matvar,tag+1);
+                        InflateDataType(mat,matvar->z,tag+1);
                         if ( byteswap )
                             (void)uint32Swap(tag+1);
                         nBytes = tag[1];
@@ -4053,7 +4053,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 fseek(mat->fp,matvar->datapos,SEEK_SET);
 
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( byteswap )
                     (void)uint32Swap(tag);
                 packed_type = tag[0] & 0x000000ff;
@@ -4062,7 +4062,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    InflateDataType(mat,matvar,tag+1);
+                    InflateDataType(mat,matvar->z,tag+1);
                     if ( byteswap )
                         (void)uint32Swap(tag+1);
                     nBytes = tag[1];
@@ -4179,7 +4179,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( mat->byteswap )
                     (void)uint32Swap(tag);
 
@@ -4243,7 +4243,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( mat->byteswap )
                     uint32Swap(tag);
                 packed_type = tag[0] & 0x000000ff;
@@ -4306,7 +4306,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
                 matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                InflateDataType(mat,matvar->z,tag);
                 if ( mat->byteswap )
                     uint32Swap(tag);
                 packed_type = tag[0] & 0x000000ff;
@@ -4500,7 +4500,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                             InflateSkip(mat,matvar->z,8-(nBytes % 8));
 
                         /* Complex Data Tag */
-                        InflateDataType(mat,matvar,tag);
+                        InflateDataType(mat,matvar->z,tag);
                         if ( byteswap )
                             (void)uint32Swap(tag);
 
@@ -4510,7 +4510,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                             nBytes = (tag[0] & 0xffff0000) >> 16;
                         } else {
                             data_in_tag = 0;
-                            InflateDataType(mat,matvar,tag+1);
+                            InflateDataType(mat,matvar->z,tag+1);
                             if ( byteswap )
                                 (void)uint32Swap(tag+1);
                             nBytes = tag[1];
@@ -4709,7 +4709,12 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
 {               
     int err = 0,real_bytes;
     mat_int32_t tag[2];
-            
+#if defined(HAVE_ZLIB)
+    z_stream z;
+
+    err = inflateCopy(&z,matvar->z);
+#endif
+
     fseek(mat->fp,matvar->datapos,SEEK_SET);
     if ( matvar->compression == COMPRESSION_NONE ) {
         fread(tag,4,2,mat->fp);
@@ -4726,15 +4731,18 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
         }
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == COMPRESSION_ZLIB ) {
-        matvar->z->avail_in = 0;
-        InflateDataType(mat,matvar,tag);
+        z.avail_in = 0;
+        InflateDataType(mat,&z,tag);
         if ( mat->byteswap ) {
             int32Swap(tag);
-            int32Swap(tag+1);
         }
         matvar->data_type = tag[0] & 0x000000ff;
         if ( !(tag[0] & 0xffff0000) ) {/* Data is NOT packed in the tag */
-            InflateSkip(mat,matvar->z,4);
+            /* We're cheating, but InflateDataType just inflates 4 bytes */
+            InflateDataType(mat,&z,tag+1);
+            if ( mat->byteswap ) {
+                int32Swap(tag+1);
+            }
             real_bytes = 8+tag[1];
         } else {
             real_bytes = 4+(tag[0] >> 16);
@@ -4777,39 +4785,45 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
             if ( matvar->isComplex ) {
                 struct ComplexSplit *complex_data = data;
 
-                ReadCompressedDataSlab2(mat,matvar->z,complex_data->Re,
+                ReadCompressedDataSlab2(mat,&z,complex_data->Re,
                     matvar->class_type,matvar->data_type,matvar->dims,
                     start,stride,edge);
-                fseek(mat->fp,matvar->datapos+real_bytes,SEEK_SET);
-                matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+
+                fseek(mat->fp,matvar->datapos,SEEK_SET);
+
+                /* Reset zlib knowledge to before reading real tag */
+                inflateEnd(&z);
+                err = inflateCopy(&z,matvar->z);
+                InflateSkip(mat,&z,real_bytes);
+                z.avail_in = 0;
+                InflateDataType(mat,&z,tag);
                 if ( mat->byteswap ) {
                     int32Swap(tag);
-                    int32Swap(tag+1);
                 }
                 matvar->data_type = tag[0] & 0x000000ff;
-                if ( !(tag[0] & 0xffff0000) ) {/* Data is NOT packed in the tag */
-                    InflateSkip(mat,matvar->z,4);
+                if ( !(tag[0] & 0xffff0000) ) {/*Data is NOT packed in the tag*/
+                    InflateSkip(mat,&z,4);
                 }
-                ReadCompressedDataSlab2(mat,matvar->z,complex_data->Im,
+                ReadCompressedDataSlab2(mat,&z,complex_data->Im,
                     matvar->class_type,matvar->data_type,matvar->dims,
                     start,stride,edge);
+                inflateEnd(&z);
             } else {
-                ReadCompressedDataSlab2(mat,matvar->z,data,matvar->class_type,
+                ReadCompressedDataSlab2(mat,&z,data,matvar->class_type,
                     matvar->data_type,matvar->dims,start,stride,edge);
             }
         }
 #endif
     } else {
-/* FIXME: ComplexSplit */
         if ( matvar->compression == COMPRESSION_NONE ) {
-            ReadDataSlabN(mat,data,matvar->class_type,matvar->data_type,
-                matvar->rank,matvar->dims,start,stride,edge);
             if ( matvar->isComplex ) {
                 int i;
-                size_t N = Mat_SizeOfClass(matvar->class_type);
-                for ( i = 0; i < matvar->rank; i++ )
-                    N *= edge[i];
+                struct ComplexSplit *complex_data = data;
+
+                ReadDataSlabN(mat,complex_data->Re,matvar->class_type,
+                    matvar->data_type,matvar->rank,matvar->dims,
+                    start,stride,edge);
+
                 fseek(mat->fp,matvar->datapos+real_bytes,SEEK_SET);
                 fread(tag,4,2,mat->fp);
                 if ( mat->byteswap ) {
@@ -4820,30 +4834,46 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
                 if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
                     fseek(mat->fp,-4,SEEK_CUR);
                 }
-                ReadDataSlab2(mat,(unsigned char *)data+N,matvar->class_type,
-                              matvar->data_type,matvar->dims,start,stride,edge);
+                ReadDataSlabN(mat,complex_data->Im,matvar->class_type,
+                    matvar->data_type,matvar->rank,matvar->dims,
+                    start,stride,edge);
+            } else {
+                ReadDataSlabN(mat,data,matvar->class_type,matvar->data_type,
+                    matvar->rank,matvar->dims,start,stride,edge);
             }
         }
 #if defined(HAVE_ZLIB)
         else if ( matvar->compression == COMPRESSION_ZLIB ) {
-            ReadCompressedDataSlabN(mat,matvar->z,data,matvar->class_type,
-                matvar->data_type,matvar->rank,matvar->dims,start,stride,edge);
             if ( matvar->isComplex ) {
                 int i;
-                size_t N = Mat_SizeOfClass(matvar->class_type);
-                for ( i = 0; i < matvar->rank; i++ )
-                    N *= edge[i];
-                fseek(mat->fp,matvar->datapos+real_bytes,SEEK_SET);
-                matvar->z->avail_in = 0;
-                InflateDataType(mat,matvar,tag);
+                struct ComplexSplit *complex_data = data;
+
+                ReadCompressedDataSlabN(mat,&z,complex_data->Re,
+                    matvar->class_type,matvar->data_type,matvar->rank,
+                    matvar->dims,start,stride,edge);
+
+                fseek(mat->fp,matvar->datapos,SEEK_SET);
+                /* Reset zlib knowledge to before reading real tag */
+                inflateEnd(&z);
+                err = inflateCopy(&z,matvar->z);
+                InflateSkip(mat,&z,real_bytes);
+                z.avail_in = 0;
+                InflateDataType(mat,&z,tag);
                 if ( mat->byteswap ) {
                     int32Swap(tag);
-                    int32Swap(tag+1);
                 }
                 matvar->data_type = tag[0] & 0x000000ff;
-                if ( !(tag[0] & 0xffff0000) ) {/* Data is NOT packed in the tag */
-                    InflateSkip(mat,matvar->z,4);
+                if ( !(tag[0] & 0xffff0000) ) {/*Data is NOT packed in the tag*/
+                    InflateSkip(mat,&z,4);
                 }
+                ReadCompressedDataSlabN(mat,&z,complex_data->Im,
+                    matvar->class_type,matvar->data_type,matvar->rank,
+                    matvar->dims,start,stride,edge);
+                inflateEnd(&z);
+            } else {
+                ReadCompressedDataSlabN(mat,matvar->z,data,matvar->class_type,
+                    matvar->data_type,matvar->rank,matvar->dims,
+                    start,stride,edge);
             }
         }
 #endif

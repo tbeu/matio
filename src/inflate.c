@@ -551,7 +551,7 @@ InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf)
  * @return Number of bytes read from the file
  */
 int
-InflateDataType(mat_t *mat, matvar_t *matvar, void *buf)
+InflateDataType(mat_t *mat, z_stream *z, void *buf)
 {
     mat_uint8_t comp_buf[32];
     int     bytesread = 0, err;
@@ -559,33 +559,33 @@ InflateDataType(mat_t *mat, matvar_t *matvar, void *buf)
     if ( buf == NULL )
         return 0;
 
-    if ( !matvar->z->avail_in ) {
-        matvar->z->avail_in = 1;
-        matvar->z->next_in = comp_buf;
+    if ( !z->avail_in ) {
+        z->avail_in = 1;
+        z->next_in = comp_buf;
         bytesread += fread(comp_buf,1,1,mat->fp);
     }
-    matvar->z->avail_out = 4;
-    matvar->z->next_out = buf;
-    err = inflate(matvar->z,Z_NO_FLUSH);
+    z->avail_out = 4;
+    z->next_out = buf;
+    err = inflate(z,Z_NO_FLUSH);
     if ( err != Z_OK ) {
-        Mat_Critical("InflateDataTag: %s - inflate returned %d",matvar->name,err);
+        Mat_Critical("InflateDataType: inflate returned %d",err);
         return bytesread;
     }
-    while ( matvar->z->avail_out && !matvar->z->avail_in ) {
-        matvar->z->avail_in = 1;
-        matvar->z->next_in = comp_buf;
+    while ( z->avail_out && !z->avail_in ) {
+        z->avail_in = 1;
+        z->next_in = comp_buf;
         bytesread += fread(comp_buf,1,1,mat->fp);
-        err = inflate(matvar->z,Z_NO_FLUSH);
+        err = inflate(z,Z_NO_FLUSH);
         if ( err != Z_OK ) {
-            Mat_Critical("InflateDataTag: %s - inflate returned %d",matvar->name,err);
+            Mat_Critical("InflateDataType: inflate returned %d",err);
             return bytesread;
         }
     }
 
-    if ( matvar->z->avail_in ) {
-        fseek(mat->fp,-(int)matvar->z->avail_in,SEEK_CUR);
-        bytesread -= matvar->z->avail_in;
-        matvar->z->avail_in = 0;
+    if ( z->avail_in ) {
+        fseek(mat->fp,-(int)z->avail_in,SEEK_CUR);
+        bytesread -= z->avail_in;
+        z->avail_in = 0;
     }
 
     return bytesread;

@@ -75,7 +75,7 @@ EXTERN int InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN int InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN int InflateVarName(mat_t *mat,matvar_t *matvar,void *buf,int N);
 EXTERN int InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateDataType(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN int InflateDataType(mat_t *mat, z_stream *matvar, void *buf);
 EXTERN int InflateData(mat_t *mat, z_stream *z, void *buf, int nBytes);
 EXTERN int InflateFieldNameLength(mat_t *mat,matvar_t *matvar,void *buf);
 EXTERN int InflateFieldNamesTag(mat_t *mat,matvar_t *matvar,void *buf);
