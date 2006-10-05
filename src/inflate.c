@@ -35,19 +35,20 @@
 int 
 InflateSkip(mat_t *mat, z_stream *z, int nbytes)
 {
-    mat_uint8_t comp_buf[32],uncomp_buf[32];
-    int     bytesread = 0, err, cnt = 0;
+    mat_uint8_t comp_buf[512],uncomp_buf[512];
+    int     bytesread = 0, n,err, cnt = 0;
 
     if ( nbytes < 1 )
         return 0;
 
+    n = (nbytes<512) ? nbytes : 512;
     if ( !z->avail_in ) {
-        z->avail_in = 1;
         z->next_in = comp_buf;
-        bytesread += fread(comp_buf,1,1,mat->fp);
+        z->avail_in += fread(comp_buf,1,n,mat->fp);
+        bytesread   += z->avail_in;
     }
-    z->avail_out = 1;
-    z->next_out = uncomp_buf;
+    z->avail_out = n;
+    z->next_out  = uncomp_buf;
     err = inflate(z,Z_NO_FLUSH);
     if ( err == Z_STREAM_END ) {
         return bytesread;
@@ -56,15 +57,16 @@ InflateSkip(mat_t *mat, z_stream *z, int nbytes)
         return bytesread;
     }
     if ( !z->avail_out ) {
-        z->avail_out = 1;
-        z->next_out = uncomp_buf;
-            cnt++;
+        cnt += n;
+        n = ((nbytes-cnt)<512) ? nbytes-cnt : 512;
+        z->avail_out = n;
+        z->next_out  = uncomp_buf;
     }
     while ( cnt < nbytes ) {
         if ( !z->avail_in ) {
-            z->avail_in = 1;
-            z->next_in = comp_buf;
-            bytesread += fread(comp_buf,1,1,mat->fp);
+            z->next_in   = comp_buf;
+            z->avail_in += fread(comp_buf,1,n,mat->fp);
+            bytesread   += z->avail_in;
         }
         err = inflate(z,Z_NO_FLUSH);
         if ( err == Z_STREAM_END ) {
@@ -74,9 +76,10 @@ InflateSkip(mat_t *mat, z_stream *z, int nbytes)
             return bytesread;
         }
         if ( !z->avail_out ) {
-            z->avail_out = 1;
-            z->next_out = uncomp_buf;
-            cnt++;
+            cnt         += n;
+            n            = ((nbytes-cnt)<512) ? nbytes-cnt : 512;
+            z->avail_out = n;
+            z->next_out  = uncomp_buf;
         }
     }
 
