@@ -2933,10 +2933,10 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
     switch ( class_type ) {
         case MAT_C_DOUBLE:
         {
-            inc[0] = stride[0]-1;
-            N = edge[0];
-            if ( start[0] > 0 )
-                fseek(mat->fp,Mat_SizeOf(data_type)*start[0],SEEK_CUR);
+            inc[0]  = stride[0]-1;
+            dimp[0] = dims[0];
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -2945,10 +2945,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    fseek(mat->fp,Mat_SizeOf(data_type)*start[i]*dimp[i-1],SEEK_CUR);
-                Mat_Message("inc[%d] = %d",i,inc[i]);
+                I += dimp[i-1]*start[i];
             }
+            fseek(mat->fp,I*Mat_SizeOf(data_type),SEEK_CUR);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadDoubleData(mat,(double*)data+i+j,data_type,1);
@@ -2978,10 +2977,10 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
         }
         case MAT_C_SINGLE:
         {
-            inc[0] = stride[0]-1;
-            N = edge[0];
-            if ( start[0] > 0 )
-                fseek(mat->fp,Mat_SizeOf(data_type)*start[0],SEEK_CUR);
+            inc[0]  = stride[0]-1;
+            dimp[0] = dims[0];
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -2990,10 +2989,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    fseek(mat->fp,Mat_SizeOf(data_type)*start[i]*dimp[i-1],SEEK_CUR);
-                Mat_Message("inc[%d] = %d",i,inc[i]);
+                I += dimp[i-1]*start[i];
             }
+            fseek(mat->fp,I*Mat_SizeOf(data_type),SEEK_CUR);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadSingleData(mat,(float*)data+i+j,data_type,1);
@@ -3023,10 +3021,10 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
         }
         case MAT_C_INT32:
         {
-            inc[0] = stride[0]-1;
-            N = edge[0];
-            if ( start[0] > 0 )
-                fseek(mat->fp,Mat_SizeOf(data_type)*start[0],SEEK_CUR);
+            inc[0]  = stride[0]-1;
+            dimp[0] = dims[0];
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3035,10 +3033,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    fseek(mat->fp,Mat_SizeOf(data_type)*start[i]*dimp[i-1],SEEK_CUR);
-                Mat_Message("inc[%d] = %d",i,inc[i]);
+                I += dimp[i-1]*start[i];
             }
+            fseek(mat->fp,I*Mat_SizeOf(data_type),SEEK_CUR);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadInt32Data(mat,(mat_int32_t*)data+i+j,data_type,1);
@@ -3068,10 +3065,10 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
         }
         case MAT_C_UINT32:
         {
-            inc[0] = stride[0]-1;
-            N = edge[0];
-            if ( start[0] > 0 )
-                fseek(mat->fp,Mat_SizeOf(data_type)*start[0],SEEK_CUR);
+            inc[0]  = stride[0]-1;
+            dimp[0] = dims[0];
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3080,10 +3077,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    fseek(mat->fp,Mat_SizeOf(data_type)*start[i]*dimp[i-1],SEEK_CUR);
-                Mat_Message("inc[%d] = %d",i,inc[i]);
+                I += dimp[i-1]*start[i];
             }
+            fseek(mat->fp,I*Mat_SizeOf(data_type),SEEK_CUR);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadUInt32Data(mat,(mat_uint32_t*)data+i+j,data_type,1);
@@ -3113,10 +3109,10 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
         }
         case MAT_C_INT16:
         {
-            inc[0] = stride[0]-1;
-            N = edge[0];
-            if ( start[0] > 0 )
-                fseek(mat->fp,Mat_SizeOf(data_type)*start[0],SEEK_CUR);
+            inc[0]  = stride[0]-1;
+            dimp[0] = dims[0];
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3125,10 +3121,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    fseek(mat->fp,start[i]*dimp[i-1]*Mat_SizeOf(data_type),SEEK_CUR);
-                Mat_Message("inc[%d] = %d",i,inc[i]);
+                I += dimp[i-1]*start[i];
             }
+            fseek(mat->fp,I*Mat_SizeOf(data_type),SEEK_CUR);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadInt16Data(mat,(mat_int16_t*)data+i+j,data_type,1);
@@ -3158,10 +3153,10 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
         }
         case MAT_C_UINT16:
         {
-            inc[0] = stride[0]-1;
-            N = edge[0];
-            if ( start[0] > 0 )
-                fseek(mat->fp,Mat_SizeOf(data_type)*start[0],SEEK_CUR);
+            inc[0]  = stride[0]-1;
+            dimp[0] = dims[0];
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3170,10 +3165,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    fseek(mat->fp,start[i]*dimp[i-1]*Mat_SizeOf(data_type),SEEK_CUR);
-                Mat_Message("inc[%d] = %d",i,inc[i]);
+                I += dimp[i-1]*start[i];
             }
+            fseek(mat->fp,I*Mat_SizeOf(data_type),SEEK_CUR);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadUInt16Data(mat,(mat_uint16_t*)data+i+j,data_type,1);
@@ -3203,10 +3197,10 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
         }
         case MAT_C_INT8:
         {
-            inc[0] = stride[0]-1;
-            N = edge[0];
-            if ( start[0] > 0 )
-                fseek(mat->fp,Mat_SizeOf(data_type)*start[0],SEEK_CUR);
+            inc[0]  = stride[0]-1;
+            dimp[0] = dims[0];
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3215,10 +3209,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    fseek(mat->fp,start[i]*dimp[i-1]*Mat_SizeOf(data_type),SEEK_CUR);
-                Mat_Message("inc[%d] = %d",i,inc[i]);
+                I += dimp[i-1]*start[i];
             }
+            fseek(mat->fp,I*Mat_SizeOf(data_type),SEEK_CUR);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadInt8Data(mat,(mat_int8_t*)data+i+j,data_type,1);
@@ -3248,11 +3241,10 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
         }
         case MAT_C_UINT8:
         {
-            inc[0] = stride[0]-1;
+            inc[0]  = stride[0]-1;
             dimp[0] = dims[0];
-            N = edge[0];
-            if ( start[0] > 0 )
-                fseek(mat->fp,Mat_SizeOf(data_type)*start[0],SEEK_CUR);
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3261,10 +3253,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    fseek(mat->fp,start[i]*dimp[i-1]*Mat_SizeOf(data_type),SEEK_CUR);
-                Mat_Message("inc[%d] = %d",i,inc[i]);
+                I += dimp[i-1]*start[i];
             }
+            fseek(mat->fp,I*Mat_SizeOf(data_type),SEEK_CUR);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadUInt8Data(mat,(mat_uint8_t*)data+i+j,data_type,1);
@@ -3335,12 +3326,11 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
         {
             double *ptr;
 
-            ptr = (double *)data;
-            inc[0] = stride[0]-1;
+            ptr     = data;
+            inc[0]  = stride[0]-1;
             dimp[0] = dims[0];
-            N = edge[0];
-            if ( start[0] > 0 )
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3349,9 +3339,10 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    InflateSkipData(mat,&z_copy,data_type,start[i]*dimp[i-1]);
+                I += dimp[i-1]*start[i];
             }
+            /* Skip all data to the starting indeces */
+            InflateSkipData(mat,&z_copy,data_type,I);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedDoubleData(mat,&z_copy,ptr+i+j,data_type,1);
@@ -3388,9 +3379,8 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             ptr     = data;
             inc[0]  = stride[0]-1;
             dimp[0] = dims[0];
-            N = edge[0];
-            if ( start[0] > 0 )
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3399,9 +3389,10 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    InflateSkipData(mat,&z_copy,data_type,start[i]*dimp[i-1]);
+                I += dimp[i-1]*start[i];
             }
+            /* Skip all data to the starting indeces */
+            InflateSkipData(mat,&z_copy,data_type,I);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedSingleData(mat,&z_copy,ptr+i+j,data_type,1);
@@ -3438,9 +3429,8 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             ptr     = data;
             inc[0]  = stride[0]-1;
             dimp[0] = dims[0];
-            N = edge[0];
-            if ( start[0] > 0 )
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3449,9 +3439,10 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    InflateSkipData(mat,&z_copy,data_type,start[i]*dimp[i-1]);
+                I += dimp[i-1]*start[i];
             }
+            /* Skip all data to the starting indeces */
+            InflateSkipData(mat,&z_copy,data_type,I);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedInt32Data(mat,&z_copy,ptr+i+j,data_type,1);
@@ -3488,9 +3479,8 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             ptr     = data;
             inc[0]  = stride[0]-1;
             dimp[0] = dims[0];
-            N = edge[0];
-            if ( start[0] > 0 )
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3499,9 +3489,10 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    InflateSkipData(mat,&z_copy,data_type,start[i]*dimp[i-1]);
+                I += dimp[i-1]*start[i];
             }
+            /* Skip all data to the starting indeces */
+            InflateSkipData(mat,&z_copy,data_type,I);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedUInt32Data(mat,&z_copy,ptr+i+j,data_type,1);
@@ -3538,9 +3529,8 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             ptr     = data;
             inc[0]  = stride[0]-1;
             dimp[0] = dims[0];
-            N = edge[0];
-            if ( start[0] > 0 )
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3549,9 +3539,10 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    InflateSkipData(mat,&z_copy,data_type,start[i]*dimp[i-1]);
+                I += dimp[i-1]*start[i];
             }
+            /* Skip all data to the starting indeces */
+            InflateSkipData(mat,&z_copy,data_type,I);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedInt16Data(mat,&z_copy,ptr+i+j,data_type,1);
@@ -3588,9 +3579,8 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             ptr     = data;
             inc[0]  = stride[0]-1;
             dimp[0] = dims[0];
-            N = edge[0];
-            if ( start[0] > 0 )
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3599,9 +3589,10 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    InflateSkipData(mat,&z_copy,data_type,start[i]*dimp[i-1]);
+                I += dimp[i-1]*start[i];
             }
+            /* Skip all data to the starting indeces */
+            InflateSkipData(mat,&z_copy,data_type,I);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedUInt16Data(mat,&z_copy,ptr+i+j,data_type,1);
@@ -3638,9 +3629,8 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             ptr     = data;
             inc[0]  = stride[0]-1;
             dimp[0] = dims[0];
-            N = edge[0];
-            if ( start[0] > 0 )
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3649,9 +3639,10 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    InflateSkipData(mat,&z_copy,data_type,start[i]*dimp[i-1]);
+                I += dimp[i-1]*start[i];
             }
+            /* Skip all data to the starting indeces */
+            InflateSkipData(mat,&z_copy,data_type,I);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedInt8Data(mat,&z_copy,ptr+i+j,data_type,1);
@@ -3688,9 +3679,8 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             ptr     = data;
             inc[0]  = stride[0]-1;
             dimp[0] = dims[0];
-            N = edge[0];
-            if ( start[0] > 0 )
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
+            N       = edge[0];
+            I       = start[0];
             for ( i = 1; i < rank; i++ ) {
                 inc[i]  = stride[i]-1;
                 dimp[i] = dims[i-1];
@@ -3699,9 +3689,10 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
                     dimp[i] *= dims[j+1];
                 }
                 N *= edge[i];
-                if ( start[i] > 0 )
-                    InflateSkipData(mat,&z_copy,data_type,start[i]*dimp[i-1]);
+                I += dimp[i-1]*start[i];
             }
+            /* Skip all data to the starting indeces */
+            InflateSkipData(mat,&z_copy,data_type,I);
             for ( i = 0; i < N; i+=edge[0] ) {
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedUInt8Data(mat,&z_copy,ptr+i+j,data_type,1);

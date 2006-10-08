@@ -4871,7 +4871,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
                     matvar->dims,start,stride,edge);
                 inflateEnd(&z);
             } else {
-                ReadCompressedDataSlabN(mat,matvar->z,data,matvar->class_type,
+                ReadCompressedDataSlabN(mat,&z,data,matvar->class_type,
                     matvar->data_type,matvar->rank,matvar->dims,
                     start,stride,edge);
             }

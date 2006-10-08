@@ -49,7 +49,7 @@ InflateSkip(mat_t *mat, z_stream *z, int nbytes)
     }
     z->avail_out = n;
     z->next_out  = uncomp_buf;
-    err = inflate(z,Z_NO_FLUSH);
+    err = inflate(z,Z_FULL_FLUSH);
     if ( err == Z_STREAM_END ) {
         return bytesread;
     } else if ( err != Z_OK ) {
@@ -68,7 +68,7 @@ InflateSkip(mat_t *mat, z_stream *z, int nbytes)
             z->avail_in += fread(comp_buf,1,n,mat->fp);
             bytesread   += z->avail_in;
         }
-        err = inflate(z,Z_NO_FLUSH);
+        err = inflate(z,Z_FULL_FLUSH);
         if ( err == Z_STREAM_END ) {
             break;
         } else if ( err != Z_OK ) {
@@ -84,7 +84,8 @@ InflateSkip(mat_t *mat, z_stream *z, int nbytes)
     }
 
     if ( z->avail_in ) {
-        fseek(mat->fp,-(int)z->avail_in,SEEK_CUR);
+        long offset = -(long)z->avail_in;
+        fseek(mat->fp,offset,SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
