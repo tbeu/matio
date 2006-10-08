@@ -24,6 +24,24 @@
 #undef SIZEOF_CHAR
 #undef SIZEOF_VOID_PTR
 
+#undef HAVE_MAT_INT64_T
+#undef HAVE_MAT_INT32_T
+#undef HAVE_MAT_INT16_T
+#undef HAVE_MAT_INT8_T
+#undef HAVE_MAT_UINT64_T
+#undef HAVE_MAT_UINT32_T
+#undef HAVE_MAT_UINT16_T
+#undef HAVE_MAT_UINT8_T
+
+#undef _mat_uint8_t
+#undef _mat_uint16_t
+#undef _mat_uint32_t
+#undef _mat_uint64_t
+#undef _mat_int8_t
+#undef _mat_int16_t
+#undef _mat_int32_t
+#undef _mat_int64_t
+
 #undef HAVE_VA_COPY
 #undef HAVE___VA_COPY
 #undef HAVE_VSNPRINTF

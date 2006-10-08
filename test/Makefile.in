@@ -41,7 +41,15 @@ bin_PROGRAMS = test_mat$(EXEEXT) test_snprintf$(EXEEXT) \
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/config/matio_lib_suffix.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/config/matio_int16_t.m4 \
+	$(top_srcdir)/config/matio_int32_t.m4 \
+	$(top_srcdir)/config/matio_int64_t.m4 \
+	$(top_srcdir)/config/matio_int8_t.m4 \
+	$(top_srcdir)/config/matio_lib_suffix.m4 \
+	$(top_srcdir)/config/matio_uint16_t.m4 \
+	$(top_srcdir)/config/matio_uint32_t.m4 \
+	$(top_srcdir)/config/matio_uint64_t.m4 \
+	$(top_srcdir)/config/matio_uint8_t.m4 \
 	$(top_srcdir)/config/matio_zlib.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)

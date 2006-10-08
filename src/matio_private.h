@@ -20,6 +20,8 @@ EXTERN int mat_vasprintf(char **ptr,const char *format,va_list ap);
 /*   endian.c     */
 EXTERN double       doubleSwap(double  *a);
 EXTERN float         floatSwap(float   *a);
+EXTERN mat_int64_t   int64Swap(mat_int64_t  *a);
+EXTERN mat_uint64_t uint64Swap(mat_uint64_t *a);
 EXTERN mat_int32_t   int32Swap(mat_int32_t  *a);
 EXTERN mat_uint32_t uint32Swap(mat_uint32_t *a);
 EXTERN mat_int16_t   int16Swap(mat_int16_t  *a);

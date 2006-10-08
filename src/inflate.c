@@ -73,7 +73,7 @@ InflateSkip(mat_t *mat, z_stream *z, int nbytes)
             break;
         } else if ( err != Z_OK ) {
             Mat_Critical("InflateSkip: inflate returned %d",err);
-            return bytesread;
+            break;
         }
         if ( !z->avail_out ) {
             cnt         += n;
@@ -177,6 +177,12 @@ InflateSkipData(mat_t *mat,z_stream *z,int data_type,int len)
             break;
         case MAT_T_SINGLE:
             data_size = sizeof(float);
+            break;
+        case MAT_T_INT64:
+            data_size = sizeof(mat_int64_t);
+            break;
+        case MAT_T_UINT64:
+            data_size = sizeof(mat_uint64_t);
             break;
         case MAT_T_INT32:
             data_size = sizeof(mat_int32_t);
@@ -657,7 +663,7 @@ InflateData(mat_t *mat, z_stream *z, void *buf, int nBytes)
             break;
         } else if ( err != Z_OK && err != Z_BUF_ERROR ) {
             Mat_Critical("InflateData: inflate returned %d",err);
-            return bytesread;
+            break;
         }
     }
 

@@ -27,6 +27,60 @@
  */
 #define swap(a,b)   a^=b;b^=a;a^=b
 
+/** @brief swap the bytes of a 64-bit signed integer
+ * @ingroup mat_internal
+ * @param a pointer to integer to swap
+ * @return the swapped integer
+ */
+mat_int64_t
+int64Swap( mat_int64_t *a )
+{
+
+    union {
+        mat_int8_t    i1[4]; 
+        mat_int64_t   i8;
+    } tmp;
+
+    tmp.i8 = *a;
+
+    swap( tmp.i1[0], tmp.i1[7] );
+    swap( tmp.i1[1], tmp.i1[6] );
+    swap( tmp.i1[2], tmp.i1[5] );
+    swap( tmp.i1[3], tmp.i1[4] );
+
+    *a = tmp.i8;
+
+    return *a;
+
+}
+
+/** @brief swap the bytes of a 64-bit unsigned integer
+ * @ingroup mat_internal
+ * @param a pointer to integer to swap
+ * @return the swapped integer
+ */
+mat_uint64_t
+uint64Swap( mat_uint64_t *a )
+{
+
+    union {
+        mat_uint8_t    i1[8]; 
+        mat_uint64_t   i8;
+    } tmp;
+
+    tmp.i8 = *a;
+
+    swap( tmp.i1[0], tmp.i1[7] );
+    swap( tmp.i1[1], tmp.i1[6] );
+    swap( tmp.i1[2], tmp.i1[5] );
+    swap( tmp.i1[3], tmp.i1[4] );
+
+    *a = tmp.i8;
+
+    return *a;
+
+}
+
 /** @brief swap the bytes of a 32-bit signed integer
  * @ingroup mat_internal
  * @param a pointer to integer to swap

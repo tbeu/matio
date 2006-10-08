@@ -480,6 +480,12 @@ test_write( void )
     mat_int32_t i32[50];
     mat_int16_t i16[50];
     mat_int8_t   i8[50];
+#ifdef HAVE_MAT_INT64_T
+    mat_int64_t i64[50];
+#endif
+#ifdef HAVE_MAT_UINT64_T
+    mat_uint64_t ui64[50];
+#endif
     char *str = "This is a string";
     mat_t *mat;
     matvar_t *matvar;
@@ -490,6 +496,12 @@ test_write( void )
         i32[i] = i+1;
         i16[i] = i+1;
          i8[i] = i+1;
+#ifdef HAVE_MAT_INT64_T
+        i64[i] = i+1;
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        ui64[i] = i+1;
+#endif
     }
 
     mat = Mat_Open("test_mat_write.mat",MAT_ACC_RDWR);
@@ -514,6 +526,20 @@ test_write( void )
         matvar = Mat_VarCreate("str",MAT_C_CHAR,MAT_T_INT8,2,dims,str,0);
         Mat_VarWrite( mat, matvar, 0);
         Mat_VarFree(matvar);
+#ifdef HAVE_MAT_INT64_T
+        dims[0] = 5;
+        dims[1] = 10;
+        matvar = Mat_VarCreate("i64",MAT_C_INT64,MAT_T_INT64,2,dims,i64,0);
+        Mat_VarWrite(mat,matvar,0);
+        Mat_VarFree(matvar);
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        dims[0] = 5;
+        dims[1] = 10;
+        matvar = Mat_VarCreate("ui64",MAT_C_UINT64,MAT_T_UINT64,2,dims,ui64,0);
+        Mat_VarWrite(mat,matvar,0);
+        Mat_VarFree(matvar);
+#endif
         Mat_Close(mat);
     } else {
         err = 1;
@@ -531,6 +557,12 @@ test_write_compressed( void )
     mat_int32_t i32[50];
     mat_int16_t i16[50];
     mat_int8_t   i8[50];
+#ifdef HAVE_MAT_INT64_T
+    mat_int64_t i64[50];
+#endif
+#ifdef HAVE_MAT_UINT64_T
+    mat_uint64_t ui64[50];
+#endif
     char *str = "This is a string";
     mat_t *mat;
     matvar_t *matvar;
@@ -541,6 +573,12 @@ test_write_compressed( void )
         i32[i] = i+1;
         i16[i] = i+1;
          i8[i] = i+1;
+#ifdef HAVE_MAT_INT64_T
+        i64[i] = i+1;
+#endif
+#ifdef HAVE_MAT_UINT64_T
+       ui64[i] = i+1;
+#endif
     }
 
     mat = Mat_Open("test_mat_write_compressed.mat",MAT_ACC_RDWR);
@@ -566,6 +604,20 @@ test_write_compressed( void )
         matvar = Mat_VarCreate("str",MAT_C_CHAR,MAT_T_INT8,2,dims,str,0);
         Mat_VarWrite(mat,matvar,COMPRESSION_ZLIB);
         Mat_VarFree(matvar);
+#ifdef HAVE_MAT_INT64_T
+        dims[0] = 5;
+        dims[1] = 10;
+        matvar = Mat_VarCreate("i64",MAT_C_INT64,MAT_T_INT64,2,dims,i64,0);
+        Mat_VarWrite(mat,matvar,COMPRESSION_ZLIB);
+        Mat_VarFree(matvar);
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        dims[0] = 5;
+        dims[1] = 10;
+        matvar = Mat_VarCreate("ui64",MAT_C_UINT64,MAT_T_UINT64,2,dims,ui64,0);
+        Mat_VarWrite(mat,matvar,COMPRESSION_ZLIB);
+        Mat_VarFree(matvar);
+#endif
         Mat_Close(mat);
     } else {
         err = 1;

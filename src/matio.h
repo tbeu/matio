@@ -28,44 +28,9 @@
 #include "matioConfig.h"
 #if defined(HAVE_INTTYPES_H)
 #   include <inttypes.h>
-    typedef  int8_t  mat_int8_t;
-    typedef uint8_t  mat_uint8_t;
-    typedef  int16_t mat_int16_t;
-    typedef uint16_t mat_uint16_t;
-    typedef  int32_t mat_int32_t;
-    typedef uint32_t mat_uint32_t;
-#elif defined(HAVE_STDINT_H)
+#endif
+#if defined(HAVE_STDINT_H)
 #   include <stdint.h>
-    typedef  int8_t  mat_int8_t;
-    typedef uint8_t  mat_uint8_t;
-    typedef  int16_t mat_int16_t;
-    typedef uint16_t mat_uint16_t;
-    typedef  int32_t mat_int32_t;
-    typedef uint32_t mat_uint32_t;
-#else
-#   if SIZEOF_INT == 4
-        typedef          int    mat_int32_t;
-        typedef unsigned int    mat_uint32_t;
-#   elif SIZEOF_SHORT == 4
-        typedef          short  mat_int32_t;
-        typedef unsigned short  mat_uint32_t;
-#   elif SIZEOF_LONG == 4
-        typedef          long   mat_int32_t;
-        typedef unsigned long   mat_uint32_t;
-#   else
-#       error Cannot find a suitable type for 32-bit integers
-#   endif
-#   if SIZEOF_SHORT == 2
-        typedef          short  mat_int16_t;
-        typedef unsigned short  mat_uint16_t;
-#   elif SIZEOF_INT == 2
-        typedef          int    mat_int16_t;
-        typedef unsigned int    mat_uint16_t;
-#   else
-#       error Cannot find a suitable type for 16-bit integers
-#   endif
-typedef   signed char   mat_int8_t;
-typedef unsigned char   mat_uint8_t;
 #endif
 
 #include <stdarg.h>
@@ -77,6 +42,31 @@ typedef unsigned char   mat_uint8_t;
 #   define EXTERN extern "C"
 #else
 #   define EXTERN extern
+#endif
+
+#ifdef _mat_int64_t
+    typedef _mat_int64_t mat_int64_t;
+#endif
+#ifdef _mat_uint64_t
+    typedef _mat_uint64_t mat_uint64_t;
+#endif
+#ifdef _mat_int32_t
+    typedef _mat_int32_t mat_int32_t;
+#endif
+#ifdef _mat_uint32_t
+    typedef _mat_uint32_t mat_uint32_t;
+#endif
+#ifdef _mat_int16_t
+    typedef _mat_int16_t mat_int16_t;
+#endif
+#ifdef _mat_uint16_t
+    typedef _mat_uint16_t mat_uint16_t;
+#endif
+#ifdef _mat_int8_t
+    typedef _mat_int8_t mat_int8_t;
+#endif
+#ifdef _mat_uint8_t
+    typedef _mat_uint8_t mat_uint8_t;
 #endif
 
 /** @defgroup MAT Matlab MAT File I/O Library */

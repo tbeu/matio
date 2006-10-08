@@ -397,6 +397,14 @@ Mat_SizeOf(int data_type)
             return sizeof(double);
         case MAT_T_SINGLE:
             return sizeof(float);
+#ifdef HAVE_MAT_INT64_T
+        case MAT_T_INT64:
+            return sizeof(mat_int64_t);
+#endif
+#ifdef HAVE_MAT_INT64_T
+        case MAT_T_UINT64:
+            return sizeof(mat_uint64_t);
+#endif
         case MAT_T_INT32:
             return sizeof(mat_int32_t);
         case MAT_T_UINT32:

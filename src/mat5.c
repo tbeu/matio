@@ -686,6 +686,34 @@ WriteEmptyData(mat_t *mat,int N,int data_type)
                 fwrite(&ui32,data_size,1,mat->fp);
             break;
         }
+#ifdef HAVE_MAT_INT64_T
+        case MAT_T_INT64:
+        {
+            mat_int64_t i64 = 0;
+
+            data_size = sizeof(mat_int64_t);
+            nBytes = N*data_size;
+            fwrite(&data_type,4,1,mat->fp);
+            fwrite(&nBytes,4,1,mat->fp);
+            for ( i = 0; i < N; i++ )
+                fwrite(&i64,data_size,1,mat->fp);
+            break;
+        }
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_T_UINT64:
+        {
+            mat_uint64_t ui64 = 0;
+
+            data_size = sizeof(mat_uint64_t);
+            nBytes = N*data_size;
+            fwrite(&data_type,4,1,mat->fp);
+            fwrite(&nBytes,4,1,mat->fp);
+            for ( i = 0; i < N; i++ )
+                fwrite(&ui64,data_size,1,mat->fp);
+            break;
+        }
+#endif
         default:
             nBytes = 0;
     }
@@ -812,6 +840,34 @@ WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,int data_type)
                 fwrite(&ui32,data_size,1,mat->fp);
             break;
         }
+#ifdef HAVE_MAT_INT64_T
+        case MAT_T_INT64:
+        {
+            mat_int64_t i64 = 0;
+
+            data_size = sizeof(mat_int64_t);
+            nBytes = N*data_size;
+            fwrite(&data_type,4,1,mat->fp);
+            fwrite(&nBytes,4,1,mat->fp);
+            for ( i = 0; i < N; i++ )
+                fwrite(&i64,data_size,1,mat->fp);
+            break;
+        }
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_T_UINT64:
+        {
+            mat_uint64_t ui64 = 0;
+
+            data_size = sizeof(mat_uint64_t);
+            nBytes = N*data_size;
+            fwrite(&data_type,4,1,mat->fp);
+            fwrite(&nBytes,4,1,mat->fp);
+            for ( i = 0; i < N; i++ )
+                fwrite(&ui64,data_size,1,mat->fp);
+            break;
+        }
+#endif
         default:
             nBytes = 0;
     }
@@ -889,6 +945,54 @@ WriteDataSlab2(mat_t *mat,void *data,int data_type,int *dims,int *start,
             }
             break;
         }
+#ifdef HAVE_MAT_INT64_T
+        case MAT_T_INT64:
+        {
+            mat_int64_t *ptr;
+
+            data_size = sizeof(mat_int64_t);
+            ptr = (mat_int64_t *)data;
+            row_stride = (stride[0]-1)*data_size;
+            col_stride = stride[1]*dims[0]*data_size;
+
+            fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            for ( i = 0; i < edge[1]; i++ ) {
+                pos = ftell(mat->fp);
+                fseek(mat->fp,start[0]*data_size,SEEK_CUR);
+                for ( j = 0; j < edge[0]; j++ ) {
+                    fwrite(ptr++,data_size,1,mat->fp);
+                    fseek(mat->fp,row_stride,SEEK_CUR);
+                }
+                pos = pos+col_stride-ftell(mat->fp);
+                fseek(mat->fp,pos,SEEK_CUR);
+            }
+            break;
+        }
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_T_UINT64:
+        {
+            mat_uint64_t *ptr;
+
+            data_size = sizeof(mat_uint64_t);
+            ptr = (mat_uint64_t *)data;
+            row_stride = (stride[0]-1)*data_size;
+            col_stride = stride[1]*dims[0]*data_size;
+
+            fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            for ( i = 0; i < edge[1]; i++ ) {
+                pos = ftell(mat->fp);
+                fseek(mat->fp,start[0]*data_size,SEEK_CUR);
+                for ( j = 0; j < edge[0]; j++ ) {
+                    fwrite(ptr++,data_size,1,mat->fp);
+                    fseek(mat->fp,row_stride,SEEK_CUR);
+                }
+                pos = pos+col_stride-ftell(mat->fp);
+                fseek(mat->fp,pos,SEEK_CUR);
+            }
+            break;
+        }
+#endif
         case MAT_T_INT32:
         {
             mat_int32_t *ptr;
@@ -1842,6 +1946,8 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
         case MAT_C_INT32:
         case MAT_C_UINT32:
         case MAT_C_INT16:
@@ -1977,6 +2083,8 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
         case MAT_C_INT32:
         case MAT_C_UINT32:
         case MAT_C_INT16:
@@ -2177,6 +2285,8 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
         case MAT_C_INT32:
         case MAT_C_UINT32:
         case MAT_C_INT16:
@@ -2378,6 +2488,8 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
         case MAT_C_INT32:
         case MAT_C_UINT32:
         case MAT_C_INT16:
@@ -2579,6 +2691,8 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
         case MAT_C_INT32:
         case MAT_C_UINT32:
         case MAT_C_INT16:
@@ -3067,6 +3181,337 @@ Read5(mat_t *mat, matvar_t *matvar)
                 }
             }
             break;
+#ifdef HAVE_MATIO_INT64_T
+        case MAT_C_INT64:
+            if ( matvar->compression ) {
+#if defined(HAVE_ZLIB)
+                fseek(mat->fp,matvar->datapos,SEEK_SET);
+
+                matvar->z->avail_in = 0;
+                InflateDataType(mat,matvar->z,tag);
+                if ( byteswap )
+                    (void)uint32Swap(tag);
+
+                packed_type = tag[0] & 0x000000ff;
+                if ( tag[0] & 0xffff0000 ) { /* Data is in the tag */
+                    data_in_tag = 1;
+                    nBytes = (tag[0] & 0xffff0000) >> 16;
+                } else {
+                    data_in_tag = 0;
+                    InflateDataType(mat,matvar->z,tag+1);
+                    if ( byteswap )
+                        (void)uint32Swap(tag+1);
+                    nBytes = tag[1];
+                }
+#endif
+            } else {
+                fseek(mat->fp,matvar->datapos,SEEK_SET);
+                fread(tag,4,1,mat->fp);
+                if ( byteswap )
+                    (void)uint32Swap(tag);
+                packed_type = tag[0] & 0x000000ff;
+                if ( tag[0] & 0xffff0000 ) { /* Data is in the tag */
+                    data_in_tag = 1;
+                    nBytes = (tag[0] & 0xffff0000) >> 16;
+                } else {
+                    data_in_tag = 0;
+                    fread(tag+1,4,1,mat->fp);
+                    if ( byteswap )
+                        (void)uint32Swap(tag+1);
+                    nBytes = tag[1];
+                }
+            }
+            if ( nBytes == 0 ) {
+                matvar->nbytes = 0;
+                break;
+            }
+            for ( i = 0; i < matvar->rank; i++ )
+                len *= matvar->dims[i];
+            matvar->data_size = sizeof(mat_int64_t);
+            matvar->data_type = MAT_T_INT64;
+            if ( matvar->isComplex ) {
+                struct ComplexSplit *complex_data;
+
+                matvar->nbytes = len*matvar->data_size;
+                complex_data = malloc(sizeof(*complex_data));
+                complex_data->Re = malloc(matvar->nbytes);
+                complex_data->Im = malloc(matvar->nbytes);
+                if ( NULL == complex_data || NULL == complex_data->Re ||
+                     NULL == complex_data->Im ) {
+                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    break;
+                }
+                if ( matvar->compression == COMPRESSION_NONE) {
+                    nBytes = ReadInt64Data(mat,complex_data->Re,
+                                 packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
+
+                    /* Complex Data Tag */
+                    fread(tag,4,1,mat->fp);
+                    if ( byteswap )
+                        (void)uint32Swap(tag);
+                    packed_type = tag[0] & 0x000000ff;
+                    if ( tag[0] & 0xffff0000 ) { /* Data is in the tag */
+                        data_in_tag = 1;
+                        nBytes = (tag[0] & 0xffff0000) >> 16;
+                    } else {
+                        data_in_tag = 0;
+                        fread(tag+1,4,1,mat->fp);
+                        if ( byteswap )
+                            (void)uint32Swap(tag+1);
+                        nBytes = tag[1];
+                    }
+                    nBytes = ReadInt64Data(mat,complex_data->Im,
+                               packed_type,len);
+#if defined(HAVE_ZLIB)
+                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                    nBytes = ReadCompressedInt64Data(mat,matvar->z,
+                                 complex_data->Re,packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        InflateSkip(mat,matvar->z,8-(nBytes % 8));
+
+                    /* Complex Data Tag */
+                    InflateDataType(mat,matvar->z,tag);
+                    if ( byteswap )
+                        (void)uint32Swap(tag);
+
+                    packed_type = tag[0] & 0x000000ff;
+                    if ( tag[0] & 0xffff0000 ) { /* Data is in the tag */
+                        data_in_tag = 1;
+                        nBytes = (tag[0] & 0xffff0000) >> 16;
+                    } else {
+                        data_in_tag = 0;
+                        InflateDataType(mat,matvar->z,tag+1);
+                        if ( byteswap )
+                            (void)uint32Swap(tag+1);
+                        nBytes = tag[1];
+                    }
+                    nBytes = ReadCompressedInt64Data(mat,matvar->z,
+                                 complex_data->Im,packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        InflateSkip(mat,matvar->z,8-(nBytes % 8));
+#endif
+                }
+                matvar->data = complex_data;
+            } else {
+                matvar->nbytes = len*matvar->data_size;
+                matvar->data   = malloc(matvar->nbytes);
+                if ( !matvar->data ) {
+                    Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
+                    break;
+                }
+                if ( matvar->compression == COMPRESSION_NONE) {
+                    nBytes = ReadInt64Data(mat,(mat_int64_t*)matvar->data,
+                                 packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
+#if defined(HAVE_ZLIB)
+                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                    nBytes = ReadCompressedInt64Data(mat,matvar->z,
+                                 (mat_int64_t*)matvar->data,packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        InflateSkip(mat,matvar->z,8-(nBytes % 8));
+#endif
+                }
+            }
+            break;
+#endif /* HAVE_MATIO_INT64_T */
+#ifdef HAVE_MATIO_UINT64_T
+        case MAT_C_UINT64:
+            if ( matvar->compression ) {
+#if defined(HAVE_ZLIB)
+                fseek(mat->fp,matvar->datapos,SEEK_SET);
+
+                matvar->z->avail_in = 0;
+                InflateDataType(mat,matvar->z,tag);
+                if ( byteswap )
+                    (void)uint32Swap(tag);
+                packed_type = tag[0] & 0x000000ff;
+                if ( tag[0] & 0xffff0000 ) { /* Data is in the tag */
+                    data_in_tag = 1;
+                    nBytes = (tag[0] & 0xffff0000) >> 16;
+                } else {
+                    data_in_tag = 0;
+                    InflateDataType(mat,matvar->z,tag+1);
+                    if ( byteswap )
+                        (void)uint32Swap(tag+1);
+                    nBytes = tag[1];
+                }
+#endif
+            } else {
+                fseek(mat->fp,matvar->datapos,SEEK_SET);
+                fread(tag,4,1,mat->fp);
+                if ( byteswap )
+                    (void)uint32Swap(tag);
+                packed_type = tag[0] & 0x000000ff;
+                if ( tag[0] & 0xffff0000 ) { /* Data is in the tag */
+                    data_in_tag = 1;
+                    nBytes = (tag[0] & 0xffff0000) >> 16;
+                } else {
+                    data_in_tag = 0;
+                    fread(tag+1,4,1,mat->fp);
+                    if ( byteswap )
+                        (void)uint32Swap(tag+1);
+                    nBytes = tag[1];
+                }
+            }
+            if ( nBytes == 0 ) {
+                matvar->nbytes = 0;
+                break;
+            }
+            for ( i = 0; i < matvar->rank; i++ )
+                len *= matvar->dims[i];
+            matvar->data_size = sizeof(mat_uint64_t);
+            matvar->data_type = MAT_T_UINT64;
+            if ( matvar->isComplex ) {
+                struct ComplexSplit *complex_data;
+
+                matvar->nbytes = len*matvar->data_size;
+                complex_data = malloc(sizeof(*complex_data));
+                complex_data->Re = malloc(matvar->nbytes);
+                complex_data->Im = malloc(matvar->nbytes);
+                if ( NULL == complex_data || NULL == complex_data->Re ||
+                     NULL == complex_data->Im ) {
+                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    break;
+                }
+                if ( matvar->compression == COMPRESSION_NONE) {
+                    nBytes = ReadInt64Data(mat,complex_data->Re,
+                                 packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
+
+                    /* Complex Data Tag */
+                    fread(tag,4,1,mat->fp);
+                    if ( byteswap )
+                        (void)uint32Swap(tag);
+                    packed_type = tag[0] & 0x000000ff;
+                    if ( tag[0] & 0xffff0000 ) { /* Data is in the tag */
+                        data_in_tag = 1;
+                        nBytes = (tag[0] & 0xffff0000) >> 16;
+                    } else {
+                        data_in_tag = 0;
+                        fread(tag+1,4,1,mat->fp);
+                        if ( byteswap )
+                            (void)uint32Swap(tag+1);
+                        nBytes = tag[1];
+                    }
+                    nBytes = ReadInt64Data(mat,complex_data->Im,
+                               packed_type,len);
+#if defined(HAVE_ZLIB)
+                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                    nBytes = ReadCompressedInt64Data(mat,matvar->z,
+                                 complex_data->Re,packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        InflateSkip(mat,matvar->z,8-(nBytes % 8));
+
+                    /* Complex Data Tag */
+                    InflateDataType(mat,matvar->z,tag);
+                    if ( byteswap )
+                        (void)uint32Swap(tag);
+
+                    packed_type = tag[0] & 0x000000ff;
+                    if ( tag[0] & 0xffff0000 ) { /* Data is in the tag */
+                        data_in_tag = 1;
+                        nBytes = (tag[0] & 0xffff0000) >> 16;
+                    } else {
+                        data_in_tag = 0;
+                        InflateDataType(mat,matvar->z,tag+1);
+                        if ( byteswap )
+                            (void)uint32Swap(tag+1);
+                        nBytes = tag[1];
+                    }
+                    nBytes = ReadCompressedInt64Data(mat,matvar->z,
+                                 complex_data->Im,packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        InflateSkip(mat,matvar->z,8-(nBytes % 8));
+#endif
+                }
+                matvar->data = complex_data;
+            } else {
+                matvar->nbytes = len*matvar->data_size;
+                matvar->data   = malloc(matvar->nbytes);
+                if ( !matvar->data ) {
+                    Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
+                    break;
+                }
+                if ( matvar->compression == COMPRESSION_NONE) {
+                    nBytes = ReadInt64Data(mat,(mat_int64_t*)matvar->data,
+                                 packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
+#if defined(HAVE_ZLIB)
+                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                    nBytes = ReadCompressedInt64Data(mat,matvar->z,
+                                 (mat_int64_t*)matvar->data,packed_type,len);
+                    /*
+                     * If the data was in the tag we started on a 4-byte
+                     * boundary so add 4 to make it an 8-byte
+                     */
+                    if ( data_in_tag )
+                        nBytes+=4;
+                    if ( (nBytes % 8) != 0 )
+                        InflateSkip(mat,matvar->z,8-(nBytes % 8));
+#endif
+                }
+            }
+            break;
+#endif /* HAVE_MATIO_UINT64_T */
         case MAT_C_INT32:
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
@@ -4890,6 +5335,14 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
             matvar->data_type = MAT_T_SINGLE;
             matvar->data_size = sizeof(float);
             break;
+        case MAT_C_INT64:
+            matvar->data_type = MAT_T_INT64;
+            matvar->data_size = sizeof(mat_int64_t);
+            break;
+        case MAT_C_UINT64:
+            matvar->data_type = MAT_T_UINT64;
+            matvar->data_size = sizeof(mat_uint64_t);
+            break;
         case MAT_C_INT32:
             matvar->data_type = MAT_T_INT32;
             matvar->data_size = sizeof(mat_int32_t);
@@ -5008,6 +5461,8 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
+            case MAT_C_INT64:
+            case MAT_C_UINT64:
             case MAT_C_INT32:
             case MAT_C_UINT32:
             case MAT_C_INT16:
@@ -5250,6 +5705,8 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
+            case MAT_C_INT64:
+            case MAT_C_UINT64:
             case MAT_C_INT32:
             case MAT_C_UINT32:
             case MAT_C_INT16:
@@ -5504,6 +5961,8 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
+            case MAT_C_INT64:
+            case MAT_C_UINT64:
             case MAT_C_INT32:
             case MAT_C_UINT32:
             case MAT_C_INT16:
@@ -5811,6 +6270,68 @@ Mat_VarPrint5( matvar_t *matvar, int printdata )
                         printf("%f\n", ((float*)matvar->data)[i]);
                 }
                 break;
+#ifdef HAVE_MATIO_INT64_T
+            case MAT_C_INT64:
+                if ( !printdata )
+                    break;
+                if ( matvar->rank > 2 ) {
+                    printf("I can't print more than 2 dimensions\n");
+                } else if ( matvar->rank == 1 && matvar->dims[0] > 15 ) {
+                    printf("I won't print more than 15 elements in a vector\n");
+                } else if ( matvar->rank == 2 &&
+                         (matvar->dims[0] > 15 || matvar->dims[1] > 15) ) {
+                    for ( i = 0; i < matvar->dims[0] && i < 15; i++ ) {
+                        for ( j = 0; j < matvar->dims[1] && j < 15; j++ )
+                            printf("%d ", ((mat_int64_t*)matvar->data)[matvar->dims[0]*j+i]);
+                        if ( j < matvar->dims[1] )
+                            printf("...");
+                        printf("\n");
+                    }
+                    if ( i < matvar->dims[0] )
+                        printf(".\n.\n.\n");
+                } else if ( matvar->rank == 2 ) {
+                    for ( i = 0; i < matvar->dims[0]; i++ ) {
+                        for ( j = 0; j < matvar->dims[1]; j++ )
+                            printf("%d ", ((mat_uint64_t*)matvar->data)[matvar->dims[0]*j+i]);
+                        printf("\n");
+                    }
+                } else {
+                    for ( i = 0; i < matvar->nbytes/matvar->data_size; i++ )
+                        printf("%d\n", ((mat_int64_t*)matvar->data)[i]);
+                }
+                break;
+#endif
+#ifdef HAVE_MATIO_UINT64_T
+            case MAT_C_UINT64:
+                if ( !printdata )
+                    break;
+                if ( matvar->rank > 2 ) {
+                    printf("I can't print more than 2 dimensions\n");
+                } else if ( matvar->rank == 1 && matvar->dims[0] > 15 ) {
+                    printf("I won't print more than 15 elements in a vector\n");
+                } else if ( matvar->rank == 2 &&
+                         (matvar->dims[0] > 15 || matvar->dims[1] > 15) ) {
+                    for ( i = 0; i < matvar->dims[0] && i < 15; i++ ) {
+                        for ( j = 0; j < matvar->dims[1] && j < 15; j++ )
+                            printf("%u ", ((mat_uint64_t*)matvar->data)[matvar->dims[0]*j+i]);
+                        if ( j < matvar->dims[1] )
+                            printf("...");
+                        printf("\n");
+                    }
+                    if ( i < matvar->dims[0] )
+                        printf(".\n.\n.\n");
+                } else if ( matvar->rank == 2 ) {
+                    for ( i = 0; i < matvar->dims[0]; i++ ) {
+                        for ( j = 0; j < matvar->dims[1]; j++ )
+                            printf("%u ", ((mat_uint64_t*)matvar->data)[matvar->dims[0]*j+i]);
+                        printf("\n");
+                    }
+                } else {
+                    for ( i = 0; i < matvar->nbytes/matvar->data_size; i++ )
+                        printf("%u\n", ((mat_int64_t*)matvar->data)[i]);
+                }
+                break;
+#endif /* HAVE_MATIO_UINT64_T */
             case MAT_C_INT32:
                 if ( !printdata )
                     break;
@@ -6076,6 +6597,54 @@ Mat_VarPrint5( matvar_t *matvar, int printdata )
                         }
                         break;
                     }
+#ifdef HAVE_MATIO_INT64_T
+                    case MAT_T_INT64:
+                    {
+                        mat_int64_t *data;
+                        data = sparse->data;
+                        if ( matvar->isComplex ) {
+                            for ( i = 0; i < sparse->njc-1; i++ ) {
+                                for (j = sparse->jc[i];
+                                     j<sparse->jc[i+1] && j<sparse->ndata;j++ )
+                                    Mat_Message("    (%d,%d)  %d + %di",
+                                        sparse->ir[j]+1,i+1,data[j],
+                                        data[sparse->ndata+j]);
+                            }
+                        } else {
+                            for ( i = 0; i < sparse->njc-1; i++ ) {
+                                for (j = sparse->jc[i];
+                                     j<sparse->jc[i+1] && j<sparse->ndata;j++ )
+                                    Mat_Message("    (%d,%d)  %d",
+                                        sparse->ir[j]+1,i+1,data[j]);
+                            }
+                        }
+                        break;
+                    }
+#endif
+#ifdef HAVE_MATIO_UINT64_T
+                    case MAT_T_UINT64:
+                    {
+                        mat_uint64_t *data;
+                        data = sparse->data;
+                        if ( matvar->isComplex ) {
+                            for ( i = 0; i < sparse->njc-1; i++ ) {
+                                for (j = sparse->jc[i];
+                                     j<sparse->jc[i+1] && j<sparse->ndata;j++ )
+                                    Mat_Message("    (%d,%d)  %u + %ui",
+                                        sparse->ir[j]+1,i+1,data[j],
+                                        data[sparse->ndata+j]);
+                            }
+                        } else {
+                            for ( i = 0; i < sparse->njc-1; i++ ) {
+                                for (j = sparse->jc[i];
+                                     j<sparse->jc[i+1] && j<sparse->ndata;j++ )
+                                    Mat_Message("    (%d,%d)  %u",
+                                        sparse->ir[j]+1,i+1,data[j]);
+                            }
+                        }
+                        break;
+                    }
+#endif
                     case MAT_T_INT32:
                     {
                         mat_int32_t *data;
