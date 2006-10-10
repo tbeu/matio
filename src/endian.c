@@ -37,7 +37,7 @@ int64Swap( mat_int64_t *a )
 {
 
     union {
-        mat_int8_t    i1[4]; 
+        mat_int8_t    i1[8]; 
         mat_int64_t   i8;
     } tmp;
 
