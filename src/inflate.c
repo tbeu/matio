@@ -178,12 +178,16 @@ InflateSkipData(mat_t *mat,z_stream *z,int data_type,int len)
         case MAT_T_SINGLE:
             data_size = sizeof(float);
             break;
+#ifdef HAVE_MAT_INT64_T
         case MAT_T_INT64:
             data_size = sizeof(mat_int64_t);
             break;
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
         case MAT_T_UINT64:
             data_size = sizeof(mat_uint64_t);
             break;
+#endif /* HAVE_MAT_UINT64_T */
         case MAT_T_INT32:
             data_size = sizeof(mat_int32_t);
             break;
