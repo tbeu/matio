@@ -1478,7 +1478,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 #endif
                 }
                 break;
-#ifdef HAVE_MATIO_UINT64_T
+#ifdef HAVE_MAT_INT64_T
             case MAT_C_INT64:
                 matvar->data_type = MAT_T_INT64;
                 matvar->data_size = sizeof(mat_int64_t);
@@ -1503,8 +1503,8 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 #endif
                 }
                 break;
-#endif
-#ifdef HAVE_MATIO_UINT64_T
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
             case MAT_C_UINT64:
                 matvar->data_type = MAT_T_UINT64;
                 matvar->data_size = sizeof(mat_uint64_t);
@@ -1529,7 +1529,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 #endif
                 }
                 break;
-#endif
+#endif /* HAVE_MAT_UINT64_T */
             case MAT_C_INT32:
                 matvar->data_type = MAT_T_INT32;
                 matvar->data_size = sizeof(mat_int32_t);

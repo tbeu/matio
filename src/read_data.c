@@ -1202,9 +1202,9 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
     return nBytes;
 }
 #endif
-#endif /* HAVE_MATIO_INT64_T */
+#endif /* HAVE_MAT_INT64_T */
 
-#ifdef HAVE_MATIO_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
 /** @brief Reads data of type @c data_type into an unsigned 64-bit integer type
  *
  * Reads from the MAT file @c len elements of data type @c data_type storing
@@ -1608,7 +1608,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
     return nBytes;
 }
 #endif /* HAVE_ZLIB */
-#endif /* HAVE_MATIO_UINT64_T */
+#endif /* HAVE_MAT_UINT64_T */
 
 /** @brief Reads data of type @c data_type into a signed 32-bit integer type
  *
@@ -3831,7 +3831,7 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
             }
             break;
         }
-#ifdef HAVE_MATIO_INT64_T
+#ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
             inc[0]  = stride[0]-1;
@@ -3876,8 +3876,8 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
             }
             break;
         }
-#endif /* HAVE_MATIO_INT64_T */
-#ifdef HAVE_MATIO_UINT64_T
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
         {
             inc[0]  = stride[0]-1;
@@ -3922,7 +3922,7 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
             }
             break;
         }
-#endif /* HAVE_MATIO_UINT64_T */
+#endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
             inc[0]  = stride[0]-1;
@@ -4326,7 +4326,7 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             }
             break;
         }
-#ifdef HAVE_MATIO_INT64_T
+#ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
             mat_int64_t *ptr;
@@ -4377,8 +4377,8 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             }
             break;
         }
-#endif /* HAVE_MATIO_INT64_T */
-#ifdef HAVE_MATIO_INT64_T
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_INT64_T
         case MAT_C_UINT64:
         {
             mat_uint64_t *ptr;
@@ -4429,7 +4429,7 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
             }
             break;
         }
-#endif /* HAVE_MATIO_UINT64_T */
+#endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
             mat_int32_t *ptr;
@@ -4809,7 +4809,7 @@ ReadDataSlab2(mat_t *mat,void *data,int class_type,int data_type,
             }
             break;
         }
-#ifdef HAVE_MATIO_INT64_T
+#ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
             mat_int64_t *ptr;
@@ -4831,8 +4831,8 @@ ReadDataSlab2(mat_t *mat,void *data,int class_type,int data_type,
             }
             break;
         }
-#endif /* HAVE_MATIO_INT64_T */
-#ifdef HAVE_MATIO_UINT64_T
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
         {
             mat_uint64_t *ptr;
@@ -4854,7 +4854,7 @@ ReadDataSlab2(mat_t *mat,void *data,int class_type,int data_type,
             }
             break;
         }
-#endif /* HAVE_MATIO_UINT64_T */
+#endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
             mat_int32_t *ptr;
@@ -5083,7 +5083,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,int class_type,
             }
             break;
         }
-#ifdef HAVE_MATIO_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
         case MAT_C_INT64:
         {
             mat_int64_t *ptr;
@@ -5105,8 +5105,8 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,int class_type,
             }
             break;
         }
-#endif /* HAVE_MATIO_INT64_T */
-#ifdef HAVE_MATIO_UINT64_T
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
         {
             mat_uint64_t *ptr;
@@ -5128,7 +5128,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,int class_type,
             }
             break;
         }
-#endif /* HAVE_MATIO_UINT64_T */
+#endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
             mat_int32_t *ptr;

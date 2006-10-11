@@ -3181,7 +3181,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 }
             }
             break;
-#ifdef HAVE_MATIO_INT64_T
+#ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
@@ -3346,8 +3346,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                 }
             }
             break;
-#endif /* HAVE_MATIO_INT64_T */
-#ifdef HAVE_MATIO_UINT64_T
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
@@ -3511,7 +3511,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 }
             }
             break;
-#endif /* HAVE_MATIO_UINT64_T */
+#endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
@@ -6270,7 +6270,7 @@ Mat_VarPrint5( matvar_t *matvar, int printdata )
                         printf("%f\n", ((float*)matvar->data)[i]);
                 }
                 break;
-#ifdef HAVE_MATIO_INT64_T
+#ifdef HAVE_MAT_INT64_T
             case MAT_C_INT64:
                 if ( !printdata )
                     break;
@@ -6301,7 +6301,7 @@ Mat_VarPrint5( matvar_t *matvar, int printdata )
                 }
                 break;
 #endif
-#ifdef HAVE_MATIO_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
             case MAT_C_UINT64:
                 if ( !printdata )
                     break;
@@ -6331,7 +6331,7 @@ Mat_VarPrint5( matvar_t *matvar, int printdata )
                         printf("%u\n", ((mat_int64_t*)matvar->data)[i]);
                 }
                 break;
-#endif /* HAVE_MATIO_UINT64_T */
+#endif /* HAVE_MAT_UINT64_T */
             case MAT_C_INT32:
                 if ( !printdata )
                     break;
@@ -6597,7 +6597,7 @@ Mat_VarPrint5( matvar_t *matvar, int printdata )
                         }
                         break;
                     }
-#ifdef HAVE_MATIO_INT64_T
+#ifdef HAVE_MAT_INT64_T
                     case MAT_T_INT64:
                     {
                         mat_int64_t *data;
@@ -6621,7 +6621,7 @@ Mat_VarPrint5( matvar_t *matvar, int printdata )
                         break;
                     }
 #endif
-#ifdef HAVE_MATIO_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
                     case MAT_T_UINT64:
                     {
                         mat_uint64_t *data;
