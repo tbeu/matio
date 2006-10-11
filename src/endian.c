@@ -27,6 +27,7 @@
  */
 #define swap(a,b)   a^=b;b^=a;a^=b
 
+#ifdef HAVE_MAT_INT64_T
 /** @brief swap the bytes of a 64-bit signed integer
  * @ingroup mat_internal
  * @param a pointer to integer to swap
@@ -53,7 +54,9 @@ int64Swap( mat_int64_t *a )
     return *a;
 
 }
+#endif /* HAVE_MAT_INT64_T */
 
+#ifdef HAVE_MAT_UINT64_T
 /** @brief swap the bytes of a 64-bit unsigned integer
  * @ingroup mat_internal
  * @param a pointer to integer to swap
@@ -80,6 +83,7 @@ uint64Swap( mat_uint64_t *a )
     return *a;
 
 }
+#endif /* HAVE_MAT_UINT64_T */
 
 /** @brief swap the bytes of a 32-bit signed integer
  * @ingroup mat_internal

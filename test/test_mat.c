@@ -102,9 +102,15 @@ static const char *helptest_write[] = {
     "---------------------------------------------------------------",
     "    d         Double      2      5x10         reshape(1:50,5,10)",
     "    f         Single      2      5x10         single(reshape(1:50,5,10))",
-    "  i32         Int 32      2      5x10         int32(reshape(1:50,5,10))",
-    "  i16         Int 16      2      5x10         int16(reshape(1:50,5,10))",
-    "   i8         Int  8      2      5x10         int8(reshape(1:50,5,10))",
+#ifdef HAVE_MAT_INT64_T
+    "  i64         int64       2      5x10         int64(reshape(1:50,5,10))",
+#endif
+#ifdef HAVE_MAT_INT64_T
+    " ui64         uint64      2      5x10         uint64(reshape(1:50,5,10))",
+#endif
+    "  i32         int32       2      5x10         int32(reshape(1:50,5,10))",
+    "  i16         int16       2      5x10         int16(reshape(1:50,5,10))",
+    "   i8         int8        2      5x10         int8(reshape(1:50,5,10))",
     "  str         Char        2      1x14         'This is a string'",
     "",
     NULL
@@ -122,9 +128,16 @@ static const char *helptest_writecompressed[] = {
     "---------------------------------------------------------------",
     "    d         Double      2      5x10         reshape(1:50,5,10)",
     "    f         Single      2      5x10         single(reshape(1:50,5,10))",
+#ifdef HAVE_MAT_INT64_T
+    "  i64         int64       2      5x10         int64(reshape(1:50,5,10))",
+#endif
+#ifdef HAVE_MAT_INT64_T
+    " ui64         uint64      2      5x10         uint64(reshape(1:50,5,10))",
+#endif
     "  i32         Int 32      2      5x10         int32(reshape(1:50,5,10))",
     "  i16         Int 16      2      5x10         int16(reshape(1:50,5,10))",
     "   i8         Int  8      2      5x10         int8(reshape(1:50,5,10))",
+    "  str         Char        2      1x14         'This is a string'",
     "",
     NULL
 };
