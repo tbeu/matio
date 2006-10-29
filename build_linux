@@ -15,14 +15,14 @@ case $m in
 esac
 # ARCH=32
 
-PREFIX=/tmp/matio
+PREFIX=/opt/matio
 
 # Uncomment to build the zlib library
 
 # cd zlib
 # CC=gcc \
 # CFLAGS='-O2 -DZ_PREFIX -fpic' \
-# ./configure --prefix=$PREFIX --libdir=$PREFIX/lib
+# ./configure --prefix=$PREFIX --libdir=$PREFIX/lib$LIBDIR_SUFFIX
 # make && make install && make clean
 # cd ..
 
@@ -34,7 +34,7 @@ ZLIB_OPTS="--with-zlib=$PREFIX"
 DOCS_OPTS="--enable-docs"
 TEST_OPTS="--enable-test"
 FORTRAN="--enable-fortran=no"
-../configure CC=gcc CFLAGS= $DEFAULT_OPTS $DEBUG $FORTRAN $ZLIB_OPTS \
+../configure CC=gcc CFLAGS="$CFLAGS" $DEFAULT_OPTS $DEBUG $FORTRAN $ZLIB_OPTS \
     $DOCS_OPTS $TEST_OPTS
 
 if test $? = 0

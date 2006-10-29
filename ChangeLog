@@ -1,61 +1,240 @@
-Changes in 1.3.2 (TBA)
-* Moved source code to sourceforge project
-* Added support for writing compressed character classes, structures, cell arrays, and sparse arrays
-* Added some test to the test_mat program: write_compressed_cell, write_compressed_sparse
+2006-10-11 00:28  chulbe2lsu
 
-Changes in 1.3.1 (7 Septempber 2006)
-* Added some internal documentation to the library
-* Defined two documentation groups public and internal
-* Disabled the building of test programs by default and added a configure
-  option to build them
-* Fixed installation path of data and documentation
-* Fixed bugs where file pointers were left open if allocating memory failed in Mat_Open and Mat_Create
+    * src/endian.c (int64Swap,uint64Swap): Added preprocessor guards
+      around function
 
-Changes in 1.3.0 (30 June 2006)
-* Cleaned out matio.h and made most preproccessor define's into enum's.
-* Moved complex arrays from single pointer with real part followed by imaginary
-  part to a struct with a pointer to the real part and a pointer to the
-  imaginary part (Previous implementation was just plain ignorant).
-* Changed version 4 mat file code from MAT_V4 to MAT_FT_MAT4 to match the
-  version 5 identifier.
-* Added function Mat_VarCalloc to allocate and initialize all fields of the
-  matvar_t structure.
-Bug Fixes in 1.3.0 (30 June 2006)
-* WriteCompressedData did not initialize the data tag (data_tag variable).
-* WriteStructField wrote the array name tag as a 2 byte integer followed by 2
-  padding bytes. Correct implementation writes the array name tag as a 4 byte
-  integer.
-* Write5 wrote the array name tag as a 2 byte integer followed by 2
-  padding bytes when the name was more than 4 characters. Correct
-  implementation writes the array name tag as a 4 byte integer.
-* Write5 had a hard-coded uncompressed variable size of 448 when writing
-  compressed data.
-* WriteInfo5 wrote the array name tag as a 2 byte integer followed by 2
-  padding bytes when the name was more than 4 characters. Correct
-  implementation writes the array name tag as a 4 byte integer.
-* Mat_Create wrote the endian sequence incorrectly.
-* Mat_VarCreate set the number of bytes incorrectly for structures.
-* Mat_VarCreate fixed the data size of the character class to 1. That didn't
-  allow for multi-byte characters.
+    * src/mat5.c (ReadData5): Added preprocessor guards around function
 
-Changes in 1.1.6 (20 March 2006)
-* Added sparse class to compressed variable.
-Bug Fixes in 1.1.6 (20 March 2006)
-* Fixed release bug in reading double class data.
-* Fixed various compressed variable writing bugs.
-* Fixed a bug in Mat_VarCreate for sparse variables.
+    * src/matio_private.h (int64Swap,uint64Swap): Added preprocessor
+      guards around function prototype
 
-Changes in 1.1.4 (9 February 2006)
-* Changed Licensing from the GNU General Public License to the GNU Lesser
-  General Public License.
-* Added support for reading numeric version 4 MAT files
-* Added support for sparse datatypes other than double.  Although Matlab does
-  not support these types, other free software does.
-* Writing compressed variables is supported for Numeric arrays.  Future versions
-  will implement character,sparse,cell, and structure arrays.
-* A fortran 90/95 interface has been incorporated.  Not all functions are
-  implemented yet, but more will come and it is at least functional now.
-  Hopefully feedback will help guide the fortran interface development.
-* Replaced preprocessor defines for types,classes,etc. with enum's.
-Bug Fixes in 1.1.4 (9 January 2006)
-* Mat_VarReadData did not handle complex data
+    * test/test_mat.c (helptest_write,helptest_writecompressed): Added
+      documentation of 64-bit integer variables
+
+2006-10-11 00:09  chulbe2lsu
+
+    * mat.c (Mat_VarReadDataLinear): Fixed preprocessor guards around 64-bit
+      integer code
+    * mat5.c (Read5,Mat_VarPrint5): Fixed preprocessor guards around
+      64-bit integer code
+    * read_data.c (ReadInt64Data,ReadCompressedInt64Data,ReadUInt64Data,
+      ReadCompressedUInt64Data,ReadDataSlab2,ReadCompressedDataSlab2):
+      Fixed preprocessor guards around 64-bit integer code
+
+2006-10-10 23:59  chulbe2lsu
+
+    * src/inflate.c (InflateSkipData): Added preprocessor
+      guards around 64-bit integer classes
+
+2006-10-10 22:47  chulbe2lsu
+
+    * src/endian.c: endian.c (int64Swap): Fixed tmp.i1 to be 8 bytes
+
+2006-10-08 18:00  chulbe2lsu
+
+    * configure.ac: Added checks to determine exact integer types
+    * src/matioConfig.h.in: Added defines HAVE_MAT_INT#_T and
+      HAVE_MAT_UINT#_T where # is in (64,32,16,8)
+    * src/matioConfig.h.in: Added defines _mat_int8_t,_mat_int16_t,_mat_int32_t,
+      _mat_int64_t,_mat_uint8_t,_mat_uint16_t,_mat_uint32_t,_mat_uint64_t
+      which are defined to the type corresponding to the exact integer
+
+    * src/endian.c (int64Swap): Added
+    * src/endian.c (uint64Swap): Added
+    * src/matio_private.h (int64Swap): Added prototype
+    * src/matio_private.h (uint64Swap): Added prototype
+
+    * src/read_data.c (ReadInt64Data): Added cases for 64-bit
+      signed/unsigned integers
+    * src/read_data.c (ReadCompressedInt64Data): Added cases for
+      64-bit signed/unsigned integers
+    * src/read_data.c (ReadUInt64Data): Added cases for 64-bit
+      signed/unsigned integers
+    * src/read_data.c (ReadCompressedUInt64Data): Added cases for
+      64-bit signed/unsigned integers
+    * src/read_data.c (ReadDataSlabN): Added cases for 64-bit
+      signed/unsigned integers
+    * src/read_data.c (ReadCompressedDataSlabN): Added cases for
+      64-bit signed/unsigned integers
+    * src/read_data.c (ReadDataSlab2): Added cases for 64-bit
+      signed/unsigned integers
+    * src/read_data.c (ReadCompressedDataSlab2): Added cases for
+      64-bit signed/unsigned integers
+
+    * src/mat5.c (WriteEmptyData): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat5.c (WriteCompressedEmptyData): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat5.c (WriteDataSlab2): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat5.c (WriteCellArrayFieldInfo): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat5.c (WriteCellArrayField): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat5.c (WriteCompressedCellArrayField): Added cases for
+      64-bit signed/unsigned integers
+    * src/mat5.c (WriteStructField): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat5.c (WriteCompressedStructField): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat5.c (Read5): Added cases for 64-bit signed/unsigned
+      integers
+    * src/mat5.c (ReadData5): Added cases for 64-bit signed/unsigned
+      integers
+    * src/mat5.c (Write5): Added cases for 64-bit signed/unsigned
+      integers
+    * src/mat5.c (WriteInfo5): Added cases for 64-bit signed/unsigned
+      integers
+    * src/mat5.c (Mat_VarPrint5): Added cases for 64-bit
+      signed/unsigned integers
+
+    * src/io.c (Mat_SizeOf): Added cases for 64-bit signed/unsigned
+      integers
+
+    * src/mat.c (Mat_SizeOfClass): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat.c (Mat_VarCreate): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat.c (Mat_VarReadDataLinear): Added cases for 64-bit
+      signed/unsigned integers
+    * src/mat.c (Mat_VarWriteData): Added cases for 64-bit
+      signed/unsigned integers
+
+    * src/inflate.c (InflateSkipData): Added cases for 64-bit
+      signed/unsigned integers
+
+    * test/test_mat.c (test_write): Added 64-bit integers if available
+    * test/test_mat.c (test_write_compressed): Added 64-bit integers
+      if available
+
+2006-10-08 13:48  chulbe2lsu
+
+	* src/read_data.c (ReadDataSlabN): Fixed unset value dimp[0]
+	* src/read_data.c (ReadDataSlabN): Fixed variable I to include the
+	  data skipped for the starting indeces
+	* src/read_data.c (ReadDataSlabN): Consolidates fseek operations
+	  in skipping the starting indeces to a single call
+	  
+	* src/read_data.c (ReadCompressedDataSlabN): Fixed variable I to
+	  include the data skipped for the starting indeces which fixes
+	  the tests in the data loop an eliminates trying to decompress
+	  more data than available
+	  src/read_data.c (ReadCompressedDataSlabN): Consolidates
+	  InflateSkipData operations in skipping the starting indeces to a
+	  single call
+	  
+	* src/mat5.c (ReadData5): Fixed call to ReadCompressedDataSlabN
+	  with uncompressed data where the matvar->z compressions stream
+	  was passed instead of &z which caused a data checksum error and
+	  resulted in incorrect data
+	  
+	* src/inflate.c (InflateSkip): Changed inflate flush type to Z_FULL_FLUSH
+
+2006-10-05 21:27  chulbe2lsu
+
+	* src/inflate.c: src/inflate.c (InflateSkip): Changed buffer sizes
+	  to 512 bytes and performed more decompression at a time
+
+2006-09-29 06:22  chulbe2lsu
+
+	* inflate.c (InflateDataType): Changed matvar_t argument to z_stream
+	* matio_private.h (InflateDataType): Updated prototype
+	* mat5.c (Read5): Updated calls to InflateDataType
+	  
+	* mat5.c (ReadData5): Fixed bug where the size of the data was not
+	  being read, so random variable tag[1] was being used
+	* mat5.c (ReadData5): Fixed bug where the file pointer was set to
+	  the complex data block, but the compression stream was not in
+	  sync
+	* mat5.c (ReadData5): Fixed N-d complex support
+
+2006-09-24 20:08  chulbe2lsu
+
+	* ChangeLog, src/mat5.c, src/mat5.h, test/test_mat.c: mat5.h
+	  (WriteCellArrayFieldInfo): Added prototype
+	  
+	* mat5.h (WriteCompressedCellArrayField): Added
+	* mat5.c (GetCellArrayFieldBufSize): Added
+	* mat5.c (GetStructFieldBufSize): Changed function call to
+	  determine size of a cell array field to GetCellArrayFieldBufSize
+	  
+	* mat5.c (GetMatrixMaxBufSize): Changed function call to determine
+	  size of a cell array field to GetCellArrayFieldBufSize
+	  
+	* mat5.h (WriteCellArrayField): Removed unused argument compress
+	* mat5.c (WriteCellArrayField): Removed unused argument compress
+	* mat5.c (WriteCellArrayFieldInfo): Removed unused argument compress
+	* mat5.c (WriteCellArrayFieldInfo): Removed compress argument
+	* mat5.c (WriteStructField): Removed compress argument in call to
+	  WriteCellArrayField
+	* mat5.c (Write5): Removed compress argument in call to WriteCellArrayField
+	  
+	* mat5.c (WriteCompressedCellArrayField): Added
+	  
+	* mat5.c (WriteCompressedStructField): Fixed function call to
+	  write compressed cell array fields
+	  
+	* mat5.c (Write5): Uncommented case when writing compressed cell
+	  arrays and fixed fixed function call to write compressed cell array fields
+	  
+	* test_mat.c (helptest_readvar4): Added
+	* test_mat.c (helptest_readvarinfo4): Added
+	  
+	* test_mat.c (help_test): Added checks for write_compressed_sparse,
+	  write_compressed_cell, readvar4, and readvarinfo4
+	  
+	* test_mat.c (test_write_compressed_struct): Inserted a cell array
+	  into index 5 and pushed the structure index back one
+	* test_mat.c (helptest_write_compressed_struct): Inserted a cell
+	  array into index 5 and pushed the structure index back one
+	  
+	* test_mat.c (test_write_cell): Added a fifth index which is a
+	  cell array to test writing nested cell arrays
+	* test_mat.c (helptest_writecell): Added fifth index which is a
+	  cell array
+	  
+	* test_mat.c (test_write_compressed_cell): Added
+	* test_mat.c (helptest_write_compressed_cell): Added
+	  
+	* test_mat.c (test_write_compressed_sparse): Added
+	* test_mat.c (helptest_write_compressed_sparse): Added
+	  
+	* test_mat.c (main): Added checks for tests write_compressed_cell
+	  and write_compressed_sparse
+
+2006-09-11 02:06  chulbe2lsu
+
+	* mat5.h (WriteCompressedCharData): Added prototype
+	  
+	* mat5.c (WriteCompressedCharData): Added
+	  
+	* mat5.c (Write5): Added case for compressed char class
+	  
+	* mat5.c (WriteCompressedStructField): Added case for compressed
+	  char class
+	  
+	* test_mat.c (test_write_struct,test_write_compressed_struct):
+	  Added character class field
+
+2006-09-11 01:06  chulbe2lsu
+
+	* mat5.h: Changed return value of WriteCompressedStructField to size_t
+	  
+	* mat5.c (GetStructFieldBufSize): Added
+	  
+	* mat5.c (GetMatrixMaxBufSize): Changed function used to calculate
+	  the number of bytes in a struct field
+	  
+	* mat5.c (WriteCompressedStructField): Updated MAT_C_STRUCT case
+	  for compressed output
+	  
+	* mat5.c (Write5): Fixed tag in uncompressed output when the
+	  variable name is 4 chars or less
+	  
+	* mat5.c (Write5): Updated MAT_C_STRUCT case for compressed output
+	  
+	* test_mat.c (test_write_compressed_struct): Fixed the test and
+	  added help documentation for it
+	  
+	* test_mat.c: Renamed writestruct test to write_struct
+

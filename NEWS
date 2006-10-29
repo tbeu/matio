@@ -1,0 +1,62 @@
+Changes in 1.3.2 (28 October 2006)
+* Added support for writing compressed character classes, structures, cell arrays, and sparse arrays
+* Added some tests to the test_mat program: write_compressed_cell, write_compressed_sparse
+* Added 64-bit signed/unsigned integer support
+* Fixed bugs in Reading slabs of N-dimensional data
+
+Changes in 1.3.1 (7 Septempber 2006)
+* Added some internal documentation to the library
+* Defined two documentation groups public and internal
+* Disabled the building of test programs by default and added a configure
+  option to build them
+* Fixed installation path of data and documentation
+* Fixed bugs where file pointers were left open if allocating memory failed in Mat_Open and Mat_Create
+
+Changes in 1.3.0 (30 June 2006)
+* Cleaned out matio.h and made most preproccessor define's into enum's.
+* Moved complex arrays from single pointer with real part followed by imaginary
+  part to a struct with a pointer to the real part and a pointer to the
+  imaginary part (Previous implementation was just plain ignorant).
+* Changed version 4 mat file code from MAT_V4 to MAT_FT_MAT4 to match the
+  version 5 identifier.
+* Added function Mat_VarCalloc to allocate and initialize all fields of the
+  matvar_t structure.
+Bug Fixes in 1.3.0 (30 June 2006)
+* WriteCompressedData did not initialize the data tag (data_tag variable).
+* WriteStructField wrote the array name tag as a 2 byte integer followed by 2
+  padding bytes. Correct implementation writes the array name tag as a 4 byte
+  integer.
+* Write5 wrote the array name tag as a 2 byte integer followed by 2
+  padding bytes when the name was more than 4 characters. Correct
+  implementation writes the array name tag as a 4 byte integer.
+* Write5 had a hard-coded uncompressed variable size of 448 when writing
+  compressed data.
+* WriteInfo5 wrote the array name tag as a 2 byte integer followed by 2
+  padding bytes when the name was more than 4 characters. Correct
+  implementation writes the array name tag as a 4 byte integer.
+* Mat_Create wrote the endian sequence incorrectly.
+* Mat_VarCreate set the number of bytes incorrectly for structures.
+* Mat_VarCreate fixed the data size of the character class to 1. That didn't
+  allow for multi-byte characters.
+
+Changes in 1.1.6 (20 March 2006)
+* Added sparse class to compressed variable.
+Bug Fixes in 1.1.6 (20 March 2006)
+* Fixed release bug in reading double class data.
+* Fixed various compressed variable writing bugs.
+* Fixed a bug in Mat_VarCreate for sparse variables.
+
+Changes in 1.1.4 (9 February 2006)
+* Changed Licensing from the GNU General Public License to the GNU Lesser
+  General Public License.
+* Added support for reading numeric version 4 MAT files
+* Added support for sparse datatypes other than double.  Although Matlab does
+  not support these types, other free software does.
+* Writing compressed variables is supported for Numeric arrays.  Future versions
+  will implement character,sparse,cell, and structure arrays.
+* A fortran 90/95 interface has been incorporated.  Not all functions are
+  implemented yet, but more will come and it is at least functional now.
+  Hopefully feedback will help guide the fortran interface development.
+* Replaced preprocessor defines for types,classes,etc. with enum's.
+Bug Fixes in 1.1.4 (9 January 2006)
+* Mat_VarReadData did not handle complex data

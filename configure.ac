@@ -2,7 +2,7 @@ dnl  conFigure.ac
 dnl
 dnl  NOTE:  Process this file with GNU autoconf to produce a configure script.
 
-AC_INIT([MATIO],[1.3.1],[cch@isl-inc.com],[])
+AC_INIT([MATIO],[1.3.2],[cch@isl-inc.com],[])
 AC_CONFIG_SRCDIR([src/matio.h])
 AC_CONFIG_AUX_DIR(config)
 dnl AM_INIT_AUTOMAKE([-no-undefined])
@@ -13,8 +13,8 @@ AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED(MATIO_PLATFORM,"${host}")
 AC_DEFINE_UNQUOTED(MATIO_MAJOR_VERSION,1)
 AC_DEFINE_UNQUOTED(MATIO_MINOR_VERSION,3)
-AC_DEFINE_UNQUOTED(MATIO_RELEASE_LEVEL,1)
-PACKAGE_RELEASE_DATE="7 September 2006"
+AC_DEFINE_UNQUOTED(MATIO_RELEASE_LEVEL,2)
+PACKAGE_RELEASE_DATE="28 October 2006"
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
 AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])

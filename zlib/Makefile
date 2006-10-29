@@ -18,7 +18,7 @@
 
 CC=gcc
 
-CFLAGS=-O2 -DZ_PREFIX -fpic -DUSE_MMAP
+CFLAGS=-O3 -DZ_PREFIX -fpic -DUSE_MMAP
 #CFLAGS=-O -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7
 #CFLAGS=-g -DDEBUG
 #CFLAGS=-O3 -Wall -Wwrite-strings -Wpointer-arith -Wconversion \
@@ -39,9 +39,9 @@ TAR=tar
 SHELL=/bin/sh
 EXE=
 
-prefix =/home/chulbert
+prefix =/home/chulbert/matio_v1.3.1
 exec_prefix =${prefix}
-libdir =/home/chulbert/lib
+libdir =/home/chulbert/matio_v1.3.1/lib64
 includedir =${prefix}/include
 mandir =${prefix}/share/man
 man3dir = ${mandir}/man3
