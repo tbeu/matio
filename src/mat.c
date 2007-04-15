@@ -186,7 +186,7 @@ Mat_Open(const char *matname,int mode)
             mat->byteswap = 0;
         else if (tmp == 0x494d) {
             mat->byteswap = 1;
-            int16Swap(&tmp2);
+            Mat_int16Swap(&tmp2);
         }
         mat->version = (int)tmp2;
 
@@ -217,15 +217,17 @@ Mat_Open(const char *matname,int mode)
 int
 Mat_Close( mat_t *mat )
 {
-    if ( mat->fp )
-        fclose(mat->fp);
-    if ( mat->header )
-        free(mat->header);
-    if ( mat->subsys_offset )
-        free(mat->subsys_offset);
-    if ( mat->filename )
-        free(mat->filename);
-    free(mat);
+    if ( NULL != mat ) {
+        if ( mat->fp )
+            fclose(mat->fp);
+        if ( mat->header )
+            free(mat->header);
+        if ( mat->subsys_offset )
+            free(mat->subsys_offset);
+        if ( mat->filename )
+            free(mat->filename);
+        free(mat);
+    }
     return 0;
 }
 
@@ -1399,8 +1401,8 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
     if ( matvar->compression == COMPRESSION_NONE ) {
         fread(tag,4,2,mat->fp);
         if ( mat->byteswap ) {
-            int32Swap(tag);
-            int32Swap(tag+1);
+            Mat_int32Swap(tag);
+            Mat_int32Swap(tag+1);
         }
         data_type = tag[0] & 0x000000ff;
         if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
@@ -1411,8 +1413,8 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
         matvar->z->avail_in = 0;
         InflateDataType(mat,matvar,tag);
         if ( mat->byteswap ) {
-            int32Swap(tag);
-            int32Swap(tag+1);
+            Mat_int32Swap(tag);
+            Mat_int32Swap(tag+1);
         }
         data_type = tag[0] & 0x000000ff;
         if ( !(tag[0] & 0xffff0000) ) {/* Data is NOT packed in the tag */
@@ -1734,8 +1736,8 @@ Mat_VarReadInfo( mat_t *mat, char *name )
             return NULL;
         err = fread(&nBytes,4,1,mat->fp);
         if ( mat->byteswap ) {
-            int32Swap(&data_type);
-            int32Swap(&nBytes);
+            Mat_int32Swap(&data_type);
+            Mat_int32Swap(&nBytes);
         }
         curpos = ftell(mat->fp);
         fseek(mat->fp,-8,SEEK_CUR);
