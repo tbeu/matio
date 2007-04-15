@@ -65,7 +65,7 @@ ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
             if ( mat->byteswap ) {
                 bytesread += fread(data,data_size,len,mat->fp);
                 for ( i = 0; i < len; i++ ) {
-                    (void)doubleSwap(data+i);
+                    (void)Mat_doubleSwap(data+i);
                 }
             } else {
                 bytesread += fread(data,data_size,len,mat->fp);
@@ -80,7 +80,7 @@ ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -98,7 +98,7 @@ ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -116,7 +116,7 @@ ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -134,7 +134,7 @@ ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -152,7 +152,7 @@ ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -245,7 +245,7 @@ ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
             if ( mat->byteswap ) {
                 InflateData(mat,z,data,len*data_size);
                 for ( i = 0; i < len; i++ )
-                    (void)doubleSwap(data+i);
+                    (void)Mat_doubleSwap(data+i);
             } else {
                 InflateData(mat,z,data,len*data_size);
             }
@@ -258,19 +258,19 @@ ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
                 if ( len <= 256 ){
                     InflateData(mat,z,buf.i32,len*data_size);
                     for ( i = 0; i < len; i++ )
-                        data[i] = int32Swap(buf.i32+i);
+                        data[i] = Mat_int32Swap(buf.i32+i);
                 } else {
                     int j;
                     len -= 256;
                     for ( i = 0; i < len; i+=256 ) {
                         InflateData(mat,z,buf.i32,256*data_size);
                         for ( j = 0; j < 256; j++ )
-                            data[i+j] = int32Swap(buf.i32+j);
+                            data[i+j] = Mat_int32Swap(buf.i32+j);
                     }
                     len = len-(i-256);
                     InflateData(mat,z,buf.i32,len*data_size);
                     for ( j = 0; j < len; j++ )
-                        data[i+j] = int32Swap(buf.i32+j);
+                        data[i+j] = Mat_int32Swap(buf.i32+j);
                 }
             } else {
                 if ( len <= 256 ){
@@ -300,19 +300,19 @@ ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
                 if ( len <= 256 ){
                     InflateData(mat,z,buf.ui32,len*data_size);
                     for ( i = 0; i < len; i++ )
-                        data[i] = uint32Swap(buf.ui32+i);
+                        data[i] = Mat_uint32Swap(buf.ui32+i);
                 } else {
                     int j;
                     len -= 256;
                     for ( i = 0; i < len; i+=256 ) {
                         InflateData(mat,z,buf.ui32,256*data_size);
                         for ( j = 0; j < 256; j++ )
-                            data[i+j] = uint32Swap(buf.ui32+j);
+                            data[i+j] = Mat_uint32Swap(buf.ui32+j);
                     }
                     len = len-(i-256);
                     InflateData(mat,z,buf.ui32,len*data_size);
                     for ( j = 0; j < len; j++ )
-                        data[i+j] = uint32Swap(buf.ui32+j);
+                        data[i+j] = Mat_uint32Swap(buf.ui32+j);
                 }
             } else {
                 if ( len <= 256 ) {
@@ -342,19 +342,19 @@ ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
                 if ( len <= 512 ){
                     InflateData(mat,z,buf.i16,len*data_size);
                     for ( i = 0; i < len; i++ )
-                        data[i] = int16Swap(buf.i16+i);
+                        data[i] = Mat_int16Swap(buf.i16+i);
                 } else {
                     int j;
                     len -= 512;
                     for ( i = 0; i < len; i+=512 ) {
                         InflateData(mat,z,buf.i16,512*data_size);
                         for ( j = 0; j < 512; j++ )
-                            data[i+j] = int16Swap(buf.i16+j);
+                            data[i+j] = Mat_int16Swap(buf.i16+j);
                     }
                     len = len-(i-512);
                     InflateData(mat,z,buf.i16,len*data_size);
                     for ( j = 0; j < len; j++ )
-                        data[i+j] = int16Swap(buf.i16+j);
+                        data[i+j] = Mat_int16Swap(buf.i16+j);
                 }
             } else {
                 if ( len <= 512 ) {
@@ -384,19 +384,19 @@ ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
                 if ( len <= 512 ){
                     InflateData(mat,z,buf.ui16,len*data_size);
                     for ( i = 0; i < len; i++ )
-                        data[i] = uint16Swap(buf.ui16+i);
+                        data[i] = Mat_uint16Swap(buf.ui16+i);
                 } else {
                     int j;
                     len -= 512;
                     for ( i = 0; i < len; i+=512 ) {
                         InflateData(mat,z,buf.ui16,512*data_size);
                         for ( j = 0; j < 512; j++ )
-                            data[i+j] = uint16Swap(buf.ui16+j);
+                            data[i+j] = Mat_uint16Swap(buf.ui16+j);
                     }
                     len = len-(i-512);
                     InflateData(mat,z,buf.ui16,len*data_size);
                     for ( j = 0; j < len; j++ )
-                        data[i+j] = uint16Swap(buf.ui16+j);
+                        data[i+j] = Mat_uint16Swap(buf.ui16+j);
                 }
             } else {
                 if ( len <= 512 ) {
@@ -498,7 +498,7 @@ ReadSingleData(mat_t *mat,float *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,mat->fp);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -516,7 +516,7 @@ ReadSingleData(mat_t *mat,float *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -534,7 +534,7 @@ ReadSingleData(mat_t *mat,float *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -552,7 +552,7 @@ ReadSingleData(mat_t *mat,float *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -570,7 +570,7 @@ ReadSingleData(mat_t *mat,float *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -588,7 +588,7 @@ ReadSingleData(mat_t *mat,float *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -671,7 +671,7 @@ ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -689,7 +689,7 @@ ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -706,7 +706,7 @@ ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -724,7 +724,7 @@ ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -742,7 +742,7 @@ ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -760,7 +760,7 @@ ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -829,7 +829,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,mat->fp);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -847,7 +847,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -865,7 +865,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i64,data_size,1,mat->fp);
-                    data[i] = int64Swap(&i64);
+                    data[i] = Mat_int64Swap(&i64);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -883,7 +883,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui64,data_size,1,mat->fp);
-                    data[i] = uint64Swap(&ui64);
+                    data[i] = Mat_uint64Swap(&ui64);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -901,7 +901,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -919,7 +919,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -937,7 +937,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -955,7 +955,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1039,7 +1039,7 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1057,7 +1057,7 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1075,7 +1075,7 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i64,data_size);
-                    data[i] = int64Swap(&i64);
+                    data[i] = Mat_int64Swap(&i64);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1093,7 +1093,7 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui64,data_size);
-                    data[i] = uint64Swap(&ui64);
+                    data[i] = Mat_uint64Swap(&ui64);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1111,7 +1111,7 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1129,7 +1129,7 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1147,7 +1147,7 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1165,7 +1165,7 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1235,7 +1235,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,mat->fp);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1253,7 +1253,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1271,7 +1271,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i64,data_size,1,mat->fp);
-                    data[i] = int64Swap(&i64);
+                    data[i] = Mat_int64Swap(&i64);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1289,7 +1289,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui64,data_size,1,mat->fp);
-                    data[i] = uint64Swap(&ui64);
+                    data[i] = Mat_uint64Swap(&ui64);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1307,7 +1307,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1325,7 +1325,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1343,7 +1343,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1361,7 +1361,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1445,7 +1445,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1463,7 +1463,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1481,7 +1481,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i64,data_size);
-                    data[i] = int64Swap(&i64);
+                    data[i] = Mat_int64Swap(&i64);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1499,7 +1499,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui64,data_size);
-                    data[i] = uint64Swap(&ui64);
+                    data[i] = Mat_uint64Swap(&ui64);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1517,7 +1517,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1535,7 +1535,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1553,7 +1553,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1571,7 +1571,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1640,7 +1640,7 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,mat->fp);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1658,7 +1658,7 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1676,7 +1676,7 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1694,7 +1694,7 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1712,7 +1712,7 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1730,7 +1730,7 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1814,7 +1814,7 @@ ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1832,7 +1832,7 @@ ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1850,7 +1850,7 @@ ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1868,7 +1868,7 @@ ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1886,7 +1886,7 @@ ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1904,7 +1904,7 @@ ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1972,7 +1972,7 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,mat->fp);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -1990,7 +1990,7 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2008,7 +2008,7 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2026,7 +2026,7 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2044,7 +2044,7 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2062,7 +2062,7 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2146,7 +2146,7 @@ ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2164,7 +2164,7 @@ ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2182,7 +2182,7 @@ ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2200,7 +2200,7 @@ ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2218,7 +2218,7 @@ ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2236,7 +2236,7 @@ ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2304,7 +2304,7 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,mat->fp);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2322,7 +2322,7 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2340,7 +2340,7 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2358,7 +2358,7 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2376,7 +2376,7 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2394,7 +2394,7 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2478,7 +2478,7 @@ ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2496,7 +2496,7 @@ ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2514,7 +2514,7 @@ ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2532,7 +2532,7 @@ ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2550,7 +2550,7 @@ ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2568,7 +2568,7 @@ ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2636,7 +2636,7 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,mat->fp);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2654,7 +2654,7 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2672,7 +2672,7 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2690,7 +2690,7 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2708,7 +2708,7 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2726,7 +2726,7 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2810,7 +2810,7 @@ ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2828,7 +2828,7 @@ ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2846,7 +2846,7 @@ ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2864,7 +2864,7 @@ ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2882,7 +2882,7 @@ ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2900,7 +2900,7 @@ ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2968,7 +2968,7 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,mat->fp);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -2986,7 +2986,7 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3004,7 +3004,7 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3022,7 +3022,7 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3040,7 +3040,7 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3058,7 +3058,7 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3142,7 +3142,7 @@ ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3160,7 +3160,7 @@ ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3178,7 +3178,7 @@ ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3196,7 +3196,7 @@ ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3214,7 +3214,7 @@ ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3232,7 +3232,7 @@ ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3300,7 +3300,7 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,mat->fp);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3318,7 +3318,7 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,mat->fp);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3336,7 +3336,7 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,mat->fp);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3354,7 +3354,7 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,mat->fp);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3372,7 +3372,7 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,mat->fp);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3390,7 +3390,7 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,mat->fp);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3474,7 +3474,7 @@ ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
-                    data[i] = doubleSwap(&d);
+                    data[i] = Mat_doubleSwap(&d);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3492,7 +3492,7 @@ ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
-                    data[i] = floatSwap(&f);
+                    data[i] = Mat_floatSwap(&f);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3510,7 +3510,7 @@ ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
-                    data[i] = int32Swap(&i32);
+                    data[i] = Mat_int32Swap(&i32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3528,7 +3528,7 @@ ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
-                    data[i] = uint32Swap(&ui32);
+                    data[i] = Mat_uint32Swap(&ui32);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3546,7 +3546,7 @@ ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = int16Swap(&i16);
+                    data[i] = Mat_int16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3564,7 +3564,7 @@ ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
-                    data[i] = uint16Swap(&ui16);
+                    data[i] = Mat_uint16Swap(&ui16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3645,7 +3645,7 @@ ReadCompressedCharData(mat_t *mat,z_stream *z,char *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = uint16Swap(&i16);
+                    data[i] = Mat_uint16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
@@ -3690,7 +3690,7 @@ ReadCharData(mat_t *mat,char *data,int data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,2,1,mat->fp);
-                    data[i] = uint16Swap(&i16);
+                    data[i] = Mat_uint16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
