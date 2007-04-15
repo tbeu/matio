@@ -123,8 +123,13 @@ fmat_open_c(char *filename, int *mode, struct fmat_t *mat, int len)
         Mat_Critical("Error opening file %s", fname);
         err = 1;
     } else {
-        strncpy(mat->header,mat->mat_t_c_ptr->header,
-                strlen(mat->mat_t_c_ptr->header));
+        if (mat->mat_t_c_ptr->version & MAT_FT_MAT4) {
+	        /* V-4 matlab files don't have a header */
+	        strcpy(mat->header, "INVALID - V4 FORMAT");
+	    } else {
+            strncpy(mat->header,mat->mat_t_c_ptr->header,
+		            strlen(mat->mat_t_c_ptr->header));
+	    }
     }
     free(fname);
 
