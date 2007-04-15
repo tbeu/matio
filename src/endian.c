@@ -34,7 +34,7 @@
  * @return the swapped integer
  */
 mat_int64_t
-int64Swap( mat_int64_t *a )
+Mat_int64Swap( mat_int64_t *a )
 {
 
     union {
@@ -63,7 +63,7 @@ int64Swap( mat_int64_t *a )
  * @return the swapped integer
  */
 mat_uint64_t
-uint64Swap( mat_uint64_t *a )
+Mat_uint64Swap( mat_uint64_t *a )
 {
 
     union {
@@ -91,7 +91,7 @@ uint64Swap( mat_uint64_t *a )
  * @return the swapped integer
  */
 mat_int32_t
-int32Swap( mat_int32_t *a )
+Mat_int32Swap( mat_int32_t *a )
 {
 
     union {
@@ -116,7 +116,7 @@ int32Swap( mat_int32_t *a )
  * @return the swapped integer
  */
 mat_uint32_t
-uint32Swap( mat_uint32_t *a )
+Mat_uint32Swap( mat_uint32_t *a )
 {
 
     union {
@@ -141,7 +141,7 @@ uint32Swap( mat_uint32_t *a )
  * @return the swapped integer
  */
 mat_int16_t
-int16Swap( mat_int16_t *a ) 
+Mat_int16Swap( mat_int16_t *a ) 
 {
 
     union {
@@ -164,7 +164,7 @@ int16Swap( mat_int16_t *a )
  * @return the swapped integer
  */
 mat_uint16_t
-uint16Swap( mat_uint16_t *a ) 
+Mat_uint16Swap( mat_uint16_t *a ) 
 {
 
     union {
@@ -187,7 +187,7 @@ uint16Swap( mat_uint16_t *a )
  * @return the swapped integer
  */
 float
-floatSwap( float *a )
+Mat_floatSwap( float *a )
 {
 
     union {
@@ -211,7 +211,7 @@ floatSwap( float *a )
  * @return the swapped integer
  */
 double
-doubleSwap( double *a )
+Mat_doubleSwap( double *a )
 {
 #ifndef SIZEOF_DOUBLE
 #define SIZEOF_DOUBLE 8
