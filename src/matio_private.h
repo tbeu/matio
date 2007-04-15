@@ -18,18 +18,18 @@ EXTERN int mat_vsnprintf(char *str,size_t count,const char *fmt,va_list args);
 EXTERN int mat_vasprintf(char **ptr,const char *format,va_list ap);
 
 /*   endian.c     */
-EXTERN double       doubleSwap(double  *a);
-EXTERN float         floatSwap(float   *a);
+EXTERN double        Mat_doubleSwap(double  *a);
+EXTERN float         Mat_floatSwap(float   *a);
 #ifdef HAVE_MAT_INT64_T
-EXTERN mat_int64_t   int64Swap(mat_int64_t  *a);
+EXTERN mat_int64_t   Mat_int64Swap(mat_int64_t  *a);
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-EXTERN mat_uint64_t uint64Swap(mat_uint64_t *a);
+EXTERN mat_uint64_t  Mat_uint64Swap(mat_uint64_t *a);
 #endif /* HAVE_MAT_UINT64_T */
-EXTERN mat_int32_t   int32Swap(mat_int32_t  *a);
-EXTERN mat_uint32_t uint32Swap(mat_uint32_t *a);
-EXTERN mat_int16_t   int16Swap(mat_int16_t  *a);
-EXTERN mat_uint16_t uint16Swap(mat_uint16_t *a);
+EXTERN mat_int32_t   Mat_int32Swap(mat_int32_t  *a);
+EXTERN mat_uint32_t  Mat_uint32Swap(mat_uint32_t *a);
+EXTERN mat_int16_t   Mat_int16Swap(mat_int16_t  *a);
+EXTERN mat_uint16_t  Mat_uint16Swap(mat_uint16_t *a);
 
 /* read_data.c */
 EXTERN int ReadDoubleData(mat_t *mat,double  *data,int data_type,int len);
