@@ -167,4 +167,8 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
             AC_MSG_RESULT([long long])
         fi
     fi
+    if test "x$ac_have_mat_int16_t" != "xyes"
+    then
+        AC_MSG_RESULT([])
+    fi
 ])

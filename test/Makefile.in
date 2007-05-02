@@ -86,8 +86,6 @@ LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 FCCOMPILE = $(FC) $(AM_FCFLAGS) $(FCFLAGS)
 LTFCCOMPILE = $(LIBTOOL) --mode=compile $(FC) $(AM_FCFLAGS) $(FCFLAGS)
 FCLD = $(FC)
-FCLINK = $(LIBTOOL) --mode=link $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(test_mat_SOURCES) $(test_matf_SOURCES) \
 	$(test_snprintf_SOURCES)
 DIST_SOURCES = $(test_mat_SOURCES) $(am__test_matf_SOURCES_DIST) \
@@ -129,6 +127,7 @@ FC = @FC@
 FCFLAGS = @FCFLAGS@
 FCLDFLAGS = @FCLDFLAGS@
 FCLIBS = @FCLIBS@
+FCLINK = @FCLINK@
 FGREP = @FGREP@
 GREP = @GREP@
 HAVE_ZLIB_FALSE = @HAVE_ZLIB_FALSE@

@@ -103,8 +103,8 @@ else
 fi
 
 dnl
-dnl Check for user-defined suffix to the library directories for installation
-dnl and search. i.e. --with-libdir-suffix=64 looks in lib64 and
+dnl Check for user-defined suffix to the library/include directories for
+dnl installation and search. i.e. --with-libdir-suffix=64 looks in lib64 and
 dnl --with-libdir-suffix=/x86_64 would look in lib/x86_64
 dnl
 MATIO_CHECK_LIBDIR_SUFFIX
@@ -113,7 +113,6 @@ dnl
 dnl Set library directories to include libdir suffix
 dnl
 acl_libdirstem="lib$with_libdir_suffix"
-libdir="$libdir$with_libdir_suffix"
 
 dnl
 dnl If debugging is enabled, add debugging options to the flags
@@ -371,12 +370,18 @@ else
 fi  
 AM_CONDITIONAL(DOCS_INSTALL, test "x$docs_install" = "xyes")
 
-dnl if test "$enable_fortran" = "yes"
-dnl then
-dnl     AC_CONFIG_SUBDIRS(fortran)
-dnl fi
-
 AM_CONDITIONAL(ENABLE_FORTRAN, test "$enable_fortran" = "yes" )
+
+dnl
+dnl Without this, the linker line is incorrect on platforms without a fortran
+dnl compiler even if we are not using fortran sources
+dnl
+if test "x$enable_fortran" != "xyes"; then
+  FCLINK='$(LINK)'
+else
+  FCLINK='$(LIBTOOL) --mode=link $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@'
+fi
+AC_SUBST(FCLINK)
 
 AC_CONFIG_FILES([Makefile \
                  matio.pc \

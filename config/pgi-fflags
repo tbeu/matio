@@ -7,9 +7,9 @@ case $build_os in
     REL_FCFLAGS=""
     ;;
 *)
-    DEBUG_FCFLAGS="-O0 -Wall -g -Mrecursive"
-    PROFILE_FCFLAGS="-g -pfi"
+    DEBUG_FCFLAGS="-O0 -g -Mrecursive"
+    PROFILE_FCFLAGS="-g -Mprof=line"
     FCLDFLAGS=""
-    REL_FCFLAGS="-O3 -Mrecursive -Mipa -fastsse -Wl,-s"
+    REL_FCFLAGS="-O3 -Mrecursive -Mipa -fastsse"
     ;;
 esac

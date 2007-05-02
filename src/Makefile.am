@@ -18,10 +18,10 @@ libmatio_la_SOURCES = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
                       mat5.c mat4.c mat.c
 
 if ENABLE_FORTRAN
-AM_FCFLAGS           = -I. -I$(top_builddir)/src/fortran
-AM_LDFLAGS          +=  $(FCLDFLAGS)
-libmatio_la_SOURCES +=  fortran/matio_internal.c fortran/matio.f90
-include_HEADERS     +=  $(top_builddir)/src/matio.mod
+    AM_FCFLAGS           = -I. -I$(top_builddir)/src/fortran
+    AM_LDFLAGS          +=  $(FCLDFLAGS)
+    include_HEADERS     +=  $(top_builddir)/src/matio.mod
+    libmatio_la_SOURCES += fortran/matio_internal.c fortran/matio.f90
 endif
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \

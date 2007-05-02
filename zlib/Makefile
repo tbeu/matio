@@ -39,9 +39,9 @@ TAR=tar
 SHELL=/bin/sh
 EXE=
 
-prefix =/home/chulbert/matio_v1.3.1
+prefix =/opt/matio
 exec_prefix =${prefix}
-libdir =/home/chulbert/matio_v1.3.1/lib64
+libdir =/opt/matio/lib
 includedir =${prefix}/include
 mandir =${prefix}/share/man
 man3dir = ${mandir}/man3

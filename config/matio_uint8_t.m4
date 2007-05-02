@@ -167,4 +167,8 @@ AC_DEFUN([CHECK_MATIO_UINT8_T],
             AC_MSG_RESULT([unsigned long long])
         fi
     fi
+    if test "x$ac_have_mat_uint8_t" != "xyes"
+    then
+        AC_MSG_RESULT([])
+    fi
 ])
