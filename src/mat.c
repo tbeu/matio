@@ -172,8 +172,10 @@ Mat_Open(const char *matname,int mode)
         mat->filename = strdup_printf("%s",matname);
         mat->bof           = ftell(mat->fp);
     } else {
-        mat->header = malloc(128);
+        mat->header        = malloc(128);
         mat->subsys_offset = malloc(8);
+        mat->filename      = NULL;
+
         err = fread(mat->header,1,116,fp);
         mat->header[116] = '\0';
         err = fread(mat->subsys_offset,1,8,fp);
