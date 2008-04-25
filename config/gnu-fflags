@@ -1,4 +1,0 @@
-DEBUG_FCFLAGS="-O0 -Wall -g"
-PROFILE_FCFLAGS="-g -p"
-FCFLAGS="$FCFLAGS"
-REL_FCFLAGS="-O3 -ffast-math -Wl,-s"

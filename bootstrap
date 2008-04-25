@@ -2,7 +2,7 @@
 
 bootstrap() {
   libtoolize -f -c && \
-  aclocal -I config -I /apps/share/aclocal && \
+  aclocal -I config && \
   automake -a -c && \
   autoconf
 }

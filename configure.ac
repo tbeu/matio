@@ -2,19 +2,19 @@ dnl  conFigure.ac
 dnl
 dnl  NOTE:  Process this file with GNU autoconf to produce a configure script.
 
-AC_INIT([MATIO],[1.3.2],[cch@isl-inc.com],[])
+AC_INIT([MATIO],[1.3.3-SVN],[cch@isl-inc.com],[])
 AC_CONFIG_SRCDIR([src/matio.h])
 AC_CONFIG_AUX_DIR(config)
 dnl AM_INIT_AUTOMAKE([-no-undefined])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
-AC_PREREQ(2.59)
+AC_PREREQ([2.59])
 AC_CANONICAL_HOST
-AC_DEFINE_UNQUOTED(MATIO_PLATFORM,"${host}")
-AC_DEFINE_UNQUOTED(MATIO_MAJOR_VERSION,1)
-AC_DEFINE_UNQUOTED(MATIO_MINOR_VERSION,3)
-AC_DEFINE_UNQUOTED(MATIO_RELEASE_LEVEL,2)
-PACKAGE_RELEASE_DATE="28 October 2006"
+AC_DEFINE_UNQUOTED([MATIO_PLATFORM],["${host}"])
+AC_DEFINE_UNQUOTED([MATIO_MAJOR_VERSION],[1])
+AC_DEFINE_UNQUOTED([MATIO_MINOR_VERSION],[3])
+AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],[3])
+PACKAGE_RELEASE_DATE="25 April 2008"
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
 AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])
@@ -34,39 +34,10 @@ dnl  Build programs, C compiler, F77 compiler, make, install, etc.
 dnl
 AC_PROG_CC([pgcc icc gcc cc])
 
-case $CC in
-    *pgcc*)
-        . $srcdir/config/pgi-cflags
-        ;;
-    *icc*)
-        . $srcdir/config/intel-cflags
-        ;;
-    *gcc*)
-        . $srcdir/config/gnu-cflags
-        ;;
-    *cl | *cl.exe)
-        . $srcdir/config/ms-cflags
-        ;;
-esac
-
 if test "$enable_fortran" = "yes"
 then
     AC_PROG_FC([pgf95 pgf90 ifort gfortran g95])
-
-    case $FC in
-        *pgf9*)
-            . $srcdir/config/pgi-fflags
-            ;;
-        *ifort*)
-            . $srcdir/config/intel-fflags
-            ;;
-        *gfortran* | *g95*)
-            . $srcdir/config/gnu-fflags
-            ;;
-    esac
-
     AC_FC_WRAPPERS
-
     AC_CONFIG_FILES([src/fortran/matio_t.inc])
 fi
 
