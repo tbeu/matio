@@ -6,7 +6,8 @@ VPATH = @srcdir@
 ACLOCAL_AMFLAGS = -Iconfig
 
 datadir = $(prefix)/share/matio
-EXTRA_DIST = matio.pc.in
+EXTRA_DIST = matio.pc.in bootstrap patches/inflate.patch \
+             share/test_file.mat share/test_file_v6.mat
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = matio.pc

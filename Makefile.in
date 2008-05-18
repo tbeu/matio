@@ -215,7 +215,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 ACLOCAL_AMFLAGS = -Iconfig
-EXTRA_DIST = matio.pc.in
+EXTRA_DIST = matio.pc.in bootstrap patches/inflate.patch \
+             share/test_file.mat share/test_file_v6.mat
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = matio.pc
 @DOCS_INSTALL_TRUE@DOCS = doxygen

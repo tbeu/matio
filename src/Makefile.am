@@ -12,16 +12,19 @@ if HAVE_ZLIB
     ZLIB_SRC = inflate.c
 endif
 
+noinst_HEADERS      = matio_private.h mat4.h mat5.h
 include_HEADERS     = matio.h matioConfig.h
 lib_LTLIBRARIES     = libmatio.la
 libmatio_la_SOURCES = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
                       mat5.c mat4.c mat.c
 
 if ENABLE_FORTRAN
-    AM_FCFLAGS           = -I. -I$(top_builddir)/src/fortran
-    AM_LDFLAGS          +=  $(FCLDFLAGS)
-    include_HEADERS     +=  $(top_builddir)/src/matio.mod
-    libmatio_la_SOURCES += fortran/matio_internal.c fortran/matio.f90
+    AM_FCFLAGS             = -I. -I$(top_builddir)/src/fortran
+    AM_LDFLAGS            +=  $(FCLDFLAGS)
+    nodist_include_HEADERS =  $(top_builddir)/src/matio.mod
+    noinst_HEADERS        += fortran/create.f90 fortran/read_data.f90 \
+                             fortran/write_data.f90 fortran/write.f90
+    libmatio_la_SOURCES   += fortran/matio_internal.c fortran/matio.f90
 endif
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \

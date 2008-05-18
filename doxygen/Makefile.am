@@ -7,6 +7,8 @@
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 VPATH = @srcdir@
 
+EXTRA_DIST = header.tex doxygen.config format_api.sh textopdf.sh
+
 docdir = $(prefix)/share/doc/matio
 doc_DATA = $(top_builddir)/doxygen/latex/libmatio.pdf
 

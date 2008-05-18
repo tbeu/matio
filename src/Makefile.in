@@ -37,11 +37,14 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @ENABLE_FORTRAN_TRUE@am__append_1 = $(FCLDFLAGS)
-@ENABLE_FORTRAN_TRUE@am__append_2 = $(top_builddir)/src/matio.mod
+@ENABLE_FORTRAN_TRUE@am__append_2 = fortran/create.f90 fortran/read_data.f90 \
+@ENABLE_FORTRAN_TRUE@                             fortran/write_data.f90 fortran/write.f90
+
 @ENABLE_FORTRAN_TRUE@am__append_3 = fortran/matio_internal.c fortran/matio.f90
 subdir = src
-DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/matioConfig.h.in
+DIST_COMMON = $(am__noinst_HEADERS_DIST) $(include_HEADERS) \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/matioConfig.h.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/config/matio_int16_t.m4 \
 	$(top_srcdir)/config/matio_int32_t.m4 \
@@ -64,7 +67,8 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)" \
+	"$(DESTDIR)$(includedir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libmatio_la_LIBADD =
@@ -94,10 +98,13 @@ LTFCCOMPILE = $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 FCLD = $(FC)
 SOURCES = $(libmatio_la_SOURCES)
 DIST_SOURCES = $(am__libmatio_la_SOURCES_DIST)
-am__include_HEADERS_DIST = matio.h matioConfig.h \
-	$(top_builddir)/src/matio.mod
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
-HEADERS = $(include_HEADERS)
+nodist_includeHEADERS_INSTALL = $(INSTALL_HEADER)
+am__noinst_HEADERS_DIST = matio_private.h mat4.h mat5.h \
+	fortran/create.f90 fortran/read_data.f90 \
+	fortran/write_data.f90 fortran/write.f90
+HEADERS = $(include_HEADERS) $(nodist_include_HEADERS) \
+	$(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -223,11 +230,13 @@ AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 AM_CFLAGS = -I. $(ZLIB_CFLAGS)
 AM_LDFLAGS = $(am__append_1)
 @HAVE_ZLIB_TRUE@ZLIB_SRC = inflate.c
-include_HEADERS = matio.h matioConfig.h $(am__append_2)
+noinst_HEADERS = matio_private.h mat4.h mat5.h $(am__append_2)
+include_HEADERS = matio.h matioConfig.h
 lib_LTLIBRARIES = libmatio.la
 libmatio_la_SOURCES = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
 	mat5.c mat4.c mat.c $(am__append_3)
 @ENABLE_FORTRAN_TRUE@AM_FCFLAGS = -I. -I$(top_builddir)/src/fortran
+@ENABLE_FORTRAN_TRUE@nodist_include_HEADERS = $(top_builddir)/src/matio.mod
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \
               -e 's,\/,\\,g'
@@ -365,6 +374,23 @@ uninstall-includeHEADERS:
 	  echo " rm -f '$(DESTDIR)$(includedir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(includedir)/$$f"; \
 	done
+install-nodist_includeHEADERS: $(nodist_include_HEADERS)
+	@$(NORMAL_INSTALL)
+	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"
+	@list='$(nodist_include_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(nodist_includeHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(includedir)/$$f'"; \
+	  $(nodist_includeHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(includedir)/$$f"; \
+	done
+
+uninstall-nodist_includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nodist_include_HEADERS)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(includedir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(includedir)/$$f"; \
+	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -444,7 +470,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(HEADERS) matioConfig.h
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -491,7 +517,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-includeHEADERS
+install-data-am: install-includeHEADERS install-nodist_includeHEADERS
 
 install-dvi: install-dvi-am
 
@@ -526,7 +552,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
+uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES \
+	uninstall-nodist_includeHEADERS
 
 .MAKE: install-am install-strip
 
@@ -538,13 +565,14 @@ uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am \
 	install-includeHEADERS install-info install-info-am \
-	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
+	install-libLTLIBRARIES install-man \
+	install-nodist_includeHEADERS install-pdf install-pdf-am \
 	install-ps install-ps-am install-strip installcheck \
 	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-includeHEADERS \
-	uninstall-libLTLIBRARIES
+	uninstall-libLTLIBRARIES uninstall-nodist_includeHEADERS
 
 
 doc:
