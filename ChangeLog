@@ -1,3 +1,68 @@
+2008-05-02 18:49  chulbe2lsu
+
+    * src/mat4.c (Read4,ReadData4,Mat_VarPrint4): Fixed complex data to use "struct ComplexSplit"
+
+2008-04-25 12:54  chulbe2lsu
+
+    * src/mat.c (Mat_Open): Fixed a bug where mat->filename is not initialized before calling Mat_Close if the byteswap or version tests fail (reported by Scilab)
+
+2008-04-25 11:11  chulbe2lsu
+
+    * src/mat4.h, src/mat5.h, src/fortran/matio_t.inc.in: Fixed copyright from GPL to LGPL
+
+    * src/fortran/matio_t.inc.in: Changed MAT_FT_MAT4 to 65536 and added MAT_FT_MAT5 = 1
+
+2008-04-25 11:08  chulbe2lsu
+
+    * config/pgi-cflags,config/pgi-fflags,config/gnu-cflags,config/gnu-fflags,config/intel-cflags,config/intel-fflags: Removed
+
+    * configure.ac: Updated version to 1.3.3-SVN and date to 25 April 2008
+
+    * bootstrap: Removed /apps/share/aclocal from include path
+
+    * config/ltmain.sh: Updated to a patched version of libtool 2.2.2
+    * aclocal.m4: Updated with patched libtool 2.2.2 and automake 1.10
+
+2007-05-02 18:48 chulbe2lsu
+
+    * config/matio_uint32_t.m4,config/matio_uint16_t.m4,config/matio_uint64_t.m4,config/matio_int32_t.m4,config/matio_int16_t.m4,config/matio_int64_t.m4,config/matio_uint8_t.m4,config/matio_int8_t.m4: Added empty result if a suitable type was not found
+
+    * config/pgi-fflags,config/pgi-cflags: Removed unsupported flags
+
+    * configure.ac: Added fix for platforms without a fortran compiler
+
+2007-04-15 16:48  chulbe2lsu
+
+    * src/fortran/matio_internal.c (fmat_open_c): Applied contributed patch to avoid trying to copy the MAT file header for version 4 files
+
+    * src/fortran/matio_t.inc.in: Applied contributed patch adding a MAT_FT_MAT4 parameter
+
+2007-04-15 13:37  chulbe2lsu
+
+    * src/inflate.c (InflateDimensions): Added Mat_ prefix to byte-swapping function calls
+
+2007-04-15 13:35  chulbe2lsu
+
+    * src/matio_private.h: Added Mat_ prefix to byte-swapping functions
+
+2007-04-15 13:34  chulbe2lsu
+
+    * src/mat5.c (ReadNextCell,ReadNextStructField,WriteCellArrayFieldInfo,WriteStructField,Read5,ReadData5,Mat_VarReadNextInfo5): Added Mat_ prefix to byte-swapping function calls
+
+2007-04-15 13:31  chulbe2lsu
+
+    * src/read_data.c (ReadDoubleData,ReadCompressedDoubleData,ReadSingleData,ReadCompressedSingleData,ReadInt64Data,ReadCompressedInt64Data,ReadUInt64Data,ReadCompressedUInt64Data,ReadInt32Data,ReadCompressedInt32Data,ReadUInt32Data,ReadCompressedUInt32Data,ReadInt16Data,ReadCompressedInt16Data,ReadUInt16Data,ReadCompressedUInt16Data,ReadInt8Data,ReadCompressedInt8Data,ReadCharData): Added Mat_ prefix to byte-swapping function calls
+
+2007-04-15 13:27  chulbe2lsu
+
+    * src/mat.c (Mat_Open,Mat_VarReadDataLinear,Mat_VarReadDataLinear,Mat_VarReadInfo): Added Mat_ prefix to byte-swapping functions
+
+    * src/mat.c (Mat_Close): Added check that mat is not NULL
+
+2007-04-15 13:25  chulbe2lsu
+
+    * src/endian.c (int64Swap,uint64Swap,int32Swap,uint32Swap,int16Swap,uint16Swap,floatSwap,doubleSwap): Added Mat_ to function name
+
 2006-10-11 00:28  chulbe2lsu
 
     * src/endian.c (int64Swap,uint64Swap): Added preprocessor guards
