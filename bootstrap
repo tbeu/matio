@@ -1,7 +1,7 @@
 #! /bin/sh
 
 bootstrap() {
-  libtoolize -f -c && \
+  libtoolize -c && \
   aclocal -I config && \
   automake -a -c && \
   autoconf
