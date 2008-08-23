@@ -4793,8 +4793,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                                           Mat_SizeOf(matvar->data_type));
                 complex_data->Im = malloc(data->ndata*
                                           Mat_SizeOf(matvar->data_type));
-                if ( NULL == complex_data || NULL == complex_data->Re ||
-                     NULL == complex_data->Im ) {
+                if ( NULL != complex_data && NULL != complex_data->Re &&
+                     NULL != complex_data->Im ) {
                     if ( matvar->compression == COMPRESSION_NONE) {
 #if defined(EXTENDED_SPARSE)
                         switch ( matvar->data_type ) {
