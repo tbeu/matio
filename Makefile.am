@@ -3,7 +3,7 @@
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 VPATH = @srcdir@
 
-ACLOCAL_AMFLAGS = -Iconfig
+ACLOCAL_AMFLAGS = -I config
 
 datadir = $(prefix)/share/matio
 EXTRA_DIST = matio.pc.in bootstrap patches/inflate.patch \

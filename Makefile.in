@@ -41,7 +41,12 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	NEWS config/config.guess config/config.sub config/depcomp \
 	config/install-sh config/ltmain.sh config/missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/config/matio_int16_t.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/config/libtool.m4 \
+	$(top_srcdir)/config/ltoptions.m4 \
+	$(top_srcdir)/config/ltsugar.m4 \
+	$(top_srcdir)/config/ltversion.m4 \
+	$(top_srcdir)/config/lt~obsolete.m4 \
+	$(top_srcdir)/config/matio_int16_t.m4 \
 	$(top_srcdir)/config/matio_int32_t.m4 \
 	$(top_srcdir)/config/matio_int64_t.m4 \
 	$(top_srcdir)/config/matio_int8_t.m4 \
@@ -135,6 +140,7 @@ LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
@@ -142,7 +148,10 @@ MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
+OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -214,7 +223,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
-ACLOCAL_AMFLAGS = -Iconfig
+ACLOCAL_AMFLAGS = -I config
 EXTRA_DIST = matio.pc.in bootstrap patches/inflate.patch \
              share/test_file.mat share/test_file_v6.mat
 

@@ -2,9 +2,10 @@ dnl  conFigure.ac
 dnl
 dnl  NOTE:  Process this file with GNU autoconf to produce a configure script.
 
-AC_INIT([MATIO],[1.3.3],[cch@isl-inc.com],[])
+AC_INIT([MATIO],[1.3.4],[cch@isl-inc.com],[])
 AC_CONFIG_SRCDIR([src/matio.h])
-AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_AUX_DIR([config])
+AC_CONFIG_MACRO_DIR([config])
 dnl AM_INIT_AUTOMAKE([-no-undefined])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
