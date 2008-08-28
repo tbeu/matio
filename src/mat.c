@@ -489,7 +489,7 @@ Mat_VarCreate(const char *name,int class_type,int data_type,int rank,int *dims,
         matvar->nbytes = nmemb*matvar->data_size;
     } else if ( matvar->class_type == MAT_C_SPARSE ) {
         matvar->data_size = sizeof(sparse_t);
-        matvar->nbytes = nmemb*matvar->data_size;
+        matvar->nbytes = matvar->data_size;
     } else {
         matvar->nbytes = nmemb*matvar->data_size;
     }

@@ -338,7 +338,8 @@ WriteCharData(mat_t *mat, void *data, int N,int data_type)
             nBytes = N*2;
             fwrite(&data_type,4,1,mat->fp);
             fwrite(&nBytes,4,1,mat->fp);
-            fwrite(data,2,N,mat->fp);
+            if ( NULL != data && N > 0 )
+                fwrite(data,2,N,mat->fp);
             if ( nBytes % 8 )
                 for ( i = nBytes % 8; i < 8; i++ )
                     fwrite(&pad1,1,1,mat->fp);
@@ -356,6 +357,8 @@ WriteCharData(mat_t *mat, void *data, int N,int data_type)
             fwrite(&data_type,4,1,mat->fp);
             fwrite(&nBytes,4,1,mat->fp);
             ptr = data;
+            if ( NULL == ptr )
+                break;
             for ( i = 0; i < N; i++ ) {
                 c = (mat_uint16_t)*(char *)ptr;
                 fwrite(&c,2,1,mat->fp);
@@ -374,7 +377,8 @@ WriteCharData(mat_t *mat, void *data, int N,int data_type)
             fwrite(&data_type,4,1,mat->fp);
             fwrite(&nBytes,4,1,mat->fp);
             ptr = data;
-            fwrite(ptr,1,nBytes,mat->fp);
+            if ( NULL != ptr && nBytes > 0 )
+                fwrite(ptr,1,nBytes,mat->fp);
             if ( nBytes % 8 )
                 for ( i = nBytes % 8; i < 8; i++ )
                     fwrite(&pad1,1,1,mat->fp);
@@ -1344,13 +1348,18 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             cells[i]->fpos = ftell(mat->fp)-matvar->z->avail_in;
 
             /* Read variable tag for cell */
+            uncomp_buf[0] = 0;
+            uncomp_buf[1] = 0;
             bytesread += InflateVarTag(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(uncomp_buf);
                 (void)Mat_uint32Swap(uncomp_buf+1);
             }
             nbytes = uncomp_buf[1];
-            if ( uncomp_buf[0] != MAT_T_MATRIX ) {
+            if ( !nbytes ) {
+                /* empty cell */
+                continue;
+            } else if ( uncomp_buf[0] != MAT_T_MATRIX ) {
                 Mat_Critical("cells[%d], Uncompressed type not MAT_T_MATRIX",i);
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
@@ -1440,6 +1449,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
         }
         cells = (matvar_t **)matvar->data;
         for ( i = 0; i < ncells; i++ ) {
+            int cell_bytes_read;
             cells[i] = Mat_VarCalloc();
             if ( !cells[i] ) {
                 Mat_Critical("Couldn't allocate memory for cell %d", i);
@@ -1449,13 +1459,21 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             cells[i]->fpos = ftell(mat->fp);
 
             /* Read variable tag for cell */
-            bytesread += fread(buf,4,2,mat->fp);
+            cell_bytes_read = fread(buf,4,2,mat->fp);
+
+            /* Empty cells at the end of a file may cause an EOF */
+            if ( !cell_bytes_read )
+                continue;
+            bytesread += cell_bytes_read;
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
                 (void)Mat_uint32Swap(buf+1);
             }
             nBytes = buf[1];
-            if ( buf[0] != MAT_T_MATRIX ) {
+            if ( !nBytes ) {
+                /* empty cell */
+                continue;
+            } else if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
@@ -2532,12 +2550,18 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
         case MAT_C_STRUCT:
         {
             char **fieldnames, *padzero;
-            int    fieldname_size, nfields;
+            int    fieldname_size, nfields = 0;
             size_t maxlen = 0;
             matvar_t **fields = (matvar_t **)matvar->data;
             unsigned fieldname;
 
-            nfields = matvar->nbytes / (nmemb*matvar->data_size);
+            /* nmemb*matvar->data_size can be zero when saving a struct that
+             * contains an empty struct in one of its fields
+             * (e.g. x.y = struct('z', {})). If it's zero, we would divide
+             * by zero.
+             */
+            if ( nmemb*matvar->data_size )
+                nfields = matvar->nbytes / (nmemb*matvar->data_size);
             fieldnames = malloc(nfields*sizeof(char *));
             for ( i = 0; i < nfields; i++ ) {
                 fieldnames[i] = fields[i]->name;
@@ -2853,6 +2877,16 @@ Read5(mat_t *mat, matvar_t *matvar)
     len = 1;
     byteswap = mat->byteswap;
     switch ( matvar->class_type ) {
+        case MAT_C_EMPTY:
+            matvar->nbytes = 0;
+            matvar->data_size = sizeof(double);
+            matvar->data_type = MAT_T_DOUBLE;
+            matvar->class_type = MAT_C_EMPTY;
+            matvar->rank = 2;
+            matvar->dims = malloc(matvar->rank*sizeof(*(matvar->dims)));
+            matvar->dims[0] = 0;
+            matvar->dims[1] = 0;
+            break;
         case MAT_C_DOUBLE:
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
@@ -5496,9 +5530,7 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
             }
             case MAT_C_CHAR:
             {
-                /* Check for a NULL character array */
-                if ( matvar->data != NULL && nmemb > 0 )
-                    WriteCharData(mat,matvar->data,nmemb,matvar->data_type);
+                WriteCharData(mat,matvar->data,nmemb,matvar->data_type);
                 break;
             }
             case MAT_C_CELL:

@@ -129,6 +129,7 @@ enum matio_types {
  * Matlab variable classes
  */
 enum matio_classes {
+    MAT_C_EMPTY    =  0, /**< @brief Empty array                           */
     MAT_C_CELL     =  1, /**< @brief Matlab cell array class               */
     MAT_C_STRUCT   =  2, /**< @brief Matlab structure class                */
     MAT_C_OBJECT   =  3, /**< @brief Matlab object class                   */
