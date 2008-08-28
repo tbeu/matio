@@ -8,8 +8,11 @@ Contact:
     You can contact me (Christopher Hulbert) through email at cch@isl-inc.com
 
 Acknowledgements:
-    Thank you to Jacco van Beek for helping me get the software running under
-solaris and for providing test files to get byteswapping verified.
+  The following people/organizations have helped in the development of matio through patches, bug reports, and/or testing:
+    * Jacco van Beek
+    * SGI in support of Interactive Supercomputing, Inc.
+    * SciLab
+    * Steven Leibman <sleibman@alum.mit.edu>
 
 Contributing:
     Part of my reason for releasing this software is I have many other projects
@@ -62,7 +65,7 @@ a big-endian system and providing some test files for that as well as testing
 reading little-endian files on a big-endian system.
 
 Copyright Notice:
-    Copyright (C) 2005-2006   Christopher C. Hulbert
+    Copyright (C) 2005-2008   Christopher C. Hulbert
 
      This library is free software; you can redistribute it and/or
      modify it under the terms of the GNU Lesser General Public
