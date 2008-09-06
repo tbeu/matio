@@ -2329,10 +2329,8 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
         }
         case MAT_C_CHAR:
         {
-            /* Check for a NULL character array */
-            if ( matvar->data != NULL && nmemb > 0 )
-                byteswritten += WriteCompressedCharData(mat,z,matvar->data,
-                    nmemb,matvar->data_type);
+            byteswritten += WriteCompressedCharData(mat,z,matvar->data,
+                nmemb,matvar->data_type);
             break;
         }
         case MAT_C_CELL:
@@ -2741,10 +2739,8 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
         }
         case MAT_C_CHAR:
         {
-            /* Check for a NULL character array */
-            if ( matvar->data != NULL && nmemb > 0 )
-                byteswritten += WriteCompressedCharData(mat,z,matvar->data,
-                    nmemb,matvar->data_type);
+            byteswritten += WriteCompressedCharData(mat,z,matvar->data,
+                nmemb,matvar->data_type);
             break;
         }
         case MAT_C_CELL:
@@ -5767,10 +5763,8 @@ Write5(mat_t *mat,matvar_t *matvar,int compress)
             }
             case MAT_C_CHAR:
             {
-                /* Check for a NULL character array */
-                if ( matvar->data != NULL && nmemb > 0 )
-                    byteswritten += WriteCompressedCharData(mat,matvar->z,
-                        matvar->data,nmemb,matvar->data_type);
+                byteswritten += WriteCompressedCharData(mat,matvar->z,
+                    matvar->data,nmemb,matvar->data_type);
                 break;
             }
             case MAT_C_CELL:
