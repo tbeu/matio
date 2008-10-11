@@ -4738,6 +4738,141 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
 }
 #endif
 
+/** @brief Reads data of type @c data_type by user-defined dimensions for 1-D
+ *         data
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param data Pointer to store the output data
+ * @param class_type Type of data class (matio_classes enumerations)
+ * @param data_type Datatype of the stored data (matio_types enumerations)
+ * @param start Index to start reading data
+ * @param stride Read every @c stride elements
+ * @param edge Number of elements to read
+ * @return Number of bytes read from the file
+ */
+int
+ReadDataSlab1(mat_t *mat,void *data,int class_type,int data_type,int start,
+    int stride,int edge)
+{
+    int i;
+    size_t data_size;
+    int    bytesread = 0;
+
+    data_size = Mat_SizeOf(data_type);
+    fseek(mat->fp,start*data_size,SEEK_CUR);
+
+    stride = data_size*(stride-1);
+    switch(class_type) {
+        case MAT_C_DOUBLE:
+            if ( !stride ) {
+                bytesread+=ReadDoubleData(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadDoubleData(mat,(double*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+        case MAT_C_SINGLE:
+            if ( !stride ) {
+                bytesread+=ReadSingleData(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadSingleData(mat,(float*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+#ifdef HAVE_MAT_INT64_T
+        case MAT_C_INT64:
+            if ( !stride ) {
+                bytesread+=ReadInt64Data(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadInt64Data(mat,(mat_int64_t*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_C_UINT64:
+            if ( !stride ) {
+                bytesread+=ReadUInt64Data(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadUInt64Data(mat,(mat_uint64_t*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+#endif /* HAVE_MAT_UINT64_T */
+        case MAT_C_INT32:
+            if ( !stride ) {
+                bytesread+=ReadInt32Data(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadInt32Data(mat,(mat_int32_t*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+        case MAT_C_UINT32:
+            if ( !stride ) {
+                bytesread+=ReadUInt32Data(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadUInt32Data(mat,(mat_uint32_t*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+        case MAT_C_INT16:
+            if ( !stride ) {
+                bytesread+=ReadInt16Data(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadInt16Data(mat,(mat_int16_t*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+        case MAT_C_UINT16:
+            if ( !stride ) {
+                bytesread+=ReadUInt16Data(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadUInt16Data(mat,(mat_uint16_t*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+        case MAT_C_INT8:
+            if ( !stride ) {
+                bytesread+=ReadInt8Data(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadInt8Data(mat,(mat_int8_t*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+        case MAT_C_UINT8:
+            if ( !stride ) {
+                bytesread+=ReadUInt8Data(mat,data,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    bytesread+=ReadUInt8Data(mat,(mat_uint8_t*)data+i,data_type,1);
+                    fseek(mat->fp,stride,SEEK_CUR);
+                }
+            }
+            break;
+    }
+
+    return bytesread;
+}
+
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
  *         data
  *
@@ -4988,6 +5123,174 @@ ReadDataSlab2(mat_t *mat,void *data,int class_type,int data_type,
 }
 
 #if defined(HAVE_ZLIB)
+/** @brief Reads data of type @c data_type by user-defined dimensions for 1-D
+ *         data
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param z zlib compression stream
+ * @param data Pointer to store the output data
+ * @param class_type Type of data class (matio_classes enumerations)
+ * @param data_type Datatype of the stored data (matio_types enumerations)
+ * @param dims Dimensions of the data
+ * @param start Index to start reading data in each dimension
+ * @param stride Read every @c stride elements in each dimension
+ * @param edge Number of elements to read in each dimension
+ * @retval Number of bytes read from the file, or -1 on error
+ */
+int
+ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,int class_type,
+    int data_type,int start,int stride,int edge)
+{   
+    int nBytes = 0, data_size, i, err;
+    z_stream z_copy = {0,};
+    
+    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+        return 0;
+
+    stride--;
+    err = inflateCopy(&z_copy,z);
+    InflateSkipData(mat,&z_copy,data_type,start);
+    switch ( class_type ) {
+        case MAT_C_DOUBLE:
+        {
+            double *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedDoubleData(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedDoubleData(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+        case MAT_C_SINGLE:
+        {
+            float *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedSingleData(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedSingleData(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+#if HAVE_MAT_INT64_T
+        case MAT_C_INT64:
+        {
+            mat_int64_t *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedInt64Data(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedInt64Data(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+#endif /* HAVE_MAT_INT64_T */
+#if HAVE_MAT_UINT64_T
+        case MAT_C_UINT64:
+        {
+            mat_uint64_t *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedUInt64Data(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedUInt64Data(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+#endif /* HAVE_MAT_UINT64_T */
+        case MAT_C_INT32:
+        {
+            mat_int32_t *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedInt32Data(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedInt32Data(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+        case MAT_C_UINT32:
+        {
+            mat_uint32_t *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedUInt32Data(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedUInt32Data(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+        case MAT_C_INT16:
+        {
+            mat_int16_t *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedInt16Data(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedInt16Data(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+        case MAT_C_UINT16:
+        {
+            mat_uint16_t *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedUInt16Data(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedUInt16Data(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+        case MAT_C_INT8:
+        {
+            mat_int8_t *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedInt8Data(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedInt8Data(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+        case MAT_C_UINT8:
+        {
+            mat_uint8_t *ptr = data;
+            if ( !stride ) {
+                nBytes+=ReadCompressedUInt8Data(mat,&z_copy,ptr,data_type,edge);
+            } else {
+                for ( i = 0; i < edge; i++ ) {
+                    nBytes+=ReadCompressedUInt8Data(mat,&z_copy,ptr+i,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,stride);
+                }
+            }
+            break;
+        }
+    }
+    inflateEnd(&z_copy);
+    return nBytes;
+}
+
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
  *         data
  *

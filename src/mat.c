@@ -1394,8 +1394,11 @@ int
 Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
     int stride,int edge)
 {
-    int err = 0, nmemb = 1, i, data_type;
+    int err = 0, nmemb = 1, i, real_bytes = 0;
     mat_int32_t tag[2];
+#if defined(HAVE_ZLIB)
+    z_stream z;
+#endif
 
     if ( mat->version == MAT_FT_MAT4 )
         return -1;
@@ -1406,279 +1409,144 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
             Mat_int32Swap(tag);
             Mat_int32Swap(tag+1);
         }
-        data_type = tag[0] & 0x000000ff;
+        matvar->data_type = tag[0] & 0x000000ff;
         if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
             fseek(mat->fp,-4,SEEK_CUR);
+            real_bytes = 4+(tag[0] >> 16);
+        } else {
+            real_bytes = 8+tag[1];
         }
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == COMPRESSION_ZLIB ) {
         matvar->z->avail_in = 0;
-        InflateDataType(mat,matvar,tag);
+        err = inflateCopy(&z,matvar->z);
+        InflateDataType(mat,&z,tag);
         if ( mat->byteswap ) {
             Mat_int32Swap(tag);
             Mat_int32Swap(tag+1);
         }
-        data_type = tag[0] & 0x000000ff;
+        matvar->data_type = tag[0] & 0x000000ff;
         if ( !(tag[0] & 0xffff0000) ) {/* Data is NOT packed in the tag */
-            InflateSkip(mat,matvar->z,4);
+            /* We're cheating, but InflateDataType just inflates 4 bytes */
+            InflateDataType(mat,&z,tag+1);
+            if ( mat->byteswap ) {
+                Mat_int32Swap(tag+1);
+            }
+            real_bytes = 8+tag[1];
+        } else {
+            real_bytes = 4+(tag[0] >> 16);
         }
 #endif
     }
+    if ( real_bytes % 8 )
+        real_bytes += (8-(real_bytes % 8));
 
     for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
 
     if ( stride*(edge-1)+start+1 > nmemb ) {
         err = 1;
-    } else {
-        stride--;
-        switch(matvar->class_type) {
-            case MAT_C_DOUBLE:
-                matvar->data_type = MAT_T_DOUBLE;
-                matvar->data_size = sizeof(double);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    fseek(mat->fp,start,SEEK_CUR);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadDoubleData(mat,(double*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
-#if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
+    } else if ( matvar->compression == COMPRESSION_NONE ) {
+        if ( matvar->isComplex ) {
+            struct ComplexSplit *complex_data = data;
 
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedDoubleData(mat,&z_copy,(double*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
-#endif
-                }
-                break;
-            case MAT_C_SINGLE:
-                matvar->data_type = MAT_T_SINGLE;
-                matvar->data_size = sizeof(float);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadSingleData(mat,(float*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
+            ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
+                matvar->data_type,start,stride,edge);
+            fseek(mat->fp,matvar->datapos+real_bytes,SEEK_SET);
+            fread(tag,4,2,mat->fp);
+            if ( mat->byteswap ) {
+                Mat_int32Swap(tag);
+                Mat_int32Swap(tag+1);
+            }
+            matvar->data_type = tag[0] & 0x000000ff;
+            if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
+                fseek(mat->fp,-4,SEEK_CUR);
+            }
+            ReadDataSlab1(mat,complex_data->Im,matvar->class_type,
+                          matvar->data_type,start,stride,edge);
+        } else {
+            ReadDataSlab1(mat,data,matvar->class_type,
+                matvar->data_type,start,stride,edge);
+        }
 #if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
-
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedSingleData(mat,&z_copy,(float*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
+    } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+        if ( matvar->isComplex ) {
+            struct ComplexSplit *complex_data = data;
+            
+            ReadCompressedDataSlab1(mat,&z,complex_data->Re,
+                matvar->class_type,matvar->data_type,start,stride,edge);
+            
+            fseek(mat->fp,matvar->datapos,SEEK_SET);
+            
+            /* Reset zlib knowledge to before reading real tag */
+            inflateEnd(&z);
+            err = inflateCopy(&z,matvar->z);
+            InflateSkip(mat,&z,real_bytes);
+            z.avail_in = 0;
+            InflateDataType(mat,&z,tag);
+            if ( mat->byteswap ) {
+                Mat_int32Swap(tag);
+            }
+            matvar->data_type = tag[0] & 0x000000ff;
+            if ( !(tag[0] & 0xffff0000) ) {/*Data is NOT packed in the tag*/
+                InflateSkip(mat,&z,4);
+            }
+            ReadCompressedDataSlab1(mat,&z,complex_data->Im,
+                matvar->class_type,matvar->data_type,start,stride,edge);
+            inflateEnd(&z);
+        } else {
+            ReadCompressedDataSlab1(mat,&z,data,matvar->class_type,
+                matvar->data_type,start,stride,edge);
+            inflateEnd(&z);
+        }
 #endif
-                }
-                break;
+    }
+
+    switch(matvar->class_type) {
+        case MAT_C_DOUBLE:
+            matvar->data_type = MAT_T_DOUBLE;
+            matvar->data_size = sizeof(double);
+            break;
+        case MAT_C_SINGLE:
+            matvar->data_type = MAT_T_SINGLE;
+            matvar->data_size = sizeof(float);
+            break;
 #ifdef HAVE_MAT_INT64_T
-            case MAT_C_INT64:
-                matvar->data_type = MAT_T_INT64;
-                matvar->data_size = sizeof(mat_int64_t);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadInt64Data(mat,(mat_int64_t*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
-#if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
-
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedInt64Data(mat,&z_copy,(mat_int64_t*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
-#endif
-                }
-                break;
+        case MAT_C_INT64:
+            matvar->data_type = MAT_T_INT64;
+            matvar->data_size = sizeof(mat_int64_t);
+            break;
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-            case MAT_C_UINT64:
-                matvar->data_type = MAT_T_UINT64;
-                matvar->data_size = sizeof(mat_uint64_t);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadInt64Data(mat,(mat_int64_t*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
-#if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
-
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedInt64Data(mat,&z_copy,(mat_int64_t*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
-#endif
-                }
-                break;
+        case MAT_C_UINT64:
+            matvar->data_type = MAT_T_UINT64; 
+            matvar->data_size = sizeof(mat_uint64_t);
+            break;
 #endif /* HAVE_MAT_UINT64_T */
-            case MAT_C_INT32:
-                matvar->data_type = MAT_T_INT32;
-                matvar->data_size = sizeof(mat_int32_t);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadInt32Data(mat,(mat_int32_t*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
-#if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
-
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedInt32Data(mat,&z_copy,(mat_int32_t*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
-#endif
-                }
-                break;
-            case MAT_C_UINT32:
-                matvar->data_type = MAT_T_UINT32;
-                matvar->data_size = sizeof(mat_uint32_t);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadInt32Data(mat,(mat_int32_t*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
-#if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
-
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedInt32Data(mat,&z_copy,(mat_int32_t*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
-#endif
-                }
-                break;
-            case MAT_C_INT16:
-                matvar->data_type = MAT_T_INT16;
-                matvar->data_size = sizeof(mat_int16_t);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadInt16Data(mat,(mat_int16_t*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
-#if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
-
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedInt16Data(mat,&z_copy,(mat_int16_t*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
-#endif
-                }
-                break;
-            case MAT_C_UINT16:
-                matvar->data_type = MAT_T_UINT16;
-                matvar->data_size = sizeof(mat_uint16_t);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadInt16Data(mat,(mat_int16_t*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
-#if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
-
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedInt16Data(mat,&z_copy,(mat_int16_t*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
-#endif
-                }
-                break;
-            case MAT_C_INT8:
-                matvar->data_type = MAT_T_INT8;
-                matvar->data_size = sizeof(mat_int8_t);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadInt8Data(mat,(mat_int8_t*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
-#if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
-
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedInt8Data(mat,&z_copy,(mat_int8_t*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
-#endif
-                }
-                break;
-            case MAT_C_UINT8:
-                matvar->data_type = MAT_T_UINT8;
-                matvar->data_size = sizeof(mat_uint8_t);
-                if ( matvar->compression == COMPRESSION_NONE ) {
-                    stride *= Mat_SizeOf(data_type);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadInt8Data(mat,(mat_int8_t*)data+i,data_type,1);
-                        fseek(mat->fp,stride,SEEK_CUR);
-                    }
-#if defined(HAVE_ZLIB)
-                } else {
-                    z_stream z_copy;
-
-                    err = inflateCopy(&z_copy,matvar->z);
-                    InflateSkipData(mat,&z_copy,data_type,start);
-                    for ( i = 0; i < edge; i++ ) {
-                        ReadCompressedInt8Data(mat,&z_copy,(mat_int8_t*)data+i,
-                            data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride);
-                    }
-                    inflateEnd(&z_copy);
-#endif
-                }
-                break;
-        }
+        case MAT_C_INT32:
+            matvar->data_type = MAT_T_INT32;
+            matvar->data_size = sizeof(mat_int32_t);
+            break;
+        case MAT_C_UINT32:
+            matvar->data_type = MAT_T_UINT32;
+            matvar->data_size = sizeof(mat_uint32_t);
+            break;
+        case MAT_C_INT16:
+            matvar->data_type = MAT_T_INT16;
+            matvar->data_size = sizeof(mat_int16_t);
+            break;
+        case MAT_C_UINT16:
+            matvar->data_type = MAT_T_UINT16;
+            matvar->data_size = sizeof(mat_uint16_t);
+            break;
+        case MAT_C_INT8:
+            matvar->data_type = MAT_T_INT8;
+            matvar->data_size = sizeof(mat_int8_t);
+            break;
+        case MAT_C_UINT8:
+            matvar->data_type = MAT_T_UINT8;
+            matvar->data_size = sizeof(mat_uint8_t);
+            break;
     }
 
     return err;

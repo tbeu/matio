@@ -58,6 +58,8 @@ EXTERN int ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len);
 EXTERN int ReadInt8Data  (mat_t *mat,mat_int8_t  *data,int data_type,int len);
 EXTERN int ReadUInt8Data (mat_t *mat,mat_uint8_t  *data,int data_type,int len);
 EXTERN int ReadCharData  (mat_t *mat,char  *data,int data_type,int len);
+EXTERN int ReadDataSlab1(mat_t *mat,void *data,int class_type,int data_type,
+               int start,int stride,int edge);
 EXTERN int ReadDataSlab2(mat_t *mat,void *data,int class_type,int data_type,
                int *dims,int *start,int *stride,int *edge);
 EXTERN int ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,
@@ -81,6 +83,8 @@ EXTERN int ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t  *data,
                int data_type,int len);
 EXTERN int ReadCompressedCharData(mat_t *mat,z_stream *z,char *data,
                int data_type,int len);
+EXTERN int ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,
+               int class_type,int data_type,int start,int stride,int edge);
 EXTERN int ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                int class_type,int data_type,int *dims,int *start,int *stride,
                int *edge);
