@@ -111,7 +111,7 @@ dnl
 dnl Try to avoid having libtool search for a fortran compiler
 dnl
 F77=$FC
-AC_DISABLE_SHARED
+AC_ENABLE_SHARED
 AC_ENABLE_STATIC
 AC_PROG_LIBTOOL
 
@@ -156,7 +156,7 @@ CHECK_MATIO_UINT16_T
 CHECK_MATIO_INT8_T
 CHECK_MATIO_UINT8_T
 
-AC_CACHE_CHECK([for va_copy()],have_va_copy,[
+AC_CACHE_CHECK([for va_copy()],matio_cv_have_va_copy,[
 	AC_LINK_IFELSE([#include <stdarg.h>
 	void f (int i, ...) {
 	va_list args1, args2;
@@ -170,12 +170,12 @@ AC_CACHE_CHECK([for va_copy()],have_va_copy,[
 	  f (0, 42);
 	  return 0;
 	}],
-	[have_va_copy=yes],
-	[have_va_copy=no])
+	[matio_cv_have_va_copy=yes],
+	[matio_cv_have_va_copy=no])
 ])
-if test "$have_va_copy" = "no"
+if test "$matio_cv_have_va_copy" = "no"
 then
-    AC_CACHE_CHECK([for __va_copy()],have___va_copy,[
+    AC_CACHE_CHECK([for __va_copy()],matio_cv_have___va_copy,[
         AC_LINK_IFELSE([#include <stdarg.h>
             void f (int i, ...) {
                 va_list args1, args2;
@@ -189,10 +189,10 @@ then
                 f (0, 42);
                 return 0;
             }],
-	[have___va_copy=yes],
-	[have___va_copy=no])
+	[matio_cv_have___va_copy=yes],
+	[matio_cv_have___va_copy=no])
     ])
-    if test "have___va_copy" = "yes"
+    if test "matio_cv_have___va_copy" = "yes"
     then
         AC_DEFINE_UNQUOTED([HAVE___VA_COPY])
     fi
@@ -200,7 +200,7 @@ else
     AC_DEFINE_UNQUOTED([HAVE_VA_COPY])
 fi
 
-AC_CACHE_CHECK([for vsnprintf()],have_vsnprintf,[
+AC_CACHE_CHECK([for vsnprintf()],matio_cv_have_vsnprintf,[
         AC_LINK_IFELSE([
         #include <stdlib.h>
         #include <stdarg.h>
@@ -210,11 +210,11 @@ AC_CACHE_CHECK([for vsnprintf()],have_vsnprintf,[
           vsnprintf(NULL,0,"%d",ap);
           return 0;
         }],
-        [have_vsnprintf=yes],
-        [have_vsnprintf=no])
+        [matio_cv_have_vsnprintf=yes],
+        [matio_cv_have_vsnprintf=no])
 ])
 
-AC_CACHE_CHECK([for snprintf()],have_snprintf,[
+AC_CACHE_CHECK([for snprintf()],matio_cv_have_snprintf,[
         AC_LINK_IFELSE([
         #include <stdlib.h>
         #include <stdarg.h>
@@ -223,11 +223,11 @@ AC_CACHE_CHECK([for snprintf()],have_snprintf,[
           snprintf(NULL,0,"%d",0);
           return 0;
         }],
-        [have_snprintf=yes],
-        [have_snprintf=no])
+        [matio_cv_have_snprintf=yes],
+        [matio_cv_have_snprintf=no])
 ])
 
-AC_CACHE_CHECK([for vasprintf()],have_vasprintf,[
+AC_CACHE_CHECK([for vasprintf()],matio_cv_have_vasprintf,[
         AC_LINK_IFELSE([
         #include <stdlib.h>
         #include <stdarg.h>
@@ -237,11 +237,11 @@ AC_CACHE_CHECK([for vasprintf()],have_vasprintf,[
           vasprintf(NULL,"%d",ap);
           return 0;
         }],
-        [have_vasprintf=yes],
-        [have_vasprintf=no])
+        [matio_cv_have_vasprintf=yes],
+        [matio_cv_have_vasprintf=no])
 ])
 
-AC_CACHE_CHECK([for asprintf()],have_asprintf,[
+AC_CACHE_CHECK([for asprintf()],matio_cv_have_asprintf,[
         AC_LINK_IFELSE([
         #include <stdlib.h>
         #include <stdarg.h>
@@ -250,23 +250,23 @@ AC_CACHE_CHECK([for asprintf()],have_asprintf,[
           asprintf(NULL,0,"%d",0);
           return 0;
         }],
-        [have_asprintf=yes],
-        [have_asprintf=no])
+        [matio_cv_have_asprintf=yes],
+        [matio_cv_have_asprintf=no])
 ])
 
-if test "$have_vsnprintf" = "yes"
+if test "$matio_cv_have_vsnprintf" = "yes"
 then
     AC_DEFINE_UNQUOTED([HAVE_VSNPRINTF])
 fi
-if test "$have_snprintf" = "yes"
+if test "$matio_cv_have_snprintf" = "yes"
 then
     AC_DEFINE_UNQUOTED([HAVE_SNPRINTF])
 fi
-if test "$have_vasprintf" = "yes"
+if test "$matio_cv_have_vasprintf" = "yes"
 then
     AC_DEFINE_UNQUOTED([HAVE_VASPRINTF])
 fi
-if test "$have_asprintf" = "yes"
+if test "$matio_cv_have_asprintf" = "yes"
 then
     AC_DEFINE_UNQUOTED([HAVE_ASPRINTF])
 fi
