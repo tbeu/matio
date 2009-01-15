@@ -1,6 +1,20 @@
-# automake file for scats
-# $Revision: 1.1.2.1 $ $State: Exp $
-# $Date: 2005/07/01 17:59:20 $
+##
+## Copyright (C) 2008   Christopher C. Hulbert
+##
+##  This library is free software; you can redistribute it and/or
+##  modify it under the terms of the GNU Lesser General Public
+##  License as published by the Free Software Foundation; either
+##  version 2.1 of the License, or (at your option) any later version.
+##
+##  This library is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+##  Lesser General Public License for more details.
+##
+##  You should have received a copy of the GNU Lesser General Public
+##  License along with this library; if not, write to the Free Software
+##  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+##
 
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 VPATH = @srcdir@
@@ -17,6 +31,7 @@ include_HEADERS     = matio.h matioConfig.h
 lib_LTLIBRARIES     = libmatio.la
 libmatio_la_SOURCES = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
                       mat5.c mat4.c mat.c
+libmatio_la_LIBADD  = $(ZLIB_LIBS)
 
 if ENABLE_FORTRAN
     AM_FCFLAGS             = -I. -I$(top_builddir)/src/fortran

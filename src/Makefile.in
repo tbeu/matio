@@ -14,10 +14,6 @@
 
 @SET_MAKE@
 
-# automake file for scats
-# $Revision: 1.1.2.1 $ $State: Exp $
-# $Date: 2005/07/01 17:59:20 $
-
 
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -76,7 +72,8 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)" \
 	"$(DESTDIR)$(includedir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libmatio_la_LIBADD =
+am__DEPENDENCIES_1 =
+libmatio_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__libmatio_la_SOURCES_DIST = snprintf.c endian.c io.c inflate.c \
 	read_data.c mat5.c mat4.c mat.c fortran/matio_internal.c \
 	fortran/matio.f90
@@ -244,6 +241,7 @@ include_HEADERS = matio.h matioConfig.h
 lib_LTLIBRARIES = libmatio.la
 libmatio_la_SOURCES = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
 	mat5.c mat4.c mat.c $(am__append_3)
+libmatio_la_LIBADD = $(ZLIB_LIBS)
 @ENABLE_FORTRAN_TRUE@AM_FCFLAGS = -I. -I$(top_builddir)/src/fortran
 @ENABLE_FORTRAN_TRUE@nodist_include_HEADERS = $(top_builddir)/src/matio.mod
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
