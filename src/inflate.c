@@ -658,7 +658,7 @@ InflateData(mat_t *mat, z_stream *z, void *buf, int nBytes)
             bytesread  += z->avail_in;
             z->next_in  = comp_buf;
         } else {
-            z->avail_in = fread(comp_buf,1,nBytes,mat->fp);
+            z->avail_in = fread(comp_buf,1,nBytes-bytesread,mat->fp);
             bytesread  += z->avail_in;
             z->next_in  = comp_buf;
         }
