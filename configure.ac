@@ -1,24 +1,44 @@
-dnl  conFigure.ac
+dnl  configure.ac
 dnl
 dnl  NOTE:  Process this file with GNU autoconf to produce a configure script.
+dnl
+dnl Copyright (C) 2005-2008   Christopher C. Hulbert
+dnl
+dnl  This library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Lesser General Public
+dnl  License as published by the Free Software Foundation; either
+dnl  version 2.1 of the License, or (at your option) any later version.
+dnl
+dnl  This library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Lesser General Public License for more details.
+dnl
+dnl  You should have received a copy of the GNU Lesser General Public
+dnl  License along with this library; if not, write to the Free Software
+dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-AC_INIT([MATIO],[1.3.4],[cch@isl-inc.com],[])
+AC_INIT([MATIO],[1.5.0],[chulbe1@mac.com],[])
 AC_CONFIG_SRCDIR([src/matio.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([config])
 dnl AM_INIT_AUTOMAKE([-no-undefined])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
-AC_PREREQ([2.59])
+AC_PREREQ(2.60)
 AC_CANONICAL_HOST
-AC_DEFINE_UNQUOTED([MATIO_PLATFORM],["${host}"])
-AC_DEFINE_UNQUOTED([MATIO_MAJOR_VERSION],[1])
-AC_DEFINE_UNQUOTED([MATIO_MINOR_VERSION],[3])
-AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],[3])
-PACKAGE_RELEASE_DATE="2 June 2008"
+AC_DEFINE_UNQUOTED(MATIO_PLATFORM,"${host}")
+AC_DEFINE_UNQUOTED(MATIO_MAJOR_VERSION,1)
+AC_DEFINE_UNQUOTED(MATIO_MINOR_VERSION,5)
+AC_DEFINE_UNQUOTED(MATIO_RELEASE_LEVEL,0)
+PACKAGE_RELEASE_DATE="3 January 2008"
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
+gl_INIT()
+
 AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])
+AC_ARG_VAR([LT_CFLAGS],[C compiler flags passed to libtool in compile mode])
+AC_ARG_VAR([LT_LDFLAGS],[Flags passed to libtool in link mode])
 
 # Enable fortran interface
 AC_ARG_ENABLE(fortran,
@@ -34,6 +54,8 @@ dnl
 dnl  Build programs, C compiler, F77 compiler, make, install, etc.
 dnl
 AC_PROG_CC([pgcc icc gcc cc])
+
+gl_EARLY()
 
 if test "$enable_fortran" = "yes"
 then
@@ -133,12 +155,17 @@ AC_STDC_HEADERS
 AC_CHECK_HEADER([inttypes.h],[AC_DEFINE_UNQUOTED([HAVE_INTTYPES_H])])
 AC_CHECK_HEADER([stdint.h],[AC_DEFINE_UNQUOTED([HAVE_STDINT_H])])
 AC_CHECK_HEADER([strings.h],[AC_DEFINE_UNQUOTED([HAVE_STRINGS_H])])
-AC_CHECK_SIZEOF(double)
-AC_CHECK_SIZEOF(float)
-AC_CHECK_SIZEOF(int)
-AC_CHECK_SIZEOF(short)
-AC_CHECK_SIZEOF(char)
-AC_CHECK_SIZEOF(void *)
+AC_CHECK_HEADER([unistd.h],[AC_DEFINE_UNQUOTED([HAVE_UNISTD_H])])
+
+MATIO_CHECK_GETOPT_LONG
+gl_GETOPT()
+
+AC_CHECK_SIZEOF([double])
+AC_CHECK_SIZEOF([float])
+AC_CHECK_SIZEOF([int])
+AC_CHECK_SIZEOF([short])
+AC_CHECK_SIZEOF([char])
+AC_CHECK_SIZEOF([void *])
 
 dnl
 dnl Substitute size of int and void * to matio_t.inc
@@ -273,6 +300,32 @@ fi
 
 MATIO_CHECK_ZLIB
 
+MATIO_CHECK_HDF5
+dnl
+dnl Check whether to enable MAT v7.3 files
+dnl
+AC_ARG_ENABLE(mat73,
+    AS_HELP_STRING([--enable-mat73=yes],[Enable MAT v7.3 file support]),
+mat73=$enableval,mat73=yes)
+AC_MSG_CHECKING(enable enable MAT v7.3 file support)
+if test "x$mat73" = "xno"
+then
+    AC_MSG_RESULT([no])
+    mat73=no
+elif test "x$ac_have_hdf5" = "xno"
+then
+    AC_MSG_RESULT([no])
+    AC_DEFINE_UNQUOTED([MAT73],[0])
+    mat73=no
+else
+    AC_MSG_RESULT([yes])
+    AC_DEFINE_UNQUOTED([MAT73],[1])
+    mat73=yes
+fi
+AM_CONDITIONAL(MAT73, test "x$mat73" = "xyes")
+
+MATIO_CHECK_DEFAULT_FILE_VERSION
+
 dnl
 dnl Check whether to build in debug mode
 dnl
@@ -351,15 +404,19 @@ dnl
 if test "x$enable_fortran" != "xyes"; then
   FCLINK='$(LINK)'
 else
-  FCLINK='$(LIBTOOL) --mode=link $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@'
+  FCLINK='$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@'
 fi
 AC_SUBST(FCLINK)
 
 AC_CONFIG_FILES([Makefile \
                  matio.pc \
                  src/Makefile \
+                 getopt/lib/Makefile \
+                 tools/Makefile \
                  test/Makefile \
-                 doxygen/Makefile])
+                 doxygen/Makefile \
+                 doxygen/user_api/Makefile
+                 doxygen/dev_api/Makefile])
 AC_OUTPUT
 
 AC_MSG_RESULT([])
@@ -372,13 +429,16 @@ AC_MSG_RESULT([              FCFLAGS: $FCFLAGS])
 AC_MSG_RESULT([            FCLDFLAGS: $FCLDFLAGS])
 AC_MSG_RESULT([     Shared Libraries: $enable_shared])
 AC_MSG_RESULT([     Static Libraries: $enable_static])
+AC_MSG_RESULT([  default MAT version: $file_ver])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Features --------------------------------------------])
 AC_MSG_RESULT([    Fortran Interface: $enable_fortran])
+AC_MSG_RESULT([MAT v7.3 file support: $mat73])
 AC_MSG_RESULT([        test programs: $build_test])
 AC_MSG_RESULT([        Documentation: $docs_install])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Packages --------------------------------------------])
 AC_MSG_RESULT([                 zlib: $ZLIB_LIBS])
+AC_MSG_RESULT([                 hdf5: $HDF5_LIBS])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([])

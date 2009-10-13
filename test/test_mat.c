@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2006   Christopher C. Hulbert
+ * Copyright (C) 2005-2008   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,10 +20,25 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <matio.h>
+#include <getopt.h>
+#include "matio.h"
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif
+
+static const char *optstring = "v:HLT:Vz";
+static struct option options[] = {
+    {"compress",    no_argument,NULL,'z'},
+    {"mat-version", required_argument,NULL,'v'},
+    {"help",        no_argument,NULL,'H'},
+    {"help-test",   required_argument,NULL,'T'},
+    {"list-tests",  no_argument,      NULL,'L'},
+    {"version",     no_argument,      NULL,'V'},
+    {NULL,0,NULL,0}
+};
+
+static enum mat_ft            mat_file_ver = MAT_FT_DEFAULT;
+static enum matio_compression compression  = COMPRESSION_NONE;
 
 static const char *helpstr[] = {
     "",
@@ -32,10 +47,12 @@ static const char *helpstr[] = {
     "Runs various test on the Matlab I/O library libmatio",
     "",
     "OPTIONS",
-    "--help         This output",
-    "--help-tests   List of tests",
-    "--help TEST    help information on test TEST",
-    "--version      version information",
+    "-H, --help           This output",
+    "-L, --list-tests     List of tests",
+    "-T, --help-test TEST help information on test TEST",
+    "-v, --mat-version x  Set MAT file version to x (4, 5, 7.3)",
+    "-V, --version        version information",
+    "-z, --compress       Enable compression for MAT 5 files",
     "",
     "test        - name of the test to run",
     "TEST_OPTS   - If required, specify arguments to a test(See --help TEST)",
@@ -161,13 +178,15 @@ static const char *helptest_write_struct[] = {
     "Writes a structure of size 4x1 with one field (data) of various types to",
     "file test_mat_write_struct.mat",
     "",
-    "Index    Data Type   Rank   Dimensions   Data",
+    "Index Data Type   Rank   Dimensions   Data",
     "---------------------------------------------------------------",
-    " 1,1     Double      2      5x10         reshape(1:50,5,10)",
-    " 2,1     Single      2      5x10         single(reshape(1:50,5,10))",
-    " 3,1     Int 32      2      5x10         int32(reshape(1:50,5,10))",
-    " 4,1     Char        2      1x16         'This is a string'",
-    " 5,1     Struct      2      4x1          structure(1:4,1)",
+    " 1,1  Double         2    5x10         reshape(1:50,5,10)",
+    " 2,1  Single         2    5x10         single(reshape(1:50,5,10))",
+    " 3,1  Int 32         2    5x10         int32(reshape(1:50,5,10))",
+    " 4,1  Char           2    1x16         'This is a string'",
+    " 5,1  Struct         2    4x1          structure(1:4,1)",
+    " 6,1  Double Complex 2    5x10   reshape(1:25,5,5)+j*reshape(26:50,5,5)",
+    " 7,1  Single Complex 2    5x10   single(reshape(1:25,5,5)+j*reshape(26:50,5,5))",
     "",
     NULL
 };
@@ -482,6 +501,8 @@ help_test(const char *test)
         Mat_Help(helptest_ind2sub);
     else if ( !strcmp(test,"sub2ind") )
         Mat_Help(helptest_sub2ind);
+    else
+        exit(EXIT_FAILURE);
 }
 
 static int
@@ -499,6 +520,7 @@ test_write( void )
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t ui64[50];
 #endif
+    struct ComplexSplit z = {NULL,NULL},s = {NULL,NULL};
     char *str = "This is a string";
     mat_t *mat;
     matvar_t *matvar;
@@ -517,7 +539,12 @@ test_write( void )
 #endif
     }
 
-    mat = Mat_Open("test_mat_write.mat",MAT_ACC_RDWR);
+    z.Re = d;
+    z.Im = d+25;
+    s.Re = f;
+    s.Im = f+25;
+
+    mat = Mat_CreateVer("test_mat_write.mat",NULL,mat_file_ver);
     if ( mat ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,d,0);
         Mat_VarWrite( mat, matvar, 0);
@@ -549,10 +576,19 @@ test_write( void )
 #ifdef HAVE_MAT_UINT64_T
         dims[0] = 5;
         dims[1] = 10;
-        matvar = Mat_VarCreate("ui64",MAT_C_UINT64,MAT_T_UINT64,2,dims,ui64,0);
-        Mat_VarWrite(mat,matvar,0);
+        matvar = Mat_VarCreate("ui64",MAT_C_UINT64,MAT_T_UINT64,2,dims,ui64,0);+        Mat_VarWrite(mat,matvar,0);
         Mat_VarFree(matvar);
 #endif
+        dims[0] = 5;
+        dims[1] = 5;
+        matvar = Mat_VarCreate("z",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&z,
+                               MAT_F_COMPLEX);
+        Mat_VarWrite(mat,matvar,0);
+        Mat_VarFree(matvar);
+        matvar = Mat_VarCreate("s",MAT_C_SINGLE,MAT_T_SINGLE,2,dims,&s,
+                               MAT_F_COMPLEX);
+        Mat_VarWrite(mat,matvar,0);
+        Mat_VarFree(matvar);
         Mat_Close(mat);
     } else {
         err = 1;
@@ -627,8 +663,7 @@ test_write_compressed( void )
 #ifdef HAVE_MAT_UINT64_T
         dims[0] = 5;
         dims[1] = 10;
-        matvar = Mat_VarCreate("ui64",MAT_C_UINT64,MAT_T_UINT64,2,dims,ui64,0);
-        Mat_VarWrite(mat,matvar,COMPRESSION_ZLIB);
+        matvar = Mat_VarCreate("ui64",MAT_C_UINT64,MAT_T_UINT64,2,dims,ui64,0);+        Mat_VarWrite(mat,matvar,COMPRESSION_ZLIB);
         Mat_VarFree(matvar);
 #endif
         Mat_Close(mat);
@@ -727,6 +762,7 @@ test_write_struct()
     float  fdata[50]={0.0,};
     int    idata[50]={0.0,};
     char  *str = "This is a string";
+    struct ComplexSplit z = {NULL,NULL},s = {NULL,NULL};
     int    err = 0, i;
     mat_t     *mat;
     matvar_t **matvar, *struct_matvar, *substruct_matvar;
@@ -737,9 +773,14 @@ test_write_struct()
         idata[i] = i+1;
     }
 
-    mat = Mat_Create("test_mat_write_struct.mat",NULL);
+    z.Re = data;
+    z.Im = data+25;
+    s.Re = fdata;
+    s.Im = fdata+25;
+
+    mat = Mat_CreateVer("test_mat_write_struct.mat",NULL,mat_file_ver);
     if ( mat ) {
-        matvar = malloc(6*sizeof(matvar_t *));
+        matvar = malloc(8*sizeof(*matvar));
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
         matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
@@ -756,9 +797,15 @@ test_write_struct()
         substruct_matvar = Mat_VarCreate("data",MAT_C_STRUCT,MAT_T_STRUCT,
                             2,dims,matvar,0);
         matvar[4] = substruct_matvar;
-        matvar[5] = NULL;
-
         dims[0] = 5;
+        dims[1] = 5;
+        matvar[5] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&z,
+                               MAT_F_COMPLEX);
+        matvar[6] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,dims,&s,
+                               MAT_F_COMPLEX);
+        matvar[7] = NULL;
+
+        dims[0] = 7;
         dims[1] = 1;
         struct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,2,
                             dims,matvar,0);
@@ -767,6 +814,8 @@ test_write_struct()
         free(matvar[1]);
         free(matvar[2]);
         free(matvar[3]);
+        free(matvar[5]);
+        free(matvar[6]);
         free(matvar);
         free(struct_matvar);
         free(substruct_matvar);
@@ -793,7 +842,7 @@ test_write_compressed_struct()
         idata[i] = i+1;
     }
 
-    mat = Mat_Create("test_mat_write_compressed_struct.mat",NULL);
+    mat = Mat_CreateVer("test_mat_write_compressed_struct.mat",NULL,mat_file_ver);
     if ( mat ) {
         matvar = malloc(7*sizeof(matvar_t *));
         /*--------------------------------------------------------------*/
@@ -906,7 +955,7 @@ test_write_cell()
         idata[i] = i+1;
     }
 
-    mat = Mat_Create("test_mat_writecell.mat",NULL);
+    mat = Mat_CreateVer("test_mat_writecell.mat",NULL,mat_file_ver);
     if ( mat ) {
         matvar = malloc(5*sizeof(matvar_t *));
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
@@ -916,11 +965,11 @@ test_write_cell()
         matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
                        dims,idata,MEM_CONSERVE);
         matvar[3] = NULL;
-        dims[0] = 3;
-        dims[1] = 1;
+        dims[0] = 3; dims[1] = 1;
         substruct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,
                             2,dims,matvar,0);
 
+        dims[0] = 5; dims[1] = 10;
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
         matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
@@ -928,11 +977,11 @@ test_write_cell()
         matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
                        dims,idata,MEM_CONSERVE);
         matvar[3] = substruct_matvar;
-        dims[0] = 4;
-        dims[1] = 1;
+        dims[0] = 4; dims[1] = 1;
         cell_matvar = Mat_VarCreate("cell",MAT_C_CELL,MAT_T_CELL,2,
                             dims,matvar,0);
 
+        dims[0] = 5; dims[1] = 10;
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
         matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
@@ -940,11 +989,11 @@ test_write_cell()
         matvar[2] = Mat_VarCreate("data",MAT_C_INT32,MAT_T_INT32,2,
                        dims,idata,MEM_CONSERVE);
         matvar[3] = NULL;
-        dims[0] = 3;
-        dims[1] = 1;
+        dims[0] = 3; dims[1] = 1;
         substruct_matvar = Mat_VarCreate("structure",MAT_C_STRUCT,MAT_T_STRUCT,
                             2,dims,matvar,0);
 
+        dims[0] = 5; dims[1] = 10;
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
         matvar[1] = Mat_VarCreate("data",MAT_C_SINGLE,MAT_T_SINGLE,2,
@@ -953,8 +1002,7 @@ test_write_cell()
                        dims,idata,MEM_CONSERVE);
         matvar[3] = substruct_matvar;
         matvar[4] = cell_matvar;
-        dims[0] = 5;
-        dims[1] = 1;
+        dims[0] = 5; dims[1] = 1;
         cell_matvar = Mat_VarCreate("cell",MAT_C_CELL,MAT_T_CELL,2,
                             dims,matvar,0);
 
@@ -983,7 +1031,7 @@ test_write_compressed_cell()
         idata[i] = i+1;
     }
 
-    mat = Mat_Create("test_mat_write_compressed_cell.mat",NULL);
+    mat = Mat_CreateVer("test_mat_write_compressed_cell.mat",NULL,mat_file_ver);
     if ( mat ) {
         matvar = malloc(5*sizeof(*matvar));
         matvar[0] = Mat_VarCreate("data",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
@@ -1053,26 +1101,43 @@ test_write_null(void)
     matvar_t *struct_fields[5] = {NULL,NULL,NULL,NULL,NULL};
     int       dims[3] = {0,1,10};
 
-    mat = Mat_Create("test_write_null.mat",NULL);
+    mat = Mat_CreateVer("test_write_null.mat",NULL,mat_file_ver);
     if ( mat != NULL ) {
         struct_fields[0] = Mat_VarCreate("d_null",MAT_C_DOUBLE,MAT_T_DOUBLE,3,
                             dims,NULL,0);
-        Mat_VarWrite(mat,struct_fields[0],0);
+        Mat_VarWrite(mat,struct_fields[0],compression);
         struct_fields[1] = Mat_VarCreate("cd_null",MAT_C_DOUBLE,MAT_T_DOUBLE,3,
                             dims,NULL,MAT_F_COMPLEX);
-        Mat_VarWrite(mat,struct_fields[1],0);
-        dims[0] = 1;
+        Mat_VarWrite(mat,struct_fields[1],compression);
+        struct_fields[2] = Mat_VarCreate("char_null",MAT_C_CHAR,MAT_T_UINT8,2,
+                            dims,NULL,0);
+        Mat_VarWrite(mat,struct_fields[2],compression);
         struct_matvar = Mat_VarCreate("struct_null",MAT_C_STRUCT,MAT_T_STRUCT,2,
                             dims,NULL,0);
-        Mat_VarWrite(mat,struct_matvar,0);
+        Mat_VarWrite(mat,struct_matvar,compression);
         Mat_VarFree(struct_matvar);
+        struct_matvar = Mat_VarCreate("struct_empty_with_fields",MAT_C_STRUCT,
+                            MAT_T_STRUCT,3,dims,struct_fields,MEM_CONSERVE);
+        Mat_VarWrite(mat,struct_matvar,compression);
+        /* Reset data to NULL so the fields are not free'd */
+        struct_matvar->data = NULL;
+        Mat_VarFree(struct_matvar);
+        dims[0] = 1;
         struct_matvar = Mat_VarCreate("struct_null_fields",MAT_C_STRUCT,
-                            MAT_T_STRUCT,2,dims,struct_fields,0);
-        Mat_VarWrite(mat,struct_matvar,0);
-        cell_matvar = Mat_VarCreate("cell_null_cells",MAT_C_CELL,MAT_T_CELL,2,
-                            dims,struct_fields,MEM_CONSERVE);
-        Mat_VarWrite(mat,cell_matvar,0);
+                            MAT_T_STRUCT,2,dims,struct_fields,MEM_CONSERVE);
+        Mat_VarWrite(mat,struct_matvar,compression);
+        /* Reset data to NULL so the fields are not free'd */
+        struct_matvar->data = NULL;
         Mat_VarFree(struct_matvar);
+        dims[0] = 0;
+        cell_matvar = Mat_VarCreate("cell_null_cells",MAT_C_CELL,MAT_T_CELL,2,
+                            dims,NULL,MEM_CONSERVE);
+        Mat_VarWrite(mat,cell_matvar,compression);
+        Mat_VarFree(cell_matvar);
+
+        Mat_VarFree(struct_fields[0]);
+        Mat_VarFree(struct_fields[1]);
+        Mat_VarFree(struct_fields[2]);
         Mat_Close(mat);
     } else {
         err = 1;
@@ -1199,7 +1264,7 @@ test_writeslab(void)
         idata[i] = i+1;
     }
 
-    mat = Mat_Create("test_mat_writeslab.mat",NULL);
+    mat = Mat_CreateVer("test_mat_writeslab.mat",NULL,mat_file_ver);
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,NULL,0);
@@ -1239,7 +1304,7 @@ test_writenan(void)
     for ( i = 0; i < 25; i+= 6 )
         data[i] = 0.0/zero;
 
-    mat = Mat_Create("test_writenan.mat",NULL);
+    mat = Mat_CreateVer("test_writenan.mat",NULL,mat_file_ver);
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
@@ -1268,7 +1333,7 @@ test_writeinf(void)
     for ( i = 0; i < 25; i+= 6 )
         data[i] = 1.0/zero;
 
-    mat = Mat_Create("test_writeinf.mat",NULL);
+    mat = Mat_CreateVer("test_writeinf.mat",NULL,mat_file_ver);
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MEM_CONSERVE);
@@ -1378,31 +1443,55 @@ test_delete(char *file,char *name)
 int main (int argc, char *argv[])
 {
     char *prog_name = "test_mat";
-    int   i, k, err = 0, ntests = 0;
+    int   c,i, k, err = 0, ntests = 0;
     mat_t *mat, *mat2;
     matvar_t *matvar, *matvar2, *matvar3;
 
     Mat_LogInit(prog_name);
 
-    if ( argc < 2 ) {
-        Mat_Error("Must specify a test, or --help");
-    } else if  ( (argc == 2) && !strcmp(argv[1],"--help") ) {
-        Mat_Help(helpstr);
-    } else if  ( (argc == 2) && !strcmp(argv[1],"--help-tests") ) {
-        Mat_Help(helptestsstr);
-    } else if  ( (argc == 3) && !strcmp(argv[1],"--help") ) {
-        help_test(argv[2]);
-    } else if  ( (argc == 2) && !strcmp(argv[1],"--version") ) {
-        printf("%s v%d.%d.%d (compiled %s, %s for %s)\n", prog_name,
-               MATIO_MAJOR_VERSION, MATIO_MINOR_VERSION, MATIO_RELEASE_LEVEL,
-               __DATE__, __TIME__, MATIO_PLATFORM );
-        exit(EXIT_SUCCESS);
+    while ((c = getopt_long(argc,argv,optstring,options,NULL)) != EOF) {
+        switch (c) {
+            case 'v':
+                if ( !strcmp(optarg,"5") ) {
+                    mat_file_ver = MAT_FT_MAT5;
+                } else if ( !strcmp(optarg,"7.3") ) {
+                    mat_file_ver = MAT_FT_MAT73;
+                } else {
+                    fprintf(stderr,"Unrecognized MAT file version %s",argv[2]);
+                    exit(EXIT_FAILURE);
+                }
+                break;
+            case 'H':
+                Mat_Help(helpstr);
+                exit(EXIT_SUCCESS);
+            case 'L':
+                Mat_Help(helptestsstr);
+                exit(EXIT_SUCCESS);
+            case 'T':
+                help_test(optarg);
+                exit(EXIT_SUCCESS);
+            case 'V':
+                printf("%s %d.%d.%d\n"
+                       "Written by Christopher Hulbert\n\n"
+                       "Copyright(C) 2006-2008 Christopher C. Hulbert\n",
+                       prog_name,MATIO_MAJOR_VERSION,MATIO_MINOR_VERSION,
+                       MATIO_RELEASE_LEVEL);
+                exit(EXIT_SUCCESS);
+            case 'z':
+                compression = COMPRESSION_ZLIB;
+                break;
+            case '?':
+                exit(EXIT_FAILURE);
+            default:
+                printf("%c not a valid option\n", c);
+                break;
+        }
     }
 
-    for ( k = 1; k < argc; ) {
+    for ( k = optind; k < argc; ) {
         if ( !strcasecmp(argv[k],"copy") ) {
             k++;
-            mat = Mat_Create("test_mat_copy.mat",NULL);
+            mat = Mat_CreateVer("test_mat_copy.mat",NULL,mat_file_ver);
             mat2 = Mat_Open(argv[k++],MAT_ACC_RDONLY);
             if ( mat && mat2 ) {
                 while ( NULL != (matvar = Mat_VarReadNext(mat2)) )

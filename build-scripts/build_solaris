@@ -1,6 +1,8 @@
-## Makefile.am -- Process this file with automake to produce Makefile.in
+#! /bin/sh
 ##
-## Copyright (C) 2005-2008   Christopher C. Hulbert
+## Run this script to build matio on Linux
+##
+## Copyright (C) 2005-2006   Christopher C. Hulbert
 ##
 ##  This library is free software; you can redistribute it and/or
 ##  modify it under the terms of the GNU Lesser General Public
@@ -16,23 +18,33 @@
 ##  License along with this library; if not, write to the Free Software
 ##  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ##
-AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
-VPATH = @srcdir@
 
-AM_CFLAGS  = -I. -I$(top_srcdir)/../src -I$(top_builddir)/../src
-AM_FCFLAGS = -I$(top_builddir)/src
-AM_LDFLAGS = $(FCLDFLAGS) -avoid-version
+DEFAULT_OPTS="--prefix=$HOME --exec-prefix=$HOME"
 
-include_HEADERS = $(top_builddir)/src/matio.mod
-lib_LTLIBRARIES      = libfmatio.la
-libfmatio_la_SOURCES = matio_internal.c matio.f90
+cd zlib
+CC=gcc \
+CFLAGS='-DZ_PREFIX -v -g -fPIC -fexceptions' \
+LDFLAGS='-fexceptions' \
+./configure $DEFAULT_OPTS
+make
+make install
+make clean
+cd ..
 
-print:
-	@list='$(libfmatio_a_SOURCES)'; \
-	rm -f libfmatio.ps; \
-	curdir=`pwd`; \
-	cd $(srcdir); \
-	for f in $$list; do \
-	    enscript -2 -G -r -Ec --color -o - $$f >> $$curdir/libfmatio.ps;\
-	done; \
-	cd $$curdir
+cd build-solaris
+DEBUG="--enable-debug"
+ZLIB_OPTS="--with-zlib=$HOME"
+DOCS_OPTS="--with-docs=no"
+FORTRAN="--enable-fortran=no"
+CC=gcc \
+CFLAGS='-Wall -pedantic -fPIC -fexceptions' \
+LDFLAGS='-fexceptions' \
+../configure CC=gcc FC= CFLAGS="$CFLAGS" FCFLAGS="$FCFLAGS" LDFLAGS="$LDFLAGS" \
+    $DEFAULT_OPTS $DEBUG $FORTRAN $ZLIB_OPTS $DOCS_OPTS
+
+if test $? = 0
+then
+    make && make install
+fi
+
+cd ..

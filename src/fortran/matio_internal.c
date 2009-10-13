@@ -22,7 +22,8 @@
 #if defined(HAVE_STRINGS_H)
 #include <strings.h>
 #endif
-#include <matio.h>
+#include "matio.h"
+#include "matio_private.h"
 
 #define fmat_loginit_c \
             FC_FUNC_(fmat_loginit_c,FMAT_LOGINIT_C)
@@ -124,12 +125,12 @@ fmat_open_c(char *filename, int *mode, struct fmat_t *mat, int len)
         err = 1;
     } else {
         if (mat->mat_t_c_ptr->version & MAT_FT_MAT4) {
-	        /* V-4 matlab files don't have a header */
-	        strcpy(mat->header, "INVALID - V4 FORMAT");
-	    } else {
+            /* V-4 matlab files don't have a header */
+            strcpy(mat->header, "INVALID - V4 FORMAT");
+        } else {
             strncpy(mat->header,mat->mat_t_c_ptr->header,
-		            strlen(mat->mat_t_c_ptr->header));
-	    }
+                    strlen(mat->mat_t_c_ptr->header));
+        }
     }
     free(fname);
 
@@ -137,7 +138,8 @@ fmat_open_c(char *filename, int *mode, struct fmat_t *mat, int len)
 }
 
 int
-fmat_create_c(char *filename,struct fmat_t *mat,char *header,int len,int hdrlen)
+fmat_create_c(char *filename,enum mat_ft mat_file_ver,struct fmat_t *mat,
+    char *header,int len,int hdrlen)
 {
     char *fname,*hdr_str = NULL;
     int err = 0;
@@ -147,7 +149,7 @@ fmat_create_c(char *filename,struct fmat_t *mat,char *header,int len,int hdrlen)
     if ( header != NULL )
         hdr_str = fstrdup(header,hdrlen);
 
-    if ( NULL == (mat->mat_t_c_ptr = Mat_Create(fname,hdr_str)) ) {
+    if ( NULL == (mat->mat_t_c_ptr = Mat_Create(fname,hdr_str,mat_file_ver)) ) {
         Mat_Critical("Error opening file %s", fname);
         err = 1;
     } else {

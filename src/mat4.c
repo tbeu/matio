@@ -47,11 +47,19 @@ static const char *v4_data_type_desc[23] = {
        "Structure"
 };
 
+/** @if mat_devman
+ * @brief Reads the data of a version 4 MAT file variable
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar MAT variable pointer to read the data
+ * @endif
+ */
 void
 Read4(mat_t *mat,matvar_t *matvar)
 {
     unsigned int N;
-    if ( fseek(mat->fp,matvar->datapos,SEEK_SET) )
+    if ( fseek(mat->fp,matvar->internal->datapos,SEEK_SET) )
         return;
 
     N = matvar->dims[0]*matvar->dims[1];
@@ -196,14 +204,27 @@ Read4(mat_t *mat,matvar_t *matvar)
     return;
 }
 
-/* Reads a slab of data from the variable */
+/** @if mat_devman
+ * @brief Reads a slab of data from a version 4 MAT file for the @c matvar variable
+ *
+ * @ingroup mat_internal
+ * @param mat Version 4 MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @param data pointer to store the read data in (must be of size
+ *             edge[0]*...edge[rank-1]*Mat_SizeOfClass(matvar->class_type))
+ * @param start index to start reading data in each dimension
+ * @param stride write data every @c stride elements in each dimension
+ * @param edge number of elements to read in each dimension
+ * @retval 0 on success
+ * @endif
+ */
 int
 ReadData4(mat_t *mat,matvar_t *matvar,void *data,
       int *start,int *stride,int *edge)
 {
     int err = 0, class_type;
 
-    fseek(mat->fp,matvar->datapos,SEEK_SET);
+    fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
 
     switch( matvar->data_type ) {
         case MAT_T_DOUBLE:
@@ -237,7 +258,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
 
             ReadDataSlab2(mat,cdata->Re,class_type,matvar->data_type,
                     matvar->dims,start,stride,edge);
-            fseek(mat->fp,matvar->datapos+nbytes,SEEK_SET);
+            fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
             ReadDataSlab2(mat,cdata->Im,class_type,
                 matvar->data_type,matvar->dims,start,stride,edge);
         } else {
@@ -255,7 +276,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
 
             ReadDataSlabN(mat,cdata->Re,class_type,matvar->data_type,
                 matvar->rank,matvar->dims,start,stride,edge);
-            fseek(mat->fp,matvar->datapos+nbytes,SEEK_SET);
+            fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
             ReadDataSlab2(mat,cdata->Im,class_type,
                 matvar->data_type,matvar->dims,start,stride,edge);
         } else {
@@ -266,6 +287,14 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
     return err;
 }
 
+/** @if mat_devman
+ * @brief Reads the header information for the next MAT variable in a version 4 MAT file
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @retuen pointer to the MAT variable or NULL
+ * @endif
+ */
 matvar_t *
 Mat_VarReadNextInfo4(mat_t *mat)
 {       
@@ -277,18 +306,11 @@ Mat_VarReadNextInfo4(mat_t *mat)
 
     if ( mat == NULL || mat->fp == NULL )
         return NULL;
-    else if ( NULL == (matvar = calloc(1,sizeof(*matvar))) )
+    else if ( NULL == (matvar = Mat_VarCalloc()) )
         return NULL;
 
-    matvar->dims = NULL;
-    matvar->data = NULL;
-    matvar->name = NULL;
-    matvar->fp   = mat;
-#if defined(HAVE_ZLIB)
-    matvar->z    = NULL;
-#endif
-
-    matvar->fpos = ftell(mat->fp);
+    matvar->internal->fp   = mat;
+    matvar->internal->fpos = ftell(mat->fp);
 
     err = fread(&tmp,sizeof(int),1,mat->fp);
     if ( !err ) {
@@ -368,7 +390,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         return NULL;
     }
 
-    matvar->datapos = ftell(mat->fp);
+    matvar->internal->datapos = ftell(mat->fp);
     nBytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex )
         nBytes *= 2;
@@ -377,6 +399,14 @@ Mat_VarReadNextInfo4(mat_t *mat)
     return matvar;  
 }
 
+/** @if mat_devman
+ * @brief Prints the variable from a MAT version 4 file
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @endif
+ */
 void
 Mat_VarPrint4(matvar_t *matvar,int printdata)
 {

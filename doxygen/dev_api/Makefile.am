@@ -19,4 +19,15 @@
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 VPATH = @srcdir@
 
-SUBDIRS = user_api dev_api
+docdir = $(prefix)/share/doc/matio
+doc_DATA = $(top_builddir)/doxygen/dev_api/latex/libmatio_dev.pdf
+
+doc: $(doc_DATA)
+
+$(top_builddir)/doxygen/dev_api/latex/libmatio_dev.pdf:
+	(cat $(srcdir)/doxygen.config; echo "INPUT=$(top_srcdir)/src";echo "LATEX_HEADER=$(srcdir)/../header.tex"; echo "IMAGE_PATH=$(srcdir)") | doxygen -
+	cd latex;../$(srcdir)/../format_api.sh;../$(srcdir)/../textopdf.sh
+	mv latex/refman.pdf latex/libmatio_dev.pdf
+
+
+print:

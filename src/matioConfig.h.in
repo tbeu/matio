@@ -42,12 +42,16 @@
 #undef _mat_int32_t
 #undef _mat_int64_t
 
+#undef MAT_FT_DEFAULT
+
 #undef HAVE_VA_COPY
 #undef HAVE___VA_COPY
 #undef HAVE_VSNPRINTF
 #undef HAVE_SNPRINTF
 #undef HAVE_VASPRINTF
 #undef HAVE_ASPRINTF
+
+#undef MAT73
 
 #undef EXTENDED_SPARSE
 

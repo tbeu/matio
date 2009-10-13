@@ -2,7 +2,7 @@
 
 bootstrap() {
   libtoolize -c && \
-  aclocal -I config && \
+  aclocal -I config -I getopt/m4 && \
   automake -a -c && \
   autoconf
 }

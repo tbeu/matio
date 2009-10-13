@@ -1,0 +1,58 @@
+#! /bin/sh
+##
+## Run this script to build matio on Windows running cygwin
+##
+## Copyright (C) 2005-2006   Christopher C. Hulbert
+##
+##  This library is free software; you can redistribute it and/or
+##  modify it under the terms of the GNU Lesser General Public
+##  License as published by the Free Software Foundation; either
+##  version 2.1 of the License, or (at your option) any later version.
+##
+##  This library is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+##  Lesser General Public License for more details.
+##
+##  You should have received a copy of the GNU Lesser General Public
+##  License along with this library; if not, write to the Free Software
+##  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+##
+
+PREFIX=/home/chulbert/matio_v1.5.0
+thisdir=`dirname $0`
+
+CC=gcc
+
+case $CC in
+  *pgcc*)
+    CFLAGS="-c9x -O2 -Kieee"
+    ;;
+  *gcc*)
+    CFLAGS="-std=c99 -mno-cygwin -O2 -fno-fast-math"
+    ;;
+esac
+
+DEFAULT_OPTS="--prefix=$PREFIX --exec-prefix=$PREFIX --with-pic"
+LIBDIR_SUFFIX="--with-libdir-suffix=$LIBDIR_SUFFIX"
+
+DEBUG="--enable-debug"
+ZLIB_OPTS="--with-zlib"
+HDF5_OPTS="--with-hdf5"
+DOCS_OPTS="--enable-docs=no"
+TEST_OPTS="--enable-test=no"
+FORTRAN="--enable-fortran=no"
+
+$thisdir/../configure CC=$CC CFLAGS="$CFLAGS" \
+  $DEFAULT_OPTS $LIBDIR_SUFFIX $DEBUG $FORTRAN $ZLIB_OPTS $HDF5_OPTS \
+  $DOCS_OPTS $TEST_OPTS
+
+if test $? = 0
+then
+    make > matio.build 2>&1
+fi
+
+if test $? = 0
+then
+    make install > matio.instl 2>&1
+fi

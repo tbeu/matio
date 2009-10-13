@@ -1,9 +1,8 @@
 /** @file io.c
- * MAT I/O Functions
- * @ingroup MAT
+ * MAT File I/O Utility Functions
  */
 /*
- * Copyright (C) 2005-2006   Christopher C. Hulbert
+ * Copyright (C) 2005-2008   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -60,13 +59,14 @@
 #define LOG_LEVEL_WARNING  1 << 2
 #define LOG_LEVEL_MESSAGE  1 << 3
 #define LOG_LEVEL_DEBUG    1 << 4
-/** @endif */
+/** @endcond */
 
 static void (*logfunc)(int log_level, char *message ) = NULL;
 static char *progname = NULL;
 
 /** @brief Allocates and prints to a new string
  *
+ * @ingroup mat_util
  * @param format format string
  * @param ap variable argument list
  * @return Newly allocated string with format printed to it
@@ -90,6 +90,12 @@ strdup_vprintf(const char* format, va_list ap)
   return buffer;
 }
 
+/** @brief Allocates and prints to a new string using printf format
+ *
+ * @ingroup mat_util
+ * @param format format string
+ * @return Pointer to resulting string, or NULL if there was an error
+ */
 char *
 strdup_printf(const char* format, ...)
 {
@@ -146,7 +152,7 @@ matio_error_func( int log_level, char *message )
 }
 
 static void
-scats_log(int loglevel, const char *format, va_list ap)
+mat_log(int loglevel, const char *format, va_list ap)
 {
     char* buffer;
 
@@ -162,7 +168,7 @@ scats_log(int loglevel, const char *format, va_list ap)
  *  @brief holds the verbose level set in @ref SetVerbose
  *  This variable is used to determine if information should be printed to
  *  the screen
- *  @ingroup libscatsio
+ *  @ingroup mat_util
  */
 static int debug = 0;
 
@@ -170,25 +176,26 @@ static int debug = 0;
  *  @brief holds the verbose level set in @ref SetVerbose
  *  This variable is used to determine if information should be printed to
  *  the screen
- *  @ingroup libscatsio
+ *  @ingroup mat_util
  */
 static int verbose = 0;
 /** @var silent
  *  @brief holds the silent level set in @ref SetVerbose
  *  If set, all output which is not an error is not displayed regardless
  *  of verbose level
- *  @ingroup libscatsio
+ *  @ingroup mat_util
  */
 static int silent = 0;
 /** @brief Sets verbose parameters
  *
  *  Sets the verbose level and silent level.  These values are used by
  *  programs to determine what information should be printed to the screen
- *  @ingroup libscatsio
+ *  @ingroup mat_util
  *  @param verb sets logging verbosity level
  *  @param s sets logging silent level
  */
-int Mat_SetVerbose( int verb, int s )
+int
+Mat_SetVerbose( int verb, int s )
 {
 
     verbose = verb;
@@ -201,11 +208,12 @@ int Mat_SetVerbose( int verb, int s )
  *
  *  Sets the verbose level and silent level.  These values are used by
  *  programs to determine what information should be printed to the screen
- *  @ingroup libscatsio
+ *  @ingroup mat_util
  *  @param verb sets logging verbosity level
  *  @param s sets logging silent level
  */
-int Mat_SetDebug( int d )
+int
+Mat_SetDebug( int d )
 {
     debug = d;
     return 0;
@@ -215,7 +223,7 @@ int Mat_SetDebug( int d )
  *
  * Logs the message unless the silent option is set (See @ref SetVerbose).
  * To log a message based on the verbose level, use @ref Mat_VerbMessage
- * @ingroup libscatsio
+ * @ingroup mat_util
  * @param format message format
  */
 int Mat_Message( const char *format, ... )
@@ -226,7 +234,7 @@ int Mat_Message( const char *format, ... )
     if ( !logfunc ) return 0;
 
     va_start(ap, format );
-    scats_log(LOG_LEVEL_MESSAGE, format, ap );
+    mat_log(LOG_LEVEL_MESSAGE, format, ap );
     va_end(ap);
     return 0;
 }
@@ -236,7 +244,7 @@ int Mat_Message( const char *format, ... )
  *  If @e level is less than or equal to the set verbose level, the message
  *  is printed.  If the level is higher than the set verbose level nothing
  *  is displayed.
- *  @ingroup libscatsio
+ *  @ingroup mat_util
  *  @param level verbose level
  *  @param format message format
  */
@@ -248,7 +256,7 @@ int Mat_DebugMessage( int level, const char *format, ... )
     if ( level > debug ) return 0;
 
     va_start(ap, format );
-    scats_log(LOG_LEVEL_DEBUG, format, ap );
+    mat_log(LOG_LEVEL_DEBUG, format, ap );
     va_end(ap);
     return 0;
 }
@@ -258,7 +266,7 @@ int Mat_DebugMessage( int level, const char *format, ... )
  *  If @e level is less than or equal to the set verbose level, the message
  *  is printed.  If the level is higher than the set verbose level nothing
  *  is displayed.
- *  @ingroup libscatsio
+ *  @ingroup mat_util
  *  @param level verbose level
  *  @param format message format
  */
@@ -270,7 +278,7 @@ int Mat_VerbMessage( int level, const char *format, ... )
     if ( level > verbose ) return 0;
 
     va_start(ap, format );
-    scats_log(LOG_LEVEL_MESSAGE, format, ap );
+    mat_log(LOG_LEVEL_MESSAGE, format, ap );
     va_end(ap);
     return 0;
 }
@@ -279,7 +287,7 @@ int Mat_VerbMessage( int level, const char *format, ... )
  *
  * Logs a Critical message and returns to the user.  If the program should
  * stop running, use @ref Mat_Error
- * @ingroup libscatsio
+ * @ingroup mat_util
  * @param format format string identical to printf format
  * @param ... arguments to the format string
  */
@@ -288,14 +296,14 @@ void Mat_Critical( const char *format, ... )
     va_list ap;
 
     va_start(ap, format );
-    scats_log(LOG_LEVEL_CRITICAL, format, ap );
+    mat_log(LOG_LEVEL_CRITICAL, format, ap );
     va_end(ap);
 }
 
 /** @brief Logs a Critical message and aborts the program
  *
  * Logs an Error message and aborts
- * @ingroup libscatsio
+ * @ingroup mat_util
  * @param format format string identical to printf format
  * @param ... arguments to the format string
  */
@@ -304,7 +312,7 @@ void Mat_Error( const char *format, ... )
     va_list ap;
 
     va_start(ap, format );
-    scats_log( LOG_LEVEL_ERROR, format, ap );
+    mat_log( LOG_LEVEL_ERROR, format, ap );
     va_end(ap);
 }
 
@@ -316,7 +324,7 @@ void Mat_Error( const char *format, ... )
  * char *helpstr[] = {"My Help string line1","My help string line 2",NULL};
  * Mat_Help(helpstr);
  * @endcode
- * @ingroup libscatsio
+ * @ingroup mat_util
  * @param helpstr array of strings with NULL as its last element
  */
 void Mat_Help( const char *helpstr[] )
@@ -329,10 +337,11 @@ void Mat_Help( const char *helpstr[] )
 
 /** @brief Closes the logging system
  *
+ * @ingroup mat_util
  * @retval 1
  */
 int
-Mat_LogClose( )
+Mat_LogClose( void )
 {
     logfunc = NULL;
     return 1;
@@ -340,7 +349,7 @@ Mat_LogClose( )
 
 /** @brief Intializes the logging system
  *
- * @ingroup libscatsio
+ * @ingroup mat_util
  * @param prog_name Name of the program initializing the logging functions
  * @return 0 on success
  */
@@ -357,7 +366,7 @@ Mat_LogInit( char *prog_name )
 
 /** @brief Intializes the logging system
  *
- * @ingroup libscatsio
+ * @ingroup mat_util
  * @param prog_name Name of the program initializing the logging functions
  * @param log_func pointer to the function to do the logging
  * @return 0 on success
@@ -376,21 +385,28 @@ Mat_LogInitFunc(char *prog_name,void (*log_func)(int log_level,char *message))
 /** @brief Prints a warning message to stdout
  *
  * Logs a warning message then returns
- * @ingroup libscatsio
+ * @ingroup mat_util
  * @param format format string identical to printf format
  * @param ... arguments to the format string
  */
-void Mat_Warning( const char *format, ... )
+void
+Mat_Warning( const char *format, ... )
 {
     va_list ap;
 
     va_start(ap, format );
-    scats_log(LOG_LEVEL_WARNING, format, ap );
+    mat_log(LOG_LEVEL_WARNING, format, ap );
     va_end(ap);
 }
 
+/** @brief Calculate the size of MAT data types
+ *
+ * @ingroup mat_util
+ * @param data_type Data type enumeration
+ * @return size of the data type in bytes
+ */
 size_t
-Mat_SizeOf(int data_type)
+Mat_SizeOf(enum matio_types data_type)
 {
     switch (data_type) {
         case MAT_T_DOUBLE:

@@ -1,5 +1,6 @@
+## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (C) 2005-2006   Christopher C. Hulbert
+## Copyright (C) 2005-2008   Christopher C. Hulbert
 ##
 ##  This library is free software; you can redistribute it and/or
 ##  modify it under the terms of the GNU Lesser General Public
@@ -18,44 +19,17 @@
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 VPATH = @srcdir@
 
-ACLOCAL_AMFLAGS = -I config -I getopt/m4
-
-datadir = $(prefix)/share/matio
-EXTRA_DIST = matio.pc.in bootstrap patches/inflate.patch \
-             share/test_file.mat share/test_file_v6.mat
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = matio.pc
-$(pkgconfig_DATA): config.status
-
-
-if DOCS_INSTALL
-DOCS=doxygen
-endif
-
-if BUILD_TEST
-data_DATA  = share/test_file.mat share/test_file_v6.mat
-TEST=test
-endif
-
 if NEED_GETOPT
-GETOPT = getopt/lib
+GETOPT_CFLAGS = -I$(top_builddir)/getopt/lib
+GETOPT_LIBS   = $(top_builddir)/getopt/lib/libgnu.la
 endif
 
-SUBDIRS = src $(GETOPT) tools $(TEST) $(DOCS)
+AM_CFLAGS = -I$(top_srcdir)/src $(GETOPT_CFLAGS) $(HDF5_CFLAGS) $(ZLIB_CFLAGS) \
+            $(LT_CFLAGS)
+AM_LDFLAGS = $(LT_LDFLAGS) $(FCLDFLAGS)
 
-dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
-              -e 's,[@]VERSION[@],$(VERSION),g' \
-              -e 's,\/,\\,g'
+bin_PROGRAMS = matdump
 
-doc:
-	
-
-print:
-	subdirs='$(SUBDIRS)'; \
-	here=`pwd`;\
-	for f in $$subdirs; do \
-	    cd $$f; \
-	    make print;\
-	    cd $$here;\
-	done
+matdump_SOURCES = matdump.c
+matdump_LDADD   = $(top_builddir)/src/libmatio.la $(GETOPT_LIBS) \
+                  $(HDF5_LIBS) $(ZLIB_LIBS)

@@ -26,34 +26,36 @@
 #   define EXTERN extern
 #endif
 
-EXTERN int WriteCellArrayField(mat_t *mat,matvar_t *matvar );
-EXTERN int WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar);
-EXTERN int WriteStructField(mat_t *mat,matvar_t *matvar);
+static size_t GetStructFieldBufSize(matvar_t *matvar);
+static size_t GetCellArrayFieldBufSize(matvar_t *matvar);
+static size_t GetMatrixMaxBufSize(matvar_t *matvar);
+static int WriteEmptyCharData(mat_t *mat, int N, int data_type);
+static int WriteEmptyData(mat_t *mat,int N,int data_type);
+static int ReadNextCell( mat_t *mat, matvar_t *matvar );
+static int ReadNextStructField( mat_t *mat, matvar_t *matvar );
+static int ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar);
+static int WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar);
+static int WriteCellArrayField(mat_t *mat,matvar_t *matvar );
+static int WriteStructField(mat_t *mat,matvar_t *matvar);
 #if defined(HAVE_ZLIB)
-EXTERN size_t WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,
-                                            z_stream *z);
-EXTERN size_t WriteCompressedStructField(mat_t *mat,matvar_t *matvar,
-                                         z_stream *z);
+static size_t WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,int data_type);
+static int WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,int data_type);
+static size_t WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,int data_type);
+static size_t WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z);
+static size_t WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z);
 #endif
-EXTERN int ReadNextStructField( mat_t *mat, matvar_t *matvar );
-EXTERN int ReadNextCell( mat_t *mat, matvar_t *matvar );
-EXTERN int WriteEmptyCharData(mat_t *mat, int N, int data_type);
 
 /*   mat5.c    */
+EXTERN mat_t *Mat_Create5(const char *matname,const char *hdr_str);
+
 void      Mat_VarPrint5( matvar_t *matvar, int printdata );
 matvar_t *Mat_VarReadNextInfo5( mat_t *mat );
 void      Read5(mat_t *mat, matvar_t *matvar);
 int       ReadData5(mat_t *mat,matvar_t *matvar,void *data, 
               int *start,int *stride,int *edge);
-int       Write5(mat_t *mat,matvar_t *matvar,int compress);
+int       Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress);
 int       WriteCharDataSlab2(mat_t *mat,void *data,int data_type,int *dims,
               int *start,int *stride,int *edge);
-#if defined(HAVE_ZLIB)
-size_t    WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
-              int data_type);
-size_t    WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
-              int data_type);
-#endif
 int       WriteData(mat_t *mat,void *data,int N,int data_type);
 int       WriteDataSlab2(mat_t *mat,void *data,int data_type,int *dims,
               int *start,int *stride,int *edge);

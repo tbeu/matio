@@ -30,14 +30,21 @@
 #include "mat5.h"
 #include "mat4.h"
 #include "matio_private.h"
+#if MAT73
+#   include "mat73.h"
+#endif
 
 static void
 ReadData(mat_t *mat, matvar_t *matvar)
 {
     if ( mat == NULL || matvar == NULL || mat->fp == NULL )
         return;
-    else if ( mat->version != MAT_FT_MAT4 )
+    else if ( mat->version == MAT_FT_MAT5 )
         Read5(mat,matvar);
+#if MAT73
+    else if ( mat->version == MAT_FT_MAT73 )
+        Mat_VarRead73(mat,matvar);
+#endif
     else if ( mat->version == MAT_FT_MAT4 )
         Read4(mat,matvar);
     return;
@@ -60,65 +67,23 @@ ReadData(mat_t *mat, matvar_t *matvar)
  * @ingroup MAT
  * @param matname Name of MAT file to create
  * @param hdr_str Optional header string, NULL to use default
+ * @param mat_file_ver MAT file version to create
  * @return A pointer to the MAT file or NULL if it failed.  This is not a
  * simple FILE * and should not be used as one.
  */
 mat_t *
-Mat_Create(const char *matname,const char *hdr_str)
+Mat_CreateVer(const char *matname,const char *hdr_str,enum mat_ft mat_file_ver)
 {
-    FILE *fp = NULL;
-    mat_int16_t endian = 0, version;
-    mat_t *mat = NULL;
-    size_t err;
-    time_t t;
+    mat_t *mat;
 
-    fp = fopen(matname,"wb");
-    if ( !fp )
-        return NULL;
-
-    mat = malloc(sizeof(*mat));
-    if ( !mat ) {
-        fclose(fp);
-        return NULL;
-    }
-
-    mat->fp            = NULL;
-    mat->header        = NULL;
-    mat->subsys_offset = NULL;
-    mat->filename      = NULL;
-    mat->version       = 0;
-    mat->byteswap      = 0;
-    mat->mode          = 0;
-    mat->bof           = 0;
-
-    t = time(NULL);
-    mat->fp = fp;
-    mat->filename = strdup_printf("%s",matname);
-    mat->mode     = MAT_ACC_RDWR;
-    mat->byteswap = 0;
-    mat->header   = calloc(1,128);
-    mat->subsys_offset = calloc(1,16);
-    memset(mat->header,' ',128);
-    if ( hdr_str == NULL ) {
-        err = mat_snprintf(mat->header,116,"MATLAB 5.0 MAT-file, Platform: %s, "
-                "Created By: libmatio v%d.%d.%d on %s", MATIO_PLATFORM,
-                MATIO_MAJOR_VERSION, MATIO_MINOR_VERSION, MATIO_RELEASE_LEVEL,
-                ctime(&t));
-        mat->header[115] = '\0';    /* Just to make sure it's NULL terminated */
-    } else {
-        err = mat_snprintf(mat->header,116,"%s",hdr_str);
-    }
-    mat->header[err] = ' ';
-    mat_snprintf(mat->subsys_offset,15,"            ");
-    mat->version = (int)0x0100;
-    endian = 0x4d49;
-
-    version = 0x0100;
-
-    err = fwrite(mat->header,1,116,mat->fp);
-    err = fwrite(mat->subsys_offset,1,8,mat->fp);
-    err = fwrite(&version,2,1,mat->fp);
-    err = fwrite(&endian,2,1,mat->fp);
+    if ( MAT_FT_MAT5 == mat_file_ver )
+        mat = Mat_Create5(matname,hdr_str);
+#if MAT73
+    else if ( MAT_FT_MAT73 == mat_file_ver )
+        mat = Mat_Create73(matname,hdr_str);
+#endif
+    else
+        mat = Mat_Create5(matname,hdr_str);
 
     return mat;
 }
@@ -140,23 +105,23 @@ Mat_Open(const char *matname,int mode)
     int     err;
     mat_t *mat = NULL;
 
-    if ( (mode & 0x000000ff) == MAT_ACC_RDONLY ) {
+    if ( (mode & 0x00000001) == MAT_ACC_RDONLY ) {
         fp = fopen( matname, "rb" );
         if ( !fp )
             return NULL;
-    } else if ( (mode & 0x000000ff) == MAT_ACC_RDWR ) {
+    } else if ( (mode & 0x00000001) == MAT_ACC_RDWR ) {
         fp = fopen( matname, "r+b" );
         if ( !fp ) {
-            mat = Mat_Create(matname,NULL);
+            mat = Mat_CreateVer(matname,NULL,mode&0xfffffffe);
             return mat;
         }
     } else {
-        mat = Mat_Create(matname,NULL);
+        mat = Mat_CreateVer(matname,NULL,mode&0xfffffffe);
         return mat;
     }
 
-    mat = malloc(sizeof(mat_t));
-    if ( !mat ) {
+    mat = malloc(sizeof(*mat));
+    if ( NULL == mat ) {
         Mat_Critical("Couldn't allocate memory for the MAT file");
         fclose(fp);
         return NULL;
@@ -169,8 +134,9 @@ Mat_Open(const char *matname,int mode)
         mat->version       = MAT_FT_MAT4;
         mat->byteswap      = 0;
         mat->mode          = mode;
-        mat->filename = strdup_printf("%s",matname);
+        mat->filename      = strdup_printf("%s",matname);
         mat->bof           = ftell(mat->fp);
+        mat->next_index    = 0;
     } else {
         mat->header        = malloc(128);
         mat->subsys_offset = malloc(8);
@@ -182,6 +148,7 @@ Mat_Open(const char *matname,int mode)
         err = fread(&tmp2,2,1,fp);
         fread (&tmp,1,2,fp);
         mat->bof = ftell(mat->fp);
+        mat->next_index    = 0;
 
         mat->byteswap = -1;
         if (tmp == 0x4d49)
@@ -196,14 +163,37 @@ Mat_Open(const char *matname,int mode)
             Mat_Critical("%s does not seem to be a valid MAT file",matname);
             Mat_Close(mat);
             mat=NULL;
-        } else if ( mat->version != 0x0100 ) {
-            Mat_Critical("%s is not a version 5 MAT file", matname);
+        } else if (mat->version != 0x0100 && mat->version != 0x0200) {
+            Mat_Critical("%s is not a recognized MAT file version", matname);
             Mat_Close(mat);
             mat=NULL;
         } else {
             mat->filename = strdup_printf("%s",matname);
             mat->mode = mode;
         }
+    }
+
+    if ( mat->version == 0x0200 ) {
+        fclose(mat->fp);
+#if MAT73
+
+        mat->fp = malloc(sizeof(hid_t));
+
+        if ( (mode & 0x00ff) == MAT_ACC_RDONLY )
+            *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDONLY,H5P_DEFAULT);
+        else if ( (mode & 0x00ff) == MAT_ACC_RDWR )
+            *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDWR,H5P_DEFAULT);
+
+        if ( -1 < *(hid_t*)mat->fp ) {
+            hsize_t num_objs;
+            H5Gget_num_objs(*(hid_t*)mat->fp,&num_objs);
+            mat->num_datasets = num_objs;
+        }
+#else
+        mat->fp = NULL;
+        Mat_Close(mat);
+        mat = NULL;
+#endif
     }
 
     return mat;
@@ -220,6 +210,13 @@ int
 Mat_Close( mat_t *mat )
 {
     if ( NULL != mat ) {
+#if MAT73
+        if ( mat->version == 0x0200 ) {
+            H5Fclose(*(hid_t*)mat->fp);
+            free(mat->fp);
+            mat->fp = NULL;
+        }
+#endif
         if ( mat->fp )
             fclose(mat->fp);
         if ( mat->header )
@@ -324,12 +321,21 @@ Mat_VarCalloc(void)
         matvar->data         = NULL;
         matvar->mem_conserve = 0;
         matvar->compression  = 0;
-        matvar->fpos         = 0;
-        matvar->datapos      = 0;
-        matvar->fp           = NULL;
+        matvar->internal     = malloc(sizeof(*matvar->internal));
+        if ( NULL == matvar->internal ) {
+            free(matvar);
+            matvar = NULL;
+        } else {
+            matvar->internal->hdf5_name = NULL;
+            matvar->internal->hdf5_ref  =  0;
+            matvar->internal->id        = -1;
+            matvar->internal->fp = NULL;
+            matvar->internal->fpos         = 0;
+            matvar->internal->datapos      = 0;
 #if defined(HAVE_ZLIB)
-        matvar->z            = NULL;
+            matvar->internal->z         = NULL;
 #endif
+        }
     }
 
     return matvar;
@@ -466,14 +472,15 @@ Mat_VarCreate(const char *name,int class_type,int data_type,int rank,int *dims,
         {
             matvar_t **fields;
 
-            if ( data == NULL )
-                break;
-            fields = data;
-            nfields = 0;
-            while ( fields[nfields] != NULL )
-                nfields++;
             matvar->data_size = sizeof(matvar_t **);
-            nmemb = nfields; /* nfields is really nmemb*nfields */
+            nmemb = 0;
+            if ( data != NULL ) {
+                fields = data;
+                nfields = 0;
+                while ( fields[nfields] != NULL )
+                    nfields++;
+                nmemb = nfields; /* nfields is really nmemb*nfields */
+            }
             break;
         }
         default:
@@ -489,7 +496,7 @@ Mat_VarCreate(const char *name,int class_type,int data_type,int rank,int *dims,
         matvar->nbytes = nmemb*matvar->data_size;
     } else if ( matvar->class_type == MAT_C_SPARSE ) {
         matvar->data_size = sizeof(sparse_t);
-        matvar->nbytes = matvar->data_size;
+        matvar->nbytes    = matvar->data_size;
     } else {
         matvar->nbytes = nmemb*matvar->data_size;
     }
@@ -543,14 +550,26 @@ Mat_VarCreate(const char *name,int class_type,int data_type,int rank,int *dims,
 int
 Mat_VarDelete(mat_t *mat, char *name)
 {
-    int   err = 1;
+    int   err = 1,mat_file_ver;
     char *tmp_name, *new_name, *temp;
     mat_t *tmp;
     matvar_t *matvar;
 
+    switch ( mat->version ) {
+        case 0x0200:
+            mat_file_ver = MAT_FT_MAT73;
+            break;
+        case 0x0100:
+            mat_file_ver = MAT_FT_MAT5;
+            break;
+        case 0x0010:
+            mat_file_ver = MAT_FT_MAT4;
+            break;
+    }
+
     temp     = strdup_printf("XXXXXX");
     tmp_name = mktemp(temp);
-    tmp      = Mat_Create(tmp_name,mat->header);
+    tmp      = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
     if ( tmp != NULL ) {
         while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
             if ( strcmp(matvar->name,name) )
@@ -597,7 +616,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     matvar_t *out;
     int i;
 
-    out = malloc(sizeof(matvar_t));
+    out = Mat_VarCalloc();
     if ( out == NULL )
         return NULL;
 
@@ -611,14 +630,20 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->isLogical    = in->isLogical;
     out->mem_conserve = in->mem_conserve;
     out->compression  = in->compression;
-    out->fpos         = in->fpos;
-    out->datapos      = in->datapos;
 
     out->name = NULL;
     out->dims = NULL;
     out->data = NULL;
+
+    if ( NULL != in->internal->hdf5_name )
+        out->internal->hdf5_name = strdup(in->internal->hdf5_name);
+
+    out->internal->hdf5_ref = in->internal->hdf5_ref;
+    out->internal->id       = in->internal->id;
+    out->internal->fpos     = in->internal->fpos;
+    out->internal->datapos  = in->internal->datapos;
 #if defined(HAVE_ZLIB)
-    out->z    = NULL;
+    out->internal->z        = NULL;
 #endif
 
     if (in->name != NULL && (NULL != (out->name = malloc(strlen(in->name)+1))))
@@ -628,8 +653,8 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     if ( out->dims != NULL )
         memcpy(out->dims,in->dims,in->rank*sizeof(int));
 #if defined(HAVE_ZLIB)
-    if ( (in->z != NULL) && (NULL != (out->z = malloc(sizeof(z_stream)))) )
-        inflateCopy(out->z,in->z);
+    if ( (in->internal->z != NULL) && (NULL != (out->internal->z = malloc(sizeof(z_stream)))) )
+        inflateCopy(out->internal->z,in->internal->z);
 #endif
 
     if ( !opt ) {
@@ -732,8 +757,42 @@ Mat_VarFree(matvar_t *matvar)
     }
 #if defined(HAVE_ZLIB)
     if ( matvar->compression == COMPRESSION_ZLIB ) {
-        inflateEnd(matvar->z);
-        free(matvar->z);
+        inflateEnd(matvar->internal->z);
+        free(matvar->internal->z);
+    }
+#endif
+#if MAT73
+    if ( NULL != matvar->internal ) {
+        if ( -1 < matvar->internal->id ) {
+            switch ( H5Iget_type(matvar->internal->id) ) {
+                case H5I_GROUP:
+                    H5Gclose(matvar->internal->id);
+                    matvar->internal->id = -1;
+                    break;
+                case H5I_DATASET:
+                    H5Dclose(matvar->internal->id);
+                    matvar->internal->id = -1;
+                    break;
+                default:
+                    break;
+            }
+        }
+        if ( 0 < matvar->internal->hdf5_ref ) {
+            switch ( H5Iget_type(matvar->internal->id) ) {
+                case H5I_GROUP:
+                    H5Gclose(matvar->internal->id);
+                    matvar->internal->hdf5_ref = -1;
+                    break;
+                case H5I_DATASET:
+                    H5Dclose(matvar->internal->id);
+                    matvar->internal->hdf5_ref = -1;
+                    break;
+                default:
+                    break;
+            }
+        }
+        free(matvar->internal);
+        matvar->internal = NULL;
     }
 #endif
     /* FIXME: Why does this cause a SEGV? */
@@ -777,7 +836,7 @@ Mat_VarFree2(matvar_t *matvar)
     }
 #if defined(HAVE_ZLIB)
     if ( matvar->compression == COMPRESSION_ZLIB )
-        inflateEnd(matvar->z);
+        inflateEnd(matvar->internal->z);
 #endif
     /* FIXME: Why does this cause a SEGV? */
 #if 0
@@ -1321,11 +1380,16 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
 void
 Mat_VarPrint( matvar_t *matvar, int printdata )
 {
-    if ( matvar == NULL || matvar->fp == NULL )
+    if ( matvar == NULL || matvar->internal == NULL ||
+         matvar->internal->fp == NULL )
         return;
-    else if ( matvar->fp->version != MAT_FT_MAT4 )
+    else if ( matvar->internal->fp->version == MAT_FT_MAT5 )
         Mat_VarPrint5(matvar,printdata);
-    else if ( matvar->fp->version == MAT_FT_MAT4 )
+#if MAT73
+    else if ( matvar->internal->fp->version == MAT_FT_MAT73 )
+        Mat_VarPrint73(matvar,printdata);
+#endif
+    else if ( matvar->internal->fp->version == MAT_FT_MAT4 )
         Mat_VarPrint4(matvar,printdata);
     return;
 }
@@ -1402,7 +1466,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 
     if ( mat->version == MAT_FT_MAT4 )
         return -1;
-    fseek(mat->fp,matvar->datapos,SEEK_SET);
+    fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( matvar->compression == COMPRESSION_NONE ) {
         fread(tag,4,2,mat->fp);
         if ( mat->byteswap ) {
@@ -1418,8 +1482,8 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
         }
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == COMPRESSION_ZLIB ) {
-        matvar->z->avail_in = 0;
-        err = inflateCopy(&z,matvar->z);
+        matvar->internal->z->avail_in = 0;
+        err = inflateCopy(&z,matvar->internal->z);
         InflateDataType(mat,&z,tag);
         if ( mat->byteswap ) {
             Mat_int32Swap(tag);
@@ -1452,7 +1516,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 
             ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
                 matvar->data_type,start,stride,edge);
-            fseek(mat->fp,matvar->datapos+real_bytes,SEEK_SET);
+            fseek(mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
             fread(tag,4,2,mat->fp);
             if ( mat->byteswap ) {
                 Mat_int32Swap(tag);
@@ -1476,11 +1540,11 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
             ReadCompressedDataSlab1(mat,&z,complex_data->Re,
                 matvar->class_type,matvar->data_type,start,stride,edge);
             
-            fseek(mat->fp,matvar->datapos,SEEK_SET);
+            fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
             
             /* Reset zlib knowledge to before reading real tag */
             inflateEnd(&z);
-            err = inflateCopy(&z,matvar->z);
+            err = inflateCopy(&z,matvar->internal->z);
             InflateSkip(mat,&z,real_bytes);
             z.avail_in = 0;
             InflateDataType(mat,&z,tag);
@@ -1567,8 +1631,12 @@ Mat_VarReadNextInfo( mat_t *mat )
 {
     if( mat == NULL )
         return NULL;
-    else if ( mat->version == 0x0100 )
+    else if ( mat->version == MAT_FT_MAT5 )
         return Mat_VarReadNextInfo5(mat);
+#if MAT73
+    else if ( mat->version == MAT_FT_MAT73 )
+        return Mat_VarReadNextInfo73(mat);
+#endif
     else
         return Mat_VarReadNextInfo4(mat);
 
@@ -1596,41 +1664,43 @@ Mat_VarReadInfo( mat_t *mat, char *name )
     if ( (mat == NULL) || (name == NULL) )
         return NULL;
 
-    fpos = ftell(mat->fp);
-
-    fseek(mat->fp,mat->bof,SEEK_SET);
-    do {
-#if 0
-        err = fread(&data_type,4,1,mat->fp);
-        if ( !err )
-            return NULL;
-        err = fread(&nBytes,4,1,mat->fp);
-        if ( mat->byteswap ) {
-            Mat_int32Swap(&data_type);
-            Mat_int32Swap(&nBytes);
-        }
-        curpos = ftell(mat->fp);
-        fseek(mat->fp,-8,SEEK_CUR);
-#endif
-        matvar = Mat_VarReadNextInfo(mat);
-        if ( matvar != NULL ) {
-            if ( !matvar->name ) {
-                Mat_VarFree(matvar);
-                matvar = NULL;
-            } else if ( strcmp(matvar->name,name) ) {
-                Mat_VarFree(matvar);
-                matvar = NULL;
+    if ( mat->version == MAT_FT_MAT73 ) {
+        do {
+            matvar = Mat_VarReadNextInfo(mat);
+            if ( matvar != NULL ) {
+                if ( !matvar->name ) {
+                    Mat_VarFree(matvar);
+                    matvar = NULL;
+                } else if ( strcmp(matvar->name,name) ) {
+                    Mat_VarFree(matvar);
+                    matvar = NULL;
+                }
+            } else {
+                Mat_Critical("An error occurred in reading the MAT file");
+                break;
             }
-        } else {
-            Mat_Critical("An error occurred in reading the MAT file");
-            break;
-        }
-#if 0
-        fseek(mat->fp,curpos+nBytes,SEEK_SET);
-#endif
-    } while ( !matvar && !feof(mat->fp) );
+        } while ( NULL == matvar && mat->next_index < mat->num_datasets);
+    } else {
+        fpos = ftell(mat->fp);
+        fseek(mat->fp,mat->bof,SEEK_SET);
+        do {
+            matvar = Mat_VarReadNextInfo(mat);
+            if ( matvar != NULL ) {
+                if ( !matvar->name ) {
+                    Mat_VarFree(matvar);
+                    matvar = NULL;
+                } else if ( strcmp(matvar->name,name) ) {
+                    Mat_VarFree(matvar);
+                    matvar = NULL;
+                }
+            } else {
+                Mat_Critical("An error occurred in reading the MAT file");
+                break;
+            }
+        } while ( !matvar && !feof(mat->fp) );
 
-    fseek(mat->fp,fpos,SEEK_SET);
+        fseek(mat->fp,fpos,SEEK_SET);
+    }
     return matvar;
 }
 
@@ -1652,11 +1722,15 @@ Mat_VarRead( mat_t *mat, char *name )
     if ( (mat == NULL) || (name == NULL) )
         return NULL;
 
-    fpos = ftell(mat->fp);
+    if ( MAT_FT_MAT73 != mat->version )
+        fpos = ftell(mat->fp);
+
     matvar = Mat_VarReadInfo(mat,name);
     if ( matvar )
         ReadData(mat,matvar);
-    fseek(mat->fp,fpos,SEEK_SET);
+
+    if ( MAT_FT_MAT73 != mat->version )
+        fseek(mat->fp,fpos,SEEK_SET);
     return matvar;
 }
 
@@ -1674,14 +1748,16 @@ Mat_VarReadNext( mat_t *mat )
     long fpos;
     matvar_t *matvar = NULL;
 
-    if ( feof(mat->fp) )
-        return NULL;
-    /* Read position so we can reset the file position if an error occurs */
-    fpos = ftell(mat->fp);
+    if ( mat->version != MAT_FT_MAT73 ) {
+        if ( feof(mat->fp) )
+            return NULL;
+        /* Read position so we can reset the file position if an error occurs */
+        fpos = ftell(mat->fp);
+    }
     matvar = Mat_VarReadNextInfo(mat);
     if ( matvar )
         ReadData(mat,matvar);
-    else
+    else if (mat->version != MAT_FT_MAT73 )
         fseek(mat->fp,fpos,SEEK_SET);
     return matvar;
 }
@@ -1729,7 +1805,7 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
 {
     int err = 0, k, N = 1;
 
-    fseek(mat->fp,matvar->datapos+8,SEEK_SET);
+    fseek(mat->fp,matvar->internal->datapos+8,SEEK_SET);
 
     if ( mat == NULL || matvar == NULL || data == NULL ) {
         err = -1;
@@ -1740,10 +1816,10 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
             WriteData(mat,data,N,matvar->data_type);
 #if 0
         else if ( matvar->compression == COMPRESSION_ZLIB ) {
-            WriteCompressedData(mat,matvar->z,data,N,matvar->data_type);
-            (void)deflateEnd(matvar->z);
-            free(matvar->z);
-            matvar->z = NULL;
+            WriteCompressedData(mat,matvar->internal->z,data,N,matvar->data_type);
+            (void)deflateEnd(matvar->internal->z);
+            free(matvar->internal->z);
+            matvar->internal->z = NULL;
         }
 #endif
     } else if ( matvar->rank == 2 ) {
@@ -1789,12 +1865,16 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
  * @retval 0 on success
  */
 int
-Mat_VarWrite( mat_t *mat, matvar_t *matvar, int compress )
+Mat_VarWrite(mat_t *mat,matvar_t *matvar,int compress)
 {
     if ( mat == NULL || matvar == NULL )
         return -1;
-    else if ( mat->version != MAT_FT_MAT4 )
-        Write5(mat,matvar,compress);
+    else if ( mat->version == MAT_FT_MAT5 )
+        Mat_VarWrite5(mat,matvar,compress);
+#if MAT73
+    else if ( mat->version == MAT_FT_MAT73 )
+        Mat_VarWrite73(mat,matvar,compress);
+#endif
 
     return 0;
 }

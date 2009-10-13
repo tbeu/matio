@@ -1,5 +1,6 @@
+## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (C) 2008   Christopher C. Hulbert
+## Copyright (C) 2005-2008   Christopher C. Hulbert
 ##
 ##  This library is free software; you can redistribute it and/or
 ##  modify it under the terms of the GNU Lesser General Public
@@ -15,31 +16,39 @@
 ##  License along with this library; if not, write to the Free Software
 ##  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ##
-
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 VPATH = @srcdir@
 
-AM_CFLAGS  = -I. $(ZLIB_CFLAGS)
-AM_LDFLAGS =
+LT_CURRENT=2
+LT_REVISION=0
+LT_AGE=0
+
+AM_CFLAGS  = -I. $(HDF5_CFLAGS) $(ZLIB_CFLAGS) $(LT_CFLAGS)
+AM_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) $(LT_LDFLAGS)
 
 if HAVE_ZLIB
     ZLIB_SRC = inflate.c
 endif
 
-noinst_HEADERS      = matio_private.h mat4.h mat5.h
-include_HEADERS     = matio.h matioConfig.h
-lib_LTLIBRARIES     = libmatio.la
-libmatio_la_SOURCES = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
-                      mat5.c mat4.c mat.c
-libmatio_la_LIBADD  = $(ZLIB_LIBS)
+nodist_include_HEADERS = matioConfig.h
+include_HEADERS        = matio.h
+noinst_HEADERS         = matio_private.h mat4.h mat5.h
+lib_LTLIBRARIES        = libmatio.la
+libmatio_la_SOURCES    = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
+                         mat5.c mat4.c mat.c
+libmatio_la_LIBADD     = $(ZLIB_LIBS)
+
+if MAT73
+libmatio_la_SOURCES+= mat73.c
+endif
 
 if ENABLE_FORTRAN
-    AM_FCFLAGS             = -I. -I$(top_builddir)/src/fortran
-    AM_LDFLAGS            +=  $(FCLDFLAGS)
-    nodist_include_HEADERS =  $(top_builddir)/src/matio.mod
-    noinst_HEADERS        += fortran/create.f90 fortran/read_data.f90 \
-                             fortran/write_data.f90 fortran/write.f90
-    libmatio_la_SOURCES   += fortran/matio_internal.c fortran/matio.f90
+AM_FCFLAGS              = -I. -I$(top_builddir)/src/fortran
+AM_LDFLAGS             +=  $(FCLDFLAGS)
+libmatio_la_SOURCES    +=  fortran/matio_internal.c fortran/matio.f90
+nodist_include_HEADERS +=  $(top_builddir)/src/matio.mod
+noinst_HEADERS         += fortran/create.f90 fortran/read_data.f90 \
+                          fortran/write_data.f90 fortran/write.f90
 endif
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \

@@ -22,6 +22,7 @@ INTEGER(mat_ptr),POINTER :: nullptr => null()
 
 TYPE mat_t
     CHARACTER(LEN=128)  :: header
+    INTEGER             :: mat_file_ver
     INTEGER(mat_ptr)    :: mat_t_c_ptr = 0
 END TYPE mat_t
 TYPE matvar_t
@@ -42,6 +43,10 @@ END TYPE matvar_t
     INTEGER,PARAMETER :: MAT_ACC_RDWR     = 2
     INTEGER,PARAMETER :: MAT_FT_MAT4      = 65536
     INTEGER,PARAMETER :: MAT_FT_MAT5      = 1
+
+    INTEGER,PARAMETER :: MAT_FT_MAT4      = 16
+    INTEGER,PARAMETER :: MAT_FT_MAT5      = 256
+    INTEGER,PARAMETER :: MAT_FT_MAT73     = 512
 
     INTEGER,PARAMETER :: MAT_T_UNKNOWN    =  0
     INTEGER,PARAMETER :: MAT_T_INT8       =  1

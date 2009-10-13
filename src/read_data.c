@@ -38,6 +38,8 @@
  * --------------------------------------------------------------------------
  */
 
+/** @cond mat_devman */
+
 /** @brief Reads data of type @c data_type into a double type
  *
  * Reads from the MAT file @c len elements of data type @c data_type storing
@@ -6435,3 +6437,5 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,int class_type,
     return nBytes;
 }
 #endif
+
+/** @endcond */

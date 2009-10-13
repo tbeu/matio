@@ -229,26 +229,28 @@ CONTAINS
     END FUNCTION FMat_Open
 
 !----------------------------------------------------------
-!   FMat_Open
+!   FMat_Create
 !
-!   Opens a Matlab file
+!   Create a Matlab file
 !
-!   filename: Name of the matlab file
-!   mode:     Mode to open the file. One of MAT_ACC_*
-!   mat:      mat_t output structure containing the file information
+!   filename:     Name of the matlab file
+!   mat_file_ver: MAT file version to create (MAT_FT_*)
+!   mat:          mat_t output structure containing the file information
+!   header:       Optional 116 character string to write as the MAT file header
 !----------------------------------------------------------
-    FUNCTION FMat_Create(filename,mat,header) RESULT(err)
+    FUNCTION FMat_Create(filename,mat_file_ver,mat,header) RESULT(err)
     IMPLICIT NONE
         CHARACTER(LEN=*),INTENT(IN)           :: filename
+        INTEGER,INTENT(IN)                    :: mat_file_ver
         CHARACTER(LEN=*),INTENT(IN),OPTIONAL  :: header
         TYPE(mat_t),INTENT(OUT)               :: mat
         INTEGER                               :: err
         INTEGER,EXTERNAL :: fmat_create_c
 
         IF ( .NOT. PRESENT(header) ) THEN
-            err = fmat_create_c(filename,mat,nullptr)
+            err = fmat_create_c(filename,mat_file_ver,mat,nullptr)
         ELSE
-            err = fmat_create_c(filename,mat,header)
+            err = fmat_create_c(filename,mat_file_ver,mat,header)
         END IF
     END FUNCTION FMat_Create
 

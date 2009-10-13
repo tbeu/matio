@@ -70,7 +70,33 @@
 #endif
 
 /** @defgroup MAT Matlab MAT File I/O Library */
-/** @defgroup mat_internal Internal Functions */
+/** @defgroup mat_util MAT File I/O Utitlity Functions */
+/** @if mat_devman @defgroup mat_internal Internal Functions @endif */
+
+#ifdef _mat_int64_t
+    typedef _mat_int64_t mat_int64_t;
+#endif
+#ifdef _mat_uint64_t
+    typedef _mat_uint64_t mat_uint64_t;
+#endif
+#ifdef _mat_int32_t
+    typedef _mat_int32_t mat_int32_t;
+#endif
+#ifdef _mat_uint32_t
+    typedef _mat_uint32_t mat_uint32_t;
+#endif
+#ifdef _mat_int16_t
+    typedef _mat_int16_t mat_int16_t;
+#endif
+#ifdef _mat_uint16_t
+    typedef _mat_uint16_t mat_uint16_t;
+#endif
+#ifdef _mat_int8_t
+    typedef _mat_int8_t mat_int8_t;
+#endif
+#ifdef _mat_uint8_t
+    typedef _mat_uint8_t mat_uint8_t;
+#endif
 
 /** @brief MAT file access types
  *
@@ -78,8 +104,8 @@
  * MAT file access types
  */
 enum mat_acc {
-    MAT_ACC_RDONLY = 1,  /**< @brief Read only file access                */
-    MAT_ACC_RDWR   = 2   /**< @brief Read/Write file access               */
+    MAT_ACC_RDONLY = 0,  /**< @brief Read only file access                */
+    MAT_ACC_RDWR   = 1   /**< @brief Read/Write file access               */
 };
 
 /** @brief MAT file versions
@@ -88,8 +114,9 @@ enum mat_acc {
  * MAT file versions
  */
 enum mat_ft {
-    MAT_FT_MAT5  = 1,        /**< @brief Matlab level-5 file                  */
-    MAT_FT_MAT4  = 1 << 16   /**< @brief Version 4 file                       */
+    MAT_FT_MAT73  = 0x0200,   /**< @brief Matlab version 7.3 file             */
+    MAT_FT_MAT5   = 0x0100,   /**< @brief Matlab level-5 file                 */
+    MAT_FT_MAT4   = 0x0010    /**< @brief Version 4 file                      */
 };
 
 
@@ -192,21 +219,15 @@ struct ComplexSplit {
     void *Im; /**< Pointer to the imaginary part */
 };
 
+struct _mat_t;
 /** @brief Matlab MAT File information
- *
  * Contains information about a Matlab MAT file
  * @ingroup MAT
  */
-typedef struct mat_t {
-    FILE *fp;               /**< Pointer to the MAT file */
-    char *header;           /**< MAT File header string */
-    char *subsys_offset;    /**< offset */
-    char *filename;         /**< Name of the file that fp points to */
-    int   version;          /**< MAT File version */
-    int   byteswap;         /**< 1 if byte swapping is required, 0 else */
-    int   mode;             /**< Access mode */
-    long  bof;              /**< Beginning of file not including header */
-} mat_t;
+typedef struct _mat_t mat_t;
+
+/* Incomplete definition for private library data */
+struct matvar_internal;
 
 /** @brief Matlab variable information
  *
@@ -218,7 +239,7 @@ typedef struct matvar_t {
     int   rank;         /**< Rank (Number of dimensions) of the data */
     int   data_type;    /**< Data type(MAT_T_*) */
     int   data_size;    /**< Bytes / element for the data */
-    int   class_type;   /**< Class type in Matlab(mxDOUBLE_CLASS, etc) */
+    int   class_type;   /**< Class type in Matlab(MAT_C_DOUBLE, etc) */
     int   isComplex;    /**< non-zero if the data is complex, 0 if real */
     int   isGlobal;     /**< non-zero if the variable is global */
     int   isLogical;    /**< non-zero if the variable is logical */
@@ -227,12 +248,7 @@ typedef struct matvar_t {
     void *data;         /**< Pointer to the data */
     int   mem_conserve; /**< 1 if Memory was conserved with data */
     int   compression;  /**< Compression (0=>None,1=>ZLIB) */
-    long  fpos;         /**< Offset from the beginning of the MAT file to the variable */
-    long  datapos;      /**< Offset from the beginning of the MAT file to the data */
-    mat_t    *fp;       /**< Pointer to the MAT file structure (mat_t) */
-#if defined(HAVE_ZLIB)
-    z_stream *z;        /**< zlib compression state */
-#endif
+    struct matvar_internal *internal; /**< matio internal data */
 } matvar_t;
 
 /** @brief sparse data information
@@ -271,11 +287,13 @@ EXTERN int    Mat_Message( const char *format, ... );
 EXTERN int    Mat_DebugMessage( int level, const char *format, ... );
 EXTERN int    Mat_VerbMessage( int level, const char *format, ... );
 EXTERN void   Mat_Warning( const char *format, ... );
-EXTERN size_t Mat_SizeOf(int data_type);
+EXTERN size_t Mat_SizeOf(enum matio_types data_type);
 EXTERN size_t Mat_SizeOfClass(int class_type);
 
 /*   MAT File functions   */
-EXTERN mat_t  *Mat_Create(const char *matname,const char *hdr_str);
+#define        Mat_Create(a,b) Mat_CreateVer(a,b,MAT_FT_DEFAULT)
+EXTERN mat_t  *Mat_CreateVer(const char *matname,const char *hdr_str,
+                   enum mat_ft mat_file_ver);
 EXTERN int     Mat_Close(mat_t *mat);
 EXTERN mat_t  *Mat_Open(const char *matname,int mode);
 EXTERN int     Mat_Rewind(mat_t *mat);
