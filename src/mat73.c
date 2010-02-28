@@ -167,6 +167,16 @@ Mat_class_type_to_hid_t(enum matio_classes class_type)
 #       elif CHAR_BIT*SIZEOF_LONG_LONG == 64
             return H5T_NATIVE_LLONG;
 #       endif
+        case MAT_C_UINT64:
+#       if CHAR_BIT*SIZEOF_SHORT == 64
+            return H5T_NATIVE_USHORT;
+#       elif CHAR_BIT*SIZEOF_INT == 64
+            return H5T_NATIVE_UINT;
+#       elif CHAR_BIT*SIZEOF_LONG == 64
+            return H5T_NATIVE_ULONG;
+#       elif CHAR_BIT*SIZEOF_LONG_LONG == 64
+            return H5T_NATIVE_ULLONG;
+#       endif
         case MAT_C_INT32:
 #       if CHAR_BIT == 32
             return H5T_NATIVE_SCHAR;
