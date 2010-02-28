@@ -55,10 +55,11 @@ static const char *Mat_class_names[] = {
 
 static const char *class_type_desc[16] = {"Undefined","Cell Array","Structure",
        "Object","Character Array","Sparse Array","Double Precision Array",
-       "Single Precision Array", "8-bit, signed Integer Array",
-       "8-bit, Unsigned Integer Array","16-bit, signed Integer Array",
-       "16-bit, unsigned Integer Array","32-bit, signed Integer Array",
-       "32-bit, unsigned Integer Array","Matlab Array","Compressed Data"};
+       "Single Precision Array", "8-bit, signed integer array",
+       "8-bit, unsigned integer array","16-bit, signed integer array",
+       "16-bit, unsigned integer array","32-bit, signed integer array",
+       "32-bit, unsigned integer array","64-bit, signed integer array",
+       "64-bit, unsigned integer array"};
 static const char *data_type_desc[23] = {"Unknown","8-bit, signed integer",
        "8-bit, unsigned integer","16-bit, signed integer",
        "16-bit, unsigned integer","32-bit, signed integer",
