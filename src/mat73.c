@@ -378,7 +378,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         int k;
         H5Sget_simple_extent_dims(space_id,dims,NULL);
         for ( k = 0; k < matvar->rank; k++ )
-            matvar->dims[k] = dims[k];
+            matvar->dims[k] = dims[matvar->rank - k - 1];
     }
     H5Sclose(space_id);
 
@@ -548,7 +548,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
             numel = 1;
             for ( k = 0; k < matvar->rank; k++ ) {
-                matvar->dims[k] = dims[k];
+                matvar->dims[k] = dims[matvar->rank - k - 1];
                 numel *= matvar->dims[k];
             }
             H5Sclose(space_id);
@@ -674,7 +674,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 int k;
                 H5Sget_simple_extent_dims(space_id,dims,NULL);
                 for ( k = 0; k < matvar->rank; k++ )
-                    matvar->dims[k] = dims[k];
+                    matvar->dims[k] = dims[matvar->rank - k - 1];
             }
             H5Sclose(space_id);
 
@@ -2766,7 +2766,7 @@ Mat_VarReadNextInfo73( mat_t *mat )
                 int k;
                 H5Sget_simple_extent_dims(space_id,dims,NULL);
                 for ( k = 0; k < matvar->rank; k++ )
-                    matvar->dims[k] = dims[k];
+                    matvar->dims[k] = dims[matvar->rank - k - 1];
             }
             H5Sclose(space_id);
 
