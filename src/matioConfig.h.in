@@ -19,6 +19,7 @@
 #undef SIZEOF_DOUBLE
 #undef SIZEOF_FLOAT
 #undef SIZEOF_LONG
+#undef SIZEOF_LONG_LONG
 #undef SIZEOF_INT
 #undef SIZEOF_SHORT
 #undef SIZEOF_CHAR
