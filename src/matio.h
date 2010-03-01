@@ -235,19 +235,19 @@ struct matvar_internal;
  * @ingroup MAT
  */
 typedef struct matvar_t {
-    int   nbytes;       /**< Number of bytes for the MAT variable */
-    int   rank;         /**< Rank (Number of dimensions) of the data */
-    int   data_type;    /**< Data type(MAT_T_*) */
-    int   data_size;    /**< Bytes / element for the data */
-    int   class_type;   /**< Class type in Matlab(MAT_C_DOUBLE, etc) */
-    int   isComplex;    /**< non-zero if the data is complex, 0 if real */
-    int   isGlobal;     /**< non-zero if the variable is global */
-    int   isLogical;    /**< non-zero if the variable is logical */
-    int  *dims;         /**< Array of lengths for each dimension */
-    char *name;         /**< Name of the variable */
-    void *data;         /**< Pointer to the data */
-    int   mem_conserve; /**< 1 if Memory was conserved with data */
-    int   compression;  /**< Compression (0=>None,1=>ZLIB) */
+    int   nbytes;                     /**< Number of bytes for the MAT variable */
+    int   rank;                       /**< Rank (Number of dimensions) of the data */
+    enum matio_types   data_type;     /**< Data type(MAT_T_*) */
+    int   data_size;                  /**< Bytes / element for the data */
+    enum matio_classes class_type;    /**< Class type in Matlab(MAT_C_DOUBLE, etc) */
+    int   isComplex;                  /**< non-zero if the data is complex, 0 if real */
+    int   isGlobal;                   /**< non-zero if the variable is global */
+    int   isLogical;                  /**< non-zero if the variable is logical */
+    int  *dims;                       /**< Array of lengths for each dimension */
+    char *name;                       /**< Name of the variable */
+    void *data;                       /**< Pointer to the data */
+    int   mem_conserve;               /**< 1 if Memory was conserved with data */
+    int   compression;                /**< Compression (0=>None,1=>ZLIB) */
     struct matvar_internal *internal; /**< matio internal data */
 } matvar_t;
 
