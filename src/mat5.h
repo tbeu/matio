@@ -48,7 +48,6 @@ static size_t WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z
 /*   mat5.c    */
 EXTERN mat_t *Mat_Create5(const char *matname,const char *hdr_str);
 
-void      Mat_VarPrint5( matvar_t *matvar, int printdata );
 matvar_t *Mat_VarReadNextInfo5( mat_t *mat );
 void      Read5(mat_t *mat, matvar_t *matvar);
 int       ReadData5(mat_t *mat,matvar_t *matvar,void *data, 
