@@ -351,6 +351,138 @@ Mat_data_type_to_hid_t(enum matio_types data_type)
 }
 
 static void
+Mat_complex_interleaved_to_split(void *data,struct ComplexSplit *complex_data,
+    enum matio_types type,size_t numel)
+{
+    switch ( type ) {
+        case MAT_T_DOUBLE:
+        {
+            double *rp      = complex_data->Re;
+            double *ip      = complex_data->Im;
+            double *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+        case MAT_T_SINGLE:
+        {
+            float *rp      = complex_data->Re;
+            float *ip      = complex_data->Im;
+            float *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+#if HAVE_MAT_INT64_T
+        case MAT_T_INT64:
+        {
+            mat_int64_t *rp      = complex_data->Re;
+            mat_int64_t *ip      = complex_data->Im;
+            mat_int64_t *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+#endif
+#if HAVE_MAT_UINT64_T
+        case MAT_T_UINT64:
+        {
+            mat_uint64_t *rp      = complex_data->Re;
+            mat_uint64_t *ip      = complex_data->Im;
+            mat_uint64_t *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+#endif
+        case MAT_T_INT32:
+        {
+            mat_int32_t *rp      = complex_data->Re;
+            mat_int32_t *ip      = complex_data->Im;
+            mat_int32_t *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+        case MAT_T_UINT32:
+        {
+            mat_uint32_t *rp      = complex_data->Re;
+            mat_uint32_t *ip      = complex_data->Im;
+            mat_uint32_t *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+        case MAT_T_INT16:
+        {
+            mat_int16_t *rp      = complex_data->Re;
+            mat_int16_t *ip      = complex_data->Im;
+            mat_int16_t *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+        case MAT_T_UINT16:
+        {
+            mat_uint16_t *rp      = complex_data->Re;
+            mat_uint16_t *ip      = complex_data->Im;
+            mat_uint16_t *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+        case MAT_T_INT8:
+        {
+            mat_int8_t *rp      = complex_data->Re;
+            mat_int8_t *ip      = complex_data->Im;
+            mat_int8_t *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+        case MAT_T_UINT8:
+        {
+            mat_uint8_t *rp      = complex_data->Re;
+            mat_uint8_t *ip      = complex_data->Im;
+            mat_uint8_t *tmp_ptr = data;
+            size_t  k;
+            for ( k = 0; k < numel; k++ ) {
+                *rp++ = *tmp_ptr++;
+                *ip++ = *tmp_ptr++;
+            }
+            break;
+        }
+    } /* switch class_type */
+}
+
+static void
 Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 {
     ssize_t  name_len;
@@ -498,6 +630,43 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     if ( -1 < attr_id ) {
         H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
         H5Aclose(attr_id);
+    }
+
+    /* Check if the variable is sparse */
+    attr_id = H5Aopen_name(dset_id,"MATLAB_sparse");
+    if ( -1 < attr_id ) {
+        hid_t sparse_dset_id;
+        unsigned nrows = 0;
+
+        H5Eset_auto(efunc,client_data);
+
+        H5Aread(attr_id,H5T_NATIVE_UINT,&nrows);
+        H5Aclose(attr_id);
+
+        matvar->class_type = MAT_C_SPARSE;
+
+        matvar->rank = 2;
+        matvar->dims = malloc(matvar->rank*sizeof(*matvar->dims));
+        matvar->dims[0] = nrows;
+
+        sparse_dset_id = H5Dopen(dset_id,"jc");
+        if ( -1 < sparse_dset_id ) {
+            space_id = H5Dget_space(sparse_dset_id);
+            (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
+            matvar->dims[1] = dims[0] - 1;
+        }
+
+        /* Test if dataset type is compound and if so if it's complex */
+        sparse_dset_id = H5Dopen(dset_id,"data");
+        if ( -1 < sparse_dset_id ) {
+            type_id = H5Dget_type(sparse_dset_id);
+            if ( H5T_COMPOUND == H5Tget_class(type_id) ) {
+                /* FIXME: Any more checks? */
+                matvar->isComplex = MAT_F_COMPLEX;
+            }
+            H5Tclose(type_id);
+        }
+        return;
     }
 
     /* Check if the structure defines its fields in MATLAB_fields */
@@ -1000,17 +1169,21 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             int i,nfields = 0;
             hid_t field_id,ref_id,field_type_id;
 
-            if ( !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
-                break;
-            nfields = matvar->nbytes / matvar->data_size;
-            fields  = matvar->data;
-            for ( i = 0; i < nfields; i++ ) {
-                if (  0 < fields[i]->internal->hdf5_ref &&
-                     -1 < fields[i]->internal->id ) {
-                    /* Dataset of references */
-                    Mat_H5ReadNextReferenceData(fields[i]->internal->id,fields[i],mat);
-                } else {
-                    Mat_VarRead73(mat,fields[i]);
+            if ( MAT_C_SPARSE == matvar->class_type ) {
+                Mat_VarRead73(mat,matvar);
+            } else {
+                if ( !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
+                    break;
+                nfields = matvar->nbytes / matvar->data_size;
+                fields  = matvar->data;
+                for ( i = 0; i < nfields; i++ ) {
+                    if (  0 < fields[i]->internal->hdf5_ref &&
+                         -1 < fields[i]->internal->id ) {
+                        /* Dataset of references */
+                        Mat_H5ReadNextReferenceData(fields[i]->internal->id,fields[i],mat);
+                    } else {
+                        Mat_VarRead73(mat,fields[i]);
+                    }
                 }
             }
             break;
@@ -2692,6 +2865,96 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             for ( i = 0; i < ncells; i++ )
                 Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
             free(ref_ids);
+            break;
+        }
+        case MAT_C_SPARSE:
+        {
+            hid_t sparse_dset_id, space_id;
+            hsize_t dims[2] = {0,};
+            struct sparse_t *sparse_data = calloc(1,sizeof(*sparse_data));
+
+            if ( NULL != matvar->internal->hdf5_name ) {
+                dset_id = H5Gopen(fid,matvar->internal->hdf5_name);
+            } else {
+                dset_id = matvar->internal->id;
+                H5Iinc_ref(dset_id);
+            }
+
+            sparse_dset_id = H5Dopen(dset_id,"ir");
+            if ( -1 < sparse_dset_id ) {
+                space_id = H5Dget_space(sparse_dset_id);
+                H5Sget_simple_extent_dims(space_id,dims,NULL);
+                sparse_data->nir = dims[0];
+                sparse_data->ir = malloc(sparse_data->nir*
+                                         sizeof(*sparse_data->ir));
+                H5Dread(sparse_dset_id,H5T_NATIVE_INT,
+                        H5S_ALL,H5S_ALL,H5P_DEFAULT,sparse_data->ir);
+                H5Sclose(space_id);
+                H5Dclose(sparse_dset_id);
+            }
+
+            sparse_dset_id = H5Dopen(dset_id,"jc");
+            if ( -1 < sparse_dset_id ) {
+                space_id = H5Dget_space(sparse_dset_id);
+                H5Sget_simple_extent_dims(space_id,dims,NULL);
+                sparse_data->njc = dims[0];
+                sparse_data->jc = malloc(sparse_data->njc*
+                                         sizeof(*sparse_data->jc));
+                H5Dread(sparse_dset_id,H5T_NATIVE_INT,
+                        H5S_ALL,H5S_ALL,H5P_DEFAULT,sparse_data->jc);
+                H5Sclose(space_id);
+                H5Dclose(sparse_dset_id);
+            }
+
+            sparse_dset_id = H5Dopen(dset_id,"data");
+            if ( -1 < sparse_dset_id ) {
+                size_t ndata_bytes;
+                space_id = H5Dget_space(sparse_dset_id);
+                H5Sget_simple_extent_dims(space_id,dims,NULL);
+                sparse_data->nzmax = dims[0];
+                sparse_data->ndata = dims[0];
+                matvar->data_size  = sizeof(struct sparse_t);
+                matvar->nbytes     = matvar->data_size;
+
+                ndata_bytes = sparse_data->nzmax*Mat_SizeOf(matvar->data_type);
+                if ( !matvar->isComplex ) {
+                    sparse_data->data  = malloc(ndata_bytes);
+                    if ( NULL != sparse_data->data ) {
+                        H5Dread(sparse_dset_id,
+                                Mat_data_type_to_hid_t(matvar->data_type),
+                                H5S_ALL,H5S_ALL,H5P_DEFAULT,sparse_data->data);
+                    }
+                } else {
+                    struct ComplexSplit *complex_data;
+                    void *tmp;
+                    hid_t h5_complex_base,h5_complex;
+
+                    complex_data     = malloc(sizeof(*complex_data));
+                    complex_data->Re = malloc(ndata_bytes);
+                    complex_data->Im = malloc(ndata_bytes);
+
+                    h5_complex_base = Mat_data_type_to_hid_t(matvar->data_type);
+                    h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                          2*H5Tget_size(h5_complex_base));
+                    H5Tinsert(h5_complex,"real",0,h5_complex_base);
+                    H5Tinsert(h5_complex,"imag",H5Tget_size(h5_complex_base),
+                              h5_complex_base);
+
+                    /* FIXME: Use of temporary storage */
+                    tmp = malloc(2*ndata_bytes);
+                    H5Dread(sparse_dset_id,h5_complex,H5S_ALL,H5S_ALL,
+                            H5P_DEFAULT,tmp);
+                    Mat_complex_interleaved_to_split(tmp,complex_data,
+                        matvar->data_type,sparse_data->ndata);
+                    free(tmp);
+
+                    H5Tclose(h5_complex);
+                    sparse_data->data = complex_data;
+                }
+                H5Sclose(space_id);
+                H5Dclose(sparse_dset_id);
+            }
+            matvar->data = sparse_data;
             break;
         }
     }
