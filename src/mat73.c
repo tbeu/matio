@@ -2850,7 +2850,6 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             matvar_t **cells;
             int i,ncells = 0;
             hid_t field_id,ref_id,field_type_id;
-            hobj_ref_t *ref_ids;
 
             if ( NULL != matvar->internal->hdf5_name ) {
                 dset_id = H5Dopen(fid,matvar->internal->hdf5_name);
@@ -2864,7 +2863,6 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
             for ( i = 0; i < ncells; i++ )
                 Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
-            free(ref_ids);
             break;
         }
         case MAT_C_SPARSE:
