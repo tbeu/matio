@@ -73,31 +73,6 @@
 /** @defgroup mat_util MAT File I/O Utitlity Functions */
 /** @if mat_devman @defgroup mat_internal Internal Functions @endif */
 
-#ifdef _mat_int64_t
-    typedef _mat_int64_t mat_int64_t;
-#endif
-#ifdef _mat_uint64_t
-    typedef _mat_uint64_t mat_uint64_t;
-#endif
-#ifdef _mat_int32_t
-    typedef _mat_int32_t mat_int32_t;
-#endif
-#ifdef _mat_uint32_t
-    typedef _mat_uint32_t mat_uint32_t;
-#endif
-#ifdef _mat_int16_t
-    typedef _mat_int16_t mat_int16_t;
-#endif
-#ifdef _mat_uint16_t
-    typedef _mat_uint16_t mat_uint16_t;
-#endif
-#ifdef _mat_int8_t
-    typedef _mat_int8_t mat_int8_t;
-#endif
-#ifdef _mat_uint8_t
-    typedef _mat_uint8_t mat_uint8_t;
-#endif
-
 /** @brief MAT file access types
  *
  * @ingroup MAT
