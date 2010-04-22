@@ -5272,8 +5272,6 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
     mat_int32_t tag[2];
 #if defined(HAVE_ZLIB)
     z_stream z;
-
-    err = inflateCopy(&z,matvar->internal->z);
 #endif
 
     fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
@@ -5292,6 +5290,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
         }
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+        err = inflateCopy(&z,matvar->internal->z);
         z.avail_in = 0;
         InflateDataType(mat,&z,tag);
         if ( mat->byteswap ) {
