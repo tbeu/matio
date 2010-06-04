@@ -2,7 +2,7 @@
  * MAT File I/O Utility Functions
  */
 /*
- * Copyright (C) 2005-2008   Christopher C. Hulbert
+ * Copyright (C) 2005-2010   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -62,7 +62,7 @@
 /** @endcond */
 
 static void (*logfunc)(int log_level, char *message ) = NULL;
-static char *progname = NULL;
+static const char *progname = NULL;
 
 /** @brief Allocates and prints to a new string
  *
@@ -354,7 +354,7 @@ Mat_LogClose( void )
  * @return 0 on success
  */
 int
-Mat_LogInit( char *prog_name )
+Mat_LogInit( const char *prog_name )
 {
     logfunc = &matio_error_func;
 
@@ -372,7 +372,8 @@ Mat_LogInit( char *prog_name )
  * @return 0 on success
  */
 int
-Mat_LogInitFunc(char *prog_name,void (*log_func)(int log_level,char *message))
+Mat_LogInitFunc(const char *prog_name,
+    void (*log_func)(int log_level,char *message))
 {
     logfunc = log_func;
     progname = prog_name;

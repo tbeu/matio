@@ -3,7 +3,7 @@
  * @ingroup MAT
  */
 /*
- * Copyright (C) 2005-2008   Christopher C. Hulbert
+ * Copyright (C) 2005-2010   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -589,7 +589,7 @@ Mat_VarCreate(const char *name,int class_type,int data_type,int rank,int *dims,
  * @returns 0 on success
  */
 int
-Mat_VarDelete(mat_t *mat, char *name)
+Mat_VarDelete(mat_t *mat, const char *name)
 {
     int   err = 1,mat_file_ver;
     char *tmp_name, *new_name, *temp;
@@ -1868,7 +1868,7 @@ Mat_VarReadNextInfo( mat_t *mat )
  * variable information
  */
 matvar_t *
-Mat_VarReadInfo( mat_t *mat, char *name )
+Mat_VarReadInfo( mat_t *mat, const char *name )
 {
 
     long  fpos;
@@ -1927,7 +1927,7 @@ Mat_VarReadInfo( mat_t *mat, char *name )
  * variable information
  */
 matvar_t *
-Mat_VarRead( mat_t *mat, char *name )
+Mat_VarRead( mat_t *mat, const char *name )
 {
     long  fpos;
     matvar_t *matvar = NULL;;

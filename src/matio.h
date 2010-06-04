@@ -3,7 +3,7 @@
  * @ingroup MAT
  */
 /*
- * Copyright (C) 2005-2008   Christopher C. Hulbert
+ * Copyright (C) 2005-2010   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -254,9 +254,9 @@ EXTERN int    Mat_SetDebug( int d );
 EXTERN void   Mat_Critical( const char *format, ... );
 EXTERN void   Mat_Error( const char *format, ... );
 EXTERN void   Mat_Help( const char *helpstr[] );
-EXTERN int    Mat_LogInit( char *progname );
+EXTERN int    Mat_LogInit( const char *progname );
 EXTERN int    Mat_LogClose(void);
-EXTERN int    Mat_LogInitFunc(char *prog_name,
+EXTERN int    Mat_LogInitFunc(const char *prog_name,
                     void (*log_func)(int log_level, char *message) );
 EXTERN int    Mat_Message( const char *format, ... );
 EXTERN int    Mat_DebugMessage( int level, const char *format, ... );
@@ -277,7 +277,7 @@ EXTERN int     Mat_Rewind(mat_t *mat);
 EXTERN matvar_t  *Mat_VarCalloc(void);
 EXTERN matvar_t  *Mat_VarCreate(const char *name,int class_type,int data_type,
                       int rank,int *dims,void *data, int opt);
-EXTERN int        Mat_VarDelete(mat_t *mat, char *name);
+EXTERN int        Mat_VarDelete(mat_t *mat, const char *name);
 EXTERN matvar_t  *Mat_VarDuplicate(const matvar_t *in, int opt);
 EXTERN void       Mat_VarFree(matvar_t *matvar);
 EXTERN matvar_t  *Mat_VarGetCell(matvar_t *matvar,int index);
@@ -295,13 +295,13 @@ EXTERN matvar_t  *Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,
 EXTERN matvar_t  *Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,
                       int edge,int copy_fields);
 EXTERN void       Mat_VarPrint( matvar_t *matvar, int printdata );
-EXTERN matvar_t  *Mat_VarRead(mat_t *mat, char *name );
+EXTERN matvar_t  *Mat_VarRead(mat_t *mat, const char *name );
 EXTERN int        Mat_VarReadData(mat_t *mat,matvar_t *matvar,void *data,
                       int *start,int *stride,int *edge);
 EXTERN int        Mat_VarReadDataAll(mat_t *mat,matvar_t *matvar);
 EXTERN int        Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,
                       int start,int stride,int edge);
-EXTERN matvar_t  *Mat_VarReadInfo( mat_t *mat, char *name );
+EXTERN matvar_t  *Mat_VarReadInfo( mat_t *mat, const char *name );
 EXTERN matvar_t  *Mat_VarReadNext( mat_t *mat );
 EXTERN matvar_t  *Mat_VarReadNextInfo( mat_t *mat );
 EXTERN int        Mat_VarWrite(mat_t *mat,matvar_t *matvar,int compress );
