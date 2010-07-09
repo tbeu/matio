@@ -351,9 +351,9 @@ Mat_VarCalloc(void)
     if ( NULL != matvar ) {
         matvar->nbytes       = 0;
         matvar->rank         = 0;
-        matvar->data_type    = 0;
+        matvar->data_type    = MAT_T_UNKNOWN;
         matvar->data_size    = 0;
-        matvar->class_type   = 0;
+        matvar->class_type   = MAT_C_EMPTY;
         matvar->isComplex    = 0;
         matvar->isGlobal     = 0;
         matvar->isLogical    = 0;
@@ -440,8 +440,8 @@ Mat_VarCalloc(void)
  * @return A MAT variable that can be written to a file or otherwise used
  */
 matvar_t *
-Mat_VarCreate(const char *name,int class_type,int data_type,int rank,int *dims,
-      void *data,int opt)
+Mat_VarCreate(const char *name,enum matio_classes class_type,
+    enum matio_types data_type,int rank,int *dims,void *data,int opt)
 {
     int i, nmemb = 1, nfields = 0;
     matvar_t *matvar = NULL;

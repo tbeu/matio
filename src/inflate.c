@@ -164,7 +164,7 @@ InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes)
  * @return Number of bytes read from the file
  */
 int
-InflateSkipData(mat_t *mat,z_stream *z,int data_type,int len)
+InflateSkipData(mat_t *mat,z_stream *z,enum matio_types data_type,int len)
 {
     int data_size = 0;
 

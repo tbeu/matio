@@ -57,7 +57,7 @@ static const char *Mat_class_names[] = {
  *  Private functions
  *===========================================================================
  */
-static int   Mat_class_str_to_id(const char *name);
+static enum matio_classes Mat_class_str_to_id(const char *name);
 static hid_t Mat_class_type_to_hid_t(enum matio_classes class_type);
 static hid_t Mat_data_type_to_hid_t(enum matio_types data_type);
 static void  Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
@@ -67,15 +67,15 @@ static void  Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *ma
 static int   Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name);
 static int   Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name);
 
-static int
+static enum matio_classes
 Mat_class_str_to_id(const char *name)
 {
-    int id = 0;
+    enum matio_classes id = MAT_C_EMPTY;
     if ( NULL != name ) {
         int k;
         for ( k = 1; k < 17; k++ ) {
             if ( !strcmp(name,Mat_class_names[k]) ) {
-                id = k;
+                id = (enum matio_classes)k;
                 break;
             }
         }

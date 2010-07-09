@@ -53,7 +53,7 @@
  * @retval Number of bytes read from the file
  */
 int
-ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
+ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -221,7 +221,7 @@ ReadDoubleData(mat_t *mat,double *data,int data_type,int len)
  */
 int
 ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
     union _buf {
@@ -484,7 +484,7 @@ ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadSingleData(mat_t *mat,float *data,int data_type,int len)
+ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -657,7 +657,7 @@ ReadSingleData(mat_t *mat,float *data,int data_type,int len)
  */
 int
 ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -815,7 +815,7 @@ ReadCompressedSingleData(mat_t *mat,z_stream *z,float *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
+ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -1025,7 +1025,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,int data_type,int len)
  */
 int
 ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -1221,7 +1221,7 @@ ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
+ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -1431,7 +1431,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,int data_type,int len)
  */
 int
 ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -1626,7 +1626,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
+ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -1800,7 +1800,7 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,int data_type,int len)
  */
 int
 ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -1958,7 +1958,7 @@ ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
+ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -2132,7 +2132,7 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,int data_type,int len)
  */
 int
 ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -2290,7 +2290,7 @@ ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
+ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -2464,7 +2464,7 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,int data_type,int len)
  */
 int
 ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -2622,7 +2622,7 @@ ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
+ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -2796,7 +2796,7 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,int data_type,int len)
  */
 int
 ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -2954,7 +2954,7 @@ ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
+ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -3128,7 +3128,7 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,int data_type,int len)
  */
 int
 ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -3286,7 +3286,7 @@ ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
+ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -3460,7 +3460,7 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,int data_type,int len)
  */
 int
 ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
-    int data_type,int len)
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -3619,7 +3619,8 @@ ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadCompressedCharData(mat_t *mat,z_stream *z,char *data,int data_type,int len)
+ReadCompressedCharData(mat_t *mat,z_stream *z,char *data,
+    enum matio_types data_type,int len)
 {
     int nBytes = 0, data_size = 0, i;
 
@@ -3667,7 +3668,7 @@ ReadCompressedCharData(mat_t *mat,z_stream *z,char *data,int data_type,int len)
 #endif
 
 int
-ReadCharData(mat_t *mat,char *data,int data_type,int len)
+ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
@@ -3731,14 +3732,16 @@ ReadCharData(mat_t *mat,char *data,int data_type,int len)
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
-    int *dims,int *start,int *stride,int *edge)
+ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
+    enum matio_types data_type,int rank,int *dims,int *start,int *stride,
+    int *edge)
 {
     int nBytes = 0, i, j, N, I = 0;
     int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
     size_t data_size;
 
-    int (*read_data_func)(mat_t *mat,void *data,int data_type,int len) = NULL;
+    int (*read_data_func)(mat_t *mat,void *data,enum matio_types data_type,
+                          int len) = NULL;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
@@ -4646,8 +4649,9 @@ ReadDataSlabN(mat_t *mat,void *data,int class_type,int data_type,int rank,
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
-    int data_type,int rank,int *dims,int *start,int *stride,int *edge)
+ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,
+    enum matio_classes class_type,enum matio_types data_type,int rank,
+    int *dims,int *start,int *stride,int *edge)
 {
     int nBytes = 0, i, j, N, I = 0;
     int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
@@ -5603,8 +5607,8 @@ ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,int class_type,
  * @return Number of bytes read from the file
  */
 int
-ReadDataSlab1(mat_t *mat,void *data,int class_type,int data_type,int start,
-    int stride,int edge)
+ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
+    enum matio_types data_type,int start,int stride,int edge)
 {
     int i;
     size_t data_size;
@@ -5739,8 +5743,8 @@ ReadDataSlab1(mat_t *mat,void *data,int class_type,int data_type,int start,
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadDataSlab2(mat_t *mat,void *data,int class_type,int data_type,
-    int *dims,int *start,int *stride,int *edge)
+ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
+    enum matio_types data_type,int *dims,int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j;
     long pos, row_stride, col_stride;
@@ -5990,8 +5994,9 @@ ReadDataSlab2(mat_t *mat,void *data,int class_type,int data_type,
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,int class_type,
-    int data_type,int start,int stride,int edge)
+ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,
+    enum matio_classes class_type,enum matio_types data_type,int start,
+    int stride,int edge)
 {   
     int nBytes = 0, data_size, i, err;
     z_stream z_copy = {0,};
@@ -6158,8 +6163,9 @@ ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,int class_type,
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,int class_type,
-    int data_type,int *dims,int *start,int *stride,int *edge)
+ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
+    enum matio_classes class_type,enum matio_types data_type,int *dims,
+    int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j, err;
     int pos, row_stride, col_stride;

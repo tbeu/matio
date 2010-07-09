@@ -29,8 +29,8 @@
 static size_t GetStructFieldBufSize(matvar_t *matvar);
 static size_t GetCellArrayFieldBufSize(matvar_t *matvar);
 static size_t GetMatrixMaxBufSize(matvar_t *matvar);
-static int WriteEmptyCharData(mat_t *mat, int N, int data_type);
-static int WriteEmptyData(mat_t *mat,int N,int data_type);
+static int WriteEmptyCharData(mat_t *mat, int N, enum matio_types data_type);
+static int WriteEmptyData(mat_t *mat,int N,enum matio_types data_type);
 static int ReadNextCell( mat_t *mat, matvar_t *matvar );
 static int ReadNextStructField( mat_t *mat, matvar_t *matvar );
 static int ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar);
@@ -38,11 +38,16 @@ static int WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar);
 static int WriteCellArrayField(mat_t *mat,matvar_t *matvar );
 static int WriteStructField(mat_t *mat,matvar_t *matvar);
 #if defined(HAVE_ZLIB)
-static size_t WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,int data_type);
-static int WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,int data_type);
-static size_t WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,int data_type);
-static size_t WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z);
-static size_t WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z);
+static size_t WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
+                  enum matio_types data_type);
+static int    WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,
+                  enum matio_types data_type);
+static size_t WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
+                  enum matio_types data_type);
+static size_t WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,
+                  z_stream *z);
+static size_t WriteCompressedStructField(mat_t *mat,matvar_t *matvar,
+                  z_stream *z);
 #endif
 
 /*   mat5.c    */
@@ -53,11 +58,11 @@ void      Read5(mat_t *mat, matvar_t *matvar);
 int       ReadData5(mat_t *mat,matvar_t *matvar,void *data, 
               int *start,int *stride,int *edge);
 int       Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress);
-int       WriteCharDataSlab2(mat_t *mat,void *data,int data_type,int *dims,
-              int *start,int *stride,int *edge);
-int       WriteData(mat_t *mat,void *data,int N,int data_type);
-int       WriteDataSlab2(mat_t *mat,void *data,int data_type,int *dims,
-              int *start,int *stride,int *edge);
+int       WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
+              int *dims,int *start,int *stride,int *edge);
+int       WriteData(mat_t *mat,void *data,int N,enum matio_types data_type);
+int       WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
+              int *dims,int *start,int *stride,int *edge);
 void      WriteInfo5(mat_t *mat, matvar_t *matvar);
 
 #endif

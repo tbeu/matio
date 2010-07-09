@@ -222,7 +222,8 @@ int
 ReadData4(mat_t *mat,matvar_t *matvar,void *data,
       int *start,int *stride,int *edge)
 {
-    int err = 0, class_type;
+    int err = 0;
+    enum matio_classes class_type = MAT_C_EMPTY;
 
     fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
 
@@ -298,8 +299,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
 matvar_t *
 Mat_VarReadNextInfo4(mat_t *mat)
 {       
-    int       tmp;
-    int       M,O;
+    int       tmp,M,O,data_type,class_type;
     long      nBytes;
     size_t    err;
     matvar_t *matvar = NULL;
@@ -321,10 +321,10 @@ Mat_VarReadNextInfo4(mat_t *mat)
     tmp -= M*1000;
     O = floor(tmp / 100.0);
     tmp -= O*100;
-    matvar->data_type = floor(tmp / 10.0);
+    data_type = floor(tmp / 10.0);
     tmp -= matvar->data_type*10;
     /* Convert the V4 data type */
-    switch ( matvar->data_type ) {
+    switch ( data_type ) {
         case 0:
             matvar->data_type = MAT_T_DOUBLE;
             break;
@@ -344,11 +344,11 @@ Mat_VarReadNextInfo4(mat_t *mat)
             matvar->data_type = MAT_T_UINT8;
             break;
         default:
-            matvar->data_type = -1;
+            matvar->data_type = MAT_T_UNKNOWN;
             break;
     }
-    matvar->class_type = floor(tmp);
-    switch ( matvar->class_type ) {
+    class_type = floor(tmp);
+    switch ( class_type ) {
         case 0:
             matvar->class_type = MAT_C_DOUBLE;
             break;
