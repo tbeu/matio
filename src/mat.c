@@ -591,7 +591,8 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
 int
 Mat_VarDelete(mat_t *mat, const char *name)
 {
-    int   err = 1,mat_file_ver;
+    int   err = 1;
+    enum mat_ft mat_file_ver;
     char *tmp_name, *new_name, *temp;
     mat_t *tmp;
     matvar_t *matvar;
