@@ -441,7 +441,7 @@ Mat_VarCalloc(void)
  */
 matvar_t *
 Mat_VarCreate(const char *name,enum matio_classes class_type,
-    enum matio_types data_type,int rank,int *dims,void *data,int opt)
+    enum matio_types data_type,int rank,size_t *dims,void *data,int opt)
 {
     int i, nmemb = 1, nfields = 0;
     matvar_t *matvar = NULL;

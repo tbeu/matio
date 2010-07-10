@@ -113,10 +113,10 @@ EXTERN int ReadCharData  (mat_t *mat,char  *data,enum matio_types data_type,
 EXTERN int ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
                enum matio_types data_type,int start,int stride,int edge);
 EXTERN int ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
-               enum matio_types data_type,int *dims,int *start,int *stride,
+               enum matio_types data_type,size_t *dims,int *start,int *stride,
                int *edge);
 EXTERN int ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
-               enum matio_types data_type,int rank,int *dims,int *start,
+               enum matio_types data_type,int rank,size_t *dims,int *start,
                int *stride,int *edge);
 #if defined(HAVE_ZLIB)
 EXTERN int ReadCompressedDoubleData(mat_t *mat,z_stream *z,double  *data,
@@ -142,11 +142,10 @@ EXTERN int ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,
                int start,int stride,int edge);
 EXTERN int ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                enum matio_classes class_type,enum matio_types data_type,
-               int *dims,int *start,int *stride,
-               int *edge);
+               size_t *dims,int *start,int *stride,int *edge);
 EXTERN int ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,
                enum matio_classes class_type,enum matio_types data_type,
-               int rank,int *dims,int *start,int *stride,int *edge);
+               int rank,size_t *dims,int *start,int *stride,int *edge);
 
 /*   inflate.c    */
 EXTERN int InflateSkip(mat_t *mat, z_stream *z, int nbytes);

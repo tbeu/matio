@@ -3733,7 +3733,7 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
  */
 int
 ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
-    enum matio_types data_type,int rank,int *dims,int *start,int *stride,
+    enum matio_types data_type,int rank,size_t *dims,int *start,int *stride,
     int *edge)
 {
     int nBytes = 0, i, j, N, I = 0;
@@ -4651,7 +4651,7 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
 int
 ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,
     enum matio_classes class_type,enum matio_types data_type,int rank,
-    int *dims,int *start,int *stride,int *edge)
+    size_t *dims,int *start,int *stride,int *edge)
 {
     int nBytes = 0, i, j, N, I = 0;
     int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
@@ -5744,7 +5744,7 @@ ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
  */
 int
 ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
-    enum matio_types data_type,int *dims,int *start,int *stride,int *edge)
+    enum matio_types data_type,size_t *dims,int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j;
     long pos, row_stride, col_stride;
@@ -6164,7 +6164,7 @@ ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,
  */
 int
 ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
-    enum matio_classes class_type,enum matio_types data_type,int *dims,
+    enum matio_classes class_type,enum matio_types data_type,size_t *dims,
     int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j, err;

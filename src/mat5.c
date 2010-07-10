@@ -978,7 +978,7 @@ WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,
  * @endif
  */
 int
-WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,int *dims,
+WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
     int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j;
@@ -1240,8 +1240,8 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,int *dims,
  * @endif
  */
 int
-WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,int *dims,
-    int *start,int *stride,int *edge)
+WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
+    size_t *dims,int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j;
     long pos, row_stride, col_stride;

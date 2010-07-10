@@ -59,10 +59,10 @@ int       ReadData5(mat_t *mat,matvar_t *matvar,void *data,
               int *start,int *stride,int *edge);
 int       Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress);
 int       WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
-              int *dims,int *start,int *stride,int *edge);
+              size_t *dims,int *start,int *stride,int *edge);
 int       WriteData(mat_t *mat,void *data,int N,enum matio_types data_type);
 int       WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
-              int *dims,int *start,int *stride,int *edge);
+              size_t *dims,int *start,int *stride,int *edge);
 void      WriteInfo5(mat_t *mat, matvar_t *matvar);
 
 #endif

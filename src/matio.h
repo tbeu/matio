@@ -218,7 +218,7 @@ typedef struct matvar_t {
     int   isComplex;                  /**< non-zero if the data is complex, 0 if real */
     int   isGlobal;                   /**< non-zero if the variable is global */
     int   isLogical;                  /**< non-zero if the variable is logical */
-    int  *dims;                       /**< Array of lengths for each dimension */
+    size_t *dims;                    /**< Array of lengths for each dimension */
     char *name;                       /**< Name of the variable */
     void *data;                       /**< Pointer to the data */
     int   mem_conserve;               /**< 1 if Memory was conserved with data */
@@ -276,8 +276,8 @@ EXTERN int     Mat_Rewind(mat_t *mat);
 /* MAT variable functions */
 EXTERN matvar_t  *Mat_VarCalloc(void);
 EXTERN matvar_t  *Mat_VarCreate(const char *name,enum matio_classes class_type,
-                      enum matio_types data_type,int rank,int *dims,void *data,
-                      int opt);
+                      enum matio_types data_type,int rank,size_t *dims,
+                      void *data,int opt);
 EXTERN int        Mat_VarDelete(mat_t *mat, const char *name);
 EXTERN matvar_t  *Mat_VarDuplicate(const matvar_t *in, int opt);
 EXTERN void       Mat_VarFree(matvar_t *matvar);

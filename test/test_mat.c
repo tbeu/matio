@@ -508,7 +508,8 @@ help_test(const char *test)
 static int
 test_write( void )
 {
-    int dims[2] = {5,10}, err = 0, i;
+    size_t dims[2] = {5,10};
+    int    err = 0, i;
     double    d[50];
     float     f[50];
     mat_int32_t i32[50];
@@ -600,7 +601,8 @@ test_write( void )
 static int
 test_write_compressed( void )
 {
-    int dims[2] = {5,10}, err = 0, i;
+    size_t dims[2] = {5,10};
+    int    err = 0, i;
     double    d[50];
     float     f[50];
     mat_int32_t i32[50];
@@ -677,7 +679,8 @@ test_write_compressed( void )
 static int
 test_write_complex_compressed( void )
 {
-    int dims[2] = {5,10}, err = 0, i;
+    size_t dims[2] = {5,10};
+    int    err = 0, i;
     mat_uint8_t    real[50],imag[50];
     struct ComplexSplit c;
     mat_t *mat;
@@ -757,7 +760,7 @@ test_readvar4(const char *inputfile, const char *var)
 static int
 test_write_struct()
 {
-    int     dims[2] = {5,10};
+    size_t  dims[2] = {5,10};
     double  data[50]={0.0,};
     float  fdata[50]={0.0,};
     int    idata[50]={0.0,};
@@ -827,7 +830,7 @@ test_write_struct()
 static int
 test_write_compressed_struct()
 {
-    int     dims[2] = {5,10};
+    size_t  dims[2] = {5,10};
     double  data[50]={0.0,};
     float  fdata[50]={0.0,};
     int    idata[50]={0.0,};
@@ -941,7 +944,7 @@ test_write_compressed_struct()
 static int
 test_write_cell()
 {
-    int     dims[2] = {5,10};
+    size_t  dims[2] = {5,10};
     double  data[50]={0.0,};
     float  fdata[50]={0.0,};
     int    idata[50]={0.0,};
@@ -1017,7 +1020,7 @@ test_write_cell()
 static int
 test_write_compressed_cell()
 {
-    int     dims[2] = {5,10};
+    size_t  dims[2] = {5,10};
     double  data[50]={0.0,};
     float  fdata[50]={0.0,};
     int    idata[50]={0.0,};
@@ -1099,7 +1102,7 @@ test_write_null(void)
     mat_t    *mat;
     matvar_t *struct_matvar,*cell_matvar;
     matvar_t *struct_fields[5] = {NULL,NULL,NULL,NULL,NULL};
-    int       dims[3] = {0,1,10};
+    size_t    dims[3] = {0,1,10};
 
     mat = Mat_CreateVer("test_write_null.mat",NULL,mat_file_ver);
     if ( mat != NULL ) {
@@ -1251,7 +1254,8 @@ static int
 test_writeslab(void)
 {
     int        err = 0, i;
-    int        dims[2] = {6,10},start[2]={0,0},stride[2]={2,2},edge[2]={3,5};
+    size_t     dims[2] = {6,10};
+    int        start[2]={0,0},stride[2]={2,2},edge[2]={3,5};
     double     data[60]={0.0,};
     float     fdata[60]={0.0,};
     int       idata[60]={0.0,};
@@ -1292,7 +1296,7 @@ static int
 test_writenan(void)
 {
     int        err = 0, i;
-    int        dims[2] = {5,5};
+    size_t     dims[2] = {5,5};
     double     data[25]={0.0,};
     double     zero = 0.0;
     mat_t    *mat;
@@ -1321,7 +1325,7 @@ static int
 test_writeinf(void)
 {
     int        err = 0, i;
-    int        dims[2] = {5,5};
+    size_t     dims[2] = {5,5};
     double     data[25]={0.0,};
     double     zero = 0.0;
     mat_t    *mat;
@@ -1349,7 +1353,8 @@ test_writeinf(void)
 static int
 test_writesparse( void )
 {
-    int dims[2] = {5,10}, err = 0, i;
+    int    err = 0, i;
+    size_t dims[2] = {5,10};
     double    d[50] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,38,39,
                        41,45,47,48,49};
     mat_int32_t  ir[25] = {0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3};
@@ -1387,7 +1392,8 @@ test_writesparse( void )
 static int
 test_write_compressed_sparse( void )
 {
-    int dims[2] = {5,10}, err = 0, i;
+    int    err = 0, i;
+    size_t dims[2] = {5,10};
     double    d[50] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,38,39,
                        41,45,47,48,49};
     mat_int32_t  ir[25] = {0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3};
