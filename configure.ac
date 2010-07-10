@@ -22,8 +22,8 @@ AC_INIT([MATIO],[1.5.0],[chulbe1@mac.com],[])
 AC_CONFIG_SRCDIR([src/matio.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([config])
-dnl AM_INIT_AUTOMAKE([-no-undefined])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign 1.8 no-dependencies])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 AM_MAINTAINER_MODE
 AC_PREREQ(2.60)
 AC_CANONICAL_HOST
