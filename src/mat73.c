@@ -60,6 +60,7 @@ static const char *Mat_class_names[] = {
 static enum matio_classes Mat_class_str_to_id(const char *name);
 static hid_t Mat_class_type_to_hid_t(enum matio_classes class_type);
 static hid_t Mat_data_type_to_hid_t(enum matio_types data_type);
+static hid_t Mat_dims_type_to_hid_t(void);
 static void  Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat);
@@ -332,6 +333,23 @@ Mat_data_type_to_hid_t(enum matio_types data_type)
     }
 }
 
+static hid_t
+Mat_dims_type_to_hid_t(void)
+{
+    if ( sizeof(size_t) == H5Tget_size(H5T_NATIVE_HSIZE) )
+        return H5T_NATIVE_HSIZE;
+    else if ( sizeof(size_t) == H5Tget_size(H5T_NATIVE_ULLONG) )
+        return H5T_NATIVE_ULLONG;
+    else if ( sizeof(size_t) == H5Tget_size(H5T_NATIVE_ULONG) )
+        return H5T_NATIVE_ULONG;
+    else if ( sizeof(size_t) == H5Tget_size(H5T_NATIVE_UINT) )
+        return H5T_NATIVE_UINT;
+    else if ( sizeof(size_t) == H5Tget_size(H5T_NATIVE_USHORT) )
+        return H5T_NATIVE_USHORT;
+    else
+        return -1;
+}
+
 static void
 Mat_complex_interleaved_to_split(void *data,struct ComplexSplit *complex_data,
     enum matio_types type,size_t numel)
@@ -535,6 +553,21 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     if ( -1 < attr_id ) {
         H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
         H5Aclose(attr_id);
+    }
+
+    /* Check for attribute that indicates an empty array */
+    attr_id = H5Aopen_name(dset_id,"MATLAB_empty");
+    /* FIXME: Check that dataspace is scalar */
+    if ( -1 < attr_id ) {
+        int empty = 0;
+        H5Aread(attr_id,H5T_NATIVE_INT,&empty);
+        H5Aclose(attr_id);
+        if ( empty ) {
+            matvar->rank = matvar->dims[0];
+            matvar->dims = calloc(matvar->rank,sizeof(*matvar->dims));
+            H5Dread(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                    H5P_DEFAULT,matvar->dims);
+        }
     }
 
     H5Eset_auto(efunc,client_data);
@@ -868,6 +901,21 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             if ( -1 < attr_id ) {
                 H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
                 H5Aclose(attr_id);
+            }
+
+            /* Check for attribute that indicates an empty array */
+            attr_id = H5Aopen_name(dset_id,"MATLAB_empty");
+            /* FIXME: Check that dataspace is scalar */
+            if ( -1 < attr_id ) {
+                int empty = 0;
+                H5Aread(attr_id,H5T_NATIVE_INT,&empty);
+                H5Aclose(attr_id);
+                if ( empty ) {
+                    matvar->rank = matvar->dims[0];
+                    matvar->dims = calloc(matvar->rank,sizeof(*matvar->dims));
+                    H5Dread(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                            H5P_DEFAULT,matvar->dims);
+                }
             }
 
             /* Test if dataset type is compound and if so if it's complex */
@@ -2822,6 +2870,21 @@ Mat_VarReadNextInfo73( mat_t *mat )
             if ( -1 < attr_id ) {
                 H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
                 H5Aclose(attr_id);
+            }
+
+            /* Check for attribute that indicates an empty array */
+            attr_id = H5Aopen_name(dset_id,"MATLAB_empty");
+            /* FIXME: Check that dataspace is scalar */
+            if ( -1 < attr_id ) {
+                int empty = 0;
+                H5Aread(attr_id,H5T_NATIVE_INT,&empty);
+                H5Aclose(attr_id);
+                if ( empty ) {
+                    matvar->rank = matvar->dims[0];
+                    matvar->dims = calloc(matvar->rank,sizeof(*matvar->dims));
+                    H5Dread(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                            H5P_DEFAULT,matvar->dims);
+                }
             }
 
             H5Eset_auto(efunc,client_data);

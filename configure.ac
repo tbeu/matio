@@ -2,7 +2,7 @@ dnl  configure.ac
 dnl
 dnl  NOTE:  Process this file with GNU autoconf to produce a configure script.
 dnl
-dnl Copyright (C) 2005-2008   Christopher C. Hulbert
+dnl Copyright (C) 2005-2010   Christopher C. Hulbert
 dnl
 dnl  This library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public
@@ -168,6 +168,7 @@ AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([short])
 AC_CHECK_SIZEOF([char])
 AC_CHECK_SIZEOF([void *])
+AC_CHECK_SIZEOF([size_t])
 
 dnl
 dnl Substitute size of int and void * to matio_t.inc

@@ -24,6 +24,7 @@
 #undef SIZEOF_SHORT
 #undef SIZEOF_CHAR
 #undef SIZEOF_VOID_PTR
+#undef SIZEOF_SIZE_T
 
 #undef HAVE_MAT_INT64_T
 #undef HAVE_MAT_INT32_T
