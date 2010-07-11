@@ -149,7 +149,7 @@ fmat_create_c(char *filename,enum mat_ft mat_file_ver,struct fmat_t *mat,
     if ( header != NULL )
         hdr_str = fstrdup(header,hdrlen);
 
-    if ( NULL == (mat->mat_t_c_ptr = Mat_Create(fname,hdr_str,mat_file_ver)) ) {
+    if (NULL == (mat->mat_t_c_ptr=Mat_CreateVer(fname,hdr_str,mat_file_ver))) {
         Mat_Critical("Error opening file %s", fname);
         err = 1;
     } else {
