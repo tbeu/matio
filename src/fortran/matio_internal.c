@@ -74,7 +74,7 @@ struct fmatvar_t {
     int       isComplex;
     int       isGlobal;
     int       isLogical;
-    int       dims[7];
+    size_t    dims[7];
     char      name[64];
     matvar_t *matvar_t_c_ptr;
 } fmatvar_t;
@@ -200,7 +200,7 @@ fmat_varreadinfo_c(struct fmat_t *mat,char *name,struct fmatvar_t *matvar,int le
             matvar->isLogical  = matvar->matvar_t_c_ptr->isLogical;
             /* FIXME: Check that matvar->rank <= 7 */
             memcpy(matvar->dims,matvar->matvar_t_c_ptr->dims,
-                   matvar->rank*sizeof(int));
+                   matvar->rank*sizeof(matvar->dims));
             /* FIXME: Check that strlen(matvar->matvar_t_c_ptr->name) <= 64 */
             strncpy(matvar->name,matvar->matvar_t_c_ptr->name,
                     strlen(matvar->matvar_t_c_ptr->name));
@@ -231,7 +231,7 @@ fmat_varreadnextinfo_c(struct fmat_t *mat,struct fmatvar_t *matvar)
         matvar->isLogical  = matvar->matvar_t_c_ptr->isLogical;
         /* FIXME: Check that matvar->rank <= 7 */
         memcpy(matvar->dims,matvar->matvar_t_c_ptr->dims,
-               matvar->rank*sizeof(int));
+               matvar->rank*sizeof(matvar->dims));
         /* FIXME: Check that strlen(matvar->matvar_t_c_ptr->name) <= 64 */
         strncpy(matvar->name,matvar->matvar_t_c_ptr->name,
                 strlen(matvar->matvar_t_c_ptr->name));
@@ -364,7 +364,7 @@ fmat_varwrite_c(struct fmat_t *mat,struct fmatvar_t *matvar,void *data,
 }
 
 int
-fmat_varcreate_c(int *rank,int *dims,char *name,int *class_type,
+fmat_varcreate_c(int *rank,size_t *dims,char *name,int *class_type,
     int *data_type, struct fmatvar_t *matvar,int len)
 {
     char *varname;
@@ -445,7 +445,7 @@ fmat_vargetstructfield_byname_c(struct fmatvar_t *matvar,char *name,int *index,
         field->isLogical  = field->matvar_t_c_ptr->isLogical;
         /* FIXME: Check that matvar->rank <= 7 */
         memcpy(field->dims,field->matvar_t_c_ptr->dims,
-               field->rank*sizeof(int));
+               field->rank*sizeof(matvar->dims));
         /* FIXME: Check that strlen(matvar->matvar_t_c_ptr->name) <= 64 */
         strncpy(field->name,field->matvar_t_c_ptr->name,
                 strlen(field->matvar_t_c_ptr->name));

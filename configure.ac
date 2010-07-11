@@ -171,10 +171,12 @@ AC_CHECK_SIZEOF([void *])
 AC_CHECK_SIZEOF([size_t])
 
 dnl
-dnl Substitute size of int and void * to matio_t.inc
+dnl Substitute size of int, size_t, and void * to matio_t.inc
 SIZEOF_INT="$ac_cv_sizeof_int"
+SIZEOF_SIZE_T="$ac_cv_sizeof_size_t"
 SIZEOF_VOID_P="$ac_cv_sizeof_void_p"
 AC_SUBST(SIZEOF_INT)
+AC_SUBST(SIZEOF_SIZE_T)
 AC_SUBST(SIZEOF_VOID_P)
 
 CHECK_MATIO_INT64_T
