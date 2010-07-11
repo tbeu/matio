@@ -1,0 +1,424 @@
+# Copyright (C) 2010   Christopher C. Hulbert
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+AT_SETUP([Read 2D double-precision array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_1_input1], [0],
+[[      Name: matio_tc_4_1_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+]], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D single-precision array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_2_input1], [0],
+[      Name: matio_tc_4_2_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 64-bit integer array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_3_input1], [0],
+[      Name: matio_tc_4_3_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 64-bit unsigned integer array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_4_input1], [0],
+[      Name: matio_tc_4_4_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 32-bit integer array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_5_input1], [0],
+[      Name: matio_tc_4_5_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 32-bit unsigned integer array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_6_input1], [0],
+[      Name: matio_tc_4_6_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 16-bit integer array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_7_input1], [0],
+[      Name: matio_tc_4_7_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 16-bit unsigned integer array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_8_input1], [0],
+[      Name: matio_tc_4_8_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 8-bit integer array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_9_input1], [0],
+[      Name: matio_tc_4_9_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 8-bit unsigned integer array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_10_input1], [0],
+[      Name: matio_tc_4_10_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D double-precision complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_11_input1], [0],
+[[      Name: matio_tc_4_11_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+]], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D single-precision complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_12_input1], [0],
+[      Name: matio_tc_4_12_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: Single Precision Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 64-bit integer complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_13_input1], [0],
+[      Name: matio_tc_4_13_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 64-bit, signed integer array (complex)
+ Data Type: 64-bit, signed integer
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 64-bit unsigned integer complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_14_input1], [0],
+[      Name: matio_tc_4_14_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 64-bit, unsigned integer array (complex)
+ Data Type: 64-bit, unsigned integer
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 32-bit integer complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_15_input1], [0],
+[      Name: matio_tc_4_15_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 32-bit unsigned integer complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_16_input1], [0],
+[      Name: matio_tc_4_16_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 32-bit, unsigned integer array (complex)
+ Data Type: 32-bit, unsigned integer
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 16-bit integer complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_17_input1], [0],
+[      Name: matio_tc_4_17_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 16-bit unsigned integer complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_18_input1], [0],
+[      Name: matio_tc_4_18_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 16-bit, unsigned integer array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 8-bit integer complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_19_input1], [0],
+[      Name: matio_tc_4_19_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 8-bit, signed integer array (complex)
+ Data Type: 8-bit, signed integer
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D 8-bit unsigned integer complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_20_input1], [0],
+[      Name: matio_tc_4_20_input1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 8-bit, unsigned integer array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read double-precision sparse array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_21_input1], [0],
+[      Name: matio_tc_4_21_input1
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: Sparse Array
+ Data Type: IEEE 754 double-precision
+{
+    (1,1)  1
+    (2,2)  2
+    (3,3)  3
+    (4,4)  4
+    (5,5)  5
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read double-precision sparse complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_22_input1], [0],
+[      Name: matio_tc_4_22_input1
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: Sparse Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+    (1,1)  1 + 6i
+    (2,2)  2 + 7i
+    (3,3)  3 + 8i
+    (4,4)  4 + 9i
+    (5,5)  5 + 10i
+}
+1 of 1 tests completed successfully
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read empty array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_be.mat matio_tc_4_23_input1], [0],
+[[      Name: matio_tc_4_23_input1
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+1 of 1 tests completed successfully
+]], [ignore])
+AT_CLEANUP

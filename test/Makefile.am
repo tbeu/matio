@@ -19,6 +19,24 @@
 AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 VPATH = @srcdir@
 
+TESTSUITE_AT = $(srcdir)/testsuite.at \
+               $(srcdir)/mat4_read.at \
+               $(srcdir)/mat5_uncompressed_read_le.at \
+               $(srcdir)/mat5_uncompressed_read_be.at \
+               $(srcdir)/mat5_compressed_read_le.at \
+               $(srcdir)/mat5_compressed_read_be.at \
+               $(srcdir)/mat73_read_le.at \
+               $(srcdir)/mat73_read_be.at
+TESTSUITE = $(srcdir)/testsuite
+if MAT73
+MAT73 = 1
+else
+MAT73 = 0
+endif
+CHECK_ENVIRONMENT = MAT73=$(MAT73)
+
+EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4
+
 if NEED_GETOPT
 GETOPT_CFLAGS = -I$(top_builddir)/getopt/lib
 GETOPT_LIBS   = $(top_builddir)/getopt/lib/libgnu.la
@@ -48,3 +66,29 @@ test_matf_FCFLAGS = -I$(top_builddir)/src -I$(top_builddir)/src/fortran
 test_matf_LDFLAGS = -L$(top_builddir)/src -L$(top_builddir)/src/fortran
 test_matf_LDADD   = $(TEST_LIBS)
 endif
+
+atconfig: $(top_builddir)/config.status
+	cd $(top_builddir) && ./config.status tests/$@
+
+check-local: atconfig $(TESTSUITE)
+	$(SHELL) $(TESTSUITE) $(CHECK_ENVIRONMENT) $(TESTSUITEFLAGS)
+
+installcheck-local: atconfig $(TESTSUITE)
+	$(SHELL) '$(TESTSUITE)' AUTOTEST_PATH='$(bindir)' $(TESTSUITEFLAGS)
+
+clean-local:
+	test ! -f '$(TESTSUITE)' || $(SHELL) '$(TESTSUITE)' --clean
+
+$(TESTSUITE): $(srcdir)/package.m4 $(TESTSUITE_AT)
+	$(AUTOTEST) -I '$(srcdir)' $@.at -o $@.tmp
+	mv $@.tmp $@
+
+$(srcdir)/package.m4: $(top_srcdir)/configure.ac
+	{ \
+	  echo '# Signature of the current package.'; \
+	  echo 'm4_define([AT_PACKAGE_NAME],      [$(PACKAGE_NAME)])'; \
+	  echo 'm4_define([AT_PACKAGE_TARNAME],   [$(PACKAGE_TARNAME)])'; \
+	  echo 'm4_define([AT_PACKAGE_VERSION],   [$(PACKAGE_VERSION)])'; \
+	  echo 'm4_define([AT_PACKAGE_STRING],    [$(PACKAGE_STRING)])'; \
+	  echo 'm4_define([AT_PACKAGE_BUGREPORT], [$(PACKAGE_BUGREPORT)])'; \
+	} >$(srcdir)/package.m4

@@ -32,16 +32,11 @@ if DOCS_INSTALL
 DOCS=doxygen
 endif
 
-if BUILD_TEST
-data_DATA  = share/test_file.mat share/test_file_v6.mat
-TEST=test
-endif
-
 if NEED_GETOPT
 GETOPT = getopt/lib
 endif
 
-SUBDIRS = src $(GETOPT) tools $(TEST) $(DOCS)
+SUBDIRS = src $(GETOPT) tools test $(DOCS)
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \

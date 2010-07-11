@@ -371,21 +371,6 @@ AM_CONDITIONAL(WINNT, test "x$winnt" = "xyes")
 AM_CONDITIONAL(SUN,   test "x$sun"   = "xyes")
 
 dnl
-dnl Check whether to build test programs
-dnl
-AC_ARG_ENABLE(test,AS_HELP_STRING([--enable-test=yes],[build test programs]),
-build_test=$enableval,build_test=no)
-AC_MSG_CHECKING(whether to build test programs)
-if test "x$build_test" = "xno"
-then
-    AC_MSG_RESULT(no)
-else
-    AC_MSG_RESULT(yes)
-    build_test=yes
-fi  
-AM_CONDITIONAL(BUILD_TEST, test "x$build_test" = "xyes")
-
-dnl
 dnl Check for doxygen program
 dnl
 AC_PATH_PROG(DOXYGEN,[doxygen])
@@ -429,6 +414,11 @@ else
 fi
 AC_SUBST(FCLINK)
 
+# Initialize the test suite.
+AC_CONFIG_TESTDIR([test])
+AC_SUBST([AUTOM4TE], [${AUTOM4TE=autom4te}])
+AC_SUBST([AUTOTEST], ['$(AUTOM4TE) --language=Autotest'])
+
 AC_CONFIG_FILES([Makefile \
                  matio.pc \
                  src/Makefile \
@@ -455,7 +445,6 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([Features --------------------------------------------])
 AC_MSG_RESULT([    Fortran Interface: $enable_fortran])
 AC_MSG_RESULT([MAT v7.3 file support: $mat73])
-AC_MSG_RESULT([        test programs: $build_test])
 AC_MSG_RESULT([        Documentation: $docs_install])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Packages --------------------------------------------])
