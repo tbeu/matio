@@ -105,7 +105,7 @@ CONTAINS
 
         outfilename = 'test_mat_copy.mat'
         WRITE (*,'(a)',ADVANCE='NO') 'Enter the input filename: '
-        READ (*,'a128') inputfile
+        READ (*,'(a128)') inputfile
 
         err = FMat_Open(inputfile,MAT_ACC_RDWR,mat)
         err = FMat_Create(outfilename,MAT_FT_MAT5,mat2)
@@ -360,9 +360,9 @@ CONTAINS
         CHARACTER(1),DIMENSION(:),ALLOCATABLE :: char_data
 
         WRITE (*,'(a)',ADVANCE='NO') 'Enter the input filename: '
-        READ (*,'a128') inputfile
+        READ (*,'(a128)') inputfile
         WRITE (*,'(a)',ADVANCE='NO') 'Enter the variable name: '
-        READ (*,'a32') varname
+        READ (*,'(a32)') varname
 
         err = FMat_Open(inputfile,MAT_ACC_RDONLY,mat)
         IF ( err .NE. 0 ) THEN
@@ -520,9 +520,9 @@ CONTAINS
         INTEGER(1),DIMENSION(4)   :: int8_data
 
         WRITE (*,'(a)',ADVANCE='NO') 'Enter the input filename: '
-        READ (*,'a128') inputfile
+        READ (*,'(a128)') inputfile
         WRITE (*,'(a)',ADVANCE='NO') 'Enter the variable name: '
-        READ (*,'a32') varname
+        READ (*,'(a32)') varname
 
         err = FMat_Open(inputfile,MAT_ACC_RDONLY,mat)
         IF ( err .NE. 0 ) THEN
