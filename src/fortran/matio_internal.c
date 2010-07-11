@@ -201,6 +201,7 @@ fmat_varreadinfo_c(struct fmat_t *mat,char *name,struct fmatvar_t *matvar,int le
             /* FIXME: Check that matvar->rank <= 7 */
             memcpy(matvar->dims,matvar->matvar_t_c_ptr->dims,
                    matvar->rank*sizeof(matvar->dims));
+            memset(matvar->name,0,sizeof(matvar->name));
             /* FIXME: Check that strlen(matvar->matvar_t_c_ptr->name) <= 64 */
             strncpy(matvar->name,matvar->matvar_t_c_ptr->name,
                     strlen(matvar->matvar_t_c_ptr->name));
@@ -232,6 +233,7 @@ fmat_varreadnextinfo_c(struct fmat_t *mat,struct fmatvar_t *matvar)
         /* FIXME: Check that matvar->rank <= 7 */
         memcpy(matvar->dims,matvar->matvar_t_c_ptr->dims,
                matvar->rank*sizeof(matvar->dims));
+        memset(matvar->name,0,sizeof(matvar->name));
         /* FIXME: Check that strlen(matvar->matvar_t_c_ptr->name) <= 64 */
         strncpy(matvar->name,matvar->matvar_t_c_ptr->name,
                 strlen(matvar->matvar_t_c_ptr->name));
@@ -446,6 +448,7 @@ fmat_vargetstructfield_byname_c(struct fmatvar_t *matvar,char *name,int *index,
         /* FIXME: Check that matvar->rank <= 7 */
         memcpy(field->dims,field->matvar_t_c_ptr->dims,
                field->rank*sizeof(matvar->dims));
+        memset(matvar->name,0,sizeof(matvar->name));
         /* FIXME: Check that strlen(matvar->matvar_t_c_ptr->name) <= 64 */
         strncpy(field->name,field->matvar_t_c_ptr->name,
                 strlen(field->matvar_t_c_ptr->name));
