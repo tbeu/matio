@@ -5,12 +5,22 @@ AC_ARG_WITH(hdf5,AS_HELP_STRING([--with-hdf5=DIR],
             HDF5_DIR=${withval},HDF5_DIR=)
 
 ac_have_hdf5=no
-if test -n "${HDF5_DIR}"
+if test "x${HDF5_DIR}" != "xno"
 then
     AC_MSG_CHECKING(for HDF5 software)
 
-    HDF5_LIBS="-L${HDF5_DIR}/$acl_libdirstem -lhdf5"
-    HDF5_CFLAGS="-I${HDF5_DIR}/include"
+    if test "x$HDF5_DIR" != "x" -a "x$HDF5_DIR" != "xyes"
+    then
+        HDF5_CFLAGS="-I${HDF5_DIR}/include"
+        if test "$acl_libdirstem" != "lib" -a -d "${HDF5_DIR}/$acl_libdirstem"
+        then
+            HDF5_LIBS="-L${HDF5_DIR}/$acl_libdirstem -lhdf5"
+        else
+            HDF5_LIBS="-L${HDF5_DIR}/lib -lhdf5"
+        fi
+    else
+        HDF5_LIBS="-lhdf5"
+    fi
 
     saved_CFLAGS="$CFLAGS"
     saved_LDFLAGS="$LDFLAGS"
