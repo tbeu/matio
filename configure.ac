@@ -386,14 +386,30 @@ fi
 AM_CONDITIONAL(BUILD_TEST, test "x$build_test" = "xyes")
 
 dnl
+dnl Check for doxygen program
+dnl
+AC_PATH_PROG(DOXYGEN,[doxygen])
+AC_SUBST([DOXYGEN])
+if test -n "$ac_cv_path_DOXYGEN"
+then
+    docs_install_default=yes
+else
+    docs_install_default=no
+fi
+
+dnl
 dnl Check whether to build documentation
 dnl
 AC_ARG_ENABLE(docs,AS_HELP_STRING([--enable-docs=yes],[install documentation]),
-docs_install=$enableval,docs_install=no)
+docs_install=$enableval,docs_install=$docs_install_default)
 AC_MSG_CHECKING(install docs)
-if test "$docs_install" = "no"
+if test "x$docs_install" = "xno"
 then
     AC_MSG_RESULT(no)
+elif test -z "$ac_cv_path_DOXYGEN"
+then
+    AC_MSG_RESULT([no (doxygen program not found)])
+    docs_install=no
 else
     AC_MSG_RESULT(yes)
     docs_install=yes
