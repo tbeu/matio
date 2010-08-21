@@ -25,7 +25,7 @@ doc_DATA = $(top_builddir)/doxygen/dev_api/latex/libmatio_dev.pdf
 doc: $(doc_DATA)
 
 $(top_builddir)/doxygen/dev_api/latex/libmatio_dev.pdf:
-	(cat $(srcdir)/doxygen.config; echo "INPUT=$(top_srcdir)/src";echo "LATEX_HEADER=$(srcdir)/../header.tex"; echo "IMAGE_PATH=$(srcdir)") | doxygen -
+	(cat $(srcdir)/doxygen.config; echo "INPUT=$(top_srcdir)/src";echo "LATEX_HEADER=$(srcdir)/../header.tex"; echo "IMAGE_PATH=$(srcdir)") | $(DOXYGEN) -
 	cd latex;../$(srcdir)/../format_api.sh;../$(srcdir)/../textopdf.sh
 	mv latex/refman.pdf latex/libmatio_dev.pdf
 
