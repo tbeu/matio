@@ -361,13 +361,15 @@ Mat_VarReadNextInfo4(mat_t *mat)
     }
     matvar->rank = 2;
     /* FIXME: Check allocation */
-    matvar->dims = malloc(2*sizeof(int));
-    err = fread(matvar->dims,sizeof(int),1,mat->fp);
+    matvar->dims = malloc(2*sizeof(*matvar->dims));
+    err = fread(&tmp,sizeof(int),1,mat->fp);
+    matvar->dims[0] = tmp;
     if ( !err ) {
         Mat_VarFree(matvar);
         return NULL;
     }
-    err = fread(matvar->dims+1,sizeof(int),1,mat->fp);
+    err = fread(&tmp,sizeof(int),1,mat->fp);
+    matvar->dims[1] = tmp;
     if ( !err ) {
         Mat_VarFree(matvar);
         return NULL;

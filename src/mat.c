@@ -459,7 +459,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     if ( name )
         matvar->name = strdup_printf("%s",name);
     matvar->rank = rank;
-    matvar->dims = malloc(matvar->rank*sizeof(int));
+    matvar->dims = malloc(matvar->rank*sizeof(*matvar->dims));
     for ( i = 0; i < matvar->rank; i++ ) {
         matvar->dims[i] = dims[i];
         nmemb *= dims[i];
@@ -691,9 +691,9 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     if (in->name != NULL && (NULL != (out->name = malloc(strlen(in->name)+1))))
         memcpy(out->name,in->name,strlen(in->name)+1);
 
-    out->dims = malloc(in->rank*sizeof(int));
+    out->dims = malloc(in->rank*sizeof(*out->dims));
     if ( out->dims != NULL )
-        memcpy(out->dims,in->dims,in->rank*sizeof(int));
+        memcpy(out->dims,in->dims,in->rank*sizeof(*out->dims));
 #if defined(HAVE_ZLIB)
     if ( (in->internal->z != NULL) && (NULL != (out->internal->z = malloc(sizeof(z_stream)))) )
         inflateCopy(out->internal->z,in->internal->z);

@@ -1489,7 +1489,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 cells[i]->rank = uncomp_buf[1];
                 nbytes -= cells[i]->rank;
                 cells[i]->rank /= 4;
-                cells[i]->dims = malloc(cells[i]->rank*sizeof(int));
+                cells[i]->dims = malloc(cells[i]->rank*sizeof(*cells[i]->dims));
                 if ( mat->byteswap ) {
                     for ( j = 0; j < cells[i]->rank; j++ )
                         cells[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
@@ -1601,7 +1601,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 nBytes-=nbytes;
 
                 cells[i]->rank = nbytes / 4;
-                cells[i]->dims = malloc(cells[i]->rank*sizeof(int));
+                cells[i]->dims = malloc(cells[i]->rank*sizeof(*cells[i]->dims));
 
                 /* Assumes rank <= 16 */
                 if ( cells[i]->rank % 2 != 0 ) {
@@ -1759,7 +1759,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 fields[i]->rank = uncomp_buf[1];
                 nbytes -= fields[i]->rank;
                 fields[i]->rank /= 4;
-                fields[i]->dims = malloc(fields[i]->rank*sizeof(int));
+                fields[i]->dims = malloc(fields[i]->rank*
+                                         sizeof(*fields[i]->dims));
                 if ( mat->byteswap ) {
                     for ( j = 0; j < fields[i]->rank; j++ )
                         fields[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
@@ -1894,7 +1895,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 nBytes-=nbytes;
 
                 fields[i]->rank = nbytes / 4;
-                fields[i]->dims = malloc(fields[i]->rank*sizeof(int));
+                fields[i]->dims = malloc(fields[i]->rank*
+                                         sizeof(*fields[i]->dims));
 
                 /* Assumes rank <= 16 */
                 if ( fields[i]->rank % 2 != 0 ) {
@@ -6418,7 +6420,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
             if ( uncomp_buf[0] == MAT_T_INT32 ) {
                 nbytes = uncomp_buf[1];
                 matvar->rank = nbytes / 4;
-                matvar->dims = malloc(matvar->rank*sizeof(int));
+                matvar->dims = malloc(matvar->rank*sizeof(*matvar->dims));
                 if ( mat->byteswap ) {
                     for ( i = 0; i < matvar->rank; i++ )
                         matvar->dims[i] = Mat_uint32Swap(&(uncomp_buf[2+i]));
@@ -6503,7 +6505,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 nbytes = buf[5];
 
                 matvar->rank = nbytes / 4;
-                matvar->dims = malloc(matvar->rank*sizeof(int));
+                matvar->dims = malloc(matvar->rank*sizeof(*matvar->dims));
 
                 /* Assumes rank <= 16 */
                 if ( matvar->rank % 2 != 0 )
