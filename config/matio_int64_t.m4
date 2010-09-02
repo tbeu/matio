@@ -28,7 +28,7 @@ AC_DEFUN([CHECK_MATIO_INT64_T],
         #endif
     ],
     [int64_t i = 0;],
-    ac_have_mat_int64_t=yes,ac_have_mat_int64_t=no)
+    ac_have_mat_int64_t =yes,ac_have_mat_int64_t=no)
 
     if test "x$ac_have_mat_int64_t" = "xyes"
     then
@@ -136,7 +136,7 @@ AC_DEFUN([CHECK_MATIO_INT64_T],
 
         if test "x$ac_have_mat_int64_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED([HAVE_MAT_INT64_T],[],[Have MAT int64]))
+            AC_DEFINE_UNQUOTED([HAVE_MAT_INT64_T],[],[Have MAT int64])
             AC_DEFINE_UNQUOTED([_mat_int64_t],[long],[int64 type])
             AC_MSG_RESULT([long])
         fi
