@@ -32,7 +32,7 @@ case "$with_default_file_ver" in
     ;;
 esac
 if test "x$file_ver" != "x"; then
-  AC_DEFINE_UNQUOTED([MAT_FT_DEFAULT],[$file_ver])
+  AC_DEFINE_UNQUOTED([MAT_FT_DEFAULT],[$file_ver],[Default file format])
   AC_MSG_RESULT([$file_ver])
 else
   AC_MSG_ERROR([Unrecognized MAT file version])

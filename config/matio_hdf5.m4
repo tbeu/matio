@@ -43,7 +43,7 @@ then
     if test "x$ac_have_hdf5" = "xyes"
     then
         AC_MSG_RESULT($HDF5_LIBS)
-        AC_DEFINE_UNQUOTED(HAVE_HDF5)
+        AC_DEFINE_UNQUOTED([HAVE_HDF5],[],[Have HDF5])
     else
         HDF5_LIBS=
         HDF5_CFLAGS=

@@ -33,8 +33,8 @@ AC_DEFUN([CHECK_MATIO_UINT16_T],
     if test "x$ac_have_mat_uint16_t" = "xyes"
     then
         ac_have_mat_uint16_t=yes
-        AC_DEFINE_UNQUOTED(HAVE_MAT_UINT16_T)
-        AC_DEFINE_UNQUOTED([_mat_uint16_t],[uint16_t])
+        AC_DEFINE_UNQUOTED([HAVE_MAT_UINT16_T],[],[Have MAT int16])
+        AC_DEFINE_UNQUOTED([_mat_uint16_t],[uint16_t],[int16 type])
         AC_MSG_RESULT([uint16_t])
     fi
     if test "x$ac_have_mat_uint16_t" != "xyes"
@@ -58,8 +58,8 @@ AC_DEFUN([CHECK_MATIO_UINT16_T],
 
         if test "x$ac_have_mat_uint16_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT16_T)
-            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned char])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT16_T],[],[Have MAT int16])
+            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned char],[int16 type])
             AC_MSG_RESULT([unsigned char])
         fi
     fi
@@ -84,8 +84,8 @@ AC_DEFUN([CHECK_MATIO_UINT16_T],
 
         if test "x$ac_have_mat_uint16_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT16_T)
-            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned short])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT16_T],[],[Have MAT int16])
+            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned short],[int16 type])
             AC_MSG_RESULT([unsigned short])
         fi
     fi
@@ -110,8 +110,8 @@ AC_DEFUN([CHECK_MATIO_UINT16_T],
 
         if test "x$ac_have_mat_uint16_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT16_T)
-            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned int])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT16_T],[],[Have MAT int16])
+            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned int],[int16 type])
             AC_MSG_RESULT([unsigned int])
         fi
     fi
@@ -136,8 +136,8 @@ AC_DEFUN([CHECK_MATIO_UINT16_T],
 
         if test "x$ac_have_mat_uint16_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT16_T)
-            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned long])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT16_T],[],[Have MAT int16])
+            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned long],[int16 type])
             AC_MSG_RESULT([unsigned long])
         fi
     fi
@@ -162,8 +162,8 @@ AC_DEFUN([CHECK_MATIO_UINT16_T],
 
         if test "x$ac_have_mat_uint16_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT16_T)
-            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned long long])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT16_T],[],[Have MAT int16])
+            AC_DEFINE_UNQUOTED([_mat_uint16_t],[unsigned long long],[int16 type])
             AC_MSG_RESULT([unsigned long long])
         fi
     fi
