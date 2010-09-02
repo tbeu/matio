@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh.
 
-# ltmain.sh (GNU libtool 1.2993 2008-06-19) 2.2.5a
+# ltmain.sh (GNU libtool) 2.2.6b
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 2008 Free Software Foundation, Inc.
@@ -65,7 +65,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2993 2008-06-19) 2.2.5a
+#       $progname:		(GNU libtool) 2.2.6b Debian-2.2.6b-2
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,9 +73,9 @@
 
 PROGRAM=ltmain.sh
 PACKAGE=libtool
-VERSION=2.2.5a
-TIMESTAMP=" 1.2993 2008-06-19"
-package_revision=1.2993
+VERSION="2.2.6b Debian-2.2.6b-2"
+TIMESTAMP=""
+package_revision=1.3017
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -116,15 +116,15 @@ $lt_unset CDPATH
 
 : ${CP="cp -f"}
 : ${ECHO="echo"}
-: ${EGREP="/usr/bin/grep -E"}
-: ${FGREP="/usr/bin/grep -F"}
-: ${GREP="/usr/bin/grep"}
+: ${EGREP="/bin/grep -E"}
+: ${FGREP="/bin/grep -F"}
+: ${GREP="/bin/grep"}
 : ${LN_S="ln -s"}
 : ${MAKE="make"}
 : ${MKDIR="mkdir"}
 : ${MV="mv -f"}
 : ${RM="rm -f"}
-: ${SED="/usr/bin/sed"}
+: ${SED="/bin/sed"}
 : ${SHELL="${CONFIG_SHELL-/bin/sh}"}
 : ${Xsed="$SED -e 1s/^X//"}
 
@@ -805,7 +805,7 @@ func_enable_tag ()
 
 
   case $host in
-    *cygwin* | *mingw* | *pw32*)
+    *cygwin* | *mingw* | *pw32* | *cegcc*)
       # don't eliminate duplications in $postdeps and $predeps
       opt_duplicate_compiler_generated_deps=:
       ;;
@@ -1276,7 +1276,7 @@ func_mode_compile ()
 
     # On Cygwin there's no "real" PIC flag so we must build both object types
     case $host_os in
-    cygwin* | mingw* | pw32* | os2*)
+    cygwin* | mingw* | pw32* | os2* | cegcc*)
       pic_mode=default
       ;;
     esac
@@ -2047,7 +2047,7 @@ func_mode_install ()
 	      'exit $?'
 	  tstripme="$stripme"
 	  case $host_os in
-	  cygwin* | mingw* | pw32*)
+	  cygwin* | mingw* | pw32* | cegcc*)
 	    case $realname in
 	    *.dll.a)
 	      tstripme=""
@@ -2153,7 +2153,7 @@ func_mode_install ()
 
 	# Do a test to see if this is really a libtool program.
 	case $host in
-	*cygwin*|*mingw*)
+	*cygwin* | *mingw*)
 	    if func_ltwrapper_executable_p "$file"; then
 	      func_ltwrapper_scriptname "$file"
 	      wrapper=$func_ltwrapper_scriptname_result
@@ -2359,7 +2359,7 @@ extern \"C\" {
 	      $RM $export_symbols
 	      eval "${SED} -n -e '/^: @PROGRAM@ $/d' -e 's/^.* \(.*\)$/\1/p' "'< "$nlist" > "$export_symbols"'
 	      case $host in
-	      *cygwin* | *mingw* )
+	      *cygwin* | *mingw* | *cegcc* )
                 eval "echo EXPORTS "'> "$output_objdir/$outputname.def"'
                 eval 'cat "$export_symbols" >> "$output_objdir/$outputname.def"'
 	        ;;
@@ -2371,7 +2371,7 @@ extern \"C\" {
 	      eval '$GREP -f "$output_objdir/$outputname.exp" < "$nlist" > "$nlist"T'
 	      eval '$MV "$nlist"T "$nlist"'
 	      case $host in
-	        *cygwin | *mingw* )
+	        *cygwin | *mingw* | *cegcc* )
 	          eval "echo EXPORTS "'> "$output_objdir/$outputname.def"'
 	          eval 'cat "$nlist" >> "$output_objdir/$outputname.def"'
 	          ;;
@@ -2427,7 +2427,7 @@ typedef struct {
 } lt_dlsymlist;
 "
 	  case $host in
-	  *cygwin* | *mingw* )
+	  *cygwin* | *mingw* | *cegcc* )
 	    $ECHO >> "$output_objdir/$my_dlsyms" "\
 /* DATA imports from DLLs on WIN32 con't be const, because
    runtime relocations are performed -- see ld's documentation
@@ -2513,7 +2513,7 @@ static const void *lt_preloaded_setup() {
 	# Transform the symbol file into the correct name.
 	symfileobj="$output_objdir/${my_outputname}S.$objext"
 	case $host in
-	*cygwin* | *mingw* )
+	*cygwin* | *mingw* | *cegcc* )
 	  if test -f "$output_objdir/$my_outputname.def"; then
 	    compile_command=`$ECHO "X$compile_command" | $Xsed -e "s%@SYMFILE@%$output_objdir/$my_outputname.def $symfileobj%"`
 	    finalize_command=`$ECHO "X$finalize_command" | $Xsed -e "s%@SYMFILE@%$output_objdir/$my_outputname.def $symfileobj%"`
@@ -2897,7 +2897,7 @@ func_emit_wrapper_part2 ()
 "
 	case $host in
 	# Backslashes separate directories on plain windows
-	*-*-mingw | *-*-os2*)
+	*-*-mingw | *-*-os2* | *-cegcc*)
 	  $ECHO "\
       exec \"\$progdir\\\\\$program\" \${1+\"\$@\"}
 "
@@ -3005,7 +3005,7 @@ func_to_host_path ()
             # error code of zero AND non-empty stdout, which explains
             # the odd construction:
             func_to_host_path_tmp1=`winepath -w "$1" 2>/dev/null`
-            if test $? -eq 0 && test -n "${func_to_host_path_tmp1}"; then
+            if test "$?" -eq 0 && test -n "${func_to_host_path_tmp1}"; then
               func_to_host_path_result=`echo "$func_to_host_path_tmp1" |\
                 $SED -e "$lt_sed_naive_backslashify"`
             else
@@ -3150,8 +3150,7 @@ EOF
 	    cat <<"EOF"
 #include <stdio.h>
 #include <stdlib.h>
-#if defined(_MSC_VER) || \
-    (defined(__PGI) && (defined(_WIN32) || defined(_WIN64)))
+#ifdef _MSC_VER
 # include <direct.h>
 # include <process.h>
 # include <io.h>
@@ -3193,8 +3192,7 @@ int setenv (const char *, const char *, int);
 # define S_IXGRP 0
 #endif
 
-#if defined(_MSC_VER) || \
-    (defined(__PGI) && (defined(_WIN32) || defined(_WIN64)))
+#ifdef _MSC_VER
 # define S_IXUSR _S_IEXEC
 # define stat _stat
 # ifndef _INTPTR_T_DEFINED
@@ -3570,19 +3568,18 @@ EOF
       return 127;
     }
   return rval;
-}
 EOF
 		;;
 	      *)
 		cat <<"EOF"
   execv (lt_argv_zero, newargz);
   return rval; /* =127, but avoids unused variable warning */
-}
 EOF
 		;;
 	    esac
 
 	    cat <<"EOF"
+}
 
 void *
 xmalloc (size_t num)
@@ -4036,7 +4033,7 @@ func_mode_link ()
 {
     $opt_debug
     case $host in
-    *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
+    *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2* | *-cegcc*)
       # It is impossible to link a dll without this setting, and
       # we shouldn't force the makefile maintainer to figure out
       # which system we are compiling for in order to pass an extra
@@ -4480,6 +4477,13 @@ func_mode_link ()
       -L*)
 	func_stripname '-L' '' "$arg"
 	dir=$func_stripname_result
+	if test -z "$dir"; then
+	  if test "$#" -gt 0; then
+	    func_fatal_error "require no space between \`-L' and \`$1'"
+	  else
+	    func_fatal_error "need path for \`-L' option"
+	  fi
+	fi
 	# We need an absolute path.
 	case $dir in
 	[\\/]* | [A-Za-z]:[\\/]*) ;;
@@ -4498,14 +4502,16 @@ func_mode_link ()
 	  ;;
 	esac
 	case $host in
-	*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
+	*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2* | *-cegcc*)
 	  testbindir=`$ECHO "X$dir" | $Xsed -e 's*/lib$*/bin*'`
 	  case :$dllsearchpath: in
 	  *":$dir:"*) ;;
+	  ::) dllsearchpath=$dir;;
 	  *) dllsearchpath="$dllsearchpath:$dir";;
 	  esac
 	  case :$dllsearchpath: in
 	  *":$testbindir:"*) ;;
+	  ::) dllsearchpath=$testbindir;;
 	  *) dllsearchpath="$dllsearchpath:$testbindir";;
 	  esac
 	  ;;
@@ -4516,7 +4522,7 @@ func_mode_link ()
       -l*)
 	if test "X$arg" = "X-lc" || test "X$arg" = "X-lm"; then
 	  case $host in
-	  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-beos*)
+	  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-beos* | *-cegcc*)
 	    # These systems don't actually have a C or math library (as such)
 	    continue
 	    ;;
@@ -4593,7 +4599,7 @@ func_mode_link ()
 
       -no-install)
 	case $host in
-	*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2* | *-*-darwin*)
+	*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2* | *-*-darwin* | *-cegcc*)
 	  # The PATH hackery in wrapper scripts is required on Windows
 	  # and Darwin in order for the loader to find any dlls it needs.
 	  func_warning "\`-no-install' is ignored for $host"
@@ -5027,7 +5033,10 @@ func_mode_link ()
 	case $pass in
 	dlopen) libs="$dlfiles" ;;
 	dlpreopen) libs="$dlprefiles" ;;
-	link) libs="$deplibs %DEPLIBS% $dependency_libs" ;;
+	link)
+	  libs="$deplibs %DEPLIBS%"
+	  test "X$link_all_deplibs" != Xno && libs="$libs $dependency_libs"
+	  ;;
 	esac
       fi
       if test "$linkmode,$pass" = "lib,dlpreopen"; then
@@ -5338,19 +5347,19 @@ func_mode_link ()
 	    # It is a libtool convenience library, so add in its objects.
 	    convenience="$convenience $ladir/$objdir/$old_library"
 	    old_convenience="$old_convenience $ladir/$objdir/$old_library"
+	    tmp_libs=
+	    for deplib in $dependency_libs; do
+	      deplibs="$deplib $deplibs"
+	      if $opt_duplicate_deps ; then
+		case "$tmp_libs " in
+		*" $deplib "*) specialdeplibs="$specialdeplibs $deplib" ;;
+		esac
+	      fi
+	      tmp_libs="$tmp_libs $deplib"
+	    done
 	  elif test "$linkmode" != prog && test "$linkmode" != lib; then
 	    func_fatal_error "\`$lib' is not a convenience library"
 	  fi
-	  tmp_libs=
-	  for deplib in $dependency_libs; do
-	    deplibs="$deplib $deplibs"
-	    if $opt_duplicate_deps ; then
-	      case "$tmp_libs " in
-	      *" $deplib "*) specialdeplibs="$specialdeplibs $deplib" ;;
-	      esac
-	    fi
-	    tmp_libs="$tmp_libs $deplib"
-	  done
 	  continue
 	fi # $pass = conv
 
@@ -5550,7 +5559,7 @@ func_mode_link ()
 	if test -n "$library_names" &&
 	   { test "$use_static_libs" = no || test -z "$old_library"; }; then
 	  case $host in
-	  *cygwin* | *mingw*)
+	  *cygwin* | *mingw* | *cegcc*)
 	      # No point in relinking DLLs because paths are not encoded
 	      notinst_deplibs="$notinst_deplibs $lib"
 	      need_relink=no
@@ -5620,7 +5629,7 @@ func_mode_link ()
 	    elif test -n "$soname_spec"; then
 	      # bleh windows
 	      case $host in
-	      *cygwin* | mingw*)
+	      *cygwin* | mingw* | *cegcc*)
 	        func_arith $current - $age
 		major=$func_arith_result
 		versuffix="-$major"
@@ -5887,6 +5896,7 @@ func_mode_link ()
 	  if test "$link_all_deplibs" != no; then
 	    # Add the search paths of all dependency libraries
 	    for deplib in $dependency_libs; do
+	      path=
 	      case $deplib in
 	      -L*) path="$deplib" ;;
 	      *.la)
@@ -6200,6 +6210,9 @@ func_mode_link ()
 	    revision="$number_minor"
 	    lt_irix_increment=no
 	    ;;
+	  *)
+	    func_fatal_configuration "$modename: unknown library version type \`$version_type'"
+	    ;;
 	  esac
 	  ;;
 	no)
@@ -6399,7 +6412,7 @@ func_mode_link ()
 	tempremovelist=`$ECHO "$output_objdir/*"`
 	for p in $tempremovelist; do
 	  case $p in
-	    *.$objext)
+	    *.$objext | *.gcno)
 	       ;;
 	    $output_objdir/$outputname | $output_objdir/$libname.* | $output_objdir/${libname}${release}.*)
 	       if test "X$precious_files_regex" != "X"; then
@@ -6470,7 +6483,7 @@ func_mode_link ()
       if test "$build_libtool_libs" = yes; then
 	if test -n "$rpath"; then
 	  case $host in
-	  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2* | *-*-beos*)
+	  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2* | *-*-beos* | *-cegcc*)
 	    # these systems don't actually have a c library (as such)!
 	    ;;
 	  *-*-rhapsody* | *-*-darwin1.[012])
@@ -6969,7 +6982,7 @@ EOF
 
 	orig_export_symbols=
 	case $host_os in
-	cygwin* | mingw*)
+	cygwin* | mingw* | cegcc*)
 	  if test -n "$export_symbols" && test -z "$export_symbols_regex"; then
 	    # exporting using user supplied symfile
 	    if test "x`$SED 1q $export_symbols`" != xEXPORTS; then
@@ -7361,7 +7374,7 @@ EOF
 
 	# Create links to the real library.
 	for linkname in $linknames; do
-	  if test "$realname" != "$linkname" && test ! -e "$output_objdir/$linkname"; then
+	  if test "$realname" != "$linkname"; then
 	    func_show_eval '(cd "$output_objdir" && $RM "$linkname" && $LN_S "$realname" "$linkname")' 'exit $?'
 	  fi
 	done
@@ -7594,14 +7607,16 @@ EOF
 	  esac
 	fi
 	case $host in
-	*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
+	*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2* | *-cegcc*)
 	  testbindir=`${ECHO} "$libdir" | ${SED} -e 's*/lib$*/bin*'`
 	  case :$dllsearchpath: in
 	  *":$libdir:"*) ;;
+	  ::) dllsearchpath=$libdir;;
 	  *) dllsearchpath="$dllsearchpath:$libdir";;
 	  esac
 	  case :$dllsearchpath: in
 	  *":$testbindir:"*) ;;
+	  ::) dllsearchpath=$testbindir;;
 	  *) dllsearchpath="$dllsearchpath:$testbindir";;
 	  esac
 	  ;;
@@ -7670,6 +7685,10 @@ EOF
         if test "$build_libtool_libs" != yes; then
           wrappers_required=no
         fi
+        ;;
+      *cegcc)
+        # Disable wrappers for cegcc, we are cross compiling anyway.
+        wrappers_required=no
         ;;
       *)
         if test "$need_relink" = no || test "$build_libtool_libs" != yes; then
@@ -7969,14 +7988,6 @@ EOF
 	  func_len " $test_cmds"
 	  len0=$func_len_result
 	  len=$len0
-     # If we are using the MS linker, we have to pass the lib file
-     # at each increment to append objects instead of overwriting the
-     # lib file
-     if test "x$with_msvc_ld" = "xyes";then
-       oldobjs=" $last_oldobj"
-       func_show_eval "$old_archive_cmds"
-       objlist=" $oldlib"
-     fi
 	  for obj in $save_oldobjs
 	  do
 	    func_len " $obj"
@@ -7993,11 +8004,7 @@ EOF
 	      fi
 	      test -z "$concat_cmds" || concat_cmds=$concat_cmds~
 	      eval concat_cmds=\"\${concat_cmds}$old_archive_cmds\"
-         if test "x$with_msvc_ld" = "xyes";then
-           objlist=" $oldlib"
-         else
-           objlist=
-         fi
+	      objlist=
 	      len=$len0
 	    fi
 	  done
@@ -8123,7 +8130,7 @@ EOF
 	  # place dlname in correct position for cygwin
 	  tdlname=$dlname
 	  case $host,$output,$installed,$module,$dlname in
-	    *cygwin*,*lai,yes,no,*.dll | *mingw*,*lai,yes,no,*.dll) tdlname=../bin/$dlname ;;
+	    *cygwin*,*lai,yes,no,*.dll | *mingw*,*lai,yes,no,*.dll | *cegcc*,*lai,yes,no,*.dll) tdlname=../bin/$dlname ;;
 	  esac
 	  $ECHO > $output "\
 # $outputname - a libtool library file
