@@ -6034,7 +6034,7 @@ ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,
             }
             break;
         }
-#if HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
             mat_int64_t *ptr = data;
@@ -6049,7 +6049,7 @@ ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
-#if HAVE_MAT_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
         {
             mat_uint64_t *ptr = data;

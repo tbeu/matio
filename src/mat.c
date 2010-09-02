@@ -30,7 +30,7 @@
 #include "mat5.h"
 #include "mat4.h"
 #include "matio_private.h"
-#if MAT73
+#ifdef MAT73
 #   include "mat73.h"
 #endif
 
@@ -41,7 +41,7 @@ ReadData(mat_t *mat, matvar_t *matvar)
         return;
     else if ( mat->version == MAT_FT_MAT5 )
         Read5(mat,matvar);
-#if MAT73
+#ifdef MAT73
     else if ( mat->version == MAT_FT_MAT73 )
         Mat_VarRead73(mat,matvar);
 #endif
@@ -60,12 +60,12 @@ Mat_PrintNumber(enum matio_types type, void *data)
         case MAT_T_SINGLE:
             printf("%g",*(float*)data);
             break;
-#if HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_INT64_T
         case MAT_T_INT64:
             printf("%lu",*(mat_int64_t*)data);
             break;
 #endif
-#if HAVE_MAT_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
         case MAT_T_UINT64:
             printf("%lu",*(mat_uint64_t*)data);
             break;
@@ -1491,10 +1491,10 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         switch( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
-#if HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_INT64_T
             case MAT_C_INT64:
 #endif
-#if HAVE_MAT_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
             case MAT_C_UINT64:
 #endif
             case MAT_C_INT32:

@@ -379,7 +379,7 @@ Mat_complex_interleaved_to_split(void *data,struct ComplexSplit *complex_data,
             }
             break;
         }
-#if HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_INT64_T
         case MAT_T_INT64:
         {
             mat_int64_t *rp      = complex_data->Re;
@@ -393,7 +393,7 @@ Mat_complex_interleaved_to_split(void *data,struct ComplexSplit *complex_data,
             break;
         }
 #endif
-#if HAVE_MAT_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
         case MAT_T_UINT64:
         {
             mat_uint64_t *rp      = complex_data->Re;
@@ -1084,7 +1084,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                         }
                         break;
                     }
-#if HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_INT64_T
                     case MAT_C_INT64:
                     {
                         mat_int64_t *rp      = complex_data->Re;
@@ -1098,7 +1098,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                         break;
                     }
 #endif
-#if HAVE_MAT_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
                     case MAT_C_UINT64:
                     {
                         mat_uint64_t *rp      = complex_data->Re;
@@ -2516,7 +2516,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                         }
                         break;
                     }
-#if HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_INT64_T
                     case MAT_C_INT64:
                     {
                         mat_int64_t *rp      = complex_data->Re;
@@ -2530,7 +2530,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                         break;
                     }
 #endif
-#if HAVE_MAT_UINT64_T
+#ifdef HAVE_MAT_UINT64_T
                     case MAT_C_UINT64:
                     {
                         mat_uint64_t *rp      = complex_data->Re;
