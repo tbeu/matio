@@ -10,6 +10,7 @@ rm -fr sed
 cp refman.tex refman.tex.save
 cp doxygen.sty doxygen.sty.save
 cat refman.tex | sed "/File Index/,/input{files}/d" | sed "/File Documentation/,/include/d" | sed "/8c/d" | sed "/8h/d" > refman.sed
+echo "\end{document}" >> refman.sed
 cat doxygen.sty | sed "s/by Doxygen//g" > doxygen.sed
 mv refman.sed refman.tex
 mv doxygen.sed doxygen.sty
