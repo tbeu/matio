@@ -20,3 +20,6 @@ libtool
 src/stamp-h1
 src/matioConfig.h
 autom4te.cache/
+aclocal.m4
+config/lt*
+config/libtool.m4
