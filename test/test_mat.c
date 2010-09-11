@@ -1133,9 +1133,17 @@ test_write_null(void)
         struct_matvar->data = NULL;
         Mat_VarFree(struct_matvar);
         dims[0] = 0;
-        cell_matvar = Mat_VarCreate("cell_null_cells",MAT_C_CELL,MAT_T_CELL,2,
+        cell_matvar = Mat_VarCreate("cell_null",MAT_C_CELL,MAT_T_CELL,2,
                             dims,NULL,MEM_CONSERVE);
         Mat_VarWrite(mat,cell_matvar,compression);
+        Mat_VarFree(cell_matvar);
+
+        dims[0] = 3;
+        cell_matvar = Mat_VarCreate("cell_null_cells",MAT_C_CELL,MAT_T_CELL,2,
+                            dims,struct_fields,MEM_CONSERVE);
+        Mat_VarWrite(mat,cell_matvar,compression);
+        /* Reset data to NULL so the cells are not free'd */
+        cell_matvar->data = NULL;
         Mat_VarFree(cell_matvar);
 
         Mat_VarFree(struct_fields[0]);
