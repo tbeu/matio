@@ -50,6 +50,8 @@ static const char *data_type_desc[23] = {"Unknown","8-bit, signed integer",
 #define TYPE_FROM_TAG(a)          (enum matio_types)((a) & 0x000000ff)
 #define CLASS_FROM_ARRAY_FLAGS(a) (enum matio_classes)((a) & 0x000000ff)
 
+static const struct ComplexSplit const null_complex_data = {NULL,NULL};
+
 /*
  * -------------------------------------------------------------
  *   Private Functions
@@ -2290,6 +2292,8 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             if ( matvar->isComplex ) {
                 struct ComplexSplit *complex_data = matvar->data;
 
+                if ( NULL == matvar->data )
+                    complex_data = &null_complex_data;
 
                 nBytes=WriteData(mat,complex_data->Re,nmemb,matvar->data_type);
                 if ( nBytes % 8 )
@@ -2506,6 +2510,9 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
             if ( matvar->isComplex ) {
                 struct ComplexSplit *complex_data = matvar->data;
 
+                if ( NULL == matvar->data )
+                    complex_data = &null_complex_data;
+
                 byteswritten += WriteCompressedData(mat,z,
                     complex_data->Re,nmemb,matvar->data_type);
                 byteswritten += WriteCompressedData(mat,z,
@@ -2709,6 +2716,8 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
             if ( matvar->isComplex ) {
                 struct ComplexSplit *complex_data = matvar->data;
 
+                if ( NULL == matvar->data )
+                    complex_data = &null_complex_data;
 
                 nBytes=WriteData(mat,complex_data->Re,nmemb,matvar->data_type);
                 if ( nBytes % 8 )
@@ -2930,6 +2939,9 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
              * on an 8-byte boundary */
             if ( matvar->isComplex ) {
                 struct ComplexSplit *complex_data = matvar->data;
+
+                if ( NULL == matvar->data )
+                    complex_data = &null_complex_data;
 
                 byteswritten += WriteCompressedData(mat,z,
                     complex_data->Re,nmemb,matvar->data_type);
@@ -5719,6 +5731,10 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             {
                 if ( matvar->isComplex ) {
                     struct ComplexSplit *complex_data = matvar->data;
+
+                    if ( NULL == complex_data )
+                        complex_data = &null_complex_data;
+
                     nBytes = WriteData(mat,complex_data->Re,nmemb,
                         matvar->data_type);
                     if ( nBytes % 8 )
@@ -5966,6 +5982,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                  * on an 8-byte boundary */
                 if ( matvar->isComplex ) {
                     struct ComplexSplit *complex_data = matvar->data;
+
+                    if ( NULL == matvar->data )
+                        complex_data = &null_complex_data;
 
                     byteswritten += WriteCompressedData(mat,matvar->internal->z,
                         complex_data->Re,nmemb,matvar->data_type);
