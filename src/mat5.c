@@ -489,7 +489,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
     int buf_size = 1024, i;
     mat_uint8_t   buf[1024], pad[8] = {0,};
 
-    if ((mat == NULL) || (data == NULL) || (mat->fp == NULL))
+    if ((mat == NULL) || (mat->fp == NULL))
         return 0;
 
     switch ( data_type ) {
@@ -504,6 +504,11 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             z->avail_out = buf_size;
             err = deflate(z,Z_NO_FLUSH);
             byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+
+            /* exit early if this is a empty data */
+            if ( NULL == data || N < 1 )
+                break;
+
             z->next_in   = data;
             z->avail_in  = data_size*N;
             do {
@@ -539,6 +544,11 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             z->avail_out = buf_size;
             err = deflate(z,Z_NO_FLUSH);
             byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+
+            /* exit early if this is a empty data */
+            if ( NULL == data || N < 1 )
+                break;
+
             z->next_in   = data;
             z->avail_in  = data_size*N;
             ptr = data;
@@ -574,6 +584,11 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             z->avail_out = buf_size;
             err = deflate(z,Z_NO_FLUSH);
             byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+
+            /* exit early if this is a empty data */
+            if ( NULL == data || N < 1 )
+                break;
+
             z->next_in   = data;
             z->avail_in  = data_size*N;
             do {
@@ -1362,7 +1377,7 @@ WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
     int buf_size = 1024;
     mat_uint8_t   buf[1024], pad[8] = {0,};
 
-    if ((mat == NULL) || (data == NULL) || (mat->fp == NULL))
+    if ((mat == NULL) || (mat->fp == NULL))
         return 0;
 
     data_size = Mat_SizeOf(data_type);
@@ -1375,6 +1390,11 @@ WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
     z->avail_out = buf_size;
     err = deflate(z,Z_NO_FLUSH);
     byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+
+    /* exit early if this is a empty data */
+    if ( NULL == data || N < 1 )
+        return byteswritten;
+
     z->next_in   = data;
     z->avail_in  = N*data_size;
     do {
