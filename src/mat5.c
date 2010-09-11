@@ -89,12 +89,19 @@ GetStructFieldBufSize(matvar_t *matvar)
     else
         nBytes += tag_size + matvar->rank*4;
 
-    if ( matvar->class_type == MAT_C_STRUCT ) {
+    switch ( matvar->class_type ) {
+    case MAT_C_STRUCT:
+    {
         matvar_t **fields = matvar->data;
         int i, nfields;
         size_t maxlen = 0;
 
-        nfields = matvar->nbytes / (nmemb*matvar->data_size);
+        if ( matvar->nbytes == 0 || matvar->data_size == 0 )
+            break;
+        else if ( nmemb )
+            nfields = matvar->nbytes / (nmemb*matvar->data_size);
+        else /* matvar->data_size is checked above */
+            nfields = matvar->nbytes / matvar->data_size;
         for ( i = 0; i < nfields; i++ ) {
             if ( NULL != fields[i]->name && strlen(fields[i]->name) > maxlen )
                 maxlen = strlen(fields[i]->name);
@@ -110,15 +117,26 @@ GetStructFieldBufSize(matvar_t *matvar)
             for ( i = 0; i < nfields*nmemb; i++ )
                 nBytes += GetStructFieldBufSize(fields[i]);
         }
-    } else if ( matvar->class_type == MAT_C_CELL ) {
+        break;
+    }
+    case MAT_C_CELL:
+    {
         matvar_t **cells = matvar->data;
-        int i, ncells = matvar->nbytes / matvar->data_size;
+        int i, ncells;
+
+        if ( matvar->nbytes == 0 || matvar->data_size == 0 )
+            break;
+
+        ncells = matvar->nbytes / matvar->data_size;
 
         if ( NULL != cells && ncells > 0 ) {
             for ( i = 0; i < ncells; i++ )
                 nBytes += GetCellArrayFieldBufSize(cells[i]);
         }
-    } else if ( matvar->class_type == MAT_C_SPARSE ) {
+        break;
+    }
+    case MAT_C_SPARSE:
+    {
         sparse_t *sparse = matvar->data;
 
         nBytes += tag_size + sparse->njc*sizeof(mat_int32_t) +
@@ -126,11 +144,13 @@ GetStructFieldBufSize(matvar_t *matvar)
                   tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
         if ( matvar->isComplex )
             nBytes += tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
-    } else {
+        break;
+    }
+    default:
         nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
         if ( matvar->isComplex )
             nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
-    }
+    } /* switch ( matvar->class_type ) */
     
     return nBytes;
 }
@@ -179,12 +199,20 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
     else
         nBytes += tag_size + matvar->rank*4;
 
-    if ( matvar->class_type == MAT_C_STRUCT ) {
+    switch ( matvar->class_type ) {
+    case MAT_C_STRUCT:
+    {
         matvar_t **fields = matvar->data;
         int i, nfields;
         size_t maxlen = 0;
 
-        nfields = matvar->nbytes / (nmemb*matvar->data_size);
+        if ( matvar->nbytes == 0 || matvar->data_size == 0 )
+            break;
+        else if ( nmemb )
+            nfields = matvar->nbytes / (nmemb*matvar->data_size);
+        else /* matvar->data_size is checked above */
+            nfields = matvar->nbytes / matvar->data_size;
+
         for ( i = 0; i < nfields; i++ ) {
             if ( NULL != fields[i]->name && strlen(fields[i]->name) > maxlen )
                 maxlen = strlen(fields[i]->name);
@@ -199,15 +227,26 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
             for ( i = 0; i < nfields*nmemb; i++ )
                 nBytes += GetStructFieldBufSize(fields[i]);
         }
-    } else if ( matvar->class_type == MAT_C_CELL ) {
+        break;
+    }
+    case MAT_C_CELL:
+    {
         matvar_t **cells = matvar->data;
-        int i, ncells = matvar->nbytes / matvar->data_size;
+        int i, ncells;
+
+        if ( matvar->nbytes == 0 || matvar->data_size == 0 )
+            break;
+
+        ncells = matvar->nbytes / matvar->data_size;
 
         if ( NULL != cells && ncells > 0 ) {
             for ( i = 0; i < ncells; i++ )
                 nBytes += GetCellArrayFieldBufSize(cells[i]);
         }
-    } else if ( matvar->class_type == MAT_C_SPARSE ) {
+        break;
+    }
+    case MAT_C_SPARSE:
+    {
         sparse_t *sparse = matvar->data;
 
         nBytes += tag_size + sparse->njc*sizeof(mat_int32_t) +
@@ -215,11 +254,13 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
                   tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
         if ( matvar->isComplex )
             nBytes += tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
-    } else {
+        break;
+    }
+    default:
         nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
         if ( matvar->isComplex )
             nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
-    }
+    } /* switch ( matvar->class_type ) */
     
     return nBytes;
 }
@@ -265,12 +306,20 @@ GetMatrixMaxBufSize(matvar_t *matvar)
     else
         nBytes += tag_size + matvar->rank*4;
 
-    if ( matvar->class_type == MAT_C_STRUCT ) {
+    switch ( matvar->class_type ) {
+    case MAT_C_STRUCT:
+    {
         matvar_t **fields = matvar->data;
         int i, nfields;
         size_t maxlen = 0;
 
-        nfields = matvar->nbytes / (nmemb*matvar->data_size);
+        if ( matvar->nbytes == 0 || matvar->data_size == 0 )
+            break;
+        else if ( nmemb )
+            nfields = matvar->nbytes / (nmemb*matvar->data_size);
+        else /* matvar->data_size is checked above */
+            nfields = matvar->nbytes / matvar->data_size;
+
         for ( i = 0; i < nfields; i++ ) {
             if ( NULL != fields[i]->name && strlen(fields[i]->name) > maxlen )
                 maxlen = strlen(fields[i]->name);
@@ -286,15 +335,26 @@ GetMatrixMaxBufSize(matvar_t *matvar)
             for ( i = 0; i < nfields*nmemb; i++ )
                 nBytes += GetStructFieldBufSize(fields[i]);
         }
-    } else if ( matvar->class_type == MAT_C_CELL ) {
+        break;
+    }
+    case MAT_C_CELL:
+    {
         matvar_t **cells = matvar->data;
-        int i, ncells = matvar->nbytes / matvar->data_size;
+        int i, ncells;
+
+        if ( matvar->nbytes == 0 || matvar->data_size == 0 )
+            break;
+
+        ncells = matvar->nbytes / matvar->data_size;
 
         if ( NULL != cells && ncells > 0 ) {
             for ( i = 0; i < ncells; i++ )
                 nBytes += GetCellArrayFieldBufSize(cells[i]);
         }
-    } else if ( matvar->class_type == MAT_C_SPARSE ) {
+        break;
+    }
+    case MAT_C_SPARSE:
+    {
         sparse_t *sparse = matvar->data;
 
         nBytes += tag_size + sparse->njc*sizeof(mat_int32_t) +
@@ -302,11 +362,13 @@ GetMatrixMaxBufSize(matvar_t *matvar)
                   tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
         if ( matvar->isComplex )
             nBytes += tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
-    } else {
+        break;
+    }
+    default:
         nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
         if ( matvar->isComplex )
             nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
-    }
+    } /* switch ( matvar->class_type ) */
     
     return nBytes;
 }
@@ -2099,11 +2161,17 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
         }
         case MAT_C_CELL:
         {
-            int nfields = matvar->nbytes / matvar->data_size;
-            matvar_t **fields = (matvar_t **)matvar->data;
+            int        ncells;
+            matvar_t **cells = (matvar_t **)matvar->data;
 
-            for ( i = 0; i < nfields; i++ )
-                WriteCellArrayFieldInfo(mat,fields[i]);
+            /* Check for an empty cell array */
+            if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
+                 matvar->data   == NULL )
+                break;
+            ncells  = matvar->nbytes / matvar->data_size;
+
+            for ( i = 0; i < ncells; i++ )
+                WriteCellArrayFieldInfo(mat,cells[i]);
             break;
         }
         /* FIXME: Structures */
@@ -2244,11 +2312,17 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             break;
         case MAT_C_CELL:
         {
-            int nfields = matvar->nbytes / matvar->data_size;
-            matvar_t **fields = (matvar_t **)matvar->data;
+            int        ncells;
+            matvar_t **cells = (matvar_t **)matvar->data;
 
-            for ( i = 0; i < nfields; i++ )
-                WriteCellArrayField(mat,fields[i]);
+            /* Check for an empty cell array */
+            if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
+                 matvar->data   == NULL )
+                break;
+            ncells  = matvar->nbytes / matvar->data_size;
+
+            for ( i = 0; i < ncells; i++ )
+                WriteCellArrayField(mat,cells[i]);
             break;
         }
         case MAT_C_STRUCT:
@@ -2259,7 +2333,13 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             matvar_t **fields = (matvar_t **)matvar->data;
             unsigned fieldname;
 
-            nfields = matvar->nbytes / (nmemb*matvar->data_size);
+            if ( nmemb && matvar->data_size )
+                nfields = matvar->nbytes / (nmemb*matvar->data_size);
+            else if ( matvar->data_size )
+                nfields = matvar->nbytes / matvar->data_size;
+            else
+                break;
+
             fieldnames = malloc(nfields*sizeof(char *));
             for ( i = 0; i < nfields; i++ ) {
                 fieldnames[i] = fields[i]->name;
@@ -2483,7 +2563,11 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
                     sizeof(*comp_buf)-z->avail_out,mat->fp);
                 break;
             }
-            nfields = matvar->nbytes / (nmemb*matvar->data_size);
+            if ( nmemb )
+                nfields = matvar->nbytes / (nmemb*matvar->data_size);
+            else /* matvar->data_size is checked above */
+                nfields = matvar->nbytes / matvar->data_size;
+
             fieldnames = malloc(nfields*sizeof(char *));
             for ( i = 0; i < nfields; i++ ) {
                 fieldnames[i] = fields[i]->name;
@@ -2647,11 +2731,17 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
             break;
         case MAT_C_CELL:
         {
-            int nfields = matvar->nbytes / matvar->data_size;
-            matvar_t **fields = (matvar_t **)matvar->data;
+            int        ncells;
+            matvar_t **cells = (matvar_t **)matvar->data;
 
-            for ( i = 0; i < nfields; i++ )
-                WriteCellArrayField(mat,fields[i]);
+            /* Check for an empty cell array */
+            if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
+                 matvar->data   == NULL )
+                break;
+            ncells  = matvar->nbytes / matvar->data_size;
+
+            for ( i = 0; i < ncells; i++ )
+                WriteCellArrayField(mat,cells[i]);
             break;
         }
         case MAT_C_STRUCT:
@@ -2667,8 +2757,13 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
              * (e.g. x.y = struct('z', {})). If it's zero, we would divide
              * by zero.
              */
-            if ( nmemb*matvar->data_size )
+            if ( nmemb )
                 nfields = matvar->nbytes / (nmemb*matvar->data_size);
+            else if ( matvar->data_size )
+                nfields = matvar->nbytes / matvar->data_size;
+            else
+                break;
+
             fieldnames = malloc(nfields*sizeof(char *));
             for ( i = 0; i < nfields; i++ ) {
                 fieldnames[i] = fields[i]->name;
@@ -2893,7 +2988,10 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
                     sizeof(*comp_buf)-z->avail_out,mat->fp);
                 break;
             }
-            nfields = matvar->nbytes / (nmemb*matvar->data_size);
+            if ( nmemb )
+                nfields = matvar->nbytes / (nmemb*matvar->data_size);
+            else /* matvar->data_size is checked above */
+                nfields = matvar->nbytes / matvar->data_size;
             fieldnames = malloc(nfields*sizeof(char *));
             for ( i = 0; i < nfields; i++ ) {
                 fieldnames[i] = fields[i]->name;
@@ -5684,7 +5782,10 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     fwrite(&nBytes,4,1,mat->fp);
                     break;
                 }
-                nfields = matvar->nbytes / (nmemb*matvar->data_size);
+                if ( nmemb )
+                    nfields = matvar->nbytes / (nmemb*matvar->data_size);
+                else /* matvar->data_size is checked above */
+                    nfields = matvar->nbytes / matvar->data_size;
                 fieldnames = malloc(nfields*sizeof(char *));
                 for ( i = 0; i < nfields; i++ ) {
                     fieldnames[i] = fields[i]->name;
@@ -5923,7 +6024,10 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                         sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
                     break;
                 }
-                nfields = matvar->nbytes / (nmemb*matvar->data_size);
+                if ( nmemb )
+                    nfields = matvar->nbytes / (nmemb*matvar->data_size);
+                else /* matvar->data_size is checked above */
+                    nfields = matvar->nbytes / matvar->data_size;
                 fieldnames = malloc(nfields*sizeof(char *));
                 for ( i = 0; i < nfields; i++ ) {
                     fieldnames[i] = fields[i]->name;
@@ -6134,11 +6238,17 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             }
             case MAT_C_CELL:
             {
-                int nfields = matvar->nbytes / matvar->data_size;
-                matvar_t **fields = (matvar_t **)matvar->data;
+                int        ncells;
+                matvar_t **cells = (matvar_t **)matvar->data;
 
-                for ( i = 0; i < nfields; i++ )
-                    WriteCellArrayFieldInfo(mat,fields[i]);
+                /* Check for an empty cell array */
+                if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
+                     matvar->data   == NULL )
+                    break;
+                ncells  = matvar->nbytes / matvar->data_size;
+
+                for ( i = 0; i < ncells; i++ )
+                    WriteCellArrayFieldInfo(mat,cells[i]);
                 break;
             }
             case MAT_C_STRUCT:
