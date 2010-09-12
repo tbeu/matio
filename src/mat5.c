@@ -1581,6 +1581,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 Mat_Critical("cells[%d], Uncompressed type not MAT_T_MATRIX",i);
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
+                break;
             }
             cells[i]->compression = 1;
             bytesread += InflateArrayFlags(mat,matvar,uncomp_buf);
@@ -1695,7 +1696,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
-                continue;
+                break;
             }
             cells[i]->compression = 0;
 #if defined(HAVE_ZLIB)
