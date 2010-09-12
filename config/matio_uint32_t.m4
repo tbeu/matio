@@ -33,8 +33,8 @@ AC_DEFUN([CHECK_MATIO_UINT32_T],
     if test "x$ac_have_mat_uint32_t" = "xyes"
     then
         ac_have_mat_uint32_t=yes
-        AC_DEFINE_UNQUOTED(HAVE_MAT_UINT32_T)
-        AC_DEFINE_UNQUOTED([_mat_uint32_t],[uint32_t])
+        AC_DEFINE_UNQUOTED([HAVE_MAT_UINT32_T],[],[Have MAT int32])
+        AC_DEFINE_UNQUOTED([_mat_uint32_t],[uint32_t],[int32 type])
         AC_MSG_RESULT([uint32_t])
     fi
     if test "x$ac_have_mat_uint32_t" != "xyes"
@@ -58,8 +58,8 @@ AC_DEFUN([CHECK_MATIO_UINT32_T],
 
         if test "x$ac_have_mat_uint32_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT32_T)
-            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned char])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT32_T],[],[Have MAT int32])
+            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned char],[int32 type])
             AC_MSG_RESULT([unsigned char])
         fi
     fi
@@ -84,8 +84,8 @@ AC_DEFUN([CHECK_MATIO_UINT32_T],
 
         if test "x$ac_have_mat_uint32_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT32_T)
-            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned short])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT32_T],[],[Have MAT int32])
+            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned short],[int32 type])
             AC_MSG_RESULT([unsigned short])
         fi
     fi
@@ -110,8 +110,8 @@ AC_DEFUN([CHECK_MATIO_UINT32_T],
 
         if test "x$ac_have_mat_uint32_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT32_T)
-            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned int])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT32_T],[],[Have MAT int32])
+            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned int],[int32 type])
             AC_MSG_RESULT([unsigned int])
         fi
     fi
@@ -136,8 +136,8 @@ AC_DEFUN([CHECK_MATIO_UINT32_T],
 
         if test "x$ac_have_mat_uint32_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT32_T)
-            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned long])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT32_T],[],[Have MAT int32])
+            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned long],[int32type ])
             AC_MSG_RESULT([unsigned long])
         fi
     fi
@@ -162,8 +162,8 @@ AC_DEFUN([CHECK_MATIO_UINT32_T],
 
         if test "x$ac_have_mat_uint32_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_UINT32_T)
-            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned long long])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_UINT32_T],[],[Have MAT int32])
+            AC_DEFINE_UNQUOTED([_mat_uint32_t],[unsigned long long],[int32 type])
             AC_MSG_RESULT([unsigned long long])
         fi
     fi

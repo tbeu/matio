@@ -33,8 +33,8 @@ AC_DEFUN([CHECK_MATIO_INT8_T],
     if test "x$ac_have_mat_int8_t" = "xyes"
     then
         ac_have_mat_int8_t=yes
-        AC_DEFINE_UNQUOTED(HAVE_MAT_INT8_T)
-        AC_DEFINE_UNQUOTED([_mat_int8_t],[int8_t])
+        AC_DEFINE_UNQUOTED([HAVE_MAT_INT8_T],[],[Have MAT int8])
+        AC_DEFINE_UNQUOTED([_mat_int8_t],[int8_t],[int8 type])
         AC_MSG_RESULT([int8_t])
     fi
     if test "x$ac_have_mat_int8_t" != "xyes"
@@ -58,8 +58,8 @@ AC_DEFUN([CHECK_MATIO_INT8_T],
 
         if test "x$ac_have_mat_int8_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_INT8_T)
-            AC_DEFINE_UNQUOTED([_mat_int8_t],[signed char])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_INT8_T],[],[Have MAT int8])
+            AC_DEFINE_UNQUOTED([_mat_int8_t],[signed char],[int8 type])
             AC_MSG_RESULT([signed char])
         fi
     fi
@@ -84,8 +84,8 @@ AC_DEFUN([CHECK_MATIO_INT8_T],
 
         if test "x$ac_have_mat_int8_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_INT8_T)
-            AC_DEFINE_UNQUOTED([_mat_int8_t],[short])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_INT8_T],[],[Have MAT int8])
+            AC_DEFINE_UNQUOTED([_mat_int8_t],[short],[int8 type])
             AC_MSG_RESULT([short])
         fi
     fi
@@ -110,8 +110,8 @@ AC_DEFUN([CHECK_MATIO_INT8_T],
 
         if test "x$ac_have_mat_int8_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_INT8_T)
-            AC_DEFINE_UNQUOTED([_mat_int8_t],[int])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_INT8_T],[],[Have MAT int8])
+            AC_DEFINE_UNQUOTED([_mat_int8_t],[int],[int8 type])
             AC_MSG_RESULT([int])
         fi
     fi
@@ -136,8 +136,8 @@ AC_DEFUN([CHECK_MATIO_INT8_T],
 
         if test "x$ac_have_mat_int8_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_INT8_T)
-            AC_DEFINE_UNQUOTED([_mat_int8_t],[long])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_INT8_T],[],[Have MAT int8])
+            AC_DEFINE_UNQUOTED([_mat_int8_t],[long],[int8 type])
             AC_MSG_RESULT([long])
         fi
     fi
@@ -162,8 +162,8 @@ AC_DEFUN([CHECK_MATIO_INT8_T],
 
         if test "x$ac_have_mat_int8_t" = "xyes"
         then
-            AC_DEFINE_UNQUOTED(HAVE_MAT_INT8_T)
-            AC_DEFINE_UNQUOTED([_mat_int8_t],[long long])
+            AC_DEFINE_UNQUOTED([HAVE_MAT_INT8_T],[],[Have MAT int8])
+            AC_DEFINE_UNQUOTED([_mat_int8_t],[long long],[int8 type])
             AC_MSG_RESULT([long long])
         fi
     fi

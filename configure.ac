@@ -27,10 +27,10 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 AM_MAINTAINER_MODE
 AC_PREREQ(2.60)
 AC_CANONICAL_HOST
-AC_DEFINE_UNQUOTED(MATIO_PLATFORM,"${host}")
-AC_DEFINE_UNQUOTED(MATIO_MAJOR_VERSION,1)
-AC_DEFINE_UNQUOTED(MATIO_MINOR_VERSION,5)
-AC_DEFINE_UNQUOTED(MATIO_RELEASE_LEVEL,0)
+AC_DEFINE_UNQUOTED([MATIO_PLATFORM],"${host}",[Platform])
+AC_DEFINE_UNQUOTED([MATIO_MAJOR_VERSION],1,[Matio major version number])
+AC_DEFINE_UNQUOTED([MATIO_MINOR_VERSION],5,[Matio minor version number])
+AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],0,[Matio release level number])
 PACKAGE_RELEASE_DATE="3 January 2008"
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
@@ -73,10 +73,10 @@ AC_MSG_CHECKING(debug mode)
 if test "$debug" = "no"
 then
     AC_MSG_RESULT(no)
-    AC_DEFINE_UNQUOTED(NODEBUG)
+    AC_DEFINE_UNQUOTED([NODEBUG],[],[Debug disabled])
 else
     AC_MSG_RESULT(yes)
-    AC_DEFINE_UNQUOTED(DEBUG)
+    AC_DEFINE_UNQUOTED([DEBUG],[],[Debug enabled])
     debug=yes
 fi
 
@@ -89,10 +89,10 @@ AC_MSG_CHECKING(profile mode)
 if test "$profile" = "no"
 then
     AC_MSG_RESULT(no)
-    AC_DEFINE_UNQUOTED(NODEBUG)
+    AC_DEFINE_UNQUOTED([NODEBUG],[],[Debug disabled])
 else
     AC_MSG_RESULT(yes)
-    AC_DEFINE_UNQUOTED(DEBUG)
+    AC_DEFINE_UNQUOTED([DEBUG],[],[Debug enabled])
     profile=yes
 fi
 
@@ -226,10 +226,10 @@ then
     ])
     if test "matio_cv_have___va_copy" = "yes"
     then
-        AC_DEFINE_UNQUOTED([HAVE___VA_COPY])
+        AC_DEFINE_UNQUOTED([HAVE___VA_COPY],[],[Have va_copy])
     fi
 else
-    AC_DEFINE_UNQUOTED([HAVE_VA_COPY])
+    AC_DEFINE_UNQUOTED([HAVE_VA_COPY],[],[Have va_copy])
 fi
 
 AC_CACHE_CHECK([for vsnprintf()],matio_cv_have_vsnprintf,[
@@ -288,19 +288,19 @@ AC_CACHE_CHECK([for asprintf()],matio_cv_have_asprintf,[
 
 if test "$matio_cv_have_vsnprintf" = "yes"
 then
-    AC_DEFINE_UNQUOTED([HAVE_VSNPRINTF])
+    AC_DEFINE_UNQUOTED([HAVE_VSNPRINTF],[],[Have vsnprintf])
 fi
 if test "$matio_cv_have_snprintf" = "yes"
 then
-    AC_DEFINE_UNQUOTED([HAVE_SNPRINTF])
+    AC_DEFINE_UNQUOTED([HAVE_SNPRINTF],[],[Have snprintf])
 fi
 if test "$matio_cv_have_vasprintf" = "yes"
 then
-    AC_DEFINE_UNQUOTED([HAVE_VASPRINTF])
+    AC_DEFINE_UNQUOTED([HAVE_VASPRINTF],[],[Have vasprintf])
 fi
 if test "$matio_cv_have_asprintf" = "yes"
 then
-    AC_DEFINE_UNQUOTED([HAVE_ASPRINTF])
+    AC_DEFINE_UNQUOTED([HAVE_ASPRINTF],[],[Have asprintf])
 fi
 
 MATIO_CHECK_ZLIB
@@ -320,11 +320,11 @@ then
 elif test "x$ac_have_hdf5" = "xno"
 then
     AC_MSG_RESULT([no])
-    AC_DEFINE_UNQUOTED([MAT73],[0])
+    AC_DEFINE_UNQUOTED([MAT73],[0],[MAT v7.3 file support])
     mat73=no
 else
     AC_MSG_RESULT([yes])
-    AC_DEFINE_UNQUOTED([MAT73],[1])
+    AC_DEFINE_UNQUOTED([MAT73],[1],[MAT v7.3 file support])
     mat73=yes
 fi
 AM_CONDITIONAL(MAT73, test "x$mat73" = "xyes")
@@ -342,7 +342,7 @@ then
     AC_MSG_RESULT(no)
 else
     AC_MSG_RESULT(yes)
-    AC_DEFINE_UNQUOTED(EXTENDED_SPARSE)
+    AC_DEFINE_UNQUOTED([EXTENDED_SPARSE],[],[Extended sparse matrix data types])
 fi
 
 linux="no"
@@ -351,19 +351,19 @@ sun="no"
 case $build_os in
 *linux*)
     linux="yes"
-    AC_DEFINE_UNQUOTED(LINUX);;
+    AC_DEFINE_UNQUOTED([LINUX],[],[OS is Linux]);;
 *mingw*)
     winnt="yes"
-    AC_DEFINE_UNQUOTED(WINNT);;
+    AC_DEFINE_UNQUOTED([WINNT],[],[OS is WinNT]);;
 *cygwin*)
     winnt="yes"
-    AC_DEFINE_UNQUOTED(WINNT);;
+    AC_DEFINE_UNQUOTED([WINNT],[],[OS is CygWin]);;
 *sun*)
     sun="yes"
-    AC_DEFINE_UNQUOTED(SUN);;
+    AC_DEFINE_UNQUOTED([SUN],[],[OS is Sun]);;
 *solaris*)
     sun="yes"
-    AC_DEFINE_UNQUOTED(SUN);;
+    AC_DEFINE_UNQUOTED([SUN],[],[OS is Solaris]);;
 esac
 
 AM_CONDITIONAL(LINUX, test "x$linux" = "xyes")

@@ -1,60 +1,231 @@
-#undef HAVE_ZLIB
-#undef HAVE_INTTYPES_H
-#undef HAVE_STRINGS_H
-#undef HAVE_STDINT_H
-#undef STDC_HEADERS
+/* src/matioConfig.h.in.  Generated from configure.ac by autoheader.  */
 
-#undef MATIO_PLATFORM
-#undef MATIO_MAJOR_VERSION
-#undef MATIO_MINOR_VERSION
-#undef MATIO_RELEASE_LEVEL
+/* Debug enabled */
+#undef DEBUG
 
-#undef FC_FUNC
-#undef FC_FUNC_
-
-#undef LINUX
-#undef WINNT
-#undef SUN
-
-#undef SIZEOF_DOUBLE
-#undef SIZEOF_FLOAT
-#undef SIZEOF_LONG
-#undef SIZEOF_LONG_LONG
-#undef SIZEOF_INT
-#undef SIZEOF_SHORT
-#undef SIZEOF_CHAR
-#undef SIZEOF_VOID_PTR
-#undef SIZEOF_SIZE_T
-
-#undef HAVE_MAT_INT64_T
-#undef HAVE_MAT_INT32_T
-#undef HAVE_MAT_INT16_T
-#undef HAVE_MAT_INT8_T
-#undef HAVE_MAT_UINT64_T
-#undef HAVE_MAT_UINT32_T
-#undef HAVE_MAT_UINT16_T
-#undef HAVE_MAT_UINT8_T
-
-#undef _mat_uint8_t
-#undef _mat_uint16_t
-#undef _mat_uint32_t
-#undef _mat_uint64_t
-#undef _mat_int8_t
-#undef _mat_int16_t
-#undef _mat_int32_t
-#undef _mat_int64_t
-
-#undef MAT_FT_DEFAULT
-
-#undef HAVE_VA_COPY
-#undef HAVE___VA_COPY
-#undef HAVE_VSNPRINTF
-#undef HAVE_SNPRINTF
-#undef HAVE_VASPRINTF
-#undef HAVE_ASPRINTF
-
-#undef MAT73
-
+/* Extended sparse matrix data types */
 #undef EXTENDED_SPARSE
 
+/* Define to dummy `main' function (if any) required to link to the Fortran
+   libraries. */
+#undef FC_DUMMY_MAIN
+
+/* Define if F77 and FC dummy `main' functions are identical. */
+#undef FC_DUMMY_MAIN_EQ_F77
+
+/* Define to a macro mangling the given C identifier (in lower and upper
+   case), which must not contain underscores, for linking with Fortran. */
+#undef FC_FUNC
+
+/* As FC_FUNC, but for C identifiers containing underscores. */
+#undef FC_FUNC_
+
+/* Have asprintf */
+#undef HAVE_ASPRINTF
+
+/* Define to 1 if you have the declaration of `getenv', and to 0 if you don't.
+   */
+#undef HAVE_DECL_GETENV
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the <getopt.h> header file. */
+#undef HAVE_GETOPT_H
+
+/* Define to 1 if you have the `getopt_long_only' function. */
+#undef HAVE_GETOPT_LONG_ONLY
+
+/* Have HDF5 */
+#undef HAVE_HDF5
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `m' library (-lm). */
+#undef HAVE_LIBM
+
+/* Have MAT int16 */
+#undef HAVE_MAT_INT16_T
+
+/* Have MAT int32 */
+#undef HAVE_MAT_INT32_T
+
+/* Have MAT int64 */
+#undef HAVE_MAT_INT64_T
+
+/* Have MAT int8 */
+#undef HAVE_MAT_INT8_T
+
+/* Have MAT int16 */
+#undef HAVE_MAT_UINT16_T
+
+/* Have MAT int32 */
+#undef HAVE_MAT_UINT32_T
+
+/* Have MAT int64 */
+#undef HAVE_MAT_UINT64_T
+
+/* Have MAT int8 */
+#undef HAVE_MAT_UINT8_T
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Have snprintf */
+#undef HAVE_SNPRINTF
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Have vasprintf */
+#undef HAVE_VASPRINTF
+
+/* Have va_copy */
+#undef HAVE_VA_COPY
+
+/* Have vsnprintf */
+#undef HAVE_VSNPRINTF
+
+/* Have zlib */
+#undef HAVE_ZLIB
+
+/* Have va_copy */
+#undef HAVE___VA_COPY
+
+/* OS is Linux */
+#undef LINUX
+
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
+/* MAT v7.3 file support */
+#undef MAT73
+
+/* Matio major version number */
+#undef MATIO_MAJOR_VERSION
+
+/* Matio minor version number */
+#undef MATIO_MINOR_VERSION
+
+/* Platform */
+#undef MATIO_PLATFORM
+
+/* Matio release level number */
+#undef MATIO_RELEASE_LEVEL
+
+/* Default file format */
+#undef MAT_FT_DEFAULT
+
+/* Debug disabled */
+#undef NODEBUG
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* The size of `char', as computed by sizeof. */
+#undef SIZEOF_CHAR
+
+/* The size of `double', as computed by sizeof. */
+#undef SIZEOF_DOUBLE
+
+/* The size of `float', as computed by sizeof. */
+#undef SIZEOF_FLOAT
+
+/* The size of `int', as computed by sizeof. */
+#undef SIZEOF_INT
+
+/* The size of `long', as computed by sizeof. */
+#undef SIZEOF_LONG
+
+/* The size of `long long', as computed by sizeof. */
+#undef SIZEOF_LONG_LONG
+
+/* The size of `short', as computed by sizeof. */
+#undef SIZEOF_SHORT
+
+/* The size of `size_t', as computed by sizeof. */
+#undef SIZEOF_SIZE_T
+
+/* The size of `void *', as computed by sizeof. */
+#undef SIZEOF_VOID_P
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* OS is Solaris */
+#undef SUN
+
+/* Version number of package */
+#undef VERSION
+
+/* OS is CygWin */
+#undef WINNT
+
+/* Z prefix */
 #undef Z_PREFIX
+
+/* Define to rpl_ if the getopt replacement functions and variables should be
+   used. */
+#undef __GETOPT_PREFIX
+
+/* int16 type */
+#undef _mat_int16_t
+
+/* int32 type */
+#undef _mat_int32_t
+
+/* int64 type */
+#undef _mat_int64_t
+
+/* int8 type */
+#undef _mat_int8_t
+
+/* int16 type */
+#undef _mat_uint16_t
+
+/* int32 type */
+#undef _mat_uint32_t
+
+/* int64 type */
+#undef _mat_uint64_t
+
+/* int8 type */
+#undef _mat_uint8_t
