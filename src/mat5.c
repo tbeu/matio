@@ -67,7 +67,7 @@ static const struct ComplexSplit const null_complex_data = {NULL,NULL};
 static size_t
 GetStructFieldBufSize(matvar_t *matvar)
 {
-    size_t nBytes = 0,len;
+    size_t nBytes = 0, data_bytes = 0;
     size_t tag_size = 8, array_flags_size = 8;
     int    nmemb = 1, i;
 
@@ -84,7 +84,7 @@ GetStructFieldBufSize(matvar_t *matvar)
     nBytes += tag_size;
 
     /* Add rank and dimensions, padded to an 8 byte block */
-    for ( i = 0, len = 0; i < matvar->rank; i++ )
+    for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
     if ( matvar->rank % 2 )
         nBytes += tag_size + matvar->rank*4 + 4;
@@ -141,17 +141,33 @@ GetStructFieldBufSize(matvar_t *matvar)
     {
         sparse_t *sparse = matvar->data;
 
-        nBytes += tag_size + sparse->njc*sizeof(mat_int32_t) +
-                  tag_size + sparse->nir*sizeof(mat_int32_t) +
-                  tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
+        data_bytes = sparse->nir*sizeof(mat_int32_t);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+
+        data_bytes = sparse->njc*sizeof(mat_int32_t);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+
+        data_bytes = sparse->ndata*Mat_SizeOf(matvar->data_type);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+
         if ( matvar->isComplex )
-            nBytes += tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
+            nBytes += tag_size + data_bytes;
+
         break;
     }
     default:
-        nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
+        data_bytes = nmemb*Mat_SizeOf(matvar->data_type);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
         if ( matvar->isComplex )
-            nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
+            nBytes += tag_size + data_bytes;
     } /* switch ( matvar->class_type ) */
     
     return nBytes;
@@ -166,7 +182,7 @@ GetStructFieldBufSize(matvar_t *matvar)
 static size_t
 GetCellArrayFieldBufSize(matvar_t *matvar)
 {
-    size_t nBytes = 0,len;
+    size_t nBytes = 0, len, data_bytes;
     size_t tag_size = 8, array_flags_size = 8;
     int    nmemb = 1, i;
 
@@ -251,17 +267,32 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
     {
         sparse_t *sparse = matvar->data;
 
-        nBytes += tag_size + sparse->njc*sizeof(mat_int32_t) +
-                  tag_size + sparse->nir*sizeof(mat_int32_t) +
-                  tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
+        data_bytes = sparse->nir*sizeof(mat_int32_t);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+
+        data_bytes = sparse->njc*sizeof(mat_int32_t);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+
+        data_bytes = sparse->ndata*Mat_SizeOf(matvar->data_type);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+
         if ( matvar->isComplex )
-            nBytes += tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
+            nBytes += tag_size + data_bytes;
         break;
     }
     default:
-        nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
+        data_bytes = nmemb*Mat_SizeOf(matvar->data_type);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
         if ( matvar->isComplex )
-            nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
+            nBytes += tag_size + data_bytes;
     } /* switch ( matvar->class_type ) */
     
     return nBytes;
@@ -276,7 +307,7 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
 static size_t
 GetMatrixMaxBufSize(matvar_t *matvar)
 {
-    size_t nBytes = 0,len;
+    size_t nBytes = 0, len, data_bytes;
     size_t tag_size = 8, array_flags_size = 8;
     int    nmemb = 1, i;
 
@@ -359,17 +390,33 @@ GetMatrixMaxBufSize(matvar_t *matvar)
     {
         sparse_t *sparse = matvar->data;
 
-        nBytes += tag_size + sparse->njc*sizeof(mat_int32_t) +
-                  tag_size + sparse->nir*sizeof(mat_int32_t) +
-                  tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
+        data_bytes = sparse->nir*sizeof(mat_int32_t);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+
+        data_bytes = sparse->njc*sizeof(mat_int32_t);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+
+        data_bytes = sparse->ndata*Mat_SizeOf(matvar->data_type);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+
         if ( matvar->isComplex )
-            nBytes += tag_size + sparse->ndata*Mat_SizeOf(matvar->data_type);
+            nBytes += tag_size + data_bytes;
+
         break;
     }
     default:
-        nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
+        data_bytes = nmemb*Mat_SizeOf(matvar->data_type);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
         if ( matvar->isComplex )
-            nBytes += tag_size + nmemb*Mat_SizeOf(matvar->data_type);
+            nBytes += tag_size + data_bytes;
     } /* switch ( matvar->class_type ) */
     
     return nBytes;
