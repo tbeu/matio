@@ -45,12 +45,12 @@ then
     if test "$ac_have_zlib" = "yes"
     then
         ZLIB_LIBS="$ZLIB_LDOPTS"
-        AC_DEFINE_UNQUOTED([HAVE_ZLIB],[],[Have zlib])
+        AC_DEFINE_UNQUOTED([HAVE_ZLIB],[1],[Have zlib])
         AC_SUBST(ZLIB_LIBS)
         AC_SUBST(ZLIB_CFLAGS)
         if test "$Z_PREFIX" = "1"
         then
-            AC_DEFINE_UNQUOTED([Z_PREFIX],[],[Z prefix])
+            AC_DEFINE_UNQUOTED([Z_PREFIX],[1],[Z prefix])
         fi
         AC_MSG_RESULT([$ZLIB_LIBS])
     else
