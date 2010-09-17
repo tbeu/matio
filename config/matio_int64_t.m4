@@ -28,7 +28,7 @@ AC_DEFUN([CHECK_MATIO_INT64_T],
         #endif
     ],
     [int64_t i = 0;],
-    ac_have_mat_int64_t =yes,ac_have_mat_int64_t=no)
+    ac_have_mat_int64_t=yes,ac_have_mat_int64_t=no)
 
     if test "x$ac_have_mat_int64_t" = "xyes"
     then
