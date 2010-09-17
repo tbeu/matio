@@ -195,20 +195,6 @@ print_default(matvar_t *matvar)
     }
 }
 
-static int
-dump(const char *file)
-{
-    int err;
-    mat_t *mat;
-
-    mat = Mat_Open(file,MAT_ACC_RDONLY);
-    if ( NULL != mat ) {
-        Mat_Close(mat);
-    } else {
-        err = 1;
-    }
-}
-
 int
 main (int argc, char *argv[])
 {
