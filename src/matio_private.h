@@ -19,7 +19,7 @@
 #define MATIO_PRIVATE_H
 
 #include "matio.h"
-#if MAT73
+#if defined(MAT73) && MAT73
 #   include <hdf5.h>
 #else
 #   define hobj_ref_t int

@@ -30,7 +30,7 @@
 #include "mat5.h"
 #include "mat4.h"
 #include "matio_private.h"
-#ifdef MAT73
+#if defined(MAT73) && MAT73
 #   include "mat73.h"
 #endif
 
@@ -41,7 +41,7 @@ ReadData(mat_t *mat, matvar_t *matvar)
         return;
     else if ( mat->version == MAT_FT_MAT5 )
         Read5(mat,matvar);
-#ifdef MAT73
+#if defined(MAT73) && MAT73
     else if ( mat->version == MAT_FT_MAT73 )
         Mat_VarRead73(mat,matvar);
 #endif
@@ -119,7 +119,7 @@ Mat_CreateVer(const char *matname,const char *hdr_str,enum mat_ft mat_file_ver)
 
     if ( MAT_FT_MAT5 == mat_file_ver )
         mat = Mat_Create5(matname,hdr_str);
-#if MAT73
+#if defined(MAT73) && MAT73
     else if ( MAT_FT_MAT73 == mat_file_ver )
         mat = Mat_Create73(matname,hdr_str);
 #endif
@@ -216,7 +216,7 @@ Mat_Open(const char *matname,int mode)
 
     if ( mat->version == 0x0200 ) {
         fclose(mat->fp);
-#if MAT73
+#if defined(MAT73) && MAT73
 
         mat->fp = malloc(sizeof(hid_t));
 
@@ -251,7 +251,7 @@ int
 Mat_Close( mat_t *mat )
 {
     if ( NULL != mat ) {
-#if MAT73
+#if defined(MAT73) && MAT73
         if ( mat->version == 0x0200 ) {
             H5Fclose(*(hid_t*)mat->fp);
             free(mat->fp);
@@ -803,7 +803,7 @@ Mat_VarFree(matvar_t *matvar)
         free(matvar->internal->z);
     }
 #endif
-#if MAT73
+#if defined(MAT73) && MAT73
     if ( NULL != matvar->internal ) {
         if ( -1 < matvar->internal->id ) {
             switch ( H5Iget_type(matvar->internal->id) ) {
@@ -1847,7 +1847,7 @@ Mat_VarReadNextInfo( mat_t *mat )
         return NULL;
     else if ( mat->version == MAT_FT_MAT5 )
         return Mat_VarReadNextInfo5(mat);
-#if MAT73
+#if defined(MAT73) && MAT73
     else if ( mat->version == MAT_FT_MAT73 )
         return Mat_VarReadNextInfo73(mat);
 #endif
@@ -2085,7 +2085,7 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,int compress)
         return -1;
     else if ( mat->version == MAT_FT_MAT5 )
         Mat_VarWrite5(mat,matvar,compress);
-#if MAT73
+#if defined(MAT73) && MAT73
     else if ( mat->version == MAT_FT_MAT73 )
         Mat_VarWrite73(mat,matvar,compress);
 #endif
