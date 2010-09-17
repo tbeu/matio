@@ -34,6 +34,10 @@
 #   endif
 #endif
 
+#if defined(HAVE_ZLIB) && HAVE_ZLIB
+#   define ZLIB_BYTE_PTR(a) ((Bytef *)(a))
+#endif
+
 /** @if mat_devman
  * @brief Matlab MAT File information
  *
