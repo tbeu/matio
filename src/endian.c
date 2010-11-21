@@ -2,7 +2,7 @@
  * @brief Functions to handle endian specifics
  */
 /*
- * Copyright (C) 2005-2006   Christopher C. Hulbert
+ * Copyright (C) 2005-2010   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <stdlib.h>
-#include "matio.h"
 #include "matio_private.h"
 
 /** @brief swap the bytes @c a and @c b

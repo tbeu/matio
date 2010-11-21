@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2006   Christopher C. Hulbert
+ * Copyright (C) 2005-2010   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@
 #include <string.h>
 #include <math.h>
 #include <getopt.h>
-#include "matio.h"
+#include "matio_private.h"
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif

@@ -26,9 +26,8 @@
 #include <math.h>
 #include <time.h>
 #include "hdf5.h"
-#include "matio.h"
-#include "mat73.h"
 #include "matio_private.h"
+#include "mat73.h"
 
 static hsize_t perm_dims[10];
 static hsize_t dims1[2] = {1,1};

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005   Christopher C. Hulbert
+ * Copyright (C) 2005-2010   Christopher C. Hulbert
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #define MAT73_H
 
 #include "hdf5.h"
-#include "matio.h"
 
 #ifdef __cplusplus
 #   define EXTERN extern "C"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008   Christopher C. Hulbert
+ * Copyright (C) 2008-2010   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,6 @@
  */
 #ifndef MAT4_H
 #define MAT4_H
-
-#include "matio.h"
 
 void Read4(mat_t *mat, matvar_t *matvar);
 int  ReadData4(mat_t *mat,matvar_t *matvar,void *data,

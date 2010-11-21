@@ -3,7 +3,7 @@
  * @ingroup MAT
  */
 /*
- * Copyright (C) 2005-2008   Christopher C. Hulbert
+ * Copyright (C) 2005-2010   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,9 +22,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "matio.h"
-#include "mat4.h"
 #include "matio_private.h"
+#include "mat4.h"
 
 static const char *v4_class_type_desc[16] = {
        "Undefined","Cell Array","Structure",

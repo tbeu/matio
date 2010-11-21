@@ -3,7 +3,7 @@
  * @ingroup MAT
  */
 /*
- * Copyright (C) 2005-2006   Christopher C. Hulbert
+ * Copyright (C) 2005-2010   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include "matio.h"
 #include "matio_private.h"
 #if defined(HAVE_ZLIB)
 #   include <zlib.h>

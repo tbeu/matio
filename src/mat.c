@@ -26,10 +26,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include "matio.h"
+#include "matio_private.h"
 #include "mat5.h"
 #include "mat4.h"
-#include "matio_private.h"
 #if defined(MAT73) && MAT73
 #   include "mat73.h"
 #endif

@@ -18,8 +18,6 @@
 #ifndef MAT5_H
 #define MAT5_H
 
-#include "matio.h"
-
 #ifdef __cplusplus
 #   define EXTERN extern "C"
 #else
