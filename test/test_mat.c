@@ -1692,7 +1692,5 @@ int main (int argc, char *argv[])
         }
     }
 
-    printf("%d of %d tests completed successfully\n",ntests-err,ntests);
-    
     return 0;
 }

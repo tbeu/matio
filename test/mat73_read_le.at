@@ -29,7 +29,6 @@ Class Type: Double Precision Array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ]], [ignore])
 AT_CLEANUP
 
@@ -48,7 +47,6 @@ Class Type: Single Precision Array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -67,7 +65,6 @@ Class Type: 64-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -86,7 +83,6 @@ Class Type: 64-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -105,7 +101,6 @@ Class Type: 32-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -124,7 +119,6 @@ Class Type: 32-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -143,7 +137,6 @@ Class Type: 16-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -162,7 +155,6 @@ Class Type: 16-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -181,7 +173,6 @@ Class Type: 8-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -200,7 +191,6 @@ Class Type: 8-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -219,7 +209,6 @@ Class Type: Double Precision Array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ]], [ignore])
 AT_CLEANUP
 
@@ -238,7 +227,6 @@ Class Type: Single Precision Array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -257,7 +245,6 @@ Class Type: 64-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -276,7 +263,6 @@ Class Type: 64-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -295,7 +281,6 @@ Class Type: 32-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -314,7 +299,6 @@ Class Type: 32-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -333,7 +317,6 @@ Class Type: 16-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -352,7 +335,6 @@ Class Type: 16-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -371,7 +353,6 @@ Class Type: 8-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -390,7 +371,6 @@ Class Type: 8-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -410,7 +390,6 @@ Class Type: Sparse Array
     (4,4)  4
     (5,5)  5
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -430,7 +409,6 @@ Class Type: Sparse Array (complex)
     (4,4)  4 + 9i
     (5,5)  5 + 10i
 }
-1 of 1 tests completed successfully
 ], [ignore])
 AT_CLEANUP
 
@@ -445,6 +423,5 @@ Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
 {
 }
-1 of 1 tests completed successfully
 ]], [ignore])
 AT_CLEANUP
