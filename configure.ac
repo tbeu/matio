@@ -190,6 +190,19 @@ CHECK_MATIO_UINT16_T
 CHECK_MATIO_INT8_T
 CHECK_MATIO_UINT8_T
 
+if test "x$ac_have_mat_uint64_t" = "xyes"; then
+    HAVE_UINT64=1
+else
+    HAVE_UINT64=0
+fi
+if test "x$ac_have_mat_int64_t" = "xyes"; then
+    HAVE_INT64=1
+else
+    HAVE_INT64=0
+fi
+AC_SUBST([HAVE_UINT64],[$HAVE_UINT64])
+AC_SUBST([HAVE_INT64], [$HAVE_INT64])
+
 AC_CACHE_CHECK([for va_copy()],matio_cv_have_va_copy,[
 	AC_LINK_IFELSE([#include <stdarg.h>
 	void f (int i, ...) {
