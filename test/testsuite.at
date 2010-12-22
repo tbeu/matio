@@ -16,23 +16,23 @@
 
 AT_INIT([matio testsuite])
 
-AT_BANNER([MAT version 4])
+AT_BANNER(Read [MAT version 4])
 m4_include([mat4_read.at])
 
-AT_BANNER([Uncompressed MAT version 5 (Little Endian)])
+AT_BANNER([Read Uncompressed MAT version 5 (Little Endian)])
 m4_include([mat5_uncompressed_read_le.at])
 
-AT_BANNER([Compressed MAT version 5 (Little Endian)])
+AT_BANNER([Read Compressed MAT version 5 (Little Endian)])
 m4_include([mat5_compressed_read_le.at])
 
-AT_BANNER([Uncompressed MAT version 5 (Big Endian)])
+AT_BANNER([Read Uncompressed MAT version 5 (Big Endian)])
 m4_include([mat5_uncompressed_read_be.at])
 
-AT_BANNER([Compressed MAT version 5 (Big Endian)])
+AT_BANNER([Read Compressed MAT version 5 (Big Endian)])
 m4_include([mat5_compressed_read_be.at])
 
-AT_BANNER([MAT version 7.3 (HDF5 Schema 1) (Little Endian)])
+AT_BANNER([Read MAT version 7.3 (HDF5 Schema 1) (Little Endian)])
 m4_include([mat73_read_le.at])
 
-AT_BANNER([MAT version 7.3 (HDF5 Schema 1) (Big Endian)])
+AT_BANNER([Read MAT version 7.3 (HDF5 Schema 1) (Big Endian)])
 m4_include([mat73_read_be.at])
