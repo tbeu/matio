@@ -255,6 +255,16 @@ Mat_data_type_to_hid_t(enum matio_types data_type)
 #       elif CHAR_BIT*SIZEOF_LONG_LONG == 64
             return H5T_NATIVE_LLONG;
 #       endif
+        case MAT_T_UINT64:
+#       if CHAR_BIT*SIZEOF_SHORT == 64
+            return H5T_NATIVE_USHORT;
+#       elif CHAR_BIT*SIZEOF_INT == 64
+            return H5T_NATIVE_UINT;
+#       elif CHAR_BIT*SIZEOF_LONG == 64
+            return H5T_NATIVE_ULONG;
+#       elif CHAR_BIT*SIZEOF_LONG_LONG == 64
+            return H5T_NATIVE_ULLONG;
+#       endif
         case MAT_T_INT32:
 #       if CHAR_BIT == 32
             return H5T_NATIVE_SCHAR;
@@ -1235,6 +1245,8 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
         case MAT_C_INT32:
         case MAT_C_UINT32:
         case MAT_C_INT16:
@@ -1313,6 +1325,32 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                             }
                             break;
                         }
+#ifdef HAVE_MAT_INT64_T
+                        case MAT_C_INT64:
+                        {
+                            mat_int64_t *dst = buf,
+                                  *r=((struct ComplexSplit*)matvar->data)->Re,
+                                  *i=((struct ComplexSplit*)matvar->data)->Im;
+                            for ( k = numel; k--; ) {
+                                *dst++ = *r++;
+                                *dst++ = *i++;
+                            }
+                            break;
+                        }
+#endif
+#ifdef HAVE_MAT_UINT64_T
+                        case MAT_C_UINT64:
+                        {
+                            mat_uint64_t *dst = buf,
+                                  *r=((struct ComplexSplit*)matvar->data)->Re,
+                                  *i=((struct ComplexSplit*)matvar->data)->Im;
+                            for ( k = numel; k--; ) {
+                                *dst++ = *r++;
+                                *dst++ = *i++;
+                            }
+                            break;
+                        }
+#endif
                         case MAT_C_INT32:
                         {
                             mat_int32_t *dst = buf,
@@ -1787,6 +1825,8 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
         case MAT_C_INT32:
         case MAT_C_UINT32:
         case MAT_C_INT16:
@@ -1865,6 +1905,32 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                             }
                             break;
                         }
+#ifdef HAVE_MAT_INT64_T
+                        case MAT_C_INT64:
+                        {
+                            mat_int64_t *dst = buf,
+                                  *r=((struct ComplexSplit*)matvar->data)->Re,
+                                  *i=((struct ComplexSplit*)matvar->data)->Im;
+                            for ( k = numel; k--; ) {
+                                *dst++ = *r++;
+                                *dst++ = *i++;
+                            }
+                            break;
+                        }
+#endif
+#ifdef HAVE_MAT_UINT64_T
+                        case MAT_C_UINT64:
+                        {
+                            mat_uint64_t *dst = buf,
+                                  *r=((struct ComplexSplit*)matvar->data)->Re,
+                                  *i=((struct ComplexSplit*)matvar->data)->Im;
+                            for ( k = numel; k--; ) {
+                                *dst++ = *r++;
+                                *dst++ = *i++;
+                            }
+                            break;
+                        }
+#endif
                         case MAT_C_INT32:
                         {
                             mat_int32_t *dst = buf,
@@ -2987,6 +3053,8 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
         case MAT_C_INT32:
         case MAT_C_UINT32:
         case MAT_C_INT16:
@@ -3065,6 +3133,32 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                             }
                             break;
                         }
+#ifdef HAVE_MAT_INT64_T
+                        case MAT_C_INT64:
+                        {
+                            mat_int64_t *dst = buf,
+                                  *r=((struct ComplexSplit*)matvar->data)->Re,
+                                  *i=((struct ComplexSplit*)matvar->data)->Im;
+                            for ( k = numel; k--; ) {
+                                *dst++ = *r++;
+                                *dst++ = *i++;
+                            }
+                            break;
+                        }
+#endif
+#ifdef HAVE_MAT_UINT64_T
+                        case MAT_C_UINT64:
+                        {
+                            mat_uint64_t *dst = buf,
+                                  *r=((struct ComplexSplit*)matvar->data)->Re,
+                                  *i=((struct ComplexSplit*)matvar->data)->Im;
+                            for ( k = numel; k--; ) {
+                                *dst++ = *r++;
+                                *dst++ = *i++;
+                            }
+                            break;
+                        }
+#endif
                         case MAT_C_INT32:
                         {
                             mat_int32_t *dst = buf,
