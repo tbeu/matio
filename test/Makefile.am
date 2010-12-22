@@ -23,10 +23,13 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat4_read.at \
                $(srcdir)/mat5_uncompressed_read_le.at \
                $(srcdir)/mat5_uncompressed_read_be.at \
+               $(srcdir)/mat5_uncompressed_write.at \
                $(srcdir)/mat5_compressed_read_le.at \
                $(srcdir)/mat5_compressed_read_be.at \
+               $(srcdir)/mat5_compressed_write.at \
                $(srcdir)/mat73_read_le.at \
-               $(srcdir)/mat73_read_be.at
+               $(srcdir)/mat73_read_be.at \
+               $(srcdir)/mat73_write.at
 TESTSUITE = $(srcdir)/testsuite
 if MAT73
 MAT73 = 1
