@@ -118,9 +118,11 @@ Mat_CreateVer(const char *matname,const char *hdr_str,enum mat_ft mat_file_ver)
 
     if ( MAT_FT_MAT5 == mat_file_ver )
         mat = Mat_Create5(matname,hdr_str);
-#if defined(MAT73) && MAT73
     else if ( MAT_FT_MAT73 == mat_file_ver )
+#if defined(MAT73) && MAT73
         mat = Mat_Create73(matname,hdr_str);
+#else
+        mat = NULL;
 #endif
     else
         mat = Mat_Create5(matname,hdr_str);
