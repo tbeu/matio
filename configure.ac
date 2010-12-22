@@ -303,6 +303,8 @@ then
     AC_DEFINE_UNQUOTED([HAVE_ASPRINTF],[],[Have asprintf])
 fi
 
+MATIO_CHECK_MATLAB
+
 MATIO_CHECK_ZLIB
 
 MATIO_CHECK_HDF5
@@ -450,5 +452,6 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([Packages --------------------------------------------])
 AC_MSG_RESULT([                 zlib: $ZLIB_LIBS])
 AC_MSG_RESULT([                 hdf5: $HDF5_LIBS])
+AC_MSG_RESULT([               MATLAB: $MATLABEXE])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([])
