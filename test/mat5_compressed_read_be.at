@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 AT_SETUP([Read 2D double-precision array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_1_input1], [0],
 [[      Name: matio_tc_5_1_input1
@@ -32,6 +33,7 @@ Class Type: Double Precision Array
 AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_2_input1], [0],
 [      Name: matio_tc_5_2_input1
@@ -49,6 +51,7 @@ Class Type: Single Precision Array
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_3_input1], [0],
 [      Name: matio_tc_5_3_input1
@@ -66,6 +69,7 @@ Class Type: 64-bit, signed integer array
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_4_input1], [0],
 [      Name: matio_tc_5_4_input1
@@ -83,6 +87,7 @@ Class Type: 64-bit, unsigned integer array
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_5_input1], [0],
 [      Name: matio_tc_5_5_input1
@@ -100,6 +105,7 @@ Class Type: 32-bit, signed integer array
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_6_input1], [0],
 [      Name: matio_tc_5_6_input1
@@ -117,6 +123,7 @@ Class Type: 32-bit, unsigned integer array
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_7_input1], [0],
 [      Name: matio_tc_5_7_input1
@@ -134,6 +141,7 @@ Class Type: 16-bit, signed integer array
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_8_input1], [0],
 [      Name: matio_tc_5_8_input1
@@ -151,6 +159,7 @@ Class Type: 16-bit, unsigned integer array
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_9_input1], [0],
 [      Name: matio_tc_5_9_input1
@@ -168,6 +177,7 @@ Class Type: 8-bit, signed integer array
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_10_input1], [0],
 [      Name: matio_tc_5_10_input1
@@ -185,6 +195,7 @@ Class Type: 8-bit, unsigned integer array
 AT_CLEANUP
 
 AT_SETUP([Read 2D double-precision complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_11_input1], [0],
 [[      Name: matio_tc_5_11_input1
@@ -202,6 +213,7 @@ Class Type: Double Precision Array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_12_input1], [0],
 [      Name: matio_tc_5_12_input1
@@ -219,6 +231,7 @@ Class Type: Single Precision Array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_13_input1], [0],
 [      Name: matio_tc_5_13_input1
@@ -236,6 +249,7 @@ Class Type: 64-bit, signed integer array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_14_input1], [0],
 [      Name: matio_tc_5_14_input1
@@ -253,6 +267,7 @@ Class Type: 64-bit, unsigned integer array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_15_input1], [0],
 [      Name: matio_tc_5_15_input1
@@ -270,6 +285,7 @@ Class Type: 32-bit, signed integer array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_16_input1], [0],
 [      Name: matio_tc_5_16_input1
@@ -287,6 +303,7 @@ Class Type: 32-bit, unsigned integer array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_17_input1], [0],
 [      Name: matio_tc_5_17_input1
@@ -304,6 +321,7 @@ Class Type: 16-bit, signed integer array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_18_input1], [0],
 [      Name: matio_tc_5_18_input1
@@ -321,6 +339,7 @@ Class Type: 16-bit, unsigned integer array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_19_input1], [0],
 [      Name: matio_tc_5_19_input1
@@ -338,6 +357,7 @@ Class Type: 8-bit, signed integer array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_20_input1], [0],
 [      Name: matio_tc_5_20_input1
@@ -355,6 +375,7 @@ Class Type: 8-bit, unsigned integer array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_21_input1], [0],
 [      Name: matio_tc_5_21_input1
@@ -373,6 +394,7 @@ Class Type: Sparse Array
 AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse complex array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_22_input1], [0],
 [      Name: matio_tc_5_22_input1
@@ -391,6 +413,7 @@ Class Type: Sparse Array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read empty array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_23_input1], [0],
 [[      Name: matio_tc_5_23_input1
