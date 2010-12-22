@@ -26,8 +26,10 @@
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif
 
-static const char *optstring = "v:HLT:Vz";
+static const char *optstring = "c:o:v:HLT:Vz";
 static struct option options[] = {
+    {"class",       required_argument,NULL,'c'},
+    {"output",      required_argument,NULL,'o'},
     {"compress",    no_argument,NULL,'z'},
     {"mat-version", required_argument,NULL,'v'},
     {"help",        no_argument,NULL,'H'},
@@ -47,15 +49,29 @@ static const char *helpstr[] = {
     "Runs various test on the Matlab I/O library libmatio",
     "",
     "OPTIONS",
-    "-H, --help           This output",
-    "-L, --list-tests     List of tests",
-    "-T, --help-test TEST help information on test TEST",
-    "-v, --mat-version x  Set MAT file version to x (4, 5, 7.3)",
-    "-V, --version        version information",
-    "-z, --compress       Enable compression for MAT 5 files",
+    "-c, --class c         Set variable class to 'c'",
+    "-H, --help            This output",
+    "-L, --list-tests      List of tests",
+    "-o, --output filename Set the name of the output MAT file",
+    "-T, --help-test TEST  help information on test TEST",
+    "-v, --mat-version x   Set MAT file version to x (4, 5, 7.3)",
+    "-V, --version         version information",
+    "-z, --compress        Enable compression for MAT 5 files",
     "",
     "test        - name of the test to run",
     "TEST_OPTS   - If required, specify arguments to a test(See --help TEST)",
+    "",
+    "The classes recognized by the -c option are:",
+    "  * double - Double precision floating point",
+    "  * single - Single precision floating point",
+    "  * int64  - 64-bit signed integer",
+    "  * uint64 - 64-bit unsigned integer",
+    "  * int32  - 32-bit signed integer",
+    "  * uint32 - 32-bit unsigned integer",
+    "  * int16  - 16-bit signed integer",
+    "  * uint16 - 16-bit unsigned integer",
+    "  * int8   - 8-bit signed integer",
+    "  * uint8  - 8-bit unsigned integer",
     "",
     NULL
 };
@@ -1460,11 +1476,43 @@ int main (int argc, char *argv[])
     int   c,i, k, err = 0, ntests = 0;
     mat_t *mat, *mat2;
     matvar_t *matvar, *matvar2, *matvar3;
+    enum matio_classes matvar_class = MAT_C_DOUBLE;
+    char *output_name = NULL;
 
     Mat_LogInit(prog_name);
 
     while ((c = getopt_long(argc,argv,optstring,options,NULL)) != EOF) {
         switch (c) {
+            case 'c':
+                if ( !strcmp(optarg,"double") )
+                    matvar_class = MAT_C_DOUBLE;
+                else if ( !strcmp(optarg,"single") )
+                    matvar_class = MAT_C_SINGLE;
+                else if ( !strcmp(optarg,"int64") )
+                    matvar_class = MAT_C_INT64;
+                else if ( !strcmp(optarg,"uint64") )
+                    matvar_class = MAT_C_UINT64;
+                else if ( !strcmp(optarg,"int32") )
+                    matvar_class = MAT_C_INT32;
+                else if ( !strcmp(optarg,"uint32") )
+                    matvar_class = MAT_C_UINT32;
+                else if ( !strcmp(optarg,"int16") )
+                    matvar_class = MAT_C_INT16;
+                else if ( !strcmp(optarg,"uint16") )
+                    matvar_class = MAT_C_UINT16;
+                else if ( !strcmp(optarg,"int8") )
+                    matvar_class = MAT_C_INT8;
+                else if ( !strcmp(optarg,"uint8") )
+                    matvar_class = MAT_C_UINT8;
+                else {
+                    fprintf(stderr,"Unrecognized MAT variable class '%s'",
+                            optarg);
+                    exit(EXIT_FAILURE);
+                }
+                break;
+            case 'o':
+                output_name = optarg;
+                break;
             case 'v':
                 if ( !strcmp(optarg,"5") ) {
                     mat_file_ver = MAT_FT_MAT5;
