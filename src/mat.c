@@ -544,17 +544,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     if ( data == NULL ) {
         matvar->data = NULL;
     } else if ( opt & MEM_CONSERVE ) {
-        if ( matvar->isComplex ) {
-            matvar->data   = malloc(sizeof(struct ComplexSplit));
-            if ( NULL != data ) {
-                struct ComplexSplit *complex_data    = matvar->data;
-                struct ComplexSplit *complex_data_in = data;
-
-                *complex_data = *complex_data_in;
-            }
-        } else {
-            matvar->data         = (void*)data;
-        }
+        matvar->data         = data;
         matvar->mem_conserve = 1;
     } else {
         if ( matvar->isComplex ) {
@@ -785,12 +775,10 @@ Mat_VarFree(matvar_t *matvar)
             free(sparse->data);
         free(sparse);
     } else {
-        if ( matvar->isComplex && NULL != matvar->data ) {
+        if ( matvar->isComplex && NULL != matvar->data && !matvar->mem_conserve ) {
             struct ComplexSplit *complex_data = matvar->data;
-            if ( !matvar->mem_conserve ) {
-                free(complex_data->Re);
-                free(complex_data->Im);
-            }
+            free(complex_data->Re);
+            free(complex_data->Im);
             free(complex_data);
         } else {
             if ( matvar->data && !matvar->mem_conserve )
