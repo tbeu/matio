@@ -433,9 +433,8 @@ Mat_VarCalloc(void)
  *       itself.  Note that the pointer should not be freed until you are done
  *       with the mat variable.  The Mat_VarFree function will NOT free
  *       data that was created with MEM_CONSERVE, so free it yourself.
- * - MAT_F_COMPLEX to specify that the data is complex.  The data variable should
- *       be a contigouse piece of memory with the real part written first and
- *       the imaginary second
+ * - MAT_F_COMPLEX to specify that the data is complex.  The data variable
+ *       should be a pointer to a struct ComplexSplit type.
  * - MAT_F_GLOBAL to assign the variable as a global variable
  * - MAT_F_LOGICAL to specify that it is a logical variable
  * @return A MAT variable that can be written to a file or otherwise used
