@@ -445,6 +445,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
 {
     int i, nmemb = 1, nfields = 0;
     matvar_t *matvar = NULL;
+    size_t data_size;
 
     if (dims == NULL) return NULL;
 
@@ -468,52 +469,52 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     matvar->data_type  = data_type;
     switch ( data_type ) {
         case MAT_T_INT8:
-            matvar->data_size = 1;
+            data_size = 1;
             break;
         case MAT_T_UINT8:
-            matvar->data_size = 1;
+            data_size = 1;
             break;
         case MAT_T_INT16:
-            matvar->data_size = 2;
+            data_size = 2;
             break;
         case MAT_T_UINT16:
-            matvar->data_size = 2;
+            data_size = 2;
             break;
         case MAT_T_INT64:
-            matvar->data_size = 8;
+            data_size = 8;
             break;
         case MAT_T_UINT64:
-            matvar->data_size = 8;
+            data_size = 8;
             break;
         case MAT_T_INT32:
-            matvar->data_size = 4;
+            data_size = 4;
             break;
         case MAT_T_UINT32:
-            matvar->data_size = 4;
+            data_size = 4;
             break;
         case MAT_T_SINGLE:
-            matvar->data_size = sizeof(float);
+            data_size = sizeof(float);
             break;
         case MAT_T_DOUBLE:
-            matvar->data_size = sizeof(double);
+            data_size = sizeof(double);
             break;
         case MAT_T_UTF8:
-            matvar->data_size = 1;
+            data_size = 1;
             break;
         case MAT_T_UTF16:
-            matvar->data_size = 2;
+            data_size = 2;
             break;
         case MAT_T_UTF32:
-            matvar->data_size = 4;
+            data_size = 4;
             break;
         case MAT_T_CELL:
-            matvar->data_size = sizeof(matvar_t **);
+            data_size = sizeof(matvar_t **);
             break;
         case MAT_T_STRUCT:
         {
             matvar_t **fields;
 
-            matvar->data_size = sizeof(matvar_t **);
+            data_size = sizeof(matvar_t **);
             nmemb = 0;
             if ( data != NULL ) {
                 fields = data;
@@ -529,16 +530,11 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
             Mat_VarFree(matvar);
             return NULL;
     }
-    if ( matvar->class_type == MAT_C_CHAR ) {
-#if 0
-        matvar->data_size = 1;
-        nmemb++;
-#endif
-        matvar->nbytes = nmemb*matvar->data_size;
-    } else if ( matvar->class_type == MAT_C_SPARSE ) {
+    if ( matvar->class_type == MAT_C_SPARSE ) {
         matvar->data_size = sizeof(sparse_t);
         matvar->nbytes    = matvar->data_size;
     } else {
+        matvar->data_size = data_size;
         matvar->nbytes = nmemb*matvar->data_size;
     }
     if ( data == NULL ) {
@@ -546,6 +542,46 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     } else if ( opt & MEM_CONSERVE ) {
         matvar->data         = data;
         matvar->mem_conserve = 1;
+    } else if ( MAT_C_SPARSE == matvar->class_type ) {
+        sparse_t *sparse_data, *sparse_data_in;
+
+        sparse_data_in = data;
+        sparse_data    = malloc(sizeof(sparse_t));
+        if ( NULL != sparse_data ) {
+            sparse_data->nzmax = sparse_data_in->nzmax;
+            sparse_data->nir   = sparse_data_in->nir;
+            sparse_data->njc   = sparse_data_in->njc;
+            sparse_data->ndata = sparse_data_in->ndata;
+            sparse_data->ir = malloc(sparse_data->nir*sizeof(*sparse_data->ir));
+            if ( NULL != sparse_data->ir )
+                memcpy(sparse_data->ir,sparse_data_in->ir,
+                       sparse_data->nir*sizeof(*sparse_data->ir));
+            sparse_data->jc = malloc(sparse_data->njc*sizeof(*sparse_data->jc));
+            if ( NULL != sparse_data->jc )
+                memcpy(sparse_data->jc,sparse_data_in->jc,
+                       sparse_data->njc*sizeof(*sparse_data->jc));
+            if ( matvar->isComplex ) {
+                sparse_data->data = malloc(sizeof(struct ComplexSplit));
+                if ( NULL != sparse_data->data ) {
+                    struct ComplexSplit *complex_data    = sparse_data->data,
+                                        *complex_data_in = sparse_data_in->data;
+                    complex_data->Re = malloc(sparse_data->ndata*data_size);
+                    complex_data->Im = malloc(sparse_data->ndata*data_size);
+                    if ( NULL != complex_data->Re )
+                        memcpy(complex_data->Re,complex_data_in->Re,
+                               sparse_data->ndata*data_size);
+                    if ( NULL != complex_data->Im )
+                        memcpy(complex_data->Im,complex_data_in->Im,
+                               sparse_data->ndata*data_size);
+                }
+            } else {
+                sparse_data->data = malloc(sparse_data->ndata*data_size);
+                if ( NULL != sparse_data->data )
+                    memcpy(sparse_data->data,sparse_data_in->data,
+                           sparse_data->ndata*data_size);
+            }
+        }
+        matvar->data = sparse_data;
     } else {
         if ( matvar->isComplex ) {
             matvar->data   = malloc(sizeof(struct ComplexSplit));
@@ -755,34 +791,60 @@ Mat_VarFree(matvar_t *matvar)
         free(matvar->dims);
     if ( matvar->name )
         free(matvar->name);
-    if ( (matvar->data != NULL) && (matvar->class_type == MAT_C_STRUCT || 
-          matvar->class_type == MAT_C_CELL) && matvar->data_size > 0 ) {
-        int i;
-        matvar_t **fields = matvar->data;
-        int nfields = matvar->nbytes / matvar->data_size;
-        for ( i = 0; i < nfields; i++ )
-            Mat_VarFree(fields[i]);
-        free(matvar->data);
-    } else if ( (matvar->data != NULL) && (!matvar->mem_conserve) &&
-                (matvar->class_type == MAT_C_SPARSE) ) {
-        sparse_t *sparse;
-        sparse = matvar->data;
-        if ( sparse->ir != NULL )
-            free(sparse->ir);
-        if ( sparse->jc != NULL )
-            free(sparse->jc);
-        if ( sparse->data != NULL )
-            free(sparse->data);
-        free(sparse);
-    } else {
-        if ( matvar->isComplex && NULL != matvar->data && !matvar->mem_conserve ) {
-            struct ComplexSplit *complex_data = matvar->data;
-            free(complex_data->Re);
-            free(complex_data->Im);
-            free(complex_data);
-        } else {
-            if ( matvar->data && !matvar->mem_conserve )
-                free(matvar->data);
+    if ( matvar->data != NULL) {
+        switch (matvar->class_type ) {
+            case MAT_C_STRUCT:
+            case MAT_C_CELL:
+                if ( matvar->data_size > 0 ) {
+                    int i;
+                    matvar_t **fields = matvar->data;
+                    int nfields = matvar->nbytes / matvar->data_size;
+                    for ( i = 0; i < nfields; i++ )
+                        Mat_VarFree(fields[i]);
+                    free(matvar->data);
+                }
+                break;
+            case MAT_C_SPARSE:
+                if ( !matvar->mem_conserve ) {
+                    sparse_t *sparse;
+                    sparse = matvar->data;
+                    if ( sparse->ir != NULL )
+                        free(sparse->ir);
+                    if ( sparse->jc != NULL )
+                        free(sparse->jc);
+                    if ( matvar->isComplex && NULL != sparse->data ) {
+                        struct ComplexSplit *complex_data = sparse->data;
+                        free(complex_data->Re);
+                        free(complex_data->Im);
+                        free(complex_data);
+                    } else if ( sparse->data != NULL ) {
+                        free(sparse->data);
+                    }
+                    free(sparse);
+                }
+                break;
+            case MAT_C_DOUBLE:
+            case MAT_C_SINGLE:
+            case MAT_C_INT64:
+            case MAT_C_UINT64:
+            case MAT_C_INT32:
+            case MAT_C_UINT32:
+            case MAT_C_INT16:
+            case MAT_C_UINT16:
+            case MAT_C_INT8:
+            case MAT_C_UINT8:
+            case MAT_C_CHAR:
+                if ( !matvar->mem_conserve && NULL != matvar->data ) {
+                    if ( matvar->isComplex ) {
+                        struct ComplexSplit *complex_data = matvar->data;
+                        free(complex_data->Re);
+                        free(complex_data->Im);
+                        free(complex_data);
+                    } else {
+                        free(matvar->data);
+                    }
+                }
+                break;
         }
     }
 #if defined(HAVE_ZLIB)
