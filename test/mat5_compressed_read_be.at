@@ -17,8 +17,8 @@
 AT_SETUP([Read 2D double-precision array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_1_input1], [0],
-[[      Name: matio_tc_5_1_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var1], [0],
+[[      Name: var1
       Rank: 2
 Dimensions: 4 x 5
 Class Type: Double Precision Array
@@ -35,8 +35,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D single-precision array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_2_input1], [0],
-[      Name: matio_tc_5_2_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var2], [0],
+[      Name: var2
       Rank: 2
 Dimensions: 4 x 5
 Class Type: Single Precision Array
@@ -53,8 +53,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 64-bit integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_3_input1], [0],
-[      Name: matio_tc_5_3_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var3], [0],
+[      Name: var3
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 64-bit, signed integer array
@@ -71,8 +71,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 64-bit unsigned integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_4_input1], [0],
-[      Name: matio_tc_5_4_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var4], [0],
+[      Name: var4
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 64-bit, unsigned integer array
@@ -89,8 +89,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 32-bit integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_5_input1], [0],
-[      Name: matio_tc_5_5_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var5], [0],
+[      Name: var5
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 32-bit, signed integer array
@@ -107,8 +107,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 32-bit unsigned integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_6_input1], [0],
-[      Name: matio_tc_5_6_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var6], [0],
+[      Name: var6
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 32-bit, unsigned integer array
@@ -125,8 +125,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 16-bit integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_7_input1], [0],
-[      Name: matio_tc_5_7_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var7], [0],
+[      Name: var7
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 16-bit, signed integer array
@@ -143,8 +143,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 16-bit unsigned integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_8_input1], [0],
-[      Name: matio_tc_5_8_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var8], [0],
+[      Name: var8
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 16-bit, unsigned integer array
@@ -161,8 +161,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 8-bit integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_9_input1], [0],
-[      Name: matio_tc_5_9_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var9], [0],
+[      Name: var9
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 8-bit, signed integer array
@@ -179,8 +179,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 8-bit unsigned integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_10_input1], [0],
-[      Name: matio_tc_5_10_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var10], [0],
+[      Name: var10
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 8-bit, unsigned integer array
@@ -197,8 +197,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D double-precision complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_11_input1], [0],
-[[      Name: matio_tc_5_11_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var11], [0],
+[[      Name: var11
       Rank: 2
 Dimensions: 4 x 5
 Class Type: Double Precision Array (complex)
@@ -215,8 +215,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D single-precision complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_12_input1], [0],
-[      Name: matio_tc_5_12_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var12], [0],
+[      Name: var12
       Rank: 2
 Dimensions: 4 x 5
 Class Type: Single Precision Array (complex)
@@ -233,8 +233,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 64-bit integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_13_input1], [0],
-[      Name: matio_tc_5_13_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var13], [0],
+[      Name: var13
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 64-bit, signed integer array (complex)
@@ -251,8 +251,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 64-bit unsigned integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_14_input1], [0],
-[      Name: matio_tc_5_14_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var14], [0],
+[      Name: var14
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 64-bit, unsigned integer array (complex)
@@ -269,8 +269,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 32-bit integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_15_input1], [0],
-[      Name: matio_tc_5_15_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var15], [0],
+[      Name: var15
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 32-bit, signed integer array (complex)
@@ -287,8 +287,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 32-bit unsigned integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_16_input1], [0],
-[      Name: matio_tc_5_16_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var16], [0],
+[      Name: var16
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 32-bit, unsigned integer array (complex)
@@ -305,8 +305,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 16-bit integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_17_input1], [0],
-[      Name: matio_tc_5_17_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var17], [0],
+[      Name: var17
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 16-bit, signed integer array (complex)
@@ -323,8 +323,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 16-bit unsigned integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_18_input1], [0],
-[      Name: matio_tc_5_18_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var18], [0],
+[      Name: var18
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 16-bit, unsigned integer array (complex)
@@ -341,8 +341,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 8-bit integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_19_input1], [0],
-[      Name: matio_tc_5_19_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var19], [0],
+[      Name: var19
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 8-bit, signed integer array (complex)
@@ -359,8 +359,8 @@ AT_CLEANUP
 AT_SETUP([Read 2D 8-bit unsigned integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_20_input1], [0],
-[      Name: matio_tc_5_20_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var20], [0],
+[      Name: var20
       Rank: 2
 Dimensions: 4 x 5
 Class Type: 8-bit, unsigned integer array (complex)
@@ -377,8 +377,8 @@ AT_CLEANUP
 AT_SETUP([Read double-precision sparse array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_21_input1], [0],
-[      Name: matio_tc_5_21_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var21], [0],
+[      Name: var21
       Rank: 2
 Dimensions: 5 x 5
 Class Type: Sparse Array
@@ -396,8 +396,8 @@ AT_CLEANUP
 AT_SETUP([Read double-precision sparse complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_22_input1], [0],
-[      Name: matio_tc_5_22_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var22], [0],
+[      Name: var22
       Rank: 2
 Dimensions: 5 x 5
 Class Type: Sparse Array (complex)
@@ -415,8 +415,8 @@ AT_CLEANUP
 AT_SETUP([Read empty array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat matio_tc_5_23_input1], [0],
-[[      Name: matio_tc_5_23_input1
+[$builddir/test_mat readvar $srcdir/matio_test_cases_compressed_be.mat var23], [0],
+[[      Name: var23
       Rank: 2
 Dimensions: 0 x 0
 Class Type: Double Precision Array

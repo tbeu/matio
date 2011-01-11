@@ -18,8 +18,8 @@ AT_TESTED([test_mat])
 
 AT_SETUP([Read 2d double-precision array])
 AT_CHECK(
-[$builddir/test_mat readvar4 $srcdir/matio_test_cases_v4_le.mat matio_tc_1_1_input1], [0],
-[      Name: matio_tc_1_1_input1
+[$builddir/test_mat readvar4 $srcdir/matio_test_cases_v4_le.mat var1], [0],
+[      Name: var1
       Rank: 2
 Dimensions: 4 x 5
 Class Type: Double Precision Array
@@ -35,8 +35,8 @@ AT_CLEANUP
 
 AT_SETUP([Read 2d double-precision complex array])
 AT_CHECK(
-[$builddir/test_mat readvar4 $srcdir/matio_test_cases_v4_le.mat matio_tc_1_2_input1], [0],
-[      Name: matio_tc_1_2_input1
+[$builddir/test_mat readvar4 $srcdir/matio_test_cases_v4_le.mat var11], [0],
+[      Name: var11
       Rank: 2
 Dimensions: 4 x 5
 Class Type: Double Precision Array (complex)
