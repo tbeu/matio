@@ -16,7 +16,7 @@
 
 AT_SETUP([Read 2D double-precision array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var1], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var1], [0],
 [[      Name: var1
       Rank: 2
 Dimensions: 4 x 5
@@ -33,7 +33,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var2], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var2], [0],
 [      Name: var2
       Rank: 2
 Dimensions: 4 x 5
@@ -50,7 +50,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var3], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var3], [0],
 [      Name: var3
       Rank: 2
 Dimensions: 4 x 5
@@ -67,7 +67,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var4], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var4], [0],
 [      Name: var4
       Rank: 2
 Dimensions: 4 x 5
@@ -84,7 +84,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var5], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var5], [0],
 [      Name: var5
       Rank: 2
 Dimensions: 4 x 5
@@ -101,7 +101,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var6], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var6], [0],
 [      Name: var6
       Rank: 2
 Dimensions: 4 x 5
@@ -118,7 +118,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var7], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var7], [0],
 [      Name: var7
       Rank: 2
 Dimensions: 4 x 5
@@ -135,7 +135,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var8], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var8], [0],
 [      Name: var8
       Rank: 2
 Dimensions: 4 x 5
@@ -152,7 +152,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var9], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var9], [0],
 [      Name: var9
       Rank: 2
 Dimensions: 4 x 5
@@ -169,7 +169,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var10], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var10], [0],
 [      Name: var10
       Rank: 2
 Dimensions: 4 x 5
@@ -186,7 +186,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D double-precision complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var11], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var11], [0],
 [[      Name: var11
       Rank: 2
 Dimensions: 4 x 5
@@ -203,7 +203,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var12], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var12], [0],
 [      Name: var12
       Rank: 2
 Dimensions: 4 x 5
@@ -220,7 +220,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var13], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var13], [0],
 [      Name: var13
       Rank: 2
 Dimensions: 4 x 5
@@ -237,7 +237,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var14], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var14], [0],
 [      Name: var14
       Rank: 2
 Dimensions: 4 x 5
@@ -254,7 +254,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var15], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var15], [0],
 [      Name: var15
       Rank: 2
 Dimensions: 4 x 5
@@ -271,7 +271,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var16], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var16], [0],
 [      Name: var16
       Rank: 2
 Dimensions: 4 x 5
@@ -288,7 +288,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var17], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var17], [0],
 [      Name: var17
       Rank: 2
 Dimensions: 4 x 5
@@ -305,7 +305,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var18], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var18], [0],
 [      Name: var18
       Rank: 2
 Dimensions: 4 x 5
@@ -322,7 +322,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var19], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var19], [0],
 [      Name: var19
       Rank: 2
 Dimensions: 4 x 5
@@ -339,7 +339,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var20], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var20], [0],
 [      Name: var20
       Rank: 2
 Dimensions: 4 x 5
@@ -356,7 +356,7 @@ AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var21], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var21], [0],
 [      Name: var21
       Rank: 2
 Dimensions: 5 x 5
@@ -374,7 +374,7 @@ AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse complex array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var22], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var22], [0],
 [      Name: var22
       Rank: 2
 Dimensions: 5 x 5
@@ -392,7 +392,7 @@ AT_CLEANUP
 
 AT_SETUP([Read empty array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/matio_test_cases_uncompressed_le.mat var23], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var23], [0],
 [[      Name: var23
       Rank: 2
 Dimensions: 0 x 0
