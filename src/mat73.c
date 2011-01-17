@@ -1263,8 +1263,8 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
-                dset_id = H5Dcreate(id,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
+                                    H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -1284,8 +1284,8 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Sclose(aspace_id);
                 H5Aclose(attr_id);
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else if ( matvar->isComplex ) {
@@ -1468,8 +1468,8 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
-                dset_id = H5Dcreate(id,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
+                                    H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -1489,8 +1489,8 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Sclose(aspace_id);
                 H5Aclose(attr_id);
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else {
@@ -1560,8 +1560,8 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
-                dset_id = H5Dcreate(id,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
+                                    H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -1604,8 +1604,8 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 }
 
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else {
@@ -1727,7 +1727,7 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
-                dset_id = H5Dcreate(id,matvar->name,H5T_NATIVE_INT,mspace_id,
+                dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
                                     H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
@@ -1748,8 +1748,8 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Sclose(aspace_id);
                 H5Aclose(attr_id);
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else {
@@ -1843,8 +1843,8 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
-                dset_id = H5Dcreate(id,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
+                                    H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -1864,8 +1864,8 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Sclose(aspace_id);
                 H5Aclose(attr_id);
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else if ( matvar->isComplex ) {
@@ -2048,8 +2048,8 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
-                dset_id = H5Dcreate(id,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
+                                    H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -2069,8 +2069,8 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Sclose(aspace_id);
                 H5Aclose(attr_id);
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else {
@@ -2140,8 +2140,8 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
-                dset_id = H5Dcreate(id,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
+                                    H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -2184,8 +2184,8 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 }
 
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else {
@@ -2308,7 +2308,7 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
-                dset_id = H5Dcreate(id,matvar->name,H5T_NATIVE_INT,mspace_id,
+                dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
                                     H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
@@ -2329,8 +2329,8 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Sclose(aspace_id);
                 H5Aclose(attr_id);
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else {
@@ -3072,7 +3072,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
                 dset_id = H5Dcreate(*(hid_t*)mat->fp,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                              H5T_NATIVE_HSIZE,mspace_id,H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -3092,8 +3092,8 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 H5Sclose(aspace_id);
                 H5Aclose(attr_id);
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else if ( matvar->isComplex ) {
@@ -3277,7 +3277,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
                 dset_id = H5Dcreate(*(hid_t*)mat->fp,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                              H5T_NATIVE_HSIZE,mspace_id,H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -3297,8 +3297,8 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 H5Sclose(aspace_id);
                 H5Aclose(attr_id);
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else {
@@ -3367,7 +3367,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
                 dset_id = H5Dcreate(*(hid_t*)mat->fp,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                              H5T_NATIVE_HSIZE,mspace_id,H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -3410,8 +3410,8 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 }
 
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else {
@@ -3526,7 +3526,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 unsigned empty = 1;
                 mspace_id = H5Screate_simple(1,&rank,NULL);
                 dset_id = H5Dcreate(*(hid_t*)mat->fp,matvar->name,
-                    H5T_NATIVE_INT,mspace_id,H5P_DEFAULT);
+                              H5T_NATIVE_HSIZE,mspace_id,H5P_DEFAULT);
                 attr_type_id = H5Tcopy(H5T_C_S1);
                 H5Tset_size(attr_type_id,
                             strlen(Mat_class_names[matvar->class_type])+1);
@@ -3546,8 +3546,8 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 H5Sclose(aspace_id);
                 H5Aclose(attr_id);
                 /* Write the dimensions as the data */
-                H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         matvar->dims);
+                H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                         H5P_DEFAULT,matvar->dims);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
             } else {
