@@ -1598,15 +1598,11 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                 if ( matvar->dims[0] == 1 ) {
                     printf("%s\n",(char *)matvar->data);
                 } else {
-                    int ndx = 0;
-                    for ( i = 0; i < matvar->dims[1]; i++ ) {
-                        ndx = i;
+                    char *data = matvar->data;
+                    for ( i = 0; i < matvar->dims[0]; i++ ) {
                         j = 0;
-                        while ( j++ < matvar->dims[0] &&
-                                *((char *)matvar->data+ndx) != '\0' ) {
-                            printf("%c", *((char *)matvar->data+ndx));
-                            ndx += matvar->dims[0];
-                        }
+                        for ( j = 0; j < matvar->dims[1]; j++ )
+                            printf("%c",data[j*matvar->dims[0]+i]);
                         printf("\n");
                     }
                 }
