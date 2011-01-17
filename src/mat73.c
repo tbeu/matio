@@ -3459,9 +3459,15 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                                 fields[k]->name);
                     } else {
                         hid_t refs_id;
+                        H5E_auto_t  efunc;
+                        void       *client_data;
+                        /* Silence errors if /#refs does not exist */
+                        H5Eget_auto(&efunc,&client_data);
+                        H5Eset_auto((H5E_auto_t)0,NULL);
                         if ((refs_id=H5Gopen(*(hid_t*)mat->fp,"/#refs#") < 0 )) {
                             refs_id = H5Gcreate(*(hid_t*)mat->fp,"/#refs#",0);
                         }
+                        H5Eset_auto(efunc,client_data);
                     
                         if ( refs_id > -1 ) {
                             char name[64];
