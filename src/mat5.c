@@ -2612,7 +2612,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->next_in   = ZLIB_BYTE_PTR(uncomp_buf);
                 z->avail_out = buf_size*sizeof(*comp_buf);
-                z->avail_in  = 32;
+                z->avail_in  = 16;
                 err = deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,buf_size*
                     sizeof(*comp_buf)-z->avail_out,mat->fp);
@@ -3042,7 +3042,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->next_in   = ZLIB_BYTE_PTR(uncomp_buf);
                 z->avail_out = buf_size*sizeof(*comp_buf);
-                z->avail_in  = 32;
+                z->avail_in  = 16;
                 err = deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,buf_size*
                     sizeof(*comp_buf)-z->avail_out,mat->fp);
@@ -6085,7 +6085,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     matvar->internal->z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     matvar->internal->z->next_in   = ZLIB_BYTE_PTR(uncomp_buf);
                     matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-                    matvar->internal->z->avail_in  = 32;
+                    matvar->internal->z->avail_in  = 16;
                     err = deflate(matvar->internal->z,Z_NO_FLUSH);
                     byteswritten += fwrite(comp_buf,1,buf_size*
                         sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
