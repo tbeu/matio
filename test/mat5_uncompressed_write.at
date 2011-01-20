@@ -1,4 +1,4 @@
-# Copyright (C) 2010   Christopher C. Hulbert
+# Copyright (C) 2010-2011   Christopher C. Hulbert
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -622,5 +622,31 @@ AT_CHECK([$builddir/test_mat -v 5 -c double write_empty_2d_numeric],[0],
          [ignore],[ignore])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write character array])
+AT_DATA([test_write_char.m],
+[
+try
+    load test_write_char.mat
+    expdata = @<:@'abcdefghijklmnopqrstuvwxyz';
+               'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+               '1234567890!@#$%^&*()-_=+`~';
+               '@<:@{@:>@}\|;:''",<.>/?          '@:>@;
+    pass = true;
+    pass = pass && isequal(expdata,a);
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 write_char],[0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_char;exit' | $GREP PASSED],[0],[PASSED
 ],[ignore])
 AT_CLEANUP

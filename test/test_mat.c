@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010   Christopher C. Hulbert
+ * Copyright (C) 2005-2011   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -92,6 +92,7 @@ static const char *helptestsstr[] = {
 "write_empty_2d_numeric   - Write an empty 2D numeric array to a matlab file.",
 "                           The class of the numeric array is set by the -c",
 "                           option or double if not set.",
+"write_char               - Write a 2D character array.",
 "",
 "   Version 5 MAT File tests",
 "================================================================",
@@ -234,6 +235,26 @@ static const char *helptest_write_empty_2d_numeric[] = {
     "",
     "    classtype = 'double';",
     "    a = cast([],classtype);",
+    "",
+    NULL
+};
+
+static const char *helptest_write_char[] = {
+    "TEST: write_char",
+    "",
+    "Usage: test_mat write_char",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a 2d character",
+    "array of dimensions 4x26. The MAT file is the default file version, or",
+    "set by the -v option. If the MAT file is version 5, compression can be",
+    "enabled using the -z option if built with zlib library",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    a = ['abcdefghijklmnopqrstuvwxyz';",
+    "         'ABCDEFGHIJKLMNOPQRSTUVWXYZ';",
+    "         '1234567890!@#$%^&*()-_=+`~';",
+    "         '[{]}\\|;:''\",<.>/?          '];",
     "",
     NULL
 };
@@ -469,6 +490,8 @@ help_test(const char *test)
         Mat_Help(helptest_write_complex_sparse);
     else if ( !strcmp(test,"write_empty_2d_numeric") )
         Mat_Help(helptest_write_empty_2d_numeric);
+    else if ( !strcmp(test,"write_char") )
+        Mat_Help(helptest_write_char);
     else if ( !strcmp(test,"write_struct") )
         Mat_Help(helptest_write_struct);
     else if ( !strcmp(test,"write_compressed_struct") )
@@ -810,6 +833,28 @@ test_write_empty_2d_numeric(enum matio_classes matvar_class,char *output_name)
         err = 1;
     }
 
+    return err;
+}
+
+static int
+test_write_char(char *output_name)
+{
+    char     *str = "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
+                    "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
+    int       err = 0, i;
+    size_t    dims[2];
+    mat_t    *mat;
+    matvar_t *matvar;
+
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
+    if ( mat ) {
+        dims[0]   = 4;
+        dims[1]   = 26;
+        matvar = Mat_VarCreate("a",MAT_C_CHAR,MAT_T_UINT8,2,
+                    dims,str,MEM_CONSERVE);
+        Mat_VarWrite(mat,matvar,compression);
+        Mat_Close(mat);
+    }
     return err;
 }
 
@@ -1697,6 +1742,12 @@ int main (int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_write_empty_2d_numeric.mat";
             err += test_write_empty_2d_numeric(matvar_class,output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"write_char") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_char.mat";
+            err += test_write_char(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"writenull") ) {
             k++;
