@@ -3,7 +3,7 @@
  * @ingroup MAT
  */
 /*
- * Copyright (C) 2005-2008   Christopher C. Hulbert
+ * Copyright (C) 2005-2011   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -95,14 +95,12 @@ GetStructFieldBufSize(matvar_t *matvar)
     case MAT_C_STRUCT:
     {
         matvar_t **fields = matvar->data;
-        int i, nfields;
+        int i, nfields = 0;
         size_t maxlen = 0;
 
-        if ( matvar->nbytes == 0 || matvar->data_size == 0 )
-            break;
-        else if ( nmemb )
+        if ( nmemb )
             nfields = matvar->nbytes / (nmemb*matvar->data_size);
-        else /* matvar->data_size is checked above */
+        else if ( matvar->data_size )
             nfields = matvar->nbytes / matvar->data_size;
         for ( i = 0; i < nfields; i++ ) {
             if ( NULL != fields[i]->name && strlen(fields[i]->name) > maxlen )
@@ -221,14 +219,12 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
     case MAT_C_STRUCT:
     {
         matvar_t **fields = matvar->data;
-        int i, nfields;
+        int i, nfields = 0;
         size_t maxlen = 0;
 
-        if ( matvar->nbytes == 0 || matvar->data_size == 0 )
-            break;
-        else if ( nmemb )
+        if ( nmemb )
             nfields = matvar->nbytes / (nmemb*matvar->data_size);
-        else /* matvar->data_size is checked above */
+        else  if ( matvar->data_size )
             nfields = matvar->nbytes / matvar->data_size;
 
         for ( i = 0; i < nfields; i++ ) {
@@ -343,14 +339,12 @@ GetMatrixMaxBufSize(matvar_t *matvar)
     case MAT_C_STRUCT:
     {
         matvar_t **fields = matvar->data;
-        int i, nfields;
+        int i, nfields = 0;
         size_t maxlen = 0;
 
-        if ( matvar->nbytes == 0 || matvar->data_size == 0 )
-            break;
-        else if ( nmemb )
+        if ( nmemb )
             nfields = matvar->nbytes / (nmemb*matvar->data_size);
-        else /* matvar->data_size is checked above */
+        else  if ( matvar->data_size )
             nfields = matvar->nbytes / matvar->data_size;
 
         for ( i = 0; i < nfields; i++ ) {
