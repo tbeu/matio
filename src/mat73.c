@@ -1290,7 +1290,6 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Sclose(mspace_id);
             } else if ( matvar->isComplex ) {
                 hid_t h5_complex,h5_complex_base;
-                void *buf;
 
                 h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
                 h5_complex      = H5Tcreate(H5T_COMPOUND,
@@ -1298,148 +1297,38 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Tinsert(h5_complex,"real",0,h5_complex_base);
                 H5Tinsert(h5_complex,"imag",H5Tget_size(h5_complex_base),
                           h5_complex_base);
-
-                /* Not very memory efficient! */
-                buf = malloc(2*numel*H5Tget_size(h5_complex_base));
-                if ( NULL != buf ) {
-                    switch ( matvar->class_type ) {
-                        case MAT_C_DOUBLE:
-                        {
-                            double *dst = buf,
-                                   *r=((struct ComplexSplit*)matvar->data)->Re,
-                                   *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_SINGLE:
-                        {
-                            float *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-#ifdef HAVE_MAT_INT64_T
-                        case MAT_C_INT64:
-                        {
-                            mat_int64_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-#endif
-#ifdef HAVE_MAT_UINT64_T
-                        case MAT_C_UINT64:
-                        {
-                            mat_uint64_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-#endif
-                        case MAT_C_INT32:
-                        {
-                            mat_int32_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_UINT32:
-                        {
-                            mat_uint32_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_INT16:
-                        {
-                            mat_int16_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_UINT16:
-                        {
-                            mat_uint16_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_INT8:
-                        {
-                            mat_int8_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_UINT8:
-                        {
-                            mat_uint8_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                    }
-                    mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
-                    dset_id = H5Dcreate(id,name,h5_complex,mspace_id,
-                                        H5P_DEFAULT);
-                    attr_type_id = H5Tcopy(H5T_C_S1);
-                    H5Tset_size(attr_type_id,
-                                strlen(Mat_class_names[matvar->class_type])+1);
-                    aspace_id = H5Screate(H5S_SCALAR);
-                    attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
-                                        aspace_id,H5P_DEFAULT);
-                    H5Awrite(attr_id,attr_type_id,
-                             Mat_class_names[matvar->class_type]);
-                    H5Sclose(aspace_id);
-                    H5Aclose(attr_id);
-                    H5Tclose(attr_type_id);
-                    H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                             buf);
-                    H5Dclose(dset_id);
-                    H5Sclose(mspace_id);
-                    free(buf);
-                }
-                /* h5_complex_base is not a copy, so don't release it */
+                mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
+                dset_id = H5Dcreate(id,name,h5_complex,mspace_id,H5P_DEFAULT);
+                attr_type_id = H5Tcopy(H5T_C_S1);
+                H5Tset_size(attr_type_id,
+                            strlen(Mat_class_names[matvar->class_type])+1);
+                aspace_id = H5Screate(H5S_SCALAR);
+                attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
+                                    aspace_id,H5P_DEFAULT);
+                H5Awrite(attr_id,attr_type_id,
+                         Mat_class_names[matvar->class_type]);
+                H5Sclose(aspace_id);
+                H5Aclose(attr_id);
+                H5Tclose(attr_type_id);
                 H5Tclose(h5_complex);
+
+                /* Write real part of dataset */
+                h5_complex = H5Tcreate(H5T_COMPOUND,
+                                       H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"real",0,h5_complex_base);
+                H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                         ((struct ComplexSplit*)matvar->data)->Re);
+                H5Tclose(h5_complex);
+
+                /* Write imaginary part of dataset */
+                h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                      H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                         ((struct ComplexSplit*)matvar->data)->Im);
+                H5Tclose(h5_complex);
+                H5Dclose(dset_id);
+                H5Sclose(mspace_id);
             } else { /* matvar->isComplex */
                 mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
                 dset_id = H5Dcreate(id,name,
@@ -1870,7 +1759,6 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Sclose(mspace_id);
             } else if ( matvar->isComplex ) {
                 hid_t h5_complex,h5_complex_base;
-                void *buf;
 
                 h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
                 h5_complex      = H5Tcreate(H5T_COMPOUND,
@@ -1878,148 +1766,38 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                 H5Tinsert(h5_complex,"real",0,h5_complex_base);
                 H5Tinsert(h5_complex,"imag",H5Tget_size(h5_complex_base),
                           h5_complex_base);
-
-                /* Not very memory efficient! */
-                buf = malloc(2*numel*H5Tget_size(h5_complex_base));
-                if ( NULL != buf ) {
-                    switch ( matvar->class_type ) {
-                        case MAT_C_DOUBLE:
-                        {
-                            double *dst = buf,
-                                   *r=((struct ComplexSplit*)matvar->data)->Re,
-                                   *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_SINGLE:
-                        {
-                            float *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-#ifdef HAVE_MAT_INT64_T
-                        case MAT_C_INT64:
-                        {
-                            mat_int64_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-#endif
-#ifdef HAVE_MAT_UINT64_T
-                        case MAT_C_UINT64:
-                        {
-                            mat_uint64_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-#endif
-                        case MAT_C_INT32:
-                        {
-                            mat_int32_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_UINT32:
-                        {
-                            mat_uint32_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_INT16:
-                        {
-                            mat_int16_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_UINT16:
-                        {
-                            mat_uint16_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_INT8:
-                        {
-                            mat_int8_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_UINT8:
-                        {
-                            mat_uint8_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                    }
-                    mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
-                    dset_id = H5Dcreate(id,name,h5_complex,mspace_id,
-                                        H5P_DEFAULT);
-                    attr_type_id = H5Tcopy(H5T_C_S1);
-                    H5Tset_size(attr_type_id,
-                                strlen(Mat_class_names[matvar->class_type])+1);
-                    aspace_id = H5Screate(H5S_SCALAR);
-                    attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
-                                        aspace_id,H5P_DEFAULT);
-                    H5Awrite(attr_id,attr_type_id,
-                             Mat_class_names[matvar->class_type]);
-                    H5Sclose(aspace_id);
-                    H5Aclose(attr_id);
-                    H5Tclose(attr_type_id);
-                    H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                             buf);
-                    H5Dclose(dset_id);
-                    H5Sclose(mspace_id);
-                    free(buf);
-                }
-                /* h5_complex_base is not a copy, so don't release it */
+                mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
+                dset_id = H5Dcreate(id,name,h5_complex,mspace_id,H5P_DEFAULT);
+                attr_type_id = H5Tcopy(H5T_C_S1);
+                H5Tset_size(attr_type_id,
+                            strlen(Mat_class_names[matvar->class_type])+1);
+                aspace_id = H5Screate(H5S_SCALAR);
+                attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
+                                    aspace_id,H5P_DEFAULT);
+                H5Awrite(attr_id,attr_type_id,
+                         Mat_class_names[matvar->class_type]);
+                H5Sclose(aspace_id);
+                H5Aclose(attr_id);
+                H5Tclose(attr_type_id);
                 H5Tclose(h5_complex);
+
+                /* Write real part of dataset */
+                h5_complex = H5Tcreate(H5T_COMPOUND,
+                                       H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"real",0,h5_complex_base);
+                H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                         ((struct ComplexSplit*)matvar->data)->Re);
+                H5Tclose(h5_complex);
+
+                /* Write imaginary part of dataset */
+                h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                      H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                         ((struct ComplexSplit*)matvar->data)->Im);
+                H5Tclose(h5_complex);
+                H5Dclose(dset_id);
+                H5Sclose(mspace_id);
             } else { /* matvar->isComplex */
                 mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
                 dset_id = H5Dcreate(id,name,
@@ -3098,7 +2876,6 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 H5Sclose(mspace_id);
             } else if ( matvar->isComplex ) {
                 hid_t h5_complex,h5_complex_base;
-                void *buf;
 
                 h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
                 h5_complex      = H5Tcreate(H5T_COMPOUND,
@@ -3106,148 +2883,39 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 H5Tinsert(h5_complex,"real",0,h5_complex_base);
                 H5Tinsert(h5_complex,"imag",H5Tget_size(h5_complex_base),
                           h5_complex_base);
-
-                /* Not very memory efficient! */
-                buf = malloc(2*numel*H5Tget_size(h5_complex_base));
-                if ( NULL != buf ) {
-                    switch ( matvar->class_type ) {
-                        case MAT_C_DOUBLE:
-                        {
-                            double *dst = buf,
-                                   *r=((struct ComplexSplit*)matvar->data)->Re,
-                                   *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_SINGLE:
-                        {
-                            float *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-#ifdef HAVE_MAT_INT64_T
-                        case MAT_C_INT64:
-                        {
-                            mat_int64_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-#endif
-#ifdef HAVE_MAT_UINT64_T
-                        case MAT_C_UINT64:
-                        {
-                            mat_uint64_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-#endif
-                        case MAT_C_INT32:
-                        {
-                            mat_int32_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_UINT32:
-                        {
-                            mat_uint32_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_INT16:
-                        {
-                            mat_int16_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_UINT16:
-                        {
-                            mat_uint16_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_INT8:
-                        {
-                            mat_int8_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                        case MAT_C_UINT8:
-                        {
-                            mat_uint8_t *dst = buf,
-                                  *r=((struct ComplexSplit*)matvar->data)->Re,
-                                  *i=((struct ComplexSplit*)matvar->data)->Im;
-                            for ( k = numel; k--; ) {
-                                *dst++ = *r++;
-                                *dst++ = *i++;
-                            }
-                            break;
-                        }
-                    }
-                    mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
-                    dset_id = H5Dcreate(*(hid_t*)mat->fp,matvar->name,
-                        h5_complex,mspace_id,H5P_DEFAULT);
-                    attr_type_id = H5Tcopy(H5T_C_S1);
-                    H5Tset_size(attr_type_id,
-                                strlen(Mat_class_names[matvar->class_type])+1);
-                    aspace_id = H5Screate(H5S_SCALAR);
-                    attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
-                                        aspace_id,H5P_DEFAULT);
-                    H5Awrite(attr_id,attr_type_id,
-                             Mat_class_names[matvar->class_type]);
-                    H5Sclose(aspace_id);
-                    H5Aclose(attr_id);
-                    H5Tclose(attr_type_id);
-                    H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                             buf);
-                    H5Dclose(dset_id);
-                    H5Sclose(mspace_id);
-                    free(buf);
-                }
-                /* h5_complex_base is not a copy, so don't release it */
+                mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
+                dset_id = H5Dcreate(*(hid_t*)mat->fp,matvar->name,
+                                    h5_complex,mspace_id,H5P_DEFAULT);
+                attr_type_id = H5Tcopy(H5T_C_S1);
+                H5Tset_size(attr_type_id,
+                            strlen(Mat_class_names[matvar->class_type])+1);
+                aspace_id = H5Screate(H5S_SCALAR);
+                attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
+                                    aspace_id,H5P_DEFAULT);
+                H5Awrite(attr_id,attr_type_id,
+                         Mat_class_names[matvar->class_type]);
+                H5Sclose(aspace_id);
+                H5Aclose(attr_id);
+                H5Tclose(attr_type_id);
                 H5Tclose(h5_complex);
+
+                /* Write real part of dataset */
+                h5_complex = H5Tcreate(H5T_COMPOUND,
+                                       H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"real",0,h5_complex_base);
+                H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                         ((struct ComplexSplit*)matvar->data)->Re);
+                H5Tclose(h5_complex);
+
+                /* Write imaginary part of dataset */
+                h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                      H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                         ((struct ComplexSplit*)matvar->data)->Im);
+                H5Tclose(h5_complex);
+                H5Dclose(dset_id);
+                H5Sclose(mspace_id);
             } else { /* matvar->isComplex */
                 mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
                 dset_id = H5Dcreate(*(hid_t*)mat->fp,matvar->name,
