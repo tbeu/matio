@@ -2116,12 +2116,7 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
     start = ftell(mat->fp);
 
     /* Array Flags */
-    if ( matvar->rank > 1 && ( matvar->dims[0] > 1 || matvar->dims[1] > 1 ) &&
-         matvar->class_type == MAT_C_INT32 ) {
-        array_flags = MAT_C_DOUBLE & MAT_F_CLASS_T;
-    } else {
-        array_flags = matvar->class_type & MAT_F_CLASS_T;
-    }
+    array_flags = matvar->class_type & MAT_F_CLASS_T;
     if ( matvar->isComplex )
         array_flags |= MAT_F_COMPLEX;
     if ( matvar->isGlobal )
@@ -2258,12 +2253,7 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
     start = ftell(mat->fp);
 
     /* Array Flags */
-    if ( matvar->rank > 1 && ( matvar->dims[0] > 1 || matvar->dims[1] > 1 ) &&
-         matvar->class_type == MAT_C_INT32 ) {
-        array_flags = MAT_C_DOUBLE & MAT_F_CLASS_T;
-    } else {
-        array_flags = matvar->class_type & MAT_F_CLASS_T;
-    }
+    array_flags = matvar->class_type & MAT_F_CLASS_T;
     if ( matvar->isComplex )
         array_flags |= MAT_F_COMPLEX;
     if ( matvar->isGlobal )
