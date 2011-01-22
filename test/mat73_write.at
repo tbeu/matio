@@ -669,8 +669,686 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$builddir/test_mat -v 5 write_char],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat -v 7.3 write_char],[0],[ignore],[ignore])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_char;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write empty structure array])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_empty_struct.m],
+[
+try
+    load test_write_empty_struct.mat
+    expdata1 = repmat(struct,0,1);
+    expdata2 = repmat(struct('field1',zeros(0,0),'field2',zeros(0,0)),0,1);
+    expdata3 = struct('field1',zeros(0,1),'field2',zeros(0,1));
+    expdata4(1).field1 = zeros(0,1);
+    expdata4(1).field2 = repmat(' ',0,1);
+    expdata4(2).field1 = repmat(struct,0,1);
+    expdata4(2).field2 = repmat({zeros(0,0)},0,1);
+    pass = true;
+    pass = pass && isequal(var1,expdata1);
+    pass = pass && isequal(var2,expdata2);
+    pass = pass && isequal(var3,expdata3);
+    pass = pass && isequal(var4,expdata4(:));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 write_empty_struct],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty_struct;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D double-precision fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape((1:12),3,4);
+    expdata(1).field2 = reshape((13:24),3,4);
+    expdata(2).field1 = reshape((25:36),3,4);
+    expdata(2).field2 = reshape((37:48),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D single-precision fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape(single((1:12)),3,4);
+    expdata(1).field2 = reshape(single((13:24)),3,4);
+    expdata(2).field1 = reshape(single((25:36)),3,4);
+    expdata(2).field2 = reshape(single((37:48)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c single write_struct_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 64-bit signed integer fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $HAVE_INT64 -eq 0])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape(int64((1:12)),3,4);
+    expdata(1).field2 = reshape(int64((13:24)),3,4);
+    expdata(2).field1 = reshape(int64((25:36)),3,4);
+    expdata(2).field2 = reshape(int64((37:48)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c int64 write_struct_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 64-bit unsigned integer fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape(uint64((1:12)),3,4);
+    expdata(1).field2 = reshape(uint64((13:24)),3,4);
+    expdata(2).field1 = reshape(uint64((25:36)),3,4);
+    expdata(2).field2 = reshape(uint64((37:48)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c uint64 write_struct_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 32-bit signed integer fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape(int32((1:12)),3,4);
+    expdata(1).field2 = reshape(int32((13:24)),3,4);
+    expdata(2).field1 = reshape(int32((25:36)),3,4);
+    expdata(2).field2 = reshape(int32((37:48)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c int32 write_struct_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 32-bit unsigned integer fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape(uint32((1:12)),3,4);
+    expdata(1).field2 = reshape(uint32((13:24)),3,4);
+    expdata(2).field1 = reshape(uint32((25:36)),3,4);
+    expdata(2).field2 = reshape(uint32((37:48)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c uint32 write_struct_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 16-bit signed integer fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape(int16((1:12)),3,4);
+    expdata(1).field2 = reshape(int16((13:24)),3,4);
+    expdata(2).field1 = reshape(int16((25:36)),3,4);
+    expdata(2).field2 = reshape(int16((37:48)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c int16 write_struct_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 16-bit unsigned integer fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape(uint16((1:12)),3,4);
+    expdata(1).field2 = reshape(uint16((13:24)),3,4);
+    expdata(2).field1 = reshape(uint16((25:36)),3,4);
+    expdata(2).field2 = reshape(uint16((37:48)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c uint16 write_struct_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 8-bit signed integer fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape(int8((1:12)),3,4);
+    expdata(1).field2 = reshape(int8((13:24)),3,4);
+    expdata(2).field1 = reshape(int8((25:36)),3,4);
+    expdata(2).field2 = reshape(int8((37:48)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c int8 write_struct_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 8-bit unsigned integer fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_2d_numeric.m],
+[
+try
+    load test_write_struct_2d_numeric.mat
+    expdata(1).field1 = reshape(uint8((1:12)),3,4);
+    expdata(1).field2 = reshape(uint8((13:24)),3,4);
+    expdata(2).field1 = reshape(uint8((25:36)),3,4);
+    expdata(2).field2 = reshape(uint8((37:48)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c uint8 write_struct_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D double-precision complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape((1:12) + j*(51:62),3,4);
+    expdata(1).field2 = reshape((13:24) + j*(63:74),3,4);
+    expdata(2).field1 = reshape((25:36) + j*(75:86),3,4);
+    expdata(2).field2 = reshape((37:48) + j*(87:98),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_complex_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D single-precision complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape(single((1:12) + j*(51:62)),3,4);
+    expdata(1).field2 = reshape(single((13:24) + j*(63:74)),3,4);
+    expdata(2).field1 = reshape(single((25:36) + j*(75:86)),3,4);
+    expdata(2).field2 = reshape(single((37:48) + j*(87:98)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c single write_struct_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 64-bit signed integer complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $HAVE_INT64 -eq 0])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape(int64((1:12) + j*(51:62)),3,4);
+    expdata(1).field2 = reshape(int64((13:24) + j*(63:74)),3,4);
+    expdata(2).field1 = reshape(int64((25:36) + j*(75:86)),3,4);
+    expdata(2).field2 = reshape(int64((37:48) + j*(87:98)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c int64 write_struct_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 64-bit unsigned integer complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape(uint64((1:12) + j*(51:62)),3,4);
+    expdata(1).field2 = reshape(uint64((13:24) + j*(63:74)),3,4);
+    expdata(2).field1 = reshape(uint64((25:36) + j*(75:86)),3,4);
+    expdata(2).field2 = reshape(uint64((37:48) + j*(87:98)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c uint64 write_struct_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 32-bit signed integer complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape(int32((1:12) + j*(51:62)),3,4);
+    expdata(1).field2 = reshape(int32((13:24) + j*(63:74)),3,4);
+    expdata(2).field1 = reshape(int32((25:36) + j*(75:86)),3,4);
+    expdata(2).field2 = reshape(int32((37:48) + j*(87:98)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c int32 write_struct_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 32-bit unsigned integer complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape(uint32((1:12) + j*(51:62)),3,4);
+    expdata(1).field2 = reshape(uint32((13:24) + j*(63:74)),3,4);
+    expdata(2).field1 = reshape(uint32((25:36) + j*(75:86)),3,4);
+    expdata(2).field2 = reshape(uint32((37:48) + j*(87:98)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c uint32 write_struct_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 16-bit signed integer complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape(int16((1:12) + j*(51:62)),3,4);
+    expdata(1).field2 = reshape(int16((13:24) + j*(63:74)),3,4);
+    expdata(2).field1 = reshape(int16((25:36) + j*(75:86)),3,4);
+    expdata(2).field2 = reshape(int16((37:48) + j*(87:98)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c int16 write_struct_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 16-bit unsigned integer complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape(uint16((1:12) + j*(51:62)),3,4);
+    expdata(1).field2 = reshape(uint16((13:24) + j*(63:74)),3,4);
+    expdata(2).field1 = reshape(uint16((25:36) + j*(75:86)),3,4);
+    expdata(2).field2 = reshape(uint16((37:48) + j*(87:98)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c uint16 write_struct_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 8-bit signed integer complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape(int8((1:12) + j*(51:62)),3,4);
+    expdata(1).field2 = reshape(int8((13:24) + j*(63:74)),3,4);
+    expdata(2).field1 = reshape(int8((25:36) + j*(75:86)),3,4);
+    expdata(2).field2 = reshape(int8((37:48) + j*(87:98)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c int8 write_struct_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write structure array with 2D 8-bit unsigned integer complex fields])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_DATA([test_write_struct_complex_2d_numeric.m],
+[
+try
+    load test_write_struct_complex_2d_numeric.mat
+    expdata(1).field1 = reshape(uint8((1:12) + j*(51:62)),3,4);
+    expdata(1).field2 = reshape(uint8((13:24) + j*(63:74)),3,4);
+    expdata(2).field1 = reshape(uint8((25:36) + j*(75:86)),3,4);
+    expdata(2).field2 = reshape(uint8((37:48) + j*(87:98)),3,4);
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 7.3 -c uint8 write_struct_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
 ],[ignore])
 AT_CLEANUP
