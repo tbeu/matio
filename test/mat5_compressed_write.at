@@ -1352,3 +1352,653 @@ AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
 ],[ignore])
 AT_CLEANUP
+
+AT_SETUP([Write empty cell array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_empty_cell.m],
+[
+try
+    load test_write_empty_cell.mat
+    expdata1 = cell(0,1);
+    expdata2 = {zeros(0,1);zeros(0,1)};
+    pass = true;
+    pass = pass && isequal(var1,expdata1);
+    pass = pass && isequal(var2,expdata2);
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])AT_CHECK([$builddir/test_mat -v 5 -z write_empty_cell],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty_cell;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D double-precision fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape((1:12),3,4);reshape((13:24),3,4);...
+               reshape((25:36),3,4);reshape((37:48),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D single-precision fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape(single((1:12)),3,4);reshape(single((13:24)),3,4);...
+               reshape(single((25:36)),3,4);reshape(single((37:48)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c single write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 64-bit signed integer fields])
+AT_SKIP_IF([test $HAVE_INT64 -eq 0])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape(int64((1:12)),3,4);reshape(int64((13:24)),3,4);...
+               reshape(int64((25:36)),3,4);reshape(int64((37:48)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c int64 write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 64-bit unsigned integer fields])
+AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape(uint64((1:12)),3,4);reshape(uint64((13:24)),3,4);...
+               reshape(uint64((25:36)),3,4);reshape(uint64((37:48)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c uint64 write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 32-bit signed integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape(int32((1:12)),3,4);reshape(int32((13:24)),3,4);...
+               reshape(int32((25:36)),3,4);reshape(int32((37:48)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c int32 write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 32-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape(uint32((1:12)),3,4);reshape(uint32((13:24)),3,4);...
+               reshape(uint32((25:36)),3,4);reshape(uint32((37:48)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c uint32 write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 16-bit signed integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape(int16((1:12)),3,4);reshape(int16((13:24)),3,4);...
+               reshape(int16((25:36)),3,4);reshape(int16((37:48)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c int16 write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 16-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape(uint16((1:12)),3,4);reshape(uint16((13:24)),3,4);...
+               reshape(uint16((25:36)),3,4);reshape(uint16((37:48)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c uint16 write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 8-bit signed integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape(int8((1:12)),3,4);reshape(int8((13:24)),3,4);...
+               reshape(int8((25:36)),3,4);reshape(int8((37:48)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c int8 write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 8-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_2d_numeric.m],
+[
+try
+    load test_write_cell_2d_numeric.mat
+    expdata = {reshape(uint8((1:12)),3,4);reshape(uint8((13:24)),3,4);...
+               reshape(uint8((25:36)),3,4);reshape(uint8((37:48)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c uint8 write_cell_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D double-precision complex fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape((1:12)+j*(51:62),3,4);...
+               reshape((13:24)+j*(63:74),3,4);...
+               reshape((25:36)+j*(75:86),3,4);...
+               reshape((37:48)+j*(87:98),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z write_cell_complex_2d_numeric],[0],
+         [ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D single-precision complex fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape(single((1:12)+j*(51:62)),3,4);...
+               reshape(single((13:24)+j*(63:74)),3,4);...
+               reshape(single((25:36)+j*(75:86)),3,4);...
+               reshape(single((37:48)+j*(87:98)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c single write_cell_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 64-bit signed integer complex fields])
+AT_SKIP_IF([test $HAVE_INT64 -eq 0])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape(int64((1:12)+j*(51:62)),3,4);...
+               reshape(int64((13:24)+j*(63:74)),3,4);...
+               reshape(int64((25:36)+j*(75:86)),3,4);...
+               reshape(int64((37:48)+j*(87:98)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c int64 write_cell_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 64-bit unsigned integer complex fields])
+AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape(uint64((1:12)+j*(51:62)),3,4);...
+               reshape(uint64((13:24)+j*(63:74)),3,4);...
+               reshape(uint64((25:36)+j*(75:86)),3,4);...
+               reshape(uint64((37:48)+j*(87:98)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c uint64 write_cell_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 32-bit signed integer complex fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape(int32((1:12)+j*(51:62)),3,4);...
+               reshape(int32((13:24)+j*(63:74)),3,4);...
+               reshape(int32((25:36)+j*(75:86)),3,4);...
+               reshape(int32((37:48)+j*(87:98)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c int32 write_cell_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 32-bit unsigned integer complex fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape(uint32((1:12)+j*(51:62)),3,4);...
+               reshape(uint32((13:24)+j*(63:74)),3,4);...
+               reshape(uint32((25:36)+j*(75:86)),3,4);...
+               reshape(uint32((37:48)+j*(87:98)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c uint32 write_cell_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 16-bit signed integer complex fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape(int16((1:12)+j*(51:62)),3,4);...
+               reshape(int16((13:24)+j*(63:74)),3,4);...
+               reshape(int16((25:36)+j*(75:86)),3,4);...
+               reshape(int16((37:48)+j*(87:98)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c int16 write_cell_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 16-bit unsigned integer complex fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape(uint16((1:12)+j*(51:62)),3,4);...
+               reshape(uint16((13:24)+j*(63:74)),3,4);...
+               reshape(uint16((25:36)+j*(75:86)),3,4);...
+               reshape(uint16((37:48)+j*(87:98)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c uint16 write_cell_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 8-bit signed integer complex fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape(int8((1:12)+j*(51:62)),3,4);...
+               reshape(int8((13:24)+j*(63:74)),3,4);...
+               reshape(int8((25:36)+j*(75:86)),3,4);...
+               reshape(int8((37:48)+j*(87:98)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c int8 write_cell_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write cell array with 2D 8-bit unsigned integer complex fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_DATA([test_write_cell_complex_2d_numeric.m],
+[
+try
+    load test_write_cell_complex_2d_numeric.mat
+    expdata = {reshape(uint8((1:12)+j*(51:62)),3,4);...
+               reshape(uint8((13:24)+j*(63:74)),3,4);...
+               reshape(uint8((25:36)+j*(75:86)),3,4);...
+               reshape(uint8((37:48)+j*(87:98)),3,4);}
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a{1}),class(expdata{1}));
+    pass = pass && strcmp(class(a{2}),class(expdata{2}));
+    pass = pass && strcmp(class(a{3}),class(expdata{3}));
+    pass = pass && strcmp(class(a{4}),class(expdata{4}));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$builddir/test_mat -v 5 -z -c uint8 write_cell_complex_2d_numeric],
+         [0],[ignore],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
