@@ -16,6 +16,8 @@
 
 AT_INIT([matio testsuite])
 
+AT_COLOR_TESTS
+
 AT_BANNER(Read [MAT version 4])
 m4_include([mat4_read.at])
 
