@@ -1805,7 +1805,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         nfields = uncomp_buf[1];
         nfields = nfields / fieldname_size;
         matvar->data_size = sizeof(matvar_t *);
-        matvar->nbytes    = nmemb*nfields*matvar->data_size;
+        if ( nmemb > 0 )
+            matvar->nbytes    = nmemb*nfields*matvar->data_size;
+        else
+            matvar->nbytes    = nfields*matvar->data_size;
         matvar->data      = malloc(matvar->nbytes);
         if ( !matvar->data )
             return 1;
@@ -1944,7 +1947,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         nfields = buf[1];
         nfields = nfields / fieldname_size;
         matvar->data_size = sizeof(matvar_t *);
-        matvar->nbytes    = nmemb*nfields*matvar->data_size;
+        if ( nmemb > 0 )
+            matvar->nbytes    = nmemb*nfields*matvar->data_size;
+        else
+            matvar->nbytes    = nfields*matvar->data_size;
         matvar->data = malloc(matvar->nbytes);
         if ( !matvar->data )
             return bytesread;
