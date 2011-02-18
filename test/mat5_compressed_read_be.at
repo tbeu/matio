@@ -1,4 +1,4 @@
-# Copyright (C) 2010   Christopher C. Hulbert
+# Copyright (C) 2010-2011   Christopher C. Hulbert
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -421,4 +421,22 @@ AT_CHECK(
 Dimensions: 0 x 0
 Class Type: Double Precision Array
 ]], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D character array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var24], [0],
+[      Name: var24
+      Rank: 2
+Dimensions: 4 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+abcdefghijklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+1234567890!@#$%^&*()-_=+`~
+@<:@{@:>@}\|;:'",<.>/?          @&t@
+}
+], [ignore])
 AT_CLEANUP
