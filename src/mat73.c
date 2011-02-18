@@ -1035,19 +1035,33 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
     switch ( H5Iget_type(ref_id) ) {
         case H5I_DATASET:
         {
+            hid_t data_type_id;
             numel = 1;
             for ( k = 0; k < matvar->rank; k++ )
                 numel *= matvar->dims[k];
-            matvar->data_size = Mat_SizeOfClass(matvar->class_type);
+
+            if ( MAT_C_CHAR == matvar->class_type ) {
+                matvar->data_type = MAT_T_UINT8;
+                matvar->data_size = Mat_SizeOf(MAT_T_UINT8);
+                data_type_id      = Mat_data_type_to_hid_t(MAT_T_UINT8);
+            } else {
+                matvar->data_size = Mat_SizeOfClass(matvar->class_type);
+                data_type_id      = Mat_class_type_to_hid_t(matvar->class_type);
+            }
             matvar->nbytes    = numel*matvar->data_size;
+
+            if ( matvar->nbytes < 1 ) {
+                H5Dclose(ref_id);
+                break;
+            }
 
             dset_id = ref_id;
 
             if ( !matvar->isComplex ) {
                 matvar->data      = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
-                    H5Dread(dset_id,Mat_class_type_to_hid_t(matvar->class_type),
-                            H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
+                    H5Dread(dset_id,data_type_id,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                            matvar->data);
                 }
             } else {
                 struct ComplexSplit *complex_data;
@@ -2466,6 +2480,26 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 matvar->data = complex_data;
             }
             H5Dclose(dset_id);
+            break;
+        case MAT_C_CHAR:
+            numel = 1;
+            for ( k = 0; k < matvar->rank; k++ )
+                numel *= matvar->dims[k];
+            matvar->data_type = MAT_T_UINT8;
+            matvar->data_size = 1;
+            matvar->nbytes    = numel*matvar->data_size;
+
+            if ( NULL != matvar->internal->hdf5_name ) {
+                dset_id = H5Dopen(fid,matvar->internal->hdf5_name);
+            } else {
+                dset_id = matvar->internal->id;
+                H5Iinc_ref(dset_id);
+            }
+            matvar->data = malloc(matvar->nbytes);
+            if ( NULL != matvar->data ) {
+                H5Dread(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
+                        H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
+            }
             break;
         case MAT_C_STRUCT:
         {
