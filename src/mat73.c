@@ -1065,151 +1065,25 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 }
             } else {
                 struct ComplexSplit *complex_data;
-                void *tmp;
                 hid_t h5_complex_base,h5_complex;
 
                 complex_data     = malloc(sizeof(*complex_data));
                 complex_data->Re = malloc(matvar->nbytes);
                 complex_data->Im = malloc(matvar->nbytes);
 
-                h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
+                h5_complex_base = data_type_id;
                 h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                      2*H5Tget_size(h5_complex_base));
+                                            H5Tget_size(h5_complex_base));
                 H5Tinsert(h5_complex,"real",0,h5_complex_base);
-                H5Tinsert(h5_complex,"imag",H5Tget_size(h5_complex_base),
-                          h5_complex_base);
+                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                        complex_data->Re);
+                H5Tclose(h5_complex);
 
-                /* FIXME */
-                tmp = malloc(2*matvar->nbytes);
-                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,tmp);
-                switch ( matvar->class_type ) {
-                    case MAT_C_DOUBLE:
-                    {
-                        double *rp      = complex_data->Re;
-                        double *ip      = complex_data->Im;
-                        double *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_SINGLE:
-                    {
-                        float *rp      = complex_data->Re;
-                        float *ip      = complex_data->Im;
-                        float *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-#ifdef HAVE_MAT_INT64_T
-                    case MAT_C_INT64:
-                    {
-                        mat_int64_t *rp      = complex_data->Re;
-                        mat_int64_t *ip      = complex_data->Im;
-                        mat_int64_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-#endif
-#ifdef HAVE_MAT_UINT64_T
-                    case MAT_C_UINT64:
-                    {
-                        mat_uint64_t *rp      = complex_data->Re;
-                        mat_uint64_t *ip      = complex_data->Im;
-                        mat_uint64_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-#endif
-                    case MAT_C_INT32:
-                    {
-                        mat_int32_t *rp      = complex_data->Re;
-                        mat_int32_t *ip      = complex_data->Im;
-                        mat_int32_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_UINT32:
-                    {
-                        mat_uint32_t *rp      = complex_data->Re;
-                        mat_uint32_t *ip      = complex_data->Im;
-                        mat_uint32_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_INT16:
-                    {
-                        mat_int16_t *rp      = complex_data->Re;
-                        mat_int16_t *ip      = complex_data->Im;
-                        mat_int16_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_UINT16:
-                    {
-                        mat_uint16_t *rp      = complex_data->Re;
-                        mat_uint16_t *ip      = complex_data->Im;
-                        mat_uint16_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_INT8:
-                    {
-                        mat_int8_t *rp      = complex_data->Re;
-                        mat_int8_t *ip      = complex_data->Im;
-                        mat_int8_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_UINT8:
-                    {
-                        mat_uint8_t *rp      = complex_data->Re;
-                        mat_uint8_t *ip      = complex_data->Im;
-                        mat_uint8_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                }
-                free(tmp);
-
+                h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                            H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                        complex_data->Im);
                 H5Tclose(h5_complex);
                 matvar->data = complex_data;
             }
@@ -2331,7 +2205,6 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 }
             } else {
                 struct ComplexSplit *complex_data;
-                void *tmp;
                 hid_t h5_complex_base,h5_complex;
 
                 complex_data     = malloc(sizeof(*complex_data));
@@ -2340,142 +2213,17 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
                 h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
                 h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                      2*H5Tget_size(h5_complex_base));
+                                            H5Tget_size(h5_complex_base));
                 H5Tinsert(h5_complex,"real",0,h5_complex_base);
-                H5Tinsert(h5_complex,"imag",H5Tget_size(h5_complex_base),
-                          h5_complex_base);
+                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                        complex_data->Re);
+                H5Tclose(h5_complex);
 
-                /* FIXME */
-                tmp = malloc(2*matvar->nbytes);
-                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,tmp);
-                switch ( matvar->class_type ) {
-                    case MAT_C_DOUBLE:
-                    {
-                        double *rp      = complex_data->Re;
-                        double *ip      = complex_data->Im;
-                        double *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_SINGLE:
-                    {
-                        float *rp      = complex_data->Re;
-                        float *ip      = complex_data->Im;
-                        float *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-#ifdef HAVE_MAT_INT64_T
-                    case MAT_C_INT64:
-                    {
-                        mat_int64_t *rp      = complex_data->Re;
-                        mat_int64_t *ip      = complex_data->Im;
-                        mat_int64_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-#endif
-#ifdef HAVE_MAT_UINT64_T
-                    case MAT_C_UINT64:
-                    {
-                        mat_uint64_t *rp      = complex_data->Re;
-                        mat_uint64_t *ip      = complex_data->Im;
-                        mat_uint64_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-#endif
-                    case MAT_C_INT32:
-                    {
-                        mat_int32_t *rp      = complex_data->Re;
-                        mat_int32_t *ip      = complex_data->Im;
-                        mat_int32_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_UINT32:
-                    {
-                        mat_uint32_t *rp      = complex_data->Re;
-                        mat_uint32_t *ip      = complex_data->Im;
-                        mat_uint32_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_INT16:
-                    {
-                        mat_int16_t *rp      = complex_data->Re;
-                        mat_int16_t *ip      = complex_data->Im;
-                        mat_int16_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_UINT16:
-                    {
-                        mat_uint16_t *rp      = complex_data->Re;
-                        mat_uint16_t *ip      = complex_data->Im;
-                        mat_uint16_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_INT8:
-                    {
-                        mat_int8_t *rp      = complex_data->Re;
-                        mat_int8_t *ip      = complex_data->Im;
-                        mat_int8_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                    case MAT_C_UINT8:
-                    {
-                        mat_uint8_t *rp      = complex_data->Re;
-                        mat_uint8_t *ip      = complex_data->Im;
-                        mat_uint8_t *tmp_ptr = tmp;
-                        size_t  k;
-                        for ( k = 0; k < numel; k++ ) {
-                            *rp++ = *tmp_ptr++;
-                            *ip++ = *tmp_ptr++;
-                        }
-                        break;
-                    }
-                }
-                free(tmp);
-
+                h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                            H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                        complex_data->Im);
                 H5Tclose(h5_complex);
                 matvar->data = complex_data;
             }
@@ -2601,7 +2349,6 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                     }
                 } else {
                     struct ComplexSplit *complex_data;
-                    void *tmp;
                     hid_t h5_complex_base,h5_complex;
 
                     complex_data     = malloc(sizeof(*complex_data));
@@ -2610,19 +2357,17 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
                     h5_complex_base = Mat_data_type_to_hid_t(matvar->data_type);
                     h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                          2*H5Tget_size(h5_complex_base));
+                                                H5Tget_size(h5_complex_base));
                     H5Tinsert(h5_complex,"real",0,h5_complex_base);
-                    H5Tinsert(h5_complex,"imag",H5Tget_size(h5_complex_base),
-                              h5_complex_base);
-
-                    /* FIXME: Use of temporary storage */
-                    tmp = malloc(2*ndata_bytes);
                     H5Dread(sparse_dset_id,h5_complex,H5S_ALL,H5S_ALL,
-                            H5P_DEFAULT,tmp);
-                    Mat_complex_interleaved_to_split(tmp,complex_data,
-                        matvar->data_type,sparse_data->ndata);
-                    free(tmp);
+                            H5P_DEFAULT,complex_data->Re);
+                    H5Tclose(h5_complex);
 
+                    h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                                H5Tget_size(h5_complex_base));
+                    H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                    H5Dread(sparse_dset_id,h5_complex,H5S_ALL,H5S_ALL,
+                            H5P_DEFAULT,complex_data->Im);
                     H5Tclose(h5_complex);
                     sparse_data->data = complex_data;
                 }
