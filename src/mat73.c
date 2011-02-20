@@ -2547,6 +2547,47 @@ Mat_VarReadNextInfo73( mat_t *mat )
                     Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
                 }
                 free(ref_ids);
+            } else if ( MAT_C_STRUCT == matvar->class_type ) {
+                /* Empty structures can be a dataset */
+
+                /* Turn off error printing so testing for attributes doesn't print
+                 * error stacks
+                 */
+                H5Eget_auto(&efunc,&client_data);
+                H5Eset_auto((H5E_auto_t)0,NULL);
+                /* Check if the structure defines its fields in MATLAB_fields */
+                attr_id = H5Aopen_name(dset_id,"MATLAB_fields");
+                if ( -1 < attr_id ) {
+                    int field_length, i;
+                    hid_t      field_id;
+                    hsize_t    nfields;
+                    hvl_t     *fieldnames_vl;
+                    matvar_t **fields;
+
+                    space_id = H5Aget_space(attr_id);
+                    (void)H5Sget_simple_extent_dims(space_id,&nfields,NULL);
+                    field_id = H5Aget_type(attr_id);
+                    fieldnames_vl = malloc(nfields*sizeof(*fieldnames_vl));
+                    H5Aread(attr_id,field_id,fieldnames_vl);
+
+                    fields = calloc(nfields,sizeof(*fields));
+                    for ( i = 0; i < nfields; i++ ) {
+                        fields[i] = Mat_VarCalloc();
+                        fields[i]->name = calloc(fieldnames_vl[i].len+1,1);
+                        memcpy(fields[i]->name,fieldnames_vl[i].p,
+                               fieldnames_vl[i].len);
+                    }
+
+                    matvar->data = fields;
+                    matvar->data_size = sizeof(matvar_t*);
+                    matvar->nbytes    = nfields*matvar->data_size;
+
+                    H5Sclose(space_id);
+                    H5Tclose(field_id);
+                    H5Aclose(attr_id);
+                    free(fieldnames_vl);
+                }
+                H5Eset_auto(efunc,client_data);
             }
 
             if ( matvar->internal->id != dset_id ) {
