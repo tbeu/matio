@@ -2760,6 +2760,11 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
             break;
         case MAT_C_CHAR:
         {
+            numel = 1;
+            for ( k = 0; k < matvar->rank; k++ ) {
+                perm_dims[k] = matvar->dims[matvar->rank-k-1];
+                numel *= perm_dims[k];
+            }
             if ( 0 == numel || NULL == matvar->data ) {
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
@@ -2791,8 +2796,6 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 H5Sclose(mspace_id);
             } else {
                 int matlab_int_decode = 2;
-                for ( k = 0; k < matvar->rank; k++ )
-                    perm_dims[k] = matvar->dims[matvar->rank-k-1];
 
                 mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
                 switch ( matvar->data_type ) {
