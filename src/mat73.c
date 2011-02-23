@@ -775,6 +775,11 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         matvar->dims[1] = 1;
     }
 
+    if ( !nfields ) {
+        H5Eset_auto(efunc,client_data);
+        return;
+    }
+
     fields = malloc(nfields*numel*sizeof(*fields));
     matvar->data = fields;
     matvar->data_size = sizeof(*fields);
