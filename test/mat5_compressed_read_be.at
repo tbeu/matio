@@ -440,3 +440,1047 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 }
 ], [ignore])
 AT_CLEANUP
+
+AT_SETUP([Read empty structure array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var25], [0],
+[      Name: var25
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+Fields@<:@0@:>@ {
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read empty structure array with fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var26], [0],
+[      Name: var26
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@2@:>@ {
+      Name: field1
+      Rank: 0
+      Name: field2
+      Rank: 0
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with empty fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var27], [0],
+[      Name: var27
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Double Precision Array
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Character Array
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Structure
+Fields@<:@0@:>@ {
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with double-precision fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var28], [0],
+[      Name: var28
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with single-precision fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var29], [0],
+[      Name: var29
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with 64-bit integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var30], [0],
+[      Name: var30
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with 64-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var31], [0],
+[      Name: var31
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with 32-bit integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var32], [0],
+[      Name: var32
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with 32-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var33], [0],
+[      Name: var33
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with 16-bit integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var34], [0],
+[      Name: var34
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with 16-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var35], [0],
+[      Name: var35
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with 8-bit integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var36], [0],
+[      Name: var36
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with 8-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var37], [0],
+[      Name: var37
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+14 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+15 18 21 24 @&t@
+16 19 22 25 @&t@
+17 20 23 26 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex double-precision fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var38], [0],
+[      Name: var38
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex single-precision fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var39], [0],
+[      Name: var39
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex 64-bit integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var40], [0],
+[      Name: var40
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, signed integer array (complex)
+ Data Type: 64-bit, signed integer
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, signed integer array (complex)
+ Data Type: 64-bit, signed integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, signed integer array (complex)
+ Data Type: 64-bit, signed integer
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, signed integer array (complex)
+ Data Type: 64-bit, signed integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex 64-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var41], [0],
+[      Name: var41
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array (complex)
+ Data Type: 64-bit, unsigned integer
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, unsigned integer array (complex)
+ Data Type: 64-bit, unsigned integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array (complex)
+ Data Type: 64-bit, unsigned integer
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, unsigned integer array (complex)
+ Data Type: 64-bit, unsigned integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex 32-bit integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var42], [0],
+[      Name: var42
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex 32-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var43], [0],
+[      Name: var43
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array (complex)
+ Data Type: 32-bit, unsigned integer
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, unsigned integer array (complex)
+ Data Type: 32-bit, unsigned integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array (complex)
+ Data Type: 32-bit, unsigned integer
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, unsigned integer array (complex)
+ Data Type: 32-bit, unsigned integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex 16-bit integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var44], [0],
+[      Name: var44
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex 16-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var45], [0],
+[      Name: var45
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex 8-bit integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var46], [0],
+[      Name: var46
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, signed integer array (complex)
+ Data Type: 8-bit, signed integer
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, signed integer array (complex)
+ Data Type: 8-bit, signed integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, signed integer array (complex)
+ Data Type: 8-bit, signed integer
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, signed integer array (complex)
+ Data Type: 8-bit, signed integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+AT_SETUP([Read structure array with complex 8-bit unsigned integer fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var47], [0],
+[      Name: var47
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+1 + 51i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, unsigned integer array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+14 + 64i @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, unsigned integer array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
+16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
+17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
