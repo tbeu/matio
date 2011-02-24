@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (C) 2005-2008   Christopher C. Hulbert
+## Copyright (C) 2005-2011   Christopher C. Hulbert
 ##
 ##  This library is free software; you can redistribute it and/or
 ##  modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,6 @@
 ##  License along with this library; if not, write to the Free Software
 ##  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ##
-AUTOMAKE_OPTIONS = foreign 1.8 no-dependencies
 VPATH = @srcdir@
 
 TESTSUITE_AT = $(srcdir)/testsuite.at \

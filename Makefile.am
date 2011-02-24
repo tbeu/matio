@@ -1,5 +1,5 @@
 ##
-## Copyright (C) 2005-2010   Christopher C. Hulbert
+## Copyright (C) 2005-2011   Christopher C. Hulbert
 ##
 ##  This library is free software; you can redistribute it and/or
 ##  modify it under the terms of the GNU Lesser General Public
