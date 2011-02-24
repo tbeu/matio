@@ -30,6 +30,16 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat73_read_be.at \
                $(srcdir)/mat73_write.at
 TESTSUITE = $(srcdir)/testsuite
+
+TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
+                 $(srcdir)/datasets/matio_test_cases_compressed_be.mat \
+                 $(srcdir)/datasets/matio_test_cases_compressed_le.mat \
+                 $(srcdir)/datasets/matio_test_cases_hdf_be.mat \
+                 $(srcdir)/datasets/matio_test_cases_hdf_le.mat \
+                 $(srcdir)/datasets/matio_test_cases_uncompressed_be.mat \
+                 $(srcdir)/datasets/matio_test_cases_uncompressed_le.mat \
+                 $(srcdir)/datasets/matio_test_cases_v4_be.mat \
+                 $(srcdir)/datasets/matio_test_cases_v4_le.mat
 if MAT73
 MAT73 = 1
 else
@@ -46,7 +56,8 @@ CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
                     HAVE_UINT64=$(HAVE_UINT64) HAVE_INT64=$(HAVE_INT64) \
                     COMPRESSION_ZLIB=$(COMPRESSION_ZLIB)
 
-EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4
+EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4 \
+             $(TEST_DATAFILES)
 
 if NEED_GETOPT
 GETOPT_CFLAGS = -I$(top_builddir)/getopt/lib
