@@ -1593,18 +1593,14 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
             }
             case MAT_C_CHAR:
             {
+                char *data = matvar->data;
                 if ( !printdata )
                     break;
-                if ( matvar->dims[0] == 1 ) {
-                    printf("%s\n",(char *)matvar->data);
-                } else {
-                    char *data = matvar->data;
-                    for ( i = 0; i < matvar->dims[0]; i++ ) {
-                        j = 0;
-                        for ( j = 0; j < matvar->dims[1]; j++ )
-                            printf("%c",data[j*matvar->dims[0]+i]);
-                        printf("\n");
-                    }
+                for ( i = 0; i < matvar->dims[0]; i++ ) {
+                    j = 0;
+                    for ( j = 0; j < matvar->dims[1]; j++ )
+                        printf("%c",data[j*matvar->dims[0]+i]);
+                    printf("\n");
                 }
                 break;
             }
