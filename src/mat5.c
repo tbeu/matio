@@ -317,7 +317,7 @@ GetMatrixMaxBufSize(matvar_t *matvar)
     if ( NULL != matvar->name )
         len = strlen(matvar->name);
     else
-        len=8;
+        len=4;
 
     if ( len <= 4 ) {
         nBytes += tag_size;
