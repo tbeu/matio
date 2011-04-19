@@ -402,7 +402,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D character array])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var24], [0],
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var24], [0],
 [      Name: var24
       Rank: 2
 Dimensions: 4 x 26
