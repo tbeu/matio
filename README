@@ -54,26 +54,8 @@ Acknowledgements:
     documentation in the top-level directory as a pdf.
 
     2.1 zlib
-        To support compressed MAT files, zlib 1.2.2 or greater is required.
-        If zlib 1.2.2 is used, there is a bug in inflate.c. A patch file
-        (inflate.patch) is included in the patches directory and should be
-        applied before creating the zlib library or libmatio will likely crash
-        at some point. The latest release of zlib already has this patch
-        applied. A minimal zlib 1.2.3 has been included. This does not have ALL
-        build targets and does not include the contrib directory. Due to some
-        linking problems under linux/solaris, when shared libraries are
-        compiled against the static zlib and a program (like Matlab) loads in
-        zlib symbols, it uses those symbols instead of the static ones. This
-        should not affect stand-alone programs or static libraries (unless
-        linked against from something like a mex file). Therefore, when building
-        libmatio, it is recommended to use the built-in zlib 1.2.3 or to
-        compile the zlib with -DZ_PREFIX which only changes the symbol names to
-        add z_ to external symbols. This eliminates the possibility of using
-        zlib symbols from a shared library. To build zlib with the z prefix,
-        you can use: CFLAGS=-DZ_PREFIX ./configure;make;make install
-
-        the build scripts provided already make the zlib that is included with
-        this distribution and set the flags to use that as appropriate.
+        To support compressed MAT files, zlib 1.2.3 or greater is required.
+        The zlib software can be downloaded from http://zlib.net.
 
     2.2 HDF-5
         Support for MAT file version 7.3 requires the HDF-5 library. This
