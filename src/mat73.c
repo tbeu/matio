@@ -1049,6 +1049,9 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 matvar->data_type = MAT_T_UINT8;
                 matvar->data_size = Mat_SizeOf(MAT_T_UINT8);
                 data_type_id      = Mat_data_type_to_hid_t(MAT_T_UINT8);
+            } else if ( MAT_C_STRUCT == matvar->class_type ) {
+                /* Empty structure array */
+                break;
             } else {
                 matvar->data_size = Mat_SizeOfClass(matvar->class_type);
                 data_type_id      = Mat_class_type_to_hid_t(matvar->class_type);
