@@ -2582,20 +2582,24 @@ Mat_VarReadNextInfo73( mat_t *mat )
                 matvar->data      = malloc(matvar->nbytes);
                 cells  = matvar->data;
 
-                ref_ids = malloc(ncells*sizeof(*ref_ids));
-                H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                        ref_ids);
-                for ( i = 0; i < ncells; i++ ) {
-                    hid_t ref_id;
-                    cells[i] = Mat_VarCalloc();
-                    cells[i]->internal->hdf5_ref = ref_ids[i];
-                    /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
-                    ref_id = H5Rdereference(dset_id,H5R_OBJECT,ref_ids+i);
-                    cells[i]->internal->id=ref_id;
-                    cells[i]->internal->fp=matvar->internal->fp;
-                    Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
+                if ( ncells ) {
+                    ref_ids = malloc(ncells*sizeof(*ref_ids));
+                    H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                            ref_ids);
+                    for ( i = 0; i < ncells; i++ ) {
+                        hid_t ref_id;
+                        cells[i] = Mat_VarCalloc();
+                        cells[i]->internal->hdf5_ref = ref_ids[i];
+                        /* Closing of ref_id is done in
+                         * Mat_H5ReadNextReferenceInfo
+                         */
+                        ref_id = H5Rdereference(dset_id,H5R_OBJECT,ref_ids+i);
+                        cells[i]->internal->id=ref_id;
+                        cells[i]->internal->fp=matvar->internal->fp;
+                        Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
+                    }
+                    free(ref_ids);
                 }
-                free(ref_ids);
             } else if ( MAT_C_STRUCT == matvar->class_type ) {
                 /* Empty structures can be a dataset */
 
