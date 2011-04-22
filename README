@@ -57,12 +57,12 @@ Acknowledgements:
         To support compressed MAT files, zlib 1.2.3 or greater is required.
         The zlib software can be downloaded from http://zlib.net.
 
-    2.2 HDF-5
-        Support for MAT file version 7.3 requires the HDF-5 library. This
+    2.2 HDF5
+        Support for MAT file version 7.3 requires the HDF5 library. This
         library can be downloaded from The HDF Group website
-        (http://www.hdfgroup.org/). HDF-5 version 1.6.6 or the 1.8.0 beta5 are
-        recommended. The 1.8.0 version must be built with
-        '--with-default-api-version=v16'.
+        (http://www.hdfgroup.org/). MATIO requires HDF5 version 1.8.x, and must
+        be built with default API version 1.8 (i.e.
+        '--with-default-api-version=v18').
 
     2.3 Targets
         The library has been tested/used on linux and windows little-endian

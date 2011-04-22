@@ -1,3 +1,28 @@
+AC_DEFUN([MATIO_CHECK_HDF5_V18],
+[
+    AC_MSG_CHECKING([if HDF5 interface is v1.8])
+    saved_CFLAGS="$CFLAGS"
+    saved_LDFLAGS="$LDFLAGS"
+    saved_LIBS="$LIBS"
+
+    CFLAGS="$HDF5_CFLAGS $saved_CFLAGS"
+    LDFLAGS="$saved_LDFLAGS"
+    LIBS="$HDF5_LIBS $ZLIB_LIBS $saved_LIBS"
+
+    AC_TRY_LINK([#include<stdio.h>
+                 #include <stdlib.h>
+                 #include <hdf5.h>],
+                 [hid_t dset_id = H5Dcreate(0,NULL,0,0,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);],
+                 [matio_hdf5_is_v18=yes],
+                 [matio_hdf5_is_v18=no])
+
+    CFLAGS="$saved_CFLAGS"
+    LDFLAGS="$saved_LDFLAGS"
+    LIBS="$saved_LIBS"
+
+    AC_MSG_RESULT([$matio_hdf5_is_v18])
+])
+
 AC_DEFUN([MATIO_CHECK_HDF5],
 [
 AC_ARG_WITH(hdf5,AS_HELP_STRING([--with-hdf5=DIR],
@@ -43,7 +68,6 @@ then
     if test "x$ac_have_hdf5" = "xyes"
     then
         AC_MSG_RESULT($HDF5_LIBS)
-        AC_DEFINE_UNQUOTED([HAVE_HDF5],[],[Have HDF5])
     else
         HDF5_LIBS=
         HDF5_CFLAGS=
@@ -53,7 +77,19 @@ else
     HDF5_LIBS=
     HDF5_CFLAGS=
 fi
+
+if test "x$ac_have_hdf5" = "xyes"
+then
+    MATIO_CHECK_HDF5_V18
+    if test "x$matio_hdf5_is_v18" = "xyes"; then
+        AC_DEFINE_UNQUOTED([HAVE_HDF5],[],[Have HDF5])
+    else
+        HDF5_LIBS=""
+        HDF5_CFLAGS=""
+    fi
+fi
+
 AC_SUBST(HDF5_LIBS)
 AC_SUBST(HDF5_CFLAGS)
-AM_CONDITIONAL(HAVE_HDF5, test "x$ac_have_hdf5" = "xyes" )
+AM_CONDITIONAL(HAVE_HDF5, test "x$ac_have_hdf5" = "xyes" -a "x$matio_hdf5_is_v18" = "xyes" )
 ])
