@@ -65,10 +65,8 @@ Acknowledgements:
         '--with-default-api-version=v18').
 
     2.3 Targets
-        The library has been tested/used on linux and windows little-endian
-        architectures, as well as solarix big-endian. Again, thanks to Jacco for
-        using a big-endian system and providing some test files for that as
-        well as testing reading little-endian files on a big-endian system.
+        The library has been tested/used on Linux, Windows, Mac OS X, and AIX
+        including both little-endian and big-endian architecture.
 
 3.0 License
     Copyright (C) 2005-2008   Christopher C. Hulbert
