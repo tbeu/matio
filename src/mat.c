@@ -282,10 +282,19 @@ Mat_Close( mat_t *mat )
 int
 Mat_Rewind( mat_t *mat )
 {
-    if ( mat->version != MAT_FT_MAT4 )
-        fseek(mat->fp,128L,SEEK_SET);
-    else
-        fseek(mat->fp,0L,SEEK_SET);
+    switch ( mat->version ) {
+        case MAT_FT_MAT73:
+            mat->next_index = 0;
+            break;
+        case MAT_FT_MAT5:
+            fseek(mat->fp,128L,SEEK_SET);
+            break;
+        case MAT_FT_MAT4:
+            fseek(mat->fp,0L,SEEK_SET);
+            break;
+        default:
+            return -1;
+    }
     return 0;
 }
 
