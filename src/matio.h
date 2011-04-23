@@ -125,7 +125,6 @@ enum matio_flags {
     MAT_F_COMPLEX = 0x0800,    /**< @brief Complex bit flag */
     MAT_F_GLOBAL  = 0x0400,    /**< @brief Global bit flag */
     MAT_F_LOGICAL = 0x0200,    /**< @brief Logical bit flag */
-    MAT_F_CLASS_T = 0x00ff     /**< @brief Class-Type bits flag */
 };
 
 #define MEM_CONSERVE 1       /**< @brief Conserve memory */
