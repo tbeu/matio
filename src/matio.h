@@ -144,8 +144,8 @@ enum matio_compression {
  * matio lookup type
  */
 enum {
-    BY_NAME  = 1, /**< Lookup by name */
-    BY_INDEX = 2  /**< Lookup by index */
+    MAT_BY_NAME  = 1, /**< Lookup by name */
+    MAT_BY_INDEX = 2  /**< Lookup by index */
 };
 
 /** @brief Complex data type using split storage

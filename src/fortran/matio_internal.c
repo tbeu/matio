@@ -434,7 +434,7 @@ fmat_vargetstructfield_byname_c(struct fmatvar_t *matvar,char *name,int *index,
     varname = fstrdup(name,name_len);
 
     field->matvar_t_c_ptr = Mat_VarGetStructField(matvar->matvar_t_c_ptr,
-        varname,BY_NAME,*index);
+        varname,MAT_BY_NAME,*index);
     free(varname);
     if ( field->matvar_t_c_ptr != NULL ) {
         field->nbytes     = field->matvar_t_c_ptr->nbytes;

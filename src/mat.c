@@ -1258,8 +1258,8 @@ Mat_VarGetNumberOfFields(matvar_t *matvar)
  * @param name_or_index Name of the field, or the 1-relative index of the field.
  * If the index is used, it should be the address of an integer variable whose
  * value is the index number.
- * @param opt BY_NAME if the name_or_index is the name or BY_INDEX if the index
- * was passed.
+ * @param opt MAT_BY_NAME if the name_or_index is the name or MAT_BY_INDEX if
+ *            the index was passed.
  * @param index linear index of the structure to find the field of
  * @return Pointer to the Structure Field on success, NULL on error
  */
@@ -1278,7 +1278,7 @@ Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
     if ( index >= nmemb || index < 0)
         err = 1;
 
-    if ( !err && (opt == BY_INDEX) ) {
+    if ( !err && (opt == MAT_BY_INDEX) ) {
         int field_index;
 
         field_index = *(int *)name_or_index;
@@ -1287,7 +1287,7 @@ Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
             Mat_Critical("Mat_VarGetStructField: field index out of bounds");
         else
             field = *((matvar_t **)matvar->data+index*nfields+field_index - 1);
-    } else if ( !err && (opt == BY_NAME) ) {
+    } else if ( !err && (opt == MAT_BY_NAME) ) {
         char *field_name;
 
         field_name = (char *)name_or_index;

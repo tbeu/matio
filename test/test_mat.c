@@ -1861,13 +1861,14 @@ test_get_struct_field(const char *file,const char *structname,
                 case '8':
                 case '9':
                     index = atoi(fieldname);
-                    field = Mat_VarGetStructField(matvar,&index,BY_INDEX,0);
+                    field = Mat_VarGetStructField(matvar,&index,MAT_BY_INDEX,0);
                     err = (field == NULL) ? 1 : 0;
                     if ( !err )
                         Mat_VarPrint( field, 0);
                     break;
                 default:
-                    field = Mat_VarGetStructField(matvar,fieldname,BY_NAME,0);
+                    field = Mat_VarGetStructField(matvar,fieldname,
+                                MAT_BY_NAME,0);
                     err = (field == NULL) ? 1 : 0;
                     if ( !err )
                         Mat_VarPrint(field,0);
