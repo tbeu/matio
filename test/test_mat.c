@@ -930,7 +930,7 @@ test_write_char(char *output_name)
         dims[0]   = 4;
         dims[1]   = 26;
         matvar = Mat_VarCreate("a",MAT_C_CHAR,MAT_T_UINT8,2,
-                    dims,str,MEM_CONSERVE);
+                    dims,str,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,matvar,compression);
         Mat_Close(mat);
     }
@@ -1179,13 +1179,13 @@ test_write_struct_2d_numeric(enum matio_classes matvar_class,
     dims[0] = 3;
     dims[1] = 4;
     matvar[0] = Mat_VarCreate("field1",matvar_class,data_type,2,
-                   dims,data[0],MEM_CONSERVE);
+                   dims,data[0],MAT_F_DONT_COPY_DATA);
     matvar[1] = Mat_VarCreate("field2",matvar_class,data_type,2,
-                   dims,data[1],MEM_CONSERVE);
+                   dims,data[1],MAT_F_DONT_COPY_DATA);
     matvar[2] = Mat_VarCreate("field1",matvar_class,data_type,2,
-                   dims,data[2],MEM_CONSERVE);
+                   dims,data[2],MAT_F_DONT_COPY_DATA);
     matvar[3] = Mat_VarCreate("field2",matvar_class,data_type,2,
-                   dims,data[3],MEM_CONSERVE);
+                   dims,data[3],MAT_F_DONT_COPY_DATA);
     matvar[4] = NULL;
     dims[0] = 2;
     dims[1] = 1;
@@ -1376,13 +1376,13 @@ test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
     dims[0] = 3;
     dims[1] = 4;
     matvar[0] = Mat_VarCreate("field1",matvar_class,data_type,2,
-                   dims,data,MEM_CONSERVE | MAT_F_COMPLEX);
+                   dims,data,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
     matvar[1] = Mat_VarCreate("field2",matvar_class,data_type,2,
-                   dims,data+1,MEM_CONSERVE | MAT_F_COMPLEX);
+                   dims,data+1,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
     matvar[2] = Mat_VarCreate("field1",matvar_class,data_type,2,
-                   dims,data+2,MEM_CONSERVE | MAT_F_COMPLEX);
+                   dims,data+2,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
     matvar[3] = Mat_VarCreate("field2",matvar_class,data_type,2,
-                   dims,data+3,MEM_CONSERVE | MAT_F_COMPLEX);
+                   dims,data+3,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
     matvar[4] = NULL;
     dims[0] = 2;
     dims[1] = 1;
@@ -1559,13 +1559,13 @@ test_write_cell_2d_numeric(enum matio_classes matvar_class,
     dims[0] = 3;
     dims[1] = 4;
     matvar[0] = Mat_VarCreate(NULL,matvar_class,data_type,2,
-                   dims,data[0],MEM_CONSERVE);
+                   dims,data[0],MAT_F_DONT_COPY_DATA);
     matvar[1] = Mat_VarCreate(NULL,matvar_class,data_type,2,
-                   dims,data[1],MEM_CONSERVE);
+                   dims,data[1],MAT_F_DONT_COPY_DATA);
     matvar[2] = Mat_VarCreate(NULL,matvar_class,data_type,2,
-                   dims,data[2],MEM_CONSERVE);
+                   dims,data[2],MAT_F_DONT_COPY_DATA);
     matvar[3] = Mat_VarCreate(NULL,matvar_class,data_type,2,
-                   dims,data[3],MEM_CONSERVE);
+                   dims,data[3],MAT_F_DONT_COPY_DATA);
     matvar[4] = NULL;
     dims[0] = 4;
     dims[1] = 1;
@@ -1756,13 +1756,13 @@ test_write_cell_complex_2d_numeric(enum matio_classes matvar_class,
     dims[0] = 3;
     dims[1] = 4;
     matvar[0] = Mat_VarCreate(NULL,matvar_class,data_type,2,
-                   dims,data,MEM_CONSERVE | MAT_F_COMPLEX);
+                   dims,data,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
     matvar[1] = Mat_VarCreate(NULL,matvar_class,data_type,2,
-                   dims,data+1,MEM_CONSERVE | MAT_F_COMPLEX);
+                   dims,data+1,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
     matvar[2] = Mat_VarCreate(NULL,matvar_class,data_type,2,
-                   dims,data+2,MEM_CONSERVE | MAT_F_COMPLEX);
+                   dims,data+2,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
     matvar[3] = Mat_VarCreate(NULL,matvar_class,data_type,2,
-                   dims,data+3,MEM_CONSERVE | MAT_F_COMPLEX);
+                   dims,data+3,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
     matvar[4] = NULL;
     dims[0] = 4;
     dims[1] = 1;
@@ -1800,27 +1800,27 @@ test_write_null(void)
         Mat_VarWrite(mat,struct_matvar,compression);
         Mat_VarFree(struct_matvar);
         struct_matvar = Mat_VarCreate("struct_empty_with_fields",MAT_C_STRUCT,
-                            MAT_T_STRUCT,3,dims,struct_fields,MEM_CONSERVE);
+                            MAT_T_STRUCT,3,dims,struct_fields,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,struct_matvar,compression);
         /* Reset data to NULL so the fields are not free'd */
         struct_matvar->data = NULL;
         Mat_VarFree(struct_matvar);
         dims[0] = 1;
         struct_matvar = Mat_VarCreate("struct_null_fields",MAT_C_STRUCT,
-                            MAT_T_STRUCT,2,dims,struct_fields,MEM_CONSERVE);
+                            MAT_T_STRUCT,2,dims,struct_fields,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,struct_matvar,compression);
         /* Reset data to NULL so the fields are not free'd */
         struct_matvar->data = NULL;
         Mat_VarFree(struct_matvar);
         dims[0] = 0;
         cell_matvar = Mat_VarCreate("cell_null",MAT_C_CELL,MAT_T_CELL,2,
-                            dims,NULL,MEM_CONSERVE);
+                            dims,NULL,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,cell_matvar,compression);
         Mat_VarFree(cell_matvar);
 
         dims[0] = 3;
         cell_matvar = Mat_VarCreate("cell_null_cells",MAT_C_CELL,MAT_T_CELL,2,
-                            dims,struct_fields,MEM_CONSERVE);
+                            dims,struct_fields,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,cell_matvar,compression);
         /* Reset data to NULL so the cells are not free'd */
         cell_matvar->data = NULL;
@@ -1999,7 +1999,7 @@ test_writenan(void)
     mat = Mat_CreateVer("test_writenan.mat",NULL,mat_file_ver);
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
-                       dims,data,MEM_CONSERVE);
+                       dims,data,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,matvar,0);
         Mat_VarFree(matvar);
         Mat_Close(mat);
@@ -2028,7 +2028,7 @@ test_writeinf(void)
     mat = Mat_CreateVer("test_writeinf.mat",NULL,mat_file_ver);
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
-                       dims,data,MEM_CONSERVE);
+                       dims,data,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,matvar,0);
         Mat_VarFree(matvar);
         Mat_Close(mat);
@@ -2071,7 +2071,7 @@ test_write_sparse(enum matio_classes matvar_class,char *output_name)
 
     if ( NULL != sparse.data) {
         matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,
-                       MAT_T_DOUBLE,2,dims,&sparse,MEM_CONSERVE);
+                       MAT_T_DOUBLE,2,dims,&sparse,MAT_F_DONT_COPY_DATA);
         if ( matvar != NULL ) {
             Mat_VarWrite(mat,matvar,compression);
             Mat_VarFree(matvar);
@@ -2126,7 +2126,7 @@ test_write_complex_sparse(enum matio_classes matvar_class,char *output_name)
 
     if ( NULL != sparse.data ) {
         matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,MAT_T_DOUBLE,2,
-                               dims,&sparse,MAT_F_COMPLEX | MEM_CONSERVE);
+                               dims,&sparse,MAT_F_COMPLEX | MAT_F_DONT_COPY_DATA);
         if ( matvar != NULL ) {
             Mat_VarWrite(mat,matvar,compression);
             Mat_VarFree(matvar);

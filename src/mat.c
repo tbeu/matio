@@ -429,10 +429,10 @@ Mat_VarCalloc(void)
  * @param dims array of dimensions of the variable of size rank
  * @param data pointer to the data
  * @param opt 0, or bitwise or of the following options:
- * - MEM_CONSERVE to just use the pointer to the data and not copy the data
- *       itself.  Note that the pointer should not be freed until you are done
- *       with the mat variable.  The Mat_VarFree function will NOT free
- *       data that was created with MEM_CONSERVE, so free it yourself.
+ * - MAT_F_DONT_COPY_DATA to just use the pointer to the data and not copy the
+ *       data itself. Note that the pointer should not be freed until you are
+ *       done with the mat variable.  The Mat_VarFree function will NOT free
+ *       data that was created with MAT_F_DONT_COPY_DATA, so free it yourself.
  * - MAT_F_COMPLEX to specify that the data is complex.  The data variable
  *       should be a pointer to a struct ComplexSplit type.
  * - MAT_F_GLOBAL to assign the variable as a global variable
@@ -539,7 +539,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     }
     if ( data == NULL ) {
         matvar->data = NULL;
-    } else if ( opt & MEM_CONSERVE ) {
+    } else if ( opt & MAT_F_DONT_COPY_DATA ) {
         matvar->data         = data;
         matvar->mem_conserve = 1;
     } else if ( MAT_C_SPARSE == matvar->class_type ) {
@@ -778,7 +778,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 /** @brief Frees all the allocated memory associated with the structure
  *
  * Frees memory used by a MAT variable.  Frees the data associated with a
- * MAT variable if it's non-NULL and MEM_CONSERVE was not used.
+ * MAT variable if it's non-NULL and MAT_F_DONT_COPY_DATA was not used.
  * @ingroup MAT
  * @param matvar Pointer to the matvar_t structure
  */
