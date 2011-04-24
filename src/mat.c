@@ -1252,7 +1252,10 @@ Mat_VarGetNumberOfFields(matvar_t *matvar)
     } else {
         for ( i = 0; i < matvar->rank; i++ )
             nmemb *= matvar->dims[i];
-        nfields = matvar->nbytes / (nmemb*matvar->data_size);
+        if ( nmemb > 0 )
+            nfields = matvar->nbytes / (nmemb*matvar->data_size);
+        else
+            nfields = matvar->nbytes / (matvar->data_size);
     }
     return nfields;
 }
