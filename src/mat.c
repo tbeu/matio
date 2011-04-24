@@ -1260,10 +1260,96 @@ Mat_VarGetNumberOfFields(matvar_t *matvar)
     return nfields;
 }
 
+/** @brief Finds a field of a structure by the field's index
+ *
+ * Returns a pointer to the structure field at the given 0-relative index.
+ * @ingroup MAT
+ * @param matvar Pointer to the Structure MAT variable
+ * @param field_index 0-relative index of the field.
+ * @param index linear index of the structure array
+ * @return Pointer to the structure field on success, NULL on error
+ */
+matvar_t *
+Mat_VarGetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index)
+{
+    int       i, err = 0, nfields, nmemb;
+    matvar_t *field = NULL;
+
+    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
+         matvar->data_size == 0 )
+        return field;
+
+    nmemb = 1;
+    for ( i = 0; i < matvar->rank; i++ )
+        nmemb *= matvar->dims[i];
+
+    if ( nmemb > 0 )
+        nfields = matvar->nbytes / (nmemb*matvar->data_size);
+    else
+        nfields = matvar->nbytes / (matvar->data_size);
+
+    if ( nmemb > 0 && index >= nmemb ) {
+        Mat_Critical("Mat_VarGetStructField: structure index out of bounds");
+    } else if ( nfields > 0 ) {
+        if ( field_index > nfields ) {
+            Mat_Critical("Mat_VarGetStructField: field index out of bounds");
+        } else {
+            field = *((matvar_t **)matvar->data+index*nfields+field_index);
+        }
+    }
+
+    return field;
+}
+
+/** @brief Finds a field of a structure by the field's name
+ *
+ * Returns a pointer to the structure field at the given 0-relative index.
+ * @ingroup MAT
+ * @param matvar Pointer to the Structure MAT variable
+ * @param name Name of the structure field
+ * @param index linear index of the structure array
+ * @return Pointer to the structure field on success, NULL on error
+ */
+matvar_t *
+Mat_VarGetStructFieldByName(matvar_t *matvar,const char *field_name,
+    size_t index)
+{
+    int       i, err = 0, nfields, nmemb;
+    matvar_t *field = NULL;
+
+    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
+         matvar->data_size == 0 )
+        return field;
+
+    nmemb = 1;
+    for ( i = 0; i < matvar->rank; i++ )
+        nmemb *= matvar->dims[i];
+
+    if ( nmemb > 0 )
+        nfields = matvar->nbytes / (nmemb*matvar->data_size);
+    else
+        nfields = matvar->nbytes / (matvar->data_size);
+
+    if ( index < 0 || (nmemb > 0 && index >= nmemb ) ) {
+        Mat_Critical("Mat_VarGetStructField: structure index out of bounds");
+    } else if ( nfields > 0 ) {
+        matvar_t **fields = (matvar_t **)matvar->data+index*nfields;
+        for ( i = 0; i < nfields; i++ ) {
+            field = fields[i];
+            if ( NULL != field && NULL != field->name &&
+                 !strcmp(field->name,field_name) )
+                break;
+            else
+                field = NULL;
+        }
+    }
+
+    return field;
+}
+
 /** @brief Finds a field of a structure
  *
- * Returns a pointer to the structure field at the given 0-relative index. MAT
- * file version must be 5.
+ * Returns a pointer to the structure field at the given 0-relative index.
  * @ingroup MAT
  * @param matvar Pointer to the Structure MAT variable
  * @param name_or_index Name of the field, or the 1-relative index of the field.
@@ -1284,32 +1370,22 @@ Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
     for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
 
-    nfields = matvar->nbytes / (nmemb*sizeof(matvar_t *));
+    if ( nmemb > 0 )
+        nfields = matvar->nbytes / (nmemb*matvar->data_size);
+    else
+        nfields = matvar->nbytes / (matvar->data_size);
 
-    if ( index >= nmemb || index < 0)
+    if ( index < 0 || (nmemb > 0 && index >= nmemb ))
+        err = 1;
+    else if ( nfields < 1 )
         err = 1;
 
     if ( !err && (opt == MAT_BY_INDEX) ) {
-        int field_index;
-
-        field_index = *(int *)name_or_index;
-
-        if ( field_index > nfields || field_index < 1 )
-            Mat_Critical("Mat_VarGetStructField: field index out of bounds");
-        else
-            field = *((matvar_t **)matvar->data+index*nfields+field_index - 1);
+        size_t field_index = *(int *)name_or_index;
+        if ( field_index > 0 )
+            field = Mat_VarGetStructFieldByIndex(matvar,field_index-1,index);
     } else if ( !err && (opt == MAT_BY_NAME) ) {
-        char *field_name;
-
-        field_name = (char *)name_or_index;
-
-        for ( i = 0; i < nfields; i++ ) {
-            field = *((matvar_t **)matvar->data+index*nfields+i);
-            if ( !strcmp(field->name,field_name) )
-                break;
-            else
-                field = NULL;
-        }
+        field = Mat_VarGetStructFieldByName(matvar,name_or_index,index);
     }
 
     return field;
