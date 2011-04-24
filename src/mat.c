@@ -1238,7 +1238,6 @@ Mat_VarAddStructField(matvar_t *matvar,matvar_t **fields)
 /** @brief Returns the number of fields in a structure variable
  *
  * Returns the number of fields in the given structure.
- * MAT file version must be 5.
  * @ingroup MAT
  * @param matvar Structure matlab variable
  * @returns Number of fields, or a negative number on error
