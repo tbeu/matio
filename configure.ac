@@ -34,8 +34,6 @@ AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],0,[Matio release level number])
 PACKAGE_RELEASE_DATE="3 January 2008"
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
-gl_INIT()
-
 AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])
 AC_ARG_VAR([LT_CFLAGS],[C compiler flags passed to libtool in compile mode])
 AC_ARG_VAR([LT_LDFLAGS],[Flags passed to libtool in link mode])
@@ -54,8 +52,6 @@ dnl
 dnl  Build programs, C compiler, F77 compiler, make, install, etc.
 dnl
 AC_PROG_CC([pgcc icc gcc cc])
-
-gl_EARLY()
 
 if test "$enable_fortran" = "yes"
 then
@@ -160,7 +156,6 @@ AC_CHECK_HEADER([strings.h],[AC_DEFINE_UNQUOTED([HAVE_STRINGS_H])])
 AC_CHECK_HEADER([unistd.h],[AC_DEFINE_UNQUOTED([HAVE_UNISTD_H])])
 
 MATIO_CHECK_GETOPT_LONG
-gl_GETOPT()
 
 AC_CHECK_SIZEOF([double])
 AC_CHECK_SIZEOF([float])
@@ -439,7 +434,7 @@ AC_SUBST([AUTOTEST], ['$(AUTOM4TE) --language=Autotest'])
 AC_CONFIG_FILES([Makefile \
                  matio.pc \
                  src/Makefile \
-                 getopt/lib/Makefile \
+                 getopt/Makefile \
                  tools/Makefile \
                  test/Makefile \
                  doxygen/Makefile \

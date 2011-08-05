@@ -60,8 +60,8 @@ EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4 \
              $(TEST_DATAFILES)
 
 if NEED_GETOPT
-GETOPT_CFLAGS = -I$(top_builddir)/getopt/lib
-GETOPT_LIBS   = $(top_builddir)/getopt/lib/libgnu.la
+GETOPT_CFLAGS = -I$(top_builddir)/getopt
+GETOPT_LIBS   = $(top_builddir)/getopt/libgetopt.la
 endif
 
 AM_CFLAGS   = -I$(top_srcdir)/src $(GETOPT_CFLAGS) $(HDF5_CFLAGS) $(ZLIB_CFLAGS)

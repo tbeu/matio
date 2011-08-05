@@ -17,7 +17,7 @@
 ##
 VPATH = @srcdir@
 
-ACLOCAL_AMFLAGS = -I config -I getopt/m4
+ACLOCAL_AMFLAGS = -I config
 
 datadir = $(prefix)/share/matio
 EXTRA_DIST = matio.pc.in bootstrap patches/inflate.patch \
@@ -33,7 +33,7 @@ DOCS=doxygen
 endif
 
 if NEED_GETOPT
-GETOPT = getopt/lib
+GETOPT=getopt
 endif
 
 SUBDIRS = src $(GETOPT) tools test $(DOCS)
