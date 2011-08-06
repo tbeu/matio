@@ -35,8 +35,11 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include "hdf5.h"
 #include "matio_private.h"
+
+#if HAVE_HDF5
+
+#include "hdf5.h"
 #include "mat73.h"
 
 static hsize_t perm_dims[10];
@@ -3306,3 +3309,5 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
     }
     return 0;
 }
+
+#endif

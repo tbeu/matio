@@ -32,6 +32,8 @@
 #include <stdlib.h>
 #include "matio_private.h"
 
+#if HAVE_ZLIB
+
 /** @cond mat_devman */
 
 /** @brief Inflate the data until @c nbytes of uncompressed data has been
@@ -851,3 +853,5 @@ InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,
 }
 
 /** @endcond */
+
+#endif
