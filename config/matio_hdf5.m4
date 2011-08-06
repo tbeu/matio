@@ -107,7 +107,7 @@ if test "x$ac_have_hdf5" = "xyes"
 then
     MATIO_CHECK_HDF5_V18
     if test "x$matio_hdf5_is_v18" = "xyes"; then
-        AC_DEFINE_UNQUOTED([HAVE_HDF5],[],[Have HDF5])
+        AC_DEFINE_UNQUOTED([HAVE_HDF5],[1],[Have HDF5])
     else
         HDF5_LIBS=""
         HDF5_CFLAGS=""
