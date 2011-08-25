@@ -1,0 +1,93 @@
+.\" Copyright (c) 2011 Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+.\" INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+.\" CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+.\" ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+.\" POSSIBILITY OF SUCH DAMAGE.
+.\"
+.Dd April 21, 2011
+.Dt MAT_CREATEVER 3
+.Os
+.Sh NAME
+.Nm Mat_CreateVer ,
+.Nm Mat_Create
+.Nd Create a MATLAB .mat file
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft mat_t *
+.Fo Mat_CreateVer
+.Fa "const char *matname"
+.Fa "const char *hdr_str"
+.Fa "enum mat_ft mat_file_ver"
+.Fc
+.Ft mat_t *
+.Fo Mat_Create
+.Fa "const char *matname"
+.Fa "const char *hdr_str"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_CreateVer
+function creates a MATLAB .mat file opened for write access. The
+.Em hdr_str
+is a string written in the file header of MAT version 5 and 7.3 (HDF) files.
+Only the first 128 bytes of the string is written. If
+.Em hdr_str
+is NULL, then a default string is written that contains the platform, date,
+matio library version.
+.Pp
+The
+.Em mat_file_ver
+argument specifies the MAT file version to create. The matio library can write
+version 5 files (MAT_FT_MAT5), and an HDF5 file format introduced in MATLAB
+version 7.3 (MAT_FT_MAT73).
+.Pp
+The
+.Fn Mat_Create
+function is equivalent to calling
+.Fn Mat_CreateVer
+with MAT_FT_DEFAULT as the file version.
+.Sh EXAMPLES
+.Bd -literal
+#include <stdlib.h>
+#include <stdio.h>
+#include "matio.h"
+
+int main(int argc,char **argv)
+{
+    mat_t *matfp;
+
+    matfp = Mat_CreateVer(argv[1],NULL,MAT_FT_73);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error creating MAT file %s\n",argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    Mat_Close(matfp);
+    return EXIT_SUCCESS;
+}
+
+.Ed
+.Sh SEE ALSO
+.Xr Mat_Create 3 ,
+.Xr Mat_CreateVer 3 ,
+.Xr Mat_Close 3

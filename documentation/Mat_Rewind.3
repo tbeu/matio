@@ -1,0 +1,103 @@
+.\" Copyright (c) 2011 Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+.\" INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+.\" CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+.\" ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+.\" POSSIBILITY OF SUCH DAMAGE.
+.\"
+.Dd April 21, 2011
+.Dt MAT_REWIND 3
+.Os
+.Sh NAME
+.Nm Mat_Rewind
+.Nd Rewind an open .mat file to the beginning
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_Rewind
+.Fa "mat_t *matfp"
+.Fc
+.Sh DESCRIPTION
+Rewinds an open .mat file so that
+.Xr Mat_VarReadNext 3
+or
+.Xr Mat_VarReadNextInfo 3
+reads the first variable in the file.
+.Sh RETURN VALUES
+The function returns 0 on success, or -1 on failure.
+.Sh EXAMPLES
+The following example shows a list of variables in the MAT file, and prompts the
+user for the index of the variale to read. If the index is valid, the file is
+reset to the beginning, and variables read until the selected index is reached.
+.Bd -literal
+#include <stdlib.h>
+#include <stdio.h>
+#include "matio.h"
+
+int
+main(int argc,char **argv)
+{
+    mat_t    *matfp;
+    matvar_t *matvar;
+    int       idx, num_variables;
+
+    matfp = Mat_Open(argv[1],MAT_ACC_RDONLY);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error opening MAT file %s\n",argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    idx = 0;
+    while ( NULL != (matvar = Mat_VarReadNextInfo(matfp)) ) {
+        idx++;
+        printf("%3d. %s\n",idx,matvar->name);
+        Mat_VarFree(matvar);
+    }
+    num_variables = idx;
+    if ( num_variables > 0 ) {
+        printf("Which variable would you like to read? ");
+        if ( 0 == fscanf(stdin,"%d",&idx) ) {
+            printf("Invalid variable selection!\n");
+        } else if ( idx < 1 || idx > num_variables ) {
+            fprintf(stderr,"That is an invalid variable index!\n");
+        } else {
+            int k;
+            Mat_Rewind(matfp);
+            for ( k = 1; k < idx; k++ ) {
+                matvar = Mat_VarReadNextInfo(matfp);
+                Mat_VarFree(matvar);
+            }
+            matvar = Mat_VarReadNext(matfp);
+            Mat_VarPrint(matvar,1);
+            Mat_VarFree(matvar);
+        }
+    }
+
+    Mat_Close(matfp);
+    return EXIT_SUCCESS;
+}
+.Ed
+.Sh SEE ALSO
+.Xr Mat_Open 3 ,
+.Xr Mat_Close 3 ,
+.Xr Mat_VarReadNext 3 ,
+.Xr Mat_VarReadNextInfo 3

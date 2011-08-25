@@ -1,0 +1,314 @@
+% Copyright (C) 2011   Christopher C. Hulbert
+%
+% All rights reserved.
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are met:
+%
+%    1. Redistributions of source code must retain the above copyright notice,
+%       this list of conditions and the following disclaimer.
+%
+%    2. Redistributions in binary form must reproduce the above copyright
+%       notice, this list of conditions and the following disclaimer in the
+%       documentation and/or other materials provided with the distribution.
+%
+% THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND ANY EXPRESS
+% OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+% OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+% EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+% INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+% (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+% LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+% ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+% (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+% SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+@chapter Quick Start
+@section Opening and Creating MAT Files
+This section will show how to create a new MAT file, open an existing MAT file
+for read and read/write access, and close the MAT file.
+
+The key functions in working with MAT files include:
+@itemize
+@item Mat_Open,
+@item Mat_CreateVer, and
+@item Mat_Close.
+@end itemize
+The following example program shows how to open a MAT file where the filename
+is the first argument to the program.
+@verbatim
+#include <stdlib.h>
+#include <stdio.h>
+#include "matio.h"
+
+int
+main(int argc,char **argv)
+{
+    mat_t *matfp;
+
+    matfp = Mat_Open(argv[1],MAT_ACC_RDONLY);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error opening MAT file \"%s\"!\n",argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    Mat_Close(matfp);
+    return EXIT_SUCCESS;
+}
+@end verbatim
+
+The @code{Mat_CreateVer} creates a new MAT file (or overwrites and existing
+file) with a specific version. The @emph{matio} library can write version 5
+MAT files, version 5 files with variable compression (if built with zlib), and
+an HDF5 format MAT file introduced in MATLAB version 7.3. The format of the MAT
+file is specified by the third argument. The short example below creates a
+version 5 file named @emph{matfile5.mat} and an HDF5 format MAT file named
+@emph{matfile73.mat}.
+
+@verbatim
+#include <stdlib.h>
+#include <stdio.h>
+#include "matio.h"
+
+int
+main(int argc,char **argv)
+{
+    mat_t *matfp;
+
+    matfp = Mat_CreateVer("matfile5.mat",NULL,MAT_FT_MAT5);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error creating MAT file \"matfile5.mat\"!\n");
+        return EXIT_FAILURE;
+    }
+    Mat_Close(matfp);
+
+    matfp = Mat_CreateVer("matfile73.mat",NULL,MAT_FT_MAT73);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error creating MAT file \"matfile73.mat\"!\n");
+        return EXIT_FAILURE;
+    }
+    Mat_Close(matfp);
+
+    return EXIT_SUCCESS;
+}
+@end verbatim
+
+@section Reading Variables in a MAT File
+This section introduces the functions used to read variables from a MAT file.
+The @emph{matio} library has functions for reading variable information only
+(e.g. name, rank, dimensions, type, etc.), reading information and data, and
+reading data from previously obtained information. Reading information and data
+in seperate function calls provides several conveniences including:
+@itemize
+@item Querying the names of variables in a file without reading data,
+@item Reading only some fields of a structure or elements of a cell array, and
+@item other actions where the variable data is not needed.
+@end itemize
+
+@subsection Reading a Variable by Name
+If the name if the variable is known, the @code{Mat_VarRead} and
+@code{Mat_VarReadInfo} functions can be used. The @code{Mat_VarRead} function
+reads both the information and data for a variable, and the
+@code{Mat_VarReadInfo} reads information only. The short example below reads a
+named variable from a MAT file, and checks that the variable is a complex
+double-precision vector.
+@verbatim
+#include <stdlib.h>
+#include <stdio.h>
+#include "matio.h"
+
+int
+main(int argc,char **argv)
+{
+    mat_t    *matfp;
+    matvar_t *matvar;
+
+    matfp = Mat_Open(argv[1],MAT_ACC_RDONLY);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error opening MAT file %s0,argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    matvar = Mat_VarReadInfo(matfp,"x");
+    if ( NULL == matvar ) {
+        fprintf(stderr,"Variable 'x' not found, or error "
+                       "reading MAT file\n");
+    } else {
+        if ( !matvar->isComplex )
+            fprintf(stderr,"Variable 'x' is not complex!\n");
+        if ( matvar->rank != 2 ||
+             (matvar->dims[0] > 1 && matvar->dims[1] > 1) )
+            fprintf(stderr,"Variable 'x' is not a vector!\n");
+        Mat_VarFree(matvar);
+    }
+
+    Mat_Close(matfp);
+    return EXIT_SUCCESS;
+}
+@end verbatim
+
+@subsection Iterating Over Variables in a MAT File
+For some applications, the name of the variable may not be known ahead of time.
+For example, if the user needs to select a variable of interest, a list of
+variables should be obtained. Like reading a variable by name, there are two
+functions that will read the next variable in the MAT file:
+@code{Mat_VarReadNext} and @code{Mat_VarReadNextInfo}. The short example shown
+below opens a MAT file, and iterates over the variables in the file printing
+the variable name.
+@verbatim
+#include <stdlib.h>
+#include <stdio.h>
+#include "matio.h"
+
+int
+main(int argc,char **argv)
+{
+    mat_t    *matfp;
+    matvar_t *matvar;
+
+    matfp = Mat_Open(argv[1],MAT_ACC_RDONLY);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error opening MAT file %s0,argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    while ( (matvar = Mat_VarReadNextInfo(matfp)) != NULL ) {
+        printf("%s\n",matvar->name);
+        Mat_VarFree(matvar);
+        matvar = NULL;
+    }
+
+    Mat_Close(matfp);
+    return EXIT_SUCCESS;
+}
+@end verbatim
+
+@section Writing Variables
+A variable can be saved in a MAT file using the @code{Mat_VarWrite} function
+which has three arguments: the MAT file to write the variable to, a MATLAB
+variable structure, and a third option used to control write options.
+The variable structure can be filled in manually, or created from helper
+routines such as @code{Mat_VarCreate}. Note that MATLAB, and thus MATIO, has no
+concept of a rank 1 array (i.e. vector). The minimum rank of an array is 2
+(i.e. matrix). A vector is simply a matrix with one dimension length of 1.
+
+@subsection Writing Numeric Arrays
+Numeric arrays can be either real or complex. Complex arrays are encapsulated
+in the @code{struct ComplexSplit} data structure that contains a pointer to
+the real part of the data, and a pointer to the imaginary part of the data.
+The example program below writes two real variables @emph{x} and @emph{y}, and
+one complex variable @emph{z} whos real and imaginary parts are the @emph{x}
+and @emph{y} variables respectively. Note the @code{MAT_F_COMPLEX} argument
+passed to @code{Mat_VarCreate} for @emph{z} to indicate a complex variable.
+
+@verbatim
+#include <stdlib.h>
+#include <stdio.h>
+#include "matio.h"
+
+int
+main(int argc,char **argv)
+{
+    mat_t    *matfp;
+    matvar_t *matvar;
+    size_t    dims[2] = {10,1};
+    double    x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9,10},
+              y[10] = {11,12,13,14,15,16,17,18,19,20};
+    struct ComplexSplit z = {x,y};
+
+    matfp = Mat_CreateVer("test.mat",NULL,MAT_FT_DEFAULT);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error creating MAT file \"test.mat\"\n");
+        return EXIT_FAILURE;
+    }
+
+    matvar = Mat_VarCreate("x",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,x,0);
+    if ( NULL == matvar ) {
+        fprintf(stderr,"Error creating variable for 'x'\n");
+    } else {
+        Mat_VarWrite(matfp,matvar,COMPRESSION_NONE);
+        Mat_VarFree(matvar);
+    }
+
+    matvar = Mat_VarCreate("y",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,y,0);
+    if ( NULL == matvar ) {
+        fprintf(stderr,"Error creating variable for 'y'\n");
+    } else {
+        Mat_VarWrite(matfp,matvar,COMPRESSION_NONE);
+        Mat_VarFree(matvar);
+    }
+
+    matvar = Mat_VarCreate("z",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&z,
+                 MAT_F_COMPLEX);
+    if ( NULL == matvar ) {
+        fprintf(stderr,"Error creating variable for 'z'\n");
+    } else {
+        Mat_VarWrite(matfp,matvar,COMPRESSION_NONE);
+        Mat_VarFree(matvar);
+    }
+
+    Mat_Close(matfp);
+    return EXIT_SUCCESS;
+}
+@end verbatim
+
+@subsection Writing Cell Arrays
+Cell arrays are multidimensional arrays whos elements can be any class of
+variables (e.g. numeric, structure, cell arrays, etc.). To create a cell array,
+pass an array of @code{matvar_t *}. Detailed information on the MATLAB variable
+structure for cell-arrays is given in @ref{Cell Variables}.
+The following example shows how to create a 3x1 cell array.
+
+@verbatim
+#include <stdlib.h>
+#include <stdio.h>
+#include "matio.h"
+
+int
+main(int argc,char **argv)
+{
+    mat_t    *matfp;
+    matvar_t *matvar[3], *cell_array;
+    size_t    dims[2] = {10,1};
+    double    x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9,10},
+              y[10] = {11,12,13,14,15,16,17,18,19,20};
+    struct ComplexSplit z = {x,y};
+
+    matfp = Mat_CreateVer("test.mat",NULL,MAT_FT_DEFAULT);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error creating MAT file \"test.mat\"\n");
+        return EXIT_FAILURE;
+    }
+
+    matvar[0] = Mat_VarCreate("x",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,x,0);
+    if ( NULL == matvar[0] ) {
+        fprintf(stderr,"Error creating variable for 'x'\n");
+    }
+
+    matvar[1] = Mat_VarCreate("y",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,y,0);
+    if ( NULL == matvar[1] ) {
+        fprintf(stderr,"Error creating variable for 'y'\n");
+    }
+
+    matvar[2] = Mat_VarCreate("z",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&z,
+                    MAT_F_COMPLEX);
+    if ( NULL == matvar[2] ) {
+        fprintf(stderr,"Error creating variable for 'z'\n");
+    }
+
+    dims[0] = 3;
+    dims[1] = 1;
+    cell_array = Mat_VarCreate("a",MAT_C_CELL,MAT_T_CELL,2,dims,matvar,0);
+    if ( NULL == cell_array ) {
+        fprintf(stderr,"Error creating variable for 'a'\n");
+    } else {
+        Mat_VarWrite(matfp,cell_array,COMPRESSION_NONE);
+        Mat_VarFree(cell_array);
+    }
+
+    Mat_Close(matfp);
+    return EXIT_SUCCESS;
+}
+@end verbatim
+
+@subsection Writing Structure Arrays

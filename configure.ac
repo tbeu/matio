@@ -447,9 +447,7 @@ AC_CONFIG_FILES([Makefile \
                  getopt/Makefile \
                  tools/Makefile \
                  test/Makefile \
-                 doxygen/Makefile \
-                 doxygen/user_api/Makefile
-                 doxygen/dev_api/Makefile])
+                 documentation/Makefile])
 AC_OUTPUT
 
 AC_MSG_RESULT([])

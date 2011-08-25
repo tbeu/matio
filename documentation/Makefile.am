@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (C) 2007-2011   Christopher C. Hulbert
+## Copyright 2011 Christopher C. Hulbert.
 ##
 ## All rights reserved.
 ##
@@ -25,17 +25,14 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ## SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ##
-VPATH = @srcdir@
 
-docdir = $(prefix)/share/doc/matio
-doc_DATA = $(top_builddir)/doxygen/dev_api/latex/libmatio_dev.pdf
+info_TEXINFOS       = matio_user_guide.texi
+matio_user_guide_TEXINFOS = intro.texi quick.texi matvar_structure.texi
 
-doc: $(doc_DATA)
+man3_MANS  = Mat_Close.3 Mat_CreateVer.3 Mat_Open.3 Mat_Rewind.3 \
+             Mat_VarReadInfo.3 Mat_VarRead.3 Mat_VarReadNextInfo.3 \
+             Mat_VarReadNext.3
 
-$(top_builddir)/doxygen/dev_api/latex/libmatio_dev.pdf:
-	(cat $(srcdir)/doxygen.config; echo "INPUT=$(top_srcdir)/src";echo "LATEX_HEADER=$(srcdir)/../header.tex"; echo "IMAGE_PATH=$(srcdir)") | $(DOXYGEN) -
-	cd latex;../$(srcdir)/../format_api.sh;../$(srcdir)/../textopdf.sh
-	mv latex/refman.pdf latex/libmatio_dev.pdf
+all-local: matio_user_guide.pdf
 
-
-print:
+install-data-local: install-pdf

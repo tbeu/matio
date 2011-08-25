@@ -36,16 +36,11 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = matio.pc
 $(pkgconfig_DATA): config.status
 
-
-if DOCS_INSTALL
-DOCS=doxygen
-endif
-
 if NEED_GETOPT
 GETOPT=getopt
 endif
 
-SUBDIRS = src $(GETOPT) tools test $(DOCS)
+SUBDIRS = src $(GETOPT) tools test documentation
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \

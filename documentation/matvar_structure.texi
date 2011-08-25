@@ -1,0 +1,120 @@
+% Copyright (C) 2011   Christopher C. Hulbert
+%
+% All rights reserved.
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are met:
+%
+%    1. Redistributions of source code must retain the above copyright notice,
+%       this list of conditions and the following disclaimer.
+%
+%    2. Redistributions in binary form must reproduce the above copyright
+%       notice, this list of conditions and the following disclaimer in the
+%       documentation and/or other materials provided with the distribution.
+%
+% THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND ANY EXPRESS
+% OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+% OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+% EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+% INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+% (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+% LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+% ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+% (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+% SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+@chapter MATLAB Variable Structure
+@section Variable Information
+When a MATLAB variable is read or created, all of the information about the
+variable (e.g. name, dimensions, etc.) are stored in the MATLAB variable
+structure type @code{matvar_t}.
+@table @code
+@item name
+Nul-terminated string that is the name of the variable. The name may be NULL (e.g. for elements of a cell-array), so the field should be checked prior to use.
+@item rank
+The number of dimensions of the variable. The minimum rank is 2.
+@item dims
+An array of the number of elements in each dimensions of the variable.
+@item class_type
+Indicates the class of the variable (e.g. double-precision, structure, cell,
+etc.).
+@item data_type
+Indicates the type of the data stored in the @code{data} field of the MATLAB
+variable structure.
+@item isComplex
+is non-zero if the variable is a complex-valued numeric array.
+@item isLogical
+is non-zero of the variable should be interpreted as logical (i.e. zero for
+false, non-zero for true).
+@item isGlobal
+is non-zero if the variable should be a global variable. In MATLAB a global
+variable is available in all scopes (e.g. base workspace, function, etc.)
+@end table
+
+@subsection Sparse Matrix Variables
+If a variable's class type is sparse, the @code{data} field of the MATLAB
+variable structure is a pointer to the sparse matrix structure @code{sparse_t}.
+The sparse matrix structure stores the non-zero elements of the matrix in
+compressed column format.
+
+@subsection Structure Variables
+If the MATLAB variable structure's @code{class_type} is @code{MAT_C_STRUCT}, the
+@code{data_type} field should be @code{MAT_T_STRUCT}. The @code{data} field of
+the variable structure is an pointer to an array of @code{matvar_t *}. The
+length of the array is @math{numel \times nfields} where @code{numel} is the
+number of elements in the structure array (product of dimensions array), and
+@math{nfields} is the number of fields in the structure. For convenience and
+to properly handle structures with no elements, the
+@code{Mat_VarGetNumberOfFields} returns the number of fields in the structure.
+
+A specific field of a structure can be accessed by finding the pointer to the
+variable structure in the @code{data} field as done by the
+@code{Mat_VarGetStructFieldByIndex} and @code{Mat_VarGetStructFieldByName}
+functions. These functions lookup the variable structure pointer in a structure
+variable by the fields'd index, or by the field's name respectively. For
+example, if there are 3 fields of a structure ordered as @emph{field1},
+@emph{field2}, and @emph{field3}, then @emph{field1} has field index 0, and
+@emph{field3} has field index 2. The example code snippet below shows how
+to iterate over the fields of a structure.
+
+@verbatim
+nfields = Mat_VarGetNumberOfFields(matvar);
+printf("%d fields\n",nfields);
+for ( k = 0; k < nfields; k++ ) {
+    matvar_t *field;
+    field = Mat_VarGetStructFieldByIndex(matvar,k,0);
+    if ( NULL != field )
+        printf("%15s\n",field->name);
+}
+@end verbatim
+
+To create a structure array with the @code{Mat_VarCreate} function, create an
+array of MATLAB variable structures (@code{matvar_t *}), and a NULL pointer
+at the end of the array. Each field of a structure array is stored contigiously.
+For example, for a 3x1 structure array, @emph{s}, with four fields: @emph{a},
+@emph{b}, @emph{c}, and @emph{d} is ordered as:
+
+@table @code
+@item s(1).a
+@item s(1).b
+@item s(1).c
+@item s(1).d
+@item s(2).a
+@item s(2).b
+@item s(2).c
+@item s(2).d
+@item s(3).a
+@item s(3).b
+@item s(3).c
+@item s(3).d
+@item NULL
+@end table
+
+
+@node Cell Variables
+@subsection Cell Variables
+If the MATLAB variable structure's @code{class_type} is @code{MAT_C_CELL}, the
+@code{data_type} field should be @code{MAT_T_CELL}. The @code{data} field of
+the variable structure is a pointer to an array of @code{matvar_t *}. The
+length of the array is product of the dimensions array. Each element of the
+cell array can be a different type.
