@@ -29,10 +29,6 @@
 info_TEXINFOS       = matio_user_guide.texi
 matio_user_guide_TEXINFOS = intro.texi quick.texi matvar_structure.texi
 
-man3_MANS  = Mat_Close.3 Mat_CreateVer.3 Mat_Open.3 Mat_Rewind.3 \
-             Mat_VarReadInfo.3 Mat_VarRead.3 Mat_VarReadNextInfo.3 \
-             Mat_VarReadNext.3
-
-all-local: matio_user_guide.pdf
-
-install-data-local: install-pdf
+dist_man3_MANS  = Mat_Close.3 Mat_CreateVer.3 Mat_Open.3 Mat_Rewind.3 \
+                  Mat_VarReadInfo.3 Mat_VarRead.3 Mat_VarReadNextInfo.3 \
+                  Mat_VarReadNext.3
