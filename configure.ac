@@ -392,37 +392,6 @@ AM_CONDITIONAL(LINUX, test "x$linux" = "xyes")
 AM_CONDITIONAL(WINNT, test "x$winnt" = "xyes")
 AM_CONDITIONAL(SUN,   test "x$sun"   = "xyes")
 
-dnl
-dnl Check for doxygen program
-dnl
-AC_PATH_PROG(DOXYGEN,[doxygen])
-AC_SUBST([DOXYGEN])
-if test -n "$ac_cv_path_DOXYGEN"
-then
-    docs_install_default=yes
-else
-    docs_install_default=no
-fi
-
-dnl
-dnl Check whether to build documentation
-dnl
-AC_ARG_ENABLE(docs,AS_HELP_STRING([--enable-docs=yes],[install documentation]),
-docs_install=$enableval,docs_install=$docs_install_default)
-AC_MSG_CHECKING(install docs)
-if test "x$docs_install" = "xno"
-then
-    AC_MSG_RESULT(no)
-elif test -z "$ac_cv_path_DOXYGEN"
-then
-    AC_MSG_RESULT([no (doxygen program not found)])
-    docs_install=no
-else
-    AC_MSG_RESULT(yes)
-    docs_install=yes
-fi  
-AM_CONDITIONAL(DOCS_INSTALL, test "x$docs_install" = "xyes")
-
 AM_CONDITIONAL(ENABLE_FORTRAN, test "$enable_fortran" = "yes" )
 
 dnl
@@ -465,7 +434,6 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([Features --------------------------------------------])
 AC_MSG_RESULT([    Fortran Interface: $enable_fortran])
 AC_MSG_RESULT([MAT v7.3 file support: $mat73])
-AC_MSG_RESULT([        Documentation: $docs_install])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Packages --------------------------------------------])
 AC_MSG_RESULT([                 zlib: $ZLIB_LIBS])
