@@ -331,7 +331,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     O = floor(tmp / 100.0);
     tmp -= O*100;
     data_type = floor(tmp / 10.0);
-    tmp -= matvar->data_type*10;
+    tmp -= data_type*10;
     /* Convert the V4 data type */
     switch ( data_type ) {
         case 0:
