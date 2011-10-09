@@ -180,50 +180,71 @@ Mat_Open(const char *matname,int mode)
     }
 
     mat->fp = fp;
-    if ( mode & MAT_FT_MAT4 ) {
+    mat->header        = calloc(128,1);
+    mat->subsys_offset = calloc(8,1);
+    mat->filename      = NULL;
+    mat->byteswap      = 0;
+
+    err = fread(mat->header,1,116,fp);
+    mat->header[116] = '\0';
+    err = fread(mat->subsys_offset,1,8,fp);
+    err = fread(&tmp2,2,1,fp);
+    fread(&tmp,1,2,fp);
+
+    mat->byteswap = -1;
+    if (tmp == 0x4d49)
+        mat->byteswap = 0;
+    else if (tmp == 0x494d) {
+        mat->byteswap = 1;
+        Mat_int16Swap(&tmp2);
+    }
+
+    mat->version = (int)tmp2;
+    if ( (mat->version == 0x0100 || mat->version == 0x0200) &&
+         -1 != mat->byteswap ) {
+        mat->bof = ftell(mat->fp);
+        mat->next_index    = 0;
+    } else {
+        /* Maybe a V4 MAT file */
+        matvar_t *var;
+        if ( NULL != mat->header )
+            free(mat->header);
+        if ( NULL != mat->subsys_offset )
+            free(mat->subsys_offset);
+
         mat->header        = NULL;
         mat->subsys_offset = NULL;
+        mat->fp            = fp;
         mat->version       = MAT_FT_MAT4;
         mat->byteswap      = 0;
         mat->mode          = mode;
-        mat->filename      = strdup_printf("%s",matname);
-        mat->bof           = ftell(mat->fp);
-        mat->next_index    = 0;
-    } else {
-        mat->header        = malloc(128);
-        mat->subsys_offset = malloc(8);
-        mat->filename      = NULL;
-
-        err = fread(mat->header,1,116,fp);
-        mat->header[116] = '\0';
-        err = fread(mat->subsys_offset,1,8,fp);
-        err = fread(&tmp2,2,1,fp);
-        fread (&tmp,1,2,fp);
-        mat->bof = ftell(mat->fp);
+        mat->bof           = 0;
         mat->next_index    = 0;
 
-        mat->byteswap = -1;
-        if (tmp == 0x4d49)
-            mat->byteswap = 0;
-        else if (tmp == 0x494d) {
-            mat->byteswap = 1;
-            Mat_int16Swap(&tmp2);
-        }
-        mat->version = (int)tmp2;
-
-        if ( mat->byteswap < 0 ) {
+        Mat_Rewind(mat);
+        var = Mat_VarReadNextInfo4(mat);
+        /* Check sanity of variable information */
+        if ( NULL == var || NULL == var->name ||
+            (var->class_type != MAT_C_DOUBLE  &&
+             var->class_type != MAT_C_SPARSE &&
+             var->class_type != MAT_C_CHAR) ) {
+            /* Does not seem to be a valid V4 file */
             Mat_Critical("%s does not seem to be a valid MAT file",matname);
+            if ( NULL != var )
+                Mat_VarFree(var);
             Mat_Close(mat);
-            mat=NULL;
-        } else if (mat->version != 0x0100 && mat->version != 0x0200) {
-            Mat_Critical("%s is not a recognized MAT file version", matname);
-            Mat_Close(mat);
-            mat=NULL;
+            mat = NULL;
         } else {
-            mat->filename = strdup_printf("%s",matname);
-            mat->mode = mode;
+            Mat_VarFree(var);
+            Mat_Rewind(mat);
         }
     }
+
+    if ( NULL == mat )
+        return mat;
+
+    mat->filename = strdup_printf("%s",matname);
+    mat->mode = mode;
 
     if ( mat->version == 0x0200 ) {
         fclose(mat->fp);
