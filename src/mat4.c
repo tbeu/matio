@@ -97,6 +97,15 @@ Read4(mat_t *mat,matvar_t *matvar)
             /* Update data type to match format of matvar->data */
             matvar->data_type = MAT_T_DOUBLE;
             break;
+        case MAT_C_CHAR:
+            matvar->data_size = 1;
+            matvar->nbytes = N;
+            matvar->data = malloc(matvar->nbytes);
+            if ( NULL == matvar->data )
+                Mat_Critical("Memory allocation failure");
+            else
+                ReadUInt8Data(mat,matvar->data,matvar->data_type,N);
+            matvar->data_type = MAT_T_UINT8;
             break;
         default:
             Mat_Critical("MAT V4 data type error");
