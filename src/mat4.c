@@ -72,8 +72,8 @@ Read4(mat_t *mat,matvar_t *matvar)
         return;
 
     N = matvar->dims[0]*matvar->dims[1];
-    switch ( matvar->data_type ) {
-        case MAT_T_DOUBLE:
+    switch ( matvar->class_type ) {
+        case MAT_C_DOUBLE:
             matvar->data_size = sizeof(double);
             if ( matvar->isComplex ) {
                 struct ComplexSplit *complex_data;
@@ -84,126 +84,19 @@ Read4(mat_t *mat,matvar_t *matvar)
                 complex_data->Im = malloc(matvar->nbytes);
                 matvar->data     = complex_data;
                 if ( complex_data != NULL &&
-                     complex_data->Re != NULL && complex_data->Im != NULL ) {
-                    fread(complex_data->Re,N,sizeof(double),mat->fp);
-                    fread(complex_data->Im,N,sizeof(double),mat->fp);
+                    complex_data->Re != NULL && complex_data->Im != NULL ) {
+                    ReadDoubleData(mat, complex_data->Re, matvar->data_type, N);
+                    ReadDoubleData(mat, complex_data->Im, matvar->data_type, N);
                 }
             } else {
                 matvar->nbytes = N*sizeof(double);
                 matvar->data   = malloc(matvar->nbytes);
                 if ( matvar->data != NULL )
-                    fread(matvar->data,N,sizeof(double),mat->fp);
+                    ReadDoubleData(mat, matvar->data, matvar->data_type, N);
             }
+            /* Update data type to match format of matvar->data */
+            matvar->data_type = MAT_T_DOUBLE;
             break;
-        case MAT_T_SINGLE:
-            matvar->data_size = sizeof(float);
-            if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
-
-                matvar->nbytes   = N*sizeof(float);
-                complex_data     = malloc(sizeof(*complex_data));
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                matvar->data     = complex_data;
-                if ( complex_data != NULL &&
-                     complex_data->Re != NULL && complex_data->Im != NULL ) {
-                    fread(complex_data->Re,N,sizeof(float),mat->fp);
-                    fread(complex_data->Im,N,sizeof(float),mat->fp);
-                }
-            } else {
-                matvar->nbytes = N*sizeof(float);
-                matvar->data   = malloc(matvar->nbytes);
-                if ( matvar->data != NULL )
-                    fread(matvar->data,N,sizeof(float),mat->fp);
-            }
-            break;
-        case MAT_T_INT32:
-            matvar->data_size = sizeof(mat_int32_t);
-            if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
-
-                matvar->nbytes   = N*sizeof(mat_int32_t);
-                complex_data     = malloc(sizeof(*complex_data));
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                matvar->data     = complex_data;
-                if ( complex_data != NULL &&
-                     complex_data->Re != NULL && complex_data->Im != NULL ) {
-                    fread(complex_data->Re,N,sizeof(mat_int32_t),mat->fp);
-                    fread(complex_data->Im,N,sizeof(mat_int32_t),mat->fp);
-                }
-            } else {
-                matvar->nbytes = N*sizeof(mat_int32_t);
-                matvar->data   = malloc(matvar->nbytes);
-                if ( matvar->data != NULL )
-                    fread(matvar->data,N,sizeof(mat_int32_t),mat->fp);
-            }
-            break;
-        case MAT_T_INT16:
-            matvar->data_size = sizeof(mat_int16_t);
-            if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
-
-                matvar->nbytes   = N*sizeof(mat_int16_t);
-                complex_data     = malloc(sizeof(*complex_data));
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                matvar->data     = complex_data;
-                if ( complex_data != NULL &&
-                     complex_data->Re != NULL && complex_data->Im != NULL ) {
-                    fread(complex_data->Re,N,sizeof(mat_int16_t),mat->fp);
-                    fread(complex_data->Im,N,sizeof(mat_int16_t),mat->fp);
-                }
-            } else {
-                matvar->nbytes = N*sizeof(mat_int16_t);
-                matvar->data   = malloc(matvar->nbytes);
-                if ( matvar->data != NULL )
-                    fread(matvar->data,N,sizeof(mat_int16_t),mat->fp);
-            }
-            break;
-        case MAT_T_UINT16:
-            matvar->data_size = sizeof(mat_uint16_t);
-            if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
-
-                matvar->nbytes   = N*sizeof(mat_uint16_t);
-                complex_data     = malloc(sizeof(*complex_data));
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                matvar->data     = complex_data;
-                if ( complex_data != NULL &&
-                     complex_data->Re != NULL && complex_data->Im != NULL ) {
-                    fread(complex_data->Re,N,sizeof(mat_uint16_t),mat->fp);
-                    fread(complex_data->Im,N,sizeof(mat_uint16_t),mat->fp);
-                }
-            } else {
-                matvar->nbytes = N*sizeof(mat_uint16_t);
-                matvar->data   = malloc(matvar->nbytes);
-                if ( matvar->data != NULL )
-                    fread(matvar->data,N,sizeof(mat_uint16_t),mat->fp);
-            }
-            break;
-        case MAT_T_UINT8:
-            matvar->data_size = sizeof(mat_uint8_t);
-            if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
-
-                matvar->nbytes   = N*sizeof(mat_uint8_t);
-                complex_data     = malloc(sizeof(*complex_data));
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                matvar->data     = complex_data;
-                if ( complex_data != NULL &&
-                     complex_data->Re != NULL && complex_data->Im != NULL ) {
-                    fread(complex_data->Re,N,sizeof(mat_uint8_t),mat->fp);
-                    fread(complex_data->Im,N,sizeof(mat_uint8_t),mat->fp);
-                }
-            } else {
-                matvar->nbytes = N*sizeof(mat_uint8_t);
-                matvar->data   = malloc(matvar->nbytes);
-                if ( matvar->data != NULL )
-                    fread(matvar->data,N,sizeof(mat_uint8_t),mat->fp);
-            }
             break;
         default:
             Mat_Critical("MAT V4 data type error");
