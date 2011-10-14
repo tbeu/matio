@@ -228,12 +228,24 @@ Mat_VarReadNextInfo4(mat_t *mat)
         free(matvar);
         return NULL;
     }
+
+    /* See if MOPT may need byteswapping */
+    if ( tmp < 0 || tmp > 4052 ) {
+        if ( Mat_int32Swap(&tmp) > 4052 ) {
+            Mat_VarFree(matvar);
+            return NULL;
+        }
+    }
+
     M = floor(tmp / 1000.0);
     tmp -= M*1000;
     O = floor(tmp / 100.0);
     tmp -= O*100;
     data_type = floor(tmp / 10.0);
     tmp -= data_type*10;
+    class_type = floor(tmp);
+
+    mat->byteswap = (M == 1) ? 1 : 0;
     /* Convert the V4 data type */
     switch ( data_type ) {
         case 0:
@@ -258,7 +270,6 @@ Mat_VarReadNextInfo4(mat_t *mat)
             matvar->data_type = MAT_T_UNKNOWN;
             break;
     }
-    class_type = floor(tmp);
     switch ( class_type ) {
         case 0:
             matvar->class_type = MAT_C_DOUBLE;
@@ -274,17 +285,22 @@ Mat_VarReadNextInfo4(mat_t *mat)
     /* FIXME: Check allocation */
     matvar->dims = malloc(2*sizeof(*matvar->dims));
     err = fread(&tmp,sizeof(int),1,mat->fp);
+    if ( mat->byteswap )
+        Mat_int32Swap(&tmp);
     matvar->dims[0] = tmp;
     if ( !err ) {
         Mat_VarFree(matvar);
         return NULL;
     }
     err = fread(&tmp,sizeof(int),1,mat->fp);
+    if ( mat->byteswap )
+        Mat_int32Swap(&tmp);
     matvar->dims[1] = tmp;
     if ( !err ) {
         Mat_VarFree(matvar);
         return NULL;
     }
+
     err = fread(&(matvar->isComplex),sizeof(int),1,mat->fp);
     if ( !err ) {
         Mat_VarFree(matvar);
@@ -295,6 +311,8 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
+    if ( mat->byteswap )
+        Mat_int32Swap(&tmp);
     /* FIXME: Check allocation */
     matvar->name = malloc(tmp);
     err = fread(matvar->name,1,tmp,mat->fp);
