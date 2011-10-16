@@ -27,6 +27,7 @@
 AT_TESTED([test_mat])
 
 AT_SETUP([Read 2d double-precision array])
+AT_KEYWORDS([mat4_read_le])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_v4_le.mat var1], [0],
 [      Name: var1
@@ -44,6 +45,7 @@ Class Type: Double Precision Array
 AT_CLEANUP
 
 AT_SETUP([Read 2d double-precision complex array])
+AT_KEYWORDS([mat4_read_le])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_v4_le.mat var11], [0],
 [      Name: var11
@@ -56,6 +58,24 @@ Class Type: Double Precision Array (complex)
 2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
+}
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read 2D character array])
+AT_KEYWORDS([mat4_read_le])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_v4_le.mat var24], [0],
+[      Name: var24
+      Rank: 2
+Dimensions: 4 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+abcdefghijklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+1234567890!@#$%^&*()-_=+`~
+@<:@{@:>@}\|;:'",<.>/?          @&t@
 }
 ], [ignore])
 AT_CLEANUP
