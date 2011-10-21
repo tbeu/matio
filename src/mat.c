@@ -841,7 +841,8 @@ Mat_VarFree(matvar_t *matvar)
                     int nfields = matvar->nbytes / matvar->data_size;
                     for ( i = 0; i < nfields; i++ )
                         Mat_VarFree(fields[i]);
-                    free(matvar->data);
+                    if ( !matvar->mem_conserve )
+                        free(matvar->data);
                 }
                 break;
             case MAT_C_SPARSE:
