@@ -888,14 +888,15 @@ Mat_VarFree(matvar_t *matvar)
                 break;
         }
     }
+
+    if ( NULL != matvar->internal ) {
 #if defined(HAVE_ZLIB)
-    if ( matvar->compression == COMPRESSION_ZLIB ) {
-        inflateEnd(matvar->internal->z);
-        free(matvar->internal->z);
-    }
+        if ( matvar->compression == COMPRESSION_ZLIB ) {
+            inflateEnd(matvar->internal->z);
+            free(matvar->internal->z);
+        }
 #endif
 #if defined(MAT73) && MAT73
-    if ( NULL != matvar->internal ) {
         if ( -1 < matvar->internal->id ) {
             switch ( H5Iget_type(matvar->internal->id) ) {
                 case H5I_GROUP:
@@ -924,10 +925,10 @@ Mat_VarFree(matvar_t *matvar)
                     break;
             }
         }
+#endif
         free(matvar->internal);
         matvar->internal = NULL;
     }
-#endif
     /* FIXME: Why does this cause a SEGV? */
 #if 0
     memset(matvar,0,sizeof(matvar_t));
