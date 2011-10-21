@@ -35,7 +35,7 @@
 #undef MATIO_HAVE_STDINT_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#undef MATIO_HAVE_STDINT_H
+#undef MATIO_HAVE_INTTYPES_H
 
 /* int16 type */
 #undef _mat_int16_t
