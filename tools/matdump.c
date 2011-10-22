@@ -260,8 +260,10 @@ main (int argc, char *argv[])
         Mat_Error("Must specify at least one argument");
 
     mat = Mat_Open( argv[optind],MAT_ACC_RDONLY );
-    if ( NULL == mat )
+    if ( NULL == mat ) {
         Mat_Error("Error opening %s\n", argv[optind]);
+        return EXIT_FAILURE;
+    }
 
     optind++;
 
