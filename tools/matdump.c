@@ -163,7 +163,7 @@ print_default(matvar_t *matvar)
         case MAT_C_STRUCT:
         {
             matvar_t **fields = (matvar_t **)matvar->data;
-            int        nfields = matvar->nbytes / matvar->data_size;
+            int        nfields;
             int        i;
 
             if ( matvar->name )
@@ -172,12 +172,15 @@ print_default(matvar_t *matvar)
             if ( matvar->rank == 0 )
                 return;
             Mat_Message("Class Type: Structure");
-            Mat_Message("Fields[%d] {", nfields);
-            indent++;
-            for ( i = 0; i < nfields; i++ )
-                print_default(fields[i]);
-            indent--;
-            Mat_Message("}");
+            nfields = Mat_VarGetNumberOfFields(matvar);
+            if ( nfields > 0 ) {
+                Mat_Message("Fields[%d] {", nfields);
+                indent++;
+                for ( i = 0; i < nfields; i++ )
+                    print_default(fields[i]);
+                indent--;
+                Mat_Message("}");
+            }
             break;
         }
         case MAT_C_CELL:
