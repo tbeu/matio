@@ -871,6 +871,14 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         }
     }
 
+    if ( NULL != fieldnames ) {
+        for ( k = 0; k < nfields; k++ ) {
+            if ( NULL != fieldnames[k] )
+                free(fieldnames[k]);
+        }
+        free(fieldnames);
+    }
+
     H5Eset_auto(H5E_DEFAULT,efunc,client_data);
 }
 
