@@ -724,6 +724,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                    fieldnames_vl[k].len);
         }
 
+        H5Dvlen_reclaim(field_id,space_id,H5P_DEFAULT,fieldnames_vl);
         H5Sclose(space_id);
         H5Tclose(field_id);
         H5Aclose(attr_id);
@@ -1017,6 +1018,8 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                     matvar->data_size = sizeof(matvar_t*);
                     matvar->nbytes    = nfields*matvar->data_size;
 
+                    H5Dvlen_reclaim(field_id,space_id,H5P_DEFAULT,
+                        fieldnames_vl);
                     H5Sclose(space_id);
                     H5Tclose(field_id);
                     H5Aclose(attr_id);
@@ -2649,6 +2652,8 @@ Mat_VarReadNextInfo73( mat_t *mat )
                     matvar->data_size = sizeof(matvar_t*);
                     matvar->nbytes    = nfields*matvar->data_size;
 
+                    H5Dvlen_reclaim(field_id,space_id,H5P_DEFAULT,
+                        fieldnames_vl);
                     H5Sclose(space_id);
                     H5Tclose(field_id);
                     H5Aclose(attr_id);
