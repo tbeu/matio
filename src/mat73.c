@@ -2282,6 +2282,11 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 H5Iinc_ref(dset_id);
             }
 
+            if ( numel < 1 ) {
+                H5Dclose(dset_id);
+                break;
+            }
+
             if ( !matvar->isComplex ) {
                 matvar->data      = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
