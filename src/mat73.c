@@ -731,33 +731,46 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         free(fieldnames_vl);
     } else {
         hsize_t next_index = 0,num_objs  = 0;
+        int     obj_type;
         H5Gget_num_objs(dset_id,&num_objs);
-        fieldnames = calloc(num_objs,sizeof(*fieldnames));
-        /* FIXME: follow symlinks, datatypes? */
-        while ( next_index < num_objs ) {
-            if ( H5G_DATASET == H5Gget_objtype_by_idx(dset_id,next_index) ) {
-                int len;
-                len = H5Gget_objname_by_idx(dset_id,next_index,NULL,0);
-                fieldnames[nfields] = calloc(len+1,sizeof(*fieldnames));
-                H5Gget_objname_by_idx(dset_id,next_index,fieldnames[nfields],len+1);
-                nfields++;
-            } else if ( H5G_GROUP == H5Gget_objtype_by_idx(dset_id,next_index) ) {
-                /* Check that this is not the /#refs# group */
-                char name[128] = {0,};
-                (void)H5Gget_objname_by_idx(dset_id,next_index,name,127);
-                if ( strcmp(name,"#refs#") ) {
-                    int len;
-                    len = H5Gget_objname_by_idx(dset_id,next_index,NULL,0);
-                    fieldnames[nfields] = calloc(len+1,1);
-                    H5Gget_objname_by_idx(dset_id,next_index,fieldnames[nfields],len+1);
-                    nfields++;
+        if ( num_objs > 0 ) {
+            fieldnames = calloc(num_objs,sizeof(*fieldnames));
+            /* FIXME: follow symlinks, datatypes? */
+            while ( next_index < num_objs ) {
+                obj_type = H5Gget_objtype_by_idx(dset_id,next_index);
+                switch ( obj_type ) {
+                    case H5G_DATASET:
+                    {
+                        int len;
+                        len = H5Gget_objname_by_idx(dset_id,next_index,NULL,0);
+                        fieldnames[nfields] = calloc(len+1,sizeof(*fieldnames));
+                        H5Gget_objname_by_idx(dset_id,next_index,
+                            fieldnames[nfields],len+1);
+                        nfields++;
+                        break;
+                    }
+                    case H5G_GROUP:
+                    {
+                        /* Check that this is not the /#refs# group */
+                        char name[128] = {0,};
+                        (void)H5Gget_objname_by_idx(dset_id,next_index,name,127);
+                        if ( strcmp(name,"#refs#") ) {
+                            int len;
+                            len = H5Gget_objname_by_idx(dset_id,next_index,NULL,0);
+                            fieldnames[nfields] = calloc(len+1,1);
+                            H5Gget_objname_by_idx(dset_id,next_index,fieldnames[nfields],len+1);
+                            nfields++;
+                        }
+                        break;
+                    }
                 }
+                next_index++;
             }
-            next_index++;
         }
     }
 
-    if ( -1 < (field_id = H5Dopen(dset_id,fieldnames[0],H5P_DEFAULT)) ) {
+    if ( nfields > 0 &&
+         -1 < (field_id = H5Dopen(dset_id,fieldnames[0],H5P_DEFAULT)) ) {
         field_type_id = H5Dget_type(field_id);
         if ( H5T_REFERENCE == H5Tget_class(field_type_id) ) {
             space_id        = H5Dget_space(field_id);
