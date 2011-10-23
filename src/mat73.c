@@ -962,6 +962,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 H5Aclose(attr_id);
                 if ( empty ) {
                     matvar->rank = matvar->dims[0];
+                    free(matvar->dims);
                     matvar->dims = calloc(matvar->rank,sizeof(*matvar->dims));
                     H5Dread(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
                             H5P_DEFAULT,matvar->dims);
@@ -2590,6 +2591,7 @@ Mat_VarReadNextInfo73( mat_t *mat )
                 H5Aclose(attr_id);
                 if ( empty ) {
                     matvar->rank = matvar->dims[0];
+                    free(matvar->dims);
                     matvar->dims = calloc(matvar->rank,sizeof(*matvar->dims));
                     H5Dread(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
                             H5P_DEFAULT,matvar->dims);
