@@ -1046,16 +1046,6 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
 
             dset_id = ref_id;
 
-            /* Get the HDF5 name of the variable */
-            name_len = H5Iget_name(dset_id,NULL,0);
-            if ( name_len > 0 ) {
-                matvar->internal->hdf5_name = malloc(name_len+1);
-                (void)H5Iget_name(dset_id,matvar->internal->hdf5_name,name_len+1);
-            } else {
-                /* Can not get an internal name, so leave the identifier open */
-                matvar->internal->id = dset_id;
-            }
-
             Mat_H5ReadGroupInfo(mat,matvar,dset_id);
 
             H5Eset_auto(H5E_DEFAULT,efunc,client_data);

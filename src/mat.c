@@ -925,6 +925,10 @@ Mat_VarFree(matvar_t *matvar)
                     break;
             }
         }
+        if ( NULL != matvar->internal->hdf5_name ) {
+            free(matvar->internal->hdf5_name);
+            matvar->internal->hdf5_name = NULL;
+        }
 #endif
         free(matvar->internal);
         matvar->internal = NULL;
