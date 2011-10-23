@@ -1072,9 +1072,6 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             dset_id = ref_id;
 
             Mat_H5ReadGroupInfo(mat,matvar,dset_id);
-
-            H5Eset_auto(H5E_DEFAULT,efunc,client_data);
-            /*H5Gclose(dset_id);*/
             break;
         }
         default:
