@@ -128,6 +128,9 @@ Mat_ClassToType73(enum matio_classes class_type)
         case MAT_C_INT8:
             type = MAT_T_INT8;
             break;
+        case MAT_C_CHAR:
+            type = MAT_T_UINT8;
+            break;
         case MAT_C_UINT8:
             type = MAT_T_UINT8;
             break;
