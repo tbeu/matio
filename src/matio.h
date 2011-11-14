@@ -138,14 +138,14 @@ enum matio_flags {
     MAT_F_DONT_COPY_DATA = 0x0001  /**< Don't copy data, use keep the pointer */
 };
 
-/** @brief Matlab compression options
+/** @brief MAT file compression options
  *
+ * This option is only used on version 5 MAT files
  * @ingroup MAT
- * Matlab compression options
  */
 enum matio_compression {
-    COMPRESSION_NONE = 0,   /**< @brief No compression */
-    COMPRESSION_ZLIB = 1    /**< @brief zlib compression */
+    MAT_COMPRESSION_NONE = 0,   /**< @brief No compression */
+    MAT_COMPRESSION_ZLIB = 1    /**< @brief zlib compression */
 };
 
 /** @brief matio lookup type

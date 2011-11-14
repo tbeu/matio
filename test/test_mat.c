@@ -50,7 +50,7 @@ static struct option options[] = {
 };
 
 static enum mat_ft            mat_file_ver = MAT_FT_DEFAULT;
-static enum matio_compression compression  = COMPRESSION_NONE;
+static enum matio_compression compression  = MAT_COMPRESSION_NONE;
 
 static const char *helpstr[] = {
     "",
@@ -2242,7 +2242,7 @@ int main (int argc, char *argv[])
                        MATIO_RELEASE_LEVEL);
                 exit(EXIT_SUCCESS);
             case 'z':
-                compression = COMPRESSION_ZLIB;
+                compression = MAT_COMPRESSION_ZLIB;
                 break;
             case '?':
                 exit(EXIT_FAILURE);

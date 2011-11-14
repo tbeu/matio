@@ -66,6 +66,7 @@ be modified to handle these changes.
 @item dims field of matvar_t structure changed to size_t *
 @item MEM_CONSERVE preprocessor definition removed
 @item BY_NAME and BY_INDEX renamed
+@item Added @code{MAT_} prefix to enumerations of @code{matio_compression}
 @end enumerate
 Each of these changes are described in the remaining sections, and include
 actions to upgrade existing code for compatability with the latest version.

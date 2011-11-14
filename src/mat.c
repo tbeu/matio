@@ -493,7 +493,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     if ( NULL == matvar )
         return NULL;
 
-    matvar->compression = COMPRESSION_NONE;
+    matvar->compression = MAT_COMPRESSION_NONE;
     matvar->isComplex   = opt & MAT_F_COMPLEX;
     matvar->isGlobal    = opt & MAT_F_GLOBAL;
     matvar->isLogical   = opt & MAT_F_LOGICAL;
@@ -891,7 +891,7 @@ Mat_VarFree(matvar_t *matvar)
 
     if ( NULL != matvar->internal ) {
 #if defined(HAVE_ZLIB)
-        if ( matvar->compression == COMPRESSION_ZLIB ) {
+        if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             inflateEnd(matvar->internal->z);
             free(matvar->internal->z);
         }
@@ -973,7 +973,7 @@ Mat_VarFree2(matvar_t *matvar)
             free(matvar->data);
     }
 #if defined(HAVE_ZLIB)
-    if ( matvar->compression == COMPRESSION_ZLIB )
+    if ( matvar->compression == MAT_COMPRESSION_ZLIB )
         inflateEnd(matvar->internal->z);
 #endif
     /* FIXME: Why does this cause a SEGV? */
@@ -1847,7 +1847,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
     if ( mat->version == MAT_FT_MAT4 )
         return -1;
     fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
-    if ( matvar->compression == COMPRESSION_NONE ) {
+    if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         fread(tag,4,2,mat->fp);
         if ( mat->byteswap ) {
             Mat_int32Swap(tag);
@@ -1861,7 +1861,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
             real_bytes = 8+tag[1];
         }
 #if defined(HAVE_ZLIB)
-    } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+    } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         matvar->internal->z->avail_in = 0;
         err = inflateCopy(&z,matvar->internal->z);
         InflateDataType(mat,&z,tag);
@@ -1890,7 +1890,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 
     if ( stride*(edge-1)+start+1 > nmemb ) {
         err = 1;
-    } else if ( matvar->compression == COMPRESSION_NONE ) {
+    } else if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         if ( matvar->isComplex ) {
             struct ComplexSplit *complex_data = data;
 
@@ -1913,7 +1913,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
                 matvar->data_type,start,stride,edge);
         }
 #if defined(HAVE_ZLIB)
-    } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+    } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         if ( matvar->isComplex ) {
             struct ComplexSplit *complex_data = data;
             
@@ -2192,10 +2192,10 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
     } else if ( start == NULL && stride == NULL && edge == NULL ) {
         for ( k = 0; k < matvar->rank; k++ )
             N *= matvar->dims[k];
-        if ( matvar->compression == COMPRESSION_NONE )
+        if ( matvar->compression == MAT_COMPRESSION_NONE )
             WriteData(mat,data,N,matvar->data_type);
 #if 0
-        else if ( matvar->compression == COMPRESSION_ZLIB ) {
+        else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             WriteCompressedData(mat,matvar->internal->z,data,N,matvar->data_type);
             (void)deflateEnd(matvar->internal->z);
             free(matvar->internal->z);

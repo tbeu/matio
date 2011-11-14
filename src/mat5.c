@@ -1861,7 +1861,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 fields[i]->rank = 0;
                 continue;
             }
-            fields[i]->compression = COMPRESSION_ZLIB;
+            fields[i]->compression = MAT_COMPRESSION_ZLIB;
             bytesread += InflateArrayFlags(mat,matvar,uncomp_buf);
             nbytes -= 16;
             if ( mat->byteswap ) {
@@ -3213,7 +3213,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadDoubleData(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -3243,7 +3243,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadDoubleData(mat,complex_data->Im,packed_type,
                                             len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedDoubleData(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -3291,7 +3291,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadDoubleData(mat,(double*)matvar->data,
                                  packed_type,len);
                     /*
@@ -3303,7 +3303,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedDoubleData(mat,matvar->internal->z,
                                  (double*)matvar->data,packed_type,len);
                     /*
@@ -3377,7 +3377,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadSingleData(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -3407,7 +3407,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadSingleData(mat,complex_data->Im,
                                packed_type,len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedSingleData(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -3455,7 +3455,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadSingleData(mat,(float*)matvar->data,
                                  packed_type,len);
                     /*
@@ -3467,7 +3467,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedSingleData(mat,matvar->internal->z,
                                  (float*)matvar->data,packed_type,len);
                     /*
@@ -3542,7 +3542,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt64Data(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -3572,7 +3572,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadInt64Data(mat,complex_data->Im,
                                packed_type,len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt64Data(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -3620,7 +3620,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt64Data(mat,(mat_int64_t*)matvar->data,
                                  packed_type,len);
                     /*
@@ -3632,7 +3632,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt64Data(mat,matvar->internal->z,
                                  (mat_int64_t*)matvar->data,packed_type,len);
                     /*
@@ -3707,7 +3707,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt64Data(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -3737,7 +3737,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadInt64Data(mat,complex_data->Im,
                                packed_type,len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt64Data(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -3785,7 +3785,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt64Data(mat,(mat_int64_t*)matvar->data,
                                  packed_type,len);
                     /*
@@ -3797,7 +3797,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt64Data(mat,matvar->internal->z,
                                  (mat_int64_t*)matvar->data,packed_type,len);
                     /*
@@ -3872,7 +3872,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt32Data(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -3902,7 +3902,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadInt32Data(mat,complex_data->Im,
                                packed_type,len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -3950,7 +3950,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt32Data(mat,(mat_int32_t*)matvar->data,
                                  packed_type,len);
                     /*
@@ -3962,7 +3962,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
                                  (mat_int32_t*)matvar->data,packed_type,len);
                     /*
@@ -4035,7 +4035,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt32Data(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -4065,7 +4065,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadInt32Data(mat,complex_data->Im,
                                packed_type,len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -4113,7 +4113,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt32Data(mat,(mat_int32_t*)matvar->data,
                                  packed_type,len);
                     /*
@@ -4125,7 +4125,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
                                  (mat_int32_t*)matvar->data,packed_type,len);
                     /*
@@ -4198,7 +4198,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt16Data(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -4228,7 +4228,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadInt16Data(mat,complex_data->Im,
                                packed_type,len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt16Data(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -4276,7 +4276,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt16Data(mat,(mat_int16_t*)matvar->data,
                                  packed_type,len);
                     /*
@@ -4288,7 +4288,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt16Data(mat,matvar->internal->z,
                                  (mat_int16_t*)matvar->data,packed_type,len);
                     /*
@@ -4361,7 +4361,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt16Data(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -4391,7 +4391,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadInt16Data(mat,complex_data->Im,
                                packed_type,len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt16Data(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -4439,7 +4439,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt16Data(mat,(mat_int16_t*)matvar->data,
                                  packed_type,len);
                     /*
@@ -4451,7 +4451,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt16Data(mat,matvar->internal->z,
                                  (mat_int16_t*)matvar->data,packed_type,len);
                     /*
@@ -4524,7 +4524,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt8Data(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -4554,7 +4554,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadInt8Data(mat,complex_data->Im,
                                packed_type,len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt8Data(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -4602,7 +4602,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt8Data(mat,(mat_int8_t*)matvar->data,
                                  packed_type,len);
                     /*
@@ -4614,7 +4614,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt8Data(mat,matvar->internal->z,
                                  (mat_int8_t*)matvar->data,packed_type,len);
                     /*
@@ -4687,7 +4687,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt8Data(mat,complex_data->Re,
                                  packed_type,len);
                     /*
@@ -4717,7 +4717,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadInt8Data(mat,complex_data->Im,
                                packed_type,len);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt8Data(mat,matvar->internal->z,
                                  complex_data->Re,packed_type,len);
                     /*
@@ -4765,7 +4765,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt8Data(mat,(mat_int8_t*)matvar->data,
                                  packed_type,len);
                     /*
@@ -4777,7 +4777,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt8Data(mat,matvar->internal->z,
                                  (mat_int8_t*)matvar->data,packed_type,len);
                     /*
@@ -4846,7 +4846,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                 break;
             }
-            if ( matvar->compression == COMPRESSION_NONE) {
+            if ( matvar->compression == MAT_COMPRESSION_NONE) {
                 nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,len);
                     /*
                      * If the data was in the tag we started on a 4-byte
@@ -4857,7 +4857,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 if ( (nBytes % 8) != 0 )
                     fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-            } else if ( matvar->compression == COMPRESSION_ZLIB) {
+            } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                 nBytes = ReadCompressedCharData(mat,matvar->internal->z,
                              (char*)matvar->data,packed_type,len);
                     /*
@@ -4957,7 +4957,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             data->nir = N / 4;
             data->ir = malloc(data->nir*sizeof(mat_int32_t));
             if ( data->ir != NULL ) {
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt32Data(mat,data->ir,packed_type,data->nir);
                     /*
                      * If the data was in the tag we started on a 4-byte
@@ -4968,7 +4968,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
                                  data->ir,packed_type,data->nir);
                     /*
@@ -5020,7 +5020,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             data->njc = N / 4;
             data->jc = malloc(data->njc*sizeof(mat_int32_t));
             if ( data->jc != NULL ) {
-                if ( matvar->compression == COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE) {
                     nBytes = ReadInt32Data(mat,data->jc,packed_type,data->njc);
                     /*
                      * If the data was in the tag we started on a 4-byte
@@ -5031,7 +5031,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
                                  data->jc,packed_type,data->njc);
                     /*
@@ -5096,7 +5096,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                                           Mat_SizeOf(matvar->data_type));
                 if ( NULL != complex_data && NULL != complex_data->Re &&
                      NULL != complex_data->Im ) {
-                    if ( matvar->compression == COMPRESSION_NONE) {
+                    if ( matvar->compression == MAT_COMPRESSION_NONE) {
 #if defined(EXTENDED_SPARSE)
                         switch ( matvar->data_type ) {
                             case MAT_T_DOUBLE:
@@ -5200,7 +5200,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         if ( (nBytes % 8) != 0 )
                             fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                    } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+                    } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(EXTENDED_SPARSE)
                         switch ( matvar->data_type ) {
                             case MAT_T_DOUBLE:
@@ -5314,7 +5314,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else { /* isComplex */
                 data->data = malloc(data->ndata*Mat_SizeOf(MAT_T_DOUBLE));
                 if ( data->data != NULL ) {
-                    if ( matvar->compression == COMPRESSION_NONE) {
+                    if ( matvar->compression == MAT_COMPRESSION_NONE) {
 #if defined(EXTENDED_SPARSE)
                         switch ( matvar->data_type ) {
                             case MAT_T_DOUBLE:
@@ -5359,7 +5359,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                         if ( (nBytes % 8) != 0 )
                             fseek(mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                    } else if ( matvar->compression == COMPRESSION_ZLIB) {
+                    } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
 #if defined(EXTENDED_SPARSE)
                         switch ( matvar->data_type ) {
                             case MAT_T_DOUBLE:
@@ -5462,7 +5462,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
 #endif
 
     fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
-    if ( matvar->compression == COMPRESSION_NONE ) {
+    if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         fread(tag,4,2,mat->fp);
         if ( mat->byteswap ) {
             Mat_int32Swap(tag);
@@ -5476,7 +5476,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
             real_bytes = 8+tag[1];
         }
 #if defined(HAVE_ZLIB)
-    } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+    } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         err = inflateCopy(&z,matvar->internal->z);
         z.avail_in = 0;
         InflateDataType(mat,&z,tag);
@@ -5504,7 +5504,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
             err = 1;
         else if ( stride[1]*(edge[1]-1)+start[1]+1 > matvar->dims[1] )
             err = 1;
-        else if ( matvar->compression == COMPRESSION_NONE ) {
+        else if ( matvar->compression == MAT_COMPRESSION_NONE ) {
             if ( matvar->isComplex ) {
                 struct ComplexSplit *complex_data = data;
 
@@ -5528,7 +5528,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
             }
         }
 #if defined(HAVE_ZLIB)
-        else if ( matvar->compression == COMPRESSION_ZLIB ) {
+        else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             if ( matvar->isComplex ) {
                 struct ComplexSplit *complex_data = data;
 
@@ -5562,7 +5562,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
         }
 #endif
     } else {
-        if ( matvar->compression == COMPRESSION_NONE ) {
+        if ( matvar->compression == MAT_COMPRESSION_NONE ) {
             if ( matvar->isComplex ) {
                 int i;
                 struct ComplexSplit *complex_data = data;
@@ -5590,7 +5590,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
             }
         }
 #if defined(HAVE_ZLIB)
-        else if ( matvar->compression == COMPRESSION_ZLIB ) {
+        else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             if ( matvar->isComplex ) {
                 int i;
                 struct ComplexSplit *complex_data = data;
@@ -5704,7 +5704,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
     fseek(mat->fp,0,SEEK_END);         /* Always write at end of file */
 
 
-    if ( compress == COMPRESSION_NONE ) {
+    if ( compress == MAT_COMPRESSION_NONE ) {
         fwrite(&matrix_type,4,1,mat->fp);
         fwrite(&pad4,4,1,mat->fp);
         start = ftell(mat->fp);
@@ -5916,7 +5916,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             }
         }
 #if defined(HAVE_ZLIB)
-    } else if ( compress == COMPRESSION_ZLIB ) {
+    } else if ( compress == MAT_COMPRESSION_ZLIB ) {
         mat_uint32_t comp_buf[512];
         mat_uint32_t uncomp_buf[512] = {0,};
         int buf_size = 512, err;
@@ -6220,7 +6220,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
     fseek(mat->fp,0,SEEK_END);         /* Always write at end of file */
 
 
-    if ( matvar->compression == COMPRESSION_NONE ) {
+    if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         fwrite(&matrix_type,4,1,mat->fp);
         fwrite(&pad4,4,1,mat->fp);
         start = ftell(mat->fp);
@@ -6365,7 +6365,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
      * Can write empty data, but how to go back and add the real data?
      */
 #if 0
-    } else if ( matvar->compression == COMPRESSION_ZLIB ) {
+    } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
         mat_uint32_t comp_buf[512];
         mat_uint32_t uncomp_buf[512] = {0,};
