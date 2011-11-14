@@ -2245,7 +2245,7 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
  * @retval 0 on success
  */
 int
-Mat_VarWrite(mat_t *mat,matvar_t *matvar,int compress)
+Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
 {
     if ( mat == NULL || matvar == NULL )
         return -1;

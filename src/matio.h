@@ -283,7 +283,8 @@ EXTERN int        Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,
 EXTERN matvar_t  *Mat_VarReadInfo( mat_t *mat, const char *name );
 EXTERN matvar_t  *Mat_VarReadNext( mat_t *mat );
 EXTERN matvar_t  *Mat_VarReadNextInfo( mat_t *mat );
-EXTERN int        Mat_VarWrite(mat_t *mat,matvar_t *matvar,int compress );
+EXTERN int        Mat_VarWrite(mat_t *mat,matvar_t *matvar,
+                      enum matio_compression compress );
 EXTERN int        Mat_VarWriteInfo(mat_t *mat,matvar_t *matvar);
 EXTERN int        Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
                       int *start,int *stride,int *edge);
