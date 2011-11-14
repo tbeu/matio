@@ -474,7 +474,7 @@ Mat_VarCalloc(void)
  *       done with the mat variable.  The Mat_VarFree function will NOT free
  *       data that was created with MAT_F_DONT_COPY_DATA, so free it yourself.
  * - MAT_F_COMPLEX to specify that the data is complex.  The data variable
- *       should be a pointer to a struct ComplexSplit type.
+ *       should be a pointer to a mat_complex_split_t type.
  * - MAT_F_GLOBAL to assign the variable as a global variable
  * - MAT_F_LOGICAL to specify that it is a logical variable
  * @return A MAT variable that can be written to a file or otherwise used
@@ -601,10 +601,11 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                 memcpy(sparse_data->jc,sparse_data_in->jc,
                        sparse_data->njc*sizeof(*sparse_data->jc));
             if ( matvar->isComplex ) {
-                sparse_data->data = malloc(sizeof(struct ComplexSplit));
+                sparse_data->data = malloc(sizeof(mat_complex_split_t));
                 if ( NULL != sparse_data->data ) {
-                    struct ComplexSplit *complex_data    = sparse_data->data,
-                                        *complex_data_in = sparse_data_in->data;
+                    mat_complex_split_t *complex_data,*complex_data_in;
+                    complex_data     = sparse_data->data;
+                    complex_data_in  = sparse_data_in->data;
                     complex_data->Re = malloc(sparse_data->ndata*data_size);
                     complex_data->Im = malloc(sparse_data->ndata*data_size);
                     if ( NULL != complex_data->Re )
@@ -624,10 +625,10 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         matvar->data = sparse_data;
     } else {
         if ( matvar->isComplex ) {
-            matvar->data   = malloc(sizeof(struct ComplexSplit));
+            matvar->data   = malloc(sizeof(mat_complex_split_t));
             if ( NULL != matvar->data ) {
-                struct ComplexSplit *complex_data    = matvar->data;
-                struct ComplexSplit *complex_data_in = data;
+                mat_complex_split_t *complex_data    = matvar->data;
+                mat_complex_split_t *complex_data_in = data;
 
                 complex_data->Re = malloc(matvar->nbytes);
                 complex_data->Im = malloc(matvar->nbytes);
@@ -795,10 +796,10 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         }
     } else if ( in->data != NULL ) {
         if ( out->isComplex ) {
-            out->data = malloc(sizeof(struct ComplexSplit));
+            out->data = malloc(sizeof(mat_complex_split_t));
             if ( out->data != NULL ) {
-                struct ComplexSplit *out_data = out->data;
-                struct ComplexSplit *in_data  = in->data;
+                mat_complex_split_t *out_data = out->data;
+                mat_complex_split_t *in_data  = in->data;
                 out_data->Re = malloc(out->nbytes);
                 if ( NULL != out_data->Re )
                     memcpy(out_data->Re,in_data->Re,out->nbytes);
@@ -854,7 +855,7 @@ Mat_VarFree(matvar_t *matvar)
                     if ( sparse->jc != NULL )
                         free(sparse->jc);
                     if ( matvar->isComplex && NULL != sparse->data ) {
-                        struct ComplexSplit *complex_data = sparse->data;
+                        mat_complex_split_t *complex_data = sparse->data;
                         free(complex_data->Re);
                         free(complex_data->Im);
                         free(complex_data);
@@ -877,7 +878,7 @@ Mat_VarFree(matvar_t *matvar)
             case MAT_C_CHAR:
                 if ( !matvar->mem_conserve && NULL != matvar->data ) {
                     if ( matvar->isComplex ) {
-                        struct ComplexSplit *complex_data = matvar->data;
+                        mat_complex_split_t *complex_data = matvar->data;
                         free(complex_data->Re);
                         free(complex_data->Im);
                         free(complex_data);
@@ -1680,7 +1681,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
             {
                 size_t stride = Mat_SizeOf(matvar->data_type);
                 if ( matvar->isComplex ) {
-                    struct ComplexSplit *complex_data = matvar->data;
+                    mat_complex_split_t *complex_data = matvar->data;
                     char *rp = complex_data->Re;
                     char *ip = complex_data->Im;
                    for ( i = 0; i < matvar->dims[0] && i < 15; i++ ) {
@@ -1738,7 +1739,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
 #endif
                 sparse = matvar->data;
                 if ( matvar->isComplex ) {
-                    struct ComplexSplit *complex_data = sparse->data;
+                    mat_complex_split_t *complex_data = sparse->data;
                     char *re,*im;
                     re = complex_data->Re;
                     im = complex_data->Im;
@@ -1892,7 +1893,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
         err = 1;
     } else if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         if ( matvar->isComplex ) {
-            struct ComplexSplit *complex_data = data;
+            mat_complex_split_t *complex_data = data;
 
             ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
                 matvar->data_type,start,stride,edge);
@@ -1915,7 +1916,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         if ( matvar->isComplex ) {
-            struct ComplexSplit *complex_data = data;
+            mat_complex_split_t *complex_data = data;
             
             ReadCompressedDataSlab1(mat,&z,complex_data->Re,
                 matvar->class_type,matvar->data_type,start,stride,edge);

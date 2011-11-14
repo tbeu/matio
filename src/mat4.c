@@ -76,7 +76,7 @@ Read4(mat_t *mat,matvar_t *matvar)
         case MAT_C_DOUBLE:
             matvar->data_size = sizeof(double);
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes   = N*sizeof(double);
                 complex_data     = malloc(sizeof(*complex_data));
@@ -165,7 +165,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
         else if ( stride[1]*(edge[1]-1)+start[1]+1 > matvar->dims[1] )
             err = 1;
         if ( matvar->isComplex ) {
-            struct ComplexSplit *cdata = data;
+            mat_complex_split_t *cdata = data;
             long nbytes = edge[0]*edge[1]*Mat_SizeOf(matvar->data_type);
 
             ReadDataSlab2(mat,cdata->Re,class_type,matvar->data_type,
@@ -180,7 +180,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
     } else {
         if ( matvar->isComplex ) {
             int i;
-            struct ComplexSplit *cdata = data;
+            mat_complex_split_t *cdata = data;
             long nbytes = Mat_SizeOf(matvar->data_type);
 
             for ( i = 0; i < matvar->rank; i++ )

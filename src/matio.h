@@ -163,10 +163,10 @@ enum {
  * Complex data type using split real/imaginary pointers
  * @ingroup MAT
  */
-struct ComplexSplit {
+typedef struct mat_complex_split_t {
     void *Re; /**< Pointer to the real part */
     void *Im; /**< Pointer to the imaginary part */
-};
+} mat_complex_split_t;
 
 struct _mat_t;
 /** @brief Matlab MAT File information

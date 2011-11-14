@@ -376,8 +376,8 @@ Mat_dims_type_to_hid_t(void)
 }
 
 static void
-Mat_complex_interleaved_to_split(void *data,struct ComplexSplit *complex_data,
-    enum matio_types type,size_t numel)
+Mat_complex_interleaved_to_split(void *data,
+    mat_complex_split_t *complex_data,enum matio_types type,size_t numel)
 {
     switch ( type ) {
         case MAT_T_DOUBLE:
@@ -1142,7 +1142,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                             matvar->data);
                 }
             } else {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
                 hid_t h5_complex_base,h5_complex;
 
                 complex_data     = malloc(sizeof(*complex_data));
@@ -1284,7 +1284,7 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                                        H5Tget_size(h5_complex_base));
                 H5Tinsert(h5_complex,"real",0,h5_complex_base);
                 H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         ((struct ComplexSplit*)matvar->data)->Re);
+                         ((mat_complex_split_t*)matvar->data)->Re);
                 H5Tclose(h5_complex);
 
                 /* Write imaginary part of dataset */
@@ -1292,7 +1292,7 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                                       H5Tget_size(h5_complex_base));
                 H5Tinsert(h5_complex,"imag",0,h5_complex_base);
                 H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         ((struct ComplexSplit*)matvar->data)->Im);
+                         ((mat_complex_split_t*)matvar->data)->Im);
                 H5Tclose(h5_complex);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
@@ -1758,7 +1758,7 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                                        H5Tget_size(h5_complex_base));
                 H5Tinsert(h5_complex,"real",0,h5_complex_base);
                 H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         ((struct ComplexSplit*)matvar->data)->Re);
+                         ((mat_complex_split_t*)matvar->data)->Re);
                 H5Tclose(h5_complex);
 
                 /* Write imaginary part of dataset */
@@ -1766,7 +1766,7 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                                       H5Tget_size(h5_complex_base));
                 H5Tinsert(h5_complex,"imag",0,h5_complex_base);
                 H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         ((struct ComplexSplit*)matvar->data)->Im);
+                         ((mat_complex_split_t*)matvar->data)->Im);
                 H5Tclose(h5_complex);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
@@ -2297,7 +2297,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                             H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
                 }
             } else {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
                 hid_t h5_complex_base,h5_complex;
 
                 complex_data     = malloc(sizeof(*complex_data));
@@ -2441,7 +2441,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                                 H5S_ALL,H5S_ALL,H5P_DEFAULT,sparse_data->data);
                     }
                 } else {
-                    struct ComplexSplit *complex_data;
+                    mat_complex_split_t *complex_data;
                     hid_t h5_complex_base,h5_complex;
 
                     complex_data     = malloc(sizeof(*complex_data));
@@ -2826,7 +2826,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                                        H5Tget_size(h5_complex_base));
                 H5Tinsert(h5_complex,"real",0,h5_complex_base);
                 H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         ((struct ComplexSplit*)matvar->data)->Re);
+                         ((mat_complex_split_t*)matvar->data)->Re);
                 H5Tclose(h5_complex);
 
                 /* Write imaginary part of dataset */
@@ -2834,7 +2834,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                                       H5Tget_size(h5_complex_base));
                 H5Tinsert(h5_complex,"imag",0,h5_complex_base);
                 H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                         ((struct ComplexSplit*)matvar->data)->Im);
+                         ((mat_complex_split_t*)matvar->data)->Im);
                 H5Tclose(h5_complex);
                 H5Dclose(dset_id);
                 H5Sclose(mspace_id);
@@ -3261,7 +3261,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                 if ( matvar->isComplex ) {
                     hid_t h5_complex,h5_complex_base;
                     void *buf;
-                    struct ComplexSplit *complex_data;
+                    mat_complex_split_t *complex_data;
 
                     complex_data = sparse->data;
 

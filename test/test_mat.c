@@ -628,7 +628,7 @@ test_write_2d_numeric(enum matio_classes matvar_class, char *output_name)
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t ui64[50];
 #endif
-    struct ComplexSplit z = {NULL,NULL},s = {NULL,NULL};
+    mat_complex_split_t z = {NULL,NULL},s = {NULL,NULL};
     char *str = "This is a string";
     mat_t *mat;
     matvar_t *matvar;
@@ -741,7 +741,7 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class,char *output_name)
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t ui64_real[50], ui64_imag[50];
 #endif
-    struct ComplexSplit z = {NULL,NULL};
+    mat_complex_split_t z = {NULL,NULL};
     mat_t *mat;
     matvar_t *matvar;
 
@@ -1229,7 +1229,7 @@ test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t ui64_real[50], ui64_imag[50];
 #endif
-    struct ComplexSplit data[4] = {NULL,NULL};
+    mat_complex_split_t data[4] = {NULL,NULL};
     mat_t *mat;
     matvar_t *matvar[5], *struct_matvar;
     enum matio_types data_type;
@@ -1609,7 +1609,7 @@ test_write_cell_complex_2d_numeric(enum matio_classes matvar_class,
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t ui64_real[50], ui64_imag[50];
 #endif
-    struct ComplexSplit data[4] = {NULL,NULL};
+    mat_complex_split_t data[4] = {NULL,NULL};
     mat_t *mat;
     matvar_t *matvar[5], *cell_matvar;
     enum matio_types data_type;
@@ -2113,7 +2113,7 @@ test_write_complex_sparse(enum matio_classes matvar_class,char *output_name)
     mat_t *mat;
     matvar_t *matvar;
     sparse_t  sparse = {0,};
-    struct ComplexSplit z = {NULL,NULL};
+    mat_complex_split_t z = {NULL,NULL};
 
     sparse.nzmax = 25;
     sparse.nir   = 25;

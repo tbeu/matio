@@ -194,8 +194,8 @@ concept of a rank 1 array (i.e. vector). The minimum rank of an array is 2
 
 @subsection Writing Numeric Arrays
 Numeric arrays can be either real or complex. Complex arrays are encapsulated
-in the @code{struct ComplexSplit} data structure that contains a pointer to
-the real part of the data, and a pointer to the imaginary part of the data.
+in the @code{struct mat_complex_split_t} data structure that contains a pointer
+to the real part of the data, and a pointer to the imaginary part of the data.
 The example program below writes two real variables @emph{x} and @emph{y}, and
 one complex variable @emph{z} whos real and imaginary parts are the @emph{x}
 and @emph{y} variables respectively. Note the @code{MAT_F_COMPLEX} argument
@@ -214,7 +214,7 @@ main(int argc,char **argv)
     size_t    dims[2] = {10,1};
     double    x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9,10},
               y[10] = {11,12,13,14,15,16,17,18,19,20};
-    struct ComplexSplit z = {x,y};
+    struct mat_complex_split_t z = {x,y};
 
     matfp = Mat_CreateVer("test.mat",NULL,MAT_FT_DEFAULT);
     if ( NULL == matfp ) {
@@ -272,7 +272,7 @@ main(int argc,char **argv)
     size_t    dims[2] = {10,1};
     double    x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9,10},
               y[10] = {11,12,13,14,15,16,17,18,19,20};
-    struct ComplexSplit z = {x,y};
+    struct mat_complex_split_t z = {x,y};
 
     matfp = Mat_CreateVer("test.mat",NULL,MAT_FT_DEFAULT);
     if ( NULL == matfp ) {

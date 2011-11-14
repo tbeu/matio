@@ -61,7 +61,7 @@ static const char *data_type_desc[23] = {"Unknown","8-bit, signed integer",
 #define CLASS_FROM_ARRAY_FLAGS(a) (enum matio_classes)((a) & 0x000000ff)
 #define CLASS_TYPE_MASK           0x000000ff
 
-static const struct ComplexSplit const null_complex_data = {NULL,NULL};
+static const mat_complex_split_t const null_complex_data = {NULL,NULL};
 
 /*
  * -------------------------------------------------------------
@@ -2339,7 +2339,7 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
         case MAT_C_UINT8:
         {
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data = matvar->data;
+                mat_complex_split_t *complex_data = matvar->data;
 
                 if ( NULL == matvar->data )
                     complex_data = &null_complex_data;
@@ -2557,7 +2557,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
             /* WriteCompressedData makes sure uncomressed data is aligned
              * on an 8-byte boundary */
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data = matvar->data;
+                mat_complex_split_t *complex_data = matvar->data;
 
                 if ( NULL == matvar->data )
                     complex_data = &null_complex_data;
@@ -2674,7 +2674,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
             byteswritten += WriteCompressedData(mat,z,sparse->jc,
                 sparse->njc,MAT_T_INT32);
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data = sparse->data;
+                mat_complex_split_t *complex_data = sparse->data;
                 byteswritten += WriteCompressedData(mat,z,
                     complex_data->Re,sparse->ndata,matvar->data_type);
                 byteswritten += WriteCompressedData(mat,z,
@@ -2763,7 +2763,7 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
         case MAT_C_UINT8:
         {
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data = matvar->data;
+                mat_complex_split_t *complex_data = matvar->data;
 
                 if ( NULL == matvar->data )
                     complex_data = &null_complex_data;
@@ -2987,7 +2987,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
             /* WriteCompressedData makes sure uncomressed data is aligned
              * on an 8-byte boundary */
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data = matvar->data;
+                mat_complex_split_t *complex_data = matvar->data;
 
                 if ( NULL == matvar->data )
                     complex_data = &null_complex_data;
@@ -3103,7 +3103,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
             byteswritten += WriteCompressedData(mat,z,sparse->jc,
                 sparse->njc,MAT_T_INT32);
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data = sparse->data;
+                mat_complex_split_t *complex_data = sparse->data;
                 byteswritten += WriteCompressedData(mat,z,
                     complex_data->Re,sparse->ndata,matvar->data_type);
                 byteswritten += WriteCompressedData(mat,z,
@@ -3202,7 +3202,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(double);
             matvar->data_type = MAT_T_DOUBLE;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -3366,7 +3366,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(float);
             matvar->data_type = MAT_T_SINGLE;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -3531,7 +3531,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(mat_int64_t);
             matvar->data_type = MAT_T_INT64;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -3696,7 +3696,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(mat_uint64_t);
             matvar->data_type = MAT_T_UINT64;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -3861,7 +3861,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(mat_int32_t);
             matvar->data_type = MAT_T_INT32;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -4024,7 +4024,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(mat_uint32_t);
             matvar->data_type = MAT_T_UINT32;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -4187,7 +4187,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(mat_int16_t);
             matvar->data_type = MAT_T_INT16;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -4350,7 +4350,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(mat_uint16_t);
             matvar->data_type = MAT_T_UINT16;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -4513,7 +4513,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(mat_int8_t);
             matvar->data_type = MAT_T_INT8;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -4676,7 +4676,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(mat_uint8_t);
             matvar->data_type = MAT_T_UINT8;
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = malloc(sizeof(*complex_data));
@@ -5087,7 +5087,7 @@ Read5(mat_t *mat, matvar_t *matvar)
 #endif
             data->ndata = N / Mat_SizeOf(packed_type);
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data;
+                mat_complex_split_t *complex_data;
 
                 complex_data = malloc(sizeof(*complex_data));
                 complex_data->Re = malloc(data->ndata*
@@ -5506,7 +5506,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
             err = 1;
         else if ( matvar->compression == MAT_COMPRESSION_NONE ) {
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data = data;
+                mat_complex_split_t *complex_data = data;
 
                 ReadDataSlab2(mat,complex_data->Re,matvar->class_type,
                     matvar->data_type,matvar->dims,start,stride,edge);
@@ -5530,7 +5530,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
 #if defined(HAVE_ZLIB)
         else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             if ( matvar->isComplex ) {
-                struct ComplexSplit *complex_data = data;
+                mat_complex_split_t *complex_data = data;
 
                 ReadCompressedDataSlab2(mat,&z,complex_data->Re,
                     matvar->class_type,matvar->data_type,matvar->dims,
@@ -5565,7 +5565,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
         if ( matvar->compression == MAT_COMPRESSION_NONE ) {
             if ( matvar->isComplex ) {
                 int i;
-                struct ComplexSplit *complex_data = data;
+                mat_complex_split_t *complex_data = data;
 
                 ReadDataSlabN(mat,complex_data->Re,matvar->class_type,
                     matvar->data_type,matvar->rank,matvar->dims,
@@ -5593,7 +5593,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
         else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             if ( matvar->isComplex ) {
                 int i;
-                struct ComplexSplit *complex_data = data;
+                mat_complex_split_t *complex_data = data;
 
                 ReadCompressedDataSlabN(mat,&z,complex_data->Re,
                     matvar->class_type,matvar->data_type,matvar->rank,
@@ -5779,7 +5779,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             case MAT_C_UINT8:
             {
                 if ( matvar->isComplex ) {
-                    struct ComplexSplit *complex_data = matvar->data;
+                    mat_complex_split_t *complex_data = matvar->data;
 
                     if ( NULL == complex_data )
                         complex_data = &null_complex_data;
@@ -5896,7 +5896,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     for ( i = nBytes % 8; i < 8; i++ )
                         fwrite(&pad1,1,1,mat->fp);
                 if ( matvar->isComplex ) {
-                    struct ComplexSplit *complex_data = sparse->data;
+                    mat_complex_split_t *complex_data = sparse->data;
                     nBytes = WriteData(mat,complex_data->Re,sparse->ndata,
                         matvar->data_type);
                     if ( nBytes % 8 )
@@ -6030,7 +6030,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 /* WriteCompressedData makes sure uncomressed data is aligned
                  * on an 8-byte boundary */
                 if ( matvar->isComplex ) {
-                    struct ComplexSplit *complex_data = matvar->data;
+                    mat_complex_split_t *complex_data = matvar->data;
 
                     if ( NULL == matvar->data )
                         complex_data = &null_complex_data;
@@ -6147,7 +6147,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 byteswritten += WriteCompressedData(mat,matvar->internal->z,sparse->jc,
                     sparse->njc,MAT_T_INT32);
                 if ( matvar->isComplex ) {
-                    struct ComplexSplit *complex_data = sparse->data;
+                    mat_complex_split_t *complex_data = sparse->data;
                     byteswritten += WriteCompressedData(mat,matvar->internal->z,
                         complex_data->Re,sparse->ndata,matvar->data_type);
                     byteswritten += WriteCompressedData(mat,matvar->internal->z,
