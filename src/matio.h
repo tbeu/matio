@@ -196,8 +196,8 @@ typedef struct matvar_t {
     char *name;                       /**< Name of the variable */
     void *data;                       /**< Pointer to the data */
     int   mem_conserve;               /**< 1 if Memory was conserved with data */
-    int   compression;                /**< Compression (0=>None,1=>ZLIB) */
-    struct matvar_internal *internal; /**< matio internal data */
+    enum matio_compression  compression; /**< Variable compression type */
+    struct matvar_internal *internal;    /**< matio internal data */
 } matvar_t;
 
 /** @brief sparse data information
