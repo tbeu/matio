@@ -69,6 +69,8 @@ be modified to handle these changes.
 @item Added @code{MAT_} prefix to enumerations of @code{matio_compression}
 @item Changed name of structure for complex split-format data from
       @code{struct ComplexSplit} to @code{struct mat_complex_split_t}
+@item Changed name of sparse data structure from @code{sparse_t} to
+      @code{mat_sparse_t}.
 @end enumerate
 Each of these changes are described in the remaining sections, and include
 actions to upgrade existing code for compatability with the latest version.

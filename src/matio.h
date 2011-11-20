@@ -205,7 +205,7 @@ typedef struct matvar_t {
  * Contains information and data for a sparse matrix
  * @ingroup MAT
  */
-typedef struct sparse_t {
+typedef struct mat_sparse_t {
     int nzmax;               /**< Maximum number of non-zero elements */
     int *ir;                 /**< Array of size nzmax where ir[k] is the row of
                                *  data[k].  0 <= k <= nzmax
@@ -218,7 +218,7 @@ typedef struct sparse_t {
     int   njc;               /**< Number of elements in jc */
     int   ndata;             /**< Number of complex/real data values */
     void *data;              /**< Array of data elements */
-} sparse_t;
+} mat_sparse_t;
 
 /*     io.c         */
 EXTERN char  *strdup_vprintf(const char *format, va_list ap);

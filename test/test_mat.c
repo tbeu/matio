@@ -2060,7 +2060,7 @@ test_write_sparse(enum matio_classes matvar_class,char *output_name)
     mat_int32_t  jc[11] = {0,2,5,7,10,12,15,17,20,22,25};
     mat_t *mat;
     matvar_t *matvar;
-    sparse_t  sparse = {0,};
+    mat_sparse_t  sparse = {0,};
 
     sparse.nzmax = 25;
     sparse.nir   = 25;
@@ -2112,7 +2112,7 @@ test_write_complex_sparse(enum matio_classes matvar_class,char *output_name)
     mat_int32_t  jc[11] = {0,2,5,7,10,12,15,17,20,22,25};
     mat_t *mat;
     matvar_t *matvar;
-    sparse_t  sparse = {0,};
+    mat_sparse_t  sparse = {0,};
     mat_complex_split_t z = {NULL,NULL};
 
     sparse.nzmax = 25;

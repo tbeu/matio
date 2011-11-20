@@ -571,7 +571,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
             return NULL;
     }
     if ( matvar->class_type == MAT_C_SPARSE ) {
-        matvar->data_size = sizeof(sparse_t);
+        matvar->data_size = sizeof(mat_sparse_t);
         matvar->nbytes    = matvar->data_size;
     } else {
         matvar->data_size = data_size;
@@ -583,10 +583,10 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         matvar->data         = data;
         matvar->mem_conserve = 1;
     } else if ( MAT_C_SPARSE == matvar->class_type ) {
-        sparse_t *sparse_data, *sparse_data_in;
+        mat_sparse_t *sparse_data, *sparse_data_in;
 
         sparse_data_in = data;
-        sparse_data    = malloc(sizeof(sparse_t));
+        sparse_data    = malloc(sizeof(mat_sparse_t));
         if ( NULL != sparse_data ) {
             sparse_data->nzmax = sparse_data_in->nzmax;
             sparse_data->nir   = sparse_data_in->nir;
@@ -848,7 +848,7 @@ Mat_VarFree(matvar_t *matvar)
                 break;
             case MAT_C_SPARSE:
                 if ( !matvar->mem_conserve ) {
-                    sparse_t *sparse;
+                    mat_sparse_t *sparse;
                     sparse = matvar->data;
                     if ( sparse->ir != NULL )
                         free(sparse->ir);
@@ -960,7 +960,7 @@ Mat_VarFree2(matvar_t *matvar)
         free(matvar->data);
     } else if ( (matvar->data != NULL) && (!matvar->mem_conserve) &&
                 (matvar->class_type == MAT_C_SPARSE) ) {
-        sparse_t *sparse;
+        mat_sparse_t *sparse;
         sparse = matvar->data;
         if ( sparse->ir != NULL )
             free(sparse->ir);
@@ -1731,7 +1731,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
             }
             case MAT_C_SPARSE:
             {
-                sparse_t *sparse;
+                mat_sparse_t *sparse;
                 size_t stride = Mat_SizeOf(matvar->data_type);
 #if !defined(EXTENDED_SPARSE)
                 if ( MAT_T_DOUBLE != matvar->data_type )

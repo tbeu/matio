@@ -148,7 +148,7 @@ GetStructFieldBufSize(matvar_t *matvar)
     }
     case MAT_C_SPARSE:
     {
-        sparse_t *sparse = matvar->data;
+        mat_sparse_t *sparse = matvar->data;
 
         data_bytes = sparse->nir*sizeof(mat_int32_t);
         if ( data_bytes % 8 )
@@ -272,7 +272,7 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
     }
     case MAT_C_SPARSE:
     {
-        sparse_t *sparse = matvar->data;
+        mat_sparse_t *sparse = matvar->data;
 
         data_bytes = sparse->nir*sizeof(mat_int32_t);
         if ( data_bytes % 8 )
@@ -393,7 +393,7 @@ GetMatrixMaxBufSize(matvar_t *matvar)
     }
     case MAT_C_SPARSE:
     {
-        sparse_t *sparse = matvar->data;
+        mat_sparse_t *sparse = matvar->data;
 
         data_bytes = sparse->nir*sizeof(mat_int32_t);
         if ( data_bytes % 8 )
@@ -2278,7 +2278,7 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
     if ( matvar->isLogical )
         array_flags |= MAT_F_LOGICAL;
     if ( matvar->class_type == MAT_C_SPARSE )
-        nzmax = ((sparse_t *)matvar->data)->nzmax;
+        nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
     if ( mat->byteswap )
         array_flags = Mat_int32Swap((mat_int32_t*)&array_flags);
@@ -2429,7 +2429,7 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
         }
         case MAT_C_SPARSE:
         {
-            sparse_t *sparse = matvar->data;
+            mat_sparse_t *sparse = matvar->data;
 
             nBytes = WriteData(mat,sparse->ir,sparse->nir,MAT_T_INT32);
             if ( nBytes % 8 )
@@ -2493,7 +2493,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     if ( matvar->isLogical )
         array_flags |= MAT_F_LOGICAL;
     if ( matvar->class_type == MAT_C_SPARSE )
-        nzmax = ((sparse_t *)matvar->data)->nzmax;
+        nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
     uncomp_buf[0] = MAT_T_MATRIX;
     uncomp_buf[1] = (int)GetMatrixMaxBufSize(matvar);
@@ -2667,7 +2667,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
         }
         case MAT_C_SPARSE:
         {
-            sparse_t *sparse = matvar->data;
+            mat_sparse_t *sparse = matvar->data;
 
             byteswritten += WriteCompressedData(mat,z,sparse->ir,
                 sparse->nir,MAT_T_INT32);
@@ -2725,7 +2725,7 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
     if ( matvar->isLogical )
         array_flags |= MAT_F_LOGICAL;
     if ( matvar->class_type == MAT_C_SPARSE )
-        nzmax = ((sparse_t *)matvar->data)->nzmax;
+        nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
     if ( mat->byteswap )
         array_flags = Mat_int32Swap((mat_int32_t*)&array_flags);
@@ -2857,7 +2857,7 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
         }
         case MAT_C_SPARSE:
         {
-            sparse_t *sparse = matvar->data;
+            mat_sparse_t *sparse = matvar->data;
 
             nBytes = WriteData(mat,sparse->ir,sparse->nir,MAT_T_INT32);
             if ( nBytes % 8 )
@@ -2923,7 +2923,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
     if ( matvar->isLogical )
         array_flags |= MAT_F_LOGICAL;
     if ( matvar->class_type == MAT_C_SPARSE )
-        nzmax = ((sparse_t *)matvar->data)->nzmax;
+        nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
     uncomp_buf[0] = MAT_T_MATRIX;
     uncomp_buf[1] = (int)GetMatrixMaxBufSize(matvar);
@@ -3096,7 +3096,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
         }
         case MAT_C_SPARSE:
         {
-            sparse_t *sparse = matvar->data;
+            mat_sparse_t *sparse = matvar->data;
 
             byteswritten += WriteCompressedData(mat,z,sparse->ir,
                 sparse->nir,MAT_T_INT32);
@@ -4910,9 +4910,9 @@ Read5(mat_t *mat, matvar_t *matvar)
         case MAT_C_SPARSE:
         {
             int N;
-            sparse_t *data;
+            mat_sparse_t *data;
 
-            matvar->data_size = sizeof(sparse_t);
+            matvar->data_size = sizeof(mat_sparse_t);
             matvar->data      = malloc(matvar->data_size);
             if ( matvar->data == NULL ) {
                 Mat_Critical("ReadData: Allocation of data pointer failed");
@@ -5719,7 +5719,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         if ( matvar->isLogical )
             array_flags |= MAT_F_LOGICAL;
         if ( matvar->class_type == MAT_C_SPARSE )
-            nzmax = ((sparse_t *)matvar->data)->nzmax;
+            nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
         fwrite(&array_flags_type,4,1,mat->fp);
         fwrite(&array_flags_size,4,1,mat->fp);
@@ -5885,7 +5885,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             }
             case MAT_C_SPARSE:
             {
-                sparse_t *sparse = matvar->data;
+                mat_sparse_t *sparse = matvar->data;
 
                 nBytes = WriteData(mat,sparse->ir,sparse->nir,MAT_T_INT32);
                 if ( nBytes % 8 )
@@ -5941,7 +5941,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         if ( matvar->isLogical )
             array_flags |= MAT_F_LOGICAL;
         if ( matvar->class_type == MAT_C_SPARSE )
-            nzmax = ((sparse_t *)matvar->data)->nzmax;
+            nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
         uncomp_buf[0] = MAT_T_MATRIX;
         uncomp_buf[1] = (int)GetMatrixMaxBufSize(matvar);
@@ -6140,7 +6140,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             }
             case MAT_C_SPARSE:
             {
-                sparse_t *sparse = matvar->data;
+                mat_sparse_t *sparse = matvar->data;
 
                 byteswritten += WriteCompressedData(mat,matvar->internal->z,sparse->ir,
                     sparse->nir,MAT_T_INT32);
@@ -6235,7 +6235,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         if ( matvar->isLogical )
             array_flags |= MAT_F_LOGICAL;
         if ( matvar->class_type == MAT_C_SPARSE )
-            nzmax = ((sparse_t *)matvar->data)->nzmax;
+            nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
         fwrite(&array_flags_type,4,1,mat->fp);
         fwrite(&array_flags_size,4,1,mat->fp);

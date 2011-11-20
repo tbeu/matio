@@ -2387,7 +2387,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         {
             hid_t sparse_dset_id, space_id;
             hsize_t dims[2] = {0,};
-            struct sparse_t *sparse_data = calloc(1,sizeof(*sparse_data));
+            struct mat_sparse_t *sparse_data = calloc(1,sizeof(*sparse_data));
 
             if ( NULL != matvar->internal->hdf5_name ) {
                 dset_id = H5Gopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
@@ -2429,7 +2429,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 H5Sget_simple_extent_dims(space_id,dims,NULL);
                 sparse_data->nzmax = dims[0];
                 sparse_data->ndata = dims[0];
-                matvar->data_size  = sizeof(struct sparse_t);
+                matvar->data_size  = sizeof(struct mat_sparse_t);
                 matvar->nbytes     = matvar->data_size;
 
                 ndata_bytes = sparse_data->nzmax*Mat_SizeOf(matvar->data_type);
@@ -3228,7 +3228,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                     matvar->name);
             } else {
                 hid_t size_type_id;
-                sparse_t *sparse;
+                mat_sparse_t *sparse;
                 hsize_t rank, nir, njc, ndata;
                 mat_uint64_t sparse_attr_value;
 

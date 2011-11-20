@@ -53,9 +53,9 @@ variable is available in all scopes (e.g. base workspace, function, etc.)
 
 @subsection Sparse Matrix Variables
 If a variable's class type is sparse, the @code{data} field of the MATLAB
-variable structure is a pointer to the sparse matrix structure @code{sparse_t}.
-The sparse matrix structure stores the non-zero elements of the matrix in
-compressed column format.
+variable structure is a pointer to the sparse matrix structure
+@code{mat_sparse_t}. The sparse matrix structure stores the non-zero elements of
+the matrix in compressed column format.
 
 @subsection Structure Variables
 If the MATLAB variable structure's @code{class_type} is @code{MAT_C_STRUCT}, the
