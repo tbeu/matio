@@ -23,3 +23,4 @@ autom4te.cache/
 aclocal.m4
 config/lt*
 config/libtool.m4
+config/texinfo.tex
