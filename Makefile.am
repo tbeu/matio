@@ -29,7 +29,7 @@ VPATH = @srcdir@
 ACLOCAL_AMFLAGS = -I config
 
 datadir = $(prefix)/share/matio
-EXTRA_DIST = matio.pc.in bootstrap patches/inflate.patch \
+EXTRA_DIST = matio.pc.in autogen.sh patches/inflate.patch \
              share/test_file.mat share/test_file_v6.mat
 
 pkgconfigdir = $(libdir)/pkgconfig
