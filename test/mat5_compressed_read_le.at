@@ -459,6 +459,7 @@ AT_CHECK(
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Structure
+ Data Type: Structure
 Fields@<:@0@:>@ {
 }
 ], [ignore])
@@ -504,6 +505,7 @@ Class Type: Character Array
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Structure
+ Data Type: Structure
 Fields@<:@0@:>@ {
 }
       Name: field2
@@ -2546,6 +2548,7 @@ Class Type: Cell Array
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Structure
+ Data Type: Structure
 Fields@<:@0@:>@ {
 }
       Rank: 2
@@ -2575,6 +2578,7 @@ Class Type: Character Array
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Structure
+ Data Type: Structure
 Fields@<:@0@:>@ {
 }
       Name: field2

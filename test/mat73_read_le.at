@@ -461,6 +461,8 @@ AT_CHECK(
 Dimensions: 1 x 1
 Class Type: Structure
  Data Type: Structure
+Fields@<:@0@:>@ {
+}
 ], [ignore])
 AT_CLEANUP
 
@@ -507,6 +509,8 @@ Class Type: Character Array
 Dimensions: 0 x 1
 Class Type: Structure
  Data Type: Structure
+Fields@<:@0@:>@ {
+}
       Name: field2
       Rank: 2
 Dimensions: 0 x 1
@@ -2558,6 +2562,8 @@ Class Type: Cell Array
 Dimensions: 1 x 1
 Class Type: Structure
  Data Type: Structure
+Fields@<:@0@:>@ {
+}
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Structure
@@ -2588,6 +2594,8 @@ Class Type: Character Array
 Dimensions: 0 x 1
 Class Type: Structure
  Data Type: Structure
+Fields@<:@0@:>@ {
+}
       Name: field2
       Rank: 2
 Dimensions: 0 x 1

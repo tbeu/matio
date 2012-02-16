@@ -84,6 +84,8 @@ struct matvar_internal {
     long  fpos;         /**< Offset from the beginning of the MAT file to the variable */
     long  datapos;      /**< Offset from the beginning of the MAT file to the data */
      mat_t    *fp;      /**< Pointer to the MAT file structure (mat_t) */
+    unsigned num_fields;
+    char **fieldnames;
 #if defined(HAVE_ZLIB)
     z_stream *z;        /**< zlib compression state */
 #endif

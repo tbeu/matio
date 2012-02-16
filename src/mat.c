@@ -414,6 +414,8 @@ Mat_VarCalloc(void)
             matvar->internal->fp = NULL;
             matvar->internal->fpos         = 0;
             matvar->internal->datapos      = 0;
+            matvar->internal->fieldnames   = NULL;
+            matvar->internal->num_fields   = 0;
 #if defined(HAVE_ZLIB)
             matvar->internal->z         = NULL;
 #endif
@@ -555,13 +557,20 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
             matvar_t **fields;
 
             data_size = sizeof(matvar_t **);
-            nmemb = 0;
             if ( data != NULL ) {
                 fields = data;
                 nfields = 0;
                 while ( fields[nfields] != NULL )
                     nfields++;
-                nmemb = nfields; /* nfields is really nmemb*nfields */
+                if ( nmemb )
+                    nfields = nfields / nmemb;
+                matvar->internal->num_fields = nfields;
+                matvar->internal->fieldnames =
+                    calloc(nfields,sizeof(*matvar->internal->fieldnames));
+                for ( i = 0; i < nfields; i++ )
+                    matvar->internal->fieldnames[i] = strdup(fields[i]->name);
+                if ( nfields )
+                    nmemb *= nfields;
             }
             break;
         }
@@ -754,6 +763,16 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 #if defined(HAVE_ZLIB)
     out->internal->z        = NULL;
 #endif
+    out->internal->num_fields = in->internal->num_fields;
+    if ( NULL != in->internal->fieldnames && in->internal->num_fields > 0 ) {
+        out->internal->fieldnames = calloc(in->internal->num_fields,
+                                           sizeof(*in->internal->fieldnames));
+        for ( i = 0; i < in->internal->num_fields; i++ ) {
+            if ( NULL != in->internal->fieldnames[i] )
+                out->internal->fieldnames[i] =
+                    strdup(in->internal->fieldnames[i]);
+        }
+    }
 
     if (in->name != NULL && (NULL != (out->name = malloc(strlen(in->name)+1))))
         memcpy(out->name,in->name,strlen(in->name)+1);
@@ -931,6 +950,15 @@ Mat_VarFree(matvar_t *matvar)
             matvar->internal->hdf5_name = NULL;
         }
 #endif
+        if ( NULL != matvar->internal->fieldnames &&
+             matvar->internal->num_fields > 0 ) {
+            size_t i;
+            for ( i = 0; i < matvar->internal->num_fields; i++ ) {
+                if ( NULL != matvar->internal->fieldnames[i] )
+                    free(matvar->internal->fieldnames[i]);
+            }
+            free(matvar->internal->fieldnames);
+        }
         free(matvar->internal);
         matvar->internal = NULL;
     }
@@ -1210,7 +1238,7 @@ Mat_VarGetSize(matvar_t *matvar)
         /* This is really nmemb*nfields, but we'll get a
          * more accurate count of the bytes by loopoing over all of them
          */
-        nfields = matvar->nbytes / matvar->data_size;
+        nfields = matvar->internal->num_fields;
         fields  = matvar->data;
         for ( i = 0; i < nfields; i++ )
             bytes += Mat_VarGetSize(fields[i]);
@@ -1241,6 +1269,7 @@ Mat_VarGetSize(matvar_t *matvar)
 void
 Mat_VarPrint( matvar_t *matvar, int printdata )
 {
+    size_t nmemb;
     int i, j;
     const char *class_type_desc[16] = {"Undefined","Cell Array","Structure",
        "Object","Character Array","Sparse Array","Double Precision Array",
@@ -1268,8 +1297,11 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     if ( matvar->rank == 0 )
         return;
     printf("Dimensions: %d",matvar->dims[0]);
-    for ( i = 1; i < matvar->rank; i++ )
+    nmemb = matvar->dims[0];
+    for ( i = 1; i < matvar->rank; i++ ) {
         printf(" x %d",matvar->dims[i]);
+        nmemb *= matvar->dims[i];
+    }
     printf("\n");
     printf("Class Type: %s",class_type_desc[matvar->class_type]);
     if ( matvar->isComplex )
@@ -1278,15 +1310,23 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     if ( matvar->data_type )
         printf(" Data Type: %s\n", data_type_desc[matvar->data_type]);
 
-    if ( matvar->data == NULL || matvar->data_size < 1 ) {
-        return;
-    } else if ( MAT_C_STRUCT == matvar->class_type ) {
+    if ( MAT_C_STRUCT == matvar->class_type ) {
         matvar_t **fields = (matvar_t **)matvar->data;
-        int nfields = matvar->nbytes / matvar->data_size;
-        printf("Fields[%d] {\n", nfields);
-        for ( i = 0; i < nfields; i++ )
-            Mat_VarPrint(fields[i],printdata);
-        printf("}\n");
+        int nfields = matvar->internal->num_fields;
+        if ( nmemb*nfields > 0 ) {
+            printf("Fields[%d] {\n", nfields*nmemb);
+            for ( i = 0; i < nfields*nmemb; i++ )
+                Mat_VarPrint(fields[i],printdata);
+            printf("}\n");
+        } else {
+            printf("Fields[%d] {\n", nfields);
+            for ( i = 0; i < nfields; i++ )
+                printf("      Name: %s\n"
+                       "      Rank: %d\n",matvar->internal->fieldnames[i],0);
+            printf("}\n");
+        }
+        return;
+    } else if ( matvar->data == NULL || matvar->data_size < 1 ) {
         return;
     } else if ( MAT_C_CELL == matvar->class_type ) {
         matvar_t **cells = (matvar_t **)matvar->data;

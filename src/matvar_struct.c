@@ -40,33 +40,37 @@
  * @retval 0 on success
  */
 int
-Mat_VarAddStructField(matvar_t *matvar,matvar_t **fields)
+Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 {
     int       i, f, nfields, nmemb, cnt = 0;
-    matvar_t **new_data,**old_data;
+    matvar_t **new_data, **old_data;
 
-    if ( matvar == NULL || fields == NULL )
+    if ( matvar == NULL || fieldname == NULL )
         return -1;
     nmemb = 1;
     for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
 
-    nfields = matvar->nbytes / (nmemb*sizeof(matvar_t *));
+    nfields = matvar->internal->num_fields+1;
+    matvar->internal->fieldnames =
+    realloc(matvar->internal->fieldnames,
+            nfields*sizeof(*matvar->internal->fieldnames));
+    matvar->internal->fieldnames[nfields-1] = strdup(fieldname);
 
-    new_data = malloc((nfields+1)*nmemb*sizeof(matvar_t *));
+    new_data = malloc(nfields*nmemb*sizeof(*new_data));
     if ( new_data == NULL )
         return -1;
 
     old_data = matvar->data;
     for ( i = 0; i < nmemb; i++ ) {
-        for ( f = 0; f < nfields; f++ )
+        for ( f = 0; f < nfields-1; f++ )
             new_data[cnt++] = old_data[i*nfields+f];
-        new_data[cnt++] = fields[i];
+        new_data[cnt++] = NULL;
     }
 
     free(matvar->data);
     matvar->data = new_data;
-    matvar->nbytes = (nfields+1)*nmemb*sizeof(matvar_t *);
+    matvar->nbytes = nfields*nmemb*sizeof(*new_data);
 
     return 0;
 }
@@ -81,17 +85,12 @@ Mat_VarAddStructField(matvar_t *matvar,matvar_t **fields)
 int
 Mat_VarGetNumberOfFields(matvar_t *matvar)
 {
-    int i, nfields, nmemb = 1;
+    int nfields;
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
-         matvar->data_size == 0 ) {
+        NULL == matvar->internal ) {
         nfields = -1;
     } else {
-        for ( i = 0; i < matvar->rank; i++ )
-            nmemb *= matvar->dims[i];
-        if ( nmemb > 0 )
-            nfields = matvar->nbytes / (nmemb*matvar->data_size);
-        else
-            nfields = matvar->nbytes / (matvar->data_size);
+        nfields = matvar->internal->num_fields;
     }
     return nfields;
 }
@@ -108,21 +107,19 @@ Mat_VarGetNumberOfFields(matvar_t *matvar)
 matvar_t *
 Mat_VarGetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index)
 {
-    int       i, err = 0, nfields, nmemb;
+    int       i, nfields;
     matvar_t *field = NULL;
+    size_t nmemb = 1;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
-         matvar->data_size == 0 )
+        matvar->data_size == 0 )
         return field;
 
     nmemb = 1;
     for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
 
-    if ( nmemb > 0 )
-        nfields = matvar->nbytes / (nmemb*matvar->data_size);
-    else
-        nfields = matvar->nbytes / (matvar->data_size);
+    nfields = matvar->internal->num_fields;
 
     if ( nmemb > 0 && index >= nmemb ) {
         Mat_Critical("Mat_VarGetStructField: structure index out of bounds");
@@ -148,37 +145,33 @@ Mat_VarGetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index)
  */
 matvar_t *
 Mat_VarGetStructFieldByName(matvar_t *matvar,const char *field_name,
-    size_t index)
+                            size_t index)
 {
-    int       i, err = 0, nfields, nmemb;
+    int       i, nfields, field_index;
     matvar_t *field = NULL;
+    size_t nmemb;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
-         matvar->data_size == 0 )
+        matvar->data_size == 0 )
         return field;
-
 
     nmemb = 1;
     for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
 
-    if ( nmemb > 0 )
-        nfields = matvar->nbytes / (nmemb*matvar->data_size);
-    else
-        nfields = matvar->nbytes / (matvar->data_size);
-
-    if ( index < 0 || (nmemb > 0 && index >= nmemb ) ) {
-        Mat_Critical("Mat_VarGetStructField: structure index out of bounds");
-    } else if ( nfields > 0 ) {
-        matvar_t **fields = (matvar_t **)matvar->data+index*nfields;
-        for ( i = 0; i < nfields; i++ ) {
-            field = fields[i];
-            if ( NULL != field && NULL != field->name &&
-                 !strcmp(field->name,field_name) )
-                break;
-            else
-                field = NULL;
+    nfields = matvar->internal->num_fields;
+    field_index = -1;
+    for ( i = 0; i < nfields; i++ ) {
+        if ( !strcmp(matvar->internal->fieldnames[i],field_name) ) {
+            field_index = i;
+            break;
         }
+    }
+
+    if ( index >= nmemb ) {
+        Mat_Critical("Mat_VarGetStructField: structure index out of bounds");
+    } else if ( field_index >= 0 ) {
+        field = *((matvar_t **)matvar->data+index*nfields+field_index);
     }
 
     return field;
@@ -207,10 +200,7 @@ Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
     for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
 
-    if ( nmemb > 0 )
-        nfields = matvar->nbytes / (nmemb*matvar->data_size);
-    else
-        nfields = matvar->nbytes / (matvar->data_size);
+    nfields = matvar->internal->num_fields;
 
     if ( index < 0 || (nmemb > 0 && index >= nmemb ))
         err = 1;
@@ -270,9 +260,7 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
     if ( !copy_fields )
         struct_slab->mem_conserve = 1;
 
-    nfields = matvar->nbytes / matvar->data_size;
-    for ( i = 0; i < matvar->rank; i++ )
-        nfields = nfields / matvar->dims[i];
+    nfields = matvar->internal->num_fields;
 
     inc[0] = stride[0]-1;
     dimp[0] = matvar->dims[0];
@@ -360,9 +348,7 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
         if ( !copy_fields )
             struct_slab->mem_conserve = 1;
 
-        nfields = matvar->nbytes / matvar->data_size;
-        for ( i = 0; i < matvar->rank; i++ )
-            nfields = nfields / matvar->dims[i];
+        nfields = matvar->internal->num_fields;
 
         struct_slab->nbytes = edge*nfields*sizeof(matvar_t *);
         struct_slab->data = malloc(struct_slab->nbytes);

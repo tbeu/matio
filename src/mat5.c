@@ -91,13 +91,11 @@ GetStructFieldBufSize(matvar_t *matvar)
         int i, nfields = 0;
         size_t maxlen = 0;
 
-        if ( nmemb )
-            nfields = matvar->nbytes / (nmemb*matvar->data_size);
-        else if ( matvar->data_size )
-            nfields = matvar->nbytes / matvar->data_size;
+        nfields = matvar->internal->num_fields;
         for ( i = 0; i < nfields; i++ ) {
-            if ( NULL != fields[i]->name && strlen(fields[i]->name) > maxlen )
-                maxlen = strlen(fields[i]->name);
+            char *fieldname = matvar->internal->fieldnames[i];
+            if ( NULL != fieldname && strlen(fieldname) > maxlen )
+                maxlen = strlen(fieldname);
         }
         maxlen++;
         while ( nfields*maxlen % 8 != 0 )
@@ -215,14 +213,11 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
         int i, nfields = 0;
         size_t maxlen = 0;
 
-        if ( nmemb )
-            nfields = matvar->nbytes / (nmemb*matvar->data_size);
-        else  if ( matvar->data_size )
-            nfields = matvar->nbytes / matvar->data_size;
-
+        nfields = matvar->internal->num_fields;
         for ( i = 0; i < nfields; i++ ) {
-            if ( NULL != fields[i]->name && strlen(fields[i]->name) > maxlen )
-                maxlen = strlen(fields[i]->name);
+            char *fieldname = matvar->internal->fieldnames[i];
+            if ( NULL != fieldname && strlen(fieldname) > maxlen )
+                maxlen = strlen(fieldname);
         }
         maxlen++;
         while ( nfields*maxlen % 8 != 0 )
@@ -335,14 +330,11 @@ GetMatrixMaxBufSize(matvar_t *matvar)
         int i, nfields = 0;
         size_t maxlen = 0;
 
-        if ( nmemb )
-            nfields = matvar->nbytes / (nmemb*matvar->data_size);
-        else  if ( matvar->data_size )
-            nfields = matvar->nbytes / matvar->data_size;
-
+        nfields = matvar->internal->num_fields;
         for ( i = 0; i < nfields; i++ ) {
-            if ( NULL != fields[i]->name && strlen(fields[i]->name) > maxlen )
-                maxlen = strlen(fields[i]->name);
+            char *fieldname = matvar->internal->fieldnames[i];
+            if ( NULL != fieldname && strlen(fieldname) > maxlen )
+                maxlen = strlen(fieldname);
         }
         maxlen++;
         while ( nfields*maxlen % 8 != 0 )
@@ -1799,30 +1791,37 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         nfields = uncomp_buf[1];
         nfields = nfields / fieldname_size;
         matvar->data_size = sizeof(matvar_t *);
-        if ( nmemb > 0 )
-            matvar->nbytes    = nmemb*nfields*matvar->data_size;
-        else
-            matvar->nbytes    = nfields*matvar->data_size;
-        matvar->data      = malloc(matvar->nbytes);
-        if ( !matvar->data )
-            return 1;
-        fields = matvar->data;
+
         if ( nfields*fieldname_size % 8 != 0 )
             i = 8-(nfields*fieldname_size % 8);
         else
             i = 0;
         ptr = malloc(nfields*fieldname_size+i);
         bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
+        matvar->internal->num_fields = nfields;
+        matvar->internal->fieldnames =
+            calloc(nfields,sizeof(*matvar->internal->fieldnames));
         for ( i = 0; i < nfields; i++ ) {
-            fields[i]       = Mat_VarCalloc();
-            fields[i]->name = malloc(fieldname_size);
-            memcpy(fields[i]->name,ptr+i*fieldname_size,fieldname_size);
-            fields[i]->name[fieldname_size-1] = '\0';
+            matvar->internal->fieldnames[i] = malloc(fieldname_size);
+            memcpy(matvar->internal->fieldnames[i],ptr+i*fieldname_size,
+                   fieldname_size);
+            matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
         }
-        for ( i = 1; i < nmemb; i++ ) {
+        free(ptr);
+
+        matvar->nbytes = nmemb*nfields*matvar->data_size;
+        if ( !matvar->nbytes )
+            return bytesread;
+
+        matvar->data = malloc(matvar->nbytes);
+        if ( !matvar->data )
+            return bytesread;
+
+        fields = matvar->data;
+        for ( i = 0; i < nmemb; i++ ) {
             for ( j = 0; j < nfields; j++ ) {
                 fields[i*nfields+j] = Mat_VarCalloc();
-                fields[i*nfields+j]->name = strdup_printf("%s",fields[j]->name);
+                fields[i*nfields+j]->name = strdup(matvar->internal->fieldnames[j]);
             }
         }
 
@@ -1909,7 +1908,6 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             fseek(mat->fp,fields[i]->internal->datapos,SEEK_SET);
             bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
         }
-        free(ptr);
 #else
         Mat_Critical("Not compiled with zlib support");
 #endif
@@ -1941,30 +1939,37 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         nfields = buf[1];
         nfields = nfields / fieldname_size;
         matvar->data_size = sizeof(matvar_t *);
-        if ( nmemb > 0 )
-            matvar->nbytes    = nmemb*nfields*matvar->data_size;
-        else
-            matvar->nbytes    = nfields*matvar->data_size;
-        matvar->data = malloc(matvar->nbytes);
-        if ( !matvar->data )
-            return bytesread;
-        fields = (matvar_t **)matvar->data;
+
+        matvar->internal->num_fields = nfields;
+        matvar->internal->fieldnames =
+            calloc(nfields,sizeof(*matvar->internal->fieldnames));
         for ( i = 0; i < nfields; i++ ) {
-            fields[i] = Mat_VarCalloc();
-            fields[i]->name = malloc(fieldname_size);
-            bytesread+=fread(fields[i]->name,1,fieldname_size,mat->fp);
-            fields[i]->name[fieldname_size-1] = '\0';
+            matvar->internal->fieldnames[i] = malloc(fieldname_size);
+            bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,mat->fp);
+            matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
         }
-        for ( i = 1; i < nmemb; i++ ) {
-            for ( j = 0; j < nfields; j++ ) {
-                fields[i*nfields+j] = Mat_VarCalloc();
-                fields[i*nfields+j]->name = strdup_printf("%s",fields[j]->name);
-            }
-        }
+
         if ( (nfields*fieldname_size) % 8 ) {
             fseek(mat->fp,8-((nfields*fieldname_size) % 8),SEEK_CUR);
             bytesread+=8-((nfields*fieldname_size) % 8);
         }
+
+        matvar->nbytes = nmemb*nfields*matvar->data_size;
+        if ( !matvar->nbytes )
+            return bytesread;
+
+        matvar->data = malloc(matvar->nbytes);
+        if ( !matvar->data )
+            return bytesread;
+
+        fields = matvar->data;
+        for ( i = 0; i < nmemb; i++ ) {
+            for ( j = 0; j < nfields; j++ ) {
+                fields[i*nfields+j] = Mat_VarCalloc();
+                fields[i*nfields+j]->name = strdup(matvar->internal->fieldnames[j]);
+            }
+        }
+
         for ( i = 0; i < nmemb*nfields; i++ ) {
 
             fields[i]->internal->fpos = ftell(mat->fp);
@@ -2787,7 +2792,7 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
         }
         case MAT_C_STRUCT:
         {
-            char **fieldnames, *padzero;
+            char  *padzero;
             int    fieldname_size, nfields = 0;
             size_t maxlen = 0;
             matvar_t **fields = (matvar_t **)matvar->data;
@@ -2798,18 +2803,12 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
              * (e.g. x.y = struct('z', {})). If it's zero, we would divide
              * by zero.
              */
-            if ( nmemb )
-                nfields = matvar->nbytes / (nmemb*matvar->data_size);
-            else if ( matvar->data_size )
-                nfields = matvar->nbytes / matvar->data_size;
-            else
-                break;
+            nfields = matvar->internal->num_fields;
 
-            fieldnames = malloc(nfields*sizeof(char *));
             for ( i = 0; i < nfields; i++ ) {
-                fieldnames[i] = fields[i]->name;
-                if ( strlen(fieldnames[i]) > maxlen )
-                    maxlen = strlen(fieldnames[i]);
+                size_t len = strlen(matvar->internal->fieldnames[i]);
+                if ( len > maxlen )
+                    maxlen = len;
             }
             maxlen++;
             fieldname_size = maxlen;
@@ -2828,11 +2827,10 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
             fwrite(&nBytes,4,1,mat->fp);
             padzero = calloc(fieldname_size,1);
             for ( i = 0; i < nfields; i++ ) {
-                fwrite(fieldnames[i],1,strlen(fieldnames[i]),mat->fp);
-                fwrite(padzero,1,fieldname_size-strlen(fieldnames[i]),
-                       mat->fp);
+                size_t len = strlen(matvar->internal->fieldnames[i]);
+                fwrite(matvar->internal->fieldnames[i],1,len,mat->fp);
+                fwrite(padzero,1,fieldname_size-len,mat->fp);
             }
-            free(fieldnames);
             free(padzero);
             for ( i = 0; i < nmemb*nfields; i++ )
                 WriteStructField(mat,fields[i]);
@@ -3007,7 +3005,6 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
         }
         case MAT_C_STRUCT:
         {
-            char     **fieldnames;
             unsigned char *padzero;
             int        fieldname_size, nfields;
             size_t     maxlen = 0;
@@ -3032,15 +3029,11 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
                     sizeof(*comp_buf)-z->avail_out,mat->fp);
                 break;
             }
-            if ( nmemb )
-                nfields = matvar->nbytes / (nmemb*matvar->data_size);
-            else /* matvar->data_size is checked above */
-                nfields = matvar->nbytes / matvar->data_size;
-            fieldnames = malloc(nfields*sizeof(char *));
+            nfields = matvar->internal->num_fields;
             for ( i = 0; i < nfields; i++ ) {
-                fieldnames[i] = fields[i]->name;
-                if ( strlen(fieldnames[i]) > maxlen )
-                    maxlen = strlen(fieldnames[i]);
+                size_t len = strlen(matvar->internal->fieldnames[i]);
+                if ( len > maxlen )
+                    maxlen = len;
             }
             maxlen++;
             fieldname_size = maxlen;
@@ -3060,8 +3053,9 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
             byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
             for ( i = 0; i < nfields; i++ ) {
+                size_t len = strlen(matvar->internal->fieldnames[i]);
                 memset(padzero,'\0',fieldname_size);
-                memcpy(padzero,fieldnames[i],strlen(fieldnames[i]));
+                memcpy(padzero,matvar->internal->fieldnames[i],len);
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->next_in   = ZLIB_BYTE_PTR(padzero);
                 z->avail_out = buf_size*sizeof(*comp_buf);
@@ -3070,7 +3064,6 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 byteswritten += fwrite(comp_buf,1,
                         buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
             }
-            free(fieldnames);
             free(padzero);
             for ( i = 0; i < nmemb*nfields; i++ )
                 byteswritten +=
@@ -4859,16 +4852,18 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar_t **fields;
             int nfields = 0;
 
+            matvar->data_type = MAT_T_STRUCT;
             if ( !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
                 break;
-            nfields = matvar->nbytes / matvar->data_size;
+            len = 1;
+            for ( i = 0; i < matvar->rank; i++ )
+                len *= matvar->dims[i];
+            nfields = matvar->internal->num_fields;
             fields = (matvar_t **)matvar->data;
-            for ( i = 0; i < nfields; i++ ) {
+            for ( i = 0; i < len*nfields; i++ ) {
                 fields[i]->internal->fp = mat;
                 Read5(mat,fields[i]);
             }
-            /* FIXME: */
-            matvar->data_type = MAT_T_STRUCT;
             break;
         }
         case MAT_C_CELL:
@@ -5806,7 +5801,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             }
             case MAT_C_STRUCT:
             {
-                char     **fieldnames, *padzero;
+                char      *padzero;
                 int        fieldname_size, nfields;
                 size_t     maxlen = 0;
                 matvar_t **fields = (matvar_t **)matvar->data;
@@ -5814,8 +5809,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 unsigned   fieldname;
 
                 /* Check for a structure with no fields */
-                if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
-                     matvar->data   == NULL ) {
+                if ( matvar->internal->num_fields < 1 ) {
 #if 0
                     fwrite(&fieldname_type,2,1,mat->fp);
                     fwrite(&fieldname_data_size,2,1,mat->fp);
@@ -5830,15 +5824,11 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     fwrite(&nBytes,4,1,mat->fp);
                     break;
                 }
-                if ( nmemb )
-                    nfields = matvar->nbytes / (nmemb*matvar->data_size);
-                else /* matvar->data_size is checked above */
-                    nfields = matvar->nbytes / matvar->data_size;
-                fieldnames = malloc(nfields*sizeof(char *));
+                nfields = matvar->internal->num_fields;
                 for ( i = 0; i < nfields; i++ ) {
-                    fieldnames[i] = fields[i]->name;
-                    if ( strlen(fieldnames[i]) > maxlen )
-                        maxlen = strlen(fieldnames[i]);
+                    size_t len = strlen(matvar->internal->fieldnames[i]);
+                    if ( len > maxlen )
+                        maxlen = len;
                 }
                 maxlen++;
                 fieldname_size = maxlen;
@@ -5857,10 +5847,10 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 fwrite(&nBytes,4,1,mat->fp);
                 padzero = calloc(fieldname_size,1);
                 for ( i = 0; i < nfields; i++ ) {
-                    fwrite(fieldnames[i],1,strlen(fieldnames[i]),mat->fp);
-                    fwrite(padzero,1,fieldname_size-strlen(fieldnames[i]),mat->fp);
+                    size_t len = strlen(matvar->internal->fieldnames[i]);
+                    fwrite(matvar->internal->fieldnames[i],1,len,mat->fp);
+                    fwrite(padzero,1,fieldname_size-len,mat->fp);
                 }
-                free(fieldnames);
                 free(padzero);
                 for ( i = 0; i < nmemb*nfields; i++ )
                     WriteStructField(mat,fields[i]);
@@ -6050,7 +6040,6 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             }
             case MAT_C_STRUCT:
             {
-                char     **fieldnames;
                 unsigned char *padzero;
                 int        fieldname_size, nfields;
                 size_t     maxlen = 0;
@@ -6058,8 +6047,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 matvar_t **fields = (matvar_t **)matvar->data;
 
                 /* Check for a structure with no fields */
-                if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
-                     matvar->data   == NULL ) {
+                if ( matvar->internal->num_fields < 1 ) {
                     fieldname_size = 1;
                     uncomp_buf[0] = (fieldname_data_size << 16) |
                                      fieldname_type;
@@ -6075,15 +6063,11 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                         sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
                     break;
                 }
-                if ( nmemb )
-                    nfields = matvar->nbytes / (nmemb*matvar->data_size);
-                else /* matvar->data_size is checked above */
-                    nfields = matvar->nbytes / matvar->data_size;
-                fieldnames = malloc(nfields*sizeof(char *));
+                nfields = matvar->internal->num_fields;
                 for ( i = 0; i < nfields; i++ ) {
-                    fieldnames[i] = fields[i]->name;
-                    if ( strlen(fieldnames[i]) > maxlen )
-                        maxlen = strlen(fieldnames[i]);
+                    size_t len = strlen(matvar->internal->fieldnames[i]);
+                    if ( len > maxlen )
+                        maxlen = len;
                 }
                 maxlen++;
                 fieldname_size = maxlen;
@@ -6103,8 +6087,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 byteswritten += fwrite(comp_buf,1,
                         buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
                 for ( i = 0; i < nfields; i++ ) {
+                    size_t len = strlen(matvar->internal->fieldnames[i]);
                     memset(padzero,'\0',fieldname_size);
-                    memcpy(padzero,fieldnames[i],strlen(fieldnames[i]));
+                    memcpy(padzero,matvar->internal->fieldnames[i],len);
                     matvar->internal->z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     matvar->internal->z->next_in   = ZLIB_BYTE_PTR(padzero);
                     matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
@@ -6114,7 +6099,6 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                             buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,
                             mat->fp);
                 }
-                free(fieldnames);
                 free(padzero);
                 for ( i = 0; i < nmemb*nfields; i++ )
                     byteswritten +=
@@ -6304,18 +6288,17 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             }
             case MAT_C_STRUCT:
             {
-                char **fieldnames, *padzero;
+                char *padzero;
                 int maxlen = 0, fieldname_size;
-                int nfields = matvar->nbytes / matvar->data_size;
+                int nfields = matvar->internal->num_fields;
                 matvar_t **fields = (matvar_t **)matvar->data;
                 mat_int32_t  array_name_type = MAT_T_INT8;
                 unsigned fieldname;
 
-                fieldnames = malloc(nfields*sizeof(char *));
                 for ( i = 0; i < nfields; i++ ) {
-                    fieldnames[i] = fields[i]->name;
-                    if ( strlen(fieldnames[i]) > maxlen )
-                        maxlen = strlen(fieldnames[i]);
+                    size_t len = strlen(matvar->internal->fieldnames[i]);
+                    if ( len > maxlen )
+                        maxlen = len;
                 }
                 maxlen++;
                 fieldname_size = maxlen;
@@ -6334,10 +6317,10 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
                 fwrite(&nBytes,4,1,mat->fp);
                 padzero = calloc(fieldname_size,1);
                 for ( i = 0; i < nfields; i++ ) {
-                    fwrite(fieldnames[i],1,strlen(fieldnames[i]),mat->fp);
-                    fwrite(padzero,1,fieldname_size-strlen(fieldnames[i]),mat->fp);
+                    size_t len = strlen(matvar->internal->fieldnames[i]);
+                    fwrite(matvar->internal->fieldnames[i],1,len,mat->fp);
+                    fwrite(padzero,1,fieldname_size-len,mat->fp);
                 }
-                free(fieldnames);
                 free(padzero);
                 for ( i = 0; i < nfields; i++ )
                     WriteInfo5(mat,fields[i]);
