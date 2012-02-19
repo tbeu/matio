@@ -834,7 +834,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                             /* Get the HDF5 name of the variable */
                             name_len = H5Iget_name(field_id,NULL,0);
                             if ( name_len > 0 ) {
-                                fields[l*nfields+k]->internal->hdf5_name = 
+                                fields[l*nfields+k]->internal->hdf5_name =
                                     malloc(name_len+1);
                                 (void)H5Iget_name(field_id,
                                     fields[l*nfields+k]->internal->hdf5_name,
@@ -1411,7 +1411,7 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
             nmemb = matvar->dims[0];
             for ( k = 1; k < matvar->rank; k++ )
                 nmemb *= matvar->dims[k];
- 
+
             if ( 0 == nmemb || NULL == matvar->data ) {
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
@@ -1627,7 +1627,7 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
                                       H5P_DEFAULT,H5P_DEFAULT);
                     H5Eset_auto(H5E_DEFAULT,efunc,client_data);
                 }
-                
+
                 if ( refs_id > -1 ) {
                     char        obj_name[64];
                     hobj_ref_t *refs;
@@ -1885,7 +1885,7 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
             nmemb = matvar->dims[0];
             for ( k = 1; k < matvar->rank; k++ )
                 nmemb *= matvar->dims[k];
- 
+
             if ( 0 == nmemb || NULL == matvar->data ) {
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
@@ -2102,7 +2102,7 @@ Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
                                       H5P_DEFAULT,H5P_DEFAULT);
                     H5Eset_auto(H5E_DEFAULT,efunc,client_data);
                 }
-                
+
                 if ( refs_id > -1 ) {
                     char        obj_name[64];
                     hobj_ref_t *refs;
@@ -2955,7 +2955,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
             nmemb = matvar->dims[0];
             for ( k = 1; k < matvar->rank; k++ )
                 nmemb *= matvar->dims[k];
- 
+
             if ( 0 == nmemb || NULL == matvar->data ) {
                 hsize_t rank = matvar->rank;
                 unsigned empty = 1;
@@ -3066,7 +3066,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                                           H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
                         }
                         H5Eset_auto(H5E_DEFAULT,efunc,client_data);
-                    
+
                         if ( refs_id > -1 ) {
                             char name[64];
                             hobj_ref_t **refs;
@@ -3166,7 +3166,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
                     refs_id = H5Gcreate(*(hid_t*)mat->fp,"/#refs#",H5P_DEFAULT,
                                   H5P_DEFAULT,H5P_DEFAULT);
                 H5Eset_auto(H5E_DEFAULT,efunc,client_data);
-                
+
                 if ( refs_id > -1 ) {
                     char        name[64];
                     hobj_ref_t *refs;

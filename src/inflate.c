@@ -45,7 +45,7 @@
  * @param nbytes Number of uncompressed bytes to skip
  * @return Number of bytes read from the file
  */
-int 
+int
 InflateSkip(mat_t *mat, z_stream *z, int nbytes)
 {
     mat_uint8_t comp_buf[512],uncomp_buf[512];
@@ -230,7 +230,7 @@ InflateSkipData(mat_t *mat,z_stream *z,enum matio_types data_type,int len)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the 8-byte variable tag 
+ * @param buf Pointer to store the 8-byte variable tag
  * @return Number of bytes read from the file
  */
 int
@@ -280,7 +280,7 @@ InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the 16-byte array flags tag and data 
+ * @param buf Pointer to store the 16-byte array flags tag and data
  * @return Number of bytes read from the file
  */
 int
@@ -331,7 +331,7 @@ InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the dimensions flag and data 
+ * @param buf Pointer to store the dimensions flag and data
  * @return Number of bytes read from the file
  */
 int
@@ -420,7 +420,7 @@ InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the variables name tag 
+ * @param buf Pointer to store the variables name tag
  * @return Number of bytes read from the file
  */
 int
@@ -469,7 +469,7 @@ InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the variables name 
+ * @param buf Pointer to store the variables name
  * @param N Number of characters in the name
  * @return Number of bytes read from the file
  */
@@ -520,7 +520,7 @@ InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the data tag 
+ * @param buf Pointer to store the data tag
  * @return Number of bytes read from the file
  */
 int
@@ -574,7 +574,7 @@ InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the data type 
+ * @param buf Pointer to store the data type
  * @return Number of bytes read from the file
  */
 int
@@ -624,7 +624,7 @@ InflateDataType(mat_t *mat, z_stream *z, void *buf)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param z zlib compression stream
- * @param buf Pointer to store the data type 
+ * @param buf Pointer to store the data type
  * @param nBytes Number of bytes to inflate
  * @return Number of bytes read from the file
  */
@@ -700,7 +700,7 @@ InflateData(mat_t *mat, z_stream *z, void *buf, int nBytes)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the fieldname length 
+ * @param buf Pointer to store the fieldname length
  * @return Number of bytes read from the file
  */
 int
@@ -750,7 +750,7 @@ InflateFieldNameLength(mat_t *mat, matvar_t *matvar, void *buf)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the fieldname tag 
+ * @param buf Pointer to store the fieldname tag
  * @return Number of bytes read from the file
  */
 int
@@ -804,7 +804,7 @@ InflateFieldNamesTag(mat_t *mat, matvar_t *matvar, void *buf)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the fieldnames 
+ * @param buf Pointer to store the fieldnames
  * @param nfields Number of fields
  * @param fieldname_length Maximum length in bytes of each field
  * @param padding Number of padding bytes

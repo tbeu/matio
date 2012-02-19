@@ -690,7 +690,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
         /* FIXME: Memory leak */
         new_name = strdup_printf("%s",mat->filename);
         fclose(mat->fp);
-		
+
         if ( (err = remove(new_name)) == -1 ) {
             Mat_Critical("remove of %s failed",new_name);
         } else if ( !Mat_Close(tmp) && (err=rename(tmp_name,new_name))==-1) {
@@ -770,7 +770,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         out->data = in->data;
     } else if ( (in->data != NULL) && (in->class_type == MAT_C_STRUCT) ) {
         matvar_t **infields, **outfields;
-        int nfields = 0; 
+        int nfields = 0;
 
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
@@ -779,11 +779,11 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
             outfields = (matvar_t **)out->data;
             for ( i = 0; i < nfields; i++ ) {
                 outfields[i] = Mat_VarDuplicate(infields[i],opt);
-            } 
+            }
         }
     } else if ( (in->data != NULL) && (in->class_type == MAT_C_CELL) ) {
         matvar_t **incells, **outcells;
-        int ncells = 0; 
+        int ncells = 0;
 
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
@@ -792,7 +792,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
             outcells = (matvar_t **)out->data;
             for ( i = 0; i < ncells; i++ ) {
                 outcells[i] = Mat_VarDuplicate(incells[i],opt);
-            } 
+            }
         }
     } else if ( in->data != NULL ) {
         if ( out->isComplex ) {
@@ -950,7 +950,7 @@ Mat_VarFree2(matvar_t *matvar)
         free(matvar->dims);
     if ( matvar->name )
         free(matvar->name);
-    if ( (matvar->data != NULL) && (matvar->class_type == MAT_C_STRUCT || 
+    if ( (matvar->data != NULL) && (matvar->class_type == MAT_C_STRUCT ||
           matvar->class_type == MAT_C_CELL) && matvar->data_size > 0 ) {
         int i;
         matvar_t **fields = (matvar_t **)matvar->data;
@@ -1115,7 +1115,7 @@ Mat_VarGetCells(matvar_t *matvar,int *start,
     int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
     matvar_t **cells;
 
-    if ( (matvar == NULL) || (start == NULL) || (stride == NULL) ||  
+    if ( (matvar == NULL) || (start == NULL) || (stride == NULL) ||
          (edge == NULL) ) {
         return NULL;
     } else if ( matvar->rank > 10 ) {
@@ -1207,7 +1207,7 @@ Mat_VarGetSize(matvar_t *matvar)
     if ( matvar->class_type == MAT_C_STRUCT ) {
         int nfields;
         matvar_t **fields;
-        /* This is really nmemb*nfields, but we'll get a 
+        /* This is really nmemb*nfields, but we'll get a
          * more accurate count of the bytes by loopoing over all of them
          */
         nfields = matvar->nbytes / matvar->data_size;
@@ -1458,7 +1458,7 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
     int nfields, field;
     matvar_t **fields, *struct_slab;
 
-    if ( (matvar == NULL) || (start == NULL) || (stride == NULL) ||  
+    if ( (matvar == NULL) || (start == NULL) || (stride == NULL) ||
          (edge == NULL) ) {
         return NULL;
     } else if ( matvar->rank > 10 ) {
@@ -1501,10 +1501,10 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
         for ( j = 0; j < edge[0]; j++ ) {
             for ( field = 0; field < nfields; field++ ) {
                 if ( copy_fields )
-                    fields[(i+j)*nfields+field] = 
+                    fields[(i+j)*nfields+field] =
                          Mat_VarDuplicate(*((matvar_t **)matvar->data + I),1);
                 else
-                    fields[(i+j)*nfields+field] = 
+                    fields[(i+j)*nfields+field] =
                                                *((matvar_t **)matvar->data + I);
                 I++;
             }
@@ -1571,7 +1571,7 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
         for ( i = 0; i < edge; i++ ) {
             if ( copy_fields ) {
                 for ( field = 0; field < nfields; field++ ) {
-                    fields[i*nfields+field] = 
+                    fields[i*nfields+field] =
                         Mat_VarDuplicate(*((matvar_t **)matvar->data+I),1);
                     I++;
                 }
@@ -1917,12 +1917,12 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         if ( matvar->isComplex ) {
             mat_complex_split_t *complex_data = data;
-            
+
             ReadCompressedDataSlab1(mat,&z,complex_data->Re,
                 matvar->class_type,matvar->data_type,start,stride,edge);
-            
+
             fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
-            
+
             /* Reset zlib knowledge to before reading real tag */
             inflateEnd(&z);
             err = inflateCopy(&z,matvar->internal->z);
@@ -1964,7 +1964,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
-            matvar->data_type = MAT_T_UINT64; 
+            matvar->data_type = MAT_T_UINT64;
             matvar->data_size = sizeof(mat_uint64_t);
             break;
 #endif /* HAVE_MAT_UINT64_T */

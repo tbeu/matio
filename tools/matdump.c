@@ -233,7 +233,7 @@ main (int argc, char *argv[])
                 }
                 Mat_Warning("%s is not a recognized output format. "
                               "Using default\n", optarg);
-                break; 
+                break;
             case 'h':
                 human_readable = 1;
                 break;
@@ -294,7 +294,7 @@ main (int argc, char *argv[])
                 }
             }
         }
-    } else { 
+    } else {
         /* print all variables */
         if ( printdata ) {
             while ( (matvar = Mat_VarReadNext(mat)) != NULL ) {

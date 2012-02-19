@@ -188,7 +188,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
  */
 matvar_t *
 Mat_VarReadNextInfo4(mat_t *mat)
-{       
+{
     int       tmp,M,O,data_type,class_type;
     long      nBytes;
     size_t    err;
@@ -305,6 +305,6 @@ Mat_VarReadNextInfo4(mat_t *mat)
     if ( matvar->isComplex )
         nBytes *= 2;
     fseek(mat->fp,nBytes,SEEK_CUR);
-                
-    return matvar;  
+
+    return matvar;
 }

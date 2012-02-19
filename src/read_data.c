@@ -248,7 +248,7 @@ ReadCompressedDoubleData(mat_t *mat,z_stream *z,double *data,
         mat_uint8_t   ui8[1024];
     } buf;
 
-    
+
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
@@ -3756,7 +3756,7 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
         return -1;
     } else if ( rank > 10 ) {
-        return -1; 
+        return -1;
     }
 
     data_size = Mat_SizeOf(data_type);
@@ -6006,10 +6006,10 @@ int
 ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,
     enum matio_classes class_type,enum matio_types data_type,int start,
     int stride,int edge)
-{   
+{
     int nBytes = 0, data_size, i, err;
     z_stream z_copy = {0,};
-    
+
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
 
@@ -6202,7 +6202,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
              * to speed up the code
              */
 #if 0
-            if ( (stride[0] == 1 && edge[0] == dims[0]) && 
+            if ( (stride[0] == 1 && edge[0] == dims[0]) &&
                  (stride[1] == 1) ) {
                 ReadCompressedDoubleData(mat,&z_copy,ptr,data_type,
                                          edge[0]*edge[1]);

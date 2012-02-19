@@ -1960,7 +1960,7 @@ test_writeslab(void)
     int       idata[60]={0.0,};
     mat_t    *mat;
     matvar_t *matvar, *matvar2, *matvar3;
-    
+
     for ( i = 0; i < 60; i++ ) {
          data[i] = i+1;
         fdata[i] = i+1;
@@ -2000,7 +2000,7 @@ test_writenan(void)
     double     zero = 0.0;
     mat_t    *mat;
     matvar_t *matvar;
-    
+
     for ( i = 0; i < 25; i++ )
          data[i] = i+1;
 
@@ -2029,7 +2029,7 @@ test_writeinf(void)
     double     zero = 0.0;
     mat_t    *mat;
     matvar_t *matvar;
-    
+
     for ( i = 0; i < 25; i++ )
          data[i] = i+1;
 
@@ -2427,7 +2427,7 @@ int main (int argc, char *argv[])
             int   start[3]={1,1,1},stride[3]={1,1,1},edge[3]={1,1,1};
             int j, l;
             double ptr[150] = {0,};
-    
+
             k++;
             mat = Mat_Open("test_slab_d3.mat",MAT_ACC_RDONLY);
             if ( mat ) {

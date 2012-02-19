@@ -76,7 +76,7 @@ Mat_uint64Swap( mat_uint64_t *a )
 {
 
     union {
-        mat_uint8_t    i1[8]; 
+        mat_uint8_t    i1[8];
         mat_uint64_t   i8;
     } tmp;
 
@@ -104,7 +104,7 @@ Mat_int32Swap( mat_int32_t *a )
 {
 
     union {
-        mat_int8_t    i1[4]; 
+        mat_int8_t    i1[4];
         mat_int32_t   i4;
     } tmp;
 
@@ -129,7 +129,7 @@ Mat_uint32Swap( mat_uint32_t *a )
 {
 
     union {
-        mat_uint8_t    i1[4]; 
+        mat_uint8_t    i1[4];
         mat_uint32_t   i4;
     } tmp;
 
@@ -150,7 +150,7 @@ Mat_uint32Swap( mat_uint32_t *a )
  * @return the swapped integer
  */
 mat_int16_t
-Mat_int16Swap( mat_int16_t *a ) 
+Mat_int16Swap( mat_int16_t *a )
 {
 
     union {
@@ -173,7 +173,7 @@ Mat_int16Swap( mat_int16_t *a )
  * @return the swapped integer
  */
 mat_uint16_t
-Mat_uint16Swap( mat_uint16_t *a ) 
+Mat_uint16Swap( mat_uint16_t *a )
 {
 
     union {
