@@ -38,7 +38,8 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat5_compressed_write.at \
                $(srcdir)/mat73_read_le.at \
                $(srcdir)/mat73_read_be.at \
-               $(srcdir)/mat73_write.at
+               $(srcdir)/mat73_write.at \
+               $(srcdir)/struct_api.at
 TESTSUITE = $(srcdir)/testsuite
 
 TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
@@ -64,7 +65,8 @@ endif
 
 CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
                     HAVE_UINT64=$(HAVE_UINT64) HAVE_INT64=$(HAVE_INT64) \
-                    COMPRESSION_ZLIB=$(COMPRESSION_ZLIB)
+                    COMPRESSION_ZLIB=$(COMPRESSION_ZLIB) \
+                    LIBTOOL="$(top_builddir)/libtool"
 
 EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4 \
              $(TEST_DATAFILES)

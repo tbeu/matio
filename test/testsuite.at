@@ -1,4 +1,4 @@
-# Copyright (C) 2010   Christopher C. Hulbert
+# Copyright (C) 2010-2012   Christopher C. Hulbert
 #
 # All rights reserved.
 #
@@ -25,6 +25,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 AT_INIT([matio testsuite])
+
+m4_divert_push([PREPARE_TESTS])
+# Check for libtool configuration data
+# host_os and with_msvc_ld are used in MATIO_AT_HOST_DATA
+eval `$LIBTOOL --config | grep '^EGREP='`
+eval `$LIBTOOL --config | $EGREP '^(host_os|with_msvc_ld)='`
+m4_divert_pop([PREPARE_TESTS])
+
+# MATIO_AT_HOST_DATA(FILE, CONTENTS)
+# -------------------------------
+# Ensure correct line ending for expected output of host executables.
+m4_define([MATIO_AT_HOST_DATA],
+[AT_DATA([$1], [$2])
+windows_eol=no
+case $host_os in
+  mingw*)
+    windows_eol=yes
+    ;;
+  *)
+    if test "x$with_msvc_ld" = "xyes"; then
+      windows_eol=yes
+    fi
+    ;;
+esac
+if test "$windows_eol" = "yes"; then
+  while read -r l; do printf "%s\r\n" "$l"; done < $1 > $1.t
+  mv -f $1.t $1
+fi
+])
 
 AT_COLOR_TESTS
 
@@ -60,3 +89,6 @@ m4_include([mat5_compressed_write.at])
 
 AT_BANNER([Write MAT version 7.3])
 m4_include([mat73_write.at])
+
+AT_BANNER([API Tests])
+m4_include([struct_api.at])
