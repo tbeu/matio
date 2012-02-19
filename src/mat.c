@@ -1315,14 +1315,20 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         int nfields = matvar->internal->num_fields;
         if ( nmemb*nfields > 0 ) {
             printf("Fields[%d] {\n", nfields*nmemb);
-            for ( i = 0; i < nfields*nmemb; i++ )
-                Mat_VarPrint(fields[i],printdata);
+            for ( i = 0; i < nfields*nmemb; i++ ) {
+                if ( NULL == fields[i] ) {
+                    printf("      Name: %s\n      Rank: %d\n",
+                           matvar->internal->fieldnames[i%nfields],0);
+                } else {
+                    Mat_VarPrint(fields[i],printdata);
+                }
+            }
             printf("}\n");
         } else {
             printf("Fields[%d] {\n", nfields);
             for ( i = 0; i < nfields; i++ )
-                printf("      Name: %s\n"
-                       "      Rank: %d\n",matvar->internal->fieldnames[i],0);
+                printf("      Name: %s\n      Rank: %d\n",
+                       matvar->internal->fieldnames[i],0);
             printf("}\n");
         }
         return;
