@@ -436,3 +436,95 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
     }
     return struct_slab;
 }
+
+/** @brief Sets the structure field to the given variable
+ *
+ * Sets the structure field specified by the 0-relative field index
+ * @c field_index for the given 0-relative structure index @c index to
+ * @c field.
+ * @ingroup MAT
+ * @param matvar Pointer to the structure MAT variable
+ * @param field_index 0-relative index of the field.
+ * @param index linear index of the structure array
+ * @param field New field variable
+ * @return Pointer to the previous field (NULL if no previous field)
+ */
+matvar_t *
+Mat_VarSetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index,
+    matvar_t *field)
+{
+    int       i, nfields;
+    matvar_t *old_field = NULL;
+    size_t nmemb = 1;
+
+    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT ||
+        matvar->data == NULL )
+        return old_field;
+
+    nmemb = 1;
+    for ( i = 0; i < matvar->rank; i++ )
+        nmemb *= matvar->dims[i];
+
+    nfields = matvar->internal->num_fields;
+
+    if ( index < nmemb && field_index < nfields ) {
+        matvar_t **fields = matvar->data;
+        old_field = fields[index*nfields+field_index];
+        fields[index*nfields+field_index] = field;
+        if ( NULL != field->name ) {
+            free(field->name);
+        }
+        field->name = strdup(matvar->internal->fieldnames[field_index]);
+    }
+
+    return old_field;
+}
+
+/** @brief Sets the structure field to the given variable
+ *
+ * Sets the specified structure fieldname at the given 0-relative @c index to
+ * @c field.
+ * @ingroup MAT
+ * @param matvar Pointer to the Structure MAT variable
+ * @param field_name Name of the structure field
+ * @param index linear index of the structure array
+ * @param field New field variable
+ * @return Pointer to the previous field (NULL if no previous field)
+ */
+matvar_t *
+Mat_VarSetStructFieldByName(matvar_t *matvar,const char *field_name,
+    size_t index,matvar_t *field)
+{
+    int       i, nfields, field_index;
+    matvar_t *old_field = NULL;
+    size_t nmemb;
+
+    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT ||
+         matvar->data == NULL )
+        return old_field;
+
+    nmemb = 1;
+    for ( i = 0; i < matvar->rank; i++ )
+        nmemb *= matvar->dims[i];
+
+    nfields = matvar->internal->num_fields;
+    field_index = -1;
+    for ( i = 0; i < nfields; i++ ) {
+        if ( !strcmp(matvar->internal->fieldnames[i],field_name) ) {
+            field_index = i;
+            break;
+        }
+    }
+
+    if ( index < nmemb && field_index >= 0 ) {
+        matvar_t **fields = matvar->data;
+        old_field = fields[index*nfields+field_index];
+        fields[index*nfields+field_index] = field;
+        if ( NULL != field->name ) {
+            free(field->name);
+        }
+        field->name = strdup(matvar->internal->fieldnames[field_index]);
+    }
+
+    return old_field;
+}
