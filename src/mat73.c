@@ -77,6 +77,8 @@ static void  Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat);
 static void  Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat);
+static int   Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,
+                 size_t *dims);
 static int   Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name);
 static int   Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name);
 
@@ -1204,13 +1206,51 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
 }
 
 static int
+Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
+{
+    int err = -1;
+    unsigned empty = 1;
+    hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
+
+    mspace_id = H5Screate_simple(1,&rank,NULL);
+    dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
+                        H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+    if ( dset_id > -1 ) {
+        attr_type_id = H5Tcopy(H5T_C_S1);
+        H5Tset_size(attr_type_id,7);
+        aspace_id = H5Screate(H5S_SCALAR);
+        attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
+                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+        H5Awrite(attr_id,attr_type_id,"double");
+        H5Sclose(aspace_id);
+        H5Aclose(attr_id);
+        H5Tclose(attr_type_id);
+
+        aspace_id = H5Screate(H5S_SCALAR);
+        attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
+                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+        H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
+        H5Sclose(aspace_id);
+        H5Aclose(attr_id);
+
+        /* Write the dimensions as the data */
+        H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                 H5P_DEFAULT,dims);
+        err = 0;
+    }
+    return err;
+}
+
+static int
 Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
 {
     unsigned long k,numel;
     hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
 
-    if ( NULL == matvar )
-        return -1;
+    if ( NULL == matvar ) {
+        size_t dims[2] = {0,0};
+        return Mat_WriteEmptyVariable73(id,name,2,dims);
+    }
 
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
