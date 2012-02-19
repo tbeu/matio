@@ -263,7 +263,7 @@ EXTERN matvar_t **Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,
 EXTERN matvar_t **Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,
                       int edge);
 EXTERN size_t     Mat_VarGetSize(matvar_t *matvar);
-EXTERN int        Mat_VarGetNumberOfFields(matvar_t *matvar);
+EXTERN unsigned   Mat_VarGetNumberOfFields(matvar_t *matvar);
 EXTERN int        Mat_VarAddStructField(matvar_t *matvar,const char *fieldname);
 EXTERN char * const *Mat_VarGetStructFieldnames(const matvar_t *matvar);
 EXTERN matvar_t  *Mat_VarGetStructFieldByIndex(matvar_t *matvar,

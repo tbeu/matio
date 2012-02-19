@@ -145,15 +145,15 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
  * Returns the number of fields in the given structure.
  * @ingroup MAT
  * @param matvar Structure matlab variable
- * @returns Number of fields, or a negative number on error
+ * @returns Number of fields
  */
-int
+unsigned
 Mat_VarGetNumberOfFields(matvar_t *matvar)
 {
     int nfields;
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
         NULL == matvar->internal ) {
-        nfields = -1;
+        nfields = 0;
     } else {
         nfields = matvar->internal->num_fields;
     }
