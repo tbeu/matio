@@ -63,53 +63,20 @@ If the MATLAB variable structure's @code{class_type} is @code{MAT_C_STRUCT}, the
 the variable structure is an pointer to an array of @code{matvar_t *}. The
 length of the array is @math{numel \times nfields} where @code{numel} is the
 number of elements in the structure array (product of dimensions array), and
-@math{nfields} is the number of fields in the structure. For convenience and
-to properly handle structures with no elements, the
-@code{Mat_VarGetNumberOfFields} returns the number of fields in the structure.
-
-A specific field of a structure can be accessed by finding the pointer to the
-variable structure in the @code{data} field as done by the
-@code{Mat_VarGetStructFieldByIndex} and @code{Mat_VarGetStructFieldByName}
-functions. These functions lookup the variable structure pointer in a structure
-variable by the fields'd index, or by the field's name respectively. For
-example, if there are 3 fields of a structure ordered as @emph{field1},
-@emph{field2}, and @emph{field3}, then @emph{field1} has field index 0, and
-@emph{field3} has field index 2. The example code snippet below shows how
-to iterate over the fields of a structure.
-
-@verbatim
-nfields = Mat_VarGetNumberOfFields(matvar);
-printf("%d fields\n",nfields);
-for ( k = 0; k < nfields; k++ ) {
-    matvar_t *field;
-    field = Mat_VarGetStructFieldByIndex(matvar,k,0);
-    if ( NULL != field )
-        printf("%15s\n",field->name);
-}
-@end verbatim
-
-To create a structure array with the @code{Mat_VarCreate} function, create an
-array of MATLAB variable structures (@code{matvar_t *}), and a NULL pointer
-at the end of the array. Each field of a structure array is stored contigiously.
-For example, for a 3x1 structure array, @emph{s}, with four fields: @emph{a},
-@emph{b}, @emph{c}, and @emph{d} is ordered as:
+@math{nfields} is the number of fields in the structure. The order of the
+variables in the array is first by field, and then by structure index. For
+example, for a @math{2 \times 1} structure array with 3 fields @emph{field1},
+@emph{field2}, and @emph{field3}, @code{data} field of the structure variable
+is ordered as:
 
 @table @code
-@item s(1).a
-@item s(1).b
-@item s(1).c
-@item s(1).d
-@item s(2).a
-@item s(2).b
-@item s(2).c
-@item s(2).d
-@item s(3).a
-@item s(3).b
-@item s(3).c
-@item s(3).d
-@item NULL
+@item s(1).field1
+@item s(1).field2
+@item s(1).field3
+@item s(2).field1
+@item s(2).field2
+@item s(2).field3
 @end table
-
 
 @node Cell Variables
 @subsection Cell Variables
