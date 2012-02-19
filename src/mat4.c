@@ -35,27 +35,6 @@
 #include "matio_private.h"
 #include "mat4.h"
 
-static const char *v4_class_type_desc[16] = {
-       "Undefined","Cell Array","Structure",
-       "Object","Character Array","Sparse Array","Double Precision Array",
-       "Single Precision Array", "8-bit, signed Integer Array",
-       "8-bit, Unsigned Integer Array","16-bit, signed Integer Array",
-       "16-bit, unsigned Integer Array","32-bit, signed Integer Array",
-       "32-bit, unsigned Integer Array","Matlab Array","Compressed Data"
-};
-static const char *v4_data_type_desc[23] = {
-       "Unknown","8-bit, signed integer",
-       "8-bit, unsigned integer","16-bit, signed integer",
-       "16-bit, unsigned integer","32-bit, signed integer",
-       "32-bit, unsigned integer","IEEE 754 single-precision","RESERVED",
-       "IEEE 754 double-precision","RESERVED","RESERVED",
-       "64-bit, signed integer","64-bit, unsigned integer", "Matlab Array",
-       "Compressed Data","Unicode UTF-8 Encoded Character Data",
-       "Unicode UTF-16 Encoded Character Data",
-       "Unicode UTF-32 Encoded Character Data","","String","Cell Array",
-       "Structure"
-};
-
 /** @if mat_devman
  * @brief Reads the data of a version 4 MAT file variable
  *

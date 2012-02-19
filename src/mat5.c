@@ -39,24 +39,6 @@
 #include "matio_private.h"
 #include "mat5.h"
 
-static const char *class_type_desc[16] = {"Undefined","Cell Array","Structure",
-       "Object","Character Array","Sparse Array","Double Precision Array",
-       "Single Precision Array", "8-bit, signed integer array",
-       "8-bit, unsigned integer array","16-bit, signed integer array",
-       "16-bit, unsigned integer array","32-bit, signed integer array",
-       "32-bit, unsigned integer array","64-bit, signed integer array",
-       "64-bit, unsigned integer array"};
-static const char *data_type_desc[23] = {"Unknown","8-bit, signed integer",
-       "8-bit, unsigned integer","16-bit, signed integer",
-       "16-bit, unsigned integer","32-bit, signed integer",
-       "32-bit, unsigned integer","IEEE 754 single-precision","RESERVED",
-       "IEEE 754 double-precision","RESERVED","RESERVED",
-       "64-bit, signed integer","64-bit, unsigned integer", "Matlab Array",
-       "Compressed Data","Unicode UTF-8 Encoded Character Data",
-       "Unicode UTF-16 Encoded Character Data",
-       "Unicode UTF-32 Encoded Character Data","","String","Cell Array",
-       "Structure"};
-
 #define TYPE_FROM_TAG(a)          (enum matio_types)((a) & 0x000000ff)
 #define CLASS_FROM_ARRAY_FLAGS(a) (enum matio_classes)((a) & 0x000000ff)
 #define CLASS_TYPE_MASK           0x000000ff
