@@ -67,9 +67,6 @@ GetStructFieldBufSize(matvar_t *matvar)
     if ( matvar == NULL )
         return nBytes;
 
-    /* Have to account for the matrix tag in a struct field */
-    nBytes += tag_size;
-
     /* Add the Array Flags tag and space to the number of bytes */
     nBytes += tag_size + array_flags_size;
 
@@ -106,7 +103,7 @@ GetStructFieldBufSize(matvar_t *matvar)
         /* FIXME: Add bytes for the fieldnames */
         if ( NULL != fields && nfields > 0 ) {
             for ( i = 0; i < nfields*nmemb; i++ )
-                nBytes += GetStructFieldBufSize(fields[i]);
+                nBytes += tag_size + GetStructFieldBufSize(fields[i]);
         }
         break;
     }
@@ -227,7 +224,7 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
 
         if ( NULL != fields && nfields > 0 ) {
             for ( i = 0; i < nfields*nmemb; i++ )
-                nBytes += GetStructFieldBufSize(fields[i]);
+                nBytes += tag_size + GetStructFieldBufSize(fields[i]);
         }
         break;
     }
@@ -345,7 +342,7 @@ GetMatrixMaxBufSize(matvar_t *matvar)
         /* FIXME: Add bytes for the fieldnames */
         if ( NULL != fields && nfields > 0 ) {
             for ( i = 0; i < nfields*nmemb; i++ )
-                nBytes += GetStructFieldBufSize(fields[i]);
+                nBytes += tag_size + GetStructFieldBufSize(fields[i]);
         }
         break;
     }
@@ -2907,7 +2904,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
         nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
     uncomp_buf[0] = MAT_T_MATRIX;
-    uncomp_buf[1] = (int)GetMatrixMaxBufSize(matvar);
+    uncomp_buf[1] = (int)GetStructFieldBufSize(matvar);
     z->next_out  = ZLIB_BYTE_PTR(comp_buf);
     z->next_in   = ZLIB_BYTE_PTR(uncomp_buf);
     z->avail_out = buf_size*sizeof(*comp_buf);
