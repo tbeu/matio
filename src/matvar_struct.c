@@ -29,6 +29,71 @@
 #include <string.h>
 #include "matio_private.h"
 
+/** @brief Creates a structure MATLAB variable with the given name and fields
+ *
+ * @ingroup MAT
+ * @param name Name of the structure variable to create
+ * @param rank Rank of the variable
+ * @param dims array of dimensions of the variable of size rank
+ * @param fields Array of @c nfields fieldnames
+ * @param nfields Number of fields in the structure
+ * @param matvar Pointer to store the new structure MATLAB variable
+ * @return @c MATIO_SUCCESS if successful, or an error value (See
+ *          @ref enum matio_error_t).
+ */
+matvar_t *
+Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
+    unsigned nfields)
+{
+    int i, nmemb = 1;
+    matvar_t *matvar;
+
+    if ( NULL == dims )
+        return NULL;
+
+    matvar = Mat_VarCalloc();
+    if ( NULL == matvar )
+        return NULL;
+
+    matvar->compression = MAT_COMPRESSION_NONE;
+    if ( NULL != name )
+        matvar->name = strdup(name);
+    matvar->rank = rank;
+    matvar->dims = malloc(matvar->rank*sizeof(*matvar->dims));
+    for ( i = 0; i < matvar->rank; i++ ) {
+        matvar->dims[i] = dims[i];
+        nmemb *= dims[i];
+    }
+    matvar->class_type = MAT_C_STRUCT;
+    matvar->data_type  = MAT_T_STRUCT;
+
+    matvar->data_size = sizeof(matvar_t *);
+
+    if ( nfields ) {
+        matvar->internal->num_fields = nfields;
+        matvar->internal->fieldnames =
+            malloc(nfields*sizeof(*matvar->internal->fieldnames));
+        if ( NULL == matvar->internal->fieldnames ) {
+            Mat_VarFree(matvar);
+            return NULL;
+        } else {
+            for ( i = 0; i < nfields; i++ ) {
+                if ( NULL == fields[i] ) {
+                    Mat_VarFree(matvar);
+                    matvar = NULL;
+                    break;
+                } else {
+                    matvar->internal->fieldnames[i] = strdup(fields[i]);
+                }
+            }
+        }
+    }
+    matvar->nbytes = nmemb*nfields*matvar->data_size;
+    matvar->data   = malloc(matvar->nbytes);
+
+    return matvar;
+}
+
 /** @brief Adds a field to a structure
  *
  * Adds the given field to the structure. fields should be an array of matvar_t
