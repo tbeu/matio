@@ -463,7 +463,8 @@ Mat_Create5(const char *matname,const char *hdr_str)
     mat->subsys_offset = calloc(1,16);
     memset(mat->header,' ',128);
     if ( hdr_str == NULL ) {
-        err = mat_snprintf(mat->header,116,"MATLAB 5.0 MAT-file, Platform: %s, "                "Created By: libmatio v%d.%d.%d on %s", MATIO_PLATFORM,
+        err = mat_snprintf(mat->header,116,"MATLAB 5.0 MAT-file, Platform: %s, "
+                "Created By: libmatio v%d.%d.%d on %s", MATIO_PLATFORM,
                 MATIO_MAJOR_VERSION, MATIO_MINOR_VERSION, MATIO_RELEASE_LEVEL,
                 ctime(&t));
         mat->header[115] = '\0';    /* Just to make sure it's NULL terminated */    } else {
