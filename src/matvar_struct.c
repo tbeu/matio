@@ -160,6 +160,25 @@ Mat_VarGetNumberOfFields(matvar_t *matvar)
     return nfields;
 }
 
+/** @brief Returns the fieldnames of a structure variable
+ *
+ * Returns the fieldnames for the given structure. The returned pointers are
+ * internal to the structure and should not be free'd.
+ * @ingroup MAT
+ * @param matvar Structure matlab variable
+ * @returns Array of fieldnames
+ */
+char * const *
+Mat_VarGetStructFieldnames(const matvar_t *matvar)
+{
+    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
+        NULL == matvar->internal ) {
+        return NULL;
+    } else {
+        return matvar->internal->fieldnames;
+    }
+}
+
 /** @brief Finds a field of a structure by the field's index
  *
  * Returns a pointer to the structure field at the given 0-relative index.
