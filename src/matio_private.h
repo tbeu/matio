@@ -70,6 +70,7 @@ struct _mat_t {
     long  bof;              /**< Beginning of file not including any header */
     long  next_index;       /**< Index/File position of next variable to read */
     long  num_datasets;     /**< Number of datasets in the file */
+    hid_t refs_id;          /**< Id of the /#refs# group in HDF5 */
 };
 
 /** @if mat_devman

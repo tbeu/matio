@@ -261,6 +261,7 @@ Mat_Open(const char *matname,int mode)
             hsize_t num_objs;
             H5Gget_num_objs(*(hid_t*)mat->fp,&num_objs);
             mat->num_datasets = num_objs;
+            mat->refs_id      = -1;
         }
 #else
         mat->fp = NULL;
@@ -285,6 +286,8 @@ Mat_Close( mat_t *mat )
     if ( NULL != mat ) {
 #if defined(MAT73) && MAT73
         if ( mat->version == 0x0200 ) {
+            if ( mat->refs_id > -1 )
+                H5Gclose(mat->refs_id);
             H5Fclose(*(hid_t*)mat->fp);
             free(mat->fp);
             mat->fp = NULL;

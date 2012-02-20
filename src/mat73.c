@@ -77,13 +77,16 @@ static void  Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat);
 static void  Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat);
-static int   Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name);
+static int   Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,
+                                hid_t *refs_id);
 static int   Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name);
 static int   Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,
                  size_t *dims);
 static int   Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name);
-static int   Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name);
-static int   Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name);
+static int   Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,
+                                  hid_t *refs_id);
+static int   Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,
+                                hid_t *refs_id);
 
 static enum matio_classes
 Mat_class_str_to_id(const char *name)
@@ -1088,13 +1091,12 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
  * @endif
  */
 static int
-Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name)
+Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
 {
     unsigned   k;
     hid_t      str_type_id,mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
     hsize_t    nmemb;
     matvar_t **cells;
-    hid_t refs_id;
     H5E_auto_t efunc;
     void       *client_data;
     int        is_ref, err = -1;
@@ -1139,21 +1141,20 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name)
     } else {
         (void)H5Iget_name(id,id_name,127);
         is_ref = !strcmp(id_name,"/#refs#");
-        if (is_ref) {
-            refs_id = id;
-        } else {
+        if ( *refs_id < 0 ) {
             /* Turn off error-checking so we don't get messages if opening
              * group /#refs# fails
              */
             H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
             H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
-            if ((refs_id=H5Gopen(id,"/#refs#",H5P_DEFAULT) < 0 ))
-                refs_id = H5Gcreate(id,"/#refs#",H5P_DEFAULT,
-                                    H5P_DEFAULT,H5P_DEFAULT);
+            *refs_id = H5Gopen(id,"/#refs#",H5P_DEFAULT);
+            if ( *refs_id < 0 )
+                *refs_id = H5Gcreate(id,"/#refs#",H5P_DEFAULT,
+                                     H5P_DEFAULT,H5P_DEFAULT);
             H5Eset_auto(H5E_DEFAULT,efunc,client_data);
         }
 
-        if ( refs_id > -1 ) {
+        if ( *refs_id > -1 ) {
             char        obj_name[64];
             hobj_ref_t *refs;
             hsize_t     num_obj;
@@ -1167,9 +1168,9 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name)
                                 H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
 
             for ( k = 0; k < nmemb; k++ ) {
-                (void)H5Gget_num_objs(refs_id,&num_obj);
+                (void)H5Gget_num_objs(*refs_id,&num_obj);
                 sprintf(obj_name,"%lu",num_obj);
-                Mat_VarWriteNext73(refs_id,cells[k],obj_name);
+                Mat_VarWriteNext73(*refs_id,cells[k],obj_name,refs_id);
                 sprintf(obj_name,"/#refs#/%lu",num_obj);
                 H5Rcreate(refs+k,id,obj_name,H5R_OBJECT,-1);
             }
@@ -1189,8 +1190,6 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name)
             H5Dclose(dset_id);
             free(refs);
             H5Sclose(mspace_id);
-            if ( !is_ref )
-                H5Gclose(refs_id);
 
             err = 0;
         }
@@ -1609,7 +1608,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
  * @endif
  */
 static int
-Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name)
+Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
 {
     int err = -1;
     unsigned   k;
@@ -1724,27 +1723,23 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name)
             if ( 1 == nmemb ) {
                 for ( k = 0; k < nfields; k++ )
                     Mat_VarWriteNext73(struct_id,fields[k],
-                        matvar->internal->fieldnames[k]);
+                        matvar->internal->fieldnames[k],refs_id);
             } else {
-                hid_t refs_id;
-
-                if (is_ref) {
-                    refs_id = id;
-                } else {
+                if ( *refs_id < 0 ) {
                     H5E_auto_t  efunc;
                     void       *client_data;
                     /* Silence errors if /#refs does not exist */
                     H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
                     H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
-                    refs_id = H5Gopen(id,"/#refs#",H5P_DEFAULT);
+                    *refs_id = H5Gopen(id,"/#refs#",H5P_DEFAULT);
                     H5Eset_auto(H5E_DEFAULT,efunc,client_data);
 
                     /* If could not open /#refs#, try to create it */
-                    if ( refs_id < 0 )
-                        refs_id = H5Gcreate(id,"/#refs#",H5P_DEFAULT,
-                                            H5P_DEFAULT,H5P_DEFAULT);
+                    if ( *refs_id < 0 )
+                        *refs_id = H5Gcreate(id,"/#refs#",H5P_DEFAULT,
+                                             H5P_DEFAULT,H5P_DEFAULT);
                 }
-                if ( refs_id > -1 ) {
+                if ( *refs_id > -1 ) {
                     char name[64];
                     hobj_ref_t **refs;
                     hsize_t      num_obj;
@@ -1756,10 +1751,10 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name)
 
                     for ( k = 0; k < nmemb; k++ ) {
                         for ( l = 0; l < nfields; l++ ) {
-                            (void)H5Gget_num_objs(refs_id,&num_obj);
+                            (void)H5Gget_num_objs(*refs_id,&num_obj);
                             sprintf(name,"%lu",num_obj);
-                            Mat_VarWriteNext73(refs_id,fields[k*nfields+l],
-                                name);
+                            Mat_VarWriteNext73(*refs_id,fields[k*nfields+l],
+                                name,refs_id);
                             sprintf(name,"/#refs#/%lu",num_obj);
                             H5Rcreate(refs[l]+k,id,name,
                                       H5R_OBJECT,-1);
@@ -1781,8 +1776,6 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name)
                     }
                     free(refs);
                     H5Sclose(mspace_id);
-                    if ( !is_ref )
-                        H5Gclose(refs_id);
                 }
             }
         }
@@ -1792,7 +1785,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name)
 }
 
 static int
-Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name)
+Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
 {
     int err = -1;
     if ( NULL == matvar ) {
@@ -1817,10 +1810,10 @@ Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name)
             err = Mat_VarWriteChar73(id,matvar,name);
             break;
         case MAT_C_STRUCT:
-            err = Mat_VarWriteStruct73(id,matvar,name);
+            err = Mat_VarWriteStruct73(id,matvar,name,refs_id);
             break;
         case MAT_C_CELL:
-            err = Mat_VarWriteCell73(id,matvar,name);
+            err = Mat_VarWriteCell73(id,matvar,name,refs_id);
             break;
         case MAT_C_SPARSE:
             err = Mat_VarWriteSparse73(id,matvar,matvar->name);
@@ -1882,6 +1875,7 @@ Mat_Create73(const char *matname,const char *hdr_str)
     mat->mode             = 0;
     mat->bof              = 0;
     mat->next_index       = 0;
+    mat->refs_id          = -1;
 
     t = time(NULL);
     mat->filename = strdup_printf("%s",matname);
@@ -2430,7 +2424,7 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
         return -1;
 
     id = *(hid_t*)mat->fp;
-    return Mat_VarWriteNext73(id, matvar, matvar->name);
+    return Mat_VarWriteNext73(id,matvar,matvar->name,&(mat->refs_id));
 }
 
 #endif
