@@ -83,8 +83,7 @@ static int   Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,
                  size_t *dims);
 static int   Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name);
 static int   Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name);
-static int   Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name);
-static int   Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name);
+static int   Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name);
 
 static enum matio_classes
 Mat_class_str_to_id(const char *name)
@@ -1170,7 +1169,7 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name)
             for ( k = 0; k < nmemb; k++ ) {
                 (void)H5Gget_num_objs(refs_id,&num_obj);
                 sprintf(obj_name,"%lu",num_obj);
-                Mat_WriteNextCellField73(refs_id,cells[k],obj_name);
+                Mat_VarWriteNext73(refs_id,cells[k],obj_name);
                 sprintf(obj_name,"/#refs#/%lu",num_obj);
                 H5Rcreate(refs+k,id,obj_name,H5R_OBJECT,-1);
             }
@@ -1724,8 +1723,8 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name)
 
             if ( 1 == nmemb ) {
                 for ( k = 0; k < nfields; k++ )
-                    Mat_WriteNextStructField73(struct_id,fields[k],
-                                               matvar->internal->fieldnames[k]);
+                    Mat_VarWriteNext73(struct_id,fields[k],
+                        matvar->internal->fieldnames[k]);
             } else {
                 hid_t refs_id;
 
@@ -1759,8 +1758,8 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name)
                         for ( l = 0; l < nfields; l++ ) {
                             (void)H5Gget_num_objs(refs_id,&num_obj);
                             sprintf(name,"%lu",num_obj);
-                            Mat_WriteNextStructField73(refs_id,
-                                                       fields[k*nfields+l],name);
+                            Mat_VarWriteNext73(refs_id,fields[k*nfields+l],
+                                name);
                             sprintf(name,"/#refs#/%lu",num_obj);
                             H5Rcreate(refs[l]+k,id,name,
                                       H5R_OBJECT,-1);
@@ -1793,11 +1792,9 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name)
 }
 
 static int
-Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
+Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name)
 {
-    unsigned long k,numel;
-    hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
-
+    int err = -1;
     if ( NULL == matvar ) {
         size_t dims[2] = {0,0};
         return Mat_WriteEmptyVariable73(id,name,2,dims);
@@ -1814,54 +1811,22 @@ Mat_WriteNextStructField73(hid_t id,matvar_t *matvar,const char *name)
         case MAT_C_UINT16:
         case MAT_C_INT8:
         case MAT_C_UINT8:
-            Mat_VarWriteNumeric73(id,matvar,name);
+            err = Mat_VarWriteNumeric73(id,matvar,name);
             break;
         case MAT_C_CHAR:
-            Mat_VarWriteChar73(id,matvar,name);
+            err = Mat_VarWriteChar73(id,matvar,name);
             break;
         case MAT_C_STRUCT:
-            Mat_VarWriteStruct73(id,matvar,name);
+            err = Mat_VarWriteStruct73(id,matvar,name);
             break;
         case MAT_C_CELL:
-            Mat_VarWriteCell73(id,matvar,name);
+            err = Mat_VarWriteCell73(id,matvar,name);
+            break;
+        case MAT_C_SPARSE:
+            err = Mat_VarWriteSparse73(id,matvar,matvar->name);
             break;
     }
-    return 0;
-}
-
-static int
-Mat_WriteNextCellField73(hid_t id,matvar_t *matvar,const char *name)
-{
-    unsigned long k,numel;
-    hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
-
-    if ( NULL == matvar )
-        return -1;
-
-    switch ( matvar->class_type ) {
-        case MAT_C_DOUBLE:
-        case MAT_C_SINGLE:
-        case MAT_C_INT64:
-        case MAT_C_UINT64:
-        case MAT_C_INT32:
-        case MAT_C_UINT32:
-        case MAT_C_INT16:
-        case MAT_C_UINT16:
-        case MAT_C_INT8:
-        case MAT_C_UINT8:
-            Mat_VarWriteNumeric73(id,matvar,name);
-            break;
-        case MAT_C_CHAR:
-            Mat_VarWriteChar73(id,matvar,name);
-            break;
-        case MAT_C_STRUCT:
-            Mat_VarWriteStruct73(id,matvar,name);
-            break;
-        case MAT_C_CELL:
-            Mat_VarWriteCell73(id,matvar,name);
-            break;
-    }
-    return 0;
+    return err;
 }
 
 /** @if mat_devman
@@ -2459,40 +2424,13 @@ Mat_VarReadNextInfo73( mat_t *mat )
 int
 Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
 {
-    unsigned long k,numel;
-    hid_t id,mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
+    hid_t id;
 
     if ( NULL == mat || NULL == matvar )
         return -1;
 
     id = *(hid_t*)mat->fp;
-    switch ( matvar->class_type ) {
-        case MAT_C_DOUBLE:
-        case MAT_C_SINGLE:
-        case MAT_C_INT64:
-        case MAT_C_UINT64:
-        case MAT_C_INT32:
-        case MAT_C_UINT32:
-        case MAT_C_INT16:
-        case MAT_C_UINT16:
-        case MAT_C_INT8:
-        case MAT_C_UINT8:
-            Mat_VarWriteNumeric73(id,matvar,matvar->name);
-            break;
-        case MAT_C_CHAR:
-            Mat_VarWriteChar73(id,matvar,matvar->name);
-            break;
-        case MAT_C_STRUCT:
-            Mat_VarWriteStruct73(id,matvar,matvar->name);
-            break;
-        case MAT_C_CELL:
-            Mat_VarWriteCell73(id,matvar,matvar->name);
-            break;
-        case MAT_C_SPARSE:
-            Mat_VarWriteSparse73(id,matvar,matvar->name);
-            break;
-    }
-    return 0;
+    return Mat_VarWriteNext73(id, matvar, matvar->name);
 }
 
 #endif
