@@ -486,7 +486,7 @@ static void
 Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 {
     ssize_t  name_len;
-    int      k;
+    int      k, fields_are_variables = 1;
     /* FIXME */
     hsize_t  dims[10],nfields=0,numel;
     hid_t   attr_id,type_id,space_id,field_id,field_type_id;
@@ -659,16 +659,37 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                                   H5P_DEFAULT)) ) {
         field_type_id = H5Dget_type(field_id);
         if ( H5T_REFERENCE == H5Tget_class(field_type_id) ) {
-            space_id        = H5Dget_space(field_id);
-            matvar->rank    = H5Sget_simple_extent_ndims(space_id);
-            matvar->dims   = malloc(matvar->rank*sizeof(*matvar->dims));
-            (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
-            numel = 1;
-            for ( k = 0; k < matvar->rank; k++ ) {
-                matvar->dims[k] = dims[matvar->rank - k - 1];
-                numel *= matvar->dims[k];
+            /* Check if the field has the MATLAB_class attribute. If so, it
+             * means the structure is a scalar. Otherwise, the dimensions of
+             * the field dataset is the dimensions of the structure
+             */
+            /* Turn off error printing so testing for attributes doesn't print
+             * error stacks
+             */
+            H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
+            H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
+            attr_id = H5Aopen_name(field_id,"MATLAB_class");
+            H5Eset_auto(H5E_DEFAULT,efunc,client_data);
+            if ( -1 < attr_id ) {
+                H5Aclose(attr_id);
+                matvar->rank    = 2;
+                matvar->dims    = malloc(2*sizeof(*matvar->dims));
+                matvar->dims[0] = 1;
+                matvar->dims[1] = 1;
+                numel = 1;
+            } else {
+                space_id        = H5Dget_space(field_id);
+                matvar->rank    = H5Sget_simple_extent_ndims(space_id);
+                matvar->dims    = malloc(matvar->rank*sizeof(*matvar->dims));
+                (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
+                numel = 1;
+                for ( k = 0; k < matvar->rank; k++ ) {
+                    matvar->dims[k] = dims[matvar->rank - k - 1];
+                    numel *= matvar->dims[k];
+                }
+                H5Sclose(space_id);
+                fields_are_variables = 0;
             }
-            H5Sclose(space_id);
         } else {
             /* Structure should be a scalar */
             matvar->rank    = 2;
@@ -704,50 +725,40 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             field_id = H5Dopen(dset_id,matvar->internal->fieldnames[k],
                                H5P_DEFAULT);
             if ( -1 < field_id ) {
-                field_type_id = H5Dget_type(field_id);
-                switch ( H5Tget_class(field_type_id) ) {
-                    case H5T_REFERENCE:
-                    {
-                        hobj_ref_t *ref_ids = malloc(numel*sizeof(*ref_ids));
-                        H5Dread(field_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,
-                                H5P_DEFAULT,ref_ids);
-                        for ( l = 0; l < numel; l++ ) {
-                            hid_t ref_id;
-                            fields[l*nfields+k] = Mat_VarCalloc();
-                            fields[l*nfields+k]->name =
-                                strdup(matvar->internal->fieldnames[k]);
-                            fields[l*nfields+k]->internal->hdf5_ref=ref_ids[l];
-                            /* Get the HDF5 name of the variable */
-                            name_len = H5Iget_name(field_id,NULL,0);
-                            if ( name_len > 0 ) {
-                                fields[l*nfields+k]->internal->hdf5_name =
-                                    malloc(name_len+1);
-                                (void)H5Iget_name(field_id,
-                                    fields[l*nfields+k]->internal->hdf5_name,
-                                    name_len+1);
-                            }
-                            /* Closing of ref_id is done in
-                             * Mat_H5ReadNextReferenceInfo
-                             */
-                            ref_id = H5Rdereference(field_id,H5R_OBJECT,
-                                                    ref_ids+l);
-                            fields[l*nfields+k]->internal->id=ref_id;
-                            Mat_H5ReadNextReferenceInfo(ref_id,fields[l*nfields+k],mat);
-                        }
-                        free(ref_ids);
-                        break;
-                    }
-                    case H5T_INTEGER:
-                    case H5T_FLOAT:
-                    case H5T_COMPOUND:
-                    {
-                        fields[k] = Mat_VarCalloc();
-                        fields[k]->internal->fp   = mat;
-                        fields[k]->name =
+                if ( !fields_are_variables ) {
+                    hobj_ref_t *ref_ids = malloc(numel*sizeof(*ref_ids));
+                    H5Dread(field_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,
+                            H5P_DEFAULT,ref_ids);
+                    for ( l = 0; l < numel; l++ ) {
+                        hid_t ref_id;
+                        fields[l*nfields+k] = Mat_VarCalloc();
+                        fields[l*nfields+k]->name =
                             strdup(matvar->internal->fieldnames[k]);
-                        Mat_H5ReadDatasetInfo(mat,fields[k],field_id);
-                        break;
+                        fields[l*nfields+k]->internal->hdf5_ref=ref_ids[l];
+                        /* Get the HDF5 name of the variable */
+                        name_len = H5Iget_name(field_id,NULL,0);
+                        if ( name_len > 0 ) {
+                            fields[l*nfields+k]->internal->hdf5_name =
+                                malloc(name_len+1);
+                            (void)H5Iget_name(field_id,
+                                fields[l*nfields+k]->internal->hdf5_name,
+                                name_len+1);
+                        }
+                        /* Closing of ref_id is done in
+                         * Mat_H5ReadNextReferenceInfo
+                         */
+                        ref_id = H5Rdereference(field_id,H5R_OBJECT,
+                                                ref_ids+l);
+                        fields[l*nfields+k]->internal->id=ref_id;
+                        Mat_H5ReadNextReferenceInfo(ref_id,fields[l*nfields+k],mat);
                     }
+                    free(ref_ids);
+                } else {
+                    fields[k] = Mat_VarCalloc();
+                    fields[k]->internal->fp   = mat;
+                    fields[k]->name =
+                        strdup(matvar->internal->fieldnames[k]);
+                    Mat_H5ReadDatasetInfo(mat,fields[k],field_id);
                 }
                 H5Dclose(field_id);
             } else {
