@@ -480,6 +480,77 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         matvar->isComplex = MAT_F_COMPLEX;
     }
     H5Tclose(type_id);
+
+    /* If the dataset is a cell array read the info of the cells */
+    if ( MAT_C_CELL == matvar->class_type ) {
+        matvar_t **cells;
+        int i,ncells = 1;
+        hobj_ref_t *ref_ids;
+
+        for ( i = 0; i < matvar->rank; i++ )
+            ncells *= matvar->dims[i];
+        matvar->data_size = sizeof(matvar_t**);
+        matvar->nbytes    = ncells*matvar->data_size;
+        matvar->data      = malloc(matvar->nbytes);
+        cells  = matvar->data;
+
+        if ( ncells ) {
+            ref_ids = malloc(ncells*sizeof(*ref_ids));
+            H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                    ref_ids);
+            for ( i = 0; i < ncells; i++ ) {
+                hid_t ref_id;
+                cells[i] = Mat_VarCalloc();
+                cells[i]->internal->hdf5_ref = ref_ids[i];
+                /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
+                ref_id = H5Rdereference(dset_id,H5R_OBJECT,ref_ids+i);
+                cells[i]->internal->id = ref_id;
+                cells[i]->internal->fp = matvar->internal->fp;
+                Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
+            }
+            free(ref_ids);
+        }
+    } else if ( MAT_C_STRUCT == matvar->class_type ) {
+        /* Empty structures can be a dataset */
+
+        /* Turn off error printing so testing for attributes doesn't print
+         * error stacks
+         */
+        H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
+        H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
+        /* Check if the structure defines its fields in MATLAB_fields */
+        attr_id = H5Aopen_name(dset_id,"MATLAB_fields");
+        if ( -1 < attr_id ) {
+            int      i;
+            hid_t    field_id;
+            hsize_t  nfields;
+            hvl_t   *fieldnames_vl;
+
+            space_id = H5Aget_space(attr_id);
+            (void)H5Sget_simple_extent_dims(space_id,&nfields,NULL);
+            field_id = H5Aget_type(attr_id);
+            fieldnames_vl = malloc(nfields*sizeof(*fieldnames_vl));
+            H5Aread(attr_id,field_id,fieldnames_vl);
+
+            matvar->internal->num_fields = nfields;
+            matvar->internal->fieldnames =
+            calloc(nfields,sizeof(*matvar->internal->fieldnames));
+            for ( i = 0; i < nfields; i++ ) {
+                matvar->internal->fieldnames[i] =
+                calloc(fieldnames_vl[i].len+1,1);
+                memcpy(matvar->internal->fieldnames[i],fieldnames_vl[i].p,
+                       fieldnames_vl[i].len);
+            }
+
+            H5Dvlen_reclaim(field_id,space_id,H5P_DEFAULT,
+                            fieldnames_vl);
+            H5Sclose(space_id);
+            H5Tclose(field_id);
+            H5Aclose(attr_id);
+            free(fieldnames_vl);
+        }
+        H5Eset_auto(H5E_DEFAULT,efunc,client_data);
+    }
 }
 
 static void
