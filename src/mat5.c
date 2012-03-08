@@ -3060,9 +3060,9 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
             mat_int32_t array_name_type = MAT_T_INT8;
             matvar_t **fields = (matvar_t **)matvar->data;
 
+            nfields = matvar->internal->num_fields;
             /* Check for a structure with no fields */
-            if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
-                 matvar->data   == NULL ) {
+            if ( nfields < 1 ) {
                 fieldname_size = 1;
                 uncomp_buf[0] = (fieldname_data_size << 16) |
                                  fieldname_type;
@@ -3078,7 +3078,6 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
                     sizeof(*comp_buf)-z->avail_out,mat->fp);
                 break;
             }
-            nfields = matvar->internal->num_fields;
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
                 if ( len > maxlen )
