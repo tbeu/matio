@@ -590,7 +590,10 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         matvar->nbytes = nmemb*matvar->data_size;
     }
     if ( data == NULL ) {
-        matvar->data = NULL;
+        if ( MAT_C_CELL == matvar->class_type && nmemb > 0 )
+            matvar->data = calloc(nmemb,sizeof(matvar_t*));
+        else
+            matvar->data = NULL;
     } else if ( opt & MAT_F_DONT_COPY_DATA ) {
         matvar->data         = data;
         matvar->mem_conserve = 1;
