@@ -156,3 +156,33 @@ Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,int edge)
     }
     return cells;
 }
+
+/** @brief Sets the element of the cell array at the specific index
+ *
+ * Sets the element of the cell array at the given 0-relative index to @c cell.
+ * @ingroup MAT
+ * @param matvar Pointer to the cell array variable
+ * @param index 0-relative linear index of the cell to set
+ * @return Pointer to the previous cell element, or NULL if there was no
+*          previous cell element or error.
+ */
+matvar_t *
+Mat_VarSetCell(matvar_t *matvar,int index,matvar_t *cell)
+{
+    int nmemb = 1, i;
+    matvar_t **cells, *old_cell = NULL;
+
+    if ( matvar == NULL || matvar->rank < 1 )
+        return NULL;
+
+    for ( i = 0; i < matvar->rank; i++ )
+        nmemb *= matvar->dims[i];
+
+    cells = matvar->data;
+    if ( index < nmemb ) {
+        old_cell = cells[index];
+        cells[index] = cell;
+    }
+
+    return old_cell;
+}
