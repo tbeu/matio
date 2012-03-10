@@ -198,7 +198,7 @@ print_default(matvar_t *matvar)
         case MAT_C_CELL:
         {
             matvar_t **cells = (matvar_t **)matvar->data;
-            int        ncells = matvar->nbytes / matvar->data_size;
+            size_t     ncells;
             int        i;
 
             if ( matvar->name )
@@ -206,6 +206,9 @@ print_default(matvar_t *matvar)
             Mat_Message("      Rank: %d", matvar->rank);
             if ( matvar->rank == 0 )
                 return;
+            ncells = matvar->dims[0];
+            for ( i = 1; i < matvar->rank; i++ )
+                ncells *= matvar->dims[i];
             Mat_Message("Class Type: Cell Array");
             Mat_Message("{");
             indent++;
