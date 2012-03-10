@@ -691,6 +691,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 matvar->isComplex = MAT_F_COMPLEX;
             }
             H5Tclose(type_id);
+            H5Dclose(sparse_dset_id);
         }
         return;
     }
