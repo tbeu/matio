@@ -43,7 +43,7 @@
 #define CLASS_FROM_ARRAY_FLAGS(a) (enum matio_classes)((a) & 0x000000ff)
 #define CLASS_TYPE_MASK           0x000000ff
 
-static const mat_complex_split_t const null_complex_data = {NULL,NULL};
+static mat_complex_split_t null_complex_data = {NULL,NULL};
 
 /*
  * -------------------------------------------------------------
