@@ -181,19 +181,8 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
     /* Add the Array Flags tag and space to the number of bytes */
     nBytes += tag_size + array_flags_size;
 
-    /* Get size of variable name, pad it to an 8 byte block, and add it to nBytes */
-    if ( NULL != matvar->name )
-        len = strlen(matvar->name);
-    else
-        len=4;
-
-    if ( len <= 4 ) {
-        nBytes += tag_size;
-    } else {
-        if ( len % 8 )
-            len = len + (8 - len % 8);
-        nBytes += tag_size + len;
-    }
+    /* In an element of a cell array, the name is just a tag with 0 bytes */
+    nBytes += tag_size;
 
     /* Add rank and dimensions, padded to an 8 byte block */
     for ( i = 0, len = 0; i < matvar->rank; i++ )
