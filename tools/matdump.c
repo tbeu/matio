@@ -165,6 +165,7 @@ print_default(matvar_t *matvar)
             matvar_t **fields = (matvar_t **)matvar->data;
             int        nfields;
             int        i;
+            size_t     nmemb;
 
             if ( matvar->name )
                 Mat_Message("      Name: %s", matvar->name);
@@ -173,10 +174,21 @@ print_default(matvar_t *matvar)
                 return;
             Mat_Message("Class Type: Structure");
             nfields = Mat_VarGetNumberOfFields(matvar);
-            if ( nfields > 0 ) {
+            nmemb = matvar->dims[0];
+            for ( i = 1; i < matvar->rank; i++ )
+                nmemb *= matvar->dims[i];
+            if ( nfields > 0 && nmemb < 1 ) {
+                char * const *fieldnames = Mat_VarGetStructFieldnames(matvar);
                 Mat_Message("Fields[%d] {", nfields);
                 indent++;
                 for ( i = 0; i < nfields; i++ )
+                    Mat_Message("    Name: %s", matvar->name);
+                indent--;
+                Mat_Message("}");
+            } else if ( nfields > 0 && nmemb > 0 ) {
+                Mat_Message("Fields[%d] {", nfields);
+                indent++;
+                for ( i = 0; i < nfields*nmemb; i++ )
                     print_default(fields[i]);
                 indent--;
                 Mat_Message("}");
