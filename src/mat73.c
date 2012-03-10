@@ -156,6 +156,46 @@ Mat_ClassToType73(enum matio_classes class_type)
     return type;
 }
 
+static enum matio_classes
+Mat_TypeToClass73(enum matio_types type)
+{
+    enum matio_classes class_type = MAT_C_EMPTY;
+    switch ( type ) {
+        case MAT_T_DOUBLE:
+            type = MAT_C_DOUBLE;
+            break;
+        case MAT_T_SINGLE:
+            type = MAT_C_SINGLE;
+            break;
+        case MAT_T_INT64:
+            type = MAT_C_INT64;
+            break;
+        case MAT_T_UINT64:
+            type = MAT_C_UINT64;
+            break;
+        case MAT_T_INT32:
+            type = MAT_C_INT32;
+            break;
+        case MAT_T_UINT32:
+            type = MAT_C_UINT32;
+            break;
+        case MAT_T_INT16:
+            type = MAT_C_INT16;
+            break;
+        case MAT_T_UINT16:
+            type = MAT_C_UINT16;
+            break;
+        case MAT_T_INT8:
+            type = MAT_C_INT8;
+            break;
+        case MAT_T_UINT8:
+            type = MAT_C_UINT8;
+            break;
+    }
+
+    return type;
+}
+
 static hid_t
 Mat_class_type_to_hid_t(enum matio_classes class_type)
 {
@@ -1578,18 +1618,20 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         mat_sparse_t *sparse;
         hsize_t rank, nir, njc, ndata;
         mat_uint64_t sparse_attr_value;
+        enum matio_classes class_type;
 
         sparse = matvar->data;
         rank = matvar->rank;
 
+        class_type = Mat_TypeToClass73(matvar->data_type);
         attr_type_id = H5Tcopy(H5T_C_S1);
         H5Tset_size(attr_type_id,
-                    strlen(Mat_class_names[matvar->class_type])+1);
+                    strlen(Mat_class_names[class_type])+1);
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(sparse_id,"MATLAB_class",attr_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
         H5Awrite(attr_id,attr_type_id,
-                 Mat_class_names[matvar->class_type]);
+                 Mat_class_names[class_type]);
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
         H5Tclose(attr_type_id);
