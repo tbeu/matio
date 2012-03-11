@@ -49,9 +49,9 @@ Acknowledgements:
     configurations supported, but I recommend the LIB Release or the
     DLL Release. The build-windows directory contains a batch file to build
     using nmake. This makes it easier to set variables and install the software.
-    Doxygen is required to build the documentation. Since not all platforms
-    support doxygen (mingw and Visual C come to mind) I have included the API
-    documentation in the top-level directory as a pdf.
+    texi2dvi is required to build the documentation.
+    "cd documentation && make pdf" will generate a PDF containing the matio
+    documentation.
 
     2.1 zlib
         To support compressed MAT files, zlib 1.2.3 or greater is required.
