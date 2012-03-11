@@ -29,9 +29,6 @@
 /* Have HDF5 */
 #undef HAVE_HDF5
 
-/* Define to 1 if you have the <inttypes.h> header file. */
-#undef HAVE_INTTYPES_H
-
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
@@ -64,9 +61,6 @@
 
 /* Have snprintf */
 #undef HAVE_SNPRINTF
-
-/* Define to 1 if you have the <stdint.h> header file. */
-#undef HAVE_STDINT_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
@@ -111,12 +105,6 @@
 /* MAT v7.3 file support */
 #undef MAT73
 
-/* Matio has access to inttypes.h */
-#undef MATIO_HAVE_INTTYPES_H
-
-/* Matio has access to stdint.h */
-#undef MATIO_HAVE_STDINT_H
-
 /* Matio major version number */
 #undef MATIO_MAJOR_VERSION
 
@@ -128,9 +116,6 @@
 
 /* Matio release level number */
 #undef MATIO_RELEASE_LEVEL
-
-/* Default file format */
-#undef MAT_FT_DEFAULT
 
 /* Debug disabled */
 #undef NODEBUG
