@@ -162,38 +162,38 @@ Mat_TypeToClass73(enum matio_types type)
     enum matio_classes class_type = MAT_C_EMPTY;
     switch ( type ) {
         case MAT_T_DOUBLE:
-            type = MAT_C_DOUBLE;
+            class_type = MAT_C_DOUBLE;
             break;
         case MAT_T_SINGLE:
-            type = MAT_C_SINGLE;
+            class_type = MAT_C_SINGLE;
             break;
         case MAT_T_INT64:
-            type = MAT_C_INT64;
+            class_type = MAT_C_INT64;
             break;
         case MAT_T_UINT64:
-            type = MAT_C_UINT64;
+            class_type = MAT_C_UINT64;
             break;
         case MAT_T_INT32:
-            type = MAT_C_INT32;
+            class_type = MAT_C_INT32;
             break;
         case MAT_T_UINT32:
-            type = MAT_C_UINT32;
+            class_type = MAT_C_UINT32;
             break;
         case MAT_T_INT16:
-            type = MAT_C_INT16;
+            class_type = MAT_C_INT16;
             break;
         case MAT_T_UINT16:
-            type = MAT_C_UINT16;
+            class_type = MAT_C_UINT16;
             break;
         case MAT_T_INT8:
-            type = MAT_C_INT8;
+            class_type = MAT_C_INT8;
             break;
         case MAT_T_UINT8:
-            type = MAT_C_UINT8;
+            class_type = MAT_C_UINT8;
             break;
     }
 
-    return type;
+    return class_type;
 }
 
 static hid_t
