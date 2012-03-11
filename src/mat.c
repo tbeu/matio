@@ -641,7 +641,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     } else {
         if ( matvar->isComplex ) {
             matvar->data   = malloc(sizeof(mat_complex_split_t));
-            if ( NULL != matvar->data ) {
+            if ( NULL != matvar->data && matvar->nbytes > 0 ) {
                 mat_complex_split_t *complex_data    = matvar->data;
                 mat_complex_split_t *complex_data_in = data;
 
@@ -652,7 +652,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                 if ( NULL != complex_data->Im )
                     memcpy(complex_data->Im,complex_data_in->Im,matvar->nbytes);
             }
-        } else {
+        } else if ( matvar->nbytes > 0 ) {
             matvar->data   = malloc(matvar->nbytes);
             if ( NULL != matvar->data )
                 memcpy(matvar->data,data,matvar->nbytes);

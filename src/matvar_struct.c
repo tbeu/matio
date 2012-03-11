@@ -75,7 +75,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
             malloc(nfields*sizeof(*matvar->internal->fieldnames));
         if ( NULL == matvar->internal->fieldnames ) {
             Mat_VarFree(matvar);
-            return NULL;
+            matvar = NULL;
         } else {
             for ( i = 0; i < nfields; i++ ) {
                 if ( NULL == fields[i] ) {
@@ -87,9 +87,11 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
                 }
             }
         }
+        if ( NULL != matvar && nmemb > 0 && nfields > 0 ) {
+            matvar->nbytes = nmemb*nfields*matvar->data_size;
+            matvar->data = malloc(matvar->nbytes);
+        }
     }
-    matvar->nbytes = nmemb*nfields*matvar->data_size;
-    matvar->data   = malloc(matvar->nbytes);
 
     return matvar;
 }

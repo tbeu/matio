@@ -826,6 +826,10 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         return;
     }
 
+    H5Eset_auto(H5E_DEFAULT,efunc,client_data);
+    if ( numel < 1 || nfields < 1 )
+        return;
+
     fields = malloc(nfields*numel*sizeof(*fields));
     matvar->data = fields;
     matvar->data_size = sizeof(*fields);
@@ -886,8 +890,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             }
         }
     }
-
-    H5Eset_auto(H5E_DEFAULT,efunc,client_data);
 }
 
 static void
