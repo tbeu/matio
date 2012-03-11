@@ -49,7 +49,7 @@ Acknowledgements:
     configurations supported, but I recommend the LIB Release or the
     DLL Release. The build-windows directory contains a batch file to build
     using nmake. This makes it easier to set variables and install the software.
-    texi2dvi is required to build the documentation.
+    texinfo is required to build the documentation.
     "cd documentation && make pdf" will generate a PDF containing the matio
     documentation.
 
