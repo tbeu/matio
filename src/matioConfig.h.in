@@ -105,17 +105,8 @@
 /* MAT v7.3 file support */
 #undef MAT73
 
-/* Matio major version number */
-#undef MATIO_MAJOR_VERSION
-
-/* Matio minor version number */
-#undef MATIO_MINOR_VERSION
-
 /* Platform */
 #undef MATIO_PLATFORM
-
-/* Matio release level number */
-#undef MATIO_RELEASE_LEVEL
 
 /* Debug disabled */
 #undef NODEBUG

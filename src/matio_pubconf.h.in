@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011   Christopher C. Hulbert
+ * Copyright (C) 2010-2012   Christopher C. Hulbert
  *
  * All rights reserved.
  *
@@ -27,6 +27,18 @@
  */
 #ifndef MATIO_PUBCONF_H
 #define MATIO_PUBCONF_H 1
+
+/* Matio major version number */
+#undef MATIO_MAJOR_VERSION
+
+/* Matio minor version number */
+#undef MATIO_MINOR_VERSION
+
+/* Matio release level number */
+#undef MATIO_RELEASE_LEVEL
+
+/* Matio version number */
+#undef MATIO_VERSION
 
 /* Default file format */
 #undef MAT_FT_DEFAULT
