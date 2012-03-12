@@ -322,6 +322,22 @@ Mat_GetFilename(mat_t *matfp)
     return filename;
 }
 
+/** @brief Gets the version of the given MAT file
+ *
+ * Gets the version of the given MAT file
+ * @ingroup MAT
+ * @param mat Pointer to the MAT file
+ * @return MAT file version
+ */
+enum mat_ft
+Mat_GetVersion(mat_t *matfp)
+{
+    enum mat_ft file_type = 0;
+    if ( NULL != matfp )
+        file_type = matfp->version;
+    return file_type;
+}
+
 /** @brief Rewinds a Matlab MAT file to the first variable
  *
  * Rewinds a Matlab MAT file to the first variable

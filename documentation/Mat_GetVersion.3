@@ -25,24 +25,35 @@
 .\" POSSIBILITY OF SUCH DAMAGE.
 .\"
 .Dd March 12, 2012
-.Dt MAT_GETFILENAME 3
+.Dt MAT_GETVERSION 3
 .Os
 .Sh NAME
-.Nm Mat_GetFilename
+.Nm Mat_GetVersion
 .Nd Returns the filename of a MATLAB .mat file given a MAT file structure
 .Sh SYNOPSIS
 .Fd #include <matio.h>
-.Ft const char *
-.Fo Mat_GetFilename
+.Ft enum mat_ft
+.Fo Mat_GetVersion
 .Fa "mat_t *matfp"
 .Fc
 .Sh DESCRIPTION
 The
-.Fn Mat_GetFilename
-function returns the filename of the MATLAB .mat file given by the MAT file
-structure.
+.Fn Mat_GetVersion
+function returns the version of the MATLAB .mat file given by the MAT file
+structure. The return value is one of the following:
+.Bl -bullet
+.It
+.Cm MAT_FT_MAT73
+if the file is an HDF5 MAT file.
+.It
+.Cm MAT_FT_MAT5
+if the file is a level 5 MAT file.
+.It
+.Cm MAT_FT_MAT4
+if the file is a level 4 MAT file.
+.El
 .Sh SEE ALSO
 .Xr Mat_Create 3 ,
 .Xr Mat_CreateVer 3 ,
 .Xr Mat_Open 3
-.Xr Mat_GetVersion 3
+.Xr Mat_GetFilename 3
