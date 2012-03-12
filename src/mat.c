@@ -306,6 +306,22 @@ Mat_Close( mat_t *mat )
     return 0;
 }
 
+/** @brief Gets the filename for the given MAT file
+ *
+ * Gets the filename for the given MAT file
+ * @ingroup MAT
+ * @param mat Pointer to the MAT file
+ * @return MAT filename
+ */
+const char *
+Mat_GetFilename(mat_t *matfp)
+{
+    const char *filename = NULL;
+    if ( NULL != matfp )
+        filename = matfp->filename;
+    return filename;
+}
+
 /** @brief Rewinds a Matlab MAT file to the first variable
  *
  * Rewinds a Matlab MAT file to the first variable

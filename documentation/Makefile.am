@@ -32,6 +32,7 @@ matio_user_guide_TEXINFOS = intro.texi quick.texi matvar_structure.texi
 dist_man3_MANS  = \
     Mat_Close.3 \
     Mat_CreateVer.3 \
+    Mat_GetFilename.3 \
     Mat_Open.3 \
     Mat_Rewind.3 \
     Mat_VarGetStructFieldnames.3 \
