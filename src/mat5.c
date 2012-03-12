@@ -600,7 +600,7 @@ static size_t
 WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
     enum matio_types data_type)
 {
-    int nBytes = 0, data_size, data_tag[2], err, byteswritten = 0;
+    int data_size, data_tag[2], err, byteswritten = 0;
     int buf_size = 1024, i;
     mat_uint8_t   buf[1024], pad[8] = {0,};
 
@@ -2482,7 +2482,6 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     mat_int16_t  fieldname_data_size = 4;
     int      array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
     int      array_flags_size = 8, pad4 = 0;
-    mat_int8_t   pad1 = 0;
     int      nBytes, i, nmemb = 1, nzmax = 0;
     long     start = 0;
 
@@ -2911,7 +2910,6 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
     mat_int16_t  fieldname_data_size = 4;
     int      array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
     int      array_flags_size = 8, pad4 = 0;
-    mat_int8_t   pad1 = 0;
     int      nBytes, i, nmemb = 1, nzmax = 0;
     long     start = 0;
 
@@ -5764,7 +5762,6 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
     } else {
         if ( matvar->compression == MAT_COMPRESSION_NONE ) {
             if ( matvar->isComplex ) {
-                int i;
                 mat_complex_split_t *complex_data = data;
 
                 ReadDataSlabN(mat,complex_data->Re,matvar->class_type,
@@ -5792,7 +5789,6 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
 #if defined(HAVE_ZLIB)
         else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             if ( matvar->isComplex ) {
-                int i;
                 mat_complex_split_t *complex_data = data;
 
                 ReadCompressedDataSlabN(mat,&z,complex_data->Re,

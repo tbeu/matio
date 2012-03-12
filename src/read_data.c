@@ -6007,7 +6007,7 @@ ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,
     enum matio_classes class_type,enum matio_types data_type,int start,
     int stride,int edge)
 {
-    int nBytes = 0, data_size, i, err;
+    int nBytes = 0, i, err;
     z_stream z_copy = {0,};
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )

@@ -43,7 +43,6 @@
 #include "mat73.h"
 
 static hsize_t perm_dims[10];
-static hsize_t dims1[2] = {1,1};
 
 static const char *Mat_class_names[] = {
     "",
@@ -699,7 +698,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     /* Check if the structure defines its fields in MATLAB_fields */
     attr_id = H5Aopen_name(dset_id,"MATLAB_fields");
     if ( -1 < attr_id ) {
-        int field_length;
         hvl_t     *fieldnames_vl;
         space_id = H5Aget_space(attr_id);
         (void)H5Sget_simple_extent_dims(space_id,&nfields,NULL);
@@ -895,7 +893,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 static void
 Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
 {
-    hid_t       gid;
     H5E_auto_t  efunc;
     void       *client_data;
 
@@ -905,7 +902,6 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
     switch ( H5Iget_type(ref_id) ) {
         case H5I_DATASET:
         {
-            ssize_t  name_len;
             /* FIXME */
             hsize_t  dims[10];
             hid_t   attr_id,type_id,dset_id,space_id;
@@ -991,7 +987,6 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             if ( MAT_C_CELL == matvar->class_type ) {
                 matvar_t **cells;
                 int i,ncells = 1;
-                hid_t field_id,ref_id,field_type_id;
                 hobj_ref_t *ref_ids;
 
                 for ( i = 0; i < matvar->rank; i++ )
@@ -1026,11 +1021,10 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 /* Check if the structure defines its fields in MATLAB_fields */
                 attr_id = H5Aopen_name(dset_id,"MATLAB_fields");
                 if ( -1 < attr_id ) {
-                    int field_length, i;
-                    hid_t      field_id;
-                    hsize_t    nfields;
-                    hvl_t     *fieldnames_vl;
-                    matvar_t **fields;
+                    int      i;
+                    hid_t    field_id;
+                    hsize_t  nfields;
+                    hvl_t   *fieldnames_vl;
 
                     space_id = H5Aget_space(attr_id);
                     (void)H5Sget_simple_extent_dims(space_id,&nfields,NULL);
@@ -1069,17 +1063,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
         }
         case H5I_GROUP:
         {
-            ssize_t  name_len;
-            int      k;
-            char    **fieldnames = NULL;
-            /* FIXME */
-            hsize_t  dims[10],nfields,numel;
-            hid_t   attr_id,type_id,dset_id,space_id,field_id,field_type_id;
-            matvar_t **fields;
-
-            dset_id = ref_id;
-
-            Mat_H5ReadGroupInfo(mat,matvar,dset_id);
+            Mat_H5ReadGroupInfo(mat,matvar,ref_id);
             break;
         }
         default:
@@ -1093,7 +1077,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
 {
     int k;
     size_t numel;
-    hid_t fid,dset_id;
+    hid_t  dset_id;
 
     if( ref_id < 0 || matvar == NULL)
         return;
@@ -1177,7 +1161,6 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
         {
             matvar_t **fields;
             int i,nfields = 0;
-            hid_t field_id,ref_id,field_type_id;
 
             if ( MAT_C_SPARSE == matvar->class_type ) {
                 Mat_VarRead73(mat,matvar);
@@ -1652,7 +1635,6 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         mspace_id = H5Screate_simple(1,&ndata,NULL);
         if ( matvar->isComplex ) {
             hid_t h5_complex,h5_complex_base;
-            void *buf;
             mat_complex_split_t *complex_data;
 
             complex_data = sparse->data;
@@ -2148,7 +2130,6 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         {
             matvar_t **fields;
             int i,nfields = 0;
-            hid_t field_id,ref_id,field_type_id;
 
             if ( !matvar->internal->num_fields || NULL == matvar->data )
                 break;
@@ -2172,7 +2153,6 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         {
             matvar_t **cells;
             int i,ncells = 0;
-            hid_t field_id,ref_id,field_type_id;
 
             if ( NULL != matvar->internal->hdf5_name ) {
                 dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
@@ -2289,7 +2269,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 matvar_t *
 Mat_VarReadNextInfo73( mat_t *mat )
 {
-    hid_t       fid,gid;
+    hid_t       fid;
     hsize_t     num_objs;
     H5E_auto_t  efunc;
     void       *client_data;
@@ -2422,7 +2402,6 @@ Mat_VarReadNextInfo73( mat_t *mat )
             if ( MAT_C_CELL == matvar->class_type ) {
                 matvar_t **cells;
                 int i,ncells = 1;
-                hid_t field_id,ref_id,field_type_id;
                 hobj_ref_t *ref_ids;
 
                 for ( i = 0; i < matvar->rank; i++ )
@@ -2461,11 +2440,10 @@ Mat_VarReadNextInfo73( mat_t *mat )
                 /* Check if the structure defines its fields in MATLAB_fields */
                 attr_id = H5Aopen_name(dset_id,"MATLAB_fields");
                 if ( -1 < attr_id ) {
-                    int field_length, i;
-                    hid_t      field_id;
-                    hsize_t    nfields;
-                    hvl_t     *fieldnames_vl;
-                    matvar_t **fields;
+                    int      i;
+                    hid_t    field_id;
+                    hsize_t  nfields;
+                    hvl_t   *fieldnames_vl;
 
                     space_id = H5Aget_space(attr_id);
                     (void)H5Sget_simple_extent_dims(space_id,&nfields,NULL);
@@ -2502,13 +2480,8 @@ Mat_VarReadNextInfo73( mat_t *mat )
         }
         case H5G_GROUP:
         {
-            ssize_t  name_len;
-            int      k;
-            char    **fieldnames = NULL;
-            /* FIXME */
-            hsize_t  dims[10],nfields,numel;
-            hid_t   attr_id,type_id,dset_id,space_id,field_id,field_type_id;
-            matvar_t **fields;
+            ssize_t name_len;
+            hid_t   dset_id;
 
             matvar->internal->fp = mat;
             name_len = H5Gget_objname_by_idx(fid,mat->next_index,NULL,0);
