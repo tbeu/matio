@@ -1971,6 +1971,58 @@ test_struct_api_getfieldnames(void)
 }
 
 static int
+test_struct_api_getlinear(void)
+{
+    size_t dims[2];
+    int    err = 0, i;
+    double    r[12] = {0,1,2,3,4,5,6,7,8,9,10,11},
+              c[12] = {12,13,14,15,16,17,18,19,20,21,22,23};
+    mat_complex_split_t z[12];
+    matvar_t *field, *matvar, *matvar2;
+    const size_t num_fields = 3;
+    const char *fieldnames[3] = {"r","c","z"};
+
+    dims[0] = 3;
+    dims[1] = 4;
+    matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, num_fields);
+
+    dims[0] = 1; dims[1] = 1;
+
+    for ( i = 0; i < 12; i++ ) {
+        field = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                              dims,r+i,MAT_F_DONT_COPY_DATA);
+        Mat_VarSetStructFieldByName(matvar, "r", i, field);
+        field = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                              dims,c+i,MAT_F_DONT_COPY_DATA);
+        Mat_VarSetStructFieldByName(matvar, "c", i, field);
+        z[i].Re = r+i;
+        z[i].Im = c+i;
+        field = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                              dims,z+i,MAT_F_DONT_COPY_DATA|MAT_F_COMPLEX);
+        Mat_VarSetStructFieldByName(matvar, "z", i, field);
+    }
+
+    /* Read the second row of data */
+    matvar2 = Mat_VarGetStructsLinear(matvar, 1, 3, 4, 0);
+    Mat_VarPrint(matvar2,1);
+    Mat_VarFree(matvar2);
+
+    /* Read the first column of data */
+    matvar2 = Mat_VarGetStructsLinear(matvar, 0, 1, 3, 0);
+    Mat_VarPrint(matvar2,1);
+    Mat_VarFree(matvar2);
+
+    /* Read diagonal */
+    matvar2 = Mat_VarGetStructsLinear(matvar, 0, 4, 3, 0);
+    Mat_VarPrint(matvar2,1);
+    Mat_VarFree(matvar2);
+
+    Mat_VarFree(matvar);
+
+    return err;
+}
+
+static int
 test_get_struct_field(const char *file,const char *structname,
     const char *fieldname)
 {
@@ -2497,6 +2549,10 @@ int main (int argc, char *argv[])
         } else if ( !strcasecmp(argv[k],"struct_api_getfieldnames") ) {
             k++;
             err += test_struct_api_getfieldnames();
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"struct_api_getlinear") ) {
+            k++;
+            err += test_struct_api_getlinear();
             ntests++;
         } else if ( !strcasecmp(argv[k],"getstructfield") ) {
             k++;
