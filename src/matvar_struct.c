@@ -411,11 +411,10 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
  * MAT File version must be 5.
  * @ingroup MAT
  * @param matvar Structure matlab variable
- * @param start starting index
- * @param stride stride
- * @param edge Number of structures to get
+ * @param start starting index (0-relative)
+ * @param stride stride (1 reads consecutive elements)
+ * @param edge Number of elements to read
  * @param copy_fields 1 to copy the fields, 0 to just set pointers to them.
- *        If 0 is used, the fields should not be freed themselves.
  * @returns A new structure with fields indexed from matvar
  */
 matvar_t *
@@ -438,7 +437,10 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
 
         struct_slab->nbytes = edge*nfields*sizeof(matvar_t *);
         struct_slab->data = malloc(struct_slab->nbytes);
+        struct_slab->dims[0] = edge;
+        struct_slab->dims[1] = 1;
         fields = struct_slab->data;
+        I = start*nfields;
         for ( i = 0; i < edge; i++ ) {
             if ( copy_fields ) {
                 for ( field = 0; field < nfields; field++ ) {
@@ -448,11 +450,11 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
                 }
             } else {
                 for ( field = 0; field < nfields; field++ ) {
-                    fields[i+field] = *((matvar_t **)matvar->data + I);
+                    fields[i*nfields+field] = *((matvar_t **)matvar->data + I);
                     I++;
                 }
             }
-            I += stride;
+            I += (stride-1)*nfields;
         }
     }
     return struct_slab;
