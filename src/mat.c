@@ -520,9 +520,8 @@ matvar_t *
 Mat_VarCreate(const char *name,enum matio_classes class_type,
     enum matio_types data_type,int rank,size_t *dims,void *data,int opt)
 {
-    int i, nmemb = 1, nfields = 0;
+    size_t i, nmemb = 1, nfields = 0, data_size;
     matvar_t *matvar = NULL;
-    size_t data_size;
 
     if (dims == NULL) return NULL;
 
