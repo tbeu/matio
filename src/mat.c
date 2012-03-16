@@ -883,18 +883,31 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 void
 Mat_VarFree(matvar_t *matvar)
 {
+    size_t nmemb = 0, i;
     if ( !matvar )
         return;
-    if ( matvar->dims )
+    if ( matvar->dims ) {
+        nmemb = 1;
+        for ( i = 0; i < matvar->rank; i++ )
+            nmemb *= matvar->dims[i];
         free(matvar->dims);
+    }
     if ( matvar->name )
         free(matvar->name);
     if ( matvar->data != NULL) {
         switch (matvar->class_type ) {
             case MAT_C_STRUCT:
+            {
+                matvar_t **fields = matvar->data;
+                int nfields = matvar->internal->num_fields;
+                for ( i = 0; i < nmemb*nfields; i++ )
+                    Mat_VarFree(fields[i]);
+                if ( !matvar->mem_conserve )
+                    free(matvar->data);
+                break;
+            }
             case MAT_C_CELL:
                 if ( matvar->data_size > 0 ) {
-                    int i;
                     matvar_t **fields = matvar->data;
                     int nfields = matvar->nbytes / matvar->data_size;
                     for ( i = 0; i < nfields; i++ )
