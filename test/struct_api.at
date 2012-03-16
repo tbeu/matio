@@ -438,3 +438,209 @@ Class Type: Double Precision Array (complex)
 ],[ignore])
 AT_CHECK([$builddir/test_mat struct_api_getlinear],[0],[expout],[ignore])
 AT_CLEANUP
+
+AT_SETUP([Index structure via dimension slices])
+AT_KEYWORDS([struct_api])
+MATIO_AT_HOST_DATA([expout],
+[      Name: a
+      Rank: 4
+Dimensions: 1 x 2 x 3 x 2
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@24@:>@ {
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+65 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-65 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+68 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-68 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+89 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-89 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+92 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-92 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+113 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-113 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+116 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-116 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+305 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-305 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+308 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-308 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+329 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-329 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+332 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-332 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+353 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-353 @&t@
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+356 @&t@
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-356 @&t@
+}
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat struct_api_get],[0],[expout],[ignore])
+AT_CLEANUP
