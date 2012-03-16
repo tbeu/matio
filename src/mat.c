@@ -907,11 +907,10 @@ Mat_VarFree(matvar_t *matvar)
                 break;
             }
             case MAT_C_CELL:
-                if ( matvar->data_size > 0 ) {
-                    matvar_t **fields = matvar->data;
-                    int nfields = matvar->nbytes / matvar->data_size;
-                    for ( i = 0; i < nfields; i++ )
-                        Mat_VarFree(fields[i]);
+                if ( NULL != matvar->data ) {
+                    matvar_t **cells = matvar->data;
+                    for ( i = 0; i < nmemb; i++ )
+                        Mat_VarFree(cells[i]);
                     if ( !matvar->mem_conserve )
                         free(matvar->data);
                 }
