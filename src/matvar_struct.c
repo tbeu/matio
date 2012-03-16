@@ -310,9 +310,12 @@ Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
  * each dimension.  The structures are placed in a new structure array.  If
  * copy_fields is non-zero, the indexed structures are copied and should be
  * freed, but if copy_fields is zero, the indexed structures are pointers to
- * the original, but should still be freed since the mem_conserve flag is set
- * so that the structures are not freed.
- * MAT File version must be 5.
+ * the original, but should still be freed. The structures have a flag set
+ * so that the structure fields are not freed.
+ *
+ * Note that this function is limited to structure arrays with a rank less than
+ * 10.
+ *
  * @ingroup MAT
  * @param matvar Structure matlab variable
  * @param start vector of length rank with 0-relative starting coordinates for
@@ -321,22 +324,19 @@ Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
  * @param edge vector of length rank with the number of elements to read in
  *              each diemnsion.
  * @param copy_fields 1 to copy the fields, 0 to just set pointers to them.
- *        If 0 is used, the fields should not be freed themselves.
- * @returns A new structure with fields indexed from matvar.
+ * @returns A new structure array with fields indexed from @c matvar.
  */
 matvar_t *
 Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
     int copy_fields)
 {
-    int i, j, N, I = 0;
-    int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
-    int nfields, field;
+    size_t i,j,N,I,nfields,field,idx[10] = {0,},cnt[10] = {0,},dimp[10] = {0,};
     matvar_t **fields, *struct_slab;
 
     if ( (matvar == NULL) || (start == NULL) || (stride == NULL) ||
          (edge == NULL) ) {
         return NULL;
-    } else if ( matvar->rank > 10 ) {
+    } else if ( matvar->rank > 9 ) {
         return NULL;
     } else if ( matvar->class_type != MAT_C_STRUCT ) {
         return NULL;
@@ -348,21 +348,19 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
 
     nfields = matvar->internal->num_fields;
 
-    inc[0] = stride[0]-1;
     dimp[0] = matvar->dims[0];
     N = edge[0];
-    I = start[0]*nfields;
+    I = start[0];
+    struct_slab->dims[0] = edge[0];
+    idx[0] = start[0];
     for ( i = 1; i < matvar->rank; i++ ) {
-        inc[i]  = stride[i]-1;
-        dimp[i] = matvar->dims[i-1];
-        for ( j = i ; j--; ) {
-            inc[i]  *= matvar->dims[j]*nfields;
-            dimp[i] *= matvar->dims[j+1];
-        }
+        idx[i]  = start[i];
+        dimp[i] = dimp[i-1]*matvar->dims[i];
         N *= edge[i];
-        if ( start[i] > 0 )
-            I += start[i]*dimp[i-1]*nfields;
+        I += start[i]*dimp[i-1];
+        struct_slab->dims[i] = edge[i];
     }
+    I *= nfields;
     struct_slab->nbytes    = N*nfields*sizeof(matvar_t *);
     struct_slab->data = malloc(struct_slab->nbytes);
     if ( struct_slab->data == NULL ) {
@@ -381,21 +379,23 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
                         *((matvar_t **)matvar->data + I);
                 I++;
             }
-            I += stride[0]*nfields;
+            if ( stride != 0 )
+                I += (stride[0]-1)*nfields;
         }
-        for ( j = 1; j < matvar->rank-1; j++ ) {
-            cnt[j]++;
-            if ( (cnt[j] % edge[j]) == 0 ) {
+        idx[0] = start[0];
+        I = idx[0];
+        cnt[1]++;
+        idx[1] += stride[1];
+        for ( j = 1; j < matvar->rank; j++ ) {
+            if ( cnt[j] == edge[j] ) {
                 cnt[j] = 0;
-                if ( (I % dimp[j]) != 0 ) {
-                    I += dimp[j]-(I % dimp[j]);
-                }
-            } else {
-                I += matvar->dims[0]-edge[0]*stride[0]-start[0];
-                I += inc[j];
-                break;
+                idx[j] = start[j];
+                cnt[j+1]++;
+                idx[j+1] += stride[j+1];
             }
+            I += idx[j]*dimp[j-1];
         }
+        I *= nfields;
     }
     return struct_slab;
 }
