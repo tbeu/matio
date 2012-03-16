@@ -184,8 +184,8 @@ struct matvar_internal;
  * @ingroup MAT
  */
 typedef struct matvar_t {
-    int   nbytes;                     /**< Number of bytes for the MAT variable */
-    int   rank;                       /**< Rank (Number of dimensions) of the data */
+    size_t nbytes;                     /**< Number of bytes for the MAT variable */
+    int    rank;                       /**< Rank (Number of dimensions) of the data */
     enum matio_types   data_type;     /**< Data type(MAT_T_*) */
     int   data_size;                  /**< Bytes / element for the data */
     enum matio_classes class_type;    /**< Class type in Matlab(MAT_C_DOUBLE, etc) */
