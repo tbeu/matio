@@ -269,11 +269,9 @@ main (int argc, char *argv[])
                 Mat_Help(helpstr);
                 exit(EXIT_SUCCESS);
             case 'V':
-                printf("%s %d.%d.%d\n"
-                       "Written by Christopher Hulbert\n\n"
-                       "Copyright(C) 2006 Christopher C. Hulbert",
-                       prog_name,MATIO_MAJOR_VERSION,MATIO_MINOR_VERSION,
-                       MATIO_RELEASE_LEVEL);
+                printf("%s %s\nWritten by Christopher Hulbert\n\n"
+                       "Copyright(C) 2006-2012 Christopher C. Hulbert\n",
+                       prog_name,PACKAGE_VERSION);
                 exit(EXIT_SUCCESS);
             default:
                 printf("%c not a valid option\n", c);
