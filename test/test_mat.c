@@ -2397,6 +2397,16 @@ int main (int argc, char *argv[])
     matvar_t *matvar, *matvar2, *matvar3;
     enum matio_classes matvar_class = MAT_C_DOUBLE;
     char *output_name = NULL;
+    int version[3];
+
+    Mat_GetLibraryVersion(version, version+1, version+2);
+    if ( MATIO_MAJOR_VERSION != version[0] ||
+         MATIO_MINOR_VERSION != version[1] ||
+         MATIO_RELEASE_LEVEL != version[2] ) {
+        fprintf(stderr,"matio version in header does not match runtime "
+                "version\n");
+        return EXIT_FAILURE;
+    }
 
     Mat_LogInit(prog_name);
 

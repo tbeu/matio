@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2011   Christopher C. Hulbert
+ * Copyright (C) 2005-2012   Christopher C. Hulbert
  *
  * All rights reserved.
  *
@@ -230,6 +230,16 @@ main (int argc, char *argv[])
     int   i, k, c, err = EXIT_SUCCESS;
     mat_t    *mat;
     matvar_t *matvar;
+    int version[3];
+
+    Mat_GetLibraryVersion(version, version+1, version+2);
+    if ( MATIO_MAJOR_VERSION != version[0] ||
+         MATIO_MINOR_VERSION != version[1] ||
+         MATIO_RELEASE_LEVEL != version[2] ) {
+        fprintf(stderr,"matio version in header does not match runtime "
+                "version\n");
+        return EXIT_FAILURE;
+    }
 
     Mat_LogInitFunc(prog_name,default_printf_func);
 
