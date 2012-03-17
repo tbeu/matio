@@ -71,9 +71,11 @@ be modified to handle these changes.
       @code{struct ComplexSplit} to @code{struct mat_complex_split_t}
 @item Changed name of sparse data structure from @code{sparse_t} to
       @code{mat_sparse_t}.
+@item Changed meaning of memory conservation for cell arrays and structures
 @end enumerate
-Each of these changes are described in the remaining sections, and include
-actions to upgrade existing code for compatability with the latest version.
+Each of these changes are described in the remaining sections, and as necessary
+include recommendations to upgrade existing code for compatability with this
+version.
 
 @subsection Type Change for Dimensions Array
 The existing dims field of the @code{matvar_t} structure was an @code{int *}
@@ -105,3 +107,12 @@ namespace and hopefully avoid conflicts, these have been renamed to
 @code{MAT_BY_NAME} and @code{MAT_BY_INDEX}. A quick search/replace operation
 should be able to correct existing code that uses the old names.
 
+@subsection Memory Conservation with Cells and Structures
+Previous versions of matio would still free fields of structures and elements
+of cell arrays even if created with memory conservation flag set. In the latest
+version of @emph{matio}, the fields/cell elements are not free'd if the
+structure was created with the @code{MAT_F_DONT_COPY_DATA} flag. This is useful
+if the fields/elements are referenced by another variable such as the case when
+they are indices of a larger array (e.g. @code{Mat_VarGetStructs},
+@code{Mat_VarGetStructsLinear},@code{Mat_VarGetCells},
+@code{Mat_VarGetCellsLinear}, etc.).
