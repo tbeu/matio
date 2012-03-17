@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright 2011 Christopher C. Hulbert.
+## Copyright 2012 Christopher C. Hulbert.
 ##
 ## All rights reserved.
 ##
@@ -37,6 +37,8 @@ dist_man3_MANS  = \
     Mat_Open.3 \
     Mat_Rewind.3 \
     Mat_VarGetStructFieldnames.3 \
+    Mat_VarGetStructs.3 \
+    Mat_VarGetStructsLinear.3 \
     Mat_VarRead.3 \
     Mat_VarReadInfo.3 \
     Mat_VarReadNext.3 \
