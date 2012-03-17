@@ -33,6 +33,7 @@ dist_man3_MANS  = \
     Mat_Close.3 \
     Mat_CreateVer.3 \
     Mat_GetFilename.3 \
+    Mat_GetLibraryVersion.3 \
     Mat_GetVersion.3 \
     Mat_Open.3 \
     Mat_Rewind.3 \

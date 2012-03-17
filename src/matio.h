@@ -220,6 +220,9 @@ typedef struct mat_sparse_t {
     void *data;              /**< Array of data elements */
 } mat_sparse_t;
 
+/* Library function */
+EXTERN void Mat_GetLibraryVersion(int *major,int *minor,int *release);
+
 /*     io.c         */
 EXTERN char  *strdup_vprintf(const char *format, va_list ap);
 EXTERN char  *strdup_printf(const char *format, ...);

@@ -106,6 +106,24 @@ Mat_PrintNumber(enum matio_types type, void *data)
  *====================================================================
  */
 
+/** @brief Get the version of the library
+ *
+ * Gets the version number of the library
+ * @param major Pointer to store the library major version number
+ * @param major Pointer to store the library major version number
+ * @param major Pointer to store the library major version number
+ */
+void
+Mat_GetLibraryVersion(int *major,int *minor,int *release)
+{
+    if ( NULL != major )
+        *major = MATIO_MAJOR_VERSION;
+    if ( NULL != minor )
+        *minor = MATIO_MINOR_VERSION;
+    if ( NULL != release )
+        *release = MATIO_RELEASE_LEVEL;
+}
+
 /** @brief Creates a new Matlab MAT file
  *
  * Tries to create a new Matlab MAT file with the given name and optional
