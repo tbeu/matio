@@ -143,12 +143,11 @@ matvar_t **
 Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,int edge)
 {
     int i, I = 0;
-    matvar_t **cells;
+    matvar_t **cells = NULL;
 
-    if ( matvar == NULL || matvar->rank > 10 ) {
-        cells = NULL;
-    } else {
+    if ( matvar != NULL ) {
         cells = malloc(edge*sizeof(matvar_t *));
+        I = start;
         for ( i = 0; i < edge; i++ ) {
             cells[i] = *((matvar_t **)matvar->data + I);
             I += stride;
