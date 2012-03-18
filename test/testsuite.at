@@ -92,3 +92,4 @@ m4_include([mat73_write.at])
 
 AT_BANNER([API Tests])
 m4_include([struct_api.at])
+m4_include([cell_api.at])

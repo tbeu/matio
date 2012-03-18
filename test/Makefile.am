@@ -39,7 +39,8 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat73_read_le.at \
                $(srcdir)/mat73_read_be.at \
                $(srcdir)/mat73_write.at \
-               $(srcdir)/struct_api.at
+               $(srcdir)/struct_api.at \
+               $(srcdir)/cell_api.at
 TESTSUITE = $(srcdir)/testsuite
 
 TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \

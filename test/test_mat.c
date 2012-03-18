@@ -2065,6 +2065,72 @@ test_struct_api_get(void)
 }
 
 static int
+test_cell_api_set(void)
+{
+    size_t dims[2];
+    double    data[10] = {0,1,2,3,4,5,6,7,8,9};
+    matvar_t *cells[10], *matvar, *prev_cell;
+
+    dims[0] = 2; dims[1] = 3;
+    matvar = Mat_VarCreate("a", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
+    dims[0] = 1; dims[1] = 1;
+    cells[0] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                              dims,data,MAT_F_DONT_COPY_DATA);
+    cells[1] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,data+1,MAT_F_DONT_COPY_DATA);
+    cells[2] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,data+2,MAT_F_DONT_COPY_DATA);
+    cells[3] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,data+3,MAT_F_DONT_COPY_DATA);
+    cells[4] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,data+4,MAT_F_DONT_COPY_DATA);
+    cells[5] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,data+5,MAT_F_DONT_COPY_DATA);
+    cells[6] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,data+6,MAT_F_DONT_COPY_DATA);
+    cells[7] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,data+7,MAT_F_DONT_COPY_DATA);
+    cells[8] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,data+8,MAT_F_DONT_COPY_DATA);
+    cells[9] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,data+9,MAT_F_DONT_COPY_DATA);
+    Mat_VarSetCell(matvar, 0, cells[0]);
+    Mat_VarSetCell(matvar, 1, cells[1]);
+    Mat_VarSetCell(matvar, 2, cells[2]);
+    Mat_VarSetCell(matvar, 3, cells[3]);
+    Mat_VarSetCell(matvar, 4, cells[4]);
+    Mat_VarSetCell(matvar, 5, cells[5]);
+    Mat_VarSetCell(matvar, 6, cells[6]);
+    Mat_VarPrint(matvar,1);
+    /* Change the first row */
+    prev_cell = Mat_VarSetCell(matvar, 0, cells[7]);
+    if ( prev_cell != cells[0] ) {
+        fprintf(stderr, "Previous cell element is not expected element\n");
+        Mat_VarFree(matvar);
+        return 1;
+    }
+    Mat_VarFree(prev_cell);
+    prev_cell = Mat_VarSetCell(matvar, 2, cells[8]);
+    if ( prev_cell != cells[2] ) {
+        fprintf(stderr, "Previous cell element is not expected element\n");
+        Mat_VarFree(matvar);
+        return 1;
+    }
+    Mat_VarFree(prev_cell);
+    prev_cell = Mat_VarSetCell(matvar, 4, cells[9]);
+    if ( prev_cell != cells[4] ) {
+        fprintf(stderr, "Previous cell element is not expected element\n");
+        Mat_VarFree(matvar);
+        return 1;
+    }
+    Mat_VarFree(prev_cell);
+    Mat_VarPrint(matvar, 1);
+    Mat_VarFree(matvar);
+
+    return 0;
+}
+
+static int
 test_get_struct_field(const char *file,const char *structname,
     const char *fieldname)
 {
@@ -2607,6 +2673,10 @@ int main (int argc, char *argv[])
         } else if ( !strcasecmp(argv[k],"struct_api_get") ) {
             k++;
             err += test_struct_api_get();
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"cell_api_set") ) {
+            k++;
+            err += test_cell_api_set();
             ntests++;
         } else if ( !strcasecmp(argv[k],"getstructfield") ) {
             k++;
