@@ -42,8 +42,6 @@
 #include "hdf5.h"
 #include "mat73.h"
 
-static hsize_t perm_dims[10];
-
 static const char *Mat_class_names[] = {
     "",
     "cell",
@@ -1209,6 +1207,7 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
     void       *client_data;
     int        is_ref, err = -1;
     char       id_name[128] = {'\0',};
+    hsize_t    perm_dims[10];
 
     cells = matvar->data;
     nmemb = matvar->dims[0];
@@ -1324,6 +1323,7 @@ Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name)
     int err = -1;
     unsigned long k,numel;
     hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
+    hsize_t perm_dims[10];
 
     numel = 1;
     for ( k = 0; k < matvar->rank; k++ ) {
@@ -1467,6 +1467,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name)
     int err = -1;
     unsigned long k,numel;
     hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
+    hsize_t perm_dims[10];
 
     numel = 1;
     for ( k = 0; k < matvar->rank; k++ ) {
@@ -1590,6 +1591,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
     unsigned k;
     hid_t      sparse_id,mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
     hsize_t    nmemb;
+    hsize_t    perm_dims[10];
 
     nmemb = matvar->dims[0];
     for ( k = 1; k < matvar->rank; k++ )
@@ -1728,6 +1730,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
     hvl_t     *fieldnames;
     char       id_name[128] = {'\0',};
     int        is_ref;
+    hsize_t    perm_dims[10];
 
     nmemb = 1;
     for ( k = 0; k < matvar->rank; k++ )
