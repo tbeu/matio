@@ -2131,6 +2131,64 @@ test_cell_api_set(void)
 }
 
 static int
+test_cell_api_getlinear(void)
+{
+    size_t dims[2], i;
+    double    r[4] = {0,1,2,3},c[4] = {4,5,6,7};
+    mat_complex_split_t z[4];
+    matvar_t *cell, *matvar, **cells;
+
+    dims[0] = 3; dims[1] = 4;
+    matvar = Mat_VarCreate("a", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
+    dims[0] = 1; dims[1] = 1;
+    for ( i = 0; i < 4; i++ ) {
+        cell = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,r+i,MAT_F_DONT_COPY_DATA);
+        Mat_VarSetCell(matvar, 3*i, cell);
+        cell = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,c+i,MAT_F_DONT_COPY_DATA);
+        Mat_VarSetCell(matvar, 3*i+1, cell);
+        z[i].Re = r+i;
+        z[i].Im = c+i;
+        cell = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                             dims,z+i,MAT_F_COMPLEX|MAT_F_DONT_COPY_DATA);
+        Mat_VarSetCell(matvar, 3*i+2, cell);
+    }
+    /* Get the first row */
+    cells = Mat_VarGetCellsLinear(matvar, 0, 3, 4);
+    if ( NULL != cells ) {
+        for (i = 0; i < 4; i++ )
+            Mat_VarPrint(cells[i], 1);
+        free(cells);
+    }
+
+    /* Get the second row */
+    cells = Mat_VarGetCellsLinear(matvar, 1, 3, 4);
+    if ( NULL != cells ) {
+        for (i = 0; i < 4; i++ )
+            Mat_VarPrint(cells[i], 1);
+        free(cells);
+    }
+    /* Get the third row */
+    cells = Mat_VarGetCellsLinear(matvar, 2, 3, 4);
+    if ( NULL != cells ) {
+        for (i = 0; i < 4; i++ )
+            Mat_VarPrint(cells[i], 1);
+        free(cells);
+    }
+    /* Get the middle two columns */
+    cells = Mat_VarGetCellsLinear(matvar, 3, 1, 6);
+    if ( NULL != cells ) {
+        for (i = 0; i < 6; i++ )
+            Mat_VarPrint(cells[i], 1);
+        free(cells);
+    }
+
+    Mat_VarFree(matvar);
+    return 0;
+}
+
+static int
 test_get_struct_field(const char *file,const char *structname,
     const char *fieldname)
 {
@@ -2677,6 +2735,10 @@ int main (int argc, char *argv[])
         } else if ( !strcasecmp(argv[k],"cell_api_set") ) {
             k++;
             err += test_cell_api_set();
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"cell_api_getlinear") ) {
+            k++;
+            err += test_cell_api_getlinear();
             ntests++;
         } else if ( !strcasecmp(argv[k],"getstructfield") ) {
             k++;
