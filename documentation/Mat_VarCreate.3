@@ -1,0 +1,150 @@
+.\" Copyright (c) 2012 Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+.\" INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+.\" CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+.\" ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+.\" POSSIBILITY OF SUCH DAMAGE.
+.\"
+.Dd March 18, 2012
+.Dt MAT_VARCREATE 3
+.Os
+.Sh NAME
+.Nm Mat_VarCreate
+.Nd Creates a MAT variable structure.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft matvar_t *
+.Fo Mat_VarCreate
+.Fa "const char *name"
+.Fa "enum matio_classes class_type"
+.Fa "enum matio_types data_type"
+.Fa "int rank"
+.Fa "size_t *dims"
+.Fa "void *data"
+.Fa "int opt"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarCreate
+function creates a MAT structure variable named
+.Fa name
+that can be written to a MAT file. The
+.Fa class_type
+argument specifies the class of the variable, and the
+.Fa data_type
+argument specifies the type of the data. For example, a double-precision class
+would use
+.Dv MAT_C_DOUBLE
+for the class type and
+.Dv MAT_T_DOUBLE
+for the data type. In some instances, the data type may not match the class
+type. For exmaple, an array of integers can be written in the double-precision
+class by using
+.Dv MAT_T_INT32
+for
+.Fa data_type.
+
+The
+.Fa rank
+argument specifies how many dimensions the data has. The minimum rank is 2. The
+number of elements in each dimension is specified in the array
+.Fa dims.
+
+The
+.Fa data
+argument is a pointer to the variable data. The pointer is typically a pointer
+to a numeric array (e.g. double, float, int, etc.) for real variables. For
+complex variables, the pointer is a pointer to a
+.Vt mat_complex_split_t
+which contains pointers to the real and imaginary data as fields of the
+structure. For sparse variables, the pointer should be a
+.Vt mat_sparse_t *.
+
+.Sh RETURN VALUES
+If the variable was successfully created, a pointer to the variable is returned.
+Otherwise NULL is returned. The variable should be free'd when no longer needed
+using
+.Xr Mat_VarFree.
+.Sh EXAMPLES
+The example program below creates a MAT file named
+.Va test.mat,
+and writes two real numeric variables
+.Va x
+and
+.Va y
+and a complex variable
+.Va z
+to the file.
+.Bd -literal
+#include <stdlib.h>
+#include <stdio.h>
+#include "matio.h"
+
+int
+main(int argc,char **argv)
+{
+    mat_t    *matfp;
+    matvar_t *matvar;
+    size_t    dims[2] = {10,1};
+    double    x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9,10},
+              y[10] = {11,12,13,14,15,16,17,18,19,20};
+    struct mat_complex_split_t z = {x,y};
+
+    matfp = Mat_CreateVer("test.mat",NULL,MAT_FT_DEFAULT);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error creating MAT file \"test.mat\"\n");
+        return EXIT_FAILURE;
+    }
+
+    matvar = Mat_VarCreate("x",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,x,0);
+    if ( NULL == matvar ) {
+        fprintf(stderr,"Error creating variable for 'x'\n");
+    } else {
+        Mat_VarWrite(matfp,matvar,COMPRESSION_NONE);
+        Mat_VarFree(matvar);
+    }
+
+    matvar = Mat_VarCreate("y",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,y,0);
+    if ( NULL == matvar ) {
+        fprintf(stderr,"Error creating variable for 'y'\n");
+    } else {
+        Mat_VarWrite(matfp,matvar,COMPRESSION_NONE);
+        Mat_VarFree(matvar);
+    }
+
+    matvar = Mat_VarCreate("z",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&z,
+                 MAT_F_COMPLEX);
+    if ( NULL == matvar ) {
+        fprintf(stderr,"Error creating variable for 'z'\n");
+    } else {
+        Mat_VarWrite(matfp,matvar,COMPRESSION_NONE);
+        Mat_VarFree(matvar);
+    }
+
+    Mat_Close(matfp);
+    return EXIT_SUCCESS;
+}
+.Ed
+.Sh SEE ALSO
+.Xr Mat_VarCreateStruct 3 ,
+.Xr Mat_VarFree 3 ,
+.Xr Mat_VarWrite 3

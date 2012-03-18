@@ -37,10 +37,16 @@ dist_man3_MANS  = \
     Mat_GetVersion.3 \
     Mat_Open.3 \
     Mat_Rewind.3 \
+    Mat_VarAddStructField.3 \
+    Mat_VarCreate.3 \
+    Mat_VarCreateStruct.3 \
+    Mat_VarFree.3 \
+    Mat_VarGetNumberOfFields.3 \
     Mat_VarGetStructFieldnames.3 \
     Mat_VarGetStructs.3 \
     Mat_VarGetStructsLinear.3 \
     Mat_VarRead.3 \
     Mat_VarReadInfo.3 \
     Mat_VarReadNext.3 \
-    Mat_VarReadNextInfo.3
+    Mat_VarReadNextInfo.3 \
+    Mat_VarWrite.3

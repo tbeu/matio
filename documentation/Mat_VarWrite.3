@@ -1,0 +1,92 @@
+.\" Copyright (c) 2012 Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+.\" INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+.\" CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+.\" ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+.\" POSSIBILITY OF SUCH DAMAGE.
+.\"
+.Dd March 18, 2012
+.Dt MAT_VARWRITE 3
+.Os
+.Sh NAME
+.Nm Mat_VarWrite
+.Nd Writes a MATLAB variable to a MATLAB MAT file.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_VarWrite
+.Fa "mat_t *mat"
+.Fa "matvar_t *matvar"
+.Fa "enum matio_compression compress"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarWrite
+function writes the MATLAB variable
+.Fa matvar
+to the MAT file
+.Fa mat
+which must be opened for writing. If the MAT file is a level 5 MAT file, the
+compress option allows the variable to be written using zlib compression if
+available. If compression is not available, the variable is written
+uncompressed.
+.Sh RETURN VALUES
+The function returns 0 if the variable was successfully written to the MAT file.
+otherwise, an error value is returned.
+.Sh EXAMPLES
+This example program creates a MAT file named by the first argument to the
+program, and writes the variable named
+.Em m_pi
+to the file.
+.Bd -literal
+#include <math.h>
+#include "matio.h"
+
+int
+main(int argc,char **argv)
+{
+    mat_t    *matfp;
+    matvar_t *matvar;
+    size_t    dims[2] = {1,1};
+    double    m_pi = M_PI;
+
+    matfp = Mat_CreateVer(argv[1],NULL,MAT_FT_DEFAULT);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error creating MAT file %s\n",argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    matvar = Mat_VarCreate("m_pi",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&m_pi,0);
+    if ( NULL != matvar ) {
+        Mat_VarWrite(matfp,matvar,MAT_COMPRESSION_ZLIB);
+        Mat_VarFree(matvar);
+    }
+
+    Mat_Close(matfp);
+    return EXIT_SUCCESS;
+}
+
+.Ed
+.Sh SEE ALSO
+.Xr Mat_CreateVer 3 ,
+.Xr Mat_Open 3 ,
+.Xr Mat_VarRead 3
