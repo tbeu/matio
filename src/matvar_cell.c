@@ -62,7 +62,10 @@ Mat_VarGetCell(matvar_t *matvar,int index)
  * dimension.  The cells are placed in a pointer array.  The cells should not
  * be freed, but the array of pointers should be.  If copies are needed,
  * use Mat_VarDuplicate on each cell.
- * MAT File version must be 5.
+ *
+ * Note that this function is limited to structure arrays with a rank less than
+ * 10.
+ *
  * @ingroup MAT
  * @param matvar Cell Array matlab variable
  * @param start vector of length rank with 0-relative starting coordinates for
@@ -73,34 +76,28 @@ Mat_VarGetCell(matvar_t *matvar,int index)
  * @returns an array of pointers to the cells
  */
 matvar_t **
-Mat_VarGetCells(matvar_t *matvar,int *start,
-                int *stride,int *edge)
+Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,int *edge)
 {
     int i, j, N, I = 0;
-    int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
+    size_t idx[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
     matvar_t **cells;
 
     if ( (matvar == NULL) || (start == NULL) || (stride == NULL) ||
         (edge == NULL) ) {
         return NULL;
-    } else if ( matvar->rank > 10 ) {
+    } else if ( matvar->rank > 9 ) {
         return NULL;
     }
 
-    inc[0] = stride[0]-1;
     dimp[0] = matvar->dims[0];
     N = edge[0];
     I = start[0];
+    idx[0] = start[0];
     for ( i = 1; i < matvar->rank; i++ ) {
-        inc[i]  = stride[i]-1;
-        dimp[i] = matvar->dims[i-1];
-        for ( j = i ; j--; ) {
-            inc[i]  *= matvar->dims[j];
-            dimp[i] *= matvar->dims[j+1];
-        }
+        idx[i]  = start[i];
+        dimp[i] = dimp[i-1]*matvar->dims[i];
         N *= edge[i];
-        if ( start[i] > 0 )
-            I += start[i]*dimp[i-1];
+        I += start[i]*dimp[i-1];
     }
     cells = malloc(N*sizeof(matvar_t *));
     for ( i = 0; i < N; i+=edge[0] ) {
@@ -108,18 +105,18 @@ Mat_VarGetCells(matvar_t *matvar,int *start,
             cells[i+j] = *((matvar_t **)matvar->data + I);
             I += stride[0];
         }
-        for ( j = 1; j < matvar->rank-1; j++ ) {
-            cnt[j]++;
-            if ( (cnt[j] % edge[j]) == 0 ) {
+        idx[0] = start[0];
+        I = idx[0];
+        cnt[1]++;
+        idx[1] += stride[1];
+        for ( j = 1; j < matvar->rank; j++ ) {
+            if ( cnt[j] == edge[j] ) {
                 cnt[j] = 0;
-                if ( (I % dimp[j]) != 0 ) {
-                    I += dimp[j]-(I % dimp[j]);
-                }
-            } else {
-                I += matvar->dims[0]-edge[0]*stride[0]-start[0];
-                I += inc[j];
-                break;
+                idx[j] = start[j];
+                cnt[j+1]++;
+                idx[j+1] += stride[j+1];
             }
+            I += idx[j]*dimp[j-1];
         }
     }
     return cells;
