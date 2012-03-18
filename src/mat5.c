@@ -5899,6 +5899,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
     fseek(mat->fp,0,SEEK_END);         /* Always write at end of file */
 
+#if !defined(HAVE_ZLIB)
+    compress = MAT_COMPRESSION_NONE;
+#endif
 
     if ( compress == MAT_COMPRESSION_NONE ) {
         fwrite(&matrix_type,4,1,mat->fp);
