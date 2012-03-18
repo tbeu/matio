@@ -2189,6 +2189,44 @@ test_cell_api_getlinear(void)
 }
 
 static int
+test_cell_api_getcells(void)
+{
+    size_t dims[4];
+    int    i, start[4], stride[4], edge[4];
+    double    x[360] = {0,};
+    matvar_t *cell, *matvar, **matvar2;
+
+    dims[0] = 3;
+    dims[1] = 4;
+    dims[2] = 5;
+    dims[3] = 6;
+    matvar = Mat_VarCreate("a", MAT_C_CELL, MAT_T_CELL, 4, dims, NULL, 0);
+
+    dims[0] = 1; dims[1] = 1;
+
+    for ( i = 0; i < 360; i++ ) {
+        x[i] = i+1;
+        cell = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                              dims,x+i,MAT_F_DONT_COPY_DATA);
+        Mat_VarSetCell(matvar, i, cell);
+    }
+
+    /* Read a(2,2:3,1:2:5,2:4:end) - MATLAB 1-relative indices */
+    start[0]  = 1; start[1]  = 1; start[2]  = 0; start[3]  = 1;
+    stride[0] = 0; stride[1] = 1; stride[2] = 2; stride[3] = 4;
+    edge[0]   = 1; edge[1]   = 2; edge[2]   = 3; edge[3]   = 2;
+    matvar2 = Mat_VarGetCells(matvar, start, stride, edge);
+    if ( NULL != matvar2 ) {
+        for ( i = 0; i < 12; i++ )
+            Mat_VarPrint(matvar2[i],1);
+        free(matvar2);
+    }
+    Mat_VarFree(matvar);
+
+    return 0;
+}
+
+static int
 test_get_struct_field(const char *file,const char *structname,
     const char *fieldname)
 {
@@ -2739,6 +2777,10 @@ int main (int argc, char *argv[])
         } else if ( !strcasecmp(argv[k],"cell_api_getlinear") ) {
             k++;
             err += test_cell_api_getlinear();
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"cell_api_getcells") ) {
+            k++;
+            err += test_cell_api_getcells();
             ntests++;
         } else if ( !strcasecmp(argv[k],"getstructfield") ) {
             k++;
