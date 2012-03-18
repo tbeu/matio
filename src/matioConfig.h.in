@@ -173,27 +173,3 @@
 
 /* Z prefix */
 #undef Z_PREFIX
-
-/* int16 type */
-#undef _mat_int16_t
-
-/* int32 type */
-#undef _mat_int32_t
-
-/* int64 type */
-#undef _mat_int64_t
-
-/* int8 type */
-#undef _mat_int8_t
-
-/* int16 type */
-#undef _mat_uint16_t
-
-/* int32 type */
-#undef _mat_uint32_t
-
-/* int64 type */
-#undef _mat_uint64_t
-
-/* int8 type */
-#undef _mat_uint8_t
