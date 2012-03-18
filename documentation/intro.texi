@@ -26,12 +26,12 @@
 @chapter Introduction
 @section About and Licensing
 The @emph{matio} software contains a library for reading and writing MATLAB MAT
-files. The @emph{matio} library (libmatio) is the primary interface for
+files. The @emph{matio} library (@emph{libmatio}) is the primary interface for
 creating/opening MAT files, and writing/ reading variables.
 
-This MATIO software is provided with the Simplified BSD License reproduced
-below. The license allows for commercial, proprietary, and open source
-derivative works.
+This @emph{matio} software is provided with the Simplified BSD License
+reproduced below. The license allows for commercial, proprietary, and open
+source derivative works.
 
 @verbatim
 Copyright 2011 Christopher C. Hulbert. All rights reserved.
@@ -60,8 +60,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @section Incompatible Changes from 1.3
 This version has changes that break compatability with the 1.3 versions of the
-matio software. This section lists these changes and how existing code should
-be modified to handle these changes.
+@emph{matio} software. This section lists these changes and how existing code
+should be modified to handle these changes.
 @enumerate
 @item dims field of matvar_t structure changed to size_t *
 @item MEM_CONSERVE preprocessor definition removed
@@ -108,10 +108,10 @@ namespace and hopefully avoid conflicts, these have been renamed to
 should be able to correct existing code that uses the old names.
 
 @subsection Memory Conservation with Cells and Structures
-Previous versions of matio would still free fields of structures and elements
-of cell arrays even if created with memory conservation flag set. In the latest
-version of @emph{matio}, the fields/cell elements are not free'd if the
-structure was created with the @code{MAT_F_DONT_COPY_DATA} flag. This is useful
-if the fields/elements are referenced by another variable such as the case when
-they are indices of a larger array (i.e. @code{Mat_VarGetStructs},
+Previous versions of @emph{matio} would still free fields of structures and
+elements of cell arrays even if created with memory conservation flag set. In
+the latest version of @emph{matio}, the fields/cell elements are not free'd if
+the structure was created with the @code{MAT_F_DONT_COPY_DATA} flag. This is
+useful if the fields/elements are referenced by another variable such as the
+case when they are indices of a larger array (i.e. @code{Mat_VarGetStructs},
 @code{Mat_VarGetStructsLinear}).
