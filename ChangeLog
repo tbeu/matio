@@ -1,4 +1,0 @@
-Changes from 1.3.x (TBA)
-* Added support for MAT file version 7.3 files
-* Added the matdump tool
-* Cleaned up the namespace and user-visible structures
