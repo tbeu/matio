@@ -1971,6 +1971,42 @@ test_struct_api_getfieldnames(void)
 }
 
 static int
+test_struct_api_addfield(void)
+{
+    size_t    dims[2];
+    double    data1[2] = {0,1}, data2[3] = {2,3,4}, data3[3] = {5,6,7},
+              data4[2] = {8,9};
+    matvar_t *fields[5], *matvar;
+
+    dims[0] = 2; dims[1] = 1;
+    matvar = Mat_VarCreateStruct("a", 2, dims, NULL, 0);
+
+    dims[0] = 2; dims[1] = 1;
+    fields[0] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                              dims,data1,MAT_F_DONT_COPY_DATA);
+    dims[0] = 3; dims[1] = 1;
+    fields[1] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                              dims,data2,MAT_F_DONT_COPY_DATA);
+    dims[0] = 1; dims[1] = 3;
+    fields[2] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                              dims,data3,MAT_F_DONT_COPY_DATA);
+    dims[0] = 1; dims[1] = 2;
+    fields[3] = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,
+                              dims,data4,MAT_F_DONT_COPY_DATA);
+    Mat_VarAddStructField(matvar, "field1");
+    Mat_VarSetStructFieldByName(matvar, "field1", 0, fields[0]);
+    Mat_VarSetStructFieldByName(matvar, "field1", 1, fields[2]);
+    Mat_VarAddStructField(matvar, "field2");
+    Mat_VarSetStructFieldByName(matvar, "field2", 0, fields[1]);
+    Mat_VarSetStructFieldByName(matvar, "field2", 1, fields[3]);
+    Mat_VarPrint(matvar,1);
+
+    Mat_VarFree(matvar);
+
+    return 0;
+}
+
+static int
 test_struct_api_getlinear(void)
 {
     size_t dims[2];
@@ -2761,6 +2797,10 @@ int main (int argc, char *argv[])
         } else if ( !strcasecmp(argv[k],"struct_api_getfieldnames") ) {
             k++;
             err += test_struct_api_getfieldnames();
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"struct_api_addfield") ) {
+            k++;
+            err += test_struct_api_addfield();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_getlinear") ) {
             k++;

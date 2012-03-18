@@ -171,6 +171,55 @@ Fieldnames of "NULL":
 AT_CHECK([$builddir/test_mat struct_api_getfieldnames],[0],[expout],[ignore])
 AT_CLEANUP
 
+AT_SETUP([Add fields to structure array])
+AT_KEYWORDS([struct_api])
+MATIO_AT_HOST_DATA([expout],
+[      Name: a
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 @&t@
+1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 @&t@
+3 @&t@
+4 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+5 6 7 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+8 9 @&t@
+}
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat struct_api_addfield],[0],[expout],[ignore])
+AT_CLEANUP
+
 AT_SETUP([Linearly index a structure])
 AT_KEYWORDS([struct_api])
 MATIO_AT_HOST_DATA([expout],
