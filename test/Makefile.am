@@ -82,7 +82,7 @@ AM_LDFLAGS  = $(FCLDFLAGS)
 TEST_LIBS   = $(top_builddir)/src/libmatio.la $(GETOPT_LIBS) $(HDF5_LIBS) $(ZLIB_LIBS)
 TEST_LFLAGS = -L$(top_builddir)/src
 
-bin_PROGRAMS = test_mat test_snprintf
+noinst_PROGRAMS = test_mat test_snprintf
 
 test_mat_SOURCES = test_mat.c
 test_mat_LDADD   = $(TEST_LIBS)
@@ -93,7 +93,7 @@ test_snprintf_LDADD   = $(TEST_LIBS)
 test_snprintf_LDFLAGS = $(TEST_LFLAGS)
 
 if ENABLE_FORTRAN
-bin_PROGRAMS += test_matf
+noinst_PROGRAMS += test_matf
 
 test_matf_SOURCES = test_matf.f90
 test_matf_CFLAGS  = -I$(top_builddir)/src -I$(top_builddir)/src/fortran
