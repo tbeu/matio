@@ -6,6 +6,9 @@
 *.la
 *.o
 
+# Vim files
+*.swp *.swo
+
 #
 # Linux autotool files
 #
