@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (C) 2005-2011   Christopher C. Hulbert
+## Copyright (C) 2005-2012   Christopher C. Hulbert
 ##
 ## All rights reserved.
 ##
@@ -49,15 +49,6 @@ libmatio_la_LIBADD     = $(ZLIB_LIBS)
 
 if MAT73
 libmatio_la_SOURCES+= mat73.c
-endif
-
-if ENABLE_FORTRAN
-AM_FCFLAGS              = -I. -I$(top_builddir)/src/fortran
-AM_LDFLAGS             +=  $(FCLDFLAGS)
-libmatio_la_SOURCES    +=  fortran/matio_internal.c fortran/matio.f90
-nodist_include_HEADERS +=  $(top_builddir)/src/matio.mod
-noinst_HEADERS         += fortran/create.f90 fortran/read_data.f90 \
-                          fortran/write_data.f90 fortran/write.f90
 endif
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \

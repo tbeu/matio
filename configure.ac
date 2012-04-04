@@ -49,27 +49,10 @@ AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])
 AC_ARG_VAR([LT_CFLAGS],[C compiler flags passed to libtool in compile mode])
 AC_ARG_VAR([LT_LDFLAGS],[Flags passed to libtool in link mode])
 
-# Enable fortran interface
-AC_ARG_ENABLE(fortran,
-[  --enable-fortran            enable fortran interface to mat library],
-  [if test "$enableval" = "no" ; then
-    enable_fortran=no
-  else
-    enable_fortran=yes
-  fi],
-  enable_fortran=no)
-
 dnl 
 dnl  Build programs, C compiler, F77 compiler, make, install, etc.
 dnl
 AC_PROG_CC([pgcc icc gcc cc])
-
-if test "$enable_fortran" = "yes"
-then
-    AC_PROG_FC([pgf95 pgf90 ifort gfortran g95])
-    AC_FC_WRAPPERS
-    AC_CONFIG_FILES([src/fortran/matio_t.inc])
-fi
 
 dnl
 dnl Check whether to build in debug mode
@@ -136,10 +119,6 @@ then
     FCFLAGS="$PROFILE_FCFLAGS $FCFLAGS"
 fi
 
-dnl
-dnl Try to avoid having libtool search for a fortran compiler
-dnl
-F77=$FC
 AC_ENABLE_SHARED
 AC_ENABLE_STATIC
 AC_PROG_LIBTOOL
@@ -394,19 +373,6 @@ AM_CONDITIONAL(LINUX, test "x$linux" = "xyes")
 AM_CONDITIONAL(WINNT, test "x$winnt" = "xyes")
 AM_CONDITIONAL(SUN,   test "x$sun"   = "xyes")
 
-AM_CONDITIONAL(ENABLE_FORTRAN, test "$enable_fortran" = "yes" )
-
-dnl
-dnl Without this, the linker line is incorrect on platforms without a fortran
-dnl compiler even if we are not using fortran sources
-dnl
-if test "x$enable_fortran" != "xyes"; then
-  FCLINK='$(LINK)'
-else
-  FCLINK='$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@'
-fi
-AC_SUBST(FCLINK)
-
 # Initialize the test suite.
 AC_CONFIG_TESTDIR([test])
 AC_SUBST([AUTOM4TE], [${AUTOM4TE=autom4te}])
@@ -425,16 +391,12 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([   MATIO Configuration Summary       ])
 AC_MSG_RESULT([==============================================================])
 AC_MSG_RESULT([           C Compiler: $CC])
-AC_MSG_RESULT([     Fortran Compiler: $FC])
 AC_MSG_RESULT([               CFLAGS: $CFLAGS])
-AC_MSG_RESULT([              FCFLAGS: $FCFLAGS])
-AC_MSG_RESULT([            FCLDFLAGS: $FCLDFLAGS])
 AC_MSG_RESULT([     Shared Libraries: $enable_shared])
 AC_MSG_RESULT([     Static Libraries: $enable_static])
 AC_MSG_RESULT([  default MAT version: $file_ver])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Features --------------------------------------------])
-AC_MSG_RESULT([    Fortran Interface: $enable_fortran])
 AC_MSG_RESULT([MAT v7.3 file support: $mat73])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Packages --------------------------------------------])
