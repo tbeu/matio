@@ -2,7 +2,7 @@ dnl  configure.ac
 dnl
 dnl  NOTE:  Process this file with GNU autoconf to produce a configure script.
 dnl
-dnl Copyright (C) 2005-2010   Christopher C. Hulbert
+dnl Copyright (C) 2005-2012   Christopher C. Hulbert
 dnl
 dnl All rights reserved.
 dnl
@@ -210,7 +210,8 @@ AC_SUBST([HAVE_UINT64],[$HAVE_UINT64])
 AC_SUBST([HAVE_INT64], [$HAVE_INT64])
 
 AC_CACHE_CHECK([for va_copy()],matio_cv_have_va_copy,[
-	AC_LINK_IFELSE([#include <stdarg.h>
+	AC_LINK_IFELSE([AC_LANG_SOURCE([[
+    #include <stdarg.h>
 	void f (int i, ...) {
 	va_list args1, args2;
 	va_start (args1, i);
@@ -222,14 +223,14 @@ AC_CACHE_CHECK([for va_copy()],matio_cv_have_va_copy,[
 	int main() {
 	  f (0, 42);
 	  return 0;
-	}],
+	}]])],
 	[matio_cv_have_va_copy=yes],
 	[matio_cv_have_va_copy=no])
 ])
 if test "$matio_cv_have_va_copy" = "no"
 then
     AC_CACHE_CHECK([for __va_copy()],matio_cv_have___va_copy,[
-        AC_LINK_IFELSE([#include <stdarg.h>
+        AC_LINK_IFELSE([AC_LANG_SOURCE([[#include <stdarg.h>
             void f (int i, ...) {
                 va_list args1, args2;
                 va_start (args1, i);
@@ -241,7 +242,7 @@ then
             int main() {
                 f (0, 42);
                 return 0;
-            }],
+            }]])],
 	[matio_cv_have___va_copy=yes],
 	[matio_cv_have___va_copy=no])
     ])
@@ -254,7 +255,7 @@ else
 fi
 
 AC_CACHE_CHECK([for vsnprintf()],matio_cv_have_vsnprintf,[
-        AC_LINK_IFELSE([
+        AC_LINK_IFELSE([AC_LANG_SOURCE([[
         #include <stdlib.h>
         #include <stdarg.h>
         #include <stdio.h>
@@ -262,26 +263,26 @@ AC_CACHE_CHECK([for vsnprintf()],matio_cv_have_vsnprintf,[
           va_list ap;
           vsnprintf(NULL,0,"%d",ap);
           return 0;
-        }],
+        }]])],
         [matio_cv_have_vsnprintf=yes],
         [matio_cv_have_vsnprintf=no])
 ])
 
 AC_CACHE_CHECK([for snprintf()],matio_cv_have_snprintf,[
-        AC_LINK_IFELSE([
+        AC_LINK_IFELSE([AC_LANG_SOURCE([[
         #include <stdlib.h>
         #include <stdarg.h>
         #include <stdio.h>
         int main() {
           snprintf(NULL,0,"%d",0);
           return 0;
-        }],
+        }]])],
         [matio_cv_have_snprintf=yes],
         [matio_cv_have_snprintf=no])
 ])
 
 AC_CACHE_CHECK([for vasprintf()],matio_cv_have_vasprintf,[
-        AC_LINK_IFELSE([
+        AC_LINK_IFELSE([AC_LANG_SOURCE([[
         #include <stdlib.h>
         #include <stdarg.h>
         #include <stdio.h>
@@ -289,20 +290,20 @@ AC_CACHE_CHECK([for vasprintf()],matio_cv_have_vasprintf,[
           va_list ap;
           vasprintf(NULL,"%d",ap);
           return 0;
-        }],
+        }]])],
         [matio_cv_have_vasprintf=yes],
         [matio_cv_have_vasprintf=no])
 ])
 
 AC_CACHE_CHECK([for asprintf()],matio_cv_have_asprintf,[
-        AC_LINK_IFELSE([
+        AC_LINK_IFELSE([AC_LANG_SOURCE([[
         #include <stdlib.h>
         #include <stdarg.h>
         #include <stdio.h>
         int main() {
           asprintf(NULL,0,"%d",0);
           return 0;
-        }],
+        }]])],
         [matio_cv_have_asprintf=yes],
         [matio_cv_have_asprintf=no])
 ])
