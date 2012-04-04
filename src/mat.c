@@ -71,12 +71,12 @@ Mat_PrintNumber(enum matio_types type, void *data)
             break;
 #ifdef HAVE_MAT_INT64_T
         case MAT_T_INT64:
-            printf("%lu",*(mat_int64_t*)data);
+            printf("%lld",*(mat_int64_t*)data);
             break;
 #endif
 #ifdef HAVE_MAT_UINT64_T
         case MAT_T_UINT64:
-            printf("%lu",*(mat_uint64_t*)data);
+            printf("%llu",*(mat_uint64_t*)data);
             break;
 #endif
         case MAT_T_INT32:
@@ -1235,10 +1235,10 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     printf("      Rank: %d\n", matvar->rank);
     if ( matvar->rank == 0 )
         return;
-    printf("Dimensions: %d",matvar->dims[0]);
+    printf("Dimensions: %zu",matvar->dims[0]);
     nmemb = matvar->dims[0];
     for ( i = 1; i < matvar->rank; i++ ) {
-        printf(" x %d",matvar->dims[i]);
+        printf(" x %zu",matvar->dims[i]);
         nmemb *= matvar->dims[i];
     }
     printf("\n");
@@ -1253,7 +1253,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         matvar_t **fields = (matvar_t **)matvar->data;
         int nfields = matvar->internal->num_fields;
         if ( nmemb*nfields > 0 ) {
-            printf("Fields[%d] {\n", nfields*nmemb);
+            printf("Fields[%zu] {\n", nfields*nmemb);
             for ( i = 0; i < nfields*nmemb; i++ ) {
                 if ( NULL == fields[i] ) {
                     printf("      Name: %s\n      Rank: %d\n",

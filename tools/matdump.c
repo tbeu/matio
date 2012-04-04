@@ -98,11 +98,11 @@ print_whos(matvar_t *matvar)
     printf("%-20s", matvar->name);
     if ( matvar->rank > 0 ) {
         int cnt = 0;
-        printf("%8d", matvar->dims[0]);
+        printf("%8zu", matvar->dims[0]);
         nbytes = matvar->dims[0];
         for ( i = 1; i < matvar->rank; i++ ) {
             if ( ceil(log10(matvar->dims[i]))+1 < 32 )
-                cnt += sprintf(size+cnt,"x%d", matvar->dims[i]);
+                cnt += sprintf(size+cnt,"x%zu", matvar->dims[i]);
             nbytes *= matvar->dims[i];
         }
         printf("%-10s",size);
@@ -120,7 +120,7 @@ print_whos(matvar_t *matvar)
         else
             printf(" %10dB",nbytes);
     } else {
-        printf("%  10d",nbytes);
+        printf("  %10d",nbytes);
     }
     printf("  %-18s\n",mxclass[matvar->class_type-1]);
 

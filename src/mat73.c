@@ -1276,9 +1276,9 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
 
             for ( k = 0; k < nmemb; k++ ) {
                 (void)H5Gget_num_objs(*refs_id,&num_obj);
-                sprintf(obj_name,"%lu",num_obj);
+                sprintf(obj_name,"%lld",num_obj);
                 Mat_VarWriteNext73(*refs_id,cells[k],obj_name,refs_id);
-                sprintf(obj_name,"/#refs#/%lu",num_obj);
+                sprintf(obj_name,"/#refs#/%lld",num_obj);
                 H5Rcreate(refs+k,id,obj_name,H5R_OBJECT,-1);
             }
 
@@ -1864,10 +1864,10 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                     for ( k = 0; k < nmemb; k++ ) {
                         for ( l = 0; l < nfields; l++ ) {
                             (void)H5Gget_num_objs(*refs_id,&num_obj);
-                            sprintf(name,"%lu",num_obj);
+                            sprintf(name,"%lld",num_obj);
                             Mat_VarWriteNext73(*refs_id,fields[k*nfields+l],
                                 name,refs_id);
-                            sprintf(name,"/#refs#/%lu",num_obj);
+                            sprintf(name,"/#refs#/%lld",num_obj);
                             H5Rcreate(refs[l]+k,id,name,
                                       H5R_OBJECT,-1);
                         }
