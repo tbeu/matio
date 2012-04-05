@@ -117,6 +117,14 @@ EXTERN int ReadDoubleData(mat_t *mat,double  *data,enum matio_types data_type,
                int len);
 EXTERN int ReadSingleData(mat_t *mat,float   *data,enum matio_types data_type,
                int len);
+#ifdef HAVE_MAT_INT64_T
+EXTERN int ReadInt64Data (mat_t *mat,mat_int64_t *data,
+               enum matio_types data_type,int len);
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
+EXTERN int ReadUInt64Data(mat_t *mat,mat_uint64_t *data,
+               enum matio_types data_type,int len);
+#endif /* HAVE_MAT_UINT64_T */
 EXTERN int ReadInt32Data (mat_t *mat,mat_int32_t *data,
                enum matio_types data_type,int len);
 EXTERN int ReadUInt32Data(mat_t *mat,mat_uint32_t *data,
@@ -144,6 +152,14 @@ EXTERN int ReadCompressedDoubleData(mat_t *mat,z_stream *z,double  *data,
                enum matio_types data_type,int len);
 EXTERN int ReadCompressedSingleData(mat_t *mat,z_stream *z,float   *data,
                enum matio_types data_type,int len);
+#ifdef HAVE_MAT_INT64_T
+EXTERN int ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
+               enum matio_types data_type,int len);
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
+EXTERN int ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
+               enum matio_types data_type,int len);
+#endif /* HAVE_MAT_UINT64_T */
 EXTERN int ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
                enum matio_types data_type,int len);
 EXTERN int ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
