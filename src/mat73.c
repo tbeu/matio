@@ -457,6 +457,7 @@ Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims)
     for ( ; i > 1; i >>= 1 ) {
         if ( dims[max_idx[0]] > i ) {
             chunk_dims[0] = i;
+            break;
         }
     }
 }
