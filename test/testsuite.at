@@ -90,6 +90,9 @@ m4_include([mat5_compressed_write.at])
 AT_BANNER([Write MAT version 7.3])
 m4_include([mat73_write.at])
 
+AT_BANNER([Write Compressed MAT version 7.3])
+m4_include([mat73_compressed_write.at])
+
 AT_BANNER([API Tests])
 m4_include([struct_api.at])
 m4_include([cell_api.at])
