@@ -70,6 +70,7 @@ static enum matio_classes Mat_class_str_to_id(const char *name);
 static hid_t Mat_class_type_to_hid_t(enum matio_classes class_type);
 static hid_t Mat_data_type_to_hid_t(enum matio_types data_type);
 static hid_t Mat_dims_type_to_hid_t(void);
+static void  Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims);
 static void  Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat);
@@ -418,6 +419,46 @@ Mat_dims_type_to_hid_t(void)
         return H5T_NATIVE_USHORT;
     else
         return -1;
+}
+
+static void
+Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims)
+{
+    unsigned i, max_idx[2] = {0,1};
+    chunk_dims[0] = 1;
+    chunk_dims[1] = 1;
+    if ( dims[0] > dims[1] ) {
+        max_idx[0] = 0;
+        max_idx[1] = 1;
+    } else {
+        max_idx[0] = 1;
+        max_idx[1] = 0;
+    }
+    for ( i = 2; i < rank; i++ ) {
+        chunk_dims[i] = 1;
+        if ( dims[i] > max_idx[0] ) {
+            max_idx[1] = max_idx[0];
+            max_idx[0] = i;
+        } else if ( dims[i] > max_idx[1] ) {
+            max_idx[1] = i;
+        }
+    }
+
+    /* Compute smaller dimension d=chunk size first */
+    for ( i = 64; i > 1; i >>= 1 ) {
+        if ( dims[max_idx[1]] > i ) {
+            chunk_dims[1] = i;
+            break;
+        }
+    }
+
+    /* Use up to a 4k block size */
+    i = 4096 / chunk_dims[1];
+    for ( ; i > 1; i >>= 1 ) {
+        if ( dims[max_idx[0]] > i ) {
+            chunk_dims[0] = i;
+        }
+    }
 }
 
 static void
@@ -1277,6 +1318,7 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
             for ( k = 0; k < nmemb; k++ ) {
                 (void)H5Gget_num_objs(*refs_id,&num_obj);
                 sprintf(obj_name,"%lld",num_obj);
+                cells[k]->compression = matvar->compression;
                 Mat_VarWriteNext73(*refs_id,cells[k],obj_name,refs_id);
                 sprintf(obj_name,"/#refs#/%lld",num_obj);
                 H5Rcreate(refs+k,id,obj_name,H5R_OBJECT,-1);
@@ -1466,8 +1508,9 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name)
 {
     int err = -1;
     unsigned long k,numel;
-    hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
+    hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id,plist;
     hsize_t perm_dims[10];
+    herr_t herr;
 
     numel = 1;
     for ( k = 0; k < matvar->rank; k++ ) {
@@ -1475,10 +1518,21 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name)
         numel *= perm_dims[k];
     }
 
+    if ( matvar->compression ) {
+        hsize_t chunk_dims[10];
+        Mat_H5GetChunkSize(matvar->rank, perm_dims,chunk_dims);
+        plist = H5Pcreate(H5P_DATASET_CREATE);
+        herr = H5Pset_chunk(plist, 2, chunk_dims);
+        herr = H5Pset_deflate(plist, 9);
+    } else {
+        plist = H5P_DEFAULT;
+    }
+
     if ( 0 == numel || NULL == matvar->data ) {
         hsize_t rank = matvar->rank;
         unsigned empty = 1;
         mspace_id = H5Screate_simple(1,&rank,NULL);
+
         dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
                             H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
         attr_type_id = H5Tcopy(H5T_C_S1);
@@ -1516,7 +1570,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name)
                   h5_complex_base);
         mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
         dset_id = H5Dcreate(id,name,h5_complex,mspace_id,H5P_DEFAULT,
-                            H5P_DEFAULT,H5P_DEFAULT);
+                            plist,H5P_DEFAULT);
         attr_type_id = H5Tcopy(H5T_C_S1);
         H5Tset_size(attr_type_id,
                     strlen(Mat_class_names[matvar->class_type])+1);
@@ -1552,7 +1606,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name)
         mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
         dset_id = H5Dcreate(id,name,
                             Mat_class_type_to_hid_t(matvar->class_type),
-                            mspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+                            mspace_id,H5P_DEFAULT,plist,H5P_DEFAULT);
         attr_type_id = H5Tcopy(H5T_C_S1);
         H5Tset_size(attr_type_id,
                     strlen(Mat_class_names[matvar->class_type])+1);
@@ -1570,6 +1624,10 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name)
         H5Sclose(mspace_id);
         err = 0;
     }
+
+    if ( H5P_DEFAULT != plist )
+        H5Pclose(plist);
+
     return err;
 }
 
@@ -1833,9 +1891,11 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
             free(fieldnames);
 
             if ( 1 == nmemb ) {
-                for ( k = 0; k < nfields; k++ )
+                for ( k = 0; k < nfields; k++ ) {
+                    fields[k]->compression = matvar->compression;
                     Mat_VarWriteNext73(struct_id,fields[k],
                         matvar->internal->fieldnames[k],refs_id);
+                }
             } else {
                 if ( *refs_id < 0 ) {
                     H5E_auto_t  efunc;
@@ -1865,6 +1925,8 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                         for ( l = 0; l < nfields; l++ ) {
                             (void)H5Gget_num_objs(*refs_id,&num_obj);
                             sprintf(name,"%lld",num_obj);
+                            fields[k*nfields+l]->compression =
+                                matvar->compression;
                             Mat_VarWriteNext73(*refs_id,fields[k*nfields+l],
                                 name,refs_id);
                             sprintf(name,"/#refs#/%lld",num_obj);
@@ -2525,6 +2587,8 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
 
     if ( NULL == mat || NULL == matvar )
         return -1;
+
+    matvar->compression = compress;
 
     id = *(hid_t*)mat->fp;
     return Mat_VarWriteNext73(id,matvar,matvar->name,&(mat->refs_id));
