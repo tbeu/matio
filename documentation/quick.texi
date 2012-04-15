@@ -268,7 +268,7 @@ int
 main(int argc,char **argv)
 {
     mat_t    *matfp;
-    matvar_t *matvar[3], *cell_array;
+    matvar_t *cell_array, *cell_element;
     size_t    dims[2] = {10,1};
     double    x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9,10},
               y[10] = {11,12,13,14,15,16,17,18,19,20};
@@ -280,33 +280,50 @@ main(int argc,char **argv)
         return EXIT_FAILURE;
     }
 
-    matvar[0] = Mat_VarCreate("x",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,x,0);
-    if ( NULL == matvar[0] ) {
-        fprintf(stderr,"Error creating variable for 'x'\n");
-    }
-
-    matvar[1] = Mat_VarCreate("y",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,y,0);
-    if ( NULL == matvar[1] ) {
-        fprintf(stderr,"Error creating variable for 'y'\n");
-    }
-
-    matvar[2] = Mat_VarCreate("z",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&z,
-                    MAT_F_COMPLEX);
-    if ( NULL == matvar[2] ) {
-        fprintf(stderr,"Error creating variable for 'z'\n");
-    }
-
     dims[0] = 3;
     dims[1] = 1;
-    cell_array = Mat_VarCreate("a",MAT_C_CELL,MAT_T_CELL,2,dims,matvar,0);
+    cell_array = Mat_VarCreate("a",MAT_C_CELL,MAT_T_CELL,2,dims,NULL,0);
     if ( NULL == cell_array ) {
         fprintf(stderr,"Error creating variable for 'a'\n");
-    } else {
-        Mat_VarWrite(matfp,cell_array,COMPRESSION_NONE);
-        Mat_VarFree(cell_array);
+        Mat_Close(matfp);
+        return EXIT_FAILURE;
     }
 
+    dims[0] = 10;
+    dims[1] = 1;
+    cell_element = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,x,0);
+    if ( NULL == cell_element ) {
+        fprintf(stderr,"Error creating cell element variable\n");
+        Mat_VarFree(cell_array);
+        Mat_Close(matfp);
+        return EXIT_FAILURE;
+    }
+    Mat_VarSetCell(cell_array,0,cell_element);
+
+    cell_element = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,y,0);
+    if ( NULL == cell_element ) {
+        fprintf(stderr,"Error creating cell element variable\n");
+        Mat_VarFree(cell_array);
+        Mat_Close(matfp);
+        return EXIT_FAILURE;
+    }
+    Mat_VarSetCell(cell_array,1,cell_element);
+
+    cell_element = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&z,
+                      MAT_F_COMPLEX);
+    if ( NULL == cell_element ) {
+        fprintf(stderr,"Error creating cell element variable\n");
+        Mat_VarFree(cell_array);
+        Mat_Close(matfp);
+        return EXIT_FAILURE;
+    }
+    Mat_VarSetCell(cell_array,2,cell_element);
+
+    Mat_VarWrite(matfp,cell_array,MAT_COMPRESSION_NONE);
+    Mat_VarFree(cell_array);
+
     Mat_Close(matfp);
+
     return EXIT_SUCCESS;
 }
 @end verbatim
