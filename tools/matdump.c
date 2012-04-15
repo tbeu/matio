@@ -68,11 +68,11 @@ NULL
 };
 
 static char *byteswapping[2] = {"No","Yes"};
-static char *mxclass[13] = { "mxCELL_CLASS", "mxSTRUCT_CLASS", "mxOBJECT_CLASS",
+static char *mxclass[15] = { "mxCELL_CLASS", "mxSTRUCT_CLASS", "mxOBJECT_CLASS",
                              "mxCHAR_CLASS", "mxSPARSE_CLASS", "mxDOUBLE_CLASS",
                              "mxSINGLE_CLASS", "mxINT8_CLASS", "mxUINT8_CLASS",
                              "mxINT16_CLASS", "mxUINT16_CLASS", "mxINT32_CLASS",
-                             "mxUINT32_CLASS"
+                             "mxUINT32_CLASS","mxINT64_CLASS","mxUINT64_CLASS",
                             };
 static int printdata = 0;
 static int human_readable = 0;
