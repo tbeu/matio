@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmatio", "libmatio\libmatio.vcproj", "{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "matdump", "matdump\matdump.vcproj", "{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655} = {67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Pocket PC 2003 (ARMV4) = Debug|Pocket PC 2003 (ARMV4)
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Pocket PC 2003 (ARMV4) = Release|Pocket PC 2003 (ARMV4)
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|x64
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Debug|Pocket PC 2003 (ARMV4).Build.0 = Debug|x64
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Debug|Win32.ActiveCfg = Release|Win32
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Debug|Win32.Build.0 = Release|Win32
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Debug|x64.ActiveCfg = Debug|x64
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Debug|x64.Build.0 = Debug|x64
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|x64
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Release|Win32.ActiveCfg = Release|Win32
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Release|Win32.Build.0 = Release|Win32
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Release|x64.ActiveCfg = Release|x64
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}.Release|x64.Build.0 = Release|x64
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|x64
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Debug|Pocket PC 2003 (ARMV4).Build.0 = Debug|x64
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Debug|Pocket PC 2003 (ARMV4).Deploy.0 = Debug|x64
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Debug|Win32.ActiveCfg = Release|Win32
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Debug|Win32.Build.0 = Release|Win32
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Debug|x64.ActiveCfg = Debug|x64
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Debug|x64.Build.0 = Debug|x64
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|x64
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|Win32.ActiveCfg = Release|Win32
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|Win32.Build.0 = Release|Win32
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|x64.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

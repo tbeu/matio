@@ -12,6 +12,9 @@ Table of Contents
     2.1.1 zlib
     2.1.2 HDF-5
   2.2 Building matio
+    2.2.1 Quick Build Guide
+    2.2.2 Configure Options
+    2.2.3 Visual Studio
   2.3 Platforms
 3.0 License
 
@@ -131,6 +134,13 @@ Table of Contents
                     libraries (i.e. HDF5 and zlib). For example, some multi-arch
                     Linux distributions install 64-bit libraries into lib64 and
                     32-bit libraries into lib.
+        2.2.3 Visual Studio
+            A visual studio solution is provided as visual_studio/matio.sln.
+            The solution is set up to build a DLL of the matio library
+            (libmatio.dll) and matdump tool in release mode and assumes HDF5 is
+            available in the directory specified by the HDF5_DIR environment
+            variable. The build was tested with the HDF5 visual studio pre-built
+            Windows binaries including zlib.
 
     2.3 Platforms
         The library has been tested/used on Linux, Windows, OS X, and AIX

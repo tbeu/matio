@@ -29,8 +29,15 @@ VPATH = @srcdir@
 ACLOCAL_AMFLAGS = -I config
 
 datadir = $(prefix)/share/matio
+VS_FILES = visual_studio/libmatio/libmatio.vcproj \
+           visual_studio/matdump/matdump.vcproj \
+           visual_studio/matio.def \
+           visual_studio/matio.sln \
+           visual_studio/matioConfig.h \
+           visual_studio/matio_pubconf.h
+
 EXTRA_DIST = matio.pc.in autogen.sh patches/inflate.patch \
-             share/test_file.mat share/test_file_v6.mat
+             share/test_file.mat share/test_file_v6.mat $(VS_FILES)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = matio.pc
