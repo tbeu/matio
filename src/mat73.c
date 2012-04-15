@@ -1319,7 +1319,8 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
             for ( k = 0; k < nmemb; k++ ) {
                 (void)H5Gget_num_objs(*refs_id,&num_obj);
                 sprintf(obj_name,"%lld",num_obj);
-                cells[k]->compression = matvar->compression;
+                if ( NULL != cells[k] )
+                    cells[k]->compression = matvar->compression;
                 Mat_VarWriteNext73(*refs_id,cells[k],obj_name,refs_id);
                 sprintf(obj_name,"/#refs#/%lld",num_obj);
                 H5Rcreate(refs+k,id,obj_name,H5R_OBJECT,-1);
@@ -1893,7 +1894,8 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
 
             if ( 1 == nmemb ) {
                 for ( k = 0; k < nfields; k++ ) {
-                    fields[k]->compression = matvar->compression;
+                    if ( NULL != fields[k] )
+                        fields[k]->compression = matvar->compression;
                     Mat_VarWriteNext73(struct_id,fields[k],
                         matvar->internal->fieldnames[k],refs_id);
                 }
