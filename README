@@ -15,6 +15,7 @@ Table of Contents
     2.2.1 Quick Build Guide
     2.2.2 Configure Options
     2.2.3 Visual Studio
+    2.2.4 Testsuite
   2.3 Platforms
 3.0 License
 
@@ -134,6 +135,7 @@ Table of Contents
                     libraries (i.e. HDF5 and zlib). For example, some multi-arch
                     Linux distributions install 64-bit libraries into lib64 and
                     32-bit libraries into lib.
+
         2.2.3 Visual Studio
             A visual studio solution is provided as visual_studio/matio.sln.
             The solution is set up to build a DLL of the matio library
@@ -141,6 +143,22 @@ Table of Contents
             available in the directory specified by the HDF5_DIR environment
             variable. The build was tested with the HDF5 visual studio pre-built
             Windows binaries including zlib.
+
+        2.2.4 Testsuite
+            A testsuite is available when building with the GNU autotools. To
+            run the testsuite, First configure and build matio. After building
+            run 'make check' to run the testsuite. If matio was built without
+            zlib, the compressed variable tests will be skipped. If built
+            without HDF5, the tests for version 7.3 MAT files will be skipped.
+            If the path to the MATLAB application was not specified
+            (--with-matlab), the write tests will fail if matio cannot read the
+            file and skip if matio can read the file. The write tests will pass
+            if MATLAB is available and can also read the file.
+
+            To report matio testsuite failures, compress the testsuite.log file
+            in the test sub-directory of the build directory. Upload the
+            compressed log file along with a bug report (see Section 1.4 for
+            information on reporting bugs).
 
     2.3 Platforms
         The library has been tested/used on Linux, Windows, OS X, and AIX
