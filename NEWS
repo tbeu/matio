@@ -1,4 +1,4 @@
-Changes in 1.5.0 (18 March 2012)
+Changes in 1.5.0 (15 April 2012)
 * Support for reading/writing HDF5 format MAT files
 * Bug fixes for compressed variables that caused issues with matio reading
   them.
