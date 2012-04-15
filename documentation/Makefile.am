@@ -27,7 +27,8 @@
 ##
 
 info_TEXINFOS       = matio_user_guide.texi
-matio_user_guide_TEXINFOS = intro.texi quick.texi matvar_structure.texi
+matio_user_guide_TEXINFOS = intro.texi quick.texi matvar_structure.texi \
+                            build.texi
 
 dist_man3_MANS  = \
     Mat_Close.3 \
