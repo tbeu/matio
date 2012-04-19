@@ -424,41 +424,17 @@ Mat_dims_type_to_hid_t(void)
 static void
 Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims)
 {
-    unsigned i, max_idx[2] = {0,1};
-    chunk_dims[0] = 1;
-    chunk_dims[1] = 1;
-    if ( dims[0] > dims[1] ) {
-        max_idx[0] = 0;
-        max_idx[1] = 1;
-    } else {
-        max_idx[0] = 1;
-        max_idx[1] = 0;
-    }
-    for ( i = 2; i < rank; i++ ) {
+    hsize_t  i, j, chunk_size = 1;
+
+    for ( i = 0; i < rank; i++ ) {
         chunk_dims[i] = 1;
-        if ( dims[i] > max_idx[0] ) {
-            max_idx[1] = max_idx[0];
-            max_idx[0] = i;
-        } else if ( dims[i] > max_idx[1] ) {
-            max_idx[1] = i;
+        for ( j = 4096/chunk_size; j > 1; j >>= 1 ) {
+            if ( dims[i] >= j ) {
+                chunk_dims[i] = j;
+                break;
+            }
         }
-    }
-
-    /* Compute smaller dimension d=chunk size first */
-    for ( i = 64; i > 1; i >>= 1 ) {
-        if ( dims[max_idx[1]] > i ) {
-            chunk_dims[1] = i;
-            break;
-        }
-    }
-
-    /* Use up to a 4k block size */
-    i = 4096 / chunk_dims[1];
-    for ( ; i > 1; i >>= 1 ) {
-        if ( dims[max_idx[0]] > i ) {
-            chunk_dims[0] = i;
-            break;
-        }
+        chunk_size *= chunk_dims[i];
     }
 }
 
@@ -1524,7 +1500,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name)
         hsize_t chunk_dims[10];
         Mat_H5GetChunkSize(matvar->rank, perm_dims,chunk_dims);
         plist = H5Pcreate(H5P_DATASET_CREATE);
-        herr = H5Pset_chunk(plist, 2, chunk_dims);
+        herr = H5Pset_chunk(plist, matvar->rank, chunk_dims);
         herr = H5Pset_deflate(plist, 9);
     } else {
         plist = H5P_DEFAULT;
