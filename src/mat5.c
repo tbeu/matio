@@ -1638,6 +1638,33 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
             bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
             nbytes -= 8;
+            if ( mat->byteswap ) {
+                (void)Mat_uint32Swap(uncomp_buf);
+                (void)Mat_uint32Swap(uncomp_buf+1);
+            }
+            /* Handle cell elements written with a variable name */
+            if ( uncomp_buf[1] > 0 ) {
+                /* Name of variable */
+                int len = 0;
+                if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
+                    len = uncomp_buf[1];
+
+                    if ( len % 8 > 0 )
+                        len = len+(8-(len % 8));
+                    cells[i]->name = malloc(len+1);
+                    /* Inflate variable name */
+                    bytesread += InflateVarName(mat,matvar,cells[i]->name,len);
+                    cells[i]->name[len] = '\0';
+                    nbytes -= len;
+                } else if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                           ((uncomp_buf[0] & 0xffff0000) != 0x00) ) {
+                    /* Name packed in tag */
+                    len = (uncomp_buf[0] & 0xffff0000) >> 16;
+                    cells[i]->name = malloc(len+1);
+                    memcpy(cells[i]->name,uncomp_buf+1,len);
+                    cells[i]->name[len] = '\0';
+                }
+            }
             cells[i]->internal->z = calloc(1,sizeof(z_stream));
             err = inflateCopy(cells[i]->internal->z,matvar->internal->z);
             if ( err != Z_OK )
@@ -1672,7 +1699,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
         }
         cells = (matvar_t **)matvar->data;
         for ( i = 0; i < ncells; i++ ) {
-            int cell_bytes_read;
+            int cell_bytes_read,name_len;
             cells[i] = Mat_VarCalloc();
             if ( !cells[i] ) {
                 Mat_Critical("Couldn't allocate memory for cell %d", i);
@@ -1757,6 +1784,21 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             /* Variable Name Tag */
             bytesread+=fread(buf,1,8,mat->fp);
             nBytes-=8;
+            if ( mat->byteswap ) {
+                (void)Mat_uint32Swap(buf);
+                (void)Mat_uint32Swap(buf+1);
+            }
+            name_len = 0;
+            if ( buf[1] > 0 ) {
+                /* Name of variable */
+                if ( buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
+                    name_len = buf[1];
+                    if ( name_len % 8 > 0 )
+                        name_len = name_len+(8-(name_len % 8));
+                    nBytes -= name_len;
+                    fseek(mat->fp,name_len,SEEK_CUR);
+                }
+            }
             cells[i]->internal->datapos = ftell(mat->fp);
             if ( cells[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,cells[i]);

@@ -2854,15 +2854,9 @@ Class Type: Cell Array
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-}
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-}
 }
 ],[ignore])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_cell.mat var2],[0],
