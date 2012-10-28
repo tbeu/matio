@@ -1862,18 +1862,23 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             i = 8-(nfields*fieldname_size % 8);
         else
             i = 0;
-        ptr = malloc(nfields*fieldname_size+i);
-        bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
-        matvar->internal->num_fields = nfields;
-        matvar->internal->fieldnames =
-            calloc(nfields,sizeof(*matvar->internal->fieldnames));
-        for ( i = 0; i < nfields; i++ ) {
-            matvar->internal->fieldnames[i] = malloc(fieldname_size);
-            memcpy(matvar->internal->fieldnames[i],ptr+i*fieldname_size,
-                   fieldname_size);
-            matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+        if ( nfields ) {
+            ptr = malloc(nfields*fieldname_size+i);
+            bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
+            matvar->internal->num_fields = nfields;
+            matvar->internal->fieldnames =
+                calloc(nfields,sizeof(*matvar->internal->fieldnames));
+            for ( i = 0; i < nfields; i++ ) {
+                matvar->internal->fieldnames[i] = malloc(fieldname_size);
+                memcpy(matvar->internal->fieldnames[i],ptr+i*fieldname_size,
+                       fieldname_size);
+                matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+            }
+            free(ptr);
+        } else {
+            matvar->internal->num_fields = 0;
+            matvar->internal->fieldnames = NULL;
         }
-        free(ptr);
 
         matvar->nbytes = nmemb*nfields*matvar->data_size;
         if ( !matvar->nbytes )
