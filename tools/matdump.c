@@ -578,6 +578,129 @@ default_printf_func(int log_level,char *message)
 }
 
 static void
+print_default_number(enum matio_types type, void *data)
+{
+    switch ( type ) {
+        case MAT_T_DOUBLE:
+            printf("%g",*(double*)data);
+            break;
+        case MAT_T_SINGLE:
+            printf("%g",*(float*)data);
+            break;
+#ifdef HAVE_MAT_INT64_T
+        case MAT_T_INT64:
+            printf("%lld",*(mat_int64_t*)data);
+            break;
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_T_UINT64:
+            printf("%llu",*(mat_uint64_t*)data);
+            break;
+#endif
+        case MAT_T_INT32:
+            printf("%d",*(mat_int32_t*)data);
+            break;
+        case MAT_T_UINT32:
+            printf("%u",*(mat_uint32_t*)data);
+            break;
+        case MAT_T_INT16:
+            printf("%hd",*(mat_int16_t*)data);
+            break;
+        case MAT_T_UINT16:
+            printf("%hu",*(mat_uint16_t*)data);
+            break;
+        case MAT_T_INT8:
+            printf("%hhd",*(mat_int8_t*)data);
+            break;
+        case MAT_T_UINT8:
+            printf("%hhu",*(mat_uint8_t*)data);
+            break;
+    }
+}
+
+static void
+print_default_numeric_2d(matvar_t *matvar)
+{
+    size_t i, j, stride;
+    stride = Mat_SizeOf(matvar->data_type);
+    if ( matvar->isComplex ) {
+        mat_complex_split_t *complex_data = matvar->data;
+        char *rp = complex_data->Re;
+        char *ip = complex_data->Im;
+        for ( i = 0; i < matvar->dims[0]; i++ ) {
+            for ( j = 0; j < matvar->dims[1]; j++ ) {
+                size_t idx = matvar->dims[0]*j+i;
+                print_default_number(matvar->data_type,rp+idx*stride);
+                printf(" + ");
+                print_default_number(matvar->data_type,ip+idx*stride);
+                printf("i ");
+            }
+            printf("\n");
+        }
+    } else {
+        char *data = matvar->data;
+        for ( i = 0; i < matvar->dims[0]; i++ ) {
+            for ( j = 0; j < matvar->dims[1]; j++ ) {
+                size_t idx = matvar->dims[0]*j+i;
+                print_default_number(matvar->data_type,
+                                data+idx*stride);
+                printf(" ");
+            }
+            printf("\n");
+        }
+    }
+}
+
+static void
+print_default_numeric_3d(matvar_t *matvar)
+{
+    size_t i, j, k, l, stride;
+    stride = Mat_SizeOf(matvar->data_type);
+    if ( matvar->isComplex ) {
+        mat_complex_split_t *complex_data = matvar->data;
+        char *rp = complex_data->Re;
+        char *ip = complex_data->Im;
+        for ( k = 0; k < matvar->dims[2]; k++ ) {
+            Mat_Message("%s(:,:,%lu) = ",matvar->name,k);
+            indent++;
+            for ( i = 0; i < matvar->dims[0]; i++ ) {
+                for ( l = 0; l < indent; l++ )
+                    printf("    ");
+                for ( j = 0; j < matvar->dims[1]; j++ ) {
+                    size_t idx = matvar->dims[0]*matvar->dims[1]*k+matvar->dims[0]*j+i;
+                    print_default_number(matvar->data_type,rp+idx*stride);
+                    printf(" + ");
+                    print_default_number(matvar->data_type,ip+idx*stride);
+                    printf("i ");
+                }
+                printf("\n");
+            }
+            indent--;
+            printf("\n");
+        }
+    } else {
+        char *data = matvar->data;
+        for ( k = 0; k < matvar->dims[2]; k++ ) {
+            Mat_Message("%s(:,:,%lu) = ",matvar->name,k);
+            indent++;
+            for ( i = 0; i < matvar->dims[0]; i++ ) {
+                for ( l = 0; l < indent; l++ )
+                    printf("    ");
+                for ( j = 0; j < matvar->dims[1]; j++ ) {
+                    size_t idx = matvar->dims[0]*matvar->dims[1]*k+matvar->dims[0]*j+i;
+                    print_default_number(matvar->data_type,
+                                    data+idx*stride);
+                    printf(" ");
+                }
+                printf("\n");
+            }
+            indent--;
+            printf("\n");
+        }
+    }
+}
+
+static void
 print_default(matvar_t *matvar)
 {
     if ( NULL == matvar )
@@ -594,6 +717,13 @@ print_default(matvar_t *matvar)
         case MAT_C_UINT16:
         case MAT_C_INT8:
         case MAT_C_UINT8:
+        {
+            if ( matvar->rank == 2 )
+                print_default_numeric_2d(matvar);
+            else if ( matvar->rank == 3 )
+                print_default_numeric_3d(matvar);
+            break;
+        }
         case MAT_C_CHAR:
         case MAT_C_SPARSE:
             Mat_VarPrint(matvar, printdata);
