@@ -2303,6 +2303,95 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 }
 
 /** @if mat_devman
+ * @brief Reads a slab of data from the mat variable @c matvar
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @param data pointer to store the read data in (must be of size
+ *             edge[0]*...edge[rank-1]*Mat_SizeOfClass(matvar->class_type))
+ * @param start index to start reading data in each dimension
+ * @param stride write data every @c stride elements in each dimension
+ * @param edge number of elements to read in each dimension
+ * @retval 0 on success
+ * @endif
+ */
+int
+Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
+          int *start,int *stride,int *edge)
+{
+    int err = -1;
+    int k;
+    size_t numel;
+    hid_t fid,dset_id,dset_space,mem_space;
+    hsize_t dset_start[10],dset_stride[10],dset_edge[10];
+
+    if ( NULL == mat || NULL == matvar || NULL == data || NULL == start ||
+         NULL == stride || NULL == edge )
+        return err;
+    else if (NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id)
+        return err;
+
+    fid = *(hid_t*)mat->fp;
+
+    for ( k = 0; k < matvar->rank; k++ ) {
+        dset_start[k]  = start[matvar->rank-k-1];
+        dset_stride[k] = stride[matvar->rank-k-1];
+        dset_edge[k]   = edge[matvar->rank-k-1];
+    }
+    mem_space = H5Screate_simple(matvar->rank, dset_edge, NULL);
+
+    switch (matvar->class_type) {
+        case MAT_C_DOUBLE:
+        case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
+        case MAT_C_INT32:
+        case MAT_C_UINT32:
+        case MAT_C_INT16:
+        case MAT_C_UINT16:
+        case MAT_C_INT8:
+        case MAT_C_UINT8:
+            if ( NULL != matvar->internal->hdf5_name ) {
+                dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
+            } else {
+                dset_id = matvar->internal->id;
+                H5Iinc_ref(dset_id);
+            }
+
+            dset_space = H5Dget_space(dset_id);
+            H5Sselect_hyperslab(dset_space, H5S_SELECT_SET, dset_start,
+                                dset_stride, dset_edge, NULL);
+
+            if ( !matvar->isComplex ) {
+                H5Dread(dset_id,Mat_class_type_to_hid_t(matvar->class_type),
+                        mem_space,dset_space,H5P_DEFAULT,data);
+            } else {
+                mat_complex_split_t *complex_data = data;
+                hid_t h5_complex_base,h5_complex;
+
+                h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
+                h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                            H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"real",0,h5_complex_base);
+                H5Dread(dset_id,h5_complex,mem_space,dset_space,H5P_DEFAULT,
+                        complex_data->Re);
+                H5Tclose(h5_complex);
+
+                h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                            H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                H5Dread(dset_id,h5_complex,mem_space,dset_space,H5P_DEFAULT,
+                        complex_data->Im);
+                H5Tclose(h5_complex);
+            }
+            H5Dclose(dset_id);
+            break;
+    }
+    H5Sclose(dset_space);
+}
+
+/** @if mat_devman
  * @brief Reads the header information for the next MAT variable
  *
  * @ingroup mat_internal
