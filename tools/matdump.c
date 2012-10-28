@@ -84,6 +84,444 @@ static void print_default(matvar_t *matvar);
 
 static void (*printfunc)(matvar_t *matvar) = NULL;
 
+static char *
+get_next_token(char *str)
+{
+    char *tok, *tokens = "(){}.";
+    char *next_tok;
+
+    next_tok = NULL;
+    while (*tokens != '\0') {
+        tok   = strchr(str,*tokens);
+        if ( tok != NULL ) {
+            if ( NULL == next_tok )
+                next_tok = tok;
+            else if (tok < next_tok)
+                next_tok = tok;
+        }
+        tokens++;
+    }
+    if ( NULL == next_tok )
+        next_tok = str;
+    return next_tok;
+}
+
+static int
+slab_get_rank(char *open,char *close)
+{
+    int rank = 0;    char *ptr = open+1;
+    rank = 1;
+    while ( ptr != close ) {
+        if ( *ptr++ == ',' )
+            rank++;
+    }
+    return rank;
+}
+
+static void
+slab_get_select(char *open, char *close, int rank, int *start, int *stride,
+                int *edge)
+{
+    char *ptr, *valptr;
+    int nvals, dim, i;
+
+    ptr = open;
+    valptr = open+1;
+    dim = 0;
+    nvals = 0;
+    do {
+        ptr++;
+        if ( *ptr == ',' ) {
+            if (nvals == 2) {
+                *ptr = '\0';
+                 if ( !strcmp(valptr,"end") ) {
+                     edge[dim] = -1;
+                 } else {
+                     i = atoi(valptr);
+                     edge[dim] = i;
+                 }
+            } else if ( nvals == 1 ) {
+                *ptr = '\0';
+                 if ( !strcmp(valptr,"end") ) {
+                     edge[dim] = -1;
+                 } else {
+                     i = atoi(valptr);
+                     edge[dim] = i;
+                 }
+            } else if ( nvals == 0 ) {
+                *ptr = '\0';
+                 if ( !strcmp(valptr,"end") ) {
+                     start[dim] = -1;
+                     edge[dim]  = -1;
+                 } else {
+                     i = atoi(valptr);
+                     start[dim] = i-1;
+                     edge[dim]  = i;
+                 }
+            }
+            dim++;
+            valptr = ptr+1;
+            nvals = 0;
+        } else if ( *ptr == ':' ) {
+            *ptr = '\0';
+            if ( !strcmp(valptr,"end") ) {
+                if ( nvals == 0 )
+                    start[dim] = -1;
+                else if ( nvals == 1 )
+                    edge[dim] = -1;
+                else if ( nvals == 2 )
+                    edge[dim] = -1;
+                else
+                    fprintf(stderr,"Too many inputs to dim %d",dim+1);
+            } else {
+                i = atoi(valptr);
+                if ( nvals == 0 )
+                    start[dim] = i-1;
+                else if ( nvals == 1 )
+                    stride[dim] = i;
+                else if ( nvals == 1 )
+                    edge[dim] = i;
+                else if ( nvals == 2 )
+                    edge[dim] = i;
+                else
+                    fprintf(stderr,"Too many inputs to dim %d",dim+1);
+            }
+            nvals++;
+            valptr = ptr+1;
+        } else if ( *ptr == ')' || *ptr == '}' ) {
+            *ptr = '\0';
+            if ( !strcmp(valptr,"end") ) {
+                if ( nvals == 0 ) {
+                    start[dim] = -1;
+                    edge[dim]  = -1;
+                } else if ( nvals == 1 )
+                    edge[dim] = -1;
+                else if ( nvals == 2 )
+                    edge[dim] = -1;
+                else
+                    fprintf(stderr,"Too many inputs to dim %d",dim+1);
+            } else {
+                i = atoi(valptr);
+                if ( nvals == 0 ) {
+                    start[dim] = i-1;
+                    edge[dim]  = i;
+                } else if ( nvals == 1 )
+                    edge[dim] = i;
+                else if ( nvals == 2 )
+                    edge[dim] = i;
+                else
+                    fprintf(stderr,"Too many inputs to dim %d",dim+1);
+            }
+            nvals++;
+            valptr = ptr+1;
+        }
+    } while ( ptr != close );
+}
+
+static int
+slab_select_valid(int rank,int *start,int *stride,int *edge,matvar_t *matvar)
+{
+    int valid = 1, i, nmemb = 1;
+
+    if ( (matvar->rank != rank) && (rank != 1) ) {
+        valid = 0;
+    } else if ( rank == 1 ) {
+        for ( i = 0; i < matvar->rank; i++ )
+            nmemb *= matvar->dims[i];
+        if ( edge[0] < 0 )
+            edge[0] = (nmemb-start[i]) / stride[0];
+        if ( *stride < 1 ) {
+            /* Check stride is at least 1 */
+            fprintf(stderr,"stride must be positive");
+            valid = 0;
+        } else if ( *edge > nmemb ) {
+            /* edge can't be bigger than the size of the dimension */
+            fprintf(stderr,"edge out of bound");
+            valid = 0;
+        } else if ( *start >= nmemb || (*start > *edge && *edge > 0) ) {
+            /* Start can't be bigger than the size of the dimension and
+             * can't be greater than the edge unless edge == -1 => end
+             */
+            fprintf(stderr,"start out of bound");
+            valid = 0;
+        } else if ( *edge == -1 && *start == -1 ) {
+            /* If edge == start == -1, then a single end was used */
+            *edge = 1;
+            *start = nmemb-1;
+        } else if ( *edge == -1 && *stride == 1 ) {
+            /* index of the form 1:end, 1:1:end, or : */
+            *edge = nmemb;
+            /* If ':' was specified, start[i] will be -1 */
+            if ( *start < 0 )
+                *start = 0;
+        } else if ( *edge == -1 ) {
+            /* index of the form 1:stride:end */
+            *edge = nmemb;
+            *edge = floor((double)(*edge-*start-1) / (double)*stride)+1;
+        } else if ( *edge > 0 ) {
+            *edge = floor((double)(*edge-*start-1) / (double)*stride)+1;
+        }
+        nmemb = *edge;
+    } else {
+        for ( i = 0; i < rank && valid; i++ ) {
+            if ( stride[i] < 1 ) {
+                /* Check stride is at least 1 */
+                fprintf(stderr,"stride must be positive");
+                valid = 0;
+                break;
+            } else if ( edge[i] == -1 && start[i] == -1 ) {
+                /* If edge == start == -1, then a single end was used */
+                edge[i] = 1;
+                start[i] = matvar->dims[i]-1;
+            } else if ( edge[i] < 0 && stride[i] == 1) {
+                /* index of the form 1:end, 1:1:end, or : */
+                edge[i] = matvar->dims[i];
+                /* If ':' was specified, start[i] will be -1 */
+                if ( start[i] < 0 )
+                    start[i] = 0;
+            } else if ( edge[i] < 0 ) {
+                /* index of the form 1:stride:end */
+                edge[i] = floor((double)(matvar->dims[i]-start[i]-1) / (double)stride[i])+1;
+            } else if ( edge[i] > matvar->dims[i] ) {
+                /* edge can't be bigger than the size of the dimension */
+                fprintf(stderr,"edge out of bound on dimension %d",i+1);
+                valid = 0;
+                break;
+            } else if ( start[i] >= matvar->dims[i] ||
+                        (start[i] > edge[i] && edge[i] > 0) ) {
+                /* Start can't be bigger than the size of the dimension and
+                 * can't be greater than the edge unless edge == -1 => end
+                 */
+                fprintf(stderr,"start out of bound on dimension %d",i+1);
+                valid = 0;
+                break;
+            } else if ( edge[i] == (start[i]+1) ) {
+                /* index of the form 3:3 */
+                edge[i] = 1;
+            } else if ( edge[i] > 0 ) {
+                edge[i] = floor((double)(edge[i]-start[i]-1) / (double)stride[i])+1;
+            }
+            nmemb *= edge[i];
+        }
+    }
+    if ( !valid )
+        nmemb = 0;
+    return nmemb;
+}
+
+static void
+read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
+{
+    char *next_tok_pos, next_tok = 0;
+    char *open = NULL, *close = NULL;
+    int err, i = 0, j, done = 0;
+
+    next_tok_pos = get_next_token(index_str);
+    next_tok = *next_tok_pos;
+
+    while ( !done ) {
+        /* Check If the user is selecting a subset of the dataset */
+        if ( next_tok == '(' ) {
+            int rank, *start, *stride, *edge,nmemb;
+
+            open    = next_tok_pos;
+            close   = strchr(open+1,')');
+
+            /* Get the next token after this selection */
+            next_tok_pos = get_next_token(close+1);
+            if ( next_tok_pos != (close+1) ) {
+                *next_tok_pos = '\0';
+                next_tok = *next_tok_pos;
+            } else {
+                done = 1;
+            }
+            /* Make sure that the partial I/O is the last token */
+            if ( !done ) {
+                fprintf(stderr,"Partial I/O must be the last operation in "
+                             "the expression");
+                break;
+            }
+            /* Get the rank of the dataset */
+            rank   = slab_get_rank(open,close);
+            start  = malloc(rank*sizeof(int));
+            stride = malloc(rank*sizeof(int));
+            edge   = malloc(rank*sizeof(int));
+            for ( j = 0; j < rank; j++ ) {
+                start[j]  = 0;
+                stride[j] = 1;
+                edge[j]   = 1;
+            }
+            /* Get the start,stride,edge using matlab syntax */
+            slab_get_select(open,close,rank,start,stride,edge);
+
+            /* Check if the users selection is valid and if so read the data */
+            if ((nmemb = slab_select_valid(rank,start,stride,edge,matvar))) {
+                 matvar->data_size = Mat_SizeOfClass(matvar->class_type);
+                 matvar->nbytes = nmemb*matvar->data_size;
+                if ( matvar->isComplex ) {
+                    mat_complex_split_t *z;
+                    matvar->data = malloc(sizeof(*z));
+                    z = matvar->data;
+                    z->Re = malloc(matvar->nbytes);
+                    z->Im = malloc(matvar->nbytes);
+                } else {
+                    matvar->data = malloc(matvar->nbytes);
+                }
+                if ( matvar->data == NULL ) {
+                    fprintf(stderr,"Couldn't allocate memory for the data");
+                    err = 1;
+                } else if ( rank == 1 ) {
+                    Mat_VarReadDataLinear(mat,matvar,matvar->data,*start,
+                                         *stride,*edge);
+                    if (matvar->rank == 2 && matvar->dims[0] == 1) {
+                       matvar->dims[1] = *edge;
+                    } else if (matvar->rank == 2 && matvar->dims[1] == 1) {
+                       matvar->dims[0] = *edge;
+                    } else {
+                       matvar->rank = 1;
+                       matvar->dims[0] = *edge;
+                    }
+                } else {
+                    Mat_VarReadData(mat,matvar,matvar->data,start,stride,edge);
+                    for ( i = 0; i < rank; i++ )
+                        matvar->dims[i] = (size_t)edge[i];
+                }
+            }
+            free(start);
+            free(stride);
+            free(edge);
+        } else if ( next_tok == '.' ) {
+            matvar_t *field;
+            char *varname;
+
+            if ( matvar->class_type == MAT_C_STRUCT ) {
+                varname = next_tok_pos+1;
+                next_tok_pos = get_next_token(next_tok_pos+1);
+                if ( next_tok_pos != varname ) {
+                    next_tok = *next_tok_pos;
+                    *next_tok_pos = '\0';
+                } else {
+                    done = 1;
+                }
+                /* FIXME: Handle structures > 1x1 */
+                field = Mat_VarGetStructFieldByName(matvar, varname, 0);
+                if ( field == NULL ) {
+                    fprintf(stderr,"field %s was not found in structure %s",
+                        varname,matvar->name);
+                    break;
+                }
+                field = Mat_VarDuplicate(field,1);
+                Mat_VarFree(matvar);
+                matvar = field;
+            } else if ( matvar->class_type == MAT_C_CELL ) {
+                int ncells;
+                matvar_t *cell, **cells;
+
+                ncells = matvar->nbytes / matvar->data_size;
+                cells = matvar->data;
+                varname = next_tok_pos+1;
+                next_tok_pos = get_next_token(next_tok_pos+1);
+                if ( next_tok_pos != varname ) {
+                    next_tok = *next_tok_pos;
+                    *next_tok_pos = '\0';
+                } else {
+                    done = 1;
+                }
+                for ( j = 0 ; j < ncells; j++ ) {
+                    cell = Mat_VarGetCell(matvar,j);
+                    if ( cell == NULL || cell->class_type != MAT_C_STRUCT ) {
+                        fprintf(stderr,"cell index %d is not a structure",j);
+                        break;
+                    } else {
+                        /* FIXME: Handle structures > 1x1 */
+                        field = Mat_VarGetStructFieldByName(cell,varname,0);
+                        if ( field == NULL ) {
+                            fprintf(stderr,"field %s was not found in "
+                                "structure %s",varname,matvar->name);
+                            break;
+                        }
+                        field = Mat_VarDuplicate(field,1);
+                        Mat_VarFree(cell);
+                        cells[j] = field;
+                    }
+                }
+                if ( j != ncells )
+                    break;
+            } else {
+                fprintf(stderr,"%s is not a structure", varname);
+                break;
+            }
+        } else if ( next_tok == '{' ) {
+            int rank, *start, *stride, *edge,nmemb;
+
+            if ( matvar->class_type != MAT_C_CELL ) {
+                fprintf(stderr,"Only Cell Arrays can index with {}");
+                break;
+            }
+            open    = next_tok_pos;
+            close   = strchr(open+1,'}');
+
+            /* Get the next token after this selection */
+            next_tok_pos = get_next_token(close+1);
+            if ( *next_tok_pos != '\0' ) {
+                next_tok = *next_tok_pos;
+                *next_tok_pos = '\0';
+            } else {
+                done = 1;
+            }
+            /* Get the rank of the dataset */
+            rank   = slab_get_rank(open,close);
+            start  = malloc(rank*sizeof(int));
+            stride = malloc(rank*sizeof(int));
+            edge   = malloc(rank*sizeof(int));
+            for ( j = 0; j < rank; j++ ) {
+                start[j]  = 0;
+                stride[j] = 1;
+                edge[j]   = 1;
+            }
+            /* Get the start,stride,edge using matlab syntax */
+            slab_get_select(open,close,rank,start,stride,edge);
+            /* Check if the users selection is valid and if so read the data */
+            if ((nmemb = slab_select_valid(rank,start,stride,edge,matvar))) {
+                matvar_t **cells, *tmp;
+                if ( rank == 1 ) {
+                    cells = Mat_VarGetCellsLinear(matvar,*start,
+                                  *stride,*edge);
+                    if (matvar->rank == 2 && matvar->dims[0] == 1) {
+                       matvar->dims[1] = *edge;
+                    } else if (matvar->rank == 2 && matvar->dims[1] == 1) {
+                       matvar->dims[0] = *edge;
+                    } else {
+                       matvar->rank = 1;
+                       matvar->dims[0] = *edge;
+                    }
+                } else {
+                    cells = Mat_VarGetCells(matvar,start,stride,edge);
+                    memcpy(matvar->dims,edge,matvar->rank*sizeof(int));
+                }
+                if ( cells == NULL ) {
+                    fprintf(stderr,"Error getting the indexed cells");
+                    break;
+                } else {
+                    for ( j = 0; j < nmemb; j++ )
+                        cells[j] = Mat_VarDuplicate(cells[j],1);
+                    tmp = Mat_VarCreate(matvar->name,MAT_C_CELL,
+                        MAT_T_CELL,matvar->rank,matvar->dims,cells,
+                        MAT_F_DONT_COPY_DATA);
+                    Mat_VarFree(matvar);
+                    matvar = tmp;
+                }
+            } else {
+                fprintf(stderr,"Cell selection not valid");
+                break;
+            }
+            free(start);
+            free(stride);
+            free(edge);
+        }
+    }
+}
+
 static void
 print_whos(matvar_t *matvar)
 {
@@ -292,31 +730,34 @@ main (int argc, char *argv[])
 
     if ( optind < argc ) {
         /* variables specified on the command line */
-        if ( printdata ) {
-            for ( i = optind; i < argc; i++ ) {
-                matvar = Mat_VarRead(mat,argv[i]);
-                if ( matvar ) {
-                    (*printfunc)(matvar);
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
-                } else {
-                    Mat_Warning("Couldn't find variable %s in the MAT file",
-                          argv[i]);
-                }
+        for ( i = optind; i < argc; i++ ) {
+            char *next_tok_pos, next_tok = 0;
+
+            next_tok_pos = get_next_token(argv[i]);
+            if ( next_tok_pos != argv[i] ) {
+                next_tok = *next_tok_pos;
+                *next_tok_pos = '\0';
             }
-        } else {
-            for ( i = optind; i < argc; i++ ) {
-                matvar = Mat_VarReadInfo(mat,argv[i]);
-                if ( matvar ) {
-                    (*printfunc)(matvar);
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
-                } else {
-                    Mat_Warning("Couldn't find variable %s in the MAT file",
-                          argv[i]);
+
+            matvar = Mat_VarReadInfo(mat,argv[i]);
+            if ( matvar ) {
+                if ( printdata ) {
+                    if ( next_tok == '\0' ) {
+                        /* No indexing tokens found, so read all of the data */
+                        Mat_VarReadDataAll(mat,matvar);
+                    } else {
+                        *next_tok_pos = next_tok;
+                        read_selected_data(mat,matvar,next_tok_pos);
+                    }
                 }
+                (*printfunc)(matvar);
+                Mat_VarFree(matvar);
+                matvar = NULL;
+            } else {
+                Mat_Warning("Couldn't find variable %s in the MAT file",
+                      argv[i]);
             }
-        }
+        } /* for ( i = optind; i < argc; i++ ) */
     } else {
         /* print all variables */
         if ( printdata ) {
