@@ -41,7 +41,13 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat73_write.at \
                $(srcdir)/mat73_compressed_write.at \
                $(srcdir)/struct_api.at \
-               $(srcdir)/cell_api.at
+               $(srcdir)/cell_api.at \
+               $(srcdir)/mat5_compressed_readslab_be.at \
+               $(srcdir)/mat5_compressed_readslab_le.at \
+               $(srcdir)/mat5_uncompressed_readslab_be.at \
+               $(srcdir)/mat5_uncompressed_readslab_le.at \
+               $(srcdir)/mat73_readslab_be.at \
+               $(srcdir)/mat73_readslab_le.at
 TESTSUITE = $(srcdir)/testsuite
 
 TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
