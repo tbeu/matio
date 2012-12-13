@@ -2682,7 +2682,7 @@ int main (int argc, char *argv[])
             mat2 = Mat_Open(argv[k++],MAT_ACC_RDONLY);
             if ( mat && mat2 ) {
                 while ( NULL != (matvar = Mat_VarReadNext(mat2)) )
-                    Mat_VarWrite( mat, matvar, 0);
+                    Mat_VarWrite(mat,matvar,compression);
                 Mat_Close(mat);
                 Mat_Close(mat2);
             }
