@@ -2500,10 +2500,25 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             if ( nBytes % 8 )
                 for ( i = nBytes % 8; i < 8; i++ )
                     fwrite(&pad1,1,1,mat->fp);
-            nBytes = WriteData(mat,sparse->data,sparse->ndata,matvar->data_type);
-            if ( nBytes % 8 )
-                for ( i = nBytes % 8; i < 8; i++ )
-                    fwrite(&pad1,1,1,mat->fp);
+            if ( matvar->isComplex ) {
+                mat_complex_split_t *complex_data = sparse->data;
+                nBytes = WriteData(mat,complex_data->Re,sparse->ndata,
+                                   matvar->data_type);
+                if ( nBytes % 8 )
+                    for ( i = nBytes % 8; i < 8; i++ )
+                        fwrite(&pad1,1,1,mat->fp);
+                nBytes = WriteData(mat,complex_data->Im,sparse->ndata,
+                                   matvar->data_type);
+                if ( nBytes % 8 )
+                    for ( i = nBytes % 8; i < 8; i++ )
+                        fwrite(&pad1,1,1,mat->fp);
+            } else {
+                nBytes = WriteData(mat,sparse->data,sparse->ndata,
+                                   matvar->data_type);
+                if ( nBytes % 8 )
+                    for ( i = nBytes % 8; i < 8; i++ )
+                        fwrite(&pad1,1,1,mat->fp);
+            }
         }
     }
     end = ftell(mat->fp);
@@ -2926,11 +2941,25 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
             if ( nBytes % 8 )
                 for ( i = nBytes % 8; i < 8; i++ )
                     fwrite(&pad1,1,1,mat->fp);
-            nBytes = WriteData(mat,sparse->data,sparse->ndata,
-                       matvar->data_type);
-            if ( nBytes % 8 )
-                for ( i = nBytes % 8; i < 8; i++ )
-                    fwrite(&pad1,1,1,mat->fp);
+            if ( matvar->isComplex ) {
+                mat_complex_split_t *complex_data = sparse->data;
+                nBytes = WriteData(mat,complex_data->Re,sparse->ndata,
+                                   matvar->data_type);
+                if ( nBytes % 8 )
+                    for ( i = nBytes % 8; i < 8; i++ )
+                        fwrite(&pad1,1,1,mat->fp);
+                nBytes = WriteData(mat,complex_data->Im,sparse->ndata,
+                                   matvar->data_type);
+                if ( nBytes % 8 )
+                    for ( i = nBytes % 8; i < 8; i++ )
+                        fwrite(&pad1,1,1,mat->fp);
+            } else {
+                nBytes = WriteData(mat,sparse->data,sparse->ndata,
+                                   matvar->data_type);
+                if ( nBytes % 8 )
+                    for ( i = nBytes % 8; i < 8; i++ )
+                        fwrite(&pad1,1,1,mat->fp);
+            }
         }
     }
     end = ftell(mat->fp);
