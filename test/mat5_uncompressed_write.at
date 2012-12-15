@@ -1008,6 +1008,9 @@ MATIO_AT_HOST_DATA([expout],
       Rank: 2
 Dimensions: 0 x 10
 Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
 ],[ignore])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_2d_numeric.mat empty],[0],
          [expout],[ignore])
@@ -1116,10 +1119,16 @@ Fields@<:@2@:>@ {
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
       Name: field2
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
 }
 ],[ignore])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_struct.mat var3],[0],
@@ -1135,6 +1144,9 @@ Fields@<:@4@:>@ {
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
       Name: field2
       Rank: 2
 Dimensions: 0 x 1
@@ -2854,9 +2866,15 @@ Class Type: Cell Array
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
 }
 ],[ignore])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_cell.mat var2],[0],
