@@ -1633,7 +1633,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
     for ( k = 1; k < matvar->rank; k++ )
         nmemb *= matvar->dims[k];
 
-    sparse_id = H5Gcreate(id,matvar->name,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+    sparse_id = H5Gcreate(id,name,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
     if ( sparse_id < 0 ) {
         Mat_Critical("Error creating group for sparse array %s",
                      matvar->name);
@@ -1969,7 +1969,7 @@ Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
             err = Mat_VarWriteCell73(id,matvar,name,refs_id);
             break;
         case MAT_C_SPARSE:
-            err = Mat_VarWriteSparse73(id,matvar,matvar->name);
+            err = Mat_VarWriteSparse73(id,matvar,name);
             break;
     }
     return err;
