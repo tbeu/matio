@@ -384,6 +384,25 @@ Class Type: 8-bit, unsigned integer array (complex)
 ], [ignore])
 AT_CLEANUP
 
+AT_SETUP([Read 2D logical array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var90], [0],
+[[      Name: var90
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 0 0 0 0 @&t@
+1 1 0 0 0 @&t@
+1 1 1 0 0 @&t@
+1 1 1 1 0 @&t@
+1 1 1 1 1 @&t@
+}
+]], [ignore])
+AT_CLEANUP
+
 AT_SETUP([Read double-precision sparse array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1525,6 +1544,66 @@ Class Type: 8-bit, unsigned integer array (complex)
 ], [ignore])
 AT_CLEANUP
 
+AT_SETUP([Read structure array with logical fields])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var91], [0],
+[[      Name: var91
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 0 0 0 0 @&t@
+1 1 1 1 1 @&t@
+0 0 0 0 0 @&t@
+1 1 1 1 1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 1 1 1 1 @&t@
+0 0 0 0 0 @&t@
+1 1 1 1 1 @&t@
+0 0 0 0 0 @&t@
+}
+      Name: field1
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 0 0 0 0 @&t@
+1 1 0 0 0 @&t@
+1 1 1 0 0 @&t@
+1 1 1 1 0 @&t@
+1 1 1 1 1 @&t@
+}
+      Name: field2
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 1 1 1 1 @&t@
+0 1 1 1 1 @&t@
+0 0 1 1 1 @&t@
+0 0 0 1 1 @&t@
+0 0 0 0 1 @&t@
+}
+}
+]], [ignore])
+AT_CLEANUP
+
 AT_SETUP([Read structure array with double-precision sparse fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -2416,6 +2495,62 @@ Class Type: 8-bit, unsigned integer array
 31 32 @&t@
 33 34 @&t@
 35 36 @&t@
+}
+}
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read cell array with logical arrays])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var92], [0],
+[      Name: var92
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 0 0 0 0 @&t@
+1 1 1 1 1 @&t@
+0 0 0 0 0 @&t@
+1 1 1 1 1 @&t@
+}
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 1 1 1 1 @&t@
+0 0 0 0 0 @&t@
+1 1 1 1 1 @&t@
+0 0 0 0 0 @&t@
+}
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 0 0 0 0 @&t@
+1 1 0 0 0 @&t@
+1 1 1 0 0 @&t@
+1 1 1 1 0 @&t@
+1 1 1 1 1 @&t@
+}
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 1 1 1 1 @&t@
+0 1 1 1 1 @&t@
+0 0 1 1 1 @&t@
+0 0 0 1 1 @&t@
+0 0 0 0 1 @&t@
 }
 }
 ], [ignore])
