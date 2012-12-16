@@ -729,6 +729,9 @@ Mat_VarDelete(mat_t *mat, const char *name)
     mat_t *tmp;
     matvar_t *matvar;
 
+    if ( NULL == mat || NULL == name )
+        return err;
+
     switch ( mat->version ) {
         case 0x0200:
             mat_file_ver = MAT_FT_MAT73;
