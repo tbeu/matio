@@ -1859,6 +1859,8 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
             matvar->internal->z = NULL;
         }
 #endif
+    } else if ( start == NULL || stride == NULL || edge == NULL ) {
+        err = 1;
     } else if ( matvar->rank == 2 ) {
         if ( stride[0]*(edge[0]-1)+start[0]+1 > matvar->dims[0] ) {
             err = 1;
