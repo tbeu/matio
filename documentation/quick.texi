@@ -125,7 +125,7 @@ main(int argc,char **argv)
 
     matfp = Mat_Open(argv[1],MAT_ACC_RDONLY);
     if ( NULL == matfp ) {
-        fprintf(stderr,"Error opening MAT file %s0,argv[1]);
+        fprintf(stderr,"Error opening MAT file \"%s\"!\n",argv[1]);
         return EXIT_FAILURE;
     }
 
@@ -168,7 +168,7 @@ main(int argc,char **argv)
 
     matfp = Mat_Open(argv[1],MAT_ACC_RDONLY);
     if ( NULL == matfp ) {
-        fprintf(stderr,"Error opening MAT file %s0,argv[1]);
+        fprintf(stderr,"Error opening MAT file \"%s\"!\n",argv[1]);
         return EXIT_FAILURE;
     }
 
