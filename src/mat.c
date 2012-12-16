@@ -766,7 +766,8 @@ Mat_VarDelete(mat_t *mat, const char *name)
                 new_name);
         } else {
             tmp = Mat_Open(new_name,mat->mode);
-            memcpy(mat,tmp,sizeof(mat_t));
+            if ( NULL != tmp )
+                memcpy(mat,tmp,sizeof(mat_t));
         }
         free(tmp);
         free(new_name);
