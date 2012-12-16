@@ -93,6 +93,7 @@ static const char *helptestsstr[] = {
 "write_complex_2d_numeric - Write a complex 2D numeric array to a matlab file.",
 "                           The class of the numeric array is set by the -c",
 "                           option or double if not set.",
+"write_2d_logical         - Write a 2D logical array to a matlab file.",
 "write_sparse             - Write a real 2D sparse array to a matlab file.",
 "                           The class of the numeric array is set by the -c",
 "                           option or double if not set.",
@@ -113,6 +114,8 @@ static const char *helptestsstr[] = {
 "                                  array to a matlab file. The class of the",
 "                                  numeric array is set by the -c option or",
 "                                  double if not set.",
+"write_struct_2d_logical         - Write a structure with 2D logical arrays",
+"                                  to a matlab file.",
 "write_empty_struct              - Write empty structure and structure with",
 "                                  empty fields",
 "",
@@ -126,6 +129,8 @@ static const char *helptestsstr[] = {
 "                                array to a matlab file. The class of the",
 "                                numeric array is set by the -c option or",
 "                                double if not set.",
+"write_cell_2d_logical         - Write a cell array with 2D logical array",
+"                                fields to a matlab file.",
 "write_empty_cell              - Write empty structure and structure with",
 "                                empty fields",
 "",
@@ -207,6 +212,30 @@ static const char *helptest_write_complex_2d_numeric[] = {
     "",
     "    classtype = 'double';",
     "    a = cast(reshape((1:50) + j*(51:100),5,10),classtype);",
+    "",
+    NULL
+};
+
+
+static const char *helptest_write_2d_logical[] = {
+    "TEST: write_2d_logical",
+    "",
+    "Usage: test_mat write_2d_logical",
+    "",
+    "Writes a several variables to a MAT file. The variables are 2d logical",
+    "arrays. Variables l1, l2, l4, and l8 if 64-bit integers are available are",
+    " the same except the logical source data are different integer sizes. The"
+    "MAT file is the default file version, or set by the -v option. If the MAT",
+    "file is version 5, compression can be enabled using the -z option if",
+    "built with zlib library.",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    l0 = false(0,10);",
+    "    l1 = logical(mod(reshape(0:49,5,10),2));",
+    "    l2 = logical(mod(reshape(0:49,5,10),2));",
+    "    l4 = logical(mod(reshape(0:49,5,10),2));",
+    "    l8 = logical(mod(reshape(0:49,5,10),2));",
     "",
     NULL
 };
@@ -349,6 +378,26 @@ static const char *helptest_write_struct_complex_2d_numeric[] = {
     NULL
 };
 
+static const char *helptest_write_struct_2d_logical[] = {
+    "TEST: write_struct_2d_logical",
+    "",
+    "Usage: test_mat write_struct_2d_logical",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a structure",
+    "array with 2d logical array fields. The MAT file is the default file",
+    "version, or set by the -v option. If the MAT file is version 5,",
+    "compression can be enabled using the -z option if built with zlib library",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    a(1).field1 = logical(mod(reshape(0:49,5,10),2));",
+    "    a(1).field2 = ~a(1).field1;",
+    "    a(2).field1 = false(0,5);",
+    "    a(2).field2 = tril(true(5));",
+    "",
+    NULL
+};
+
 static const char *helptest_write_empty_struct[] = {
     "TEST: write_empty_struct",
     "",
@@ -412,6 +461,24 @@ static const char *helptest_write_cell_complex_2d_numeric[] = {
     "         cast(reshape((13:24)+j*(63:74),3,4),classtype);",
     "         cast(reshape((25:36)+j*(75:86),3,4),classtype);",
     "         cast(reshape((37:48)+j*(87:98),3,4),classtype);}",
+    "",
+    NULL
+};
+
+static const char *helptest_write_cell_2d_logical[] = {
+    "TEST: write_cell_2d_logical",
+    "",
+    "Usage: test_mat write_cell_2d_logical",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a cell array",
+    "with 2d logical array fields. The MAT file is the default file",
+    "version, or set by the -v option. If the MAT file is version 5,",
+    "compression can be enabled using the -z option if built with zlib library",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    a = {reshape((1:12),3,4);reshape((13:24),3,4);...",
+    "         reshape((25:36),3,4);reshape((37:48),3,4);}",
     "",
     NULL
 };
@@ -569,6 +636,8 @@ help_test(const char *test)
         Mat_Help(helptest_write_2d_numeric);
     else if ( !strcmp(test,"write_complex_2d_numeric") )
         Mat_Help(helptest_write_complex_2d_numeric);
+    else if ( !strcmp(test,"write_2d_logical") )
+        Mat_Help(helptest_write_2d_logical);
     else if ( !strcmp(test,"write_sparse") )
         Mat_Help(helptest_write_sparse);
     else if ( !strcmp(test,"write_complex_sparse") )
@@ -581,12 +650,16 @@ help_test(const char *test)
         Mat_Help(helptest_write_struct_2d_numeric);
     else if ( !strcmp(test,"write_struct_complex_2d_numeric") )
         Mat_Help(helptest_write_struct_complex_2d_numeric);
+    else if ( !strcmp(test,"write_struct_2d_logical") )
+        Mat_Help(helptest_write_struct_2d_logical);
     else if ( !strcmp(test,"write_empty_struct") )
         Mat_Help(helptest_write_empty_struct);
     else if ( !strcmp(test,"write_cell_2d_numeric") )
         Mat_Help(helptest_write_cell_2d_numeric);
     else if ( !strcmp(test,"write_cell_complex_2d_numeric") )
         Mat_Help(helptest_write_cell_complex_2d_numeric);
+    else if ( !strcmp(test,"write_cell_2d_logical") )
+        Mat_Help(helptest_write_cell_2d_logical);
     else if ( !strcmp(test,"write_empty_cell") )
         Mat_Help(helptest_write_empty_cell);
     else if ( !strcmp(test,"writeinf") )
@@ -607,6 +680,58 @@ help_test(const char *test)
         Mat_Help(helptest_sub2ind);
     else
         exit(EXIT_FAILURE);
+}
+
+static int
+test_write_2d_logical(char *output_name)
+{
+    size_t dims[2] = {5,10};
+    int    err = 0, i;
+#ifdef HAVE_MAT_INT64_T
+    mat_uint64_t   l8[50];
+#endif
+    mat_uint32_t   l4[50];
+    mat_uint16_t   l2[50];
+    mat_uint8_t    l1[50];
+    mat_t *mat;
+    matvar_t *matvar;
+
+    for ( i = 0; i < 50; i++ ) {
+        l1[i] = i % 2;
+        l2[i] = i % 2;
+        l4[i] = i % 2;
+#ifdef HAVE_MAT_INT64_T
+        l8[i] = i % 2;
+#endif
+    }
+
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
+    if ( !mat ) {
+        return 1;
+    }
+
+#ifdef HAVE_MAT_INT64_T
+    matvar = Mat_VarCreate("l8",MAT_C_UINT64,MAT_T_UINT64,2,dims,l8,MAT_F_LOGICAL);
+    Mat_VarWrite(mat,matvar,compression);
+    Mat_VarFree(matvar);
+#endif
+    matvar = Mat_VarCreate("l4",MAT_C_UINT32,MAT_T_UINT32,2,dims,l4,MAT_F_LOGICAL);
+    Mat_VarWrite(mat,matvar,compression);
+    Mat_VarFree(matvar);
+    matvar = Mat_VarCreate("l2",MAT_C_UINT16,MAT_T_UINT16,2,dims,l2,MAT_F_LOGICAL);
+    Mat_VarWrite(mat,matvar,compression);
+    Mat_VarFree(matvar);
+    matvar = Mat_VarCreate("l1",MAT_C_UINT8,MAT_T_UINT8,2,dims,l1,MAT_F_LOGICAL);
+    Mat_VarWrite(mat,matvar,compression);
+    Mat_VarFree(matvar);
+    dims[0] = 0;
+    matvar = Mat_VarCreate("l0",MAT_C_UINT8,MAT_T_UINT8,2,dims,NULL,MAT_F_LOGICAL);
+    Mat_VarWrite(mat,matvar,compression);
+    Mat_VarFree(matvar);
+
+    Mat_Close(mat);
+
+    return err;
 }
 
 static int
@@ -1062,6 +1187,56 @@ test_write_empty_struct(char *output_name)
     return err;
 }
 
+
+static int
+test_write_struct_2d_logical(char *output_name)
+{
+    size_t dims[2] = {5,10};
+    int    err = 0, i, j;
+    mat_uint32_t odd[50];
+    mat_uint16_t even[50];
+    mat_uint8_t  lower_tri[25] = {0,};
+    mat_t *mat;
+    matvar_t *matvar[5], *struct_matvar;
+    enum matio_types data_type;
+
+    for ( i = 0; i < 50; i++ ) {
+        odd[i] = i % 2;
+        even[i] = !odd[i];
+    }
+
+    for ( i = 0; i < 5; i++ )
+        for ( j = i; j < 5; j++ )
+            lower_tri[j+5*i] = 1;
+
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
+    if ( !mat ) {
+        return 1;
+    }
+
+    matvar[0] = Mat_VarCreate("field1",MAT_C_UINT32,MAT_T_UINT32,2,
+                              dims,odd,MAT_F_DONT_COPY_DATA | MAT_F_LOGICAL);
+    matvar[1] = Mat_VarCreate("field2",MAT_C_UINT16,MAT_T_UINT16,2,
+                              dims,even,MAT_F_DONT_COPY_DATA | MAT_F_LOGICAL);
+    dims[0] = 0; dims[1] = 5;
+    matvar[2] = Mat_VarCreate("field1",MAT_C_UINT8,MAT_T_UINT8,2,
+                              dims,NULL,MAT_F_DONT_COPY_DATA | MAT_F_LOGICAL);
+    dims[0] = 5; dims[1] = 5;
+    matvar[3] = Mat_VarCreate("field2",MAT_C_UINT8,MAT_T_UINT8,2,dims,
+                              lower_tri,MAT_F_DONT_COPY_DATA | MAT_F_LOGICAL);
+    matvar[4] = NULL;
+    dims[0] = 2;
+    dims[1] = 1;
+    struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
+                                  matvar,0);
+    Mat_VarWrite(mat,struct_matvar,compression);
+    Mat_VarFree(struct_matvar);
+
+    Mat_Close(mat);
+
+    return err;
+}
+
 static int
 test_write_struct_2d_numeric(enum matio_classes matvar_class,
     char *output_name)
@@ -1439,6 +1614,50 @@ test_write_empty_cell(char *output_name)
 
         Mat_Close(mat);
     }
+    return err;
+}
+
+static int
+test_write_cell_2d_logical(char *output_name)
+{
+    size_t dims[2] = {5,5};
+    int    err = 0, i, j;
+    mat_uint32_t   upper_tri[25] = {0,};
+    mat_uint16_t   lower_tri[25] = {0,};
+    mat_uint8_t    eye[25] = {0,};
+    mat_t *mat;
+    matvar_t *matvar[5] = {NULL,}, *cell_matvar;
+
+    for ( i = 0; i < 5; i++ ) {
+        eye[5*i+i] = 1;
+        for ( j = 0; j <= i; j++ )
+            upper_tri[j+5*i] = 1;
+        for ( j = i; j < 5; j++ )
+            lower_tri[j+5*i] = 1;
+    }
+
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
+    if ( !mat ) {
+        return 1;
+    }
+
+    matvar[0] = Mat_VarCreate(NULL,MAT_C_UINT32,MAT_T_UINT32,2,dims,upper_tri,
+                              MAT_F_LOGICAL);
+    matvar[1] = Mat_VarCreate(NULL,MAT_C_UINT16,MAT_T_UINT16,2,dims,lower_tri,
+                              MAT_F_LOGICAL);
+    matvar[2] = Mat_VarCreate(NULL,MAT_C_UINT8,MAT_T_UINT8,2,dims,eye,
+                              MAT_F_LOGICAL);
+    dims[0] = 0;
+    matvar[3] = Mat_VarCreate(NULL,MAT_C_UINT8,MAT_T_UINT8,2,dims,NULL,
+                              MAT_F_LOGICAL);
+
+    dims[0] = 4;
+    dims[1] = 1;
+    cell_matvar = Mat_VarCreate("a",MAT_C_CELL,MAT_T_CELL,2,dims,matvar,0);
+    Mat_VarWrite(mat,cell_matvar,compression);
+    Mat_VarFree(cell_matvar);
+    Mat_Close(mat);
+
     return err;
 }
 
@@ -2692,6 +2911,12 @@ int main (int argc, char *argv[])
             err += test_delete(argv[k],argv[k+1]);
             k+= 2;
             ntests++;
+        } else if ( !strcasecmp(argv[k],"write_2d_logical") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_2d_logical.mat";
+            err += test_write_2d_logical(output_name);
+            ntests++;
         } else if ( !strcasecmp(argv[k],"write_2d_numeric") ) {
             k++;
             if ( NULL == output_name )
@@ -2748,6 +2973,12 @@ int main (int argc, char *argv[])
                 k+=2;
             }
             ntests++;
+        } else if ( !strcasecmp(argv[k],"write_struct_2d_logical") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_struct_2d_logical.mat";
+            err += test_write_struct_2d_logical(output_name);
+            ntests++;
         } else if ( !strcasecmp(argv[k],"write_struct_2d_numeric") ) {
             k++;
             if ( NULL == output_name )
@@ -2766,6 +2997,12 @@ int main (int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_write_empty_struct.mat";
             err += test_write_empty_struct(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"write_cell_2d_logical") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_cell_2d_logical.mat";
+            err += test_write_cell_2d_logical(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"write_cell_2d_numeric") ) {
             k++;
