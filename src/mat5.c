@@ -4401,6 +4401,13 @@ Read5(mat_t *mat, matvar_t *matvar)
 #endif    /* HAVE_ZLIB */
                     }
                 } else {
+                    if ( NULL != complex_data ) {
+                        if ( NULL != complex_data->Re )
+                            free(complex_data->Re);
+                        if ( NULL != complex_data->Im )
+                            free(complex_data->Im);
+                        free(complex_data);
+                    }
                     Mat_Critical("ReadData: Allocation of data pointer failed");
                     break;
                 }
