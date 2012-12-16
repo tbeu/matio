@@ -753,7 +753,7 @@ print_default(matvar_t *matvar)
                 Mat_Message("Fields[%d] {", nfields);
                 indent++;
                 for ( i = 0; i < nfields; i++ )
-                    Mat_Message("    Name: %s", matvar->name);
+                    Mat_Message("    Name: %s", fieldnames[i]);
                 indent--;
                 Mat_Message("}");
             } else if ( nfields > 0 && nmemb > 0 ) {
