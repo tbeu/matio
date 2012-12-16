@@ -451,7 +451,7 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
                 break;
             }
         } else if ( next_tok == '{' ) {
-            int rank, *start, *stride, *edge,nmemb;
+            int rank, *start, *stride, *edge,nmemb, err = 0;
 
             if ( matvar->class_type != MAT_C_CELL ) {
                 fprintf(stderr,"Only Cell Arrays can index with {}");
@@ -500,7 +500,7 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
                 }
                 if ( cells == NULL ) {
                     fprintf(stderr,"Error getting the indexed cells");
-                    break;
+                    err = 1;
                 } else {
                     for ( j = 0; j < nmemb; j++ )
                         cells[j] = Mat_VarDuplicate(cells[j],1);
@@ -512,11 +512,13 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
                 }
             } else {
                 fprintf(stderr,"Cell selection not valid");
-                break;
+                err = 1;
             }
             free(start);
             free(stride);
             free(edge);
+            if ( err )
+                break;
         }
     }
 }
