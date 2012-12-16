@@ -1245,6 +1245,8 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     printf("Class Type: %s",class_type_desc[matvar->class_type]);
     if ( matvar->isComplex )
         printf(" (complex)");
+    else if ( matvar->isLogical )
+        printf(" (logical)");
     printf("\n");
     if ( matvar->data_type )
         printf(" Data Type: %s\n", data_type_desc[matvar->data_type]);
