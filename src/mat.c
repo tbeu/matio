@@ -724,7 +724,7 @@ int
 Mat_VarDelete(mat_t *mat, const char *name)
 {
     int   err = 1;
-    enum mat_ft mat_file_ver;
+    enum mat_ft mat_file_ver = MAT_FT_DEFAULT;
     char *tmp_name, *new_name, *temp;
     mat_t *tmp;
     matvar_t *matvar;
