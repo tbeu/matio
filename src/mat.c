@@ -617,12 +617,13 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                 if ( nmemb )
                     nfields = nfields / nmemb;
                 matvar->internal->num_fields = nfields;
-                matvar->internal->fieldnames =
-                    calloc(nfields,sizeof(*matvar->internal->fieldnames));
-                for ( i = 0; i < nfields; i++ )
-                    matvar->internal->fieldnames[i] = strdup(fields[i]->name);
-                if ( nfields )
+                if ( nfields ) {
+                    matvar->internal->fieldnames =
+                        calloc(nfields,sizeof(*matvar->internal->fieldnames));
+                    for ( i = 0; i < nfields; i++ )
+                        matvar->internal->fieldnames[i] = strdup(fields[i]->name);
                     nmemb *= nfields;
+                }
             }
             break;
         }
