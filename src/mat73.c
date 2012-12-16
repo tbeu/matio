@@ -71,6 +71,7 @@ static hid_t Mat_class_type_to_hid_t(enum matio_classes class_type);
 static hid_t Mat_data_type_to_hid_t(enum matio_types data_type);
 static hid_t Mat_dims_type_to_hid_t(void);
 static void  Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims);
+static void  Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void  Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat);
@@ -439,6 +440,56 @@ Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims)
 }
 
 static void
+Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id)
+{
+    hid_t attr_id, type_id;
+    attr_id = H5Aopen_name(dset_id,"MATLAB_class");
+    type_id  = H5Aget_type(attr_id);
+    if ( H5T_STRING == H5Tget_class(type_id) ) {
+        char *class_str = calloc(H5Tget_size(type_id)+1,1);
+        if ( NULL != class_str ) {
+            hid_t class_id = H5Tcopy(H5T_C_S1);
+            H5Tset_size(class_id,H5Tget_size(type_id));
+            H5Aread(attr_id,class_id,class_str);
+            H5Tclose(class_id);
+            matvar->class_type = Mat_class_str_to_id(class_str);
+            if ( MAT_C_EMPTY == matvar->class_type ) {
+                /* Check if this is a logical variable */
+                if ( !strcmp(class_str, "logical") ) {
+                    int int_decode = 0;
+                    hid_t attr_id2;
+                    matvar->isLogical = MAT_F_LOGICAL;
+                    attr_id2 = H5Aopen_name(dset_id,"MATLAB_int_decode");
+                    /* FIXME: Check that dataspace is scalar */
+                    if ( -1 < attr_id2 ) {
+                        H5Aread(attr_id2,H5T_NATIVE_INT,&int_decode);
+                        H5Aclose(attr_id2);
+                    }
+                    switch (int_decode) {
+                        case 1:
+                            matvar->class_type = MAT_C_UINT8;
+                            break;
+                        case 2:
+                            matvar->class_type = MAT_C_UINT16;
+                            break;
+                        case 4:
+                            matvar->class_type = MAT_C_UINT32;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            matvar->data_type  = Mat_ClassToType73(matvar->class_type);
+            free(class_str);
+        }
+    }
+    H5Tclose(type_id);
+    H5Aclose(attr_id);
+}
+
+static void
 Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 {
     ssize_t  name_len;
@@ -481,22 +532,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     }
     H5Sclose(space_id);
 
-    attr_id = H5Aopen_name(dset_id,"MATLAB_class");
-    type_id  = H5Aget_type(attr_id);
-    if ( H5T_STRING == H5Tget_class(type_id) ) {
-        char *class_str = calloc(H5Tget_size(type_id)+1,1);
-        if ( NULL != class_str ) {
-            hid_t class_id = H5Tcopy(H5T_C_S1);
-            H5Tset_size(class_id,H5Tget_size(type_id));
-            H5Aread(attr_id,class_id,class_str);
-            H5Tclose(class_id);
-            matvar->class_type = Mat_class_str_to_id(class_str);
-            matvar->data_type  = Mat_ClassToType73(matvar->class_type);
-            free(class_str);
-        }
-    }
-    H5Tclose(type_id);
-    H5Aclose(attr_id);
+    Mat_H5ReadClassType(matvar, dset_id);
 
     /* Turn off error printing so testing for attributes doesn't print
      * error stacks
@@ -642,22 +678,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         matvar->internal->id = dset_id;
     }
 
-    attr_id = H5Aopen_name(dset_id,"MATLAB_class");
-    type_id  = H5Aget_type(attr_id);
-    if ( H5T_STRING == H5Tget_class(type_id) ) {
-        char *class_str = calloc(H5Tget_size(type_id)+1,1);
-        if ( NULL != class_str ) {
-            hid_t class_id = H5Tcopy(H5T_C_S1);
-            H5Tset_size(class_id,H5Tget_size(type_id));
-            H5Aread(attr_id,class_id,class_str);
-            H5Tclose(class_id);
-            matvar->class_type = Mat_class_str_to_id(class_str);
-            matvar->data_type  = Mat_ClassToType73(matvar->class_type);
-            free(class_str);
-        }
-    }
-    H5Tclose(type_id);
-    H5Aclose(attr_id);
+    Mat_H5ReadClassType(matvar,dset_id);
 
     /* Turn off error printing so testing for attributes doesn't print
      * error stacks
@@ -945,22 +966,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             }
             H5Sclose(space_id);
 
-            attr_id = H5Aopen_name(dset_id,"MATLAB_class");
-            type_id  = H5Aget_type(attr_id);
-            if ( H5T_STRING == H5Tget_class(type_id) ) {
-                char *class_str = calloc(H5Tget_size(type_id)+1,1);
-                if ( NULL != class_str ) {
-                    hid_t class_id = H5Tcopy(H5T_C_S1);
-                    H5Tset_size(class_id,H5Tget_size(type_id));
-                    H5Aread(attr_id,class_id,class_str);
-                    H5Tclose(class_id);
-                    matvar->class_type = Mat_class_str_to_id(class_str);
-                    matvar->data_type  = Mat_ClassToType73(matvar->class_type);
-                    free(class_str);
-                }
-            }
-            H5Tclose(type_id);
-            H5Aclose(attr_id);
+            Mat_H5ReadClassType(matvar,dset_id);
 
             /* Turn off error printing so testing for attributes doesn't print
              * error stacks
@@ -2475,22 +2481,7 @@ Mat_VarReadNextInfo73( mat_t *mat )
             }
             H5Sclose(space_id);
 
-            attr_id = H5Aopen_name(dset_id,"MATLAB_class");
-            type_id  = H5Aget_type(attr_id);
-            if ( H5T_STRING == H5Tget_class(type_id) ) {
-                char *class_str = calloc(H5Tget_size(type_id)+1,1);
-                if ( NULL != class_str ) {
-                    hid_t class_id = H5Tcopy(H5T_C_S1);
-                    H5Tset_size(class_id,H5Tget_size(type_id));
-                    H5Aread(attr_id,class_id,class_str);
-                    H5Tclose(class_id);
-                    matvar->class_type = Mat_class_str_to_id(class_str);
-                    matvar->data_type  = Mat_ClassToType73(matvar->class_type);
-                    free(class_str);
-                }
-            }
-            H5Tclose(type_id);
-            H5Aclose(attr_id);
+            Mat_H5ReadClassType(matvar,dset_id);
 
             /* Turn off error printing so testing for attributes doesn't print
              * error stacks
