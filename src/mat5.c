@@ -4556,7 +4556,7 @@ int
 ReadData5(mat_t *mat,matvar_t *matvar,void *data,
     int *start,int *stride,int *edge)
 {
-    int err = 0,real_bytes;
+    int err = 0,real_bytes = 0;
     mat_int32_t tag[2];
 #if defined(HAVE_ZLIB)
     z_stream z;
