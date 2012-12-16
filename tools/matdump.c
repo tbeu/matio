@@ -67,7 +67,6 @@ static const char *helpstr[] = {
 NULL
 };
 
-static char *byteswapping[2] = {"No","Yes"};
 static char *mxclass[15] = { "mxCELL_CLASS", "mxSTRUCT_CLASS", "mxOBJECT_CLASS",
                              "mxCHAR_CLASS", "mxSPARSE_CLASS", "mxDOUBLE_CLASS",
                              "mxSINGLE_CLASS", "mxINT8_CLASS", "mxUINT8_CLASS",
@@ -799,7 +798,7 @@ int
 main (int argc, char *argv[])
 {
     char *prog_name = "matdump";
-    int   i, k, c, err = EXIT_SUCCESS;
+    int   i, c, err = EXIT_SUCCESS;
     mat_t    *mat;
     matvar_t *matvar;
     int version[3];

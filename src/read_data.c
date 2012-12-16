@@ -3749,9 +3749,6 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
     int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
     size_t data_size;
 
-    int (*read_data_func)(mat_t *mat,void *data,enum matio_types data_type,
-                          int len) = NULL;
-
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
         return -1;

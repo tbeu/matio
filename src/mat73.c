@@ -2439,7 +2439,6 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
 {
     int err = -1;
     int k;
-    size_t numel;
     hid_t fid,dset_id,dset_space,mem_space;
     hsize_t dset_start[10],dset_stride[10],dset_edge[10];
 
