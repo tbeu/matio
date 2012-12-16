@@ -525,7 +525,7 @@ static void
 print_whos(matvar_t *matvar)
 {
     int i;
-    int nbytes;
+    size_t nbytes = 0;
     char size[32] = {'\0',};
 
     if ( print_whos_first ) {
@@ -555,9 +555,9 @@ print_whos(matvar_t *matvar)
         else if ( nbytes > 1024 )
             printf(" %10.1fK",(double)nbytes/1024.0);
         else
-            printf(" %10dB",nbytes);
+            printf(" %10luB",nbytes);
     } else {
-        printf("  %10d",nbytes);
+        printf("  %10lu",nbytes);
     }
     printf("  %-18s\n",mxclass[matvar->class_type-1]);
 
