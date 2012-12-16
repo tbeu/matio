@@ -1477,6 +1477,115 @@ Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
 }
 
 /** @if mat_devman
+ * @brief Writes a logical matlab variable to the specified HDF id with the
+ *        given name
+ *
+ * @ingroup mat_internal
+ * @param id HDF id of the parent object
+ * @param matvar pointer to the logical variable
+ * @param name Name of the HDF dataset
+ * @retval 0 on success
+ * @endif
+ */
+static int
+Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name)
+{
+    int err = -1;
+    unsigned long k,numel;
+    hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id,plist;
+    hsize_t perm_dims[10];
+    herr_t herr;
+    int int_decode = 1;
+
+    numel = 1;
+    for ( k = 0; k < matvar->rank; k++ ) {
+        perm_dims[k] = matvar->dims[matvar->rank-k-1];
+        numel *= perm_dims[k];
+    }
+
+    if ( matvar->compression ) {
+        hsize_t chunk_dims[10];
+        Mat_H5GetChunkSize(matvar->rank, perm_dims,chunk_dims);
+        plist = H5Pcreate(H5P_DATASET_CREATE);
+        herr = H5Pset_chunk(plist, matvar->rank, chunk_dims);
+        herr = H5Pset_deflate(plist, 9);
+    } else {
+        plist = H5P_DEFAULT;
+    }
+
+    if ( 0 == numel || NULL == matvar->data ) {
+        hsize_t rank = matvar->rank;
+        unsigned empty = 1;
+        mspace_id = H5Screate_simple(1,&rank,NULL);
+
+        dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
+                            H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+        attr_type_id = H5Tcopy(H5T_C_S1);
+        H5Tset_size(attr_type_id,7);
+        aspace_id = H5Screate(H5S_SCALAR);
+        attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
+                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+        H5Awrite(attr_id,attr_type_id,"logical");
+        H5Sclose(aspace_id);
+        H5Aclose(attr_id);
+        H5Tclose(attr_type_id);
+        /* Write the MATLAB_int_decode attribute */
+        aspace_id = H5Screate(H5S_SCALAR);
+        attr_id = H5Acreate(dset_id,"MATLAB_int_decode",H5T_NATIVE_INT,
+                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+        H5Awrite(attr_id,H5T_NATIVE_INT,&int_decode);
+        H5Sclose(aspace_id);
+        H5Aclose(attr_id);
+        /* Write the empty attribute */
+        aspace_id = H5Screate(H5S_SCALAR);
+        attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
+                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+        H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
+        H5Sclose(aspace_id);
+        H5Aclose(attr_id);
+        /* Write the dimensions as the data */
+        H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                 H5P_DEFAULT,matvar->dims);
+        H5Dclose(dset_id);
+        H5Sclose(mspace_id);
+        err = 0;
+    } else {
+        mspace_id = H5Screate_simple(matvar->rank,perm_dims,NULL);
+        /* Note that MATLAB only recognizes uint8 as logical */
+        dset_id = H5Dcreate(id,name,
+                            Mat_class_type_to_hid_t(MAT_C_UINT8),
+                            mspace_id,H5P_DEFAULT,plist,H5P_DEFAULT);
+        attr_type_id = H5Tcopy(H5T_C_S1);
+        H5Tset_size(attr_type_id,7);
+        aspace_id = H5Screate(H5S_SCALAR);
+        attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
+                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+        H5Awrite(attr_id,attr_type_id,"logical");
+        H5Sclose(aspace_id);
+        H5Aclose(attr_id);
+        H5Tclose(attr_type_id);
+        /* Write the MATLAB_int_decode attribute */
+        aspace_id = H5Screate(H5S_SCALAR);
+        attr_id = H5Acreate(dset_id,"MATLAB_int_decode",H5T_NATIVE_INT,
+                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+        H5Awrite(attr_id,H5T_NATIVE_INT,&int_decode);
+        H5Sclose(aspace_id);
+        H5Aclose(attr_id);
+
+        H5Dwrite(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
+                 H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
+        H5Dclose(dset_id);
+        H5Sclose(mspace_id);
+        err = 0;
+    }
+
+    if ( H5P_DEFAULT != plist )
+        H5Pclose(plist);
+
+    return err;
+}
+
+/** @if mat_devman
  * @brief Writes a numeric matlab variable to the specified HDF id with the
  *        given name
  *
@@ -1950,6 +2059,8 @@ Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
     if ( NULL == matvar ) {
         size_t dims[2] = {0,0};
         return Mat_WriteEmptyVariable73(id,name,2,dims);
+    } else if ( matvar->isLogical ) {
+        return Mat_VarWriteLogical73(id,matvar,name);
     }
 
     switch ( matvar->class_type ) {
