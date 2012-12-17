@@ -4806,6 +4806,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
     compress = MAT_COMPRESSION_NONE;
 #endif
 
+    if ( NULL == mat || NULL == matvar || NULL == matvar->name )
+        return -1;
+
     if ( compress == MAT_COMPRESSION_NONE ) {
         fwrite(&matrix_type,4,1,mat->fp);
         fwrite(&pad4,4,1,mat->fp);
