@@ -1412,6 +1412,8 @@ Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name)
                                     mspace_id,H5P_DEFAULT,H5P_DEFAULT,
                                     H5P_DEFAULT);
                 break;
+            default:
+                return err;
         }
         attr_type_id = H5Tcopy(H5T_C_S1);
         H5Tset_size(attr_type_id,
@@ -2501,10 +2503,10 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
                         complex_data->Im);
                 H5Tclose(h5_complex);
             }
+            H5Sclose(dset_space);
             H5Dclose(dset_id);
             break;
     }
-    H5Sclose(dset_space);
 }
 
 /** @if mat_devman
