@@ -772,7 +772,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                         int len;
                         len = H5Gget_objname_by_idx(dset_id,next_index,NULL,0);
                         matvar->internal->fieldnames[nfields] =
-                            calloc(len+1,sizeof(*matvar->internal->fieldnames));
+                            calloc(len+1,sizeof(**matvar->internal->fieldnames));
                         H5Gget_objname_by_idx(dset_id,next_index,
                             matvar->internal->fieldnames[nfields],len+1);
                         nfields++;
