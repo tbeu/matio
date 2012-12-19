@@ -88,8 +88,12 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
             }
         }
         if ( NULL != matvar && nmemb > 0 && nfields > 0 ) {
+            matvar_t **field_vars;
             matvar->nbytes = nmemb*nfields*matvar->data_size;
             matvar->data = malloc(matvar->nbytes);
+            field_vars = (matvar_t**)matvar->data;
+            for ( i = 0; i < nfields*nmemb; i++ )
+                field_vars[i] = NULL;
         }
     }
 
