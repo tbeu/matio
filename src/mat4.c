@@ -193,6 +193,10 @@ Mat_VarReadNextInfo4(mat_t *mat)
     long      nBytes;
     size_t    err;
     matvar_t *matvar = NULL;
+    union {
+        mat_uint32_t u;
+        mat_uint8_t  c[4];
+    } endian;
 
     if ( mat == NULL || mat->fp == NULL )
         return NULL;
@@ -207,6 +211,8 @@ Mat_VarReadNextInfo4(mat_t *mat)
         free(matvar);
         return NULL;
     }
+
+    endian.u = 0x01020304;
 
     /* See if MOPT may need byteswapping */
     if ( tmp < 0 || tmp > 4052 ) {
@@ -224,7 +230,16 @@ Mat_VarReadNextInfo4(mat_t *mat)
     tmp -= data_type*10;
     class_type = floor(tmp);
 
-    mat->byteswap = (M == 1) ? 1 : 0;
+    switch ( M ) {
+        case 0:
+            /* IEEE little endian */
+            mat->byteswap = (endian.c[0] != 4);
+            break;
+        case 1:
+            /* IEEE big endian */
+            mat->byteswap = (endian.c[0] != 1);
+            break;
+    }
     /* Convert the V4 data type */
     switch ( data_type ) {
         case 0:
