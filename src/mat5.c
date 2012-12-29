@@ -575,6 +575,8 @@ WriteCharData(mat_t *mat, void *data, int N,enum matio_types data_type)
                     fwrite(&pad1,1,1,mat->fp);
             break;
         }
+        default:
+            break;
     }
     bytesread+=nBytes;
     return bytesread;
@@ -723,6 +725,8 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             }
             break;
         }
+        default:
+            break;
     }
     return byteswritten;
 }
@@ -779,6 +783,8 @@ WriteEmptyCharData(mat_t *mat, int N, enum matio_types data_type)
                     fwrite(&pad1,1,1,mat->fp);
             break;
         }
+        default:
+            break;
     }
     bytesread+=nBytes;
     return bytesread;
@@ -2292,6 +2298,12 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
             break;
         }
         /* FIXME: Structures */
+        case MAT_C_STRUCT:
+        case MAT_C_SPARSE:
+        case MAT_C_FUNCTION:
+        case MAT_C_OBJECT:
+        case MAT_C_EMPTY:
+            break;
     }
     end = ftell(mat->fp);
     nBytes = (int)(end-start);
@@ -2520,6 +2532,10 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
                         fwrite(&pad1,1,1,mat->fp);
             }
         }
+        case MAT_C_FUNCTION:
+        case MAT_C_OBJECT:
+        case MAT_C_EMPTY:
+            break;
     }
     end = ftell(mat->fp);
     nBytes = (int)(end-start);
@@ -2760,6 +2776,10 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
             }
             break;
         }
+        case MAT_C_FUNCTION:
+        case MAT_C_OBJECT:
+        case MAT_C_EMPTY:
+            break;
     }
     return byteswritten;
 }
@@ -2961,6 +2981,10 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
                         fwrite(&pad1,1,1,mat->fp);
             }
         }
+        case MAT_C_FUNCTION:
+        case MAT_C_OBJECT:
+        case MAT_C_EMPTY:
+            break;
     }
     end = ftell(mat->fp);
     nBytes = (int)(end-start);
@@ -3200,6 +3224,10 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
             }
             break;
         }
+        case MAT_C_FUNCTION:
+        case MAT_C_OBJECT:
+        case MAT_C_EMPTY:
+            break;
     }
 
     return byteswritten;
@@ -4772,6 +4800,8 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
             matvar->data_type = MAT_T_UINT8;
             matvar->data_size = sizeof(mat_uint8_t);
             break;
+        default:
+            break;
     }
 
     return err;
@@ -5014,6 +5044,10 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                             fwrite(&pad1,1,1,mat->fp);
                 }
             }
+            case MAT_C_EMPTY:
+            case MAT_C_FUNCTION:
+            case MAT_C_OBJECT:
+                break;
         }
 #if defined(HAVE_ZLIB)
     } else if ( compress == MAT_COMPRESSION_ZLIB ) {
@@ -5252,6 +5286,10 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 }
                 break;
             }
+            case MAT_C_EMPTY:
+            case MAT_C_FUNCTION:
+            case MAT_C_OBJECT:
+                break;
         }
         matvar->internal->z->avail_in  = 0;
         matvar->internal->z->next_in   = NULL;
@@ -5453,6 +5491,11 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
                     WriteInfo5(mat,fields[i]);
                 break;
             }
+            case MAT_C_SPARSE:
+            case MAT_C_EMPTY:
+            case MAT_C_FUNCTION:
+            case MAT_C_OBJECT:
+                break;
         }
     /* Does not work.
      * Can write empty data, but how to go back and add the real data?

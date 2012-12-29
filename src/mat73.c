@@ -190,6 +190,9 @@ Mat_TypeToClass73(enum matio_types type)
         case MAT_T_UINT8:
             class_type = MAT_C_UINT8;
             break;
+        default:
+            class_type = MAT_C_EMPTY;
+            break;
     }
 
     return class_type;
@@ -2090,6 +2093,10 @@ Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
         case MAT_C_SPARSE:
             err = Mat_VarWriteSparse73(id,matvar,name);
             break;
+        case MAT_C_EMPTY:
+        case MAT_C_FUNCTION:
+        case MAT_C_OBJECT:
+            break;
     }
     return err;
 }
@@ -2418,6 +2425,10 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             matvar->data = sparse_data;
             break;
         }
+        case MAT_C_EMPTY:
+        case MAT_C_FUNCTION:
+        case MAT_C_OBJECT:
+            break;
     }
 }
 
@@ -2505,6 +2516,8 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
             }
             H5Sclose(dset_space);
             H5Dclose(dset_id);
+            break;
+        default:
             break;
     }
 }

@@ -136,6 +136,8 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
         case MAT_T_UINT8:
             class_type = MAT_C_UINT8;
             break;
+        default:
+            return 1;
     }
 
     if ( matvar->rank == 2 ) {

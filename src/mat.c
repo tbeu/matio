@@ -97,6 +97,8 @@ Mat_PrintNumber(enum matio_types type, void *data)
         case MAT_T_UINT8:
             printf("%hhu",*(mat_uint8_t*)data);
             break;
+        default:
+            break;
     }
 }
 
@@ -978,6 +980,10 @@ Mat_VarFree(matvar_t *matvar)
                     }
                 }
                 break;
+            case MAT_C_EMPTY:
+            case MAT_C_OBJECT:
+            case MAT_C_FUNCTION:
+                break;
         }
     }
 
@@ -1403,6 +1409,8 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                 }
                 break;
             } /* case MAT_C_SPARSE: */
+            default:
+                break;
         } /* switch( matvar->class_type ) */
     }
 
@@ -1652,6 +1660,8 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
             matvar->data_type = MAT_T_UINT8;
             matvar->data_size = sizeof(mat_uint8_t);
             break;
+        default:
+            break;
     }
 
     return err;
@@ -1888,6 +1898,8 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
                 case MAT_C_CHAR:
                     WriteCharDataSlab2(mat,data,matvar->data_type,matvar->dims,
                                    start,stride,edge);
+                    break;
+                default:
                     break;
             }
         }

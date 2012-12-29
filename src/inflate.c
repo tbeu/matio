@@ -219,6 +219,8 @@ InflateSkipData(mat_t *mat,z_stream *z,enum matio_types data_type,int len)
         case MAT_T_INT8:
             data_size = sizeof(mat_int8_t);
             break;
+        default:
+            return 0;
     }
     InflateSkip(mat,z,len*data_size);
     return len;
