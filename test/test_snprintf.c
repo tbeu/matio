@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
-#include <matio.h>
+#include "matio_private.h"
 
 int main (void)
 {
