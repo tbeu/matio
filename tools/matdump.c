@@ -616,6 +616,8 @@ print_default_number(enum matio_types type, void *data)
         case MAT_T_UINT8:
             printf("%hhu",*(mat_uint8_t*)data);
             break;
+        default:
+            break;
     }
 }
 

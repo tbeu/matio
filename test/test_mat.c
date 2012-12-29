@@ -839,6 +839,8 @@ test_write_2d_numeric(enum matio_classes matvar_class, char *output_name)
             Mat_VarWrite(mat,matvar,compression);
             Mat_VarFree(matvar);
             break;
+        default:
+            break;
     }
 
     Mat_Close(mat);
@@ -986,6 +988,8 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class,char *output_name)
             Mat_VarWrite(mat,matvar,compression);
             Mat_VarFree(matvar);
             break;
+        default:
+            break;
     }
 
     Mat_Close(mat);
@@ -1033,6 +1037,8 @@ test_write_empty_2d_numeric(enum matio_classes matvar_class,char *output_name)
         case MAT_C_UINT8:
             matvar_datatype = MAT_T_UINT8;
             break;
+        default:
+            return 1;
     }
 
     mat = Mat_CreateVer("test_write_empty_2d_numeric.mat",NULL,mat_file_ver);
@@ -1352,6 +1358,8 @@ test_write_struct_2d_numeric(enum matio_classes matvar_class,
             data[3] = ui8+36;
             data_type = MAT_T_UINT8;
             break;
+        default:
+            return 1;
     }
 
     mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
@@ -1549,6 +1557,8 @@ test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
             data[3].Im = ui8_imag+36;
             data_type = MAT_T_UINT8;
             break;
+        default:
+            return 1;
     }
 
     mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
@@ -1776,6 +1786,8 @@ test_write_cell_2d_numeric(enum matio_classes matvar_class,
             data[3] = ui8+36;
             data_type = MAT_T_UINT8;
             break;
+        default:
+            return 1;
     }
 
     mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
@@ -1973,6 +1985,8 @@ test_write_cell_complex_2d_numeric(enum matio_classes matvar_class,
             data[3].Im = ui8_imag+36;
             data_type = MAT_T_UINT8;
             break;
+        default:
+            return 1;
     }
 
     mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
@@ -2709,6 +2723,9 @@ test_write_sparse(enum matio_classes matvar_class,char *output_name)
         case MAT_C_DOUBLE:
             sparse.data  = d;
             break;
+        default:
+            err = 1;
+            break;
     }
 
     if ( NULL != sparse.data) {
@@ -2763,6 +2780,9 @@ test_write_complex_sparse(enum matio_classes matvar_class,char *output_name)
             z.Re = d_real;
             z.Im = d_imag;
             sparse.data  = &z;
+            break;
+        default:
+            err = 1;
             break;
     }
 
