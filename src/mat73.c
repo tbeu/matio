@@ -961,7 +961,9 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             space_id = H5Dget_space(dset_id);
             matvar->rank = H5Sget_simple_extent_ndims(space_id);
             matvar->dims = malloc(matvar->rank*sizeof(*matvar->dims));
-            if ( NULL != matvar->dims ) {
+            if ( NULL == matvar->dims ) {
+                break;
+            } else {
                 int k;
                 H5Sget_simple_extent_dims(space_id,dims,NULL);
                 for ( k = 0; k < matvar->rank; k++ )
