@@ -2516,10 +2516,13 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
             }
             H5Sclose(dset_space);
             H5Dclose(dset_id);
+            err = 0;
             break;
         default:
             break;
     }
+
+    return err;
 }
 
 /** @if mat_devman
