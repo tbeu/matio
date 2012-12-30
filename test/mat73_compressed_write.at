@@ -4744,8 +4744,8 @@ AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exi
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D logical fields])
-AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_2d_logical],[0],
          [ignore],[ignore])
 MATIO_AT_HOST_DATA([expout],

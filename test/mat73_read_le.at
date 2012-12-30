@@ -2478,6 +2478,7 @@ Class Type: 8-bit, unsigned integer array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with logical arrays])
+AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_le.mat var92], [0],
 [      Name: var92
