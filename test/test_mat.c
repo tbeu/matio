@@ -2699,13 +2699,36 @@ test_write_sparse(enum matio_classes matvar_class,char *output_name)
 {
     int    err = 0;
     size_t dims[2] = {5,10};
-    double    d[50] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,38,39,
-                       41,45,47,48,49};
     mat_int32_t  ir[25] = {0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3};
     mat_int32_t  jc[11] = {0,2,5,7,10,12,15,17,20,22,25};
     mat_t *mat;
     matvar_t *matvar;
     mat_sparse_t  sparse = {0,};
+    enum matio_types data_type;
+    double    d[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,38,39,
+                       41,45,47,48,49};
+    float     f[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,38,39,
+                       41,45,47,48,49};
+    mat_int32_t   i32[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                             38,39,41,45,47,48,49};
+    mat_uint32_t ui32[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                             38,39,41,45,47,48,49};
+    mat_int16_t   i16[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                             38,39,41,45,47,48,49};
+    mat_uint16_t ui16[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                             38,39,41,45,47,48,49};
+    mat_int8_t    i8[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                            38,39,41,45,47,48,49};
+    mat_uint8_t  ui8[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                            38,39,41,45,47,48,49};
+#ifdef HAVE_MAT_INT64_T
+    mat_int64_t i64[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                           38,39,41,45,47,48,49};
+#endif
+#ifdef HAVE_MAT_UINT64_T
+    mat_uint64_t ui64[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                             38,39,41,45,47,48,49};
+#endif
 
     sparse.nzmax = 25;
     sparse.nir   = 25;
@@ -2722,6 +2745,47 @@ test_write_sparse(enum matio_classes matvar_class,char *output_name)
     switch (matvar_class) {
         case MAT_C_DOUBLE:
             sparse.data  = d;
+            data_type = MAT_T_DOUBLE;
+            break;
+        case MAT_C_SINGLE:
+            sparse.data  = f;
+            data_type = MAT_T_SINGLE;
+            break;
+#ifdef HAVE_MAT_INT64_T
+        case MAT_C_INT64:
+            sparse.data  = i64;
+            data_type = MAT_T_INT64;
+            break;
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_C_UINT64:
+            sparse.data  = ui64;
+            data_type = MAT_T_UINT64;
+            break;
+#endif
+        case MAT_C_INT32:
+            sparse.data  = i32;
+            data_type = MAT_T_INT32;
+            break;
+        case MAT_C_UINT32:
+            sparse.data  = ui32;
+            data_type = MAT_T_UINT32;
+            break;
+        case MAT_C_INT16:
+            sparse.data  = i16;
+            data_type = MAT_T_INT16;
+            break;
+        case MAT_C_UINT16:
+            sparse.data  = ui16;
+            data_type = MAT_T_UINT16;
+            break;
+        case MAT_C_INT8:
+            sparse.data  = i8;
+            data_type = MAT_T_INT8;
+            break;
+        case MAT_C_UINT8:
+            sparse.data  = ui8;
+            data_type = MAT_T_UINT8;
             break;
         default:
             err = 1;
@@ -2730,7 +2794,7 @@ test_write_sparse(enum matio_classes matvar_class,char *output_name)
 
     if ( NULL != sparse.data) {
         matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,
-                       MAT_T_DOUBLE,2,dims,&sparse,MAT_F_DONT_COPY_DATA);
+                       data_type,2,dims,&sparse,MAT_F_DONT_COPY_DATA);
         if ( matvar != NULL ) {
             Mat_VarWrite(mat,matvar,compression);
             Mat_VarFree(matvar);
@@ -2752,16 +2816,57 @@ test_write_complex_sparse(enum matio_classes matvar_class,char *output_name)
 {
     int    err = 0;
     size_t dims[2] = {5,10};
-    double    d_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
-                            38,39,41,45,47,48,49},
-              d_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,81,85,
-                            87,88,89,91,95,97,98,99};
     mat_int32_t  ir[25] = {0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3};
     mat_int32_t  jc[11] = {0,2,5,7,10,12,15,17,20,22,25};
     mat_t *mat;
     matvar_t *matvar;
     mat_sparse_t  sparse = {0,};
     mat_complex_split_t z = {NULL,NULL};
+    enum matio_types data_type;
+    double    d_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                            38,39,41,45,47,48,49},
+              d_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,81,85,
+                            87,88,89,91,95,97,98,99};
+    float     f_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,37,
+                            38,39,41,45,47,48,49},
+              f_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,81,85,
+                            87,88,89,91,95,97,98,99};
+    mat_int32_t i32_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,
+                                37,38,39,41,45,47,48,49},
+                i32_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,81,
+                                85,87,88,89,91,95,97,98,99};
+    mat_uint32_t ui32_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,
+                                  37,38,39,41,45,47,48,49},
+                 ui32_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,
+                                  81,85,87,88,89,91,95,97,98,99};
+    mat_int16_t i16_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,
+                                37,38,39,41,45,47,48,49},
+                i16_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,81,
+                                85,87,88,89,91,95,97,98,99};
+    mat_uint16_t ui16_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,
+                                  37,38,39,41,45,47,48,49},
+                 ui16_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,
+                                  81,85,87,88,89,91,95,97,98,99};
+    mat_int8_t i8_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,
+                              37,38,39,41,45,47,48,49},
+               i8_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,81,
+                              85,87,88,89,91,95,97,98,99};
+    mat_uint8_t ui8_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,
+                                37,38,39,41,45,47,48,49},
+                ui8_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,
+                                81,85,87,88,89,91,95,97,98,99};
+#ifdef HAVE_MAT_INT64_T
+    mat_int64_t i64_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,
+                                37,38,39,41,45,47,48,49},
+                i64_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,81,
+                                85,87,88,89,91,95,97,98,99};
+#endif
+#ifdef HAVE_MAT_UINT64_T
+    mat_uint64_t ui64_real[25] = {1,5,7,8,9,11,15,17,18,19,21,25,27,28,29,31,35,
+                                  37,38,39,41,45,47,48,49},
+                 ui64_imag[25] = {51,55,57,58,59,61,65,67,68,69,71,75,77,78,79,
+                                  81,85,87,88,89,91,95,97,98,99};
+#endif
 
     sparse.nzmax = 25;
     sparse.nir   = 25;
@@ -2780,15 +2885,74 @@ test_write_complex_sparse(enum matio_classes matvar_class,char *output_name)
             z.Re = d_real;
             z.Im = d_imag;
             sparse.data  = &z;
+            data_type = MAT_T_DOUBLE;
             break;
-        default:
+        case MAT_C_SINGLE:
+            z.Re = f_real;
+            z.Im = f_imag;
+            sparse.data  = &z;
+            data_type = MAT_T_SINGLE;
+            break;
+#ifdef HAVE_MAT_INT64_T
+        case MAT_C_INT64:
+            z.Re = i64_real;
+            z.Im = i64_imag;
+            sparse.data  = &z;
+            data_type = MAT_T_INT64;
+            break;
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_C_UINT64:
+            z.Re = ui64_real;
+            z.Im = ui64_imag;
+            sparse.data  = &z;
+            data_type = MAT_T_UINT64;
+            break;
+#endif
+        case MAT_C_INT32:
+            z.Re = i32_real;
+            z.Im = i32_imag;
+            sparse.data  = &z;
+            data_type = MAT_T_INT32;
+            break;
+        case MAT_C_UINT32:
+            z.Re = ui32_real;
+            z.Im = ui32_imag;
+            sparse.data  = &z;
+            data_type = MAT_T_UINT32;
+            break;
+        case MAT_C_INT16:
+            z.Re = i16_real;
+            z.Im = i16_imag;
+            sparse.data  = &z;
+            data_type = MAT_T_INT16;
+            break;
+        case MAT_C_UINT16:
+            z.Re = ui16_real;
+            z.Im = ui16_imag;
+            sparse.data  = &z;
+            data_type = MAT_T_UINT16;
+            break;
+        case MAT_C_INT8:
+            z.Re = i8_real;
+            z.Im = i8_imag;
+            sparse.data  = &z;
+            data_type = MAT_T_INT8;
+            break;
+        case MAT_C_UINT8:
+            z.Re = ui8_real;
+            z.Im = ui8_imag;
+            sparse.data  = &z;
+            data_type = MAT_T_UINT8;
+            break;
+       default:
             err = 1;
             break;
     }
 
     if ( NULL != sparse.data ) {
-        matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,MAT_T_DOUBLE,2,
-                               dims,&sparse,MAT_F_COMPLEX | MAT_F_DONT_COPY_DATA);
+        matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,data_type,2,
+                               dims,&sparse,MAT_F_COMPLEX|MAT_F_DONT_COPY_DATA);
         if ( matvar != NULL ) {
             Mat_VarWrite(mat,matvar,compression);
             Mat_VarFree(matvar);
