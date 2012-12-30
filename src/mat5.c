@@ -4265,6 +4265,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                                 nBytes = ReadInt8Data(mat,complex_data->Re,
                                     packed_type,data->ndata);
                                 break;
+                            default:
+                                break;
                         }
 #else
                         nBytes = ReadDoubleData(mat,complex_data->Re,
@@ -4336,6 +4338,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                                 nBytes = ReadUInt8Data(mat,complex_data->Im,
                                     packed_type,data->ndata);
                                 break;
+                            default:
+                                break;
                         }
 #else /* EXTENDED_SPARSE */
                         nBytes = ReadDoubleData(mat,complex_data->Im,
@@ -4394,6 +4398,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                             case MAT_T_UINT8:
                                 nBytes = ReadCompressedInt8Data(mat,matvar->internal->z,
                                      complex_data->Re,packed_type,data->ndata);
+                                break;
+                            default:
                                 break;
                         }
 #else    /* EXTENDED_SPARSE */
@@ -4469,6 +4475,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                                 nBytes = ReadCompressedUInt8Data(mat,matvar->internal->z,
                                      complex_data->Im,packed_type,data->ndata);
                                 break;
+                            default:
+                                break;
                         }
 #else    /* EXTENDED_SPARSE */
                         nBytes = ReadCompressedDoubleData(mat,matvar->internal->z,
@@ -4542,6 +4550,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                                 nBytes = ReadInt8Data(mat,data->data,
                                     packed_type,data->ndata);
                                 break;
+                            default:
+                                break;
                         }
 #else
                         nBytes = ReadDoubleData(mat,data->data,packed_type,
@@ -4600,6 +4610,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                             case MAT_T_UINT8:
                                 nBytes = ReadCompressedInt8Data(mat,matvar->internal->z,
                                      data->data,packed_type,data->ndata);
+                                break;
+                            default:
                                 break;
                         }
 #else   /* EXTENDED_SPARSE */
