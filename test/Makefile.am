@@ -47,7 +47,11 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat5_uncompressed_readslab_be.at \
                $(srcdir)/mat5_uncompressed_readslab_le.at \
                $(srcdir)/mat73_readslab_be.at \
-               $(srcdir)/mat73_readslab_le.at
+               $(srcdir)/mat73_readslab_le.at \
+               $(srcdir)/mat5_compressed_extended_sparse.at \
+               $(srcdir)/mat5_uncompressed_extended_sparse.at \
+               $(srcdir)/mat73_compressed_extended_sparse.at \
+               $(srcdir)/mat73_uncompressed_extended_sparse.at
 TESTSUITE = $(srcdir)/testsuite
 
 TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
@@ -71,8 +75,15 @@ else
 COMPRESSION_ZLIB = 0
 endif
 
+if EXTENDED_SPARSE
+EXTENDED_SPARSE = 1
+else
+EXTENDED_SPARSE = 0
+endif
+
 CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
                     HAVE_UINT64=$(HAVE_UINT64) HAVE_INT64=$(HAVE_INT64) \
+                    EXTENDED_SPARSE=$(EXTENDED_SPARSE) \
                     COMPRESSION_ZLIB=$(COMPRESSION_ZLIB) \
                     LIBTOOL="$(top_builddir)/libtool"
 

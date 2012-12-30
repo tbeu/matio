@@ -343,11 +343,14 @@ extended_sparse=$enableval,extended_sparse=yes)
 AC_MSG_CHECKING(enable extended sparse types)
 if test "$extended_sparse" = "no"
 then
+    extended_sparse=no
     AC_MSG_RESULT(no)
 else
+    extended_sparse=yes
     AC_MSG_RESULT(yes)
     AC_DEFINE_UNQUOTED([EXTENDED_SPARSE],[],[Extended sparse matrix data types])
 fi
+AM_CONDITIONAL(EXTENDED_SPARSE, test "x$extended_sparse" = "xyes")
 
 linux="no"
 winnt="no"
@@ -398,7 +401,8 @@ AC_MSG_RESULT([     Static Libraries: $enable_static])
 AC_MSG_RESULT([  default MAT version: $file_ver])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Features --------------------------------------------])
-AC_MSG_RESULT([MAT v7.3 file support: $mat73])
+AC_MSG_RESULT([  MAT v7.3 file support: $mat73])
+AC_MSG_RESULT([Extended sparse support: $extended_sparse])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Packages --------------------------------------------])
 AC_MSG_RESULT([                 zlib: $ZLIB_LIBS])
