@@ -4229,6 +4229,18 @@ Read5(mat_t *mat, matvar_t *matvar)
                                 nBytes = ReadSingleData(mat,complex_data->Re,
                                     packed_type,data->ndata);
                                 break;
+                            case MAT_T_INT64:
+#ifdef HAVE_MAT_INT64_T
+                                nBytes = ReadInt64Data(mat,complex_data->Re,
+                                    packed_type,data->ndata);
+#endif
+                                break;
+                            case MAT_T_UINT64:
+#ifdef HAVE_MAT_UINT64_T
+                                nBytes = ReadUInt64Data(mat,complex_data->Re,
+                                    packed_type,data->ndata);
+#endif
+                                break;
                             case MAT_T_INT32:
                                 nBytes = ReadInt32Data(mat,complex_data->Re,
                                     packed_type,data->ndata);
@@ -4288,6 +4300,18 @@ Read5(mat_t *mat, matvar_t *matvar)
                                 nBytes = ReadSingleData(mat,complex_data->Im,
                                     packed_type,data->ndata);
                                 break;
+                            case MAT_T_INT64:
+#ifdef HAVE_MAT_INT64_T
+                                nBytes = ReadInt64Data(mat,complex_data->Im,
+                                    packed_type,data->ndata);
+#endif
+                                break;
+                            case MAT_T_UINT64:
+#ifdef HAVE_MAT_UINT64_T
+                                nBytes = ReadUInt64Data(mat,complex_data->Im,
+                                    packed_type,data->ndata);
+#endif
+                                break;
                             case MAT_T_INT32:
                                 nBytes = ReadInt32Data(mat,complex_data->Im,
                                     packed_type,data->ndata);
@@ -4332,6 +4356,20 @@ Read5(mat_t *mat, matvar_t *matvar)
                             case MAT_T_SINGLE:
                                 nBytes = ReadCompressedSingleData(mat,matvar->internal->z,
                                      complex_data->Re,packed_type,data->ndata);
+                                break;
+                            case MAT_T_INT64:
+#ifdef HAVE_MAT_INT64_T
+                                nBytes = ReadCompressedInt64Data(mat,
+                                    matvar->internal->z,complex_data->Re,
+                                    packed_type,data->ndata);
+#endif
+                                break;
+                            case MAT_T_UINT64:
+#ifdef HAVE_MAT_UINT64_T
+                                nBytes = ReadCompressedUInt64Data(mat,
+                                    matvar->internal->z,complex_data->Re,
+                                    packed_type,data->ndata);
+#endif
                                 break;
                             case MAT_T_INT32:
                                 nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
@@ -4392,6 +4430,20 @@ Read5(mat_t *mat, matvar_t *matvar)
                             case MAT_T_SINGLE:
                                 nBytes = ReadCompressedSingleData(mat,matvar->internal->z,
                                      complex_data->Im,packed_type,data->ndata);
+                                break;
+                            case MAT_T_INT64:
+#ifdef HAVE_MAT_INT64_T
+                                nBytes = ReadCompressedInt64Data(mat,
+                                    matvar->internal->z,complex_data->Im,
+                                    packed_type,data->ndata);
+#endif
+                                break;
+                            case MAT_T_UINT64:
+#ifdef HAVE_MAT_UINT64_T
+                                nBytes = ReadCompressedUInt64Data(mat,
+                                    matvar->internal->z,complex_data->Im,
+                                    packed_type,data->ndata);
+#endif
                                 break;
                             case MAT_T_INT32:
                                 nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
@@ -4454,6 +4506,18 @@ Read5(mat_t *mat, matvar_t *matvar)
                                 nBytes = ReadSingleData(mat,data->data,
                                     packed_type,data->ndata);
                                 break;
+                            case MAT_T_INT64:
+#ifdef HAVE_MAT_INT64_T
+                                nBytes = ReadInt64Data(mat,data->data,
+                                    packed_type,data->ndata);
+#endif
+                                break;
+                            case MAT_T_UINT64:
+#ifdef HAVE_MAT_UINT64_T
+                                nBytes = ReadUInt64Data(mat,data->data,
+                                    packed_type,data->ndata);
+#endif
+                                break;
                             case MAT_T_INT32:
                                 nBytes = ReadInt32Data(mat,data->data,
                                     packed_type,data->ndata);
@@ -4498,6 +4562,20 @@ Read5(mat_t *mat, matvar_t *matvar)
                             case MAT_T_SINGLE:
                                 nBytes = ReadCompressedSingleData(mat,matvar->internal->z,
                                      data->data,packed_type,data->ndata);
+                                break;
+                            case MAT_T_INT64:
+#ifdef HAVE_MAT_INT64_T
+                                nBytes = ReadCompressedInt64Data(mat,
+                                    matvar->internal->z,data->data,packed_type,
+                                    data->ndata);
+#endif
+                                break;
+                            case MAT_T_UINT64:
+#ifdef HAVE_MAT_UINT64_T
+                                nBytes = ReadCompressedUInt64Data(mat,
+                                    matvar->internal->z,data->data,packed_type,
+                                    data->ndata);
+#endif
                                 break;
                             case MAT_T_INT32:
                                 nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
