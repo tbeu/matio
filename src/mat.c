@@ -1456,7 +1456,11 @@ Mat_VarReadData(mat_t *mat,matvar_t *matvar,void *data,
 
     switch ( mat->version ) {
         case MAT_FT_MAT73:
+#if defined(MAT73) && MAT73
             err = Mat_VarReadData73(mat,matvar,data,start,stride,edge);
+#else
+            err = 1;
+#endif
             break;
         case MAT_FT_MAT5:
             err = ReadData5(mat,matvar,data,start,stride,edge);
