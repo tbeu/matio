@@ -1,9 +1,12 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmatio", "libmatio\libmatio.vcxproj", "{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}"
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmatio", "libmatio\libmatio.vcproj", "{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "matdump", "matdump\matdump.vcxproj", "{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "matdump", "matdump\matdump.vcproj", "{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655} = {67AB1DE2-B06E-4DC1-AEBB-CB1E8E593655}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,8 +39,7 @@ Global
 		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|x64
 		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|Win32.ActiveCfg = Release|Win32
 		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|Win32.Build.0 = Release|Win32
-		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|x64.ActiveCfg = Release|x64
-		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|x64.Build.0 = Release|x64
+		{F85AD892-CF1E-47B7-BC7D-ED00BCA859C0}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

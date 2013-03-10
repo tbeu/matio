@@ -30,8 +30,13 @@ ACLOCAL_AMFLAGS = -I config
 
 datadir = $(prefix)/share/matio
 VS_FILES = visual_studio/libmatio/libmatio.vcproj \
+           visual_studio/libmatio/libmatio.vcxproj \
+           visual_studio/libmatio/libmatio.vcxproj.filters \
            visual_studio/matdump/matdump.vcproj \
+           visual_studio/matdump/matdump.vcxproj \
+           visual_studio/matdump/matdump.vcxproj.filters \
            visual_studio/matio.def \
+           visual_studio/matio_vs2008.sln \
            visual_studio/matio.sln \
            visual_studio/matioConfig.h \
            visual_studio/matio_pubconf.h
