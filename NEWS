@@ -1,3 +1,19 @@
+Changes in 1.5.1 (10 March 2013)
+* Fix bug writing compressed HDF5 files
+* Fix bug reading cell array elements written with a non-empty variable name
+* Fix bug writing complex sparse matrices as struct fields or cell elements to
+  uncompressed v5 MAT files
+* Fix a number of potential issues identified via static analysis
+* Fix uninitialized pointers when creating structures through
+  Mat_VarCreateStruct, and fix a bug in the struct API testsuite
+* Fix extended sparse support in v7.3 MAT files and add 64-bit integer support
+  for v5 MAT files
+* Add missing support for reading hyperslabs from HDF5 MAT files
+* Added variable indexing notation support to matdump to display subsets of
+  variables
+* Added tests for extended sparse support in testsuite
+* Add missing enumerations or default case in switch statements
+
 Changes in 1.5.0 (15 April 2012)
 * Support for reading/writing HDF5 format MAT files
 * Bug fixes for compressed variables that caused issues with matio reading

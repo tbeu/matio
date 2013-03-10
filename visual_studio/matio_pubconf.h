@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012   Christopher C. Hulbert
+ * Copyright (C) 2010-2013   Christopher C. Hulbert
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,10 +25,10 @@
 #define MATIO_MINOR_VERSION 5
 
 /* Matio release level number */
-#define MATIO_RELEASE_LEVEL 0
+#define MATIO_RELEASE_LEVEL 1
 
 /* Matio version number */
-#define MATIO_VERSION 150
+#define MATIO_VERSION 151
 
 /* Default file format */
 #define MAT_FT_DEFAULT MAT_FT_MAT5
