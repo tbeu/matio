@@ -227,8 +227,6 @@ slab_select_valid(int rank,int *start,int *stride,int *edge,matvar_t *matvar)
     } else if ( rank == 1 ) {
         for ( i = 0; i < matvar->rank; i++ )
             nmemb *= matvar->dims[i];
-        if ( edge[0] < 0 )
-            edge[0] = (nmemb-start[i]) / stride[0];
         if ( *stride < 1 ) {
             /* Check stride is at least 1 */
             fprintf(stderr,"stride must be positive");
@@ -377,8 +375,9 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
                     } else if (matvar->rank == 2 && matvar->dims[1] == 1) {
                        matvar->dims[0] = *edge;
                     } else {
-                       matvar->rank = 1;
-                       matvar->dims[0] = *edge;
+                        matvar->rank = 2;
+                        matvar->dims[0] = *edge;
+                        matvar->dims[1] = 1;
                     }
                 } else {
                     Mat_VarReadData(mat,matvar,matvar->data,start,stride,edge);
