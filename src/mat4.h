@@ -31,6 +31,8 @@
 void Read4(mat_t *mat, matvar_t *matvar);
 int  ReadData4(mat_t *mat,matvar_t *matvar,void *data,
          int *start,int *stride,int *edge);
+int  Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
+         int stride,int edge);
 
 matvar_t *Mat_VarReadNextInfo4(mat_t *mat);
 

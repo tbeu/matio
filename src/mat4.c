@@ -180,6 +180,76 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
     return err;
 }
 
+/** @brief Reads a subset of a MAT variable using a 1-D indexing
+ *
+ * Reads data from a MAT variable using a linear (1-D) indexing mode. The
+ * variable must have been read by Mat_VarReadInfo.
+ * @ingroup MAT
+ * @param mat MAT file to read data from
+ * @param matvar MAT variable information
+ * @param data pointer to store data in (must be pre-allocated)
+ * @param start starting index
+ * @param stride stride of data
+ * @param edge number of elements to read
+ * @retval 0 on success
+ */
+int
+Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
+                       int stride,int edge)
+{
+    size_t i, nmemb = 1;
+    int err = 0;
+    enum matio_classes class_type = MAT_C_EMPTY;
+
+    fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
+
+    switch( matvar->data_type ) {
+        case MAT_T_DOUBLE:
+            class_type = MAT_C_DOUBLE;
+            break;
+        case MAT_T_SINGLE:
+            class_type = MAT_C_SINGLE;
+            break;
+        case MAT_T_INT32:
+            class_type = MAT_C_INT32;
+            break;
+        case MAT_T_INT16:
+            class_type = MAT_C_INT16;
+            break;
+        case MAT_T_UINT16:
+            class_type = MAT_C_UINT16;
+            break;
+        case MAT_T_UINT8:
+            class_type = MAT_C_UINT8;
+            break;
+        default:
+            return 1;
+    }
+    matvar->data_size = Mat_SizeOf(matvar->data_type);
+
+    for ( i = 0; i < matvar->rank; i++ )
+        nmemb *= matvar->dims[i];
+
+    if ( stride*(edge-1)+start+1 > nmemb ) {
+        return 1;
+    }
+    if ( matvar->isComplex ) {
+            mat_complex_split_t *complex_data = data;
+            long nbytes = nmemb*matvar->data_size;
+
+            ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
+                          matvar->data_type,start,stride,edge);
+            fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            ReadDataSlab1(mat,complex_data->Im,matvar->class_type,
+                          matvar->data_type,start,stride,edge);
+    } else {
+        ReadDataSlab1(mat,data,matvar->class_type,matvar->data_type,start,
+                      stride,edge);
+    }
+
+    return err;
+}
+
 /** @if mat_devman
  * @brief Reads the header information for the next MAT variable in a version 4 MAT file
  *

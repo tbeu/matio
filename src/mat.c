@@ -1537,7 +1537,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
             err = Mat_VarReadDataLinear5(mat,matvar,data,start,stride,edge);
             break;
         case MAT_FT_MAT4:
-            err = 1;
+            err = Mat_VarReadDataLinear4(mat,matvar,data,start,stride,edge);
             break;
     }
 
