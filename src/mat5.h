@@ -70,6 +70,8 @@ matvar_t *Mat_VarReadNextInfo5( mat_t *mat );
 void      Read5(mat_t *mat, matvar_t *matvar);
 int       ReadData5(mat_t *mat,matvar_t *matvar,void *data, 
               int *start,int *stride,int *edge);
+int       Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,
+              int start,int stride,int edge);
 int       Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress);
 int       WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
               size_t *dims,int *start,int *stride,int *edge);
