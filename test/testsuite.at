@@ -59,9 +59,11 @@ AT_COLOR_TESTS
 
 AT_BANNER(Read [MAT version 4 (Little Endian)])
 m4_include([mat4_read.at])
+m4_include([mat4_readslab_le.at])
 
 AT_BANNER(Read [MAT version 4 (Big Endian)])
 m4_include([mat4_read_be.at])
+m4_include([mat4_readslab_be.at])
 
 AT_BANNER([Read Uncompressed MAT version 5 (Little Endian)])
 m4_include([mat5_uncompressed_read_le.at])
