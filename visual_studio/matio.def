@@ -45,6 +45,7 @@ EXPORTS
     Mat_VarReadDataLinear
     Mat_VarReadDataLinear4
     Mat_VarReadDataLinear5
+    Mat_VarReadDataLinear73
     Mat_VarReadInfo
     Mat_VarReadNext
     Mat_VarReadNextInfo

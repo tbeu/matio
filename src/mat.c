@@ -1531,7 +1531,11 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 
     switch ( mat->version ) {
         case MAT_FT_MAT73:
+#if defined(MAT73) && MAT73
+            err = Mat_VarReadDataLinear73(mat,matvar,data,start,stride,edge);
+#else
             err = 1;
+#endif
             break;
         case MAT_FT_MAT5:
             err = Mat_VarReadDataLinear5(mat,matvar,data,start,stride,edge);

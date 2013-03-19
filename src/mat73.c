@@ -2527,6 +2527,117 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
 }
 
 /** @if mat_devman
+ * @brief Reads a subset of a MAT variable using a 1-D indexing
+ *
+ * Reads data from a MAT variable using a linear (1-D) indexing mode. The
+ * variable must have been read by Mat_VarReadInfo.
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @param data pointer to store the read data in (must be of size
+ *             edge*Mat_SizeOfClass(matvar->class_type))
+ * @param start starting index
+ * @param stride stride of data
+ * @param edge number of elements to read
+ * @retval 0 on success
+ * @endif
+ */
+int
+Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
+    int start,int stride,int edge)
+{
+    int err = -1;
+    hid_t fid,dset_id,dset_space,mem_space;
+    hsize_t dset_start,dset_stride,dset_edge;
+    hsize_t *points, k, dimp[10];
+
+    if ( NULL == mat || NULL == matvar || NULL == data )
+        return err;
+    else if (NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id)
+        return err;
+
+    fid = *(hid_t*)mat->fp;
+
+    dset_start  = start;
+    dset_stride = stride;
+    dset_edge   = edge;
+    mem_space = H5Screate_simple(1, &dset_edge, NULL);
+
+    switch (matvar->class_type) {
+        case MAT_C_DOUBLE:
+        case MAT_C_SINGLE:
+        case MAT_C_INT64:
+        case MAT_C_UINT64:
+        case MAT_C_INT32:
+        case MAT_C_UINT32:
+        case MAT_C_INT16:
+        case MAT_C_UINT16:
+        case MAT_C_INT8:
+        case MAT_C_UINT8:
+            if ( NULL != matvar->internal->hdf5_name ) {
+                dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
+            } else {
+                dset_id = matvar->internal->id;
+                H5Iinc_ref(dset_id);
+            }
+
+            points = malloc(matvar->rank*dset_edge*sizeof(*points));
+            if ( NULL == points ) {
+                err = -2;
+                break;
+            }
+            dimp[0] = 1;
+            for ( k = 1; k < matvar->rank; k++ )
+                dimp[k] = dimp[k-1]*matvar->dims[k-1];
+            for ( k = 0; k < dset_edge; k++ ) {
+                size_t l, coord, idx;
+                coord = start + k*stride;
+                for ( l = matvar->rank; l--; ) {
+                    idx = coord / dimp[l];
+                    points[matvar->rank*(k+1)-1-l] = idx;
+                    coord -= idx*dimp[l];
+                }
+            }
+            dset_space = H5Dget_space(dset_id);
+            H5Sselect_elements(dset_space,H5S_SELECT_SET,dset_edge,points);
+
+            if ( !matvar->isComplex ) {
+                H5Dread(dset_id,Mat_class_type_to_hid_t(matvar->class_type),
+                        mem_space,dset_space,H5P_DEFAULT,data);
+                H5Eprint1(stdout);
+            } else {
+                mat_complex_split_t *complex_data = data;
+                hid_t h5_complex_base,h5_complex;
+
+                h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
+                h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                            H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"real",0,h5_complex_base);
+                H5Dread(dset_id,h5_complex,mem_space,dset_space,H5P_DEFAULT,
+                        complex_data->Re);
+                H5Tclose(h5_complex);
+
+                h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                            H5Tget_size(h5_complex_base));
+                H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                H5Dread(dset_id,h5_complex,mem_space,dset_space,H5P_DEFAULT,
+                        complex_data->Im);
+                H5Tclose(h5_complex);
+            }
+            H5Sclose(dset_space);
+            H5Dclose(dset_id);
+            free(points);
+            err = 0;
+            break;
+        default:
+            break;
+    }
+    H5Sclose(mem_space);
+
+    return err;
+}
+
+/** @if mat_devman
  * @brief Reads the header information for the next MAT variable
  *
  * @ingroup mat_internal
