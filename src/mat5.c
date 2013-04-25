@@ -3423,8 +3423,8 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
 void
 Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
 {
-    int nBytes, data_in_tag = 0;
-    enum matio_types packed_type;
+    int nBytes = 0, data_in_tag = 0;
+    enum matio_types packed_type = MAT_T_UNKNOWN;
     mat_uint32_t tag[2];
 
     if ( matvar->compression ) {
@@ -3587,8 +3587,8 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
 void
 Read5(mat_t *mat, matvar_t *matvar)
 {
-    int nBytes, len = 1, i, byteswap, data_in_tag = 0;
-    enum matio_types packed_type;
+    int nBytes = 0, len = 1, i, byteswap, data_in_tag = 0;
+    enum matio_types packed_type = MAT_T_UNKNOWN;
     long fpos;
     mat_uint32_t tag[2];
 
