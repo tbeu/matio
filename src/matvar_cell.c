@@ -78,7 +78,7 @@ Mat_VarGetCell(matvar_t *matvar,int index)
 matvar_t **
 Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,int *edge)
 {
-    int i, j, N, I = 0;
+    int i, j, N, I;
     size_t idx[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
     matvar_t **cells;
 
@@ -139,7 +139,7 @@ Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,int *edge)
 matvar_t **
 Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,int edge)
 {
-    int i, I = 0;
+    int i, I;
     matvar_t **cells = NULL;
 
     if ( matvar != NULL ) {

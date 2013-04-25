@@ -200,7 +200,7 @@ Mat_VarGetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index)
 {
     int       i, nfields;
     matvar_t *field = NULL;
-    size_t nmemb = 1;
+    size_t nmemb;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
         matvar->data_size == 0 )
@@ -426,7 +426,7 @@ matvar_t *
 Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
     int copy_fields)
 {
-    int i, I = 0, field, nfields;
+    int i, I, field, nfields;
     matvar_t *struct_slab, **fields;
 
     /* FIXME: Check allocations */
@@ -483,7 +483,7 @@ Mat_VarSetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index,
 {
     int       i, nfields;
     matvar_t *old_field = NULL;
-    size_t nmemb = 1;
+    size_t nmemb;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT ||
         matvar->data == NULL )
