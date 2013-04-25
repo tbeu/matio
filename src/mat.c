@@ -144,18 +144,20 @@ Mat_GetLibraryVersion(int *major,int *minor,int *release)
 mat_t *
 Mat_CreateVer(const char *matname,const char *hdr_str,enum mat_ft mat_file_ver)
 {
-    mat_t *mat;
+    mat_t *mat = NULL;
 
-    if ( MAT_FT_MAT5 == mat_file_ver )
-        mat = Mat_Create5(matname,hdr_str);
-    else if ( MAT_FT_MAT73 == mat_file_ver )
+    switch ( mat_file_ver ) {
+        case MAT_FT_MAT4:
+            break;
+        case MAT_FT_MAT5:
+            mat = Mat_Create5(matname,hdr_str);
+            break;
+        case MAT_FT_MAT73:
 #if defined(MAT73) && MAT73
-        mat = Mat_Create73(matname,hdr_str);
-#else
-        mat = NULL;
+            mat = Mat_Create73(matname,hdr_str);
 #endif
-    else
-        mat = Mat_Create5(matname,hdr_str);
+            break;
+    }
 
     return mat;
 }
