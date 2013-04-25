@@ -3045,6 +3045,8 @@ int main (int argc, char *argv[])
                     mat_file_ver = MAT_FT_MAT5;
                 } else if ( !strcmp(optarg,"7.3") ) {
                     mat_file_ver = MAT_FT_MAT73;
+                } else if ( !strcmp(optarg,"4") ) {
+                    mat_file_ver = MAT_FT_MAT4;
                 } else {
                     fprintf(stderr,"Unrecognized MAT file version %s",argv[2]);
                     exit(EXIT_FAILURE);
