@@ -1550,24 +1550,28 @@ WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
 static int
 ReadNextCell( mat_t *mat, matvar_t *matvar )
 {
-    int ncells, bytesread = 0, i, err;
+    int ncells, bytesread = 0, i;
     matvar_t **cells = NULL;
+
+    ncells = 1;
+    for ( i = 0; i < matvar->rank; i++ )
+        ncells *= matvar->dims[i];
+    matvar->data_size = sizeof(matvar_t *);
+    matvar->nbytes    = ncells*matvar->data_size;
+    matvar->data      = malloc(matvar->nbytes);
+    if ( !matvar->data ) {
+        Mat_Critical("Couldn't allocate memory for %s->data",matvar->name);
+        return bytesread;
+    }
+    cells = (matvar_t **)matvar->data;
 
     if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
         mat_uint32_t uncomp_buf[16] = {0,};
         int      nbytes;
         mat_uint32_t array_flags;
+        int err;
 
-        ncells = 1;
-        for ( i = 0; i < matvar->rank; i++ )
-            ncells *= matvar->dims[i];
-        matvar->data_size = sizeof(matvar_t *);
-        matvar->nbytes    = ncells*matvar->data_size;
-        matvar->data = malloc(matvar->nbytes);
-        if ( !matvar->data )
-            return bytesread;
-        cells = matvar->data;
         for ( i = 0; i < ncells; i++ ) {
             cells[i] = Mat_VarCalloc();
             if ( NULL == cells[i] ) {
@@ -1690,22 +1694,10 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 #endif
 
     } else {
-        int ncells;
         mat_uint32_t buf[16];
         int      nbytes,nBytes;
         mat_uint32_t array_flags;
 
-        ncells = 1;
-        for ( i = 0; i < matvar->rank; i++ )
-            ncells *= matvar->dims[i];
-        matvar->data_size = sizeof(matvar_t *);
-        matvar->nbytes    = ncells*matvar->data_size;
-        matvar->data = malloc(matvar->nbytes);
-        if ( !matvar->data ) {
-            Mat_Critical("Couldn't allocate memory for %s->data",matvar->name);
-            return bytesread;
-        }
-        cells = (matvar_t **)matvar->data;
         for ( i = 0; i < ncells; i++ ) {
             int cell_bytes_read,name_len;
             cells[i] = Mat_VarCalloc();
@@ -1831,18 +1823,19 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 static int
 ReadNextStructField( mat_t *mat, matvar_t *matvar )
 {
-    int fieldname_size,nfields, bytesread = 0, i, err;
+    int fieldname_size,nfields, bytesread = 0, nmemb = 1, i;
     matvar_t **fields = NULL;
+
+    for ( i = 0; i < matvar->rank; i++ )
+        nmemb *= matvar->dims[i];
 
     if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
         char    *ptr;
         mat_uint32_t uncomp_buf[16] = {0,};
-        int      nbytes, j, nmemb = 1;
+        int      nbytes, j;
         mat_uint32_t array_flags;
-
-        for ( i = 0; i < matvar->rank; i++ )
-            nmemb *= matvar->dims[i];
+        int err;
 
         /* Inflate Field name length */
         bytesread += InflateFieldNameLength(mat,matvar,uncomp_buf);
@@ -1991,13 +1984,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         Mat_Critical("Not compiled with zlib support");
 #endif
     } else {
-        int fieldname_size,nfields;
         mat_uint32_t buf[16] = {0,};
-        int      nbytes,nBytes,nmemb=1,j;
+        int      nbytes,nBytes,j;
         mat_uint32_t array_flags;
-
-        for ( i = 0; i < matvar->rank; i++ )
-            nmemb *= matvar->dims[i];
 
         bytesread+=fread(buf,4,2,mat->fp);
         if ( mat->byteswap ) {
