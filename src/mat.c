@@ -1562,18 +1562,25 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 matvar_t *
 Mat_VarReadNextInfo( mat_t *mat )
 {
+    matvar_t *matvar = NULL;
     if( mat == NULL )
         return NULL;
-    else if ( mat->version == MAT_FT_MAT5 )
-        return Mat_VarReadNextInfo5(mat);
-#if defined(MAT73) && MAT73
-    else if ( mat->version == MAT_FT_MAT73 )
-        return Mat_VarReadNextInfo73(mat);
-#endif
-    else
-        return Mat_VarReadNextInfo4(mat);
 
-    return NULL;
+    switch ( mat->version ) {
+        case MAT_FT_MAT5:
+            matvar = Mat_VarReadNextInfo5(mat);
+            break;
+        case MAT_FT_MAT73:
+#if defined(MAT73) && MAT73
+            matvar = Mat_VarReadNextInfo73(mat);
+#endif
+            break;
+        case MAT_FT_MAT4:
+            matvar = Mat_VarReadNextInfo4(mat);
+            break;
+    }
+
+    return matvar;
 }
 
 /** @brief Reads the information of a variable with the given name from a MAT file
