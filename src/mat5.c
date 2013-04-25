@@ -168,7 +168,7 @@ GetStructFieldBufSize(matvar_t *matvar)
 static size_t
 GetCellArrayFieldBufSize(matvar_t *matvar)
 {
-    size_t nBytes = 0, len, data_bytes;
+    size_t nBytes = 0, data_bytes;
     size_t tag_size = 8, array_flags_size = 8;
     int    nmemb = 1, i;
 
@@ -182,7 +182,7 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
     nBytes += tag_size;
 
     /* Add rank and dimensions, padded to an 8 byte block */
-    for ( i = 0, len = 0; i < matvar->rank; i++ )
+    for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
     if ( matvar->rank % 2 )
         nBytes += tag_size + matvar->rank*4 + 4;
