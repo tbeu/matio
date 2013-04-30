@@ -176,8 +176,8 @@ Mat_Open(const char *matname,int mode)
 {
     FILE *fp = NULL;
     mat_int16_t tmp, tmp2;
-    int     err;
     mat_t *mat = NULL;
+    size_t bytesread = 0;
 
     if ( (mode & 0x00000001) == MAT_ACC_RDONLY ) {
         fp = fopen( matname, "rb" );
@@ -207,11 +207,16 @@ Mat_Open(const char *matname,int mode)
     mat->filename      = NULL;
     mat->byteswap      = 0;
 
-    err = fread(mat->header,1,116,fp);
+    bytesread += fread(mat->header,1,116,fp);
     mat->header[116] = '\0';
-    err = fread(mat->subsys_offset,1,8,fp);
-    err = fread(&tmp2,2,1,fp);
-    fread(&tmp,1,2,fp);
+    bytesread += fread(mat->subsys_offset,1,8,fp);
+    bytesread += 2*fread(&tmp2,2,1,fp);
+    bytesread += fread(&tmp,1,2,fp);
+    if ( 128 != bytesread ) {
+        Mat_Critical("Could not read MAT file header");
+        Mat_Close(mat);
+        return NULL;
+    }
 
     mat->byteswap = -1;
     if (tmp == 0x4d49)
