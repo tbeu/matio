@@ -36,6 +36,10 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#if defined(_WIN64) || defined(_WIN32)
+#   include <io.h>
+#   define mktemp _mktemp
+#endif
 #include "matio_private.h"
 #include "mat5.h"
 #include "mat4.h"
