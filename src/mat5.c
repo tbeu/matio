@@ -5932,9 +5932,9 @@ Mat_VarReadNextInfo5( mat_t *mat )
         Mat_int32Swap(&nBytes);
     }
     switch ( data_type ) {
-#if defined(HAVE_ZLIB)
         case MAT_T_COMPRESSED:
         {
+#if defined(HAVE_ZLIB)
             mat_uint32_t uncomp_buf[16] = {0,};
             int      nbytes;
             long     bytesread = 0;
@@ -6056,8 +6056,13 @@ Mat_VarReadNextInfo5( mat_t *mat )
             matvar->internal->datapos = ftell(mat->fp);
             fseek(mat->fp,nBytes+8+fpos,SEEK_SET);
             break;
-        }
+#else
+            Mat_Critical("Compressed variable found in \"%s\", but matio was "
+                         "built without zlib support",mat->filename);
+            fseek(mat->fp,nBytes+8+fpos,SEEK_SET);
+            return NULL;
 #endif
+        }
         case MAT_T_MATRIX:
         {
             int      nbytes;
@@ -6153,7 +6158,8 @@ Mat_VarReadNextInfo5( mat_t *mat )
             break;
         }
         default:
-            Mat_Message("%d is not valid (MAT_T_MATRIX or MAT_T_COMPRESSED", data_type);
+            Mat_Critical("%d is not valid (MAT_T_MATRIX or MAT_T_COMPRESSED)",
+                         data_type);
             return NULL;
     }
 
