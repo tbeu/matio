@@ -5918,7 +5918,6 @@ Mat_VarReadNextInfo5( mat_t *mat )
     long  fpos;
     matvar_t *matvar = NULL;
     mat_uint32_t array_flags;
-    long     bytesread = 0;
 
     if( mat == NULL )
         return NULL;
@@ -5938,6 +5937,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
         {
             mat_uint32_t uncomp_buf[16] = {0,};
             int      nbytes;
+            long     bytesread = 0;
 
             matvar               = Mat_VarCalloc();
             matvar->name         = NULL;
