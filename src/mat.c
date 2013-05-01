@@ -294,6 +294,8 @@ Mat_Open(const char *matname,int mode)
         mat->fp = NULL;
         Mat_Close(mat);
         mat = NULL;
+        Mat_Critical("No HDF5 support which is required to read the v7.3 "
+                     "MAT file \"%s\"",matname);
 #endif
     }
 
