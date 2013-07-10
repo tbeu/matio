@@ -210,32 +210,35 @@ Mat_Open(const char *matname,int mode)
     mat->subsys_offset = calloc(8,1);
     mat->filename      = NULL;
     mat->byteswap      = 0;
+    mat->version       = 0;
 
     bytesread += fread(mat->header,1,116,fp);
     mat->header[116] = '\0';
     bytesread += fread(mat->subsys_offset,1,8,fp);
     bytesread += 2*fread(&tmp2,2,1,fp);
     bytesread += fread(&tmp,1,2,fp);
-    if ( 128 != bytesread ) {
-        Mat_Critical("Could not read MAT file header");
-        Mat_Close(mat);
-        return NULL;
+
+    if ( 128 == bytesread ) {
+        /* v5 and v7.3 files have at least 128 byte header */
+        mat->byteswap = -1;
+        if (tmp == 0x4d49)
+            mat->byteswap = 0;
+        else if (tmp == 0x494d) {
+            mat->byteswap = 1;
+            Mat_int16Swap(&tmp2);
+        }
+
+        mat->version = (int)tmp2;
+        if ( (mat->version == 0x0100 || mat->version == 0x0200) &&
+             -1 != mat->byteswap ) {
+            mat->bof = ftell(mat->fp);
+            mat->next_index    = 0;
+        } else {
+            mat->version = 0;
+        }
     }
 
-    mat->byteswap = -1;
-    if (tmp == 0x4d49)
-        mat->byteswap = 0;
-    else if (tmp == 0x494d) {
-        mat->byteswap = 1;
-        Mat_int16Swap(&tmp2);
-    }
-
-    mat->version = (int)tmp2;
-    if ( (mat->version == 0x0100 || mat->version == 0x0200) &&
-         -1 != mat->byteswap ) {
-        mat->bof = ftell(mat->fp);
-        mat->next_index    = 0;
-    } else {
+    if ( 0 == mat->version ) {
         /* Maybe a V4 MAT file */
         matvar_t *var;
         if ( NULL != mat->header )
