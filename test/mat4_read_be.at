@@ -1,4 +1,4 @@
-# Copyright (C) 2011   Christopher C. Hulbert
+# Copyright (C) 2011-2013   Christopher C. Hulbert
 #
 # All rights reserved.
 #
@@ -76,6 +76,21 @@ abcdefghijklmnopqrstuvwxyz
 ABCDEFGHIJKLMNOPQRSTUVWXYZ
 1234567890!@#$%^&*()-_=+`~
 @<:@{@:>@}\|;:'",<.>/?          @&t@
+}
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read small v4 file])
+AT_KEYWORDS([mat4_read_be])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/small_v4_be.mat x], [0],
+[      Name: x
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.14159 @&t@
 }
 ], [ignore])
 AT_CLEANUP
