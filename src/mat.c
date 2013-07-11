@@ -257,15 +257,9 @@ Mat_Open(const char *matname,int mode)
 
         Mat_Rewind(mat);
         var = Mat_VarReadNextInfo4(mat);
-        /* Check sanity of variable information */
-        if ( NULL == var || NULL == var->name ||
-            (var->class_type != MAT_C_DOUBLE  &&
-             var->class_type != MAT_C_SPARSE &&
-             var->class_type != MAT_C_CHAR) ) {
+        if ( NULL == var ) {
             /* Does not seem to be a valid V4 file */
             Mat_Critical("%s does not seem to be a valid MAT file",matname);
-            if ( NULL != var )
-                Mat_VarFree(var);
             Mat_Close(mat);
             mat = NULL;
         } else {

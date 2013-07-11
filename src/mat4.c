@@ -311,6 +311,15 @@ Mat_VarReadNextInfo4(mat_t *mat)
             /* IEEE big endian */
             mat->byteswap = (endian.c[0] != 1);
             break;
+        default:
+            /* VAX, Cray, or bogus */
+            Mat_VarFree(matvar);
+            return NULL;
+    }
+    /* O must be zero */
+    if ( 0 != O ) {
+        Mat_VarFree(matvar);
+        return NULL;
     }
     /* Convert the V4 data type */
     switch ( data_type ) {
@@ -333,8 +342,8 @@ Mat_VarReadNextInfo4(mat_t *mat)
             matvar->data_type = MAT_T_UINT8;
             break;
         default:
-            matvar->data_type = MAT_T_UNKNOWN;
-            break;
+            Mat_VarFree(matvar);
+            return NULL;
     }
     switch ( class_type ) {
         case 0:
@@ -346,10 +355,16 @@ Mat_VarReadNextInfo4(mat_t *mat)
         case 2:
             matvar->class_type = MAT_C_SPARSE;
             break;
+        default:
+            Mat_VarFree(matvar);
+            return NULL;
     }
     matvar->rank = 2;
-    /* FIXME: Check allocation */
     matvar->dims = malloc(2*sizeof(*matvar->dims));
+    if ( NULL == matvar->dims ) {
+        Mat_VarFree(matvar);
+        return NULL;
+    }
     err = fread(&tmp,sizeof(int),1,mat->fp);
     if ( mat->byteswap )
         Mat_int32Swap(&tmp);
@@ -379,8 +394,16 @@ Mat_VarReadNextInfo4(mat_t *mat)
     }
     if ( mat->byteswap )
         Mat_int32Swap(&tmp);
-    /* FIXME: Check allocation */
+    /* Check that the length of the variable name is at least 1 */
+    if ( tmp < 1 ) {
+        Mat_VarFree(matvar);
+        return NULL;
+    }
     matvar->name = malloc(tmp);
+    if ( NULL == matvar->name ) {
+        Mat_VarFree(matvar);
+        return NULL;
+    }
     err = fread(matvar->name,1,tmp,mat->fp);
     if ( !err ) {
         Mat_VarFree(matvar);
