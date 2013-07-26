@@ -3949,8 +3949,6 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->nbytes = 0;
                 break;
             }
-            for ( i = 0; i < matvar->rank; i++ )
-                len *= matvar->dims[i];
             matvar->data_size = sizeof(char);
             /* FIXME: */
             matvar->data_type = MAT_T_UINT8;
