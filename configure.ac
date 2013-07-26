@@ -317,14 +317,9 @@ AC_ARG_ENABLE(mat73,
     AS_HELP_STRING([--enable-mat73=yes],[Enable MAT v7.3 file support]),
 mat73=$enableval,mat73=yes)
 AC_MSG_CHECKING(enable enable MAT v7.3 file support)
-if test "x$mat73" = "xno"
+if test "x$mat73" = "xno" -o "x$ac_have_hdf5" = "xno" -o "x$matio_hdf5_is_v18" = "xno"
 then
     AC_MSG_RESULT([no])
-    mat73=no
-elif test "x$ac_have_hdf5" = "xno"
-then
-    AC_MSG_RESULT([no])
-    AC_DEFINE_UNQUOTED([MAT73],[0],[MAT v7.3 file support])
     mat73=no
 else
     AC_MSG_RESULT([yes])
