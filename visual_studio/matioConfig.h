@@ -167,6 +167,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Define to 1 if you have the ctype.h header file. */
+#define HAVE_CTYPE_H 1
+
 /* Version number of package */
 #define VERSION "1.5.1"
 
