@@ -35,6 +35,11 @@
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif
+#ifdef _MSC_VER
+#   define SIZE_T_FMTSTR "Iu"
+#else
+#   define SIZE_T_FMTSTR "zu"
+#endif
 
 static const char *optstring = "df:hvHV";
 static struct option options[] = {
@@ -536,11 +541,11 @@ print_whos(matvar_t *matvar)
     printf("%-20s", matvar->name);
     if ( matvar->rank > 0 ) {
         int cnt = 0;
-        printf("%8zu", matvar->dims[0]);
+        printf("%8" SIZE_T_FMTSTR, matvar->dims[0]);
         nbytes = matvar->dims[0];
         for ( i = 1; i < matvar->rank; i++ ) {
             if ( ceil(log10(matvar->dims[i]))+1 < 32 )
-                cnt += sprintf(size+cnt,"x%zu", matvar->dims[i]);
+                cnt += sprintf(size+cnt,"x%" SIZE_T_FMTSTR, matvar->dims[i]);
             nbytes *= matvar->dims[i];
         }
         printf("%-10s",size);
