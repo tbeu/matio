@@ -64,7 +64,9 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/datasets/matio_test_cases_uncompressed_be.mat \
                  $(srcdir)/datasets/matio_test_cases_uncompressed_le.mat \
                  $(srcdir)/datasets/matio_test_cases_v4_be.mat \
-                 $(srcdir)/datasets/matio_test_cases_v4_le.mat
+                 $(srcdir)/datasets/matio_test_cases_v4_le.mat \
+                 $(srcdir)/datasets/small_v4_be.mat \
+                 $(srcdir)/datasets/small_v4_le.mat
 if MAT73
 MAT73 = 1
 else
