@@ -39,7 +39,6 @@
 
 #if HAVE_HDF5
 
-#include "hdf5.h"
 #include "mat73.h"
 
 static const char *Mat_class_names[] = {

@@ -28,7 +28,7 @@
 #ifndef MAT73_H
 #define MAT73_H
 
-#include "hdf5.h"
+#include <hdf5.h>
 
 #ifdef __cplusplus
 #   define EXTERN extern "C"
