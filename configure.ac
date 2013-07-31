@@ -28,7 +28,7 @@ dnl CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 dnl ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 dnl POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([MATIO],[1.5.1],[chulbe2lsu@users.sourceforge.net],[],
+AC_INIT([MATIO],[1.5.2],[chulbe2lsu@users.sourceforge.net],[],
         [http://sourceforge.net/projects/matio])
 AC_CONFIG_SRCDIR([src/matio.h])
 AC_CONFIG_AUX_DIR([config])
@@ -41,9 +41,9 @@ AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([MATIO_PLATFORM],"${host}",[Platform])
 AC_DEFINE_UNQUOTED([MATIO_MAJOR_VERSION],1,[Matio major version number])
 AC_DEFINE_UNQUOTED([MATIO_MINOR_VERSION],5,[Matio minor version number])
-AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],1,[Matio release level number])
+AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],2,[Matio release level number])
 AC_DEFINE_UNQUOTED([MATIO_VERSION],151,[Matio version number])
-PACKAGE_RELEASE_DATE="10 March 2013"
+PACKAGE_RELEASE_DATE="31 July 2013"
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
 AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])

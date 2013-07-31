@@ -1,3 +1,14 @@
+Changes in 1.5.2 (31 July 2013)
+* Added support for linear data read for v4 and HDF5 MAT files
+* Fixed bug reading slices of variables in matdump
+* Fix feof calls so they compile on platforms that dereference the argument in
+  a macro
+* More robust checking that file is MAT file and eliminates some segmentation
+  faults
+* Various fixes for unused variables, unnecessary initializations, etc. that
+  cause compilers to issue diagnostices
+* Several other fixes
+
 Changes in 1.5.1 (10 March 2013)
 * Fix bug writing compressed HDF5 files
 * Fix bug reading cell array elements written with a non-empty variable name

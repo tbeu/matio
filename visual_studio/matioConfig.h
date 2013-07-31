@@ -120,7 +120,7 @@
 #define PACKAGE_NAME "MATIO"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "MATIO 1.5.1"
+#define PACKAGE_STRING "MATIO 1.5.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "matio"
@@ -129,7 +129,7 @@
 #define PACKAGE_URL "http://sourceforge.net/projects/matio"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.5.1"
+#define PACKAGE_VERSION "1.5.2"
 
 /* The size of `char', as computed by sizeof. */
 #define SIZEOF_CHAR 1
