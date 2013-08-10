@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2012   Christopher C. Hulbert
+ * Copyright (C) 2005-2013   Christopher C. Hulbert
  *
  * All rights reserved.
  *
@@ -31,7 +31,7 @@
 #include <string.h>
 #include <math.h>
 #include <getopt.h>
-#include "matio_private.h"
+#include "matio.h"
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif
@@ -849,8 +849,8 @@ main (int argc, char *argv[])
                 exit(EXIT_SUCCESS);
             case 'V':
                 printf("%s %s\nWritten by Christopher Hulbert\n\n"
-                       "Copyright(C) 2006-2012 Christopher C. Hulbert\n",
-                       prog_name,PACKAGE_VERSION);
+                       "Copyright(C) 2006-2013 Christopher C. Hulbert\n",
+                       prog_name,MATIO_VERSION_STR);
                 exit(EXIT_SUCCESS);
             default:
                 printf("%c not a valid option\n", c);

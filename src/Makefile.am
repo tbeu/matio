@@ -45,7 +45,7 @@ noinst_HEADERS         = matio_private.h mat4.h mat5.h mat73.h
 lib_LTLIBRARIES        = libmatio.la
 libmatio_la_SOURCES    = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
                          mat5.c mat4.c mat.c matvar_cell.c matvar_struct.c
-libmatio_la_LIBADD     = $(ZLIB_LIBS)
+libmatio_la_LIBADD     = $(HDF5_LIBS) $(ZLIB_LIBS)
 
 if MAT73
 libmatio_la_SOURCES+= mat73.c
