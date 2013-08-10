@@ -3,7 +3,7 @@
  * @ingroup MAT
  */
 /*
- * Copyright (C) 2005-2011   Christopher C. Hulbert
+ * Copyright (C) 2005-2013   Christopher C. Hulbert
  *
  * All rights reserved.
  *
@@ -2442,24 +2442,18 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
         }
         case MAT_C_STRUCT:
         {
-            char **fieldnames, *padzero;
+            char  *padzero;
             int    fieldname_size, nfields;
             size_t maxlen = 0;
             matvar_t **fields = (matvar_t **)matvar->data;
             unsigned fieldname;
 
-            if ( nmemb && matvar->data_size )
-                nfields = matvar->nbytes / (nmemb*matvar->data_size);
-            else if ( matvar->data_size )
-                nfields = matvar->nbytes / matvar->data_size;
-            else
-                break;
+            nfields = matvar->internal->num_fields;
 
-            fieldnames = malloc(nfields*sizeof(char *));
             for ( i = 0; i < nfields; i++ ) {
-                fieldnames[i] = fields[i]->name;
-                if ( strlen(fieldnames[i]) > maxlen )
-                    maxlen = strlen(fieldnames[i]);
+                size_t len = strlen(matvar->internal->fieldnames[i]);
+                if ( len > maxlen )
+                    maxlen = len;
             }
             maxlen++;
             fieldname_size = maxlen;
@@ -2480,10 +2474,10 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             fwrite(&nBytes,4,1,mat->fp);
             padzero = calloc(fieldname_size,1);
             for ( i = 0; i < nfields; i++ ) {
-                fwrite(fieldnames[i],1,strlen(fieldnames[i]),mat->fp);
-                fwrite(padzero,1,fieldname_size-strlen(fieldnames[i]),mat->fp);
+                size_t len = strlen(matvar->internal->fieldnames[i]);
+                fwrite(matvar->internal->fieldnames[i],1,len,mat->fp);
+                fwrite(padzero,1,fieldname_size-len,mat->fp);
             }
-            free(fieldnames);
             free(padzero);
             for ( i = 0; i < nmemb*nfields; i++ )
                 WriteStructField(mat,fields[i]);
@@ -2674,7 +2668,6 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
         }
         case MAT_C_STRUCT:
         {
-            char     **fieldnames;
             unsigned char *padzero;
             int        fieldname_size, nfields;
             size_t     maxlen = 0;
@@ -2699,16 +2692,13 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
                     sizeof(*comp_buf)-z->avail_out,mat->fp);
                 break;
             }
-            if ( nmemb )
-                nfields = matvar->nbytes / (nmemb*matvar->data_size);
-            else /* matvar->data_size is checked above */
-                nfields = matvar->nbytes / matvar->data_size;
 
-            fieldnames = malloc(nfields*sizeof(char *));
+            nfields = matvar->internal->num_fields;
+
             for ( i = 0; i < nfields; i++ ) {
-                fieldnames[i] = fields[i]->name;
-                if ( strlen(fieldnames[i]) > maxlen )
-                    maxlen = strlen(fieldnames[i]);
+                size_t len = strlen(matvar->internal->fieldnames[i]);
+                if ( len > maxlen )
+                    maxlen = len;
             }
             maxlen++;
             fieldname_size = maxlen;
@@ -2729,7 +2719,8 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
                     buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
             for ( i = 0; i < nfields; i++ ) {
                 memset(padzero,'\0',fieldname_size);
-                memcpy(padzero,fieldnames[i],strlen(fieldnames[i]));
+                memcpy(padzero,matvar->internal->fieldnames[i],
+                       strlen(matvar->internal->fieldnames[i]));
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->next_in   = ZLIB_BYTE_PTR(padzero);
                 z->avail_out = buf_size*sizeof(*comp_buf);
@@ -2738,7 +2729,6 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 byteswritten += fwrite(comp_buf,1,
                         buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
             }
-            free(fieldnames);
             free(padzero);
             for ( i = 0; i < nmemb*nfields; i++ )
                 byteswritten +=
