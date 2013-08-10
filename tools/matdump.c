@@ -68,7 +68,7 @@ static const char *helpstr[] = {
 "mat_file          name of the MAT file to dump",
 "var1 var2 ...     If specified, dumps only listed variables",
 "",
-"Report bugs to <cch@isl-inc.com>.",
+"Report bugs to <chulbe2lsu@sourceforge.net>.",
 NULL
 };
 
