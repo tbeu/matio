@@ -44,6 +44,7 @@ AC_DEFINE_UNQUOTED([MATIO_MINOR_VERSION],5,[Matio minor version number])
 AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],2,[Matio release level number])
 AC_DEFINE_UNQUOTED([MATIO_VERSION],151,[Matio version number])
 PACKAGE_RELEASE_DATE="31 July 2013"
+AC_DEFINE_UNQUOTED([MATIO_VERSION_STR],"1.5.2",[Matio version number])
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
 AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])

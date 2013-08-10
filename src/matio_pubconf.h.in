@@ -40,6 +40,9 @@
 /* Matio version number */
 #undef MATIO_VERSION
 
+/* Matio version string */
+#undef MATIO_VERSION_STR
+
 /* Default file format */
 #undef MAT_FT_DEFAULT
 
