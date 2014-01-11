@@ -147,6 +147,18 @@ GetStructFieldBufSize(matvar_t *matvar)
 
         break;
     }
+    case MAT_C_CHAR:
+        if ( MAT_T_UINT8 == matvar->data_type ||
+             MAT_T_INT8 == matvar->data_type )
+            data_bytes = nmemb*Mat_SizeOf(MAT_T_UINT16);
+        else
+            data_bytes = nmemb*Mat_SizeOf(matvar->data_type);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+        if ( matvar->isComplex )
+            nBytes += tag_size + data_bytes;
+        break;
     default:
         data_bytes = nmemb*Mat_SizeOf(matvar->data_type);
         if ( data_bytes % 8 )
@@ -253,6 +265,18 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
             nBytes += tag_size + data_bytes;
         break;
     }
+    case MAT_C_CHAR:
+        if ( MAT_T_UINT8 == matvar->data_type ||
+            MAT_T_INT8 == matvar->data_type )
+            data_bytes = nmemb*Mat_SizeOf(MAT_T_UINT16);
+        else
+            data_bytes = nmemb*Mat_SizeOf(matvar->data_type);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+        if ( matvar->isComplex )
+            nBytes += tag_size + data_bytes;
+        break;
     default:
         data_bytes = nmemb*Mat_SizeOf(matvar->data_type);
         if ( data_bytes % 8 )
@@ -413,6 +437,18 @@ GetMatrixMaxBufSize(matvar_t *matvar)
 
         break;
     }
+    case MAT_C_CHAR:
+        if ( MAT_T_UINT8 == matvar->data_type ||
+            MAT_T_INT8 == matvar->data_type )
+            data_bytes = nmemb*Mat_SizeOf(MAT_T_UINT16);
+        else
+            data_bytes = nmemb*Mat_SizeOf(matvar->data_type);
+        if ( data_bytes % 8 )
+            data_bytes += (8 - (data_bytes % 8));
+        nBytes += tag_size + data_bytes;
+        if ( matvar->isComplex )
+            nBytes += tag_size + data_bytes;
+        break;
     default:
         data_bytes = nmemb*Mat_SizeOf(matvar->data_type);
         if ( data_bytes % 8 )
