@@ -592,12 +592,12 @@ print_default_number(enum matio_types type, void *data)
         case MAT_T_SINGLE:
             printf("%g",*(float*)data);
             break;
-#ifdef HAVE_MAT_INT64_T
+#ifdef _mat_int64_t
         case MAT_T_INT64:
             printf("%lld",*(mat_int64_t*)data);
             break;
 #endif
-#ifdef HAVE_MAT_UINT64_T
+#ifdef _mat_uint64_t
         case MAT_T_UINT64:
             printf("%llu",*(mat_uint64_t*)data);
             break;
