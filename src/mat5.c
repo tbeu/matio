@@ -761,6 +761,21 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             }
             break;
         }
+        case MAT_T_UNKNOWN:
+        {
+            /* Sometimes empty char data will have MAT_T_UNKNOWN, so just write
+             * a data tag
+             */
+            data_size = 2;
+            data_tag[0]  = MAT_T_UINT16;
+            data_tag[1]  = N*data_size;
+            z->next_in   = ZLIB_BYTE_PTR(data_tag);
+            z->avail_in  = 8;
+            z->next_out  = buf;
+            z->avail_out = buf_size;
+            err = deflate(z,Z_NO_FLUSH);
+            byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
+        }
         default:
             break;
     }
