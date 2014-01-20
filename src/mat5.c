@@ -2059,13 +2059,18 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         nfields = nfields / fieldname_size;
         matvar->data_size = sizeof(matvar_t *);
 
-        matvar->internal->num_fields = nfields;
-        matvar->internal->fieldnames =
-            calloc(nfields,sizeof(*matvar->internal->fieldnames));
-        for ( i = 0; i < nfields; i++ ) {
-            matvar->internal->fieldnames[i] = malloc(fieldname_size);
-            bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,mat->fp);
-            matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+        if ( nfields ) {
+            matvar->internal->num_fields = nfields;
+            matvar->internal->fieldnames =
+                calloc(nfields,sizeof(*matvar->internal->fieldnames));
+            for ( i = 0; i < nfields; i++ ) {
+                matvar->internal->fieldnames[i] = malloc(fieldname_size);
+                bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,mat->fp);
+                matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+            }
+        } else {
+            matvar->internal->num_fields = 0;
+            matvar->internal->fieldnames = NULL;
         }
 
         if ( (nfields*fieldname_size) % 8 ) {
