@@ -4064,7 +4064,7 @@ Read5(mat_t *mat, matvar_t *matvar)
         }
         case MAT_C_SPARSE:
         {
-            int N;
+            int N = 0;
             mat_sparse_t *data;
 
             matvar->data_size = sizeof(mat_sparse_t);
