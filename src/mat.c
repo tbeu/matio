@@ -216,6 +216,7 @@ Mat_Open(const char *matname,int mode)
     mat->filename      = NULL;
     mat->byteswap      = 0;
     mat->version       = 0;
+    mat->refs_id       = -1;
 
     bytesread += fread(mat->header,1,116,fp);
     mat->header[116] = '\0';
@@ -259,6 +260,7 @@ Mat_Open(const char *matname,int mode)
         mat->mode          = mode;
         mat->bof           = 0;
         mat->next_index    = 0;
+        mat->refs_id       = -1;
 
         Mat_Rewind(mat);
         var = Mat_VarReadNextInfo4(mat);
