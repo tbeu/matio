@@ -188,19 +188,19 @@ Mat_Open(const char *matname,int mode)
     mat_t *mat = NULL;
     size_t bytesread = 0;
 
-    if ( (mode & 0x00000001) == MAT_ACC_RDONLY ) {
+    if ( (mode & 0x01) == MAT_ACC_RDONLY ) {
         fp = fopen( matname, "rb" );
         if ( !fp )
             return NULL;
-    } else if ( (mode & 0x00000001) == MAT_ACC_RDWR ) {
+    } else if ( (mode & 0x01) == MAT_ACC_RDWR ) {
         fp = fopen( matname, "r+b" );
         if ( !fp ) {
             mat = Mat_CreateVer(matname,NULL,mode&0xfffffffe);
             return mat;
         }
     } else {
-        mat = Mat_CreateVer(matname,NULL,mode&0xfffffffe);
-        return mat;
+        Mat_Critical("Invalid file open mode");
+        return NULL;
     }
 
     mat = malloc(sizeof(*mat));
@@ -285,9 +285,9 @@ Mat_Open(const char *matname,int mode)
 
         mat->fp = malloc(sizeof(hid_t));
 
-        if ( (mode & 0x00ff) == MAT_ACC_RDONLY )
+        if ( (mode & 0x01) == MAT_ACC_RDONLY )
             *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDONLY,H5P_DEFAULT);
-        else if ( (mode & 0x00ff) == MAT_ACC_RDWR )
+        else if ( (mode & 0x01) == MAT_ACC_RDWR )
             *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDWR,H5P_DEFAULT);
 
         if ( -1 < *(hid_t*)mat->fp ) {
