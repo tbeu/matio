@@ -779,16 +779,18 @@ Mat_VarDelete(mat_t *mat, const char *name)
         fclose(mat->fp);
 
         if ( (err = remove(new_name)) == -1 ) {
+            Mat_Close(tmp);
             Mat_Critical("remove of %s failed",new_name);
         } else if ( !Mat_Close(tmp) && (err=rename(tmp_name,new_name))==-1) {
             Mat_Critical("rename failed oldname=%s,newname=%s",tmp_name,
                 new_name);
         } else {
             tmp = Mat_Open(new_name,mat->mode);
-            if ( NULL != tmp )
+            if ( NULL != tmp ) {
                 memcpy(mat,tmp,sizeof(mat_t));
+                Mat_Close(tmp);
+            }
         }
-        free(tmp);
         free(new_name);
     }
     free(temp);
