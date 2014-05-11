@@ -39,4 +39,5 @@ AM_LDFLAGS = $(LT_LDFLAGS) $(FCLDFLAGS)
 bin_PROGRAMS = matdump
 
 matdump_SOURCES = matdump.c
-matdump_LDADD   = $(top_builddir)/src/libmatio.la $(GETOPT_LIBS)
+matdump_LDADD   = $(top_builddir)/src/libmatio.la $(HDF5_LIBS) $(ZLIB_LIBS) \
+                  $(GETOPT_LIBS)
