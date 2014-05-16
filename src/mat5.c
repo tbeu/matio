@@ -4315,6 +4315,12 @@ Read5(mat_t *mat, matvar_t *matvar)
                         Mat_int32Swap(&N);
                 }
             }
+            if ( matvar->isLogical && packed_type == MAT_T_DOUBLE ) {
+                /* For some reason, MAT says the data type is a double,
+                 * but it appears to be written as 8-bit integer.
+                 */
+                packed_type = MAT_T_UINT8;
+            }
 #if defined(EXTENDED_SPARSE)
             matvar->data_type = packed_type;
 #else
