@@ -70,16 +70,16 @@
 /* Have MAT int8 */
 #undef HAVE_MAT_INT8_T
 
-/* Have MAT int16 */
+/* Have MAT uint16 */
 #undef HAVE_MAT_UINT16_T
 
-/* Have MAT int32 */
+/* Have MAT uint32 */
 #undef HAVE_MAT_UINT32_T
 
-/* Have MAT int64 */
+/* Have MAT uint64 */
 #undef HAVE_MAT_UINT64_T
 
-/* Have MAT int8 */
+/* Have MAT uint8 */
 #undef HAVE_MAT_UINT8_T
 
 /* Define to 1 if you have the <memory.h> header file. */

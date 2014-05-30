@@ -51,16 +51,16 @@
 /* int8 type */
 #define _mat_int8_t signed char
 
-/* int16 type */
+/* uint16 type */
 #define _mat_uint16_t unsigned short
 
-/* int32 type */
+/* uint32 type */
 #define _mat_uint32_t unsigned
 
-/* int64 type */
+/* uint64 type */
 #define _mat_uint64_t unsigned long long
 
-/* int8 type */
+/* uint8 type */
 #define _mat_uint8_t unsigned char
 
 #if MATIO_HAVE_INTTYPES_H

@@ -45,16 +45,16 @@
 /* Have MAT int8 */
 #define HAVE_MAT_INT8_T 1
 
-/* Have MAT int16 */
+/* Have MAT uint16 */
 #define HAVE_MAT_UINT16_T 1
 
-/* Have MAT int32 */
+/* Have MAT uint32 */
 #define HAVE_MAT_UINT32_T 1
 
-/* Have MAT int64 */
+/* Have MAT uint64 */
 #define HAVE_MAT_UINT64_T 1
 
-/* Have MAT int8 */
+/* Have MAT uint8 */
 #define HAVE_MAT_UINT8_T 1
 
 /* Define to 1 if you have the <memory.h> header file. */

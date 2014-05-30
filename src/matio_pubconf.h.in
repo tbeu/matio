@@ -64,16 +64,16 @@
 /* int8 type */
 #undef _mat_int8_t
 
-/* int16 type */
+/* uint16 type */
 #undef _mat_uint16_t
 
-/* int32 type */
+/* uint32 type */
 #undef _mat_uint32_t
 
-/* int64 type */
+/* uint64 type */
 #undef _mat_uint64_t
 
-/* int8 type */
+/* uint8 type */
 #undef _mat_uint8_t
 
 #if MATIO_HAVE_INTTYPES_H
