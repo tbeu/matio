@@ -1673,9 +1673,9 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 /* empty cell */
                 continue;
             } else if ( uncomp_buf[0] != MAT_T_MATRIX ) {
-                Mat_Critical("cells[%d], Uncompressed type not MAT_T_MATRIX",i);
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
+                Mat_Critical("cells[%d], Uncompressed type not MAT_T_MATRIX",i);
                 break;
             }
             cells[i]->compression = 1;
@@ -1818,9 +1818,9 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 /* empty cell */
                 continue;
             } else if ( buf[0] != MAT_T_MATRIX ) {
-                Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
+                Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
                 break;
             }
             cells[i]->compression = 0;
@@ -2001,9 +2001,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
             nbytes = uncomp_buf[1];
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
-                Mat_Critical("fields[%d], Uncompressed type not MAT_T_MATRIX",i);
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
+                Mat_Critical("fields[%d], Uncompressed type not MAT_T_MATRIX",i);
                 continue;
             } else if ( nbytes == 0 ) {
                 fields[i]->rank = 0;
@@ -2163,9 +2163,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
             nBytes = buf[1];
             if ( buf[0] != MAT_T_MATRIX ) {
-                Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
+                Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
                 return bytesread;
             } else if ( nBytes == 0 ) {
                 fields[i]->rank = 0;
@@ -6252,10 +6252,10 @@ Mat_VarReadNextInfo5( mat_t *mat )
             }
             nbytes = uncomp_buf[1];
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
-                Mat_Critical("Uncompressed type not MAT_T_MATRIX");
                 fseek(mat->fp,nBytes-bytesread,SEEK_CUR);
                 Mat_VarFree(matvar);
                 matvar = NULL;
+                Mat_Critical("Uncompressed type not MAT_T_MATRIX");
                 break;
             }
             /* Inflate Array Flags */
