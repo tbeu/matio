@@ -3327,7 +3327,7 @@ Read5(mat_t *mat, matvar_t *matvar)
         }
         case MAT_C_SPARSE:
         {
-            int N = 0;
+            mat_int32_t N = 0;
             mat_sparse_t *data;
 
             matvar->data_size = sizeof(mat_sparse_t);
@@ -5539,7 +5539,8 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
 matvar_t *
 Mat_VarReadNextInfo5( mat_t *mat )
 {
-    int err, data_type, nBytes;
+    int err;
+    mat_int32_t data_type, nBytes;
     long fpos;
     matvar_t *matvar = NULL;
     mat_uint32_t array_flags;

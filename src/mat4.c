@@ -733,7 +733,8 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
 matvar_t *
 Mat_VarReadNextInfo4(mat_t *mat)
 {
-    int       tmp,M,O,data_type,class_type;
+    int       M,O,data_type,class_type;
+    mat_int32_t tmp;
     long      nBytes;
     size_t    err;
     matvar_t *matvar = NULL;
