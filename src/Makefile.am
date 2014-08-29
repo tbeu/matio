@@ -33,6 +33,7 @@ LT_AGE=1
 
 AM_CFLAGS  = -I. $(HDF5_CFLAGS) $(ZLIB_CFLAGS) $(LT_CFLAGS)
 AM_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) $(LT_LDFLAGS)
+AM_LDFLAGS += -no-undefined
 
 if HAVE_ZLIB
     ZLIB_SRC = inflate.c
