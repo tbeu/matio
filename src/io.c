@@ -428,7 +428,7 @@ Mat_SizeOf(enum matio_types data_type)
         case MAT_T_INT64:
             return sizeof(mat_int64_t);
 #endif
-#ifdef HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_UINT64_T
         case MAT_T_UINT64:
             return sizeof(mat_uint64_t);
 #endif
