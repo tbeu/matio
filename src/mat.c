@@ -1622,6 +1622,8 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
         return NULL;
 
     if ( mat->version == MAT_FT_MAT73 ) {
+        fpos = mat->next_index;
+        mat->next_index = 0;
         do {
             matvar = Mat_VarReadNextInfo(mat);
             if ( matvar != NULL ) {
@@ -1637,6 +1639,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
                 break;
             }
         } while ( NULL == matvar && mat->next_index < mat->num_datasets);
+        mat->next_index = fpos;
     } else {
         fpos = ftell(mat->fp);
         fseek(mat->fp,mat->bof,SEEK_SET);
@@ -1681,6 +1684,10 @@ Mat_VarRead( mat_t *mat, const char *name )
 
     if ( MAT_FT_MAT73 != mat->version )
         fpos = ftell(mat->fp);
+    else {
+        fpos = mat->next_index;
+        mat->next_index = 0;
+    }
 
     matvar = Mat_VarReadInfo(mat,name);
     if ( matvar )
@@ -1688,6 +1695,9 @@ Mat_VarRead( mat_t *mat, const char *name )
 
     if ( MAT_FT_MAT73 != mat->version )
         fseek(mat->fp,fpos,SEEK_SET);
+    else {
+        mat->next_index = fpos;
+    }
     return matvar;
 }
 
