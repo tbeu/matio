@@ -2024,8 +2024,9 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                         for ( l = 0; l < nfields; l++ ) {
                             (void)H5Gget_num_objs(*refs_id,&num_obj);
                             sprintf(name,"%lld",num_obj);
-                            fields[k*nfields+l]->compression =
-                                matvar->compression;
+                            if ( NULL != fields[k*nfields+l] )
+                                fields[k*nfields+l]->compression =
+                                    matvar->compression;
                             Mat_VarWriteNext73(*refs_id,fields[k*nfields+l],
                                 name,refs_id);
                             sprintf(name,"/#refs#/%lld",num_obj);
