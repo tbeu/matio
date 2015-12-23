@@ -1,5 +1,5 @@
 /** @file mat73.c
- * Matlab MAT version 5 file functions
+ * Matlab MAT version 7.3 file functions
  * @ingroup MAT
  */
 /*
