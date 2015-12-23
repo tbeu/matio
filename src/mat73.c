@@ -2164,7 +2164,7 @@ Mat_Create73(const char *matname,const char *hdr_str)
     mat->subsys_offset = calloc(1,16);
     memset(mat->header,' ',128);
     if ( hdr_str == NULL ) {
-        err = mat_snprintf(mat->header,116,"MATLAB 7.0 MAT-file, Platform: %s,"
+        err = mat_snprintf(mat->header,116,"MATLAB 7.3 MAT-file, Platform: %s, "
                 "Created by libmatio v%d.%d.%d on %s HDF5 schema 0.5",
                 MATIO_PLATFORM,MATIO_MAJOR_VERSION,MATIO_MINOR_VERSION,
                 MATIO_RELEASE_LEVEL,ctime(&t));
