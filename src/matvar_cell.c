@@ -69,10 +69,10 @@ Mat_VarGetCell(matvar_t *matvar,int index)
  * @ingroup MAT
  * @param matvar Cell Array matlab variable
  * @param start vector of length rank with 0-relative starting coordinates for
- *              each diemnsion.
- * @param stride vector of length rank with strides for each diemnsion.
+ *              each dimension.
+ * @param stride vector of length rank with strides for each dimension.
  * @param edge vector of length rank with the number of elements to read in
- *              each diemnsion.
+ *              each dimension.
  * @returns an array of pointers to the cells
  */
 matvar_t **

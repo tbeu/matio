@@ -2684,7 +2684,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
         case MAT_C_INT8:
         case MAT_C_UINT8:
         {
-            /* WriteCompressedData makes sure uncomressed data is aligned
+            /* WriteCompressedData makes sure uncompressed data is aligned
              * on an 8-byte boundary */
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data = matvar->data;
@@ -3135,7 +3135,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
         case MAT_C_INT8:
         case MAT_C_UINT8:
         {
-            /* WriteCompressedData makes sure uncomressed data is aligned
+            /* WriteCompressedData makes sure uncompressed data is aligned
              * on an 8-byte boundary */
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data = matvar->data;
@@ -5548,7 +5548,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             case MAT_C_INT8:
             case MAT_C_UINT8:
             {
-                /* WriteCompressedData makes sure uncomressed data is aligned
+                /* WriteCompressedData makes sure uncompressed data is aligned
                  * on an 8-byte boundary */
                 if ( matvar->isComplex ) {
                     mat_complex_split_t *complex_data = matvar->data;

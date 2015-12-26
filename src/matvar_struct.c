@@ -324,10 +324,10 @@ Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
  * @ingroup MAT
  * @param matvar Structure matlab variable
  * @param start vector of length rank with 0-relative starting coordinates for
- *              each diemnsion.
- * @param stride vector of length rank with strides for each diemnsion.
+ *              each dimension.
+ * @param stride vector of length rank with strides for each dimension.
  * @param edge vector of length rank with the number of elements to read in
- *              each diemnsion.
+ *              each dimension.
  * @param copy_fields 1 to copy the fields, 0 to just set pointers to them.
  * @returns A new structure array with fields indexed from @c matvar.
  */
