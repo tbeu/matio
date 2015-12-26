@@ -157,6 +157,7 @@ Mat_CreateVer(const char *matname,const char *hdr_str,enum mat_ft mat_file_ver)
 
     switch ( mat_file_ver ) {
         case MAT_FT_MAT4:
+            mat = Mat_Create4(matname);
             break;
         case MAT_FT_MAT5:
             mat = Mat_Create5(matname,hdr_str);
@@ -1841,12 +1842,14 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
 {
     if ( mat == NULL || matvar == NULL )
         return -1;
+    else if ( mat->version == MAT_FT_MAT4 )
+        return Mat_VarWrite4(mat,matvar);
     else if ( mat->version == MAT_FT_MAT5 )
-        Mat_VarWrite5(mat,matvar,compress);
+        return Mat_VarWrite5(mat,matvar,compress);
 #if defined(MAT73) && MAT73
     else if ( mat->version == MAT_FT_MAT73 )
-        Mat_VarWrite73(mat,matvar,compress);
+        return Mat_VarWrite73(mat,matvar,compress);
 #endif
 
-    return 0;
+    return 1;
 }

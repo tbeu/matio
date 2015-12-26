@@ -36,6 +36,132 @@
 #include "mat4.h"
 
 /** @if mat_devman
+ * @brief Creates a new Matlab MAT version 4 file
+ *
+ * Tries to create a new Matlab MAT file with the given name.
+ * @ingroup MAT
+ * @param matname Name of MAT file to create
+ * @return A pointer to the MAT file or NULL if it failed.  This is not a
+ * simple FILE * and should not be used as one.
+ * @endif
+ */
+mat_t *
+Mat_Create4(const char* matname)
+{
+    FILE *fp = NULL;
+    mat_t *mat = NULL;
+
+    fp = fopen(matname,"wb");
+    if ( !fp )
+        return NULL;
+
+    mat = malloc(sizeof(*mat));
+    if ( NULL == mat ) {
+        fclose(fp);
+        Mat_Critical("Couldn't allocate memory for the MAT file");
+        return NULL;
+    }
+
+    mat->header        = NULL;
+    mat->subsys_offset = NULL;
+    mat->fp            = fp;
+    mat->version       = MAT_FT_MAT4;
+    mat->byteswap      = 0;
+    mat->bof           = 0;
+    mat->next_index    = 0;
+    mat->refs_id       = -1;
+    mat->filename      = strdup_printf("%s",matname);
+    mat->mode          = 0;
+
+    Mat_Rewind(mat);
+
+    return mat;
+}
+
+/** @if mat_devman
+ * @brief Writes a matlab variable to a version 4 matlab file
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar pointer to the mat variable
+ * @retval 0 on success
+ * @endif
+ */
+int
+Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
+{
+    typedef struct {
+        mat_int32_t type;
+        mat_int32_t mrows;
+        mat_int32_t ncols;
+        mat_int32_t imagf;
+        mat_int32_t namelen;
+    } Fmatrix;
+
+    mat_int32_t nmemb = 1, i;
+    mat_complex_split_t *complex_data = NULL;
+    Fmatrix x;
+
+    if ( NULL == mat || NULL == matvar || NULL == matvar->name || matvar->rank != 2 )
+        return -1;
+
+    if (matvar->isComplex) {
+        mat_complex_split_t *complex_data = matvar->data;
+        if ( NULL == complex_data )
+            return 1;
+    }
+
+    switch ( matvar->data_type ) {
+        case MAT_T_DOUBLE:
+            x.type = 0;
+            break;
+        case MAT_T_SINGLE:
+            x.type = 10;
+            break;
+        case MAT_T_INT32:
+            x.type = 20;
+            break;
+        case MAT_T_INT16:
+            x.type = 30;
+            break;
+        case MAT_T_UINT16:
+            x.type = 40;
+            break;
+        case MAT_T_UINT8:
+            x.type = 50;
+            break;
+        default:
+            return 2;
+    }
+
+    for ( i = 0; i < matvar->rank; i++ ) {
+        mat_int32_t dim;
+        dim = (mat_int32_t)matvar->dims[i];
+        nmemb *= dim;
+    }
+
+    /* FIXME: SEEK_END is not Guaranteed by the C standard */
+    fseek(mat->fp,0,SEEK_END);         /* Always write at end of file */
+
+    if (mat->byteswap)
+        x.type += 1000;
+    x.mrows = (mat_int32_t)matvar->dims[0];
+    x.ncols = (mat_int32_t)matvar->dims[1];
+    x.imagf = matvar->isComplex ? 1 : 0;
+    x.namelen = (mat_int32_t)strlen(matvar->name) + 1;
+    fwrite(&x, sizeof(Fmatrix), 1, mat->fp);
+    fwrite(matvar->name, sizeof(char), x.namelen, mat->fp);
+    if (matvar->isComplex) {
+        fwrite(complex_data->Re, matvar->data_size, nmemb, mat->fp);
+        fwrite(complex_data->Im, matvar->data_size, nmemb, mat->fp);
+    }
+    else {
+        fwrite(matvar->data, matvar->data_size, nmemb, mat->fp);
+    }
+    return 0;
+}
+
+/** @if mat_devman
  * @brief Reads the data of a version 4 MAT file variable
  *
  * @ingroup mat_internal

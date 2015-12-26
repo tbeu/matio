@@ -28,6 +28,14 @@
 #ifndef MAT4_H
 #define MAT4_H
 
+#ifdef __cplusplus
+#   define EXTERN extern "C"
+#else
+#   define EXTERN extern
+#endif
+
+EXTERN mat_t *Mat_Create4(const char* matname);
+int  Mat_VarWrite4(mat_t *mat,matvar_t *matvar);
 void Read4(mat_t *mat, matvar_t *matvar);
 int  ReadData4(mat_t *mat,matvar_t *matvar,void *data,
          int *start,int *stride,int *edge);
