@@ -266,7 +266,7 @@ Mat_Open(const char *matname,int mode)
         var = Mat_VarReadNextInfo4(mat);
         if ( NULL == var ) {
             /* Does not seem to be a valid V4 file */
-            Mat_Critical("%s does not seem to be a valid MAT file",matname);
+            Mat_Critical("\"%s\" does not seem to be a valid MAT file",matname);
             Mat_Close(mat);
             mat = NULL;
         } else {
