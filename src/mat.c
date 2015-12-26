@@ -264,7 +264,8 @@ Mat_Open(const char *matname,int mode)
 
         Mat_Rewind(mat);
         var = Mat_VarReadNextInfo4(mat);
-        if ( NULL == var ) {
+        if ( NULL == var &&
+             bytesread != 0 ) { /* Accept 0 bytes files as a valid V4 file */
             /* Does not seem to be a valid V4 file */
             Mat_Critical("\"%s\" does not seem to be a valid MAT file",matname);
             Mat_Close(mat);
