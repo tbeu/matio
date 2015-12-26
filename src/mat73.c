@@ -297,8 +297,6 @@ Mat_class_type_to_hid_t(enum matio_classes class_type)
 #       elif CHAR_BIT*SIZEOF_LONG_LONG == 8
             return H5T_NATIVE_ULLONG;
 #       endif
-        case MAT_T_UTF8:
-            return H5T_NATIVE_CHAR;
         default:
             return -1;
     }
@@ -404,8 +402,10 @@ Mat_data_type_to_hid_t(enum matio_types data_type)
 #       elif CHAR_BIT*SIZEOF_LONG_LONG == 8
             return H5T_NATIVE_ULLONG;
 #       endif
-       default:
-           return -1;
+        case MAT_T_UTF8:
+            return H5T_NATIVE_CHAR;
+        default:
+            return -1;
     }
 }
 
