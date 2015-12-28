@@ -101,10 +101,10 @@
 #undef LT_OBJDIR
 
 /* Platform */
-#if defined(_WIN32)
-#   define MATIO_PLATFORM "i686-pc-windows"
-#elif defined(_WIN64)
+#if defined(_WIN64)
 #   define MATIO_PLATFORM "x86_64-pc-windows"
+#elif defined(_WIN32)
+#   define MATIO_PLATFORM "i686-pc-windows"
 #endif
 
 /* Debug disabled */
