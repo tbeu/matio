@@ -37,9 +37,7 @@
  * @param dims array of dimensions of the variable of size rank
  * @param fields Array of @c nfields fieldnames
  * @param nfields Number of fields in the structure
- * @param matvar Pointer to store the new structure MATLAB variable
- * @return @c MATIO_SUCCESS if successful, or an error value (See
- *          @ref enum matio_error_t).
+ * @return Pointer to the new structure MATLAB variable on success, NULL on error
  */
 matvar_t *
 Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
@@ -107,7 +105,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
  * element).
  * @ingroup MAT
  * @param matvar Pointer to the Structure MAT variable
- * @param fields Array of fields to be added
+ * @param fieldname Name of field to be added
  * @retval 0 on success
  */
 int
