@@ -46,7 +46,7 @@
 #endif
 
 /** @defgroup MAT Matlab MAT File I/O Library */
-/** @defgroup mat_util MAT File I/O Utitlity Functions */
+/** @defgroup mat_util MAT File I/O Utility Functions */
 /** @if mat_devman @defgroup mat_internal Internal Functions @endif */
 
 /** @brief MAT file access types
@@ -211,7 +211,7 @@ typedef struct mat_sparse_t {
                                *  data[k].  0 <= k <= nzmax
                                */
     int nir;                 /**< number of elements in ir */
-    int *jc;                 /**< Array size N+1 (N is number of columsn) with
+    int *jc;                 /**< Array size N+1 (N is number of columns) with
                                *  jc[k] being the index into ir/data of the
                                *  first non-zero element for row k.
                                */
