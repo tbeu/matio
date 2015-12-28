@@ -121,9 +121,9 @@ enum matio_classes {
     MAT_C_UINT16   = 11, /**< @brief Matlab unsigned 16-bit integer class  */
     MAT_C_INT32    = 12, /**< @brief Matlab signed 32-bit integer class    */
     MAT_C_UINT32   = 13, /**< @brief Matlab unsigned 32-bit integer class  */
-    MAT_C_INT64    = 14, /**< @brief Matlab unsigned 32-bit integer class  */
-    MAT_C_UINT64   = 15, /**< @brief Matlab unsigned 32-bit integer class  */
-    MAT_C_FUNCTION = 16 /**< @brief Matlab unsigned 32-bit integer class  */
+    MAT_C_INT64    = 14, /**< @brief Matlab signed 64-bit integer class    */
+    MAT_C_UINT64   = 15, /**< @brief Matlab unsigned 64-bit integer class  */
+    MAT_C_FUNCTION = 16  /**< @brief Matlab function class                 */
 };
 
 /** @brief Matlab array flags
