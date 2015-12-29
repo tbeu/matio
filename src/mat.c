@@ -791,8 +791,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
     if ( NULL == mat || NULL == name )
         return err;
 
-    tmp_name = mktemp(temp);
-    if (tmp_name != NULL) {
+    if ( (tmp_name = mktemp(temp)) != NULL ) {
         enum mat_ft mat_file_ver = MAT_FT_DEFAULT;
         mat_t *tmp;
 
@@ -810,7 +809,6 @@ Mat_VarDelete(mat_t *mat, const char *name)
 
         tmp = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
         if ( tmp != NULL ) {
-            char *new_name;
             matvar_t *matvar;
             while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
                 if ( strcmp(matvar->name,name) )
@@ -819,48 +817,50 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     err = 0;
                 Mat_VarFree(matvar);
             }
-
-            new_name = strdup_printf("%s",mat->filename);
-#if defined(HAVE_HDF5)
-            if ( mat_file_ver == MAT_FT_MAT73 ) {
-                if ( mat->refs_id > -1 )
-                    H5Gclose(mat->refs_id);
-                H5Fclose(*(hid_t*)mat->fp);
-                free(mat->fp);
-                mat->fp = NULL;
-            }
-#endif
-            if ( mat->fp ) {
-                fclose(mat->fp);
-                mat->fp = NULL;
-            }
             Mat_Close(tmp);
 
-            if ( (err = mat_copy(tmp_name,new_name)) == -1 ) {
-                Mat_Critical("Cannot copy file from \"%s\" to \"%s\".",
-                    tmp_name, new_name);
+            if (err == 0) {
+                char *new_name = strdup_printf("%s",mat->filename);
+#if defined(HAVE_HDF5)
+                if ( mat_file_ver == MAT_FT_MAT73 ) {
+                    if ( mat->refs_id > -1 )
+                        H5Gclose(mat->refs_id);
+                    H5Fclose(*(hid_t*)mat->fp);
+                    free(mat->fp);
+                    mat->fp = NULL;
+                }
+#endif
+                if ( mat->fp ) {
+                    fclose(mat->fp);
+                    mat->fp = NULL;
+                }
+
+                if ( (err = mat_copy(tmp_name,new_name)) == -1 ) {
+                    Mat_Critical("Cannot copy file from \"%s\" to \"%s\".",
+                        tmp_name, new_name);
+                } else if ( (err = remove(tmp_name)) == -1 ) {
+                    Mat_Critical("Cannot remove file \"%s\".",tmp_name);
+                } else {
+                    tmp = Mat_Open(new_name,mat->mode);
+                    if ( NULL != tmp ) {
+                        if ( mat->header )
+                            free(mat->header);
+                        if ( mat->subsys_offset )
+                            free(mat->subsys_offset);
+                        if ( mat->filename )
+                            free(mat->filename);
+                        memcpy(mat,tmp,sizeof(mat_t));
+                        free(tmp);
+                    } else {
+                        Mat_Critical("Cannot open file \"%s\".",new_name);
+                    }
+                }
+                free(new_name);
             } else if ( (err = remove(tmp_name)) == -1 ) {
                 Mat_Critical("Cannot remove file \"%s\".",tmp_name);
-            } else {
-                tmp = Mat_Open(new_name,mat->mode);
-                if ( NULL != tmp ) {
-                    if ( mat->header )
-                        free(mat->header);
-                    if ( mat->subsys_offset )
-                        free(mat->subsys_offset);
-                    if ( mat->filename )
-                        free(mat->filename);
-                    memcpy(mat,tmp,sizeof(mat_t));
-                    free(tmp);
-                }
-                else {
-                    Mat_Critical("Cannot open file \"%s\".",new_name);
-                }
             }
-            free(new_name);
         }
-    }
-    else {
+    } else {
         Mat_Critical("Cannot create a unique file name.");
     }
     return err;
