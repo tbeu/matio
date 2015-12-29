@@ -512,7 +512,7 @@ Mat_Create5(const char *matname,const char *hdr_str)
     mat->mode     = MAT_ACC_RDWR;
     mat->byteswap = 0;
     mat->header   = calloc(1,128);
-    mat->subsys_offset = calloc(1,16);
+    mat->subsys_offset = calloc(1,8);
     memset(mat->header,' ',128);
     if ( hdr_str == NULL ) {
         err = mat_snprintf(mat->header,116,"MATLAB 5.0 MAT-file, Platform: %s, "
@@ -523,7 +523,7 @@ Mat_Create5(const char *matname,const char *hdr_str)
         err = mat_snprintf(mat->header,116,"%s",hdr_str);
     }
     mat->header[err] = ' ';
-    mat_snprintf(mat->subsys_offset,15,"            ");
+    memset(mat->subsys_offset,' ',8);
     mat->version = (int)0x0100;
     endian = 0x4d49;
 
