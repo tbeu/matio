@@ -781,7 +781,19 @@ Mat_VarDelete(mat_t *mat, const char *name)
             }
             /* FIXME: Memory leak */
             new_name = strdup_printf("%s",mat->filename);
-            fclose(mat->fp);
+#if defined(HAVE_HDF5)
+            if ( mat_file_ver == MAT_FT_MAT73 ) {
+                if ( mat->refs_id > -1 )
+                    H5Gclose(mat->refs_id);
+                H5Fclose(*(hid_t*)mat->fp);
+                free(mat->fp);
+                mat->fp = NULL;
+            }
+#endif
+            if ( mat->fp ) {
+                fclose(mat->fp);
+                mat->fp = NULL;
+            }
             Mat_Close(tmp);
 
             if ( (err = remove(new_name)) == -1 ) {
