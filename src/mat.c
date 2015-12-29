@@ -821,7 +821,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
 
             if (err == 0) {
                 char *new_name = strdup_printf("%s",mat->filename);
-#if defined(HAVE_HDF5)
+#if defined(MAT73) && MAT73
                 if ( mat_file_ver == MAT_FT_MAT73 ) {
                     if ( mat->refs_id > -1 )
                         H5Gclose(mat->refs_id);
