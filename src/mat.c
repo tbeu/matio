@@ -745,7 +745,7 @@ int
 Mat_VarDelete(mat_t *mat, const char *name)
 {
     int   err = 1;
-    char *tmp_name, *new_name;
+    char *tmp_name;
     char temp[7] = "XXXXXX";
 
     if ( NULL == mat || NULL == name )
@@ -770,6 +770,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
 
         tmp = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
         if ( tmp != NULL ) {
+            char *new_name;
             matvar_t *matvar;
             while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
                 if ( strcmp(matvar->name,name) )
