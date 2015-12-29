@@ -745,29 +745,30 @@ int
 Mat_VarDelete(mat_t *mat, const char *name)
 {
     int   err = 1;
-    enum mat_ft mat_file_ver = MAT_FT_DEFAULT;
     char *tmp_name, *new_name;
     char temp[7] = "XXXXXX";
-    mat_t *tmp;
 
     if ( NULL == mat || NULL == name )
         return err;
 
-    switch ( mat->version ) {
-        case 0x0200:
-            mat_file_ver = MAT_FT_MAT73;
-            break;
-        case 0x0100:
-            mat_file_ver = MAT_FT_MAT5;
-            break;
-        case 0x0010:
-            mat_file_ver = MAT_FT_MAT4;
-            break;
-    }
-
     tmp_name = mktemp(temp);
     if (tmp_name != NULL) {
-        tmp      = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
+        enum mat_ft mat_file_ver = MAT_FT_DEFAULT;
+        mat_t *tmp;
+
+        switch ( mat->version ) {
+            case 0x0200:
+                mat_file_ver = MAT_FT_MAT73;
+                break;
+            case 0x0100:
+                mat_file_ver = MAT_FT_MAT5;
+                break;
+            case 0x0010:
+                mat_file_ver = MAT_FT_MAT4;
+                break;
+        }
+
+        tmp = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
         if ( tmp != NULL ) {
             matvar_t *matvar;
             while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
