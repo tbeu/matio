@@ -746,7 +746,8 @@ Mat_VarDelete(mat_t *mat, const char *name)
 {
     int   err = 1;
     enum mat_ft mat_file_ver = MAT_FT_DEFAULT;
-    char *tmp_name, *new_name, *temp;
+    char *tmp_name, *new_name;
+	char temp[7] = "XXXXXX";
     mat_t *tmp;
     matvar_t *matvar;
 
@@ -765,7 +766,6 @@ Mat_VarDelete(mat_t *mat, const char *name)
             break;
     }
 
-    temp     = strdup_printf("XXXXXX");
     tmp_name = mktemp(temp);
     tmp      = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
     if ( tmp != NULL ) {
@@ -795,7 +795,6 @@ Mat_VarDelete(mat_t *mat, const char *name)
         }
         free(new_name);
     }
-    free(temp);
     return err;
 }
 
