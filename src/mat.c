@@ -747,7 +747,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
     int   err = 1;
     enum mat_ft mat_file_ver = MAT_FT_DEFAULT;
     char *tmp_name, *new_name;
-	char temp[7] = "XXXXXX";
+    char temp[7] = "XXXXXX";
     mat_t *tmp;
     matvar_t *matvar;
 
@@ -767,33 +767,38 @@ Mat_VarDelete(mat_t *mat, const char *name)
     }
 
     tmp_name = mktemp(temp);
-    tmp      = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
-    if ( tmp != NULL ) {
-        while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
-            if ( strcmp(matvar->name,name) )
-                Mat_VarWrite(tmp,matvar,0);
-            else
-                err = 0;
-            Mat_VarFree(matvar);
-        }
-        /* FIXME: Memory leak */
-        new_name = strdup_printf("%s",mat->filename);
-        fclose(mat->fp);
-
-        if ( (err = remove(new_name)) == -1 ) {
-            Mat_Close(tmp);
-            Mat_Critical("remove of %s failed",new_name);
-        } else if ( !Mat_Close(tmp) && (err=rename(tmp_name,new_name))==-1) {
-            Mat_Critical("rename failed oldname=%s,newname=%s",tmp_name,
-                new_name);
-        } else {
-            tmp = Mat_Open(new_name,mat->mode);
-            if ( NULL != tmp ) {
-                memcpy(mat,tmp,sizeof(mat_t));
-                Mat_Close(tmp);
+    if (tmp_name != NULL) {
+        tmp      = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
+        if ( tmp != NULL ) {
+            while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
+                if ( strcmp(matvar->name,name) )
+                    Mat_VarWrite(tmp,matvar,0);
+                else
+                    err = 0;
+                Mat_VarFree(matvar);
             }
+            /* FIXME: Memory leak */
+            new_name = strdup_printf("%s",mat->filename);
+            fclose(mat->fp);
+
+            if ( (err = remove(new_name)) == -1 ) {
+                Mat_Close(tmp);
+                Mat_Critical("remove of %s failed",new_name);
+            } else if ( !Mat_Close(tmp) && (err=rename(tmp_name,new_name))==-1) {
+                Mat_Critical("rename failed oldname=%s,newname=%s",tmp_name,
+                    new_name);
+            } else {
+                tmp = Mat_Open(new_name,mat->mode);
+                if ( NULL != tmp ) {
+                    memcpy(mat,tmp,sizeof(mat_t));
+                    Mat_Close(tmp);
+                }
+            }
+            free(new_name);
         }
-        free(new_name);
+    }
+    else {
+        Mat_Critical("Cannot create a unique file name.");
     }
     return err;
 }
