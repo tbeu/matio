@@ -734,6 +734,46 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     return matvar;
 }
 
+/** @brief Copies a file
+ *
+ * @param src source file path
+ * @param dst destination file path
+ * @retval 0 on success
+ */
+static int
+mat_copy(const char* src, const char* dst)
+{
+    size_t len;
+    char buf[BUFSIZ] = {'\0'};
+    FILE* in;
+    FILE* out;
+
+    in = fopen(src, "rb");
+    if (in == NULL) {
+        Mat_Critical("Cannot open file \"%s\" for reading.", src);
+        return -1;
+    }
+
+    out = fopen(dst, "wb");
+    if (out == NULL) {
+        fclose(in);
+        Mat_Critical("Cannot open file \"%s\" for writing.", dst);
+        return -1;
+    }
+
+    while ((len = fread(buf, sizeof(char), BUFSIZ, in)) > 0) {
+        if (len != fwrite(buf, sizeof(char), len, out)) {
+            fclose(in);
+            fclose(out);
+            Mat_Critical("Error writing to file \"%s\".", dst);
+            return -1;
+        }
+    }
+    fclose(in);
+    fclose(out);
+    return 0;
+}
+
 /** @brief Deletes a variable from a file
  *
  * @ingroup MAT
@@ -779,6 +819,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     err = 0;
                 Mat_VarFree(matvar);
             }
+
             new_name = strdup_printf("%s",mat->filename);
 #if defined(HAVE_HDF5)
             if ( mat_file_ver == MAT_FT_MAT73 ) {
@@ -795,11 +836,11 @@ Mat_VarDelete(mat_t *mat, const char *name)
             }
             Mat_Close(tmp);
 
-            if ( (err = remove(new_name)) == -1 ) {
-                Mat_Critical("remove of %s failed",new_name);
-            } else if ( (err=rename(tmp_name,new_name))==-1) {
-                Mat_Critical("rename failed oldname=%s,newname=%s",tmp_name,
-                    new_name);
+            if ( (err = mat_copy(tmp_name,new_name)) == -1 ) {
+                Mat_Critical("Cannot copy file from \"%s\" to \"%s\".",
+                    tmp_name, new_name);
+            } else if ( (err = remove(tmp_name)) == -1 ) {
+                Mat_Critical("Cannot remove file \"%s\".",tmp_name);
             } else {
                 tmp = Mat_Open(new_name,mat->mode);
                 if ( NULL != tmp ) {
