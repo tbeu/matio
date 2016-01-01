@@ -317,7 +317,7 @@ dnl
 AC_ARG_ENABLE(mat73,
     AS_HELP_STRING([--enable-mat73=yes],[Enable MAT v7.3 file support]),
 mat73=$enableval,mat73=yes)
-AC_MSG_CHECKING(enable enable MAT v7.3 file support)
+AC_MSG_CHECKING(enable MAT v7.3 file support)
 if test "x$mat73" = "xno" -o "x$ac_have_hdf5" = "xno" -o "x$matio_hdf5_is_v18" = "xno"
 then
     AC_MSG_RESULT([no])
@@ -332,7 +332,7 @@ AM_CONDITIONAL(MAT73, test "x$mat73" = "xyes")
 MATIO_CHECK_DEFAULT_FILE_VERSION
 
 dnl
-dnl Check whether to build in debug mode
+dnl Check whether to enable extended sparse matrix data types
 dnl
 AC_ARG_ENABLE(extended-sparse,AS_HELP_STRING([--enable-extended-sparse=yes],[Enable extended sparse matrix data types not supported in Matlab]),
 extended_sparse=$enableval,extended_sparse=yes)
