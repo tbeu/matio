@@ -45,7 +45,7 @@ Table of Contents
         interested in collaborations, contact me via email (see Section 1.1).
 
     1.4 Questions and Reporting Bugs
-        Questions can be askes using the forums on the sourceforge site hosting
+        Questions can be asked using the forums on the sourceforge site hosting
         matio (http://sourceforge.net/projects/matio/forums).
 
         Bugs, enhancements, etc. should be submitted using one of the trackers
@@ -94,7 +94,7 @@ Table of Contents
                 $ make install
 
             If any of the tests in the testsuite fail, you should report the failure
-            using the tracker (see Section 1.4). You should attache the generated
+            using the tracker (see Section 1.4). You should attach the generated
             testsuite.log file to the bug report.
 
         2.2.2 Configure Options
