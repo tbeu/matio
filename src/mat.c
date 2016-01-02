@@ -121,8 +121,8 @@ Mat_PrintNumber(enum matio_types type, void *data)
  *
  * Gets the version number of the library
  * @param major Pointer to store the library major version number
- * @param major Pointer to store the library major version number
- * @param major Pointer to store the library major version number
+ * @param minor Pointer to store the library minor version number
+ * @param release Pointer to store the library release version number
  */
 void
 Mat_GetLibraryVersion(int *major,int *minor,int *release)
