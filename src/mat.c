@@ -1009,7 +1009,7 @@ Mat_VarFree(matvar_t *matvar)
     if ( matvar->data != NULL) {
         switch (matvar->class_type ) {
             case MAT_C_STRUCT:
-                if ( !matvar->mem_conserve && NULL != matvar->data ) {
+                if ( !matvar->mem_conserve ) {
                     matvar_t **fields = matvar->data;
                     int nfields = matvar->internal->num_fields;
                     for ( i = 0; i < nmemb*nfields; i++ )
@@ -1019,7 +1019,7 @@ Mat_VarFree(matvar_t *matvar)
                     break;
                 }
             case MAT_C_CELL:
-                if ( !matvar->mem_conserve && NULL != matvar->data ) {
+                if ( !matvar->mem_conserve ) {
                     matvar_t **cells = matvar->data;
                     for ( i = 0; i < nmemb; i++ )
                         Mat_VarFree(cells[i]);
@@ -1057,7 +1057,7 @@ Mat_VarFree(matvar_t *matvar)
             case MAT_C_INT8:
             case MAT_C_UINT8:
             case MAT_C_CHAR:
-                if ( !matvar->mem_conserve && NULL != matvar->data ) {
+                if ( !matvar->mem_conserve ) {
                     if ( matvar->isComplex ) {
                         mat_complex_split_t *complex_data = matvar->data;
                         free(complex_data->Re);
