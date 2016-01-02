@@ -35,7 +35,7 @@ Table of Contents
           * SGI in support of Interactive Supercomputing, Inc.
           * Scilab (http://www.scilab.org/)
           * Steven Leibman <sleibman@alum.mit.edu>
-          * OpenMEEG (http://www-sop.inria.fr/athena/software/OpenMEEG/)
+          * OpenMEEG (http://openmeeg.github.io/)
 
     1.3 Contributing
         Part of my reason for releasing this software is I have many other
@@ -50,7 +50,7 @@ Table of Contents
 
         Bugs, enhancements, etc. should be submitted using one of the trackers
         on the sourceforge page
-        (http://sourceforge.net/tracker/?group_id=176643).
+        (http://sourceforge.net/p/matio/_list/tickets).
 
 
 2.0 Building
@@ -73,7 +73,7 @@ Table of Contents
         2.1.2 HDF5
               Support for MAT file version 7.3 requires the HDF5 library. This
               library can be downloaded from The HDF Group website
-              (http://www.hdfgroup.org/). MATIO requires HDF5 version 1.8.x,
+              (https://www.hdfgroup.org/). MATIO requires HDF5 version 1.8.x,
               and must be built with default API version 1.8 (i.e.
               '--with-default-api-version=v18').
 
