@@ -98,7 +98,7 @@ This section introduces the functions used to read variables from a MAT file.
 The @emph{matio} library has functions for reading variable information only
 (e.g. name, rank, dimensions, type, etc.), reading information and data, and
 reading data from previously obtained information. Reading information and data
-in seperate function calls provides several conveniences including:
+in separate function calls provides several conveniences including:
 @itemize
 @item Querying the names of variables in a file without reading data,
 @item Reading only some fields of a structure or elements of a cell array, and
@@ -197,7 +197,7 @@ Numeric arrays can be either real or complex. Complex arrays are encapsulated
 in the @code{struct mat_complex_split_t} data structure that contains a pointer
 to the real part of the data, and a pointer to the imaginary part of the data.
 The example program below writes two real variables @emph{x} and @emph{y}, and
-one complex variable @emph{z} whos real and imaginary parts are the @emph{x}
+one complex variable @emph{z} whose real and imaginary parts are the @emph{x}
 and @emph{y} variables respectively. Note the @code{MAT_F_COMPLEX} argument
 passed to @code{Mat_VarCreate} for @emph{z} to indicate a complex variable.
 
@@ -253,7 +253,7 @@ main(int argc,char **argv)
 @end verbatim
 
 @subsection Writing Cell Arrays
-Cell arrays are multidimensional arrays whos elements can be any class of
+Cell arrays are multidimensional arrays whose elements can be any class of
 variables (e.g. numeric, structure, cell arrays, etc.). To create a cell array,
 pass an array of @code{matvar_t *}. Detailed information on the MATLAB variable
 structure for cell-arrays is given in @ref{Cell Variables}.

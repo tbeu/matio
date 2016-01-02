@@ -59,7 +59,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @end verbatim
 
 @section Incompatible Changes from 1.3
-This version has changes that break compatability with the 1.3 versions of the
+This version has changes that break compatibility with the 1.3 versions of the
 @emph{matio} software. This section lists these changes and how existing code
 should be modified to handle these changes.
 @enumerate
@@ -74,7 +74,7 @@ should be modified to handle these changes.
 @item Changed meaning of memory conservation for cell arrays and structures
 @end enumerate
 Each of these changes are described in the remaining sections, and as necessary
-include recommendations to upgrade existing code for compatability with this
+include recommendations to upgrade existing code for compatibility with this
 version.
 
 @subsection Type Change for Dimensions Array
