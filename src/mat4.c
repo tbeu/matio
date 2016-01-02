@@ -359,7 +359,7 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
  *
  * @ingroup mat_internal
  * @param mat MAT file pointer
- * @retuen pointer to the MAT variable or NULL
+ * @return pointer to the MAT variable or NULL
  * @endif
  */
 matvar_t *

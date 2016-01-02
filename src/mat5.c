@@ -6039,7 +6039,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
  *
  * @ingroup mat_internal
  * @param mat MAT file pointer
- * @retuen pointer to the MAT variable or NULL
+ * @return pointer to the MAT variable or NULL
  * @endif
  */
 matvar_t *
