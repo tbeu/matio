@@ -1514,7 +1514,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
  * @param mat MAT file to read data from
  * @param matvar MAT variable information
  * @param data pointer to store data in (must be pre-allocated)
- * @param start array of starting indeces
+ * @param start array of starting indices
  * @param stride stride of data
  * @param edge array specifying the number to read in each direction
  * @retval 0 on success
@@ -1830,7 +1830,7 @@ Mat_VarWriteInfo(mat_t *mat, matvar_t *matvar )
  * @param mat MAT file to write to
  * @param matvar MAT variable information to write
  * @param data pointer to the data to write
- * @param start array of starting indeces
+ * @param start array of starting indices
  * @param stride stride of data
  * @param edge array specifying the number to read in each direction
  * @retval 0 on success
