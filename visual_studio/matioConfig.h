@@ -152,16 +152,16 @@
 /* The size of `short', as computed by sizeof. */
 #define SIZEOF_SHORT 2
 
-#if defined(_WIN32)
-    /* The size of `void *', as computed by sizeof. */
-#   define SIZEOF_VOID_P 4
-    /* The size of `size_t', as computed by sizeof. */
-#    define SIZEOF_SIZE_T 4
-#elif defined(_WIN64)
+#if defined(_WIN64)
     /* The size of `void *', as computed by sizeof. */
 #   define SIZEOF_VOID_P 8
     /* The size of `size_t', as computed by sizeof. */
 #    define SIZEOF_SIZE_T 8
+#elif defined(_WIN32)
+    /* The size of `void *', as computed by sizeof. */
+#   define SIZEOF_VOID_P 4
+    /* The size of `size_t', as computed by sizeof. */
+#    define SIZEOF_SIZE_T 4
 #endif
 
 /* Define to 1 if you have the ANSI C header files. */
