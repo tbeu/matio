@@ -171,7 +171,7 @@
 #define HAVE_CTYPE_H 1
 
 /* Version number of package */
-#define VERSION "1.5.1"
+#define VERSION "1.5.2"
 
 /* Z prefix */
 #undef Z_PREFIX
