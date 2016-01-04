@@ -3,6 +3,7 @@ MATLAB MAT file I/O library
 
 ## Build status
 [![Build Status](https://drone.io/github.com/tbeu/matio/status.png)](https://drone.io/github.com/tbeu/matio/latest)
+[![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master)
 
 ## Table of Contents
 1. [Introduction](#10-introduction)
