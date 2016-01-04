@@ -1,0 +1,173 @@
+# MATIO
+MATLAB MAT file I/O library
+
+## Build status
+[![Build Status](https://drone.io/github.com/tbeu/matio/status.png)](https://drone.io/github.com/tbeu/matio/latest)
+
+## Table of Contents
+1. [Introduction](#10-introduction)
+  * 1.1[Contact](#11-contact)
+  * 1.2 [Acknowledgements](#12-acknowledgements)
+  * 1.3 [Contributing](#13-contributing)
+  * 1.4 [Questions and Reporting Bugs](#14-questions-and-reporting-bugs)
+2. [Building](#20-building)
+  * 2.1 [Dependencies](#21-dependencies)
+    * 2.1.1 [zlib](#211-zlib)
+    * 2.1.2 [HDF5](#212-hdf5)
+  * 2.2 [Building matio](#22-building-matio)
+    * 2.2.1 [Quick Build Guide](#221-quick-build-guide)
+    * 2.2.2 [Configure Options](#222-configure-options)
+    * 2.2.3  [Visual Studio](#223-visual-studio)
+    * 2.2.4 [Testsuite](#224-testsuite)
+  * 2.3 [Platforms](#23-platforms)
+3. [License](#30-license)
+
+## 1.0 Introduction
+matio is an open-source library for reading/writing MATLAB MAT files.
+This library is designed for use by programs/libraries that do not have
+access or do not want to rely on MATLAB's shared library.
+
+### 1.1 Contact
+You can contact me (Christopher Hulbert) through email at
+chulbe2lsu@users.sourceforge.net.
+
+### 1.2 Acknowledgements
+The following people/organizations have helped in the development of
+matio through patches, bug reports, and/or testing:
+* Jacco van Beek
+* SGI in support of Interactive Supercomputing, Inc.
+* Scilab (http://www.scilab.org/)
+* Steven Leibman <sleibman@alum.mit.edu>
+* OpenMEEG (http://openmeeg.github.io/)
+
+### 1.3 Contributing
+Part of my reason for releasing this software is I have many other
+projects to work on and have many features I would still like to
+implement. If you make changes, I would appreciate your contributions
+and more than likely will include them in future releases. If you are
+interested in collaborations, contact me via email (see Section [1.1](#11-contact)).
+
+### 1.4 Questions and Reporting Bugs
+Questions can be asked using the forums on the sourceforge site hosting
+matio (http://sourceforge.net/projects/matio/forums).
+
+Bugs, enhancements, etc. should be submitted using one of the trackers
+on the sourceforge page
+(http://sourceforge.net/p/matio/_list/tickets).
+
+## 2.0 Building
+This section describes how to build matio. Section [2.1](#21-dependencies) describes the
+dependencies, Section [2.2](#22-building-matio) how to build/test matio, and Section [2.3](#23-platforms)
+documents the platforms matio has been tested on.
+
+### 2.1 Dependencies
+MATIO has two optional dependencies. These are not required for the
+software to work, but without them some files may be unreadable. Zlib
+is required to read/write level 5 MAT files that use compression. HDF5
+is required to work with newer MAT files that use the HDF5-format
+files
+
+#### 2.1.1 zlib
+To support compressed MAT files, zlib 1.2.3 or greater is
+required. The zlib software can be downloaded from
+http://zlib.net/.
+
+#### 2.1.2 HDF5
+Support for MAT file version 7.3 requires the HDF5 library. This
+library can be downloaded from The HDF Group website
+(https://www.hdfgroup.org/). MATIO requires HDF5 version 1.8.x,
+and must be built with default API version 1.8 (i.e.
+`--with-default-api-version=v18`).
+
+For windows, the pre-compiled binaries can be used which also
+include a DLL of zlib to satisfy the zlib dependency.
+
+### 2.2 Building matio
+#### 2.2.1 Quick Build Guide
+The primary method for building the software is using `configure`
+followed by `make`. After building, the testsuite can be executed to
+test the software using `make check`. The software can be installed
+using `make install`. For example,
+```sh
+$ tar zxf matio-X.Y.Z.tar.gz
+$ cd matio-X.Y.Z
+$ ./configure
+$ make
+$ git clone --depth=1 git://git.code.sf.net/p/matio/matio_test_datasets ./test/datasets
+$ make check
+$ make install
+```
+If any of the tests in the testsuite fail, you should report the failure
+using the tracker (see Section [1.4](#14-questions-and-reporting-bugs)). You should attach the generated
+testsuite.log file to the bug report.
+
+#### 2.2.2 Configure Options
+The configure script used to build the software takes a number of
+options. This section describes the key options.
+
+* `--enable-mat73=yes`
+This flag en/disables the support for version 7.3 MAT files.
+The option only makes sense if built with HDF5 as support
+for version 7.3 files will be disabled if HDF5 is not
+available.
+* `--enable-extended-sparse=yes`
+Enable extended sparse matrix data types not supported in
+MATLAB. MATLAB only supports double-precision sparse data.
+With this flag, matio will read sparse data with other
+types (i.e. single-precision and integer types).
+* `--with-matlab=DIR`
+This option specifies the directory (DIR) with the 'matlab'
+program. With this option, the testsuite will check that the
+MAT files written by matio can be read into MATLAB. Without
+this, the test will only check that matio can read the file
+written and if successful the test will be skipped. If matio
+can not read the file, the test will fail.
+* `--with-zlib=DIR`
+This option specifies the prefix where zlib is installed
+(see Section [2.1.1](#211-zlib) for information about zlib).
+* `--with-hdf5=DIR`
+This option specifies the prefix where the HDF5 software is
+installed (see Section [2.1.2](#212-hdf5) for information about HDF5).
+* `--with-default-file-ver=version`
+This option sets the default MAT file version (4,5,7.3) that
+will be used when writing. The default file version is used
+by the Mat_Create macro and the Mat_CreateVer function when
+MAT_FT_DEFAULT is used for the version argument.
+* `--with-libdir-suffix=suffix`
+This option specifies a suffix to apply to library
+directories when installing and looking for dependent
+libraries (i.e. HDF5 and zlib). For example, some multi-arch
+Linux distributions install 64-bit libraries into lib64 and
+32-bit libraries into lib.
+
+#### 2.2.3 Visual Studio
+A Visual Studio solution is provided as [visual_studio/matio.sln](visual_studio/matio.sln).
+The solution is set up to build a DLL of the matio library
+(libmatio.dll) and matdump tool in release mode and assumes HDF5 is
+available in the directory specified by the HDF5_DIR environment
+variable. The build was tested with the HDF5 Visual Studio pre-built
+Windows binaries including zlib.
+
+#### 2.2.4 Testsuite
+A testsuite is available when building with the GNU autotools. To
+run the testsuite, first configure and build matio. After building
+run `make check` to run the testsuite. If matio was built without
+zlib, the compressed variable tests will be skipped. If built
+without HDF5, the tests for version 7.3 MAT files will be skipped.
+If the path to the MATLAB application was not specified
+(`--with-matlab`), the write tests will fail if matio cannot read the
+file and skip if matio can read the file. The write tests will pass
+if MATLAB is available and can also read the file.
+
+To report matio testsuite failures, compress the testsuite.log file
+in the test sub-directory of the build directory. Upload the
+compressed log file along with a bug report (see Section [1.4](#14-questions-and-reporting-bugs) for
+information on reporting bugs).
+
+### 2.3 Platforms
+The library has been tested/used on Linux, Windows, OS X, and AIX
+including both little-endian and big-endian architecture.
+
+## 3.0 License
+This software is provided under a Simplified BSD license. See the [COPYING](COPYING)
+file for details on the license.
