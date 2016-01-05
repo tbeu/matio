@@ -6095,6 +6095,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
             if ( err != Z_OK ) {
                 Mat_Critical("inflateInit2 returned %d",err);
                 Mat_VarFree(matvar);
+                matvar = NULL;
                 break;
             }
 
