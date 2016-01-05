@@ -687,7 +687,7 @@ test_write_2d_logical(char *output_name)
 {
     size_t dims[2] = {5,10};
     int    err = 0, i;
-#ifdef HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_UINT64_T
     mat_uint64_t   l8[50];
 #endif
     mat_uint32_t   l4[50];
@@ -700,7 +700,7 @@ test_write_2d_logical(char *output_name)
         l1[i] = i % 2;
         l2[i] = i % 2;
         l4[i] = i % 2;
-#ifdef HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_UINT64_T
         l8[i] = i % 2;
 #endif
     }
@@ -710,7 +710,7 @@ test_write_2d_logical(char *output_name)
         return 1;
     }
 
-#ifdef HAVE_MAT_INT64_T
+#ifdef HAVE_MAT_UINT64_T
     matvar = Mat_VarCreate("l8",MAT_C_UINT64,MAT_T_UINT64,2,dims,l8,MAT_F_LOGICAL);
     Mat_VarWrite(mat,matvar,compression);
     Mat_VarFree(matvar);
