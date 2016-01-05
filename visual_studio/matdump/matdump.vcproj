@@ -21,7 +21,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -64,9 +64,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hdf5dll.lib szip.lib zlib1.lib"
+				AdditionalDependencies="libmatio.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(HDF5_DIR)\dll&quot;"
+				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -139,9 +139,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="$(SolutionDir)$(PlatformName)\$(ConfigurationName)\libmatio.lib hdf5dll.lib szip.lib zlib1.lib"
+				AdditionalDependencies="libmatio.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(HDF5_DIR)\dll&quot;"
+				AdditionalLibraryDirectories="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="17"
@@ -214,9 +214,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hdf5dll.lib szip.lib zlib1.lib"
+				AdditionalDependencies="libmatio.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(HDF5_DIR)\dll&quot;"
+				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
 				EnableUAC="false"
 				GenerateDebugInformation="false"
 				SubSystem="1"
@@ -292,7 +292,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libmatio.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
