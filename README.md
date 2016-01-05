@@ -94,7 +94,6 @@ $ tar zxf matio-X.Y.Z.tar.gz
 $ cd matio-X.Y.Z
 $ ./configure
 $ make
-$ git clone --depth=1 git://git.code.sf.net/p/matio/matio_test_datasets ./test/datasets
 $ make check
 $ make install
 ```
