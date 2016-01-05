@@ -142,12 +142,16 @@ Linux distributions install 64-bit libraries into lib64 and
 32-bit libraries into lib.
 
 #### 2.2.3 Visual Studio
-A Visual Studio solution is provided as [visual_studio/matio.sln](visual_studio/matio.sln).
-The solution is set up to build a DLL of the matio library
-(libmatio.dll) and matdump tool in release mode and assumes HDF5 is
+Visual Studio solutions are provided as [matio_vs2008.sln](visual_studio/matio_vs2008.sln)
+for VS2008 and as [matio.sln](visual_studio/matio.sln) for VS2010.
+The solutions are set up to build a DLL of the matio library
+(libmatio.dll) and matdump tool and assume HDF5 is
 available in the directory specified by the HDF5_DIR environment
-variable. The build was tested with the HDF5 Visual Studio pre-built
-Windows binaries including zlib.
+variable. The VS2008 build was tested with the [HDF5 1.8.12 Visual Studio pre-built
+Windows binaries](https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.12/bin/windows/) (vs9shared)
+including zlib. The VS2010 build was tested with the [HDF5 1.8.13 Visual Studio pre-built
+Windows binaries](https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/bin/windows/) (VS2010-shared)
+including zlib.
 
 #### 2.2.4 Testsuite
 A testsuite is available when building with the GNU autotools. To
