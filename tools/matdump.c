@@ -893,7 +893,6 @@ main (int argc, char *argv[])
                 }
                 (*printfunc)(matvar);
                 Mat_VarFree(matvar);
-                matvar = NULL;
             } else {
                 Mat_Warning("Couldn't find variable %s in the MAT file",
                       argv[i]);
@@ -905,13 +904,11 @@ main (int argc, char *argv[])
             while ( (matvar = Mat_VarReadNext(mat)) != NULL ) {
                 (*printfunc)(matvar);
                 Mat_VarFree(matvar);
-                matvar = NULL;
             }
         } else {
             while ( (matvar = Mat_VarReadNextInfo(mat)) != NULL ) {
                 (*printfunc)(matvar);
                 Mat_VarFree(matvar);
-                matvar = NULL;
             }
         }
     }
