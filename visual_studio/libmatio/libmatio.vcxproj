@@ -84,7 +84,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(HDF5_DIR)/include;$(SolutionDir);$(SolutionDir)/../src;$(SolutionDir)/../getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;_HDF5USEDLL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling />
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -110,7 +110,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(HDF5_DIR)/include;$(SolutionDir);$(SolutionDir)/../src;$(SolutionDir)/../getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;_HDF5USEDLL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling />
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -133,7 +133,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(HDF5_DIR)/include;$(SolutionDir);$(SolutionDir)/../src;$(SolutionDir)/../getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;_HDF5USEDLL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -159,7 +159,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(HDF5_DIR)/include;$(SolutionDir);$(SolutionDir)/../src;$(SolutionDir)/../getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;_HDF5USEDLL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
