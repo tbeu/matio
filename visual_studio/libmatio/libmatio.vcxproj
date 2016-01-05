@@ -190,6 +190,9 @@
   <ItemGroup>
     <None Include="..\matio.def" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\matio.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
