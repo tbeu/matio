@@ -97,7 +97,6 @@ enum matio_types {
     MAT_T_STRING     = 20,    /**< @brief String data type                    */
     MAT_T_CELL       = 21,    /**< @brief Cell array data type                */
     MAT_T_STRUCT     = 22,    /**< @brief Structure data type                 */
-    MAT_T_ARRAY      = 23,    /**< @brief Array data type                     */
     MAT_T_FUNCTION   = 24     /**< @brief Function data type                  */
 };
 
