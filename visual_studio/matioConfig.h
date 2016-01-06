@@ -85,7 +85,11 @@
 #undef HAVE_VASPRINTF
 
 /* Have va_copy */
+#if defined(_MSC_VER) && _MSC_VER >= 1800
+#define HAVE_VA_COPY 1
+#else
 #undef HAVE_VA_COPY
+#endif
 
 /* Have vsnprintf */
 #undef HAVE_VSNPRINTF
