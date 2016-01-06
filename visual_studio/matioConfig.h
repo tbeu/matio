@@ -61,7 +61,11 @@
 #define HAVE_MEMORY_H 1
 
 /* Have snprintf */
+#if defined(_MSC_VER) && _MSC_VER >= 1900
+#define HAVE_SNPRINTF 1
+#else
 #undef HAVE_SNPRINTF
+#endif
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
@@ -92,7 +96,14 @@
 #endif
 
 /* Have vsnprintf */
+#if defined(_MSC_VER) && _MSC_VER >= 1900
+#define HAVE_VSNPRINTF 1
+#if !defined(HAVE_C99_VSNPRINTF)
+#define HAVE_C99_VSNPRINTF 1
+#endif
+#else
 #undef HAVE_VSNPRINTF
+#endif
 
 /* Have va_copy */
 #undef HAVE___VA_COPY
