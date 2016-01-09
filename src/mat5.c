@@ -5443,6 +5443,10 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         int buf_size = 512, err;
         size_t byteswritten = 0;
 
+        if (matvar->internal->z != NULL) {
+            inflateEnd(matvar->internal->z);
+            free(matvar->internal->z);
+        }
         matvar->internal->z         = calloc(1,sizeof(*matvar->internal->z));
         matvar->internal->z->zalloc = Z_NULL;
         matvar->internal->z->zfree  = Z_NULL;
