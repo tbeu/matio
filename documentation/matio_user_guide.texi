@@ -36,14 +36,14 @@
 @sp 0
 @title 
 @subtitle User Manual
-@subtitle for version 1.5.2
-@subtitle July 2013
+@subtitle for version 1.5.3
+@subtitle January 2016
 @author Christopher C. Hulbert
 @page
 @vskip 0pt plus 1filll
 @smallexample
 @group
-  Copyright (C)  @var{2011-2013}  @var{Christopher C. Hulbert}. All rights reserved.
+  Copyright (C)  @var{2011-2016}  @var{Christopher C. Hulbert}. All rights reserved.
 
   Redistribution and use in source (texinfo) and 'compiled' forms (HTML, PDF,
   PostScript, RTF and so forth) with or without modification, are permitted
