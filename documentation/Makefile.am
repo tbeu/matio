@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright 2012 Christopher C. Hulbert.
+## Copyright 2012-2016 Christopher C. Hulbert.
 ##
 ## All rights reserved.
 ##

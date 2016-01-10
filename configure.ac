@@ -2,7 +2,7 @@ dnl  configure.ac
 dnl
 dnl  NOTE:  Process this file with GNU autoconf to produce a configure script.
 dnl
-dnl Copyright (C) 2005-2013   Christopher C. Hulbert
+dnl Copyright (C) 2005-2016   Christopher C. Hulbert
 dnl
 dnl All rights reserved.
 dnl

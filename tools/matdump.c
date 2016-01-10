@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2013   Christopher C. Hulbert
+ * Copyright (C) 2005-2016   Christopher C. Hulbert
  *
  * All rights reserved.
  *
@@ -849,7 +849,7 @@ main (int argc, char *argv[])
                 exit(EXIT_SUCCESS);
             case 'V':
                 printf("%s %s\nWritten by Christopher Hulbert\n\n"
-                       "Copyright(C) 2006-2013 Christopher C. Hulbert\n",
+                       "Copyright(C) 2006-2016 Christopher C. Hulbert\n",
                        prog_name,MATIO_VERSION_STR);
                 exit(EXIT_SUCCESS);
             default:
