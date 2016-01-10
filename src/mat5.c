@@ -1754,15 +1754,30 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
             cells[i]->internal->z = calloc(1,sizeof(z_stream));
             err = inflateCopy(cells[i]->internal->z,matvar->internal->z);
-            if ( err != Z_OK )
+            if ( err != Z_OK ) {
                 Mat_Critical("inflateCopy returned error %d",err);
+            }
             cells[i]->internal->datapos = ftell(mat->fp)-matvar->internal->z->avail_in;
             if ( cells[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,cells[i]);
             else if ( cells[i]->class_type == MAT_C_CELL )
                 bytesread+=ReadNextCell(mat,cells[i]);
+            else if ( nbytes <= (1 << MAX_WBITS) ) {
+                /* Memory optimization: Read data if less in size
+                   than the zlib inflate state (approximately) */
+                cells[i]->internal->fp = mat;
+                Mat_VarReadDataAll(mat,cells[i]);
+            }
             fseek(mat->fp,cells[i]->internal->datapos,SEEK_SET);
             bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
+            if ( cells[i]->data != NULL && (nbytes <= (1 << MAX_WBITS) ||
+                cells[i]->class_type == MAT_C_STRUCT ||
+                cells[i]->class_type == MAT_C_CELL) ) {
+                /* Memory optimization: Free inflate state */
+                inflateEnd(cells[i]->internal->z);
+                free(cells[i]->internal->z);
+                cells[i]->internal->z = NULL;
+            }
         }
 #else
         Mat_Critical("Not compiled with zlib support");
@@ -2052,8 +2067,22 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 bytesread+=ReadNextStructField(mat,fields[i]);
             else if ( fields[i]->class_type == MAT_C_CELL )
                 bytesread+=ReadNextCell(mat,fields[i]);
+            else if ( nbytes <= (1 << MAX_WBITS) ) {
+                /* Memory optimization: Read data if less in size
+                   than the zlib inflate state (approximately) */
+                fields[i]->internal->fp = mat;
+                Mat_VarReadDataAll(mat,fields[i]);
+            }
             fseek(mat->fp,fields[i]->internal->datapos,SEEK_SET);
             bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
+            if ( fields[i]->data != NULL && (nbytes <= (1 << MAX_WBITS) ||
+                fields[i]->class_type == MAT_C_STRUCT ||
+                fields[i]->class_type == MAT_C_CELL) ) {
+                /* Memory optimization: Free inflate state */
+                inflateEnd(fields[i]->internal->z);
+                free(fields[i]->internal->z);
+                fields[i]->internal->z = NULL;
+            }
         }
 #else
         Mat_Critical("Not compiled with zlib support");
@@ -3700,6 +3729,11 @@ Read5(mat_t *mat, matvar_t *matvar)
         return;
     else if ( matvar->rank == 0 )        /* An empty data set */
         return;
+    else if ( matvar->class_type != MAT_C_STRUCT &&
+        matvar->class_type != MAT_C_CELL && matvar->data != NULL ) {
+        /* Data already read in ReadNextStructField or ReadNextCell */
+        return;
+    }
 
     fpos = ftell(mat->fp);
     len = 1;
@@ -4131,6 +4165,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             if ( nBytes == 0 ) {
                 matvar->nbytes = 0;
+                matvar->data   = calloc(0,1);
                 break;
             }
             matvar->data_size = sizeof(char);
