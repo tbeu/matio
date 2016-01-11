@@ -28,7 +28,7 @@
 VPATH = @srcdir@
 
 LT_CURRENT=2
-LT_REVISION=2
+LT_REVISION=3
 LT_AGE=0
 
 AM_CFLAGS  = -I. $(HDF5_CFLAGS) $(ZLIB_CFLAGS) $(LT_CFLAGS)
@@ -48,7 +48,7 @@ libmatio_la_SOURCES    = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
 libmatio_la_LIBADD     = $(HDF5_LIBS) $(ZLIB_LIBS)
 
 if MAT73
-libmatio_la_SOURCES+= mat73.c
+    libmatio_la_SOURCES+= mat73.c
 endif
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
