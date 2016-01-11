@@ -36,8 +36,12 @@
 /* Default file format */
 #define MAT_FT_DEFAULT MAT_FT_MAT5
 
-/* Define to 1 if you have the <stdint.h> header file. */
+/* Have the <stdint.h> header file */
+#if defined(_MSC_VER) && _MSC_VER >= 1600
+#define MATIO_HAVE_STDINT_H 1
+#else
 #undef MATIO_HAVE_STDINT_H
+#endif
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef MATIO_HAVE_INTTYPES_H
