@@ -1827,7 +1827,7 @@ matvar_t *
 Mat_VarRead( mat_t *mat, const char *name )
 {
     long  fpos = 0;
-    matvar_t *matvar = NULL;;
+    matvar_t *matvar = NULL;
 
     if ( (mat == NULL) || (name == NULL) )
         return NULL;
