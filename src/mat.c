@@ -1803,11 +1803,11 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
                     Mat_VarFree(matvar);
                     matvar = NULL;
                 }
-            } else {
+            } else if (!feof((FILE *)mat->fp)) {
                 Mat_Critical("An error occurred in reading the MAT file");
                 break;
             }
-        } while ( !matvar && !feof(((FILE *)mat->fp)) );
+        } while ( !matvar && !feof((FILE *)mat->fp) );
 
         fseek(mat->fp,fpos,SEEK_SET);
     }
@@ -1866,7 +1866,7 @@ Mat_VarReadNext( mat_t *mat )
     matvar_t *matvar = NULL;
 
     if ( mat->version != MAT_FT_MAT73 ) {
-        if ( feof(((FILE *)mat->fp)) )
+        if ( feof((FILE *)mat->fp) )
             return NULL;
         /* Read position so we can reset the file position if an error occurs */
         fpos = ftell(mat->fp);
