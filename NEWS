@@ -1,6 +1,8 @@
-Changes in 1.5.3 (10 January 2016)
+Changes in 1.5.3 (11 January 2016)
 * Added support for writing numeric arrays to v4 MAT files
 * Added Visual Studio project for test_mat
+* Added new API functions Mat_CalcSingleSubscript2 and Mat_CalcSubscripts2 that
+  work on size_t type
 * Fixed memory consumption reading compressed v5 MAT files
 * Fixed bug writing compressed v5 MAT files
 * Fixed bug in Mat_VarReadNextInfo5 where freed variable was not set to NULL
