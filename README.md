@@ -34,9 +34,10 @@ The following people/organizations have helped in the development of matio throu
 
 * Jacco van Beek
 * SGI in support of Interactive Supercomputing, Inc.
-* Scilab (http://www.scilab.org/)
+* Scilab ([http://www.scilab.org/](http://www.scilab.org/))
 * Steven Leibman <sleibman@alum.mit.edu>
-* OpenMEEG (http://openmeeg.github.io/)
+* OpenMEEG ([http://openmeeg.github.io/](http://openmeeg.github.io/))
+* Modelica Association ([https://modelica.org/association](https://modelica.org/association))
 
 ### 1.3 Contributing
 Part of my reason for releasing this software is I have many other projects to work on and have many features I would still like to implement. If you make changes, I would appreciate your contributions and more than likely will include them in future releases. If you are interested in collaborations, contact me via email (see Section [1.1](#11-contact)).
