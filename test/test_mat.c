@@ -2602,7 +2602,7 @@ test_writeslab(void)
     int        start[2]={0,0},stride[2]={2,2},edge[2]={3,5};
     double     data[60]={0.0,};
     float     fdata[60]={0.0,};
-    int       idata[60]={0.0,};
+    int       idata[60]={0,};
     mat_t    *mat;
     matvar_t *matvar, *matvar2, *matvar3;
 
