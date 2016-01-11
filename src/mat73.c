@@ -948,7 +948,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             hsize_t  dims[10];
             hid_t   attr_id,type_id,dset_id,space_id;
 
-            //matvar->fp = mat;
+            /* matvar->fp = mat; */
             dset_id = ref_id;
 
 #if 0
@@ -1337,7 +1337,6 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
 
     return err;
 }
-
 
 /** @if mat_devman
  * @brief Writes a character matlab variable to the specified HDF id with the
