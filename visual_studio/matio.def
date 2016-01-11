@@ -53,4 +53,6 @@ EXPORTS
     Mat_VarWriteInfo
     Mat_VarWriteData
     Mat_CalcSingleSubscript
+    Mat_CalcSingleSubscript2
     Mat_CalcSubscripts
+    Mat_CalcSubscripts2

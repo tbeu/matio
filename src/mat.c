@@ -1189,8 +1189,8 @@ Mat_VarFree2(matvar_t *matvar)
  * \f]
  * @ingroup MAT
  * @param rank Rank of the variable
- * @param dims dimensions of the variable
- * @param subs Dimension subscripts
+ * @param dims Dimensions of the variable
+ * @param subs Array of dimension subscripts
  * @return Single (linear) subscript
  */
 int
@@ -1219,6 +1219,47 @@ Mat_CalcSingleSubscript(int rank,int *dims,int *subs)
     return index;
 }
 
+/** @brief Calculate a single subscript from a set of subscript values
+ *
+ * Calculates a single linear subscript (0-relative) given a 1-relative
+ * subscript for each dimension.  The calculation uses the formula below where
+ * index is the linear index, s is an array of length RANK where each element
+ * is the subscript for the correspondind dimension, D is an array whose
+ * elements are the dimensions of the variable.
+ * \f[
+ *   index = \sum\limits_{k=0}^{RANK-1} [(s_k - 1) \prod\limits_{l=0}^{k} D_l ]
+ * \f]
+ * @ingroup MAT
+ * @param rank Rank of the variable
+ * @param dims Dimensions of the variable
+ * @param subs Array of dimension subscripts
+ * @param[out] index Single (linear) subscript
+ * @retval 0 on success
+ */
+int
+Mat_CalcSingleSubscript2(int rank,size_t *dims,size_t *subs,size_t *index)
+{
+    int i, err = 0;
+
+    for ( i = 0; i < rank; i++ ) {
+        int j;
+        size_t k = subs[i];
+        if ( k > dims[i] ) {
+            err = 1;
+            Mat_Critical("Mat_CalcSingleSubscript2: index out of bounds");
+            break;
+        } else if ( k < 1 ) {
+            err = 1;
+            break;
+        }
+        k--;
+        for ( j = i; j--; )
+            k *= dims[j];
+        *index += k;
+    }
+
+    return err;
+}
 
 /** @brief Calculate a set of subscript values from a single(linear) subscript
  *
@@ -1234,8 +1275,8 @@ Mat_CalcSingleSubscript(int rank,int *dims,int *subs)
  * \f]
  * @ingroup MAT
  * @param rank Rank of the variable
- * @param dims dimensions of the variable
- * @param index linear index
+ * @param dims Dimensions of the variable
+ * @param index Linear index
  * @return Array of dimension subscripts
  */
 int *
@@ -1251,6 +1292,46 @@ Mat_CalcSubscripts(int rank,int *dims,int index)
         for ( j = i; j--; )
             k *= dims[j];
         subs[i] = floor(l / (double)k);
+        l -= subs[i]*k;
+        subs[i]++;
+    }
+
+    return subs;
+}
+
+/** @brief Calculate a set of subscript values from a single(linear) subscript
+ *
+ * Calculates 1-relative subscripts for each dimension given a 0-relative
+ * linear index.  Subscripts are calculated as follows where s is the array
+ * of dimension subscripts, D is the array of dimensions, and index is the
+ * linear index.
+ * \f[
+ *   s_k = \lfloor\frac{1}{L} \prod\limits_{l = 0}^{k} D_l\rfloor + 1
+ * \f]
+ * \f[
+ *   L = index - \sum\limits_{l = k}^{RANK - 1} s_k \prod\limits_{m = 0}^{k} D_m
+ * \f]
+ * @ingroup MAT
+ * @param rank Rank of the variable
+ * @param dims Dimensions of the variable
+ * @param index Linear index
+ * @return Array of dimension subscripts
+ */
+size_t *
+Mat_CalcSubscripts2(int rank,size_t *dims,size_t index)
+{
+    int i;
+    size_t *subs;
+    double l;
+
+    subs = malloc(rank*sizeof(size_t));
+    l = (double)index;
+    for ( i = rank; i--; ) {
+        int j;
+        size_t k = 1;
+        for ( j = i; j--; )
+            k *= dims[j];
+        subs[i] = (size_t)floor(l / (double)k);
         l -= subs[i]*k;
         subs[i]++;
     }

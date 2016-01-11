@@ -3337,19 +3337,20 @@ int main (int argc, char *argv[])
             err += test_write_complex_sparse(matvar_class,output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"ind2sub") ) {
-            int *subs, dims[3] = {256,256,124};
+            size_t *subs, dims[3] = {256,256,124};
 
-            subs = Mat_CalcSubscripts(3,dims,18921-1);
-            Mat_Message("%d,%d,%d",subs[0],subs[1],subs[2]);
+            subs = Mat_CalcSubscripts2(3,dims,18921-1);
+            Mat_Message("%lu,%lu,%lu",(unsigned long)subs[0],(unsigned long)subs[1],(unsigned long)subs[2]);
             free(subs);
             k++;
             ntests++;
         } else if ( !strcasecmp(argv[k],"sub2ind") ) {
-            int  dims[3] = {256,256,124}, index[3] = {233,74,1};
-            int  linear_index;
+            size_t dims[3] = {256,256,124}, index[3] = {233,74,1};
+            size_t linear_index = 0;
+            int err;
 
-            linear_index = Mat_CalcSingleSubscript(3,dims,index);
-            Mat_Message("%d",linear_index);
+            err = Mat_CalcSingleSubscript2(3,dims,index,&linear_index);
+            Mat_Message("%lu",(unsigned long)linear_index);
             k++;
             ntests++;
         } else {
