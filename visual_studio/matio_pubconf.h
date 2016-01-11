@@ -43,8 +43,12 @@
 #undef MATIO_HAVE_STDINT_H
 #endif
 
-/* Define to 1 if you have the <inttypes.h> header file. */
+/* Have the <inttypes.h> header file */
+#if defined(_MSC_VER) && _MSC_VER >= 1800
+#define MATIO_HAVE_INTTYPES_H 1
+#else
 #undef MATIO_HAVE_INTTYPES_H
+#endif
 
 /* int16 type */
 #define _mat_int16_t short
