@@ -1182,7 +1182,7 @@ Mat_VarFree2(matvar_t *matvar)
  * Calculates a single linear subscript (0-relative) given a 1-relative
  * subscript for each dimension.  The calculation uses the formula below where
  * index is the linear index, s is an array of length RANK where each element
- * is the subscript for the correspondind dimension, D is an array whose
+ * is the subscript for the corresponding dimension, D is an array whose
  * elements are the dimensions of the variable.
  * \f[
  *   index = \sum\limits_{k=0}^{RANK-1} [(s_k - 1) \prod\limits_{l=0}^{k} D_l ]
@@ -1224,7 +1224,7 @@ Mat_CalcSingleSubscript(int rank,int *dims,int *subs)
  * Calculates a single linear subscript (0-relative) given a 1-relative
  * subscript for each dimension.  The calculation uses the formula below where
  * index is the linear index, s is an array of length RANK where each element
- * is the subscript for the correspondind dimension, D is an array whose
+ * is the subscript for the corresponding dimension, D is an array whose
  * elements are the dimensions of the variable.
  * \f[
  *   index = \sum\limits_{k=0}^{RANK-1} [(s_k - 1) \prod\limits_{l=0}^{k} D_l ]
@@ -1355,7 +1355,7 @@ Mat_VarGetSize(matvar_t *matvar)
         int nfields;
         matvar_t **fields;
         /* This is really nmemb*nfields, but we'll get a
-         * more accurate count of the bytes by loopoing over all of them
+         * more accurate count of the bytes by looping over all of them
          */
         nfields = matvar->internal->num_fields;
         fields  = matvar->data;
