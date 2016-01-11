@@ -2,8 +2,7 @@
 MATLAB MAT file I/O library
 
 ## Build status
-[![Build Status](https://drone.io/github.com/tbeu/matio/status.png)](https://drone.io/github.com/tbeu/matio/latest)
-[![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master)
+[![Build Status](https://drone.io/github.com/tbeu/matio/status.png)](https://drone.io/github.com/tbeu/matio/latest) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master)
 
 ## Table of Contents
 1. [Introduction](#10-introduction)
@@ -63,8 +62,7 @@ For Windows, the pre-compiled binaries can be used which also include a DLL of z
 
 ### 2.2 Building matio
 #### 2.2.1 Quick Build Guide
-The primary method for building the software is using `configure` followed by `make`. After building, the testsuite can be executed to test the software using `make check`. The software can be installed
-using `make install`. For example,
+The primary method for building the software is using `configure` followed by `make`. After building, the testsuite can be executed to test the software using `make check`. The software can be installed using `make install`. For example,
 ```sh
 $ tar zxf matio-X.Y.Z.tar.gz
 $ cd matio-X.Y.Z
