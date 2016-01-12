@@ -35,6 +35,11 @@
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif
+#ifdef _MSC_VER
+#   define SIZE_T_FMTSTR "Iu"
+#else
+#   define SIZE_T_FMTSTR "zu"
+#endif
 
 static const char *optstring = "c:o:v:HLT:Vz";
 static struct option options[] = {
@@ -3340,7 +3345,7 @@ int main (int argc, char *argv[])
             size_t *subs, dims[3] = {256,256,124};
 
             subs = Mat_CalcSubscripts2(3,dims,18921-1);
-            Mat_Message("%lu,%lu,%lu",(unsigned long)subs[0],(unsigned long)subs[1],(unsigned long)subs[2]);
+            Mat_Message("%" SIZE_T_FMTSTR,"%" SIZE_T_FMTSTR,"%" SIZE_T_FMTSTR,subs[0],subs[1],subs[2]);
             free(subs);
             k++;
             ntests++;
@@ -3350,7 +3355,7 @@ int main (int argc, char *argv[])
             int err;
 
             err = Mat_CalcSingleSubscript2(3,dims,index,&linear_index);
-            Mat_Message("%lu",(unsigned long)linear_index);
+            Mat_Message("%" SIZE_T_FMTSTR,linear_index);
             k++;
             ntests++;
         } else {
