@@ -212,8 +212,8 @@ Mat_Open(const char *matname,int mode)
     }
 
     mat->fp = fp;
-    mat->header        = calloc(128,1);
-    mat->subsys_offset = calloc(8,1);
+    mat->header        = calloc(128,sizeof(char));
+    mat->subsys_offset = calloc(8,sizeof(char));
     mat->filename      = NULL;
     mat->byteswap      = 0;
     mat->version       = 0;
@@ -486,12 +486,12 @@ Mat_VarCalloc(void)
             matvar->internal->hdf5_ref  =  0;
             matvar->internal->id        = -1;
             matvar->internal->fp = NULL;
-            matvar->internal->fpos         = 0;
-            matvar->internal->datapos      = 0;
-            matvar->internal->fieldnames   = NULL;
-            matvar->internal->num_fields   = 0;
+            matvar->internal->fpos       = 0;
+            matvar->internal->datapos    = 0;
+            matvar->internal->fieldnames = NULL;
+            matvar->internal->num_fields = 0;
 #if defined(HAVE_ZLIB)
-            matvar->internal->z         = NULL;
+            matvar->internal->z          = NULL;
 #endif
         }
     }

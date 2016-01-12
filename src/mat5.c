@@ -496,27 +496,27 @@ Mat_Create5(const char *matname,const char *hdr_str)
         return NULL;
     }
 
-    mat->fp               = NULL;
-    mat->header           = NULL;
-    mat->subsys_offset    = NULL;
-    mat->filename         = NULL;
-    mat->version          = 0;
-    mat->byteswap         = 0;
-    mat->mode             = 0;
-    mat->bof              = 0;
-    mat->next_index       = 0;
+    mat->fp            = NULL;
+    mat->header        = NULL;
+    mat->subsys_offset = NULL;
+    mat->filename      = NULL;
+    mat->version       = 0;
+    mat->byteswap      = 0;
+    mat->mode          = 0;
+    mat->bof           = 0;
+    mat->next_index    = 0;
 
     t = time(NULL);
-    mat->fp = fp;
+    mat->fp       = fp;
     mat->filename = strdup_printf("%s",matname);
     mat->mode     = MAT_ACC_RDWR;
     mat->byteswap = 0;
-    mat->header   = calloc(1,128);
-    mat->subsys_offset = calloc(1,8);
+    mat->header   = malloc(128*sizeof(char));
+    mat->subsys_offset = malloc(8*sizeof(char));
     memset(mat->header,' ',128);
     if ( hdr_str == NULL ) {
         err = mat_snprintf(mat->header,116,"MATLAB 5.0 MAT-file, Platform: %s, "
-                "Created By: libmatio v%d.%d.%d on %s", MATIO_PLATFORM,
+                "Created by: libmatio v%d.%d.%d on %s", MATIO_PLATFORM,
                 MATIO_MAJOR_VERSION, MATIO_MINOR_VERSION, MATIO_RELEASE_LEVEL,
                 ctime(&t));
         mat->header[115] = '\0';    /* Just to make sure it's NULL terminated */    } else {
@@ -5539,9 +5539,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             inflateEnd(matvar->internal->z);
             free(matvar->internal->z);
         }
-        matvar->internal->z         = calloc(1,sizeof(*matvar->internal->z));
-        matvar->internal->z->zalloc = Z_NULL;
-        matvar->internal->z->zfree  = Z_NULL;
+        matvar->internal->z = calloc(1,sizeof(*matvar->internal->z));
         err = deflateInit(matvar->internal->z,Z_DEFAULT_COMPRESSION);
 
         matrix_type = MAT_T_COMPRESSED;
@@ -5997,9 +5995,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         int buf_size = 512, err;
         size_t byteswritten = 0;
 
-        matvar->internal->z         = malloc(sizeof(*matvar->internal->z));
-        matvar->internal->z->zalloc = Z_NULL;
-        matvar->internal->z->zfree  = Z_NULL;
+        matvar->internal->z = calloc(1,sizeof(*matvar->internal->z));
         err = deflateInit(matvar->internal->z,Z_DEFAULT_COMPRESSION);
 
         matrix_type = MAT_T_COMPRESSED;
@@ -6202,15 +6198,8 @@ Mat_VarReadNextInfo5( mat_t *mat )
             matvar->compression  = 1;
 
             matvar->internal->fp = mat;
-            matvar->internal->fpos         = fpos;
+            matvar->internal->fpos = fpos;
             matvar->internal->z = calloc(1,sizeof(z_stream));
-            matvar->internal->z->zalloc    = NULL;
-            matvar->internal->z->zfree     = NULL;
-            matvar->internal->z->opaque    = NULL;
-            matvar->internal->z->next_in   = NULL;
-            matvar->internal->z->next_out  = NULL;
-            matvar->internal->z->avail_in  = 0;
-            matvar->internal->z->avail_out = 0;
             err = inflateInit(matvar->internal->z);
             if ( err != Z_OK ) {
                 Mat_Critical("inflateInit2 returned %d",err);
