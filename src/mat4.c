@@ -186,14 +186,24 @@ Read4(mat_t *mat,matvar_t *matvar)
 
                 matvar->nbytes   = N*sizeof(double);
                 complex_data     = malloc(sizeof(*complex_data));
+                if ( NULL == complex_data ) {
+                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
+                    break;
+                }
                 complex_data->Re = malloc(matvar->nbytes);
                 complex_data->Im = malloc(matvar->nbytes);
-                matvar->data     = complex_data;
-                if ( complex_data != NULL &&
-                    complex_data->Re != NULL && complex_data->Im != NULL ) {
-                    ReadDoubleData(mat, complex_data->Re, matvar->data_type, N);
-                    ReadDoubleData(mat, complex_data->Im, matvar->data_type, N);
+                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
+                    if ( NULL != complex_data->Re )
+                        free(complex_data->Re);
+                    if ( NULL != complex_data->Im )
+                        free(complex_data->Im);
+                    free(complex_data);
+                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    break;
                 }
+                matvar->data     = complex_data;
+		ReadDoubleData(mat, complex_data->Re, matvar->data_type, N);
+		ReadDoubleData(mat, complex_data->Im, matvar->data_type, N);
             } else {
                 matvar->nbytes = N*sizeof(double);
                 matvar->data   = malloc(matvar->nbytes);
@@ -242,7 +252,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
     int err = 0;
     enum matio_classes class_type = MAT_C_EMPTY;
 
-    fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
+    (void)fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
 
     switch( matvar->data_type ) {
         case MAT_T_DOUBLE:
@@ -278,7 +288,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
 
             ReadDataSlab2(mat,cdata->Re,class_type,matvar->data_type,
                     matvar->dims,start,stride,edge);
-            fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            (void)fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
             ReadDataSlab2(mat,cdata->Im,class_type,
                 matvar->data_type,matvar->dims,start,stride,edge);
         } else {
@@ -296,7 +306,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
 
             ReadDataSlabN(mat,cdata->Re,class_type,matvar->data_type,
                 matvar->rank,matvar->dims,start,stride,edge);
-            fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            (void)fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
             ReadDataSlab2(mat,cdata->Im,class_type,
                 matvar->data_type,matvar->dims,start,stride,edge);
         } else {
@@ -327,7 +337,7 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
     size_t i, nmemb = 1;
     int err = 0;
 
-    fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
+    (void)fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
 
     matvar->data_size = Mat_SizeOf(matvar->data_type);
 
@@ -343,7 +353,7 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
 
             ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
                           matvar->data_type,start,stride,edge);
-            fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            (void)fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
             ReadDataSlab1(mat,complex_data->Im,matvar->class_type,
                           matvar->data_type,start,stride,edge);
     } else {
@@ -518,7 +528,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     nBytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex )
         nBytes *= 2;
-    fseek(mat->fp,nBytes,SEEK_CUR);
+    (void)fseek(mat->fp,nBytes,SEEK_CUR);
 
     return matvar;
 }
