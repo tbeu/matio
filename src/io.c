@@ -324,6 +324,8 @@ void Mat_Error( const char *format, ... )
     va_start(ap, format );
     mat_log( LOG_LEVEL_ERROR, format, ap );
     va_end(ap);
+
+    abort();
 }
 
 /** @brief Prints a helpstring to stdout and exits with status 1

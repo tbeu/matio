@@ -204,7 +204,8 @@ Mat_Open(const char *matname,int mode)
         return NULL;
     }
 
-    mat = malloc(sizeof(*mat));
+    mat = Mat_Initialize();
+    
     if ( NULL == mat ) {
         Mat_Critical("Couldn't allocate memory for the MAT file");
         fclose(fp);
@@ -239,6 +240,9 @@ Mat_Open(const char *matname,int mode)
         if ( (mat->version == 0x0100 || mat->version == 0x0200) &&
              -1 != mat->byteswap ) {
             mat->bof = ftell(mat->fp);
+	    if (mat->bof < 0) {
+	      Mat_Error("Error determining location in file %s\n", mat->filename);
+	    }
             mat->next_index    = 0;
         } else {
             mat->version = 0;
@@ -248,10 +252,8 @@ Mat_Open(const char *matname,int mode)
     if ( 0 == mat->version ) {
         /* Maybe a V4 MAT file */
         matvar_t *var;
-        if ( NULL != mat->header )
-            free(mat->header);
-        if ( NULL != mat->subsys_offset )
-            free(mat->subsys_offset);
+	free(mat->header);
+	free(mat->subsys_offset);
 
         mat->header        = NULL;
         mat->subsys_offset = NULL;
@@ -310,6 +312,29 @@ Mat_Open(const char *matname,int mode)
     }
 
     return mat;
+}
+
+/** @brief Allocate and initialize a mat_t structure
+ *
+ * @ingroup MAT
+ * @retval pointer to mat_t
+ */
+mat_t * Mat_Initialize()
+{
+  mat_t *mat = malloc(sizeof(mat_t));
+
+  mat->fp = NULL;               /**< File pointer for the MAT file */
+  mat->header = NULL;           /**< MAT File header string */
+  mat->subsys_offset = NULL;    /**< offset */
+  mat->filename = NULL;         /**< Filename of the MAT file */
+  mat->version = 0;             /**< MAT File version */
+  mat->byteswap = 0;            /**< 1 if byte swapping is required, 0 otherwise */
+  mat->mode = 0;                /**< Access mode */
+  mat->bof = 0;                 /**< Beginning of file not including any header */
+  mat->next_index = 0;          /**< Index/File position of next variable to read */
+  mat->num_datasets = 0;        /**< Number of datasets in the file */
+  mat->refs_id = 0;             /**< Id of the /#refs# group in HDF5 */
+  return mat;
 }
 
 /** @brief Closes an open Matlab MAT file
@@ -392,10 +417,10 @@ Mat_Rewind( mat_t *mat )
             mat->next_index = 0;
             break;
         case MAT_FT_MAT5:
-            fseek(mat->fp,128L,SEEK_SET);
+            (void)fseek(mat->fp,128L,SEEK_SET);
             break;
         case MAT_FT_MAT4:
-            fseek(mat->fp,0L,SEEK_SET);
+            (void)fseek(mat->fp,0L,SEEK_SET);
             break;
         default:
             return -1;
@@ -1530,8 +1555,6 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
             case MAT_C_CHAR:
             {
                 char *data = matvar->data;
-                if ( !printdata )
-                    break;
                 for ( i = 0; i < matvar->dims[0]; i++ ) {
                     for ( j = 0; j < matvar->dims[1]; j++ )
                         printf("%c",data[j*matvar->dims[0]+i]);
@@ -1792,7 +1815,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
         mat->next_index = fpos;
     } else {
         fpos = ftell(mat->fp);
-        fseek(mat->fp,mat->bof,SEEK_SET);
+        (void)fseek(mat->fp,mat->bof,SEEK_SET);
         do {
             matvar = Mat_VarReadNextInfo(mat);
             if ( matvar != NULL ) {
@@ -1809,7 +1832,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
             }
         } while ( !matvar && !feof((FILE *)mat->fp) );
 
-        fseek(mat->fp,fpos,SEEK_SET);
+        (void)fseek(mat->fp,fpos,SEEK_SET);
     }
     return matvar;
 }
@@ -1832,8 +1855,12 @@ Mat_VarRead( mat_t *mat, const char *name )
     if ( (mat == NULL) || (name == NULL) )
         return NULL;
 
-    if ( MAT_FT_MAT73 != mat->version )
+    if ( MAT_FT_MAT73 != mat->version ) {
         fpos = ftell(mat->fp);
+	if (fpos < 0) {
+	  Mat_Error("Error determining location in file %s\n", mat->filename);
+	}
+    }
     else {
         fpos = mat->next_index;
         mat->next_index = 0;
@@ -1844,7 +1871,7 @@ Mat_VarRead( mat_t *mat, const char *name )
         ReadData(mat,matvar);
 
     if ( MAT_FT_MAT73 != mat->version )
-        fseek(mat->fp,fpos,SEEK_SET);
+        (void)fseek(mat->fp,fpos,SEEK_SET);
     else {
         mat->next_index = fpos;
     }
@@ -1870,12 +1897,15 @@ Mat_VarReadNext( mat_t *mat )
             return NULL;
         /* Read position so we can reset the file position if an error occurs */
         fpos = ftell(mat->fp);
+	if (fpos < 0) {
+	  Mat_Error("Error determining location in file %s\n", mat->filename);
+	}
     }
     matvar = Mat_VarReadNextInfo(mat);
     if ( matvar )
         ReadData(mat,matvar);
     else if (mat->version != MAT_FT_MAT73 )
-        fseek(mat->fp,fpos,SEEK_SET);
+        (void)fseek(mat->fp,fpos,SEEK_SET);
     return matvar;
 }
 
@@ -1922,11 +1952,14 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
 {
     int err = 0, k, N = 1;
 
-    fseek(mat->fp,matvar->internal->datapos+8,SEEK_SET);
-
     if ( mat == NULL || matvar == NULL || data == NULL ) {
         err = -1;
-    } else if ( start == NULL && stride == NULL && edge == NULL ) {
+	return err;
+    }
+
+    (void)fseek(mat->fp,matvar->internal->datapos+8,SEEK_SET);
+
+    if ( start == NULL && stride == NULL && edge == NULL ) {
         for ( k = 0; k < matvar->rank; k++ )
             N *= matvar->dims[k];
         if ( matvar->compression == MAT_COMPRESSION_NONE )

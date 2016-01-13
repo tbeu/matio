@@ -181,10 +181,10 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride,
                 i = atoi(valptr);
                 if ( nvals == 0 )
                     start[dim] = i-1;
-                else if ( nvals == 1 )
+                else if ( nvals == 1 ) {
                     stride[dim] = i;
-                else if ( nvals == 1 )
                     edge[dim] = i;
+		}
                 else if ( nvals == 2 )
                     edge[dim] = i;
                 else
@@ -311,8 +311,8 @@ slab_select_valid(int rank,int *start,int *stride,int *edge,matvar_t *matvar)
     return nmemb;
 }
 
-static void
-read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
+static
+matvar_t *read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
 {
     char *next_tok_pos, next_tok = 0;
     char *open = NULL, *close = NULL;
@@ -395,7 +395,7 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
             free(edge);
         } else if ( next_tok == '.' ) {
             matvar_t *field;
-            char *varname;
+            char *varname = NULL;
 
             if ( matvar->class_type == MAT_C_STRUCT ) {
                 varname = next_tok_pos+1;
@@ -451,7 +451,7 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
                 if ( j != ncells )
                     break;
             } else {
-                fprintf(stderr,"%s is not a structure", varname);
+                fprintf(stderr,"%s is not a structure", matvar->name);
                 break;
             }
         } else if ( next_tok == '{' ) {
@@ -525,6 +525,7 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
                 break;
         }
     }
+    return matvar;
 }
 
 static void
@@ -888,7 +889,7 @@ main (int argc, char *argv[])
                         Mat_VarReadDataAll(mat,matvar);
                     } else {
                         *next_tok_pos = next_tok;
-                        read_selected_data(mat,matvar,next_tok_pos);
+                        matvar = read_selected_data(mat,matvar,next_tok_pos);
                     }
                 }
                 (*printfunc)(matvar);
