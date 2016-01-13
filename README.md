@@ -80,7 +80,6 @@ The configure script used to build the software takes a number of options. This 
 
 * `--enable-mat73=yes`
 This flag en/disables the support for version 7.3 MAT files. The option only makes sense if built with HDF5 as support for version 7.3 files will be disabled if HDF5 is not available.
-
 * `--enable-extended-sparse=yes`
 Enable extended sparse matrix data types not supported in MATLAB. MATLAB only supports double-precision sparse data. With this flag, matio will read sparse data with other types (i.e. single-precision and integer types).
 * `--with-matlab=DIR`
@@ -92,8 +91,7 @@ This option specifies the prefix where the HDF5 software is installed (see Secti
 * `--with-default-file-ver=version`
 This option sets the default MAT file version (4,5,7.3) that will be used when writing. The default file version is used by the Mat_Create macro and the Mat_CreateVer function when MAT_FT_DEFAULT is used for the version argument.
 * `--with-libdir-suffix=suffix`
-This option specifies a suffix to apply to library directories when installing and looking for dependent
-libraries (i.e. HDF5 and zlib). For example, some multi-arch Linux distributions install 64-bit libraries into lib64 and 32-bit libraries into lib.
+This option specifies a suffix to apply to library directories when installing and looking for dependent libraries (i.e. HDF5 and zlib). For example, some multi-arch Linux distributions install 64-bit libraries into lib64 and 32-bit libraries into lib.
 
 #### 2.2.3 Visual Studio
 Visual Studio solutions are provided as [matio_vs2008.sln](visual_studio/matio_vs2008.sln) for VS2008 and as [matio.sln](visual_studio/matio.sln) for VS2010 (and newer). The solutions are set up to build a DLL of the matio library (libmatio.dll) and matdump tool and assume HDF5 is available in the directory specified by the HDF5_DIR environment variable. It is assumed that the **shared** libraries of HDF5 (and zlib) are available. If the **static** libraries of HDF5 (and zlib) are installed/built the macro `H5_BUILT_AS_STATIC_LIB` needs to be defined (instead of `H5_BUILT_AS_DYNAMIC_LIB`).
