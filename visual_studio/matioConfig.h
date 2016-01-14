@@ -159,6 +159,7 @@
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
+
 /* Define to 1 if the system has the type `uintmax_t'. */
 #if defined(_MSC_VER) && _MSC_VER >= 1600
 #define HAVE_UINTMAX_T 1
