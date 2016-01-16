@@ -527,3 +527,44 @@ end
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint8;exit' | $GREP PASSED],[0],[PASSED
 ],[ignore])
 AT_CLEANUP
+
+AT_SETUP([Write character array])
+AT_CHECK([$builddir/test_mat -v 4 write_char],[0],[ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: a
+      Rank: 2
+Dimensions: 4 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+abcdefghijklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+1234567890!@#$%^&*()-_=+`~
+@<:@{@:>@}\|;:'",<.>/?          @&t@
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_char.mat a],[0],
+         [expout],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_DATA([test_write_char.m],
+[
+try
+    load test_write_char.mat
+    expdata = @<:@'abcdefghijklmnopqrstuvwxyz';
+               'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+               '1234567890!@#$%^&*()-_=+`~';
+               '@<:@{@:>@}\|;:''",<.>/?          '@:>@;
+    pass = true;
+    pass = pass && isequal(expdata,a);
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_char;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
