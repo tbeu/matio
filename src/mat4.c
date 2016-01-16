@@ -107,7 +107,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         return -1;
 
     if (matvar->isComplex) {
-        mat_complex_split_t *complex_data = matvar->data;
+        complex_data = matvar->data;
         if ( NULL == complex_data )
             return 1;
     }

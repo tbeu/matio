@@ -89,6 +89,9 @@ AT_BANNER([Read MAT version 7.3 (HDF5 Schema 1) (Big Endian)])
 m4_include([mat73_read_be.at])
 m4_include([mat73_readslab_be.at])
 
+AT_BANNER([Write MAT version 4])
+m4_include([mat4_write.at])
+
 AT_BANNER([Write Uncompressed MAT version 5])
 m4_include([mat5_uncompressed_write.at])
 
