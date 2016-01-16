@@ -135,6 +135,9 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
             return 2;
     }
 
+    if ( matvar->class_type == MAT_C_CHAR )
+        x.type++;
+
     for ( i = 0; i < matvar->rank; i++ ) {
         mat_int32_t dim;
         dim = (mat_int32_t)matvar->dims[i];
