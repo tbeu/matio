@@ -861,11 +861,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         matvar->dims[1] = 1;
     }
 
-    if ( !nfields ) {
-        H5Eset_auto(H5E_DEFAULT,efunc,client_data);
-        return;
-    }
-
     H5Eset_auto(H5E_DEFAULT,efunc,client_data);
     if ( numel < 1 || nfields < 1 )
         return;
@@ -2209,7 +2204,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 {
     int k;
     size_t numel;
-    hid_t fid,dset_id;
+    hid_t fid,dset_id,ref_id;
 
     if ( NULL == mat || NULL == matvar )
         return;
@@ -2235,16 +2230,20 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             matvar->data_size = Mat_SizeOfClass(matvar->class_type);
             matvar->nbytes    = numel*matvar->data_size;
 
-            if ( NULL != matvar->internal->hdf5_name ) {
-                dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
-            } else {
-                dset_id = matvar->internal->id;
-                H5Iinc_ref(dset_id);
-            }
-
-            if ( numel < 1 ) {
-                H5Dclose(dset_id);
+            if ( numel < 1 )
                 break;
+
+            if ( NULL != matvar->internal->hdf5_name ) {
+                ref_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
+            } else {
+                ref_id = matvar->internal->id;
+                H5Iinc_ref(ref_id);
+            }
+            if ( 0 < matvar->internal->hdf5_ref )
+                dset_id = H5Rdereference(ref_id,H5R_OBJECT,&matvar->internal->hdf5_ref);
+            else {
+                dset_id = ref_id;
+                ref_id = -1;
             }
 
             if ( !matvar->isComplex ) {
@@ -2278,6 +2277,8 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 matvar->data = complex_data;
             }
             H5Dclose(dset_id);
+            if ( ref_id > -1 )
+                H5Dclose(ref_id);
             break;
         case MAT_C_CHAR:
             numel = 1;
@@ -2455,7 +2456,7 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
 {
     int err = -1;
     int k;
-    hid_t fid,dset_id,dset_space,mem_space;
+    hid_t fid,dset_id,ref_id,dset_space,mem_space;
     hsize_t dset_start[10],dset_stride[10],dset_edge[10];
 
     if ( NULL == mat || NULL == matvar || NULL == data || NULL == start ||
@@ -2485,10 +2486,16 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
         case MAT_C_INT8:
         case MAT_C_UINT8:
             if ( NULL != matvar->internal->hdf5_name ) {
-                dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
+                ref_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
             } else {
-                dset_id = matvar->internal->id;
-                H5Iinc_ref(dset_id);
+                ref_id = matvar->internal->id;
+                H5Iinc_ref(ref_id);
+            }
+            if ( 0 < matvar->internal->hdf5_ref )
+                dset_id = H5Rdereference(ref_id,H5R_OBJECT,&matvar->internal->hdf5_ref);
+            else {
+                dset_id = ref_id;
+                ref_id = -1;
             }
 
             dset_space = H5Dget_space(dset_id);
@@ -2519,6 +2526,8 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
             }
             H5Sclose(dset_space);
             H5Dclose(dset_id);
+            if ( ref_id > -1 )
+                H5Dclose(ref_id);
             err = 0;
             break;
         default:
