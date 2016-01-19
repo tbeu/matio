@@ -62,7 +62,7 @@ static const char *Mat_class_names[] = {
 };
 
 struct mat_read_next_iter_data {
-    const mat_t *mat;
+    mat_t *mat;
     matvar_t *matvar;
 };
 
@@ -2686,7 +2686,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
     if ( H5O_TYPE_DATASET != object_info.type && H5O_TYPE_GROUP != object_info.type )
         return 0;
 
-    mat_data = (struct iter_data *)op_data;
+    mat_data = (struct mat_read_next_iter_data *)op_data;
     if (mat_data == NULL )
         return -1;
     mat = mat_data->mat;
