@@ -1160,48 +1160,6 @@ Mat_VarFree(matvar_t *matvar)
     free(matvar);
 }
 
-void
-Mat_VarFree2(matvar_t *matvar)
-{
-    if ( !matvar )
-        return;
-    if ( matvar->dims )
-        free(matvar->dims);
-    if ( matvar->name )
-        free(matvar->name);
-    if ( (matvar->data != NULL) && (matvar->class_type == MAT_C_STRUCT ||
-          matvar->class_type == MAT_C_CELL) && matvar->data_size > 0 ) {
-        int i;
-        matvar_t **fields = (matvar_t **)matvar->data;
-        int nfields = matvar->nbytes / matvar->data_size;
-        for ( i = 0; i < nfields; i++ )
-            Mat_VarFree(fields[i]);
-        free(matvar->data);
-    } else if ( (matvar->data != NULL) && (!matvar->mem_conserve) &&
-                (matvar->class_type == MAT_C_SPARSE) ) {
-        mat_sparse_t *sparse;
-        sparse = matvar->data;
-        if ( sparse->ir != NULL )
-            free(sparse->ir);
-        if ( sparse->jc != NULL )
-            free(sparse->jc);
-        if ( sparse->data != NULL )
-            free(sparse->data);
-        free(sparse);
-    } else {
-        if ( matvar->data && !matvar->mem_conserve )
-            free(matvar->data);
-    }
-#if defined(HAVE_ZLIB)
-    if ( matvar->compression == MAT_COMPRESSION_ZLIB )
-        inflateEnd(matvar->internal->z);
-#endif
-    /* FIXME: Why does this cause a SEGV? */
-#if 0
-    memset(matvar,0,sizeof(matvar_t));
-#endif
-}
-
 /** @brief Calculate a single subscript from a set of subscript values
  *
  * Calculates a single linear subscript (0-relative) given a 1-relative
