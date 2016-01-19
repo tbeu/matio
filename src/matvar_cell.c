@@ -159,6 +159,7 @@ Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,int edge)
  * @ingroup MAT
  * @param matvar Pointer to the cell array variable
  * @param index 0-relative linear index of the cell to set
+ * @param cell Pointer to the cell to set
  * @return Pointer to the previous cell element, or NULL if there was no
 *          previous cell element or error.
  */

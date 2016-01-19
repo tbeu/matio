@@ -374,7 +374,7 @@ Mat_Close( mat_t *mat )
  *
  * Gets the filename for the given MAT file
  * @ingroup MAT
- * @param mat Pointer to the MAT file
+ * @param matfp Pointer to the MAT file
  * @return MAT filename
  */
 const char *
@@ -390,7 +390,7 @@ Mat_GetFilename(mat_t *matfp)
  *
  * Gets the version of the given MAT file
  * @ingroup MAT
- * @param mat Pointer to the MAT file
+ * @param matfp Pointer to the MAT file
  * @return MAT file version
  */
 enum mat_ft

@@ -228,7 +228,7 @@ Mat_VarGetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index)
  * Returns a pointer to the structure field at the given 0-relative index.
  * @ingroup MAT
  * @param matvar Pointer to the Structure MAT variable
- * @param name Name of the structure field
+ * @param field_name Name of the structure field
  * @param index linear index of the structure array
  * @return Pointer to the structure field on success, NULL on error
  */
