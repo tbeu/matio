@@ -312,11 +312,12 @@ slab_select_valid(int rank,int *start,int *stride,int *edge,matvar_t *matvar)
 }
 
 static void
-read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
+read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
 {
     char *next_tok_pos, next_tok = 0;
     char *open = NULL, *close = NULL;
     int err, i = 0, j, done = 0;
+	matvar_t* matvar = *_matvar;
 
     next_tok_pos = get_next_token(index_str);
     next_tok = *next_tok_pos;
@@ -525,6 +526,7 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
                 break;
         }
     }
+	*_matvar = matvar;
 }
 
 static void
@@ -888,7 +890,7 @@ main (int argc, char *argv[])
                         Mat_VarReadDataAll(mat,matvar);
                     } else {
                         *next_tok_pos = next_tok;
-                        read_selected_data(mat,matvar,next_tok_pos);
+                        read_selected_data(mat,&matvar,next_tok_pos);
                     }
                 }
                 (*printfunc)(matvar);
