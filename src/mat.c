@@ -295,9 +295,9 @@ Mat_Open(const char *matname,int mode)
             *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDWR,H5P_DEFAULT);
 
         if ( -1 < *(hid_t*)mat->fp ) {
-            hsize_t num_objs;
-            H5Gget_num_objs(*(hid_t*)mat->fp,&num_objs);
-            mat->num_datasets = num_objs;
+            H5G_info_t group_info;
+            H5Gget_info(*(hid_t*)mat->fp, &group_info);
+            mat->num_datasets = group_info.nlinks;
             mat->refs_id      = -1;
         }
 #else
@@ -1777,10 +1777,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
         do {
             matvar = Mat_VarReadNextInfo(mat);
             if ( matvar != NULL ) {
-                if ( !matvar->name ) {
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
-                } else if ( strcmp(matvar->name,name) ) {
+                if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
                     Mat_VarFree(matvar);
                     matvar = NULL;
                 }
@@ -1796,10 +1793,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
         do {
             matvar = Mat_VarReadNextInfo(mat);
             if ( matvar != NULL ) {
-                if ( !matvar->name ) {
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
-                } else if ( strcmp(matvar->name,name) ) {
+                if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
                     Mat_VarFree(matvar);
                     matvar = NULL;
                 }
@@ -1807,8 +1801,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
                 Mat_Critical("An error occurred in reading the MAT file");
                 break;
             }
-        } while ( !matvar && !feof((FILE *)mat->fp) );
-
+        } while ( NULL == matvar && !feof((FILE *)mat->fp) );
         fseek(mat->fp,fpos,SEEK_SET);
     }
     return matvar;

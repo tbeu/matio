@@ -70,7 +70,6 @@ enum mat_ft {
     MAT_FT_MAT4   = 0x0010    /**< @brief Version 4 file                      */
 };
 
-
 /** @brief Matlab data types
  *
  * @ingroup MAT

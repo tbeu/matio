@@ -61,6 +61,16 @@ static const char *Mat_class_names[] = {
     "function"
 };
 
+struct mat_read_next_iter_data {
+    const mat_t *mat;
+    matvar_t *matvar;
+};
+
+struct h5_read_group_info_iter_data {
+    hsize_t nfields;
+    matvar_t *matvar;
+};
+
 /*===========================================================================
  *  Private functions
  *===========================================================================
@@ -85,6 +95,10 @@ static int   Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,
                                   hid_t *refs_id);
 static int   Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,
                                 hid_t *refs_id);
+herr_t       Mat_VarReadNextInfoIterate(hid_t id, const char *name,
+                                        const H5L_info_t *info, void *op_data);
+herr_t       Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name,
+                                        const H5L_info_t *info, void *op_data);
 
 static enum matio_classes
 Mat_class_str_to_id(const char *name)
@@ -762,48 +776,25 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         H5Aclose(attr_id);
         free(fieldnames_vl);
     } else {
-        hsize_t next_index = 0,num_objs  = 0;
-        int     obj_type;
-        H5Gget_num_objs(dset_id,&num_objs);
-        if ( num_objs > 0 ) {
+        herr_t herr;
+        struct h5_read_group_info_iter_data group_data;
+        /* First iteration to retrieve number of relevant links */
+        group_data.nfields = 0;
+        group_data.matvar = NULL;
+        herr = H5Literate_by_name(dset_id, matvar->name, H5_INDEX_NAME, H5_ITER_NATIVE,
+            NULL, Mat_H5ReadGroupInfoIterate, (void *)&group_data, H5P_DEFAULT);
+        if ( herr > 0 && group_data.nfields > 0 ) {
+            /* Second iteration to fill fieldnames */
             matvar->internal->fieldnames =
-                calloc(num_objs,sizeof(*matvar->internal->fieldnames));
-            /* FIXME: follow symlinks, datatypes? */
-            while ( next_index < num_objs ) {
-                obj_type = H5Gget_objtype_by_idx(dset_id,next_index);
-                switch ( obj_type ) {
-                    case H5G_DATASET:
-                    {
-                        int len;
-                        len = H5Gget_objname_by_idx(dset_id,next_index,NULL,0);
-                        matvar->internal->fieldnames[nfields] =
-                            calloc(len+1,sizeof(**matvar->internal->fieldnames));
-                        H5Gget_objname_by_idx(dset_id,next_index,
-                            matvar->internal->fieldnames[nfields],len+1);
-                        nfields++;
-                        break;
-                    }
-                    case H5G_GROUP:
-                    {
-                        /* Check that this is not the /#refs# group */
-                        char name[128] = {0,};
-                        (void)H5Gget_objname_by_idx(dset_id,next_index,name,127);
-                        if ( strcmp(name,"#refs#") ) {
-                            int len;
-                            len = H5Gget_objname_by_idx(dset_id,next_index,NULL,0);
-                            matvar->internal->fieldnames[nfields] =
-                                calloc(len+1,1);
-                            H5Gget_objname_by_idx(dset_id,next_index,
-                                matvar->internal->fieldnames[nfields],len+1);
-                            nfields++;
-                        }
-                        break;
-                    }
-                }
-                next_index++;
-            }
-            matvar->internal->num_fields = nfields;
+                calloc(group_data.nfields,sizeof(*matvar->internal->fieldnames));
+            group_data.nfields = 0;
+            group_data.matvar = matvar;
+            H5Literate_by_name(dset_id, matvar->name, H5_INDEX_NAME, H5_ITER_NATIVE,
+                NULL, Mat_H5ReadGroupInfoIterate, (void *)&group_data, H5P_DEFAULT);
+            matvar->internal->num_fields = (unsigned)group_data.nfields;
         }
+        else
+            matvar->internal->num_fields = 0;
     }
 
     if ( matvar->internal->num_fields > 0 &&
@@ -925,6 +916,54 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             }
         }
     }
+}
+
+herr_t
+Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *info, void *op_data)
+{
+    matvar_t  *matvar;
+    H5O_info_t object_info;
+    struct h5_read_group_info_iter_data *group_data;
+
+    /* FIXME: follow symlinks, datatypes? */
+
+    H5Oget_info_by_name(dset_id, name, &object_info, H5P_DEFAULT);
+    if ( H5O_TYPE_DATASET != object_info.type && H5O_TYPE_GROUP != object_info.type )
+        return 0;
+
+    group_data = (struct h5_read_group_info_iter_data *)op_data;
+    if ( group_data == NULL )
+        return -1;
+    matvar = group_data->matvar;
+
+    switch ( object_info.type ) {
+        case H5O_TYPE_DATASET:
+        {
+            if ( matvar != NULL ) {
+                matvar->internal->fieldnames[group_data->nfields] =
+                    calloc(strlen(name)+1,sizeof(char));
+                strcpy(matvar->internal->fieldnames[group_data->nfields], name);
+            }
+            group_data->nfields++;
+            break;
+        }
+        case H5O_TYPE_GROUP:
+        {
+            /* Check that this is not the /#refs# group */
+            if ( 0 == strcmp(name,"#refs#") )
+                return 0;
+            if ( matvar != NULL ) {
+                matvar->internal->fieldnames[group_data->nfields] =
+                    calloc(strlen(name)+1,sizeof(char));
+                strcpy(matvar->internal->fieldnames[group_data->nfields], name);
+            }
+            group_data->nfields++;
+            break;
+        }
+        default:
+            break;
+    }
+    return 0;
 }
 
 static void
@@ -1290,7 +1329,6 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
         if ( *refs_id > -1 ) {
             char        obj_name[64];
             hobj_ref_t *refs;
-            hsize_t     num_obj;
 
             for ( k = 0; k < matvar->rank; k++ )
                 perm_dims[k] = matvar->dims[matvar->rank-k-1];
@@ -1301,12 +1339,13 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                                 H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
 
             for ( k = 0; k < nmemb; k++ ) {
-                (void)H5Gget_num_objs(*refs_id,&num_obj);
-                sprintf(obj_name,"%lld",num_obj);
+                H5G_info_t group_info;
+                H5Gget_info(*refs_id, &group_info);
+                sprintf(obj_name,"%lld",group_info.nlinks);
                 if ( NULL != cells[k] )
                     cells[k]->compression = matvar->compression;
                 Mat_VarWriteNext73(*refs_id,cells[k],obj_name,refs_id);
-                sprintf(obj_name,"/#refs#/%lld",num_obj);
+                sprintf(obj_name,"/#refs#/%lld",group_info.nlinks);
                 H5Rcreate(refs+k,id,obj_name,H5R_OBJECT,-1);
             }
 
@@ -2010,7 +2049,6 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                 if ( *refs_id > -1 ) {
                     char name[64];
                     hobj_ref_t **refs;
-                    hsize_t      num_obj;
                     int l;
 
                     refs = malloc(nfields*sizeof(*refs));
@@ -2019,16 +2057,16 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
 
                     for ( k = 0; k < nmemb; k++ ) {
                         for ( l = 0; l < nfields; l++ ) {
-                            (void)H5Gget_num_objs(*refs_id,&num_obj);
-                            sprintf(name,"%lld",num_obj);
+                            H5G_info_t group_info;
+                            H5Gget_info(*refs_id, &group_info);
+                            sprintf(name,"%lld",group_info.nlinks);
                             if ( NULL != fields[k*nfields+l] )
                                 fields[k*nfields+l]->compression =
                                     matvar->compression;
                             Mat_VarWriteNext73(*refs_id,fields[k*nfields+l],
                                 name,refs_id);
-                            sprintf(name,"/#refs#/%lld",num_obj);
-                            H5Rcreate(refs[l]+k,id,name,
-                                      H5R_OBJECT,-1);
+                            sprintf(name,"/#refs#/%lld",group_info.nlinks);
+                            H5Rcreate(refs[l]+k,id,name,H5R_OBJECT,-1);
                         }
                     }
 
@@ -2659,55 +2697,66 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
 matvar_t *
 Mat_VarReadNextInfo73( mat_t *mat )
 {
-    hid_t       fid;
-    hsize_t     num_objs;
-    H5E_auto_t  efunc;
-    void       *client_data;
-    matvar_t   *matvar;
+    hid_t   fid;
+    hsize_t idx;
+    herr_t  herr;
+    struct mat_read_next_iter_data mat_data;
 
     if( mat == NULL )
         return NULL;
 
     fid = *(hid_t*)mat->fp;
-    H5Gget_num_objs(fid,&num_objs);
-    /* FIXME: follow symlinks, datatypes? */
-    while ( mat->next_index < num_objs ) {
-        if ( H5G_DATASET == H5Gget_objtype_by_idx(fid,mat->next_index) ) {
-            break;
-        } else if ( H5G_GROUP == H5Gget_objtype_by_idx(fid,mat->next_index) ) {
-            /* Check that this is not the /#refs# group */
-            char name[128] = {0,};
-            (void)H5Gget_objname_by_idx(fid,mat->next_index,name,127);
-            if ( strcmp(name,"#refs#") )
-                break;
-            else
-                mat->next_index++;
-        } else {
-            mat->next_index++;
-        }
-    }
+    idx = (hsize_t)mat->next_index;
+    mat_data.mat = mat;
+    mat_data.matvar = NULL;
+    herr = H5Literate(fid, H5_INDEX_NAME, H5_ITER_NATIVE, &idx, Mat_VarReadNextInfoIterate, (void*)&mat_data);
+    if ( herr > 0 )
+        mat->next_index = (long)idx;
+    return mat_data.matvar;
+}
 
-    if ( mat->next_index >= num_objs )
-        return NULL;
-    else if ( NULL == (matvar = Mat_VarCalloc()) )
-        return NULL;
+herr_t
+Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, void *op_data)
+{
+    mat_t *mat;
+    matvar_t *matvar;
+    H5O_info_t object_info;
+    struct mat_read_next_iter_data *mat_data;
 
-    switch ( H5Gget_objtype_by_idx(fid,mat->next_index) ) {
-        case H5G_DATASET:
+    //* FIXME: follow symlinks, datatypes? */
+
+    /* Check that this is not the /#refs# group */
+    if ( 0 == strcmp(name, "#refs#") )
+        return 0;
+
+    H5Oget_info_by_name(fid, name, &object_info, H5P_DEFAULT);
+    if ( H5O_TYPE_DATASET != object_info.type && H5O_TYPE_GROUP != object_info.type )
+        return 0;
+
+    mat_data = (struct iter_data *)op_data;
+    if (mat_data == NULL )
+        return -1;
+    mat = mat_data->mat;
+    matvar = mat_data->matvar;
+
+    if ( NULL == (matvar = Mat_VarCalloc()) )
+        return -1;
+
+    switch ( object_info.type ) {
+        case H5O_TYPE_DATASET:
         {
-            ssize_t  name_len;
+            H5E_auto_t  efunc;
+            void       *client_data;
+            ssize_t     name_len;
             /* FIXME */
             hsize_t  dims[10];
             hid_t   attr_id,type_id,dset_id,space_id;
 
             matvar->internal->fp = mat;
-            name_len = H5Gget_objname_by_idx(fid,mat->next_index,NULL,0);
-            matvar->name = malloc(1+name_len);
-            if ( matvar->name ) {
-                name_len = H5Gget_objname_by_idx(fid,mat->next_index,
-                                                 matvar->name,1+name_len);
-                matvar->name[name_len] = '\0';
-            }
+            matvar->name = malloc(1 + strlen(name));
+            if ( matvar->name == NULL )
+                return -1;
+            strcpy(matvar->name, name);
             dset_id = H5Dopen(fid,matvar->name,H5P_DEFAULT);
 
             /* Get the HDF5 name of the variable */
@@ -2850,33 +2899,30 @@ Mat_VarReadNextInfo73( mat_t *mat )
                 /* Close dataset and increment count */
                 H5Dclose(dset_id);
             }
-            mat->next_index++;
+            mat_data->matvar = matvar;
             break;
         }
-        case H5G_GROUP:
+        case H5O_TYPE_GROUP:
         {
-            ssize_t name_len;
-            hid_t   dset_id;
+            hid_t dset_id;
 
             matvar->internal->fp = mat;
-            name_len = H5Gget_objname_by_idx(fid,mat->next_index,NULL,0);
-            matvar->name = malloc(1+name_len);
-            if ( matvar->name ) {
-                name_len = H5Gget_objname_by_idx(fid,mat->next_index,
-                                                 matvar->name,1+name_len);
-                matvar->name[name_len] = '\0';
-            }
+            matvar->name = malloc(1 + strlen(name));
+            if ( matvar->name == NULL )
+                return -1;
+            strcpy(matvar->name, name);
             dset_id = H5Gopen(fid,matvar->name,H5P_DEFAULT);
 
             Mat_H5ReadGroupInfo(mat,matvar,dset_id);
             H5Gclose(dset_id);
-            mat->next_index++;
+            mat_data->matvar = matvar;
             break;
         }
         default:
             break;
     }
-    return matvar;
+
+    return 1;
 }
 
 /** @if mat_devman
