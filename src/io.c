@@ -151,7 +151,7 @@ mat_log(int loglevel, const char *format, va_list ap)
 }
 
 /** @var debug
- *  @brief holds the verbose level set in @ref SetVerbose
+ *  @brief holds the debug level set in @ref Mat_SetDebug
  *  This variable is used to determine if information should be printed to
  *  the screen
  *  @ingroup mat_util
@@ -159,7 +159,7 @@ mat_log(int loglevel, const char *format, va_list ap)
 static int debug = 0;
 
 /** @var verbose
- *  @brief holds the verbose level set in @ref SetVerbose
+ *  @brief holds the verbose level set in @ref Mat_SetVerbose
  *  This variable is used to determine if information should be printed to
  *  the screen
  *  @ingroup mat_util
@@ -167,7 +167,7 @@ static int debug = 0;
 static int verbose = 0;
 
 /** @var silent
- *  @brief holds the silent level set in @ref SetVerbose
+ *  @brief holds the silent level set in @ref Mat_SetVerbose
  *  If set, all output which is not an error is not displayed regardless
  *  of verbose level
  *  @ingroup mat_util
@@ -192,13 +192,12 @@ Mat_SetVerbose( int verb, int s )
     return 0;
 }
 
-/** @brief Sets verbose parameters
+/** @brief Set debug parameter
  *
- *  Sets the verbose level and silent level.  These values are used by
- *  programs to determine what information should be printed to the screen
+ *  Sets the debug level.  This value is used by
+ *  program to determine what information should be printed to the screen
  *  @ingroup mat_util
- *  @param verb sets logging verbosity level
- *  @param s sets logging silent level
+ *  @param d sets logging debug level
  */
 int
 Mat_SetDebug( int d )
@@ -209,7 +208,7 @@ Mat_SetDebug( int d )
 
 /** @brief Log a message unless silent
  *
- * Logs the message unless the silent option is set (See @ref SetVerbose).
+ * Logs the message unless the silent option is set (See @ref Mat_SetVerbose).
  * To log a message based on the verbose level, use @ref Mat_VerbMessage
  * @ingroup mat_util
  * @param format message format
@@ -227,13 +226,13 @@ int Mat_Message( const char *format, ... )
     return 0;
 }
 
-/** @brief Log a message based on verbose level
+/** @brief Log a message based on debug level
  *
- *  If @e level is less than or equal to the set verbose level, the message
- *  is printed.  If the level is higher than the set verbose level nothing
+ *  If @e level is less than or equal to the set debug level, the message
+ *  is printed.  If the level is higher than the set debug level nothing
  *  is displayed.
  *  @ingroup mat_util
- *  @param level verbose level
+ *  @param level debug level
  *  @param format message format
  */
 int Mat_DebugMessage( int level, const char *format, ... )
