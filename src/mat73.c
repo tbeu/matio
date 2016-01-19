@@ -461,7 +461,7 @@ static void
 Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id)
 {
     hid_t attr_id, type_id;
-    attr_id = H5Aopen_name(dset_id,"MATLAB_class");
+    attr_id = H5Aopen_by_name(dset_id,".","MATLAB_class",H5P_DEFAULT,H5P_DEFAULT);
     type_id  = H5Aget_type(attr_id);
     if ( H5T_STRING == H5Tget_class(type_id) ) {
         char *class_str = calloc(H5Tget_size(type_id)+1,1);
@@ -477,7 +477,7 @@ Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id)
                     int int_decode = 0;
                     hid_t attr_id2;
                     matvar->isLogical = MAT_F_LOGICAL;
-                    attr_id2 = H5Aopen_name(dset_id,"MATLAB_int_decode");
+                    attr_id2 = H5Aopen_by_name(dset_id,".","MATLAB_int_decode",H5P_DEFAULT,H5P_DEFAULT);
                     /* FIXME: Check that dataspace is scalar */
                     if ( -1 < attr_id2 ) {
                         H5Aread(attr_id2,H5T_NATIVE_INT,&int_decode);
@@ -558,7 +558,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
     H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
 
-    attr_id = H5Aopen_name(dset_id,"MATLAB_global");
+    attr_id = H5Aopen_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT,H5P_DEFAULT);
     /* FIXME: Check that dataspace is scalar */
     if ( -1 < attr_id ) {
         H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
@@ -566,7 +566,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     }
 
     /* Check for attribute that indicates an empty array */
-    attr_id = H5Aopen_name(dset_id,"MATLAB_empty");
+    attr_id = H5Aopen_by_name(dset_id,".","MATLAB_empty",H5P_DEFAULT,H5P_DEFAULT);
     /* FIXME: Check that dataspace is scalar */
     if ( -1 < attr_id ) {
         int empty = 0;
@@ -629,7 +629,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
         H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
         /* Check if the structure defines its fields in MATLAB_fields */
-        attr_id = H5Aopen_name(dset_id,"MATLAB_fields");
+        attr_id = H5Aopen_by_name(dset_id,".","MATLAB_fields",H5P_DEFAULT,H5P_DEFAULT);
         if ( -1 < attr_id ) {
             int      i;
             hid_t    field_id;
@@ -706,7 +706,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
 
     /* Check if the variable is global */
-    attr_id = H5Aopen_name(dset_id,"MATLAB_global");
+    attr_id = H5Aopen_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT,H5P_DEFAULT);
     /* FIXME: Check that dataspace is scalar */
     if ( -1 < attr_id ) {
         H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
@@ -714,7 +714,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     }
 
     /* Check if the variable is sparse */
-    attr_id = H5Aopen_name(dset_id,"MATLAB_sparse");
+    attr_id = H5Aopen_by_name(dset_id,".","MATLAB_sparse",H5P_DEFAULT,H5P_DEFAULT);
     if ( -1 < attr_id ) {
         hid_t sparse_dset_id;
         unsigned nrows = 0;
@@ -752,7 +752,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     }
 
     /* Check if the structure defines its fields in MATLAB_fields */
-    attr_id = H5Aopen_name(dset_id,"MATLAB_fields");
+    attr_id = H5Aopen_by_name(dset_id,".","MATLAB_fields",H5P_DEFAULT,H5P_DEFAULT);
     if ( -1 < attr_id ) {
         hvl_t     *fieldnames_vl;
         space_id = H5Aget_space(attr_id);
@@ -777,20 +777,20 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         free(fieldnames_vl);
     } else {
         herr_t herr;
-        struct h5_read_group_info_iter_data group_data;
+        struct h5_read_group_info_iter_data group_data = {0};
         /* First iteration to retrieve number of relevant links */
-        group_data.nfields = 0;
-        group_data.matvar = NULL;
         herr = H5Literate_by_name(dset_id, matvar->name, H5_INDEX_NAME, H5_ITER_NATIVE,
             NULL, Mat_H5ReadGroupInfoIterate, (void *)&group_data, H5P_DEFAULT);
         if ( herr > 0 && group_data.nfields > 0 ) {
-            /* Second iteration to fill fieldnames */
             matvar->internal->fieldnames =
                 calloc(group_data.nfields,sizeof(*matvar->internal->fieldnames));
             group_data.nfields = 0;
             group_data.matvar = matvar;
-            H5Literate_by_name(dset_id, matvar->name, H5_INDEX_NAME, H5_ITER_NATIVE,
-                NULL, Mat_H5ReadGroupInfoIterate, (void *)&group_data, H5P_DEFAULT);
+            if ( matvar->internal->fieldnames != NULL ) {
+                /* Second iteration to fill fieldnames */
+                H5Literate_by_name(dset_id, matvar->name, H5_INDEX_NAME, H5_ITER_NATIVE,
+                    NULL, Mat_H5ReadGroupInfoIterate, (void *)&group_data, H5P_DEFAULT);
+            }
             matvar->internal->num_fields = (unsigned)group_data.nfields;
         }
         else
@@ -811,7 +811,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
              */
             H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
             H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
-            attr_id = H5Aopen_name(field_id,"MATLAB_class");
+            attr_id = H5Aopen_by_name(field_id,".","MATLAB_class",H5P_DEFAULT,H5P_DEFAULT);
             H5Eset_auto(H5E_DEFAULT,efunc,client_data);
             if ( -1 < attr_id ) {
                 H5Aclose(attr_id);
@@ -1015,7 +1015,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
             H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
 
-            attr_id = H5Aopen_name(dset_id,"MATLAB_global");
+            attr_id = H5Aopen_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT,H5P_DEFAULT);
             /* FIXME: Check that dataspace is scalar */
             if ( -1 < attr_id ) {
                 H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
@@ -1023,7 +1023,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             }
 
             /* Check for attribute that indicates an empty array */
-            attr_id = H5Aopen_name(dset_id,"MATLAB_empty");
+            attr_id = H5Aopen_by_name(dset_id,".","MATLAB_empty",H5P_DEFAULT,H5P_DEFAULT);
             /* FIXME: Check that dataspace is scalar */
             if ( -1 < attr_id ) {
                 int empty = 0;
@@ -1082,7 +1082,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
                 H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
                 /* Check if the structure defines its fields in MATLAB_fields */
-                attr_id = H5Aopen_name(dset_id,"MATLAB_fields");
+                attr_id = H5Aopen_by_name(dset_id,".","MATLAB_fields",H5P_DEFAULT,H5P_DEFAULT);
                 if ( -1 < attr_id ) {
                     int      i;
                     hid_t    field_id;
@@ -2653,7 +2653,6 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
             if ( !matvar->isComplex ) {
                 H5Dread(dset_id,Mat_class_type_to_hid_t(matvar->class_type),
                         mem_space,dset_space,H5P_DEFAULT,data);
-                H5Eprint1(stdout);
             } else {
                 mat_complex_split_t *complex_data = data;
                 hid_t h5_complex_base,h5_complex;
@@ -2789,7 +2788,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
             H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
             H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
 
-            attr_id = H5Aopen_name(dset_id,"MATLAB_global");
+            attr_id = H5Aopen_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT,H5P_DEFAULT);
             /* FIXME: Check that dataspace is scalar */
             if ( -1 < attr_id ) {
                 H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
@@ -2797,7 +2796,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
             }
 
             /* Check for attribute that indicates an empty array */
-            attr_id = H5Aopen_name(dset_id,"MATLAB_empty");
+            attr_id = H5Aopen_by_name(dset_id,".","MATLAB_empty",H5P_DEFAULT,H5P_DEFAULT);
             /* FIXME: Check that dataspace is scalar */
             if ( -1 < attr_id ) {
                 int empty = 0;
@@ -2862,7 +2861,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
                 H5Eget_auto(H5E_DEFAULT,&efunc,&client_data);
                 H5Eset_auto(H5E_DEFAULT,(H5E_auto_t)0,NULL);
                 /* Check if the structure defines its fields in MATLAB_fields */
-                attr_id = H5Aopen_name(dset_id,"MATLAB_fields");
+                attr_id = H5Aopen_by_name(dset_id,".","MATLAB_fields",H5P_DEFAULT,H5P_DEFAULT);
                 if ( -1 < attr_id ) {
                     int      i;
                     hid_t    field_id;
