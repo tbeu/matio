@@ -98,7 +98,7 @@ InflateSkip(mat_t *mat, z_stream *z, int nbytes)
 
     if ( z->avail_in ) {
         long offset = -(long)z->avail_in;
-        (void)fseek(mat->fp,offset,SEEK_CUR);
+        fseek(mat->fp,offset,SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
@@ -156,7 +156,7 @@ InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -268,7 +268,7 @@ InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -317,7 +317,7 @@ InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -409,7 +409,7 @@ InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -458,7 +458,7 @@ InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -508,7 +508,7 @@ InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -562,7 +562,7 @@ InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -612,7 +612,7 @@ InflateDataType(mat_t *mat, z_stream *z, void *buf)
     }
 
     if ( z->avail_in ) {
-        (void)fseek(mat->fp,-(int)z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)z->avail_in,SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
@@ -688,7 +688,7 @@ InflateData(mat_t *mat, z_stream *z, void *buf, int nBytes)
 
     if ( z->avail_in ) {
         long offset = -(long)z->avail_in;
-        (void)fseek(mat->fp,offset,SEEK_CUR);
+        fseek(mat->fp,offset,SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
@@ -738,7 +738,7 @@ InflateFieldNameLength(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -788,7 +788,7 @@ InflateFieldNamesTag(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -846,7 +846,7 @@ InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,
     }
 
     if ( matvar->internal->z->avail_in ) {
-        (void)fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+        fseek(mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
