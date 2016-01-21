@@ -79,16 +79,16 @@ struct _mat_t {
  * @endif
  */
 struct matvar_internal {
-    char *hdf5_name;		/**< Name */
-    hobj_ref_t hdf5_ref;	/**< Reference */
-    hid_t      id;			/**< Id */
-    long  fpos;				/**< Offset from the beginning of the MAT file to the variable */
-    long  datapos;			/**< Offset from the beginning of the MAT file to the data */
-    mat_t    *fp;			/**< Pointer to the MAT file structure (mat_t) */
-    unsigned num_fields;	/**< Number of fields/
-    char **fieldnames;		/**< Pointer to fieldnames*/
+    char *hdf5_name;        /**< Name */
+    hobj_ref_t hdf5_ref;    /**< Reference */
+    hid_t      id;          /**< Id */
+    long  fpos;             /**< Offset from the beginning of the MAT file to the variable */
+    long  datapos;          /**< Offset from the beginning of the MAT file to the data */
+    mat_t    *fp;           /**< Pointer to the MAT file structure (mat_t) */
+    unsigned num_fields;    /**< Number of fields */
+    char **fieldnames;      /**< Pointer to fieldnames */
 #if defined(HAVE_ZLIB)
-    z_stream *z;        /**< zlib compression state */
+    z_stream *z;            /**< zlib compression state */
 #endif
 };
 
