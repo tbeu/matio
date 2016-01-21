@@ -1,0 +1,39 @@
+language: c
+
+git:
+  depth: 1
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-4.8-multilib
+      - texlive
+      - texinfo 
+
+compiler:
+  - gcc-4.8
+
+script:
+  - git submodule init
+  - git submodule update
+  - svn co -q https://svn.hdfgroup.uiuc.edu/hdf5/branches/hdf5_1_8_16@28320
+  - cd hdf5_1_8_16
+  - ./configure --quiet --enable-shared --enable-production --enable-debug --with-pic --disable-deprecated-symbols --disable-hl --with-default-api-version=v18 CFLAGS="-O3 -w"
+  - make
+  - make install
+  - cd $TRAVIS_BUILD_DIR
+  - ./autogen.sh
+  - ./configure --quiet --enable-shared --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/hdf5_1_8_16/hdf5 CFLAGS="-O3"
+  - make
+  - make check
+  - make pdf
+  - cd src/.libs
+  - tar cJf linux64.tar.xz libmatio.so.* libmatio.so
+# deployment rules are currently missing but can be added for, e.g, github releases
+
+notifications:
+  email: false
+
+sudo: false
