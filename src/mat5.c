@@ -39,8 +39,11 @@
 #include "matio_private.h"
 #include "mat5.h"
 
+/** Get type from tag */
 #define TYPE_FROM_TAG(a)          (enum matio_types)((a) & 0x000000ff)
+/** Get class from array flag */
 #define CLASS_FROM_ARRAY_FLAGS(a) (enum matio_classes)((a) & 0x000000ff)
+/** Class type mask */
 #define CLASS_TYPE_MASK           0x000000ff
 
 static mat_complex_split_t null_complex_data = {NULL,NULL};
