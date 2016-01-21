@@ -67,7 +67,6 @@ The primary method for building the software is using `configure` followed by `m
 ```sh
 $ tar zxf matio-X.Y.Z.tar.gz
 $ cd matio-X.Y.Z
-$ ./autogen.sh
 $ ./configure
 $ make
 $ make check
