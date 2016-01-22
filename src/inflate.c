@@ -639,7 +639,6 @@ InflateData(mat_t *mat, z_stream *z, void *buf, int nBytes)
     if ( buf == NULL )
         return 0;
     if ( nBytes < 1 ) {
-        Mat_Critical("InflateData: nBytes must be > 0");
         return bytesread;
     }
 
