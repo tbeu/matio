@@ -2,7 +2,7 @@
 MATLAB MAT file I/O library
 
 ## Build status
-[![Build Status](https://drone.io/github.com/tbeu/matio/status.png)](https://drone.io/github.com/tbeu/matio/latest) [![Build Status](https://travis-ci.org/tbeu/matio.svg?branch=master)](https://travis-ci.org/tbeu/matio) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master)
+[![Build Status](https://drone.io/github.com/tbeu/matio/status.png)](https://drone.io/github.com/tbeu/matio/latest) [![Build Status](https://travis-ci.org/tbeu/matio.svg?branch=master)](https://travis-ci.org/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master)
 
 ## Table of Contents
 1. [Introduction](#10-introduction)
