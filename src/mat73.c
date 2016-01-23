@@ -2732,6 +2732,9 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
                 H5Sget_simple_extent_dims(space_id,dims,NULL);
                 for ( k = 0; k < matvar->rank; k++ )
                     matvar->dims[k] = dims[matvar->rank - k - 1];
+            } else {
+                Mat_VarFree(matvar);
+                return -1;
             }
             H5Sclose(space_id);
 

@@ -4856,9 +4856,11 @@ Read5(mat_t *mat, matvar_t *matvar)
                 break;
             nfunctions = matvar->nbytes / matvar->data_size;
             functions = (matvar_t **)matvar->data;
-            for ( i = 0; i < nfunctions; i++ ) {
-                functions[i]->internal->fp = mat;
-                Read5(mat,functions[i]);
+            if ( NULL != functions ) {
+                for ( i = 0; i < nfunctions; i++ ) {
+                    functions[i]->internal->fp = mat;
+                    Read5(mat,functions[i]);
+                }
             }
             /* FIXME: */
             matvar->data_type = MAT_T_FUNCTION;
@@ -5311,15 +5313,18 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
     int      nBytes, i, nmemb = 1,nzmax = 0;
     long     start = 0, end = 0;
 
+    if ( NULL == mat )
+        return -1;
+
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
     fseek(mat->fp,0,SEEK_END);         /* Always write at end of file */
+
+    if ( NULL == matvar || NULL == matvar->name )
+        return -1;
 
 #if !defined(HAVE_ZLIB)
     compress = MAT_COMPRESSION_NONE;
 #endif
-
-    if ( NULL == mat || NULL == matvar || NULL == matvar->name )
-        return -1;
 
     if ( compress == MAT_COMPRESSION_NONE ) {
         fwrite(&matrix_type,4,1,mat->fp);

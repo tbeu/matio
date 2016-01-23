@@ -1885,12 +1885,14 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
 {
     int err = 0, k, N = 1;
 
-    if ( mat == NULL || matvar == NULL || data == NULL )
+    if ( mat == NULL || matvar == NULL )
         return -1;
 
     fseek(mat->fp,matvar->internal->datapos+8,SEEK_SET);
 
-    if ( start == NULL && stride == NULL && edge == NULL ) {
+    if ( data == NULL ) {
+        err = -1;
+    } else if ( start == NULL && stride == NULL && edge == NULL ) {
         for ( k = 0; k < matvar->rank; k++ )
             N *= matvar->dims[k];
         if ( matvar->compression == MAT_COMPRESSION_NONE )
