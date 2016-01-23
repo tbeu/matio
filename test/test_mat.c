@@ -3315,18 +3315,20 @@ int main (int argc, char *argv[])
 
             k++;
             mat = Mat_Open("test_slab_d3.mat",MAT_ACC_RDONLY);
-            if ( mat ) {
+            if ( NULL != mat ) {
                 matvar = Mat_VarReadInfo(mat,"d3");
-                Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-                for ( i = 0; i < 3; i++ ) {
-                   for ( j = 0; j < 5; j++ ) {
-                      for ( l = 0; l < 10; l++ )
-                          printf("%f ",*(ptr+50*i+5*l+j));
-                      printf("\n");
+                if ( NULL != matvar ) {
+                    Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                    for ( i = 0; i < 3; i++ ) {
+                       for ( j = 0; j < 5; j++ ) {
+                          for ( l = 0; l < 10; l++ )
+                              printf("%f ",*(ptr+50*i+5*l+j));
+                          printf("\n");
+                        }
+                        printf("\n\n");
                     }
-                    printf("\n\n");
+                    Mat_VarFree(matvar);
                 }
-                Mat_VarFree(matvar);
                 Mat_Close(mat);
             }
             ntests++;
