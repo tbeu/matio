@@ -398,8 +398,8 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
             matvar_t *field;
             char *varname;
 
+            varname = next_tok_pos+1;
             if ( matvar->class_type == MAT_C_STRUCT ) {
-                varname = next_tok_pos+1;
                 next_tok_pos = get_next_token(next_tok_pos+1);
                 if ( next_tok_pos != varname ) {
                     next_tok = *next_tok_pos;
@@ -423,7 +423,6 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
 
                 ncells = matvar->nbytes / matvar->data_size;
                 cells = matvar->data;
-                varname = next_tok_pos+1;
                 next_tok_pos = get_next_token(next_tok_pos+1);
                 if ( next_tok_pos != varname ) {
                     next_tok = *next_tok_pos;
