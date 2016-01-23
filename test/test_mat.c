@@ -1077,6 +1077,7 @@ test_write_char(char *output_name)
         matvar = Mat_VarCreate("a",MAT_C_CHAR,MAT_T_UINT8,2,
                     dims,str,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,matvar,compression);
+        Mat_VarFree(matvar);
         Mat_Close(mat);
     }
     return err;
