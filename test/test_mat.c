@@ -333,8 +333,8 @@ static const char *helptest_readvar[] = {
     "",
     "Usage: test_mat readvar FILE variable_name",
     "",
-    "Reads variable_name from FILE and prints out it's information and data",
-    "If possible",
+    "Reads variable_name from FILE and prints out its information and data",
+    "if possible to the screen.",
     "",
     NULL
 };
@@ -583,7 +583,7 @@ static const char *helptest_readvar4[] = {
     "",
     "Usage: test_mat readvar4 FILE variable_name",
     "",
-    "Reads variable_name from the Matlab v4 MAT file FILE and prints out it's",
+    "Reads variable_name from the Matlab v4 MAT file FILE and prints out its",
     "information and data if possible to the screen.",
     "",
     NULL
