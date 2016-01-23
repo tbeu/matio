@@ -206,22 +206,25 @@ Mat_Open(const char *matname,int mode)
 
     mat = malloc(sizeof(*mat));
     if ( NULL == mat ) {
-        Mat_Critical("Couldn't allocate memory for the MAT file");
         fclose(fp);
+        Mat_Critical("Couldn't allocate memory for the MAT file");
         return NULL;
     }
 
     mat->fp = fp;
     mat->header        = calloc(128,sizeof(char));
     if ( NULL == mat->header ) {
-        Mat_Critical("Couldn't allocate memory for the MAT file header");
+        free(mat);
         fclose(fp);
+        Mat_Critical("Couldn't allocate memory for the MAT file header");
         return NULL;
     }
     mat->subsys_offset = calloc(8,sizeof(char));
     if ( NULL == mat->subsys_offset ) {
-        Mat_Critical("Couldn't allocate memory for the MAT file subsys offset");
+        free(mat->header);
+        free(mat);
         fclose(fp);
+        Mat_Critical("Couldn't allocate memory for the MAT file subsys offset");
         return NULL;
     }
     mat->filename      = NULL;
