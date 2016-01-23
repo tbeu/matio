@@ -28,6 +28,11 @@ compiler:
   - gcc-4.8
   - clang
 
+matrix:
+  exclude:
+    - os: osx
+      compiler: gcc
+
 env:
   global:
     # COVERITY_SCAN_TOKEN
