@@ -213,7 +213,17 @@ Mat_Open(const char *matname,int mode)
 
     mat->fp = fp;
     mat->header        = calloc(128,sizeof(char));
+    if ( NULL == mat->header ) {
+        Mat_Critical("Couldn't allocate memory for the MAT file header");
+        fclose(fp);
+        return NULL;
+    }
     mat->subsys_offset = calloc(8,sizeof(char));
+    if ( NULL == mat->subsys_offset ) {
+        Mat_Critical("Couldn't allocate memory for the MAT file subsys offset");
+        fclose(fp);
+        return NULL;
+    }
     mat->filename      = NULL;
     mat->byteswap      = 0;
     mat->version       = 0;
@@ -248,10 +258,9 @@ Mat_Open(const char *matname,int mode)
     if ( 0 == mat->version ) {
         /* Maybe a V4 MAT file */
         matvar_t *var;
-        if ( NULL != mat->header )
-            free(mat->header);
-        if ( NULL != mat->subsys_offset )
-            free(mat->subsys_offset);
+
+        free(mat->header);
+        free(mat->subsys_offset);
 
         mat->header        = NULL;
         mat->subsys_offset = NULL;
