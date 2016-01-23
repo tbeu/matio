@@ -183,8 +183,6 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride,
                     start[dim] = i-1;
                 else if ( nvals == 1 )
                     stride[dim] = i;
-                else if ( nvals == 1 )
-                    edge[dim] = i;
                 else if ( nvals == 2 )
                     edge[dim] = i;
                 else
