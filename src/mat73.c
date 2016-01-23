@@ -2695,6 +2695,14 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
     if ( NULL == (matvar = Mat_VarCalloc()) )
         return -1;
 
+    matvar->internal->fp = mat;
+    matvar->name = malloc(1 + strlen(name));
+    if ( matvar->name == NULL ) {
+        Mat_VarFree(matvar);
+        return -1;
+    }
+    strcpy(matvar->name, name);
+
     switch ( object_info.type ) {
         case H5O_TYPE_DATASET:
         {
@@ -2703,11 +2711,6 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
             hsize_t  dims[10];
             hid_t   attr_id,type_id,dset_id,space_id;
 
-            matvar->internal->fp = mat;
-            matvar->name = malloc(1 + strlen(name));
-            if ( matvar->name == NULL )
-                return -1;
-            strcpy(matvar->name, name);
             dset_id = H5Dopen(fid,matvar->name,H5P_DEFAULT);
 
             /* Get the HDF5 name of the variable */
@@ -2765,7 +2768,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
             }
             H5Tclose(type_id);
 
-            /* If the dataset is a cell array read theinfo of the cells */
+            /* If the dataset is a cell array read the info of the cells */
             if ( MAT_C_CELL == matvar->class_type ) {
                 matvar_t **cells;
                 int i,ncells = 1;
@@ -2823,8 +2826,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
                                fieldnames_vl[i].len);
                     }
 
-                    H5Dvlen_reclaim(field_id,space_id,H5P_DEFAULT,
-                        fieldnames_vl);
+                    H5Dvlen_reclaim(field_id,space_id,H5P_DEFAULT,fieldnames_vl);
                     H5Sclose(space_id);
                     H5Tclose(field_id);
                     H5Aclose(attr_id);
@@ -2843,11 +2845,6 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
         {
             hid_t dset_id;
 
-            matvar->internal->fp = mat;
-            matvar->name = malloc(1 + strlen(name));
-            if ( matvar->name == NULL )
-                return -1;
-            strcpy(matvar->name, name);
             dset_id = H5Gopen(fid,matvar->name,H5P_DEFAULT);
 
             Mat_H5ReadGroupInfo(mat,matvar,dset_id);
