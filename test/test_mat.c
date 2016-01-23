@@ -229,7 +229,7 @@ static const char *helptest_write_2d_logical[] = {
     "",
     "Writes a several variables to a MAT file. The variables are 2d logical",
     "arrays. Variables l1, l2, l4, and l8 if 64-bit integers are available are",
-    " the same except the logical source data are different integer sizes. The"
+    " the same except the logical source data are different integer sizes. The",
     "MAT file is the default file version, or set by the -v option. If the MAT",
     "file is version 5, compression can be enabled using the -z option if",
     "built with zlib library.",
@@ -333,7 +333,7 @@ static const char *helptest_readvar[] = {
     "",
     "Usage: test_mat readvar FILE variable_name",
     "",
-    "Reads variable_name from FILE and prints out it's information and data"
+    "Reads variable_name from FILE and prints out it's information and data",
     "If possible",
     "",
     NULL
@@ -594,7 +594,7 @@ static const char *helptest_readvarinfo4[] = {
     "",
     "Usage: test_mat readvarinfo4 FILE variable_name",
     "",
-    "Reads header information for variable_name from the Matlab v4 MAT file"
+    "Reads header information for variable_name from the Matlab v4 MAT file",
     "FILE and prints it out to the screen.",
     "",
     NULL
@@ -607,7 +607,7 @@ static const char *helptest_sub2ind[] = {
     "",
     "  Calculates a linear (single) index from a set of subscript indeces.",
     "  The size of the array used is [256,256,124].  The 1-relative indeces",
-    "  are (233,74,1).  Therefore, the calculated linear index should be"
+    "  are (233,74,1).  Therefore, the calculated linear index should be",
     "  18921.",
     "",
     NULL
@@ -620,7 +620,7 @@ static const char *helptest_ind2sub[] = {
     "",
     "  Calculates a set of subscript indeces from a linear (single) index.",
     "  The size of the array used is [256,256,124].  The 1-relative linear",
-    "  index used is 18921.  Therefore, the calculated subscripts should be"
+    "  index used is 18921.  Therefore, the calculated subscripts should be",
     "  (233,74,1).",
     "",
     NULL
