@@ -183,8 +183,6 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride,
                     start[dim] = i-1;
                 else if ( nvals == 1 )
                     stride[dim] = i;
-                else if ( nvals == 1 )
-                    edge[dim] = i;
                 else if ( nvals == 2 )
                     edge[dim] = i;
                 else
@@ -312,11 +310,12 @@ slab_select_valid(int rank,int *start,int *stride,int *edge,matvar_t *matvar)
 }
 
 static void
-read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
+read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
 {
     char *next_tok_pos, next_tok = 0;
     char *open = NULL, *close = NULL;
     int err, i = 0, j, done = 0;
+	matvar_t* matvar = *_matvar;
 
     next_tok_pos = get_next_token(index_str);
     next_tok = *next_tok_pos;
@@ -397,8 +396,8 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
             matvar_t *field;
             char *varname;
 
+            varname = next_tok_pos+1;
             if ( matvar->class_type == MAT_C_STRUCT ) {
-                varname = next_tok_pos+1;
                 next_tok_pos = get_next_token(next_tok_pos+1);
                 if ( next_tok_pos != varname ) {
                     next_tok = *next_tok_pos;
@@ -422,7 +421,6 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
 
                 ncells = matvar->nbytes / matvar->data_size;
                 cells = matvar->data;
-                varname = next_tok_pos+1;
                 next_tok_pos = get_next_token(next_tok_pos+1);
                 if ( next_tok_pos != varname ) {
                     next_tok = *next_tok_pos;
@@ -525,6 +523,7 @@ read_selected_data(mat_t *mat,matvar_t *matvar,char *index_str)
                 break;
         }
     }
+	*_matvar = matvar;
 }
 
 static void
@@ -594,12 +593,12 @@ print_default_number(enum matio_types type, void *data)
             break;
 #ifdef _mat_int64_t
         case MAT_T_INT64:
-            printf("%lld",*(mat_int64_t*)data);
+            printf("%ld",*(mat_int64_t*)data);
             break;
 #endif
 #ifdef _mat_uint64_t
         case MAT_T_UINT64:
-            printf("%llu",*(mat_uint64_t*)data);
+            printf("%lu",*(mat_uint64_t*)data);
             break;
 #endif
         case MAT_T_INT32:
@@ -888,7 +887,7 @@ main (int argc, char *argv[])
                         Mat_VarReadDataAll(mat,matvar);
                     } else {
                         *next_tok_pos = next_tok;
-                        read_selected_data(mat,matvar,next_tok_pos);
+                        read_selected_data(mat,&matvar,next_tok_pos);
                     }
                 }
                 (*printfunc)(matvar);

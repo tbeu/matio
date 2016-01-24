@@ -189,13 +189,14 @@ Read4(mat_t *mat,matvar_t *matvar)
 
                 matvar->nbytes   = N*sizeof(double);
                 complex_data     = malloc(sizeof(*complex_data));
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                matvar->data     = complex_data;
-                if ( complex_data != NULL &&
-                    complex_data->Re != NULL && complex_data->Im != NULL ) {
-                    ReadDoubleData(mat, complex_data->Re, matvar->data_type, N);
-                    ReadDoubleData(mat, complex_data->Im, matvar->data_type, N);
+                if ( complex_data != NULL ) {
+                    complex_data->Re = malloc(matvar->nbytes);
+                    complex_data->Im = malloc(matvar->nbytes);
+                    matvar->data     = complex_data;
+                    if ( complex_data->Re != NULL && complex_data->Im != NULL ) {
+                        ReadDoubleData(mat, complex_data->Re, matvar->data_type, N);
+                        ReadDoubleData(mat, complex_data->Im, matvar->data_type, N);
+                    }
                 }
             } else {
                 matvar->nbytes = N*sizeof(double);

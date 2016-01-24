@@ -70,7 +70,6 @@ enum mat_ft {
     MAT_FT_MAT4   = 0x0010    /**< @brief Version 4 file                      */
 };
 
-
 /** @brief Matlab data types
  *
  * @ingroup MAT
@@ -243,6 +242,7 @@ EXTERN size_t Mat_SizeOf(enum matio_types data_type);
 EXTERN size_t Mat_SizeOfClass(int class_type);
 
 /*   MAT File functions   */
+/** Create new Matlab MAT file */
 #define            Mat_Create(a,b) Mat_CreateVer(a,b,MAT_FT_DEFAULT)
 EXTERN mat_t      *Mat_CreateVer(const char *matname,const char *hdr_str,
                        enum mat_ft mat_file_ver);

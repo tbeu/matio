@@ -40,28 +40,6 @@
 #elif !defined(HAVE_VA_COPY)
 #    define va_copy(d,s) memcpy(&(d),&(s),sizeof(va_list))
 #endif
-#ifndef HAVE_VSNPRINTF
-#    define vsnprintf mat_vsnprintf
-#    ifdef  __cplusplus
-         extern "C" int vsnprintf(char *,size_t,const char *,va_list);
-#    else
-         extern int vsnprintf(char *,size_t,const char *,va_list);
-#    endif
-#endif
-#ifndef HAVE_SNPRINTF
-#    define snprintf mat_snprintf
-#    ifdef  __cplusplus
-         extern "C" int snprintf(char *str,size_t size,const char *format,...);
-#    else
-         extern int snprintf(char *str,size_t size,const char *format,...);
-#    endif
-#endif
-#ifndef HAVE_VASPRINTF
-#    define vasprintf mat_vasprintf
-#endif
-#ifndef HAVE_ASPRINTF
-#    define asprintf mat_asprintf
-#endif
 
 /** @cond 0 */
 #define LOG_LEVEL_ERROR    1
@@ -84,20 +62,20 @@ static const char *progname = NULL;
 char *
 strdup_vprintf(const char* format, va_list ap)
 {
-  va_list ap2;
-  int size;
-  char* buffer;
+    va_list ap2;
+    int size;
+    char* buffer;
 
-  va_copy(ap2, ap);
-  size = vsnprintf(NULL, 0, format, ap2)+1;
-  va_end(ap2);
+    va_copy(ap2, ap);
+    size = mat_vsnprintf(NULL, 0, format, ap2)+1;
+    va_end(ap2);
 
-  buffer = malloc(size+1);
-  if ( !buffer )
-      return NULL;
+    buffer = malloc(size+1);
+    if ( !buffer )
+        return NULL;
 
-  vsnprintf(buffer, size, format, ap);
-  return buffer;
+    mat_vsnprintf(buffer, size, format, ap);
+    return buffer;
 }
 
 /** @brief Allocates and prints to a new string using printf format
@@ -109,18 +87,17 @@ strdup_vprintf(const char* format, va_list ap)
 char *
 strdup_printf(const char* format, ...)
 {
-  char* buffer;
-  va_list ap;
-  va_start(ap, format);
-  buffer = strdup_vprintf(format, ap);
-  va_end(ap);
-  return buffer;
+    char* buffer;
+    va_list ap;
+    va_start(ap, format);
+    buffer = strdup_vprintf(format, ap);
+    va_end(ap);
+    return buffer;
 }
 
 static void
 matio_error_func( int log_level, char *message )
 {
-
     if ( progname ) {
         if ( log_level & LOG_LEVEL_CRITICAL) {
             fprintf(stderr,"-E- %s: %s\n", progname, message);
@@ -173,7 +150,6 @@ mat_log(int loglevel, const char *format, va_list ap)
     return;
 }
 
-
 /** @var debug
  *  @brief holds the debug level set in @ref Mat_SetDebug
  *  This variable is used to determine if information should be printed to
@@ -189,6 +165,7 @@ static int debug = 0;
  *  @ingroup mat_util
  */
 static int verbose = 0;
+
 /** @var silent
  *  @brief holds the silent level set in @ref Mat_SetVerbose
  *  If set, all output which is not an error is not displayed regardless
@@ -196,6 +173,7 @@ static int verbose = 0;
  *  @ingroup mat_util
  */
 static int silent = 0;
+
 /** @brief Sets verbose parameters
  *
  *  Sets the verbose level and silent level.  These values are used by
@@ -356,7 +334,7 @@ Mat_LogClose( void )
     return 1;
 }
 
-/** @brief Intializes the logging system
+/** @brief Initializes the logging system
  *
  * @ingroup mat_util
  * @param prog_name Name of the program initializing the logging functions
@@ -373,7 +351,7 @@ Mat_LogInit( const char *prog_name )
     return 0;
 }
 
-/** @brief Intializes the logging system
+/** @brief Initializes the logging system
  *
  * @ingroup mat_util
  * @param prog_name Name of the program initializing the logging functions

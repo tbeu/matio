@@ -142,10 +142,17 @@ dnl
 
 AC_CONFIG_HEADERS([src/matioConfig.h src/matio_pubconf.h])
 AC_STDC_HEADERS
+AC_CHECK_HEADERS_ONCE([stdarg.h])
+AC_CHECK_HEADERS_ONCE([varargs.h])
 AC_CHECK_HEADER([inttypes.h],[AC_DEFINE_UNQUOTED([MATIO_HAVE_INTTYPES_H],[1],[Matio has access to inttypes.h])])
 AC_CHECK_HEADER([stdint.h],[AC_DEFINE_UNQUOTED([MATIO_HAVE_STDINT_H],[1],[Matio has access to stdint.h])])
 AC_CHECK_HEADER([strings.h],[AC_DEFINE_UNQUOTED([HAVE_STRINGS_H],[1],[Matio has access to strings.h])])
 AC_CHECK_HEADER([unistd.h],[AC_DEFINE_UNQUOTED([HAVE_UNISTD_H],[1],[Matio has access to unistd.h])])
+AC_CHECK_HEADERS([locale.h stddef.h])
+AC_CHECK_MEMBERS([struct lconv.decimal_point, struct lconv.thousands_sep], [], [], [#include <locale.h>])
+
+AC_CHECK_TYPES([ptrdiff_t])
+AC_CHECK_FUNCS([localeconv])
 
 MATIO_CHECK_GETOPT_LONG
 
@@ -190,6 +197,14 @@ fi
 AC_SUBST([HAVE_UINT64],[$HAVE_UINT64])
 AC_SUBST([HAVE_INT64], [$HAVE_INT64])
 
+AC_TYPE_LONG_DOUBLE
+AC_TYPE_LONG_LONG_INT
+AC_TYPE_UNSIGNED_LONG_LONG_INT
+AC_TYPE_SIZE_T
+AC_TYPE_INTMAX_T
+AC_TYPE_UINTMAX_T
+AC_TYPE_UINTPTR_T
+
 AC_CACHE_CHECK([for va_copy()],matio_cv_have_va_copy,[
 	AC_LINK_IFELSE([AC_LANG_SOURCE([[
     #include <stdarg.h>
@@ -229,10 +244,10 @@ then
     ])
     if test "matio_cv_have___va_copy" = "yes"
     then
-        AC_DEFINE_UNQUOTED([HAVE___VA_COPY],[],[Have va_copy])
+        AC_DEFINE_UNQUOTED([HAVE___VA_COPY],[1],[Define to 1 if you have the `__va_copy' function or macro.])
     fi
 else
-    AC_DEFINE_UNQUOTED([HAVE_VA_COPY],[],[Have va_copy])
+    AC_DEFINE_UNQUOTED([HAVE_VA_COPY],[1],[Define to 1 if you have the `va_copy' function or macro.])
 fi
 
 AC_CACHE_CHECK([for vsnprintf()],matio_cv_have_vsnprintf,[
@@ -291,19 +306,19 @@ AC_CACHE_CHECK([for asprintf()],matio_cv_have_asprintf,[
 
 if test "$matio_cv_have_vsnprintf" = "yes"
 then
-    AC_DEFINE_UNQUOTED([HAVE_VSNPRINTF],[],[Have vsnprintf])
+    AC_DEFINE_UNQUOTED([HAVE_VSNPRINTF],[1],[Define to 1 if you have a C99 compliant `vsnprintf' function.])
 fi
 if test "$matio_cv_have_snprintf" = "yes"
 then
-    AC_DEFINE_UNQUOTED([HAVE_SNPRINTF],[],[Have snprintf])
+    AC_DEFINE_UNQUOTED([HAVE_SNPRINTF],[1],[Define to 1 if you have a C99 compliant `snprintf' function.])
 fi
 if test "$matio_cv_have_vasprintf" = "yes"
 then
-    AC_DEFINE_UNQUOTED([HAVE_VASPRINTF],[],[Have vasprintf])
+    AC_DEFINE_UNQUOTED([HAVE_VASPRINTF],[1],[Define to 1 if you have the `vasprintf' function.])
 fi
 if test "$matio_cv_have_asprintf" = "yes"
 then
-    AC_DEFINE_UNQUOTED([HAVE_ASPRINTF],[],[Have asprintf])
+    AC_DEFINE_UNQUOTED([HAVE_ASPRINTF],[1],[Define to 1 if you have the `asprintf' function.])
 fi
 
 MATIO_CHECK_MATLAB

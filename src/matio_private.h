@@ -62,7 +62,7 @@
 struct _mat_t {
     void *fp;               /**< File pointer for the MAT file */
     char *header;           /**< MAT File header string */
-    char *subsys_offset;    /**< offset */
+    char *subsys_offset;    /**< Offset */
     char *filename;         /**< Filename of the MAT file */
     int   version;          /**< MAT File version */
     int   byteswap;         /**< 1 if byte swapping is required, 0 otherwise */
@@ -79,24 +79,44 @@ struct _mat_t {
  * @endif
  */
 struct matvar_internal {
-    char *hdf5_name;
-    hobj_ref_t hdf5_ref;
-    hid_t      id;
-    long  fpos;         /**< Offset from the beginning of the MAT file to the variable */
-    long  datapos;      /**< Offset from the beginning of the MAT file to the data */
-     mat_t    *fp;      /**< Pointer to the MAT file structure (mat_t) */
-    unsigned num_fields;
-    char **fieldnames;
+    char *hdf5_name;        /**< Name */
+    hobj_ref_t hdf5_ref;    /**< Reference */
+    hid_t      id;          /**< Id */
+    long  fpos;             /**< Offset from the beginning of the MAT file to the variable */
+    long  datapos;          /**< Offset from the beginning of the MAT file to the data */
+    mat_t    *fp;           /**< Pointer to the MAT file structure (mat_t) */
+    unsigned num_fields;    /**< Number of fields */
+    char **fieldnames;      /**< Pointer to fieldnames */
 #if defined(HAVE_ZLIB)
-    z_stream *z;        /**< zlib compression state */
+    z_stream *z;            /**< zlib compression state */
 #endif
 };
 
 /*    snprintf.c    */
-EXTERN int mat_snprintf(char *str,size_t count,const char *fmt,...);
-EXTERN int mat_asprintf(char **ptr,const char *format, ...);
-EXTERN int mat_vsnprintf(char *str,size_t count,const char *fmt,va_list args);
-EXTERN int mat_vasprintf(char **ptr,const char *format,va_list ap);
+#if !HAVE_VSNPRINTF
+int rpl_vsnprintf(char *, size_t, const char *, va_list);
+#define mat_vsnprintf rpl_vsnprintf
+#else
+#define mat_vsnprintf vsnprintf
+#endif	/* !HAVE_VSNPRINTF */
+#if !HAVE_SNPRINTF
+int rpl_snprintf(char *, size_t, const char *, ...);
+#define mat_snprintf rpl_snprintf
+#else
+#define mat_snprintf snprintf
+#endif	/* !HAVE_SNPRINTF */
+#if !HAVE_VASPRINTF
+int rpl_vasprintf(char **, const char *, va_list);
+#define mat_vasprintf rpl_vasprintf
+#else
+#define mat_vasprintf vasprintf
+#endif	/* !HAVE_VASPRINTF */
+#if !HAVE_ASPRINTF
+int rpl_asprintf(char **, const char *, ...);
+#define mat_asprintf rpl_asprintf
+#else
+#define mat_asprintf asprintf
+#endif	/* !HAVE_ASPRINTF */
 
 /*   endian.c     */
 EXTERN double        Mat_doubleSwap(double  *a);

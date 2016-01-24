@@ -80,12 +80,12 @@ Mat_PrintNumber(enum matio_types type, void *data)
             break;
 #ifdef HAVE_MAT_INT64_T
         case MAT_T_INT64:
-            printf("%lld",*(mat_int64_t*)data);
+            printf("%ld",*(mat_int64_t*)data);
             break;
 #endif
 #ifdef HAVE_MAT_UINT64_T
         case MAT_T_UINT64:
-            printf("%llu",*(mat_uint64_t*)data);
+            printf("%lu",*(mat_uint64_t*)data);
             break;
 #endif
         case MAT_T_INT32:
@@ -206,14 +206,27 @@ Mat_Open(const char *matname,int mode)
 
     mat = malloc(sizeof(*mat));
     if ( NULL == mat ) {
-        Mat_Critical("Couldn't allocate memory for the MAT file");
         fclose(fp);
+        Mat_Critical("Couldn't allocate memory for the MAT file");
         return NULL;
     }
 
     mat->fp = fp;
     mat->header        = calloc(128,sizeof(char));
+    if ( NULL == mat->header ) {
+        free(mat);
+        fclose(fp);
+        Mat_Critical("Couldn't allocate memory for the MAT file header");
+        return NULL;
+    }
     mat->subsys_offset = calloc(8,sizeof(char));
+    if ( NULL == mat->subsys_offset ) {
+        free(mat->header);
+        free(mat);
+        fclose(fp);
+        Mat_Critical("Couldn't allocate memory for the MAT file subsys offset");
+        return NULL;
+    }
     mat->filename      = NULL;
     mat->byteswap      = 0;
     mat->version       = 0;
@@ -248,10 +261,9 @@ Mat_Open(const char *matname,int mode)
     if ( 0 == mat->version ) {
         /* Maybe a V4 MAT file */
         matvar_t *var;
-        if ( NULL != mat->header )
-            free(mat->header);
-        if ( NULL != mat->subsys_offset )
-            free(mat->subsys_offset);
+
+        free(mat->header);
+        free(mat->subsys_offset);
 
         mat->header        = NULL;
         mat->subsys_offset = NULL;
@@ -295,9 +307,9 @@ Mat_Open(const char *matname,int mode)
             *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDWR,H5P_DEFAULT);
 
         if ( -1 < *(hid_t*)mat->fp ) {
-            hsize_t num_objs;
-            H5Gget_num_objs(*(hid_t*)mat->fp,&num_objs);
-            mat->num_datasets = num_objs;
+            H5G_info_t group_info;
+            H5Gget_info(*(hid_t*)mat->fp, &group_info);
+            mat->num_datasets = group_info.nlinks;
             mat->refs_id      = -1;
         }
 #else
@@ -1735,10 +1747,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
         do {
             matvar = Mat_VarReadNextInfo(mat);
             if ( matvar != NULL ) {
-                if ( !matvar->name ) {
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
-                } else if ( strcmp(matvar->name,name) ) {
+                if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
                     Mat_VarFree(matvar);
                     matvar = NULL;
                 }
@@ -1754,10 +1763,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
         do {
             matvar = Mat_VarReadNextInfo(mat);
             if ( matvar != NULL ) {
-                if ( !matvar->name ) {
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
-                } else if ( strcmp(matvar->name,name) ) {
+                if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
                     Mat_VarFree(matvar);
                     matvar = NULL;
                 }
@@ -1765,8 +1771,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
                 Mat_Critical("An error occurred in reading the MAT file");
                 break;
             }
-        } while ( !matvar && !feof((FILE *)mat->fp) );
-
+        } while ( NULL == matvar && !feof((FILE *)mat->fp) );
         fseek(mat->fp,fpos,SEEK_SET);
     }
     return matvar;
@@ -1880,9 +1885,12 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
 {
     int err = 0, k, N = 1;
 
+    if ( mat == NULL || matvar == NULL )
+        return -1;
+
     fseek(mat->fp,matvar->internal->datapos+8,SEEK_SET);
 
-    if ( mat == NULL || matvar == NULL || data == NULL ) {
+    if ( data == NULL ) {
         err = -1;
     } else if ( start == NULL && stride == NULL && edge == NULL ) {
         for ( k = 0; k < matvar->rank; k++ )
