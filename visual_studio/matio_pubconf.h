@@ -60,6 +60,31 @@
 #undef MATIO_HAVE_INTTYPES_H
 #endif
 
+#if MATIO_HAVE_STDINT_H
+/* int16 type */
+#define _mat_int16_t int16_t
+
+/* int32 type */
+#define _mat_int32_t int32_t
+
+/* int64 type */
+#define _mat_int64_t int64_t
+
+/* int8 type */
+#define _mat_int8_t int8_t
+
+/* uint16 type */
+#define _mat_uint16_t uint16_t
+
+/* uint32 type */
+#define _mat_uint32_t uint32_t
+
+/* uint64 type */
+#define _mat_uint64_t uint64_t
+
+/* uint8 type */
+#define _mat_uint8_t uint8_t
+#else
 /* int16 type */
 #define _mat_int16_t short
 
@@ -67,7 +92,11 @@
 #define _mat_int32_t int
 
 /* int64 type */
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#define _mat_int64_t __int64
+#else
 #define _mat_int64_t long long
+#endif
 
 /* int8 type */
 #define _mat_int8_t signed char
@@ -79,10 +108,15 @@
 #define _mat_uint32_t unsigned
 
 /* uint64 type */
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#define _mat_uint64_t unsigned __int64
+#else
 #define _mat_uint64_t unsigned long long
+#endif
 
 /* uint8 type */
 #define _mat_uint8_t unsigned char
+#endif
 
 #if MATIO_HAVE_INTTYPES_H
 #   include <inttypes.h>
