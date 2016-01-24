@@ -850,7 +850,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         matvar->dims[1] = 1;
     }
 
-    H5Eset_auto(H5E_DEFAULT,efunc,client_data);
     if ( numel < 1 || nfields < 1 )
         return;
 
@@ -2757,9 +2756,6 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
                 H5Sget_simple_extent_dims(space_id,dims,NULL);
                 for ( k = 0; k < matvar->rank; k++ )
                     matvar->dims[k] = dims[matvar->rank - k - 1];
-            } else {
-                Mat_VarFree(matvar);
-                return -1;
             }
             H5Sclose(space_id);
 

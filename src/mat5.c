@@ -53,18 +53,16 @@ mat_complex_split_t *allocate_complex(size_t nbytes)
   mat_complex_split_t *complex_data = malloc(sizeof(*complex_data));
   if ( NULL == complex_data ) {
     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-    break;
   }
 
-  complex_data->Re = malloc(matvar->nbytes);
-  complex_data->Im = malloc(matvar->nbytes);
+  complex_data->Re = malloc(nbytes);
+  complex_data->Im = malloc(nbytes);
 
   if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
     free(complex_data->Re);
     free(complex_data->Im);
     free(complex_data);
-    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-    break;
+    Mat_Critical("Failed to allocate %d bytes",2*nbytes);
   }
   return complex_data;
 }
@@ -2751,7 +2749,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size*sizeof(*comp_buf);
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
             mat->fp);
     } while ( z->avail_out == 0 );
@@ -2779,7 +2777,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size*sizeof(*comp_buf);
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
             mat->fp);
     } while ( z->avail_out == 0 );
@@ -2791,7 +2789,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size*sizeof(*comp_buf);
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
             mat->fp);
     } while ( z->avail_out == 0 );
@@ -2872,7 +2870,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 do {
                     z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     z->avail_out = buf_size*sizeof(*comp_buf);
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(comp_buf,1,buf_size*
                         sizeof(*comp_buf)-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
@@ -2901,7 +2899,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
             do {
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->avail_out = buf_size*sizeof(*comp_buf);
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
@@ -2914,7 +2912,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 do {
                     z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     z->avail_out = buf_size*sizeof(*comp_buf);
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(comp_buf,1,
                         buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
@@ -3808,6 +3806,7 @@ void
 Read5(mat_t *mat, matvar_t *matvar)
 {
     int nBytes = 0, len = 1, i, byteswap, data_in_tag = 0;
+    size_t data_size=0;
     enum matio_types packed_type = MAT_T_UNKNOWN;
     long fpos;
     mat_uint32_t tag[2];
@@ -3848,7 +3847,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
                 matvar->nbytes = len*matvar->data_size;
-                complex_data =  = allocate_complex(matvar->nbytes);
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
