@@ -394,7 +394,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
             free(edge);
         } else if ( next_tok == '.' ) {
             matvar_t *field;
-            char *varname;
+            char *varname = NULL;
 
             varname = next_tok_pos+1;
             if ( matvar->class_type == MAT_C_STRUCT ) {
@@ -449,7 +449,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 if ( j != ncells )
                     break;
             } else {
-                fprintf(stderr,"%s is not a structure", varname);
+                fprintf(stderr,"%s is not a structure", matvar->name);
                 break;
             }
         } else if ( next_tok == '{' ) {

@@ -48,6 +48,27 @@
 
 static mat_complex_split_t null_complex_data = {NULL,NULL};
 
+mat_complex_split_t *allocate_complex(size_t nbytes)
+{
+  mat_complex_split_t *complex_data = malloc(sizeof(*complex_data));
+  if ( NULL == complex_data ) {
+    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
+    break;
+  }
+
+  complex_data->Re = malloc(matvar->nbytes);
+  complex_data->Im = malloc(matvar->nbytes);
+
+  if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
+    free(complex_data->Re);
+    free(complex_data->Im);
+    free(complex_data);
+    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+    break;
+  }
+  return complex_data;
+}
+
 /*
  * -------------------------------------------------------------
  *   Private Functions
@@ -1658,6 +1679,9 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             cells[i]->internal->fpos = ftell(mat->fp)-matvar->internal->z->avail_in;
+            if (cells[i]->internal->fpos < 0) {
+              Mat_Error("Error determining location in file %s\n", mat->filename);
+            }
 
             /* Read variable tag for cell */
             uncomp_buf[0] = 0;
@@ -1761,6 +1785,9 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 Mat_Critical("inflateCopy returned error %d",err);
             }
             cells[i]->internal->datapos = ftell(mat->fp)-matvar->internal->z->avail_in;
+            if (cells[i]->internal->datapos < 0) {
+              Mat_Error("Error determining location in file %s\n", mat->filename);
+            }
             if ( cells[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,cells[i]);
             else if ( cells[i]->class_type == MAT_C_CELL )
@@ -1800,6 +1827,9 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             cells[i]->internal->fpos = ftell(mat->fp);
+            if (cells[i]->internal->fpos < 0) {
+              Mat_Error("Error determining location in file %s\n", mat->filename);
+            }
 
             /* Read variable tag for cell */
             cell_bytes_read = fread(buf,4,2,mat->fp);
@@ -1893,6 +1923,9 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 }
             }
             cells[i]->internal->datapos = ftell(mat->fp);
+            if (cells[i]->internal->datapos < 0) {
+              Mat_Error("Error determining location in file %s\n", mat->filename);
+            }
             if ( cells[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,cells[i]);
             if ( cells[i]->class_type == MAT_C_CELL )
@@ -1992,6 +2025,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
         for ( i = 0; i < nmemb*nfields; i++ ) {
             fields[i]->internal->fpos = ftell(mat->fp)-matvar->internal->z->avail_in;
+            if (fields[i]->internal->fpos < 0) {
+              Mat_Error("Error determining location in file %s\n", mat->filename);
+            }
             /* Read variable tag for struct field */
             bytesread += InflateVarTag(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
@@ -2066,6 +2102,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 Mat_Critical("inflateCopy returned error %d",err);
             }
             fields[i]->internal->datapos = ftell(mat->fp)-matvar->internal->z->avail_in;
+            if (fields[i]->internal->datapos < 0) {
+              Mat_Error("Error determining location in file %s\n", mat->filename);
+            }
             if ( fields[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,fields[i]);
             else if ( fields[i]->class_type == MAT_C_CELL )
@@ -2153,6 +2192,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         for ( i = 0; i < nmemb*nfields; i++ ) {
 
             fields[i]->internal->fpos = ftell(mat->fp);
+            if (fields[i]->internal->datapos < 0) {
+              Mat_Error("Error determining location in file %s\n", mat->filename);
+            }
 
             /* Read variable tag for struct field */
             bytesread += fread(buf,4,2,mat->fp);
@@ -2228,6 +2270,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             bytesread+=fread(buf,1,8,mat->fp);
             nBytes-=8;
             fields[i]->internal->datapos = ftell(mat->fp);
+            if (fields[i]->internal->datapos < 0) {
+              Mat_Error("Error determining location in file %s\n", mat->filename);
+            }
             if ( fields[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,fields[i]);
             else if ( fields[i]->class_type == MAT_C_CELL )
@@ -2299,6 +2344,9 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
     fwrite(&matrix_type,4,1,mat->fp);
     fwrite(&pad4,4,1,mat->fp);
     start = ftell(mat->fp);
+    if (start < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -2356,6 +2404,9 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
     }
 
     matvar->internal->datapos = ftell(mat->fp);
+    if (matvar->internal->datapos < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -2407,6 +2458,9 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
             break;
     }
     end = ftell(mat->fp);
+    if (end < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     nBytes = (int)(end-start);
     fseek(mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,mat->fp);
@@ -2442,6 +2496,9 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
     fwrite(&matrix_type,4,1,mat->fp);
     fwrite(&pad4,4,1,mat->fp);
     start = ftell(mat->fp);
+    if (start < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -2633,6 +2690,9 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             break;
     }
     end = ftell(mat->fp);
+    if (end < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     nBytes = (int)(end-start);
     fseek(mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,mat->fp);
@@ -2662,13 +2722,16 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
 
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
-    int buf_size = 512, err;
+    int buf_size = 512;
     size_t byteswritten = 0;
 
     if ( NULL == matvar || NULL == mat || NULL == z)
         return 0;
 
     start = ftell(mat->fp);
+    if (start < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -2734,6 +2797,9 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     } while ( z->avail_out == 0 );
 
     matvar->internal->datapos = ftell(mat->fp);
+    if (matvar->internal->datapos < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -2919,6 +2985,9 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
     fwrite(&matrix_type,4,1,mat->fp);
     fwrite(&pad4,4,1,mat->fp);
     start = ftell(mat->fp);
+    if (start < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -3090,6 +3159,9 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
             break;
     }
     end = ftell(mat->fp);
+    if (end < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     nBytes = (int)(end-start);
     fseek(mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,mat->fp);
@@ -3132,6 +3204,9 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
         return byteswritten;
     }
     start = ftell(mat->fp);
+    if (start < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -3197,6 +3272,9 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
     } while ( z->avail_out == 0 );
 
     matvar->internal->datapos = ftell(mat->fp);
+    if (matvar->internal->datapos < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -3364,6 +3442,9 @@ Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,size_t *dims)
     fwrite(&pad4,4,1,mat->fp);
 
     start = ftell(mat->fp);
+    if (start < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     /* Array Flags */
     array_flags = MAT_C_DOUBLE;
 
@@ -3418,6 +3499,9 @@ Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,size_t *dims)
             byteswritten += fwrite(&pad1,1,1,mat->fp);
 
     end = ftell(mat->fp);
+    if (end < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     nBytes = (int)(end-start);
     fseek(mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,mat->fp);
@@ -3739,6 +3823,9 @@ Read5(mat_t *mat, matvar_t *matvar)
     }
 
     fpos = ftell(mat->fp);
+    if (fpos < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     len = 1;
     byteswap = mat->byteswap;
     for ( i = 0; i < matvar->rank; i++ )
@@ -3760,24 +3847,8 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_DOUBLE;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
-
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data =  = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -3797,24 +3868,8 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_SINGLE;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
-
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -3835,24 +3890,8 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_INT64;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
-
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -3874,24 +3913,8 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_UINT64;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
-
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -3912,24 +3935,8 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_INT32;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
-
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -3951,22 +3958,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -3988,22 +3980,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -4025,22 +4002,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -4060,24 +4022,8 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_INT8;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
-
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -4097,24 +4043,8 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_UINT8;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
-
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
-                    break;
-                }
+                complex_data = allocate_complex(matvar->nbytes);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,len);
                 matvar->data = complex_data;
@@ -4422,29 +4352,13 @@ Read5(mat_t *mat, matvar_t *matvar)
 #else
             matvar->data_type = MAT_T_DOUBLE;
 #endif
-            data->ndata = N / Mat_SizeOf(packed_type);
+            data_size = Mat_SizeOf(packed_type);
+            data_size = data_size == 0 ? 1 : data_size;
+            data->ndata = N / data_size;
             if ( matvar->isComplex ) {
-                mat_complex_split_t *complex_data;
-
-                complex_data = malloc(sizeof(*complex_data));
-                if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(data->ndata*
-                                          Mat_SizeOf(matvar->data_type));
-                complex_data->Im = malloc(data->ndata*
-                                          Mat_SizeOf(matvar->data_type));
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",
-                                 data->ndata* Mat_SizeOf(matvar->data_type));
-                    break;
-                }
+                mat_complex_split_t *complex_data = 
+                  allocate_complex(data->ndata*
+                                   Mat_SizeOf(matvar->data_type));
                 if ( matvar->compression == MAT_COMPRESSION_NONE) {
 #if defined(EXTENDED_SPARSE)
                     switch ( matvar->data_type ) {
@@ -5313,14 +5227,11 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
     int      nBytes, i, nmemb = 1,nzmax = 0;
     long     start = 0, end = 0;
 
-    if ( NULL == mat )
+    if ( NULL == mat || NULL == matvar || NULL == matvar->name )
         return -1;
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
     fseek(mat->fp,0,SEEK_END);         /* Always write at end of file */
-
-    if ( NULL == matvar || NULL == matvar->name )
-        return -1;
 
 #if !defined(HAVE_ZLIB)
     compress = MAT_COMPRESSION_NONE;
@@ -5330,6 +5241,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         fwrite(&matrix_type,4,1,mat->fp);
         fwrite(&pad4,4,1,mat->fp);
         start = ftell(mat->fp);
+        if (start < 0) {
+          Mat_Error("Error determining location in file %s\n", mat->filename);
+        }
 
         /* Array Flags */
 
@@ -5388,6 +5302,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         }
 
         matvar->internal->datapos = ftell(mat->fp);
+        if (matvar->internal->datapos < 0) {
+          Mat_Error("Error determining location in file %s\n", mat->filename);
+        }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
@@ -5554,6 +5471,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         fwrite(&matrix_type,4,1,mat->fp);
         fwrite(&pad4,4,1,mat->fp);
         start = ftell(mat->fp);
+        if (start < 0) {
+          Mat_Error("Error determining location in file %s\n", mat->filename);
+        }
 
         /* Array Flags */
         array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -5646,6 +5566,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             } while ( matvar->internal->z->avail_out == 0 );
         }
         matvar->internal->datapos = ftell(mat->fp);
+        if (matvar->internal->datapos < 0) {
+          Mat_Error("Error determining location in file %s\n", mat->filename);
+        }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
@@ -5817,6 +5740,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
 #endif
     }
     end = ftell(mat->fp);
+    if (end < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     nBytes = (int)(end-start);
     fseek(mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,mat->fp);
@@ -5851,6 +5777,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         fwrite(&matrix_type,4,1,mat->fp);
         fwrite(&pad4,4,1,mat->fp);
         start = ftell(mat->fp);
+        if (start < 0) {
+          Mat_Error("Error determining location in file %s\n", mat->filename);
+        }
 
         /* Array Flags */
 
@@ -5904,6 +5833,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         }
 
         matvar->internal->datapos = ftell(mat->fp);
+        if (matvar->internal->datapos < 0) {
+          Mat_Error("Error determining location in file %s\n", mat->filename);
+        }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
@@ -6010,6 +5942,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         fwrite(&matrix_type,4,1,mat->fp);
         fwrite(&pad4,4,1,mat->fp);
         start = ftell(mat->fp);
+        if (start < 0) {
+          Mat_Error("Error determining location in file %s\n", mat->filename);
+        }
 
         /* Array Flags */
 
@@ -6100,6 +6035,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             } while ( matvar->internal->z->avail_out == 0 );
         }
         matvar->internal->datapos = ftell(mat->fp);
+        if (matvar->internal->datapos < 0) {
+          Mat_Error("Error determining location in file %s\n", mat->filename);
+        }
         deflateCopy(&z_save,matvar->internal->z);
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
@@ -6152,6 +6090,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
 #endif
     }
     end = ftell(mat->fp);
+    if (end < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     nBytes = (int)(end-start);
     fseek(mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,mat->fp);
@@ -6178,6 +6119,9 @@ Mat_VarReadNextInfo5( mat_t *mat )
         return NULL;
 
     fpos = ftell(mat->fp);
+    if (fpos < 0) {
+      Mat_Error("Error determining location in file %s\n", mat->filename);
+    }
     err = fread(&data_type,4,1,mat->fp);
     if ( !err )
         return NULL;
