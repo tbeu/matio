@@ -710,6 +710,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             space_id = H5Dget_space(sparse_dset_id);
             (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
             matvar->dims[1] = dims[0] - 1;
+            H5Sclose(space_id);
             H5Dclose(sparse_dset_id);
         }
 
@@ -976,6 +977,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             matvar->rank = H5Sget_simple_extent_ndims(space_id);
             matvar->dims = malloc(matvar->rank*sizeof(*matvar->dims));
             if ( NULL == matvar->dims ) {
+                H5Sclose(space_id);
                 break;
             } else {
                 int k;
@@ -1413,6 +1415,7 @@ Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name)
                                     H5P_DEFAULT);
                 break;
             default:
+                H5Sclose(mspace_id);
                 return err;
         }
         attr_type_id = H5Tcopy(H5T_C_S1);
@@ -1474,7 +1477,9 @@ Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
         H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
                  H5P_DEFAULT,dims);
         err = 0;
+        H5Dclose(dset_id);
     }
+    H5Sclose(mspace_id);
     return err;
 }
 
@@ -1787,7 +1792,6 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         H5Aclose(attr_id);
 
         ndata = sparse->ndata;
-        mspace_id = H5Screate_simple(1,&ndata,NULL);
         data_type_id = Mat_data_type_to_hid_t(matvar->data_type);
         if ( matvar->isComplex ) {
             hid_t h5_complex;
@@ -1828,6 +1832,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
             H5Dclose(dset_id);
             H5Sclose(mspace_id);
         } else { /* if ( matvar->isComplex ) */
+            mspace_id = H5Screate_simple(1,&ndata,NULL);
             dset_id = H5Dcreate(sparse_id,"data",data_type_id,mspace_id,
                                 H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
             H5Dwrite(dset_id,data_type_id,H5S_ALL,H5S_ALL,H5P_DEFAULT,
@@ -1956,12 +1961,14 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                                 aspace_id,H5P_DEFAULT,H5P_DEFAULT);
             H5Awrite(attr_id,str_type_id,"struct");
             H5Aclose(attr_id);
+            H5Sclose(aspace_id);
 
             nfields = matvar->internal->num_fields;
 
             /* Structure with no fields */
             if ( nfields == 0 ) {
                 H5Gclose(struct_id);
+                H5Tclose(str_type_id);
                 return 0;
             }
 
@@ -2523,6 +2530,7 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
         default:
             break;
     }
+    H5Sclose(mem_space);
 
     return err;
 }
@@ -2731,6 +2739,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
                 for ( k = 0; k < matvar->rank; k++ )
                     matvar->dims[k] = dims[matvar->rank - k - 1];
             } else {
+                H5Sclose(space_id);
                 Mat_VarFree(matvar);
                 return -1;
             }
