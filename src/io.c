@@ -299,13 +299,13 @@ void Mat_Error( const char *format, ... )
     va_list ap;
 
     va_start(ap, format );
-    mat_log( LOG_LEVEL_ERROR, format, ap );
+    mat_log( LOG_LEVEL_ERROR, format, ap ); /* Does not return, calls abort() */
     va_end(ap);
 }
 
-/** @brief Prints a helpstring to stdout and exits with status 1
+/** @brief Prints a helpstring to stdout and exits with status EXIT_SUCCESS (typically 0)
  *
- * Prints the array of strings to stdout and exits with status 1.  The array
+ * Prints the array of strings to stdout and exits with status EXIT_SUCCESS.  The array
  * of strings should have NULL as its last element
  * @code
  * char *helpstr[] = {"My Help string line1","My help string line 2",NULL};
