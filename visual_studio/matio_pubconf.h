@@ -151,4 +151,20 @@
     typedef _mat_uint8_t mat_uint8_t;
 #endif
 
+/* 
+  The following macros handle noreturn attributes according to the latest
+  C11/C++11 standard with fallback to the MSVC extension if using an older
+  compiler.
+*/
+#define MATIO_NORETURNATTR
+#if __STDC_VERSION__ >= 201112L
+#define MATIO_NORETURN _Noreturn
+#elif __cplusplus >= 201103L
+#define MATIO_NORETURN [[noreturn]]
+#elif defined(_MSC_VER) && _MSC_VER >= 1200
+#define MATIO_NORETURN __declspec(noreturn)
+#else
+#define MATIO_NORETURN
+#endif
+
 #endif /* MATIO_PUBCONF_H */
