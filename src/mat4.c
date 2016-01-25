@@ -177,8 +177,10 @@ void
 Read4(mat_t *mat,matvar_t *matvar)
 {
     unsigned int N;
-    if ( fseek(mat->fp,matvar->internal->datapos,SEEK_SET) )
+    if ( fseek(mat->fp,matvar->internal->datapos,SEEK_SET) ) {
+        Mat_Critical("Couldn't set file position");
         return;
+    }
 
     N = matvar->dims[0]*matvar->dims[1];
     switch ( matvar->class_type ) {
@@ -392,6 +394,11 @@ Mat_VarReadNextInfo4(mat_t *mat)
 
     matvar->internal->fp   = mat;
     matvar->internal->fpos = ftell(mat->fp);
+    if ( matvar->internal->fpos == -1L ) {
+        Mat_VarFree(matvar);
+        Mat_Critical("Couldn't determine file position");
+        return NULL;
+    }
 
     err = fread(&tmp,sizeof(int),1,mat->fp);
     if ( !err ) {
@@ -526,6 +533,11 @@ Mat_VarReadNextInfo4(mat_t *mat)
     }
 
     matvar->internal->datapos = ftell(mat->fp);
+    if ( matvar->internal->datapos == -1L ) {
+        Mat_VarFree(matvar);
+        Mat_Critical("Couldn't determine file position");
+        return NULL;
+    }
     nBytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex )
         nBytes *= 2;

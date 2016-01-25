@@ -843,9 +843,10 @@ WriteEmptyCharData(mat_t *mat, int N, enum matio_types data_type)
     mat_int8_t pad1 = 0;
 
     switch ( data_type ) {
-        case MAT_T_UINT8: /* Matlab MAT_C_CHAR needs uint16 */
-        case MAT_T_INT8:  /* Matlab MAT_C_CHAR needs uint16 */
+        case MAT_T_UINT8:
+        case MAT_T_INT8:
             data_type = MAT_T_UINT16;
+            /* Fall through: Matlab MAT_C_CHAR needs uint16 */
         case MAT_T_UINT16:
         {
             mat_uint16_t u16 = 0;
