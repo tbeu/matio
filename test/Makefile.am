@@ -53,7 +53,8 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat5_compressed_extended_sparse.at \
                $(srcdir)/mat5_uncompressed_extended_sparse.at \
                $(srcdir)/mat73_compressed_extended_sparse.at \
-               $(srcdir)/mat73_uncompressed_extended_sparse.at
+               $(srcdir)/mat73_uncompressed_extended_sparse.at \
+               $(srcdir)/mat4_write.at
 TESTSUITE = $(srcdir)/testsuite
 
 TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
