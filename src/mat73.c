@@ -2269,8 +2269,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 matvar->data = complex_data;
             }
             H5Dclose(dset_id);
-            if ( ref_id > -1 )
-                H5Dclose(ref_id);
+            H5Dclose(ref_id);
             break;
         case MAT_C_CHAR:
             numel = 1;
@@ -2518,8 +2517,7 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
             }
             H5Sclose(dset_space);
             H5Dclose(dset_id);
-            if ( ref_id > -1 )
-                H5Dclose(ref_id);
+            H5Dclose(ref_id);
             err = 0;
             break;
         default:
