@@ -268,7 +268,15 @@ Mat_Open(const char *matname,int mode)
         if ( (mat->version == 0x0100 || mat->version == 0x0200) &&
              -1 != mat->byteswap ) {
             mat->bof = ftell(mat->fp);
-            mat->next_index    = 0;
+            if ( mat->bof == -1L ) {
+                free(mat->header);
+                free(mat->subsys_offset);
+                free(mat);
+                fclose(fp);
+                Mat_Critical("Couldn't determine file position");
+                return NULL;
+            }
+            mat->next_index = 0;
         } else {
             mat->version = 0;
         }
@@ -1748,8 +1756,7 @@ Mat_VarReadNextInfo( mat_t *mat )
 matvar_t *
 Mat_VarReadInfo( mat_t *mat, const char *name )
 {
-
-    long  fpos;
+    long fpos;
     matvar_t *matvar = NULL;
 
     if ( (mat == NULL) || (name == NULL) )
@@ -1769,24 +1776,28 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
                 Mat_Critical("An error occurred in reading the MAT file");
                 break;
             }
-        } while ( NULL == matvar && mat->next_index < mat->num_datasets);
+        } while ( NULL == matvar && mat->next_index < mat->num_datasets );
         mat->next_index = fpos;
     } else {
         fpos = ftell(mat->fp);
-        fseek(mat->fp,mat->bof,SEEK_SET);
-        do {
-            matvar = Mat_VarReadNextInfo(mat);
-            if ( matvar != NULL ) {
-                if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
+        if ( fpos != -1L ) {
+            fseek(mat->fp,mat->bof,SEEK_SET);
+            do {
+                matvar = Mat_VarReadNextInfo(mat);
+                if ( matvar != NULL ) {
+                    if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
+                        Mat_VarFree(matvar);
+                        matvar = NULL;
+                    }
+                } else if (!feof((FILE *)mat->fp)) {
+                    Mat_Critical("An error occurred in reading the MAT file");
+                    break;
                 }
-            } else if (!feof((FILE *)mat->fp)) {
-                Mat_Critical("An error occurred in reading the MAT file");
-                break;
-            }
-        } while ( NULL == matvar && !feof((FILE *)mat->fp) );
-        fseek(mat->fp,fpos,SEEK_SET);
+            } while ( NULL == matvar && !feof((FILE *)mat->fp) );
+            fseek(mat->fp,fpos,SEEK_SET);
+        } else {
+            Mat_Critical("Couldn't determine file position");
+        }
     }
     return matvar;
 }
@@ -1803,14 +1814,19 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
 matvar_t *
 Mat_VarRead( mat_t *mat, const char *name )
 {
-    long  fpos = 0;
+    long fpos;
     matvar_t *matvar = NULL;
 
     if ( (mat == NULL) || (name == NULL) )
         return NULL;
 
-    if ( MAT_FT_MAT73 != mat->version )
+    if ( MAT_FT_MAT73 != mat->version ) {
         fpos = ftell(mat->fp);
+        if ( fpos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+            return NULL;
+        }
+    }
     else {
         fpos = mat->next_index;
         mat->next_index = 0;
@@ -1847,6 +1863,10 @@ Mat_VarReadNext( mat_t *mat )
             return NULL;
         /* Read position so we can reset the file position if an error occurs */
         fpos = ftell(mat->fp);
+        if ( fpos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+            return NULL;
+        }
     }
     matvar = Mat_VarReadNextInfo(mat);
     if ( matvar )
