@@ -80,12 +80,28 @@ Mat_PrintNumber(enum matio_types type, void *data)
             break;
 #ifdef HAVE_MAT_INT64_T
         case MAT_T_INT64:
-            printf("%ld",*(mat_int64_t*)data);
+#if HAVE_INTTYPES_H
+            printf("%" PRIi64,*(mat_int64_t*)data);
+#elif defined(_MSC_VER) && _MSC_VER < 1800
+            printf("%I64i",*(mat_int64_t*)data);
+#elif defined(HAVE_LONG_LONG_INT)
+            printf("%lld",(long long)(*(mat_int64_t*)data));
+#else
+            printf("%ld",(long)(*(mat_int64_t*)data));
+#endif
             break;
 #endif
 #ifdef HAVE_MAT_UINT64_T
         case MAT_T_UINT64:
-            printf("%lu",*(mat_uint64_t*)data);
+#if HAVE_INTTYPES_H
+            printf("%" PRIu64,*(mat_uint64_t*)data);
+#elif defined(_MSC_VER) && _MSC_VER < 1800
+            printf("%I64u",*(mat_uint64_t*)data);
+#elif defined(HAVE_UNSIGNED_LONG_LONG_INT)
+            printf("%llu",(unsigned long long)(*(mat_uint64_t*)data));
+#else
+            printf("%lu",(long)(*(mat_uint64_t*)data));
+#endif
             break;
 #endif
         case MAT_T_INT32:

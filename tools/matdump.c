@@ -315,7 +315,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
     char *next_tok_pos, next_tok = 0;
     char *open = NULL, *close = NULL;
     int err, i = 0, j, done = 0;
-	matvar_t* matvar = *_matvar;
+    matvar_t* matvar = *_matvar;
 
     next_tok_pos = get_next_token(index_str);
     next_tok = *next_tok_pos;
@@ -523,7 +523,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 break;
         }
     }
-	*_matvar = matvar;
+    *_matvar = matvar;
 }
 
 static void
@@ -593,12 +593,24 @@ print_default_number(enum matio_types type, void *data)
             break;
 #ifdef _mat_int64_t
         case MAT_T_INT64:
-            printf("%ld",*(mat_int64_t*)data);
+#if MATIO_HAVE_INTTYPES_H
+            printf("%" PRIi64,*(mat_int64_t*)data);
+#elif defined(_MSC_VER) && _MSC_VER < 1800
+            printf("%I64i",*(mat_int64_t*)data);
+#else
+            printf("%lld",(long long)(*(mat_int64_t*)data));
+#endif
             break;
 #endif
 #ifdef _mat_uint64_t
         case MAT_T_UINT64:
-            printf("%lu",*(mat_uint64_t*)data);
+#if MATIO_HAVE_INTTYPES_H
+            printf("%" PRIu64,*(mat_uint64_t*)data);
+#elif defined(_MSC_VER) && _MSC_VER < 1800
+            printf("%I64u",*(mat_uint64_t*)data);
+#else
+            printf("%llu",(unsigned long long)(*(mat_uint64_t*)data));
+#endif
             break;
 #endif
         case MAT_T_INT32:
