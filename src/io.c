@@ -104,7 +104,7 @@ strdup_printf(const char* format, ...)
  * @param message logging message
  */
 static void
-matio_error_func( int log_level, char *message )
+mat_logfunc( int log_level, char *message )
 {
     if ( progname ) {
         if ( log_level & LOG_LEVEL_CRITICAL) {
@@ -148,7 +148,7 @@ matio_error_func( int log_level, char *message )
 
 /** @brief Logging function handler
  *
- * Calls either the default logging function @ref matio_error_func
+ * Calls either the default logging function @ref mat_logfunc
  * set by @ref Mat_LogInit or a custom logging function set by
  * @ref Mat_LogInitFunc.
  * @ingroup mat_util
@@ -361,7 +361,7 @@ Mat_LogClose( void )
 int
 Mat_LogInit( const char *prog_name )
 {
-    logfunc = &matio_error_func;
+    logfunc = &mat_logfunc;
 
     verbose = 0;
     silent  = 0;
