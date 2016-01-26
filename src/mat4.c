@@ -196,15 +196,22 @@ Read4(mat_t *mat,matvar_t *matvar)
 
                 matvar->nbytes   = N*sizeof(double);
                 complex_data     = malloc(sizeof(*complex_data));
-                if ( complex_data != NULL ) {
-                    complex_data->Re = malloc(matvar->nbytes);
-                    complex_data->Im = malloc(matvar->nbytes);
-                    matvar->data     = complex_data;
-                    if ( complex_data->Re != NULL && complex_data->Im != NULL ) {
-                        ReadDoubleData(mat, complex_data->Re, matvar->data_type, N);
-                        ReadDoubleData(mat, complex_data->Im, matvar->data_type, N);
-                    }
+                if ( NULL == complex_data ) {
+                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
+                    break;
                 }
+                complex_data->Re = malloc(matvar->nbytes);
+                complex_data->Im = malloc(matvar->nbytes);
+                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
+		    free(complex_data->Re);
+		    free(complex_data->Im);
+		    free(complex_data);
+		    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+		    break;
+                }
+                matvar->data     = complex_data;
+		ReadDoubleData(mat, complex_data->Re, matvar->data_type, N);
+		ReadDoubleData(mat, complex_data->Im, matvar->data_type, N);
             } else {
                 matvar->nbytes = N*sizeof(double);
                 matvar->data   = malloc(matvar->nbytes);

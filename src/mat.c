@@ -268,15 +268,14 @@ Mat_Open(const char *matname,int mode)
         if ( (mat->version == 0x0100 || mat->version == 0x0200) &&
              -1 != mat->byteswap ) {
             mat->bof = ftell(mat->fp);
-            if ( mat->bof == -1L ) {
-                free(mat->header);
-                free(mat->subsys_offset);
-                free(mat);
-                fclose(fp);
-                Mat_Critical("Couldn't determine file position");
-                return NULL;
-            }
-            mat->next_index = 0;
+	    if (mat->bof < 0) {
+	      free(mat->header);
+	      free(mat->subsys_offset);
+	      free(mat);
+	      fclose(fp);
+	      Mat_Error("Error determining location in file %s\n", mat->filename);
+	    }
+            mat->next_index    = 0;
         } else {
             mat->version = 0;
         }
@@ -1926,7 +1925,12 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
 
     if ( data == NULL ) {
         err = -1;
-    } else if ( start == NULL && stride == NULL && edge == NULL ) {
+	return err;
+    }
+
+    fseek(mat->fp,matvar->internal->datapos+8,SEEK_SET);
+
+    if ( start == NULL && stride == NULL && edge == NULL ) {
         for ( k = 0; k < matvar->rank; k++ )
             N *= matvar->dims[k];
         if ( matvar->compression == MAT_COMPRESSION_NONE )
