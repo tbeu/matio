@@ -5658,7 +5658,7 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
     enum matio_types data_type,size_t *dims,int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j;
-    long pos, row_stride, col_stride;
+    long pos, row_stride, col_stride, pos2;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
@@ -5683,15 +5683,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
                 row_stride = (stride[0]-1)*data_size;
                 col_stride = stride[1]*dims[0]*data_size;
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
                 for ( i = 0; i < edge[1]; i++ ) {
                     pos = ftell(mat->fp);
+                    if ( pos == -1L ) {
+                        Mat_Critical("Couldn't determine file position");
+                        return -1;
+                    }
                     fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                     for ( j = 0; j < edge[0]; j++ ) {
                         ReadDoubleData(mat,ptr++,data_type,1);
                         fseek(mat->fp,row_stride,SEEK_CUR);
                     }
-                    pos = pos+col_stride-ftell(mat->fp);
+                    pos2 = ftell(mat->fp);
+                    if ( pos2 == -1L ) {
+                        Mat_Critical("Couldn't determine file position");
+                        return -1;
+                    }
+                    pos +=col_stride-pos2;
                     fseek(mat->fp,pos,SEEK_CUR);
                 }
             }
@@ -5705,15 +5718,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
             pos = ftell(mat->fp);
+            if ( pos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                return -1;
+            }
             fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadSingleData(mat,ptr++,data_type,1);
                     fseek(mat->fp,row_stride,SEEK_CUR);
                 }
-                pos = pos+col_stride-ftell(mat->fp);
+                pos2 = ftell(mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
                 fseek(mat->fp,pos,SEEK_CUR);
             }
             break;
@@ -5727,15 +5753,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
             pos = ftell(mat->fp);
+            if ( pos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                return -1;
+            }
             fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadInt64Data(mat,ptr++,data_type,1);
                     fseek(mat->fp,row_stride,SEEK_CUR);
                 }
-                pos = pos+col_stride-ftell(mat->fp);
+                pos2 = ftell(mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
                 fseek(mat->fp,pos,SEEK_CUR);
             }
             break;
@@ -5750,15 +5789,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
             pos = ftell(mat->fp);
+            if ( pos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                return -1;
+            }
             fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadUInt64Data(mat,ptr++,data_type,1);
                     fseek(mat->fp,row_stride,SEEK_CUR);
                 }
-                pos = pos+col_stride-ftell(mat->fp);
+                pos2 = ftell(mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
                 fseek(mat->fp,pos,SEEK_CUR);
             }
             break;
@@ -5772,15 +5824,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
             pos = ftell(mat->fp);
+            if ( pos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                return -1;
+            }
             fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadInt32Data(mat,ptr++,data_type,1);
                     fseek(mat->fp,row_stride,SEEK_CUR);
                 }
-                pos = pos+col_stride-ftell(mat->fp);
+                pos2 = ftell(mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
                 fseek(mat->fp,pos,SEEK_CUR);
             }
             break;
@@ -5793,15 +5858,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
             pos = ftell(mat->fp);
+            if ( pos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                return -1;
+            }
             fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadUInt32Data(mat,ptr++,data_type,1);
                     fseek(mat->fp,row_stride,SEEK_CUR);
                 }
-                pos = pos+col_stride-ftell(mat->fp);
+                pos2 = ftell(mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
                 fseek(mat->fp,pos,SEEK_CUR);
             }
             break;
@@ -5814,15 +5892,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
             pos = ftell(mat->fp);
+            if ( pos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                return -1;
+            }
             fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadInt16Data(mat,ptr++,data_type,1);
                     fseek(mat->fp,row_stride,SEEK_CUR);
                 }
-                pos = pos+col_stride-ftell(mat->fp);
+                pos2 = ftell(mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
                 fseek(mat->fp,pos,SEEK_CUR);
             }
             break;
@@ -5835,15 +5926,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
             pos = ftell(mat->fp);
+            if ( pos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                return -1;
+            }
             fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadUInt16Data(mat,ptr++,data_type,1);
                     fseek(mat->fp,row_stride,SEEK_CUR);
                 }
-                pos = pos+col_stride-ftell(mat->fp);
+                pos2 = ftell(mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
                 fseek(mat->fp,pos,SEEK_CUR);
             }
             break;
@@ -5856,15 +5960,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
             pos = ftell(mat->fp);
+            if ( pos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                return -1;
+            }
             fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadInt8Data(mat,ptr++,data_type,1);
                     fseek(mat->fp,row_stride,SEEK_CUR);
                 }
-                pos = pos+col_stride-ftell(mat->fp);
+                pos2 = ftell(mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
                 fseek(mat->fp,pos,SEEK_CUR);
             }
             break;
@@ -5877,15 +5994,28 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
             pos = ftell(mat->fp);
+            if ( pos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                return -1;
+            }
             fseek(mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell(mat->fp);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
                 fseek(mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     ReadUInt8Data(mat,ptr++,data_type,1);
                     fseek(mat->fp,row_stride,SEEK_CUR);
                 }
-                pos = pos+col_stride-ftell(mat->fp);
+                pos2 = ftell(mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
                 fseek(mat->fp,pos,SEEK_CUR);
             }
             break;
