@@ -545,6 +545,9 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         H5Sget_simple_extent_dims(space_id,dims,NULL);
         for ( k = 0; k < matvar->rank; k++ )
             matvar->dims[k] = dims[matvar->rank - k - 1];
+    } else {
+        Mat_Critical("Error allocating memory for matvar->dims");
+        return;
     }
     H5Sclose(space_id);
 
@@ -703,6 +706,10 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 
         matvar->rank = 2;
         matvar->dims = malloc(matvar->rank*sizeof(*matvar->dims));
+        if (matvar->dims == NULL) {
+            Mat_Critical("Error allocating memory for matvar->dims");
+            return;
+        }
         matvar->dims[0] = nrows;
 
         if ( H5Lexists(dset_id,"jc",H5P_DEFAULT) ) {
@@ -798,6 +805,12 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 H5Aclose(attr_id);
                 matvar->rank    = 2;
                 matvar->dims    = malloc(2*sizeof(*matvar->dims));
+                if (matvar->dims == NULL) {
+                    H5Tclose(field_type_id);
+                    H5Dclose(field_id);
+                    Mat_Critical("Error allocating memory for matvar->dims");
+                    return;
+                }
                 matvar->dims[0] = 1;
                 matvar->dims[1] = 1;
                 numel = 1;
@@ -805,6 +818,13 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 space_id        = H5Dget_space(field_id);
                 matvar->rank    = H5Sget_simple_extent_ndims(space_id);
                 matvar->dims    = malloc(matvar->rank*sizeof(*matvar->dims));
+                if (matvar->dims == NULL) {
+                    H5Tclose(field_type_id);
+                    H5Dclose(field_id);
+                    H5Sclose(space_id);
+                    Mat_Critical("Error allocating memory for matvar->dims");
+                    return;
+                }
                 (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
                 numel = 1;
                 for ( k = 0; k < matvar->rank; k++ ) {
@@ -818,6 +838,12 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             /* Structure should be a scalar */
             matvar->rank    = 2;
             matvar->dims    = malloc(2*sizeof(*matvar->dims));
+            if (matvar->dims == NULL) {
+                H5Tclose(field_type_id);
+                H5Dclose(field_id);
+                Mat_Critical("Error allocating memory for matvar->dims");
+                return;
+            }
             matvar->dims[0] = 1;
             matvar->dims[1] = 1;
             numel = 1;
@@ -829,6 +855,10 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         numel = 1;
         matvar->rank    = 2;
         matvar->dims    = malloc(2*sizeof(*matvar->dims));
+        if (matvar->dims == NULL) {
+            Mat_Critical("Error allocating memory for matvar->dims");
+            return;
+        }
         matvar->dims[0] = 1;
         matvar->dims[1] = 1;
     }
@@ -2744,6 +2774,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
             } else {
                 H5Sclose(space_id);
                 Mat_VarFree(matvar);
+                Mat_Critical("Error allocating memory for matvar->dims");
                 return -1;
             }
             H5Sclose(space_id);
