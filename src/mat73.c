@@ -1432,6 +1432,7 @@ Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name)
         attr_id = H5Acreate(dset_id,"MATLAB_int_decode",attr_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
         H5Awrite(attr_id,attr_type_id,&matlab_int_decode);
+        H5Aclose(attr_id);
         H5Tclose(attr_type_id);
         H5Sclose(aspace_id);
 
@@ -1858,6 +1859,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
                  sparse->jc);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
+        H5Gclose(sparse_id);
         err = 0;
     }
 
@@ -2424,6 +2426,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 H5Sclose(space_id);
                 H5Dclose(sparse_dset_id);
             }
+            H5Gclose(dset_id);
             matvar->data = sparse_data;
             break;
         }
