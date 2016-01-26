@@ -2270,15 +2270,15 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 ref_id = matvar->internal->id;
                 H5Iinc_ref(ref_id);
             }
-            if ( 0 < matvar->internal->hdf5_ref )
+            if ( 0 < matvar->internal->hdf5_ref ) {
                 dset_id = H5Rdereference(ref_id,H5R_OBJECT,&matvar->internal->hdf5_ref);
-            else {
+            } else {
                 dset_id = ref_id;
-                ref_id = -1;
+                H5Iinc_ref(dset_id);
             }
 
             if ( !matvar->isComplex ) {
-                matvar->data      = malloc(matvar->nbytes);
+                matvar->data     = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
                     H5Dread(dset_id,Mat_class_type_to_hid_t(matvar->class_type),
                             H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
@@ -2522,11 +2522,11 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
                 ref_id = matvar->internal->id;
                 H5Iinc_ref(ref_id);
             }
-            if ( 0 < matvar->internal->hdf5_ref )
+            if ( 0 < matvar->internal->hdf5_ref ) {
                 dset_id = H5Rdereference(ref_id,H5R_OBJECT,&matvar->internal->hdf5_ref);
-            else {
+            } else {
                 dset_id = ref_id;
-                ref_id = -1;
+                H5Iinc_ref(dset_id);
             }
 
             dset_space = H5Dget_space(dset_id);
