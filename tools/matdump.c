@@ -579,8 +579,6 @@ default_printf_func(int log_level,char *message)
     for ( i = 0; i < indent; i++ )
         printf("    ");
     printf("%s\n",message);
-    if ( log_level == 1 )
-        exit(EXIT_FAILURE);
 }
 
 static void
