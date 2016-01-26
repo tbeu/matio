@@ -423,20 +423,30 @@ Mat_GetVersion(mat_t *matfp)
 int
 Mat_Rewind( mat_t *mat )
 {
+    int err;
+
     switch ( mat->version ) {
         case MAT_FT_MAT73:
+            err = 0;
             mat->next_index = 0;
             break;
         case MAT_FT_MAT5:
-            fseek(mat->fp,128L,SEEK_SET);
+            err = fseek(mat->fp,128L,SEEK_SET);
+            if ( err != 0 ) {
+                Mat_Critical("Couldn't set file position");
+            }
             break;
         case MAT_FT_MAT4:
-            fseek(mat->fp,0L,SEEK_SET);
+            err = fseek(mat->fp,0L,SEEK_SET);
+            if ( err != 0 ) {
+                Mat_Critical("Couldn't set file position");
+            }
             break;
         default:
-            return -1;
+            err = -1;
+            break;
     }
-    return 0;
+    return err;
 }
 
 /** @brief Returns the size of a Matlab Class
@@ -1781,7 +1791,10 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
     } else {
         fpos = ftell(mat->fp);
         if ( fpos != -1L ) {
-            fseek(mat->fp,mat->bof,SEEK_SET);
+            if ( fseek(mat->fp,mat->bof,SEEK_SET) != 0 ) {
+                Mat_Critical("Couldn't set file position");
+                return NULL;
+            }
             do {
                 matvar = Mat_VarReadNextInfo(mat);
                 if ( matvar != NULL ) {
@@ -1794,7 +1807,11 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
                     break;
                 }
             } while ( NULL == matvar && !feof((FILE *)mat->fp) );
-            fseek(mat->fp,fpos,SEEK_SET);
+            if ( fseek(mat->fp,fpos,SEEK_SET) != 0 ) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+                Mat_Critical("Couldn't set file position");
+            }
         } else {
             Mat_Critical("Couldn't determine file position");
         }
@@ -1826,8 +1843,7 @@ Mat_VarRead( mat_t *mat, const char *name )
             Mat_Critical("Couldn't determine file position");
             return NULL;
         }
-    }
-    else {
+    } else {
         fpos = mat->next_index;
         mat->next_index = 0;
     }
@@ -1836,9 +1852,13 @@ Mat_VarRead( mat_t *mat, const char *name )
     if ( matvar )
         ReadData(mat,matvar);
 
-    if ( MAT_FT_MAT73 != mat->version )
-        fseek(mat->fp,fpos,SEEK_SET);
-    else {
+    if ( MAT_FT_MAT73 != mat->version ) {
+        if ( fseek(mat->fp,fpos,SEEK_SET) != 0 ) {
+            Mat_VarFree(matvar);
+            matvar = NULL;
+            Mat_Critical("Couldn't set file position");
+        }
+    } else {
         mat->next_index = fpos;
     }
     return matvar;
@@ -1869,10 +1889,16 @@ Mat_VarReadNext( mat_t *mat )
         }
     }
     matvar = Mat_VarReadNextInfo(mat);
-    if ( matvar )
+    if ( matvar ) {
         ReadData(mat,matvar);
-    else if (mat->version != MAT_FT_MAT73 )
-        fseek(mat->fp,fpos,SEEK_SET);
+    } else if (mat->version != MAT_FT_MAT73 ) {
+        if ( fseek(mat->fp,fpos,SEEK_SET) != 0 ) {
+            Mat_VarFree(matvar);
+            matvar = NULL;
+            Mat_Critical("Couldn't set file position");
+        }
+    }
+
     return matvar;
 }
 
@@ -1922,7 +1948,11 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
     if ( mat == NULL || matvar == NULL )
         return -1;
 
-    fseek(mat->fp,matvar->internal->datapos+8,SEEK_SET);
+    err = fseek(mat->fp,matvar->internal->datapos+8,SEEK_SET);
+    if ( err != 0 ) {
+        Mat_Critical("Couldn't set file position");
+        return err;
+    }
 
     if ( data == NULL ) {
         err = -1;
