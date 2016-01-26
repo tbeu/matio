@@ -545,11 +545,12 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         H5Sget_simple_extent_dims(space_id,dims,NULL);
         for ( k = 0; k < matvar->rank; k++ )
             matvar->dims[k] = dims[matvar->rank - k - 1];
+        H5Sclose(space_id);
     } else {
+        H5Sclose(space_id);
         Mat_Critical("Error allocating memory for matvar->dims");
         return;
     }
-    H5Sclose(space_id);
 
     Mat_H5ReadClassType(matvar, dset_id);
 
