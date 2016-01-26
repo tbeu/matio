@@ -685,8 +685,8 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
             break;
         }
         default:
-            Mat_Error("Unrecognized data_type");
             Mat_VarFree(matvar);
+            Mat_Critical("Unrecognized data_type");
             return NULL;
     }
     if ( matvar->class_type == MAT_C_SPARSE ) {
