@@ -228,7 +228,8 @@ EXTERN char  *strdup_printf(const char *format, ...);
 EXTERN int    Mat_SetVerbose( int verb, int s );
 EXTERN int    Mat_SetDebug( int d );
 EXTERN void   Mat_Critical( const char *format, ... );
-EXTERN void   Mat_Error( const char *format, ... );
+MATIO_NORETURN
+EXTERN void   Mat_Error( const char *format, ... ) MATIO_NORETURNATTR;
 EXTERN void   Mat_Help( const char *helpstr[] );
 EXTERN int    Mat_LogInit( const char *progname );
 EXTERN int    Mat_LogClose(void);

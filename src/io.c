@@ -95,8 +95,16 @@ strdup_printf(const char* format, ...)
     return buffer;
 }
 
+/** @brief Default logging function
+ *
+ * Prints the message to stderr/stdout and calls abort() if the
+ * log_level equals LOG_LEVEL_ERROR.
+ * @ingroup mat_util
+ * @param log_level logging level
+ * @param message logging message
+ */
 static void
-matio_error_func( int log_level, char *message )
+mat_logfunc( int log_level, char *message )
 {
     if ( progname ) {
         if ( log_level & LOG_LEVEL_CRITICAL) {
@@ -138,6 +146,16 @@ matio_error_func( int log_level, char *message )
 
 }
 
+/** @brief Logging function handler
+ *
+ * Calls either the default logging function @ref mat_logfunc
+ * set by @ref Mat_LogInit or a custom logging function set by
+ * @ref Mat_LogInitFunc.
+ * @ingroup mat_util
+ * @param loglevel log level
+ * @param format format string
+ * @param ap variable argument list
+ */
 static void
 mat_log(int loglevel, const char *format, va_list ap)
 {
@@ -299,13 +317,14 @@ void Mat_Error( const char *format, ... )
     va_list ap;
 
     va_start(ap, format );
-    mat_log( LOG_LEVEL_ERROR, format, ap );
+    mat_log( LOG_LEVEL_ERROR, format, ap ); /* Shall never return to the calling function */
     va_end(ap);
+    abort(); /* Always abort */
 }
 
-/** @brief Prints a helpstring to stdout and exits with status 1
+/** @brief Prints a helpstring to stdout and exits with status EXIT_SUCCESS (typically 0)
  *
- * Prints the array of strings to stdout and exits with status 1.  The array
+ * Prints the array of strings to stdout and exits with status EXIT_SUCCESS.  The array
  * of strings should have NULL as its last element
  * @code
  * char *helpstr[] = {"My Help string line1","My help string line 2",NULL};
@@ -343,7 +362,7 @@ Mat_LogClose( void )
 int
 Mat_LogInit( const char *prog_name )
 {
-    logfunc = &matio_error_func;
+    logfunc = &mat_logfunc;
 
     verbose = 0;
     silent  = 0;

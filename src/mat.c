@@ -268,7 +268,15 @@ Mat_Open(const char *matname,int mode)
         if ( (mat->version == 0x0100 || mat->version == 0x0200) &&
              -1 != mat->byteswap ) {
             mat->bof = ftell(mat->fp);
-            mat->next_index    = 0;
+            if ( mat->bof == -1L ) {
+                free(mat->header);
+                free(mat->subsys_offset);
+                free(mat);
+                fclose(fp);
+                Mat_Critical("Couldn't determine file position");
+                return NULL;
+            }
+            mat->next_index = 0;
         } else {
             mat->version = 0;
         }
@@ -677,8 +685,8 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
             break;
         }
         default:
-            Mat_Error("Unrecognized data_type");
             Mat_VarFree(matvar);
+            Mat_Critical("Unrecognized data_type");
             return NULL;
     }
     if ( matvar->class_type == MAT_C_SPARSE ) {
@@ -1516,8 +1524,6 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
             case MAT_C_CHAR:
             {
                 char *data = matvar->data;
-                if ( !printdata )
-                    break;
                 for ( i = 0; i < matvar->dims[0]; i++ ) {
                     for ( j = 0; j < matvar->dims[1]; j++ )
                         printf("%c",data[j*matvar->dims[0]+i]);
@@ -1750,8 +1756,7 @@ Mat_VarReadNextInfo( mat_t *mat )
 matvar_t *
 Mat_VarReadInfo( mat_t *mat, const char *name )
 {
-
-    long  fpos;
+    long fpos;
     matvar_t *matvar = NULL;
 
     if ( (mat == NULL) || (name == NULL) )
@@ -1771,24 +1776,28 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
                 Mat_Critical("An error occurred in reading the MAT file");
                 break;
             }
-        } while ( NULL == matvar && mat->next_index < mat->num_datasets);
+        } while ( NULL == matvar && mat->next_index < mat->num_datasets );
         mat->next_index = fpos;
     } else {
         fpos = ftell(mat->fp);
-        fseek(mat->fp,mat->bof,SEEK_SET);
-        do {
-            matvar = Mat_VarReadNextInfo(mat);
-            if ( matvar != NULL ) {
-                if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
+        if ( fpos != -1L ) {
+            fseek(mat->fp,mat->bof,SEEK_SET);
+            do {
+                matvar = Mat_VarReadNextInfo(mat);
+                if ( matvar != NULL ) {
+                    if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
+                        Mat_VarFree(matvar);
+                        matvar = NULL;
+                    }
+                } else if (!feof((FILE *)mat->fp)) {
+                    Mat_Critical("An error occurred in reading the MAT file");
+                    break;
                 }
-            } else if (!feof((FILE *)mat->fp)) {
-                Mat_Critical("An error occurred in reading the MAT file");
-                break;
-            }
-        } while ( NULL == matvar && !feof((FILE *)mat->fp) );
-        fseek(mat->fp,fpos,SEEK_SET);
+            } while ( NULL == matvar && !feof((FILE *)mat->fp) );
+            fseek(mat->fp,fpos,SEEK_SET);
+        } else {
+            Mat_Critical("Couldn't determine file position");
+        }
     }
     return matvar;
 }
@@ -1805,14 +1814,19 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
 matvar_t *
 Mat_VarRead( mat_t *mat, const char *name )
 {
-    long  fpos = 0;
+    long fpos;
     matvar_t *matvar = NULL;
 
     if ( (mat == NULL) || (name == NULL) )
         return NULL;
 
-    if ( MAT_FT_MAT73 != mat->version )
+    if ( MAT_FT_MAT73 != mat->version ) {
         fpos = ftell(mat->fp);
+        if ( fpos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+            return NULL;
+        }
+    }
     else {
         fpos = mat->next_index;
         mat->next_index = 0;
@@ -1849,6 +1863,10 @@ Mat_VarReadNext( mat_t *mat )
             return NULL;
         /* Read position so we can reset the file position if an error occurs */
         fpos = ftell(mat->fp);
+        if ( fpos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+            return NULL;
+        }
     }
     matvar = Mat_VarReadNextInfo(mat);
     if ( matvar )
