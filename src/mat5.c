@@ -4423,7 +4423,12 @@ Read5(mat_t *mat, matvar_t *matvar)
 #else
             matvar->data_type = MAT_T_DOUBLE;
 #endif
-            data->ndata = N / Mat_SizeOf(packed_type);
+            {
+                size_t s_type = Mat_SizeOf(packed_type);
+                if ( s_type == 0 )
+                    break;
+                data->ndata = N / s_type;
+            }
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
