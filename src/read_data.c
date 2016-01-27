@@ -6218,7 +6218,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
     enum matio_classes class_type,enum matio_types data_type,size_t *dims,
     int *start,int *stride,int *edge)
 {
-    int nBytes = 0, data_size, i, j, err;
+    int nBytes = 0, i, j, err;
     int pos, row_stride, col_stride;
     z_stream z_copy = {0,};
 
@@ -6231,10 +6231,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
     switch ( class_type ) {
         case MAT_C_DOUBLE:
         {
-            double *ptr;
-
-            data_size = sizeof(double);
-            ptr = data;
+            double *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6260,7 +6257,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                     InflateSkipData(mat,&z_copy,data_type,start[0]);
                     for ( j = 0; j < edge[0]-1; j++ ) {
                         ReadCompressedDoubleData(mat,&z_copy,ptr++,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                        InflateSkipData(mat,&z_copy,data_type,row_stride);
                     }
                     ReadCompressedDoubleData(mat,&z_copy,ptr++,data_type,1);
                     pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6271,10 +6268,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
         }
         case MAT_C_SINGLE:
         {
-            float *ptr;
-
-            data_size = sizeof(float);
-            ptr = data;
+            float *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6282,7 +6276,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedSingleData(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedSingleData(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6293,10 +6287,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
-            mat_int64_t *ptr;
-
-            data_size = sizeof(mat_int64_t);
-            ptr = data;
+            mat_int64_t *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6304,7 +6295,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedInt64Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedInt64Data(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6316,10 +6307,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
 #ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
         {
-            mat_uint64_t *ptr;
-
-            data_size = sizeof(mat_uint64_t);
-            ptr = data;
+            mat_uint64_t *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6327,7 +6315,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedUInt64Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedUInt64Data(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6338,10 +6326,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
 #endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
-            mat_int32_t *ptr;
-
-            data_size = sizeof(mat_int32_t);
-            ptr = data;
+            mat_int32_t *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6349,7 +6334,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedInt32Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedInt32Data(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6359,10 +6344,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
         }
         case MAT_C_UINT32:
         {
-            mat_uint32_t *ptr;
-
-            data_size = sizeof(mat_uint32_t);
-            ptr = data;
+            mat_uint32_t *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6370,7 +6352,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedUInt32Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedUInt32Data(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6380,10 +6362,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
         }
         case MAT_C_INT16:
         {
-            mat_int16_t *ptr;
-
-            data_size = sizeof(mat_int16_t);
-            ptr = data;
+            mat_int16_t *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6391,7 +6370,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedInt16Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedInt16Data(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6401,10 +6380,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
         }
         case MAT_C_UINT16:
         {
-            mat_uint16_t *ptr;
-
-            data_size = sizeof(mat_uint16_t);
-            ptr = data;
+            mat_uint16_t *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6412,7 +6388,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedUInt16Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedUInt16Data(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6422,10 +6398,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
         }
         case MAT_C_INT8:
         {
-            mat_int8_t *ptr;
-
-            data_size = sizeof(mat_int8_t);
-            ptr = data;
+            mat_int8_t *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6433,7 +6406,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedInt8Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedInt8Data(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6443,10 +6416,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
         }
         case MAT_C_UINT8:
         {
-            mat_uint8_t *ptr;
-
-            data_size = sizeof(mat_uint8_t);
-            ptr = data;
+            mat_uint8_t *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6454,7 +6424,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedUInt8Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedUInt8Data(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
@@ -6464,10 +6434,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
         }
         case MAT_C_CHAR:
         {
-            char *ptr;
-
-            data_size = 1;
-            ptr = data;
+            char *ptr = data;
             row_stride = (stride[0]-1);
             col_stride = (stride[1]-1)*dims[0];
             InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
@@ -6475,7 +6442,7 @@ ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,start[0]);
                 for ( j = 0; j < edge[0]-1; j++ ) {
                     ReadCompressedCharData(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride[0]-1);
+                    InflateSkipData(mat,&z_copy,data_type,row_stride);
                 }
                 ReadCompressedCharData(mat,&z_copy,ptr++,data_type,1);
                 pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
