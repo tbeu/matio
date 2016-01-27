@@ -641,7 +641,7 @@ static size_t
 WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
     enum matio_types data_type)
 {
-    int data_size, data_tag[2], err, byteswritten = 0;
+    int data_size, data_tag[2], byteswritten = 0;
     int buf_size = 1024, i;
     mat_uint8_t   buf[1024], pad[8] = {0,};
 
@@ -659,7 +659,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             do {
                 z->next_out  = buf;
                 z->avail_out = buf_size;
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
 
@@ -672,7 +672,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             do {
                 z->next_out  = buf;
                 z->avail_out = buf_size;
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
             /* Add/Compress padding to pad to 8-byte boundary */
@@ -682,7 +682,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
                 do {
                     z->next_out  = buf;
                     z->avail_out = buf_size;
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
             }
@@ -703,7 +703,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             do {
                 z->next_out  = buf;
                 z->avail_out = buf_size;
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
 
@@ -721,7 +721,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
                 do {
                     z->next_out  = buf;
                     z->avail_out = buf_size;
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
                 ptr++;
@@ -733,7 +733,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
                 do {
                     z->next_out  = buf;
                     z->avail_out = buf_size;
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
             }
@@ -749,7 +749,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             do {
                 z->next_out  = buf;
                 z->avail_out = buf_size;
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
 
@@ -762,7 +762,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             do {
                 z->next_out  = buf;
                 z->avail_out = buf_size;
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
             /* Add/Compress padding to pad to 8-byte boundary */
@@ -772,7 +772,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
                 do {
                     z->next_out  = buf;
                     z->avail_out = buf_size;
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
             }
@@ -791,7 +791,7 @@ WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
             do {
                 z->next_out  = buf;
                 z->avail_out = buf_size;
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
         }
@@ -1017,7 +1017,7 @@ static int
 WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,
     enum matio_types data_type)
 {
-    int nBytes = 0, data_size, i, err, byteswritten = 0;
+    int nBytes = 0, data_size, i, byteswritten = 0;
 
     if ( (mat == NULL) || (mat->fp == NULL) )
         return 0;
@@ -1038,7 +1038,7 @@ WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,
             do {
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->avail_out = 32*sizeof(*comp_buf);
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,32*sizeof(*comp_buf)-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
             for ( i = 0; i < N; i++ ) {
@@ -1047,7 +1047,7 @@ WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,
                 do {
                     z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     z->avail_out = 32*sizeof(*comp_buf);
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(comp_buf,32*sizeof(*comp_buf)-z->avail_out,1,mat->fp);
                 } while ( z->avail_out == 0 );
             }
@@ -1571,7 +1571,7 @@ static size_t
 WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
     enum matio_types data_type)
 {
-    int nBytes = 0, data_size, data_tag[2], err, byteswritten = 0;
+    int nBytes = 0, data_size, data_tag[2], byteswritten = 0;
     int buf_size = 1024;
     mat_uint8_t   buf[1024], pad[8] = {0,};
 
@@ -1587,7 +1587,7 @@ WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
     do {
         z->next_out  = buf;
         z->avail_out = buf_size;
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
     } while ( z->avail_out == 0 );
 
@@ -1600,7 +1600,7 @@ WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
     do {
         z->next_out  = buf;
         z->avail_out = buf_size;
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
     } while ( z->avail_out == 0 );
     /* Add/Compress padding to pad to 8-byte boundary */
@@ -1610,7 +1610,7 @@ WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
         do {
             z->next_out  = buf;
             z->avail_out = buf_size;
-            err = deflate(z,Z_NO_FLUSH);
+            deflate(z,Z_NO_FLUSH);
             byteswritten += fwrite(buf,1,buf_size-z->avail_out,mat->fp);
         } while ( z->avail_out == 0 );
     }
@@ -1759,7 +1759,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             cells[i]->internal->z = calloc(1,sizeof(z_stream));
             err = inflateCopy(cells[i]->internal->z,matvar->internal->z);
             if ( err != Z_OK ) {
-                Mat_Critical("inflateCopy returned error %d",err);
+                Mat_Critical("inflateCopy returned error %s",zError(err));
             }
             cells[i]->internal->datapos = ftell(mat->fp)-matvar->internal->z->avail_in;
             if ( cells[i]->class_type == MAT_C_STRUCT )
@@ -2064,7 +2064,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             fields[i]->internal->z = calloc(1,sizeof(z_stream));
             err = inflateCopy(fields[i]->internal->z,matvar->internal->z);
             if ( err != Z_OK ) {
-                Mat_Critical("inflateCopy returned error %d",err);
+                Mat_Critical("inflateCopy returned error %s",zError(err));
             }
             fields[i]->internal->datapos = ftell(mat->fp)-matvar->internal->z->avail_in;
             if ( fields[i]->class_type == MAT_C_STRUCT )
@@ -2663,7 +2663,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
 
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
-    int buf_size = 512, err;
+    int buf_size = 512;
     size_t byteswritten = 0;
 
     if ( NULL == matvar || NULL == mat || NULL == z)
@@ -2689,7 +2689,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size*sizeof(*comp_buf);
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
             mat->fp);
     } while ( z->avail_out == 0 );
@@ -2717,7 +2717,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size*sizeof(*comp_buf);
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
             mat->fp);
     } while ( z->avail_out == 0 );
@@ -2729,7 +2729,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size*sizeof(*comp_buf);
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
             mat->fp);
     } while ( z->avail_out == 0 );
@@ -2807,7 +2807,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 do {
                     z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     z->avail_out = buf_size*sizeof(*comp_buf);
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(comp_buf,1,buf_size*
                         sizeof(*comp_buf)-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
@@ -2836,7 +2836,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
             do {
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->avail_out = buf_size*sizeof(*comp_buf);
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
@@ -2849,7 +2849,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 do {
                     z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     z->avail_out = buf_size*sizeof(*comp_buf);
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(comp_buf,1,
                         buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
@@ -3121,7 +3121,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
 
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
-    int buf_size = 512, err;
+    int buf_size = 512;
     size_t byteswritten = 0;
 
     if ( NULL == mat || NULL == z)
@@ -3152,7 +3152,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size*sizeof(*comp_buf);
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
             mat->fp);
     } while ( z->avail_out == 0 );
@@ -3180,7 +3180,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size*sizeof(*comp_buf);
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
             mat->fp);
     } while ( z->avail_out == 0 );
@@ -3192,7 +3192,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size*sizeof(*comp_buf);
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
             mat->fp);
     } while ( z->avail_out == 0 );
@@ -3270,7 +3270,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 do {
                     z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     z->avail_out = buf_size*sizeof(*comp_buf);
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(comp_buf,1,buf_size*
                         sizeof(*comp_buf)-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
@@ -3296,7 +3296,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
             do {
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->avail_out = buf_size*sizeof(*comp_buf);
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
             } while ( z->avail_out == 0 );
@@ -3309,7 +3309,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_stream *z)
                 do {
                     z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     z->avail_out = buf_size*sizeof(*comp_buf);
-                    err = deflate(z,Z_NO_FLUSH);
+                    deflate(z,Z_NO_FLUSH);
                     byteswritten += fwrite(comp_buf,1,
                         buf_size*sizeof(*comp_buf)-z->avail_out,mat->fp);
                 } while ( z->avail_out == 0 );
@@ -3440,7 +3440,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
 
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
-    int buf_size = 512, err;
+    int buf_size = 512;
     size_t byteswritten = 0, buf_size_bytes;
 
     if ( NULL == mat || NULL == z)
@@ -3458,7 +3458,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size_bytes;
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,mat->fp);
     } while ( z->avail_out == 0 );
     uncomp_buf[0] = array_flags_type;
@@ -3485,7 +3485,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
     do {
         z->next_out  = ZLIB_BYTE_PTR(comp_buf);
         z->avail_out = buf_size_bytes;
-        err = deflate(z,Z_NO_FLUSH);
+        deflate(z,Z_NO_FLUSH);
         byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,mat->fp);
     } while ( z->avail_out == 0 );
     /* Name of variable */
@@ -3497,7 +3497,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
         do {
             z->next_out  = ZLIB_BYTE_PTR(comp_buf);
             z->avail_out = buf_size_bytes;
-            err = deflate(z,Z_NO_FLUSH);
+            deflate(z,Z_NO_FLUSH);
             byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,mat->fp);
         } while ( z->avail_out == 0 );
     } else {
@@ -3516,7 +3516,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
             do {
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->avail_out = buf_size_bytes;
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,
                     mat->fp);
             } while ( z->avail_out == 0 );
@@ -3535,7 +3535,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
             do {
                 z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 z->avail_out = buf_size_bytes;
-                err = deflate(z,Z_NO_FLUSH);
+                deflate(z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,
                     mat->fp);
             } while ( z->avail_out == 0 );
@@ -4921,6 +4921,9 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         err = inflateCopy(&z,matvar->internal->z);
+        if ( err != Z_OK ) {
+            Mat_Critical("inflateCopy returned error %s",zError(err));
+        }
         z.avail_in = 0;
         InflateDataType(mat,&z,tag);
         if ( mat->byteswap ) {
@@ -4984,6 +4987,9 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
                 /* Reset zlib knowledge to before reading real tag */
                 inflateEnd(&z);
                 err = inflateCopy(&z,matvar->internal->z);
+                if ( err != Z_OK ) {
+                    Mat_Critical("inflateCopy returned error %s",zError(err));
+                }
                 InflateSkip(mat,&z,real_bytes);
                 z.avail_in = 0;
                 InflateDataType(mat,&z,tag);
@@ -5044,6 +5050,9 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
                 /* Reset zlib knowledge to before reading real tag */
                 inflateEnd(&z);
                 err = inflateCopy(&z,matvar->internal->z);
+                if ( err != Z_OK ) {
+                    Mat_Critical("inflateCopy returned error %s",zError(err));
+                }
                 InflateSkip(mat,&z,real_bytes);
                 z.avail_in = 0;
                 InflateDataType(mat,&z,tag);
@@ -5164,6 +5173,9 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         matvar->internal->z->avail_in = 0;
         err = inflateCopy(&z,matvar->internal->z);
+        if ( err != Z_OK ) {
+            Mat_Critical("inflateCopy returned error %s",zError(err));
+        }
         InflateDataType(mat,&z,tag);
         if ( mat->byteswap ) {
             Mat_int32Swap(tag);
@@ -5225,6 +5237,9 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
             /* Reset zlib knowledge to before reading real tag */
             inflateEnd(&z);
             err = inflateCopy(&z,matvar->internal->z);
+            if ( err != Z_OK ) {
+                Mat_Critical("inflateCopy returned error %s",zError(err));
+            }
             InflateSkip(mat,&z,real_bytes);
             z.avail_in = 0;
             InflateDataType(mat,&z,tag);
@@ -5555,6 +5570,12 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         }
         matvar->internal->z = calloc(1,sizeof(*matvar->internal->z));
         err = deflateInit(matvar->internal->z,Z_DEFAULT_COMPRESSION);
+        if ( err != Z_OK ) {
+            free(matvar->internal->z);
+            matvar->internal->z = NULL;
+            Mat_Critical("deflateInit returned %s",zError(err));
+            return -1;
+        }
 
         matrix_type = MAT_T_COMPRESSED;
         fwrite(&matrix_type,4,1,mat->fp);
@@ -5579,7 +5600,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         do {
             matvar->internal->z->next_out  = ZLIB_BYTE_PTR(comp_buf);
             matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-            err = deflate(matvar->internal->z,Z_NO_FLUSH);
+            deflate(matvar->internal->z,Z_NO_FLUSH);
             byteswritten += fwrite(comp_buf,1,
                 buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
         } while ( matvar->internal->z->avail_out == 0 );
@@ -5607,7 +5628,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         do {
             matvar->internal->z->next_out  = ZLIB_BYTE_PTR(comp_buf);
             matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-            err = deflate(matvar->internal->z,Z_NO_FLUSH);
+            deflate(matvar->internal->z,Z_NO_FLUSH);
             byteswritten += fwrite(comp_buf,1,
                 buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
         } while ( matvar->internal->z->avail_out == 0 );
@@ -5627,7 +5648,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             do {
                 matvar->internal->z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-                err = deflate(matvar->internal->z,Z_NO_FLUSH);
+                deflate(matvar->internal->z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
             } while ( matvar->internal->z->avail_out == 0 );
@@ -5646,7 +5667,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             do {
                 matvar->internal->z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                 matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-                err = deflate(matvar->internal->z,Z_NO_FLUSH);
+                deflate(matvar->internal->z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
             } while ( matvar->internal->z->avail_out == 0 );
@@ -5723,7 +5744,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     do {
                         matvar->internal->z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                         matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-                        err = deflate(matvar->internal->z,Z_NO_FLUSH);
+                        deflate(matvar->internal->z,Z_NO_FLUSH);
                         byteswritten += fwrite(comp_buf,1,buf_size*
                             sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
                     } while ( matvar->internal->z->avail_out == 0 );
@@ -5750,7 +5771,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 do {
                     matvar->internal->z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                     matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-                    err = deflate(matvar->internal->z,Z_NO_FLUSH);
+                    deflate(matvar->internal->z,Z_NO_FLUSH);
                     byteswritten += fwrite(comp_buf,1,
                         buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
                 } while ( matvar->internal->z->avail_out == 0 );
@@ -5763,7 +5784,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     do {
                         matvar->internal->z->next_out  = ZLIB_BYTE_PTR(comp_buf);
                         matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-                        err = deflate(matvar->internal->z,Z_NO_FLUSH);
+                        deflate(matvar->internal->z,Z_NO_FLUSH);
                         byteswritten += fwrite(comp_buf,1,
                             buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,
                             mat->fp);
@@ -5817,7 +5838,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             for ( i = 0; i < 8-(byteswritten % 8); i++ )
                 fwrite(&pad1,1,1,mat->fp);
 #endif
-        err = deflateEnd(matvar->internal->z);
+        (void)deflateEnd(matvar->internal->z);
         free(matvar->internal->z);
         matvar->internal->z = NULL;
 #endif
@@ -6011,6 +6032,12 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
 
         matvar->internal->z = calloc(1,sizeof(*matvar->internal->z));
         err = deflateInit(matvar->internal->z,Z_DEFAULT_COMPRESSION);
+        if ( err != Z_OK ) {
+            free(matvar->internal->z);
+            matvar->internal->z = NULL;
+            Mat_Critical("deflateInit returned %s",zError(err));
+            return;
+        }
 
         matrix_type = MAT_T_COMPRESSED;
         fwrite(&matrix_type,4,1,mat->fp);
@@ -6018,7 +6045,6 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         start = ftell(mat->fp);
 
         /* Array Flags */
-
         array_flags = matvar->class_type & MAT_F_CLASS_T;
         if ( matvar->isComplex )
             array_flags |= MAT_F_COMPLEX;
@@ -6034,7 +6060,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         do {
             matvar->internal->z->next_out  = comp_buf;
             matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-            err = deflate(matvar->internal->z,Z_NO_FLUSH);
+            deflate(matvar->internal->z,Z_NO_FLUSH);
             byteswritten += fwrite(comp_buf,1,
                 buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,
                 mat->fp);
@@ -6061,7 +6087,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         do {
             matvar->internal->z->next_out  = comp_buf;
             matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-            err = deflate(matvar->internal->z,Z_NO_FLUSH);
+            deflate(matvar->internal->z,Z_NO_FLUSH);
             byteswritten += fwrite(comp_buf,1,
                 buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,
                 mat->fp);
@@ -6080,7 +6106,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             do {
                 matvar->internal->z->next_out  = comp_buf;
                 matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-                err = deflate(matvar->internal->z,Z_NO_FLUSH);
+                deflate(matvar->internal->z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,
                     mat->fp);
@@ -6100,7 +6126,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             do {
                 matvar->internal->z->next_out  = comp_buf;
                 matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
-                err = deflate(matvar->internal->z,Z_NO_FLUSH);
+                deflate(matvar->internal->z,Z_NO_FLUSH);
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
             } while ( matvar->internal->z->avail_out == 0 );
@@ -6137,18 +6163,14 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             matvar->internal->z->avail_out = buf_size*sizeof(*comp_buf);
             err = deflate(matvar->internal->z,Z_FINISH);
             byteswritten += fwrite(comp_buf,1,
-                buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,
-                mat->fp);
+                buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,mat->fp);
         } while ( err != Z_STREAM_END && matvar->internal->z->avail_out == 0 );
         if ( byteswritten % 8 )
             for ( i = byteswritten % 8; i < 8; i++ )
                 fwrite(&pad1,1,1,mat->fp);
-        fprintf(stderr,"deflate Z_FINISH: err = %d,byteswritten = %u\n",err,byteswritten);
-
-        err = deflateEnd(matvar->internal->z);
-        fprintf(stderr,"deflateEnd: err = %d\n",err);
+        Mat_Critical("deflate with Z_FINISH returned %s, byteswritten = %u",zError(err),byteswritten);
 #if 1
-        err = deflateEnd(matvar->internal->z);
+        (void)deflateEnd(matvar->internal->z);
         free(matvar->internal->z);
         matvar->internal->z = NULL;
 #else
@@ -6216,9 +6238,9 @@ Mat_VarReadNextInfo5( mat_t *mat )
             matvar->internal->z = calloc(1,sizeof(z_stream));
             err = inflateInit(matvar->internal->z);
             if ( err != Z_OK ) {
-                Mat_Critical("inflateInit2 returned %d",err);
                 Mat_VarFree(matvar);
                 matvar = NULL;
+                Mat_Critical("inflateInit returned %s",zError(err));
                 break;
             }
 
