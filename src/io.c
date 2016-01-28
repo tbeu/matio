@@ -70,7 +70,7 @@ strdup_vprintf(const char* format, va_list ap)
     size = mat_vsnprintf(NULL, 0, format, ap2)+1;
     va_end(ap2);
 
-    buffer = malloc(size+1);
+    buffer = (char*)malloc(size+1);
     if ( !buffer )
         return NULL;
 

@@ -49,18 +49,18 @@ static int WriteStructField(mat_t *mat,matvar_t *matvar);
 static size_t Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,
                   size_t *dims);
 #if defined(HAVE_ZLIB)
-static size_t WriteCompressedCharData(mat_t *mat,z_stream *z,void *data,int N,
+static size_t WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
                   enum matio_types data_type);
-static int    WriteCompressedEmptyData(mat_t *mat,z_stream *z,int N,
+static int    WriteCompressedEmptyData(mat_t *mat,z_streamp z,int N,
                   enum matio_types data_type);
-static size_t WriteCompressedData(mat_t *mat,z_stream *z,void *data,int N,
+static size_t WriteCompressedData(mat_t *mat,z_streamp z,void *data,int N,
                   enum matio_types data_type);
 static size_t WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,
-                  z_stream *z);
+                  z_streamp z);
 static size_t WriteCompressedStructField(mat_t *mat,matvar_t *matvar,
-                  z_stream *z);
+                  z_streamp z);
 static size_t Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,
-                  int rank,size_t *dims,z_stream *z);
+                  int rank,size_t *dims,z_streamp z);
 #endif
 
 /*   mat5.c    */

@@ -688,7 +688,7 @@ help_test(const char *test)
 }
 
 static int
-test_write_2d_logical(char *output_name)
+test_write_2d_logical(const char *output_name)
 {
     size_t dims[2] = {5,10};
     int    err = 0, i;
@@ -740,7 +740,7 @@ test_write_2d_logical(char *output_name)
 }
 
 static int
-test_write_2d_numeric(enum matio_classes matvar_class, char *output_name)
+test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name)
 {
     size_t dims[2] = {5,10};
     int    err = 0, i;
@@ -854,7 +854,7 @@ test_write_2d_numeric(enum matio_classes matvar_class, char *output_name)
 }
 
 static int
-test_write_complex_2d_numeric(enum matio_classes matvar_class,char *output_name)
+test_write_complex_2d_numeric(enum matio_classes matvar_class,const char *output_name)
 {
     size_t dims[2] = {5,10};
     int    err = 0, i;
@@ -1003,7 +1003,7 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class,char *output_name)
 }
 
 static int
-test_write_empty_2d_numeric(enum matio_classes matvar_class,char *output_name)
+test_write_empty_2d_numeric(enum matio_classes matvar_class,const char *output_name)
 {
     int       err = 0;
     mat_t    *mat;
@@ -1061,9 +1061,9 @@ test_write_empty_2d_numeric(enum matio_classes matvar_class,char *output_name)
 }
 
 static int
-test_write_char(char *output_name)
+test_write_char(const char *output_name)
 {
-    char     *str = "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
+    const char *str = "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
                     "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
     int       err = 0;
     size_t    dims[2];
@@ -1130,7 +1130,7 @@ test_readvar4(const char *inputfile, const char *var)
 }
 
 static int
-test_write_empty_struct(char *output_name)
+test_write_empty_struct(const char *output_name)
 {
     size_t  dims[2] = {0,0};
     int    err = 0;
@@ -1200,7 +1200,7 @@ test_write_empty_struct(char *output_name)
 
 
 static int
-test_write_struct_2d_logical(char *output_name)
+test_write_struct_2d_logical(const char *output_name)
 {
     size_t dims[2] = {5,10};
     int    err = 0, i, j;
@@ -1249,7 +1249,7 @@ test_write_struct_2d_logical(char *output_name)
 
 static int
 test_write_struct_2d_numeric(enum matio_classes matvar_class,
-    char *output_name)
+    const char *output_name)
 {
     size_t dims[2] = {5,10};
     int    err = 0, i;
@@ -1398,7 +1398,7 @@ test_write_struct_2d_numeric(enum matio_classes matvar_class,
 
 static int
 test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
-    char *output_name)
+    const char *output_name)
 {
     size_t dims[2] = {5,10};
     int    err = 0, i;
@@ -1596,7 +1596,7 @@ test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
 }
 
 static int
-test_write_empty_cell(char *output_name)
+test_write_empty_cell(const char *output_name)
 {
     size_t  dims[2] = {0,0};
     int    err = 0;
@@ -1632,7 +1632,7 @@ test_write_empty_cell(char *output_name)
 }
 
 static int
-test_write_cell_2d_logical(char *output_name)
+test_write_cell_2d_logical(const char *output_name)
 {
     size_t dims[2] = {5,5};
     int    err = 0, i, j;
@@ -1677,7 +1677,7 @@ test_write_cell_2d_logical(char *output_name)
 
 static int
 test_write_cell_2d_numeric(enum matio_classes matvar_class,
-    char *output_name)
+    const char *output_name)
 {
     size_t dims[2] = {5,10};
     int    err = 0, i;
@@ -1826,7 +1826,7 @@ test_write_cell_2d_numeric(enum matio_classes matvar_class,
 
 static int
 test_write_cell_complex_2d_numeric(enum matio_classes matvar_class,
-    char *output_name)
+    const char *output_name)
 {
     size_t dims[2] = {5,10};
     int    err = 0, i;
@@ -2528,7 +2528,7 @@ test_get_struct_field(const char *file,const char *structname,
                         Mat_VarPrint( field, 0);
                     break;
                 default:
-                    field = Mat_VarGetStructField(matvar,fieldname,
+                    field = Mat_VarGetStructField(matvar,(void*)fieldname,
                                 MAT_BY_NAME,0);
                     err = (field == NULL) ? 1 : 0;
                     if ( !err )
@@ -2662,7 +2662,7 @@ test_writenan(void)
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MAT_F_DONT_COPY_DATA);
-        Mat_VarWrite(mat,matvar,0);
+        Mat_VarWrite(mat,matvar,MAT_COMPRESSION_NONE);
         Mat_VarFree(matvar);
         Mat_Close(mat);
     } else {
@@ -2691,7 +2691,7 @@ test_writeinf(void)
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MAT_F_DONT_COPY_DATA);
-        Mat_VarWrite(mat,matvar,0);
+        Mat_VarWrite(mat,matvar,MAT_COMPRESSION_NONE);
         Mat_VarFree(matvar);
         Mat_Close(mat);
     } else {
@@ -2701,7 +2701,7 @@ test_writeinf(void)
 }
 
 static int
-test_write_sparse(enum matio_classes matvar_class,char *output_name)
+test_write_sparse(enum matio_classes matvar_class,const char *output_name)
 {
     int    err = 0;
     size_t dims[2] = {5,10};
@@ -2818,7 +2818,7 @@ test_write_sparse(enum matio_classes matvar_class,char *output_name)
 }
 
 static int
-test_write_complex_sparse(enum matio_classes matvar_class,char *output_name)
+test_write_complex_sparse(enum matio_classes matvar_class,const char *output_name)
 {
     int    err = 0;
     size_t dims[2] = {5,10};
@@ -2995,12 +2995,12 @@ test_delete(char *file,char *name)
 
 int main (int argc, char *argv[])
 {
-    char *prog_name = "test_mat";
+    const char *prog_name = "test_mat";
     int   c,i, k, err = 0, ntests = 0;
     mat_t *mat, *mat2;
     matvar_t *matvar;
     enum matio_classes matvar_class = MAT_C_DOUBLE;
-    char *output_name = NULL;
+    const char *output_name = NULL;
     int version[3];
 
     Mat_GetLibraryVersion(version, version+1, version+2);

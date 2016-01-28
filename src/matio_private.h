@@ -88,7 +88,7 @@ struct matvar_internal {
     unsigned num_fields;    /**< Number of fields */
     char **fieldnames;      /**< Pointer to fieldnames */
 #if defined(HAVE_ZLIB)
-    z_stream *z;            /**< zlib compression state */
+    z_streamp z;            /**< zlib compression state */
 #endif
 };
 
@@ -168,46 +168,46 @@ EXTERN int ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
                enum matio_types data_type,int rank,size_t *dims,int *start,
                int *stride,int *edge);
 #if defined(HAVE_ZLIB)
-EXTERN int ReadCompressedDoubleData(mat_t *mat,z_stream *z,double  *data,
+EXTERN int ReadCompressedDoubleData(mat_t *mat,z_streamp z,double  *data,
                enum matio_types data_type,int len);
-EXTERN int ReadCompressedSingleData(mat_t *mat,z_stream *z,float   *data,
+EXTERN int ReadCompressedSingleData(mat_t *mat,z_streamp z,float   *data,
                enum matio_types data_type,int len);
 #ifdef HAVE_MAT_INT64_T
-EXTERN int ReadCompressedInt64Data(mat_t *mat,z_stream *z,mat_int64_t *data,
+EXTERN int ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
                enum matio_types data_type,int len);
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-EXTERN int ReadCompressedUInt64Data(mat_t *mat,z_stream *z,mat_uint64_t *data,
+EXTERN int ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
                enum matio_types data_type,int len);
 #endif /* HAVE_MAT_UINT64_T */
-EXTERN int ReadCompressedInt32Data(mat_t *mat,z_stream *z,mat_int32_t *data,
+EXTERN int ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
                enum matio_types data_type,int len);
-EXTERN int ReadCompressedUInt32Data(mat_t *mat,z_stream *z,mat_uint32_t *data,
+EXTERN int ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
                enum matio_types data_type,int len);
-EXTERN int ReadCompressedInt16Data(mat_t *mat,z_stream *z,mat_int16_t *data,
+EXTERN int ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
                enum matio_types data_type,int len);
-EXTERN int ReadCompressedUInt16Data(mat_t *mat,z_stream *z,mat_uint16_t *data,
+EXTERN int ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
                enum matio_types data_type,int len);
-EXTERN int ReadCompressedInt8Data(mat_t *mat,z_stream *z,mat_int8_t  *data,
+EXTERN int ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t  *data,
                enum matio_types data_type,int len);
-EXTERN int ReadCompressedUInt8Data(mat_t *mat,z_stream *z,mat_uint8_t  *data,
+EXTERN int ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t  *data,
                enum matio_types data_type,int len);
-EXTERN int ReadCompressedCharData(mat_t *mat,z_stream *z,char *data,
+EXTERN int ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
                enum matio_types data_type,int len);
-EXTERN int ReadCompressedDataSlab1(mat_t *mat,z_stream *z,void *data,
+EXTERN int ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
                enum matio_classes class_type,enum matio_types data_type,
                int start,int stride,int edge);
-EXTERN int ReadCompressedDataSlab2(mat_t *mat,z_stream *z,void *data,
+EXTERN int ReadCompressedDataSlab2(mat_t *mat,z_streamp z,void *data,
                enum matio_classes class_type,enum matio_types data_type,
                size_t *dims,int *start,int *stride,int *edge);
-EXTERN int ReadCompressedDataSlabN(mat_t *mat,z_stream *z,void *data,
+EXTERN int ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
                enum matio_classes class_type,enum matio_types data_type,
                int rank,size_t *dims,int *start,int *stride,int *edge);
 
 /*   inflate.c    */
-EXTERN int InflateSkip(mat_t *mat, z_stream *z, int nbytes);
+EXTERN int InflateSkip(mat_t *mat, z_streamp z, int nbytes);
 EXTERN int InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes);
-EXTERN int InflateSkipData(mat_t *mat,z_stream *z,enum matio_types data_type,int len);
+EXTERN int InflateSkipData(mat_t *mat,z_streamp z,enum matio_types data_type,int len);
 EXTERN int InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN int InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN int InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf);
@@ -215,7 +215,7 @@ EXTERN int InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN int InflateVarName(mat_t *mat,matvar_t *matvar,void *buf,int N);
 EXTERN int InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN int InflateDataType(mat_t *mat, z_stream *matvar, void *buf);
-EXTERN int InflateData(mat_t *mat, z_stream *z, void *buf, int nBytes);
+EXTERN int InflateData(mat_t *mat, z_streamp z, void *buf, int nBytes);
 EXTERN int InflateFieldNameLength(mat_t *mat,matvar_t *matvar,void *buf);
 EXTERN int InflateFieldNamesTag(mat_t *mat,matvar_t *matvar,void *buf);
 EXTERN int InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,

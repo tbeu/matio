@@ -66,8 +66,9 @@ enum mat_acc {
  */
 enum mat_ft {
     MAT_FT_MAT73  = 0x0200,   /**< @brief Matlab version 7.3 file             */
-    MAT_FT_MAT5   = 0x0100,   /**< @brief Matlab level-5 file                 */
-    MAT_FT_MAT4   = 0x0010    /**< @brief Version 4 file                      */
+    MAT_FT_MAT5   = 0x0100,   /**< @brief Matlab version 5 file               */
+    MAT_FT_MAT4   = 0x0010,   /**< @brief Matlab version 4 file               */
+    MAT_FT_UNDEFINED =   0    /**< @brief Undefined version                   */
 };
 
 /** @brief Matlab data types
@@ -228,8 +229,7 @@ EXTERN char  *strdup_printf(const char *format, ...);
 EXTERN int    Mat_SetVerbose( int verb, int s );
 EXTERN int    Mat_SetDebug( int d );
 EXTERN void   Mat_Critical( const char *format, ... );
-MATIO_NORETURN
-EXTERN void   Mat_Error( const char *format, ... ) MATIO_NORETURNATTR;
+EXTERN MATIO_NORETURN void Mat_Error( const char *format, ... ) MATIO_NORETURNATTR;
 EXTERN void   Mat_Help( const char *helpstr[] );
 EXTERN int    Mat_LogInit( const char *progname );
 EXTERN int    Mat_LogClose(void);
