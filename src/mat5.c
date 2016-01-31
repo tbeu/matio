@@ -1184,7 +1184,7 @@ WriteCompressedEmptyData(mat_t *mat,z_streamp z,int N,
  * @param start index to start writing the data in each dimension
  * @param stride write data every @c stride elements
  * @param edge number of elements to write in each dimension
- * @return number of byteswritten
+ * @return number of byteswritten, or -1 on error
  * @endif
  */
 int
@@ -1192,7 +1192,7 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
     int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j;
-    long pos, row_stride, col_stride;
+    long pos, row_stride, col_stride, pos2;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
@@ -1212,13 +1212,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1234,13 +1249,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1257,13 +1287,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1281,13 +1326,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1304,13 +1364,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1326,13 +1401,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1348,13 +1438,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1370,13 +1475,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1392,13 +1512,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1414,13 +1549,28 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1446,7 +1596,7 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
  * @param start index to start writing the data in each dimension
  * @param stride write data every @c stride elements
  * @param edge number of elements to write in each dimension
- * @return number of byteswritten
+ * @return number of byteswritten, or -1 on error
  * @endif
  */
 int
@@ -1454,7 +1604,7 @@ WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
     size_t *dims,int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j;
-    long pos, row_stride, col_stride;
+    long pos, row_stride, col_stride, pos2;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
@@ -1474,13 +1624,28 @@ WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1499,14 +1664,29 @@ WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++,ptr++ ) {
                     c = *ptr;
                     fwrite(&c,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1522,13 +1702,28 @@ WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
             fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                if ( fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
                 for ( j = 0; j < edge[0]; j++,ptr++ ) {
                     fwrite(ptr,data_size,1,(FILE*)mat->fp);
                     fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                if ( fseek((FILE*)mat->fp,pos,SEEK_CUR) != 0 ) {
+                    Mat_Critical("Couldn't set file position");
+                    return -1;
+                }
             }
             break;
         }
@@ -1659,6 +1854,10 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             cells[i]->internal->fpos = ftell((FILE*)mat->fp)-matvar->internal->z->avail_in;
+            if ( cells[i]->internal->fpos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                continue;
+            }
 
             /* Read variable tag for cell */
             uncomp_buf[0] = 0;
@@ -1762,6 +1961,9 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 Mat_Critical("inflateCopy returned error %s",zError(err));
             }
             cells[i]->internal->datapos = ftell((FILE*)mat->fp)-matvar->internal->z->avail_in;
+            if ( cells[i]->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
             if ( cells[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,cells[i]);
             else if ( cells[i]->class_type == MAT_C_CELL )
@@ -1801,6 +2003,10 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             cells[i]->internal->fpos = ftell((FILE*)mat->fp);
+            if ( cells[i]->internal->fpos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                continue;
+            }
 
             /* Read variable tag for cell */
             cell_bytes_read = fread(buf,4,2,(FILE*)mat->fp);
@@ -1894,6 +2100,9 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 }
             }
             cells[i]->internal->datapos = ftell((FILE*)mat->fp);
+            if ( cells[i]->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
             if ( cells[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,cells[i]);
             if ( cells[i]->class_type == MAT_C_CELL )
@@ -1993,6 +2202,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
         for ( i = 0; i < nmemb*nfields; i++ ) {
             fields[i]->internal->fpos = ftell((FILE*)mat->fp)-matvar->internal->z->avail_in;
+            if ( fields[i]->internal->fpos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
             /* Read variable tag for struct field */
             bytesread += InflateVarTag(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
@@ -2067,6 +2279,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 Mat_Critical("inflateCopy returned error %s",zError(err));
             }
             fields[i]->internal->datapos = ftell((FILE*)mat->fp)-matvar->internal->z->avail_in;
+            if ( fields[i]->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
             if ( fields[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,fields[i]);
             else if ( fields[i]->class_type == MAT_C_CELL )
@@ -2154,6 +2369,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         for ( i = 0; i < nmemb*nfields; i++ ) {
 
             fields[i]->internal->fpos = ftell((FILE*)mat->fp);
+            if ( fields[i]->internal->fpos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
 
             /* Read variable tag for struct field */
             bytesread += fread(buf,4,2,(FILE*)mat->fp);
@@ -2229,6 +2447,9 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             bytesread+=fread(buf,1,8,(FILE*)mat->fp);
             nBytes-=8;
             fields[i]->internal->datapos = ftell((FILE*)mat->fp);
+            if ( fields[i]->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
             if ( fields[i]->class_type == MAT_C_STRUCT )
                 bytesread+=ReadNextStructField(mat,fields[i]);
             else if ( fields[i]->class_type == MAT_C_CELL )
@@ -2300,6 +2521,9 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
     fwrite(&matrix_type,4,1,(FILE*)mat->fp);
     fwrite(&pad4,4,1,(FILE*)mat->fp);
     start = ftell((FILE*)mat->fp);
+    if ( start == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -2357,6 +2581,9 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
     }
 
     matvar->internal->datapos = ftell((FILE*)mat->fp);
+    if ( matvar->internal->datapos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -2408,6 +2635,9 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
             break;
     }
     end = ftell((FILE*)mat->fp);
+    if ( end == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     nBytes = (int)(end-start);
     fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,(FILE*)mat->fp);
@@ -2443,6 +2673,9 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
     fwrite(&matrix_type,4,1,(FILE*)mat->fp);
     fwrite(&pad4,4,1,(FILE*)mat->fp);
     start = ftell((FILE*)mat->fp);
+    if ( start == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -2634,6 +2867,9 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             break;
     }
     end = ftell((FILE*)mat->fp);
+    if ( end == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     nBytes = (int)(end-start);
     fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,(FILE*)mat->fp);
@@ -2670,6 +2906,9 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
         return 0;
 
     start = ftell((FILE*)mat->fp);
+    if ( start == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -2735,6 +2974,9 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
     } while ( z->avail_out == 0 );
 
     matvar->internal->datapos = ftell((FILE*)mat->fp);
+    if ( matvar->internal->datapos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -2920,6 +3162,9 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
     fwrite(&matrix_type,4,1,(FILE*)mat->fp);
     fwrite(&pad4,4,1,(FILE*)mat->fp);
     start = ftell((FILE*)mat->fp);
+    if ( start == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -3091,6 +3336,9 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
             break;
     }
     end = ftell((FILE*)mat->fp);
+    if ( end == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     nBytes = (int)(end-start);
     fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,(FILE*)mat->fp);
@@ -3133,6 +3381,9 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
         return byteswritten;
     }
     start = ftell((FILE*)mat->fp);
+    if ( start == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -3198,6 +3449,9 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
     } while ( z->avail_out == 0 );
 
     matvar->internal->datapos = ftell((FILE*)mat->fp);
+    if ( matvar->internal->datapos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -3365,6 +3619,9 @@ Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,size_t *dims)
     fwrite(&pad4,4,1,(FILE*)mat->fp);
 
     start = ftell((FILE*)mat->fp);
+    if ( start == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     /* Array Flags */
     array_flags = MAT_C_DOUBLE;
 
@@ -3419,6 +3676,9 @@ Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,size_t *dims)
             byteswritten += fwrite(&pad1,1,1,(FILE*)mat->fp);
 
     end = ftell((FILE*)mat->fp);
+    if ( end == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     nBytes = (int)(end-start);
     fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,(FILE*)mat->fp);
@@ -3740,6 +4000,9 @@ Read5(mat_t *mat, matvar_t *matvar)
     }
 
     fpos = ftell((FILE*)mat->fp);
+    if ( fpos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     len = 1;
     byteswap = mat->byteswap;
     for ( i = 0; i < matvar->rank; i++ )
@@ -5351,6 +5614,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         fwrite(&matrix_type,4,1,(FILE*)mat->fp);
         fwrite(&pad4,4,1,(FILE*)mat->fp);
         start = ftell((FILE*)mat->fp);
+        if ( start == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
 
         /* Array Flags */
 
@@ -5409,6 +5675,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         }
 
         matvar->internal->datapos = ftell((FILE*)mat->fp);
+        if ( matvar->internal->datapos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
@@ -5581,6 +5850,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         fwrite(&matrix_type,4,1,(FILE*)mat->fp);
         fwrite(&pad4,4,1,(FILE*)mat->fp);
         start = ftell((FILE*)mat->fp);
+        if ( start == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
 
         /* Array Flags */
         array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -5673,6 +5945,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             } while ( matvar->internal->z->avail_out == 0 );
         }
         matvar->internal->datapos = ftell((FILE*)mat->fp);
+        if ( matvar->internal->datapos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
@@ -5844,6 +6119,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
 #endif
     }
     end = ftell((FILE*)mat->fp);
+    if ( end == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     nBytes = (int)(end-start);
     fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,(FILE*)mat->fp);
@@ -5878,6 +6156,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         fwrite(&matrix_type,4,1,(FILE*)mat->fp);
         fwrite(&pad4,4,1,(FILE*)mat->fp);
         start = ftell((FILE*)mat->fp);
+        if ( start == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
 
         /* Array Flags */
 
@@ -5931,6 +6212,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         }
 
         matvar->internal->datapos = ftell((FILE*)mat->fp);
+        if ( matvar->internal->datapos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
@@ -6043,6 +6327,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         fwrite(&matrix_type,4,1,(FILE*)mat->fp);
         fwrite(&pad4,4,1,(FILE*)mat->fp);
         start = ftell((FILE*)mat->fp);
+        if ( start == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
 
         /* Array Flags */
         array_flags = matvar->class_type & MAT_F_CLASS_T;
@@ -6132,6 +6419,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             } while ( matvar->internal->z->avail_out == 0 );
         }
         matvar->internal->datapos = ftell((FILE*)mat->fp);
+        if ( matvar->internal->datapos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
         deflateCopy(&z_save,matvar->internal->z);
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
@@ -6180,6 +6470,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
 #endif
     }
     end = ftell((FILE*)mat->fp);
+    if ( end == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     nBytes = (int)(end-start);
     fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
     fwrite(&nBytes,4,1,(FILE*)mat->fp);
@@ -6206,6 +6499,9 @@ Mat_VarReadNextInfo5( mat_t *mat )
         return NULL;
 
     fpos = ftell((FILE*)mat->fp);
+    if ( fpos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     err = fread(&data_type,4,1,(FILE*)mat->fp);
     if ( !err )
         return NULL;
@@ -6331,6 +6627,9 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 ReadNextCell(mat,matvar);
             fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
             matvar->internal->datapos = ftell((FILE*)mat->fp);
+            if ( matvar->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
             fseek((FILE*)mat->fp,nBytes+8+fpos,SEEK_SET);
             break;
 #else
@@ -6431,6 +6730,9 @@ Mat_VarReadNextInfo5( mat_t *mat )
             else if ( matvar->class_type == MAT_C_FUNCTION )
                 (void)ReadNextFunctionHandle(mat,matvar);
             matvar->internal->datapos = ftell((FILE*)mat->fp);
+            if ( matvar->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
             fseek((FILE*)mat->fp,nBytes+8+fpos,SEEK_SET);
             break;
         }
