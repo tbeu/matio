@@ -556,10 +556,11 @@ Mat_Create5(const char *matname,const char *hdr_str)
  * @return number of bytes written
  * @endif
  */
-int
+static size_t
 WriteCharData(mat_t *mat, void *data, int N,enum matio_types data_type)
 {
-    int nBytes = 0, byteswritten = 0, i;
+    int nBytes = 0, i;
+    size_t byteswritten = 0;
     mat_int8_t pad1 = 0;
 
     switch ( data_type ) {
@@ -817,10 +818,11 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
  * @return number of bytes written
  * @endif
  */
-static int
+static size_t
 WriteEmptyCharData(mat_t *mat, int N, enum matio_types data_type)
 {
-    int nBytes = 0, byteswritten = 0, i;
+    int nBytes = 0, i;
+    size_t byteswritten = 0;
     mat_int8_t pad1 = 0;
 
     switch ( data_type ) {
@@ -873,7 +875,7 @@ WriteEmptyCharData(mat_t *mat, int N, enum matio_types data_type)
  * @return Number of bytes written
  * @endif
  */
-static int
+static size_t
 WriteEmptyData(mat_t *mat,int N,enum matio_types data_type)
 {
     int nBytes = 0, data_size, i;
@@ -1013,11 +1015,12 @@ WriteEmptyData(mat_t *mat,int N,enum matio_types data_type)
 }
 
 #if defined(HAVE_ZLIB)
-static int
+static size_t
 WriteCompressedEmptyData(mat_t *mat,z_streamp z,int N,
     enum matio_types data_type)
 {
-    int nBytes = 0, data_size, i, byteswritten = 0;
+    int nBytes = 0, data_size, i;
+    size_t byteswritten = 0;
 
     if ( (mat == NULL) || (mat->fp == NULL) )
         return 0;
@@ -1821,10 +1824,11 @@ WriteCompressedData(mat_t *mat,z_streamp z,void *data,int N,
  * @param matvar MAT variable pointer
  * @return Number of bytes read
  */
-static int
+static size_t
 ReadNextCell( mat_t *mat, matvar_t *matvar )
 {
-    int ncells, bytesread = 0, i;
+    size_t bytesread = 0;
+    int ncells, i;
     matvar_t **cells = NULL;
 
     ncells = 1;
@@ -2137,10 +2141,11 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
  * @param matvar MAT variable pointer
  * @return Number of bytes read
  */
-static int
+static size_t
 ReadNextStructField( mat_t *mat, matvar_t *matvar )
 {
-    int fieldname_size,nfields, bytesread = 0, nmemb = 1, i;
+    int fieldname_size,nfields, nmemb = 1, i;
+    size_t bytesread = 0;
     matvar_t **fields = NULL;
 
     for ( i = 0; i < matvar->rank; i++ )
@@ -2498,10 +2503,11 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
  * @param matvar MAT variable pointer
  * @return Number of bytes read
  */
-static int
+static size_t
 ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
 {
-    int nfunctions = 1, bytesread = 0, i;
+    int nfunctions = 1, i;
+    size_t bytesread = 0;
     matvar_t **functions = NULL;
 
     for ( i = 0; i < matvar->rank; i++ )

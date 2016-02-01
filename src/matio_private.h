@@ -205,20 +205,20 @@ EXTERN int ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
                int rank,size_t *dims,int *start,int *stride,int *edge);
 
 /*   inflate.c    */
-EXTERN int InflateSkip(mat_t *mat, z_streamp z, int nbytes);
-EXTERN int InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes);
-EXTERN int InflateSkipData(mat_t *mat,z_streamp z,enum matio_types data_type,int len);
-EXTERN int InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateVarName(mat_t *mat,matvar_t *matvar,void *buf,int N);
-EXTERN int InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateDataType(mat_t *mat, z_stream *matvar, void *buf);
-EXTERN int InflateData(mat_t *mat, z_streamp z, void *buf, int nBytes);
-EXTERN int InflateFieldNameLength(mat_t *mat,matvar_t *matvar,void *buf);
-EXTERN int InflateFieldNamesTag(mat_t *mat,matvar_t *matvar,void *buf);
-EXTERN int InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,
+EXTERN size_t InflateSkip(mat_t *mat, z_streamp z, int nbytes);
+EXTERN size_t InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes);
+EXTERN size_t InflateSkipData(mat_t *mat,z_streamp z,enum matio_types data_type,int len);
+EXTERN size_t InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateVarName(mat_t *mat,matvar_t *matvar,void *buf,int N);
+EXTERN size_t InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateDataType(mat_t *mat, z_stream *matvar, void *buf);
+EXTERN size_t InflateData(mat_t *mat, z_streamp z, void *buf, int nBytes);
+EXTERN size_t InflateFieldNameLength(mat_t *mat,matvar_t *matvar,void *buf);
+EXTERN size_t InflateFieldNamesTag(mat_t *mat,matvar_t *matvar,void *buf);
+EXTERN size_t InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,
                int fieldname_length,int padding);
 #endif
 
