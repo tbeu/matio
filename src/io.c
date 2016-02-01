@@ -417,7 +417,7 @@ Mat_LogInit( const char *prog_name )
 {
     logfunc = &mat_logfunc;
 #if defined(MAT73) && MAT73
-    H5Eset_auto(H5E_DEFAULT, (H5E_auto2_t)mat_h5_log_cb, NULL);
+    H5Eset_auto(H5E_DEFAULT, mat_h5_log_cb, NULL);
 #endif
     verbose = 0;
     silent  = 0;
@@ -439,7 +439,7 @@ Mat_LogInitFunc(const char *prog_name,
     logfunc = log_func;
     progname = prog_name;
 #if defined(MAT73) && MAT73
-    H5Eset_auto(H5E_DEFAULT, (H5E_auto2_t)mat_h5_log_cb, NULL);
+    H5Eset_auto(H5E_DEFAULT, mat_h5_log_cb, NULL);
 #endif
     verbose = 0;
     silent  = 0;
