@@ -1075,7 +1075,7 @@ test_write_char(const char *output_name)
         dims[0]   = 4;
         dims[1]   = 26;
         matvar = Mat_VarCreate("a",MAT_C_CHAR,MAT_T_UINT8,2,
-                    dims,str,MAT_F_DONT_COPY_DATA);
+                    dims,(void*)str,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,matvar,compression);
         Mat_VarFree(matvar);
         Mat_Close(mat);
