@@ -56,7 +56,7 @@ Mat_Create4(const char* matname)
     if ( !fp )
         return NULL;
 
-    mat = malloc(sizeof(*mat));
+    mat = (mat_t*)malloc(sizeof(*mat));
     if ( NULL == mat ) {
         fclose(fp);
         Mat_Critical("Couldn't allocate memory for the MAT file");
@@ -108,14 +108,14 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         return -1;
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
-    err = fseek(mat->fp,0,SEEK_END);         /* Always write at end of file */
+    err = fseek((FILE*)mat->fp,0,SEEK_END);         /* Always write at end of file */
     if ( err != 0 ) {
         Mat_Critical("Couldn't set file position");
         return err;
     }
 
     if (matvar->isComplex) {
-        complex_data = matvar->data;
+        complex_data = (mat_complex_split_t*)matvar->data;
         if ( NULL == complex_data )
             return 1;
     }
@@ -158,14 +158,14 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
     x.ncols = (mat_int32_t)matvar->dims[1];
     x.imagf = matvar->isComplex ? 1 : 0;
     x.namelen = (mat_int32_t)strlen(matvar->name) + 1;
-    fwrite(&x, sizeof(Fmatrix), 1, mat->fp);
-    fwrite(matvar->name, sizeof(char), x.namelen, mat->fp);
+    fwrite(&x, sizeof(Fmatrix), 1, (FILE*)mat->fp);
+    fwrite(matvar->name, sizeof(char), x.namelen, (FILE*)mat->fp);
     if (matvar->isComplex) {
-        fwrite(complex_data->Re, matvar->data_size, nmemb, mat->fp);
-        fwrite(complex_data->Im, matvar->data_size, nmemb, mat->fp);
+        fwrite(complex_data->Re, matvar->data_size, nmemb, (FILE*)mat->fp);
+        fwrite(complex_data->Im, matvar->data_size, nmemb, (FILE*)mat->fp);
     }
     else {
-        fwrite(matvar->data, matvar->data_size, nmemb, mat->fp);
+        fwrite(matvar->data, matvar->data_size, nmemb, (FILE*)mat->fp);
     }
     return 0;
 }
@@ -182,7 +182,7 @@ void
 Read4(mat_t *mat,matvar_t *matvar)
 {
     unsigned int N;
-    if ( fseek(mat->fp,matvar->internal->datapos,SEEK_SET) != 0 ) {
+    if ( fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET) != 0 ) {
         Mat_Critical("Couldn't set file position");
         return;
     }
@@ -195,21 +195,21 @@ Read4(mat_t *mat,matvar_t *matvar)
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes   = N*sizeof(double);
-                complex_data     = malloc(sizeof(*complex_data));
+                complex_data     = (mat_complex_split_t*)malloc(sizeof(*complex_data));
                 if ( complex_data != NULL ) {
                     complex_data->Re = malloc(matvar->nbytes);
                     complex_data->Im = malloc(matvar->nbytes);
                     matvar->data     = complex_data;
                     if ( complex_data->Re != NULL && complex_data->Im != NULL ) {
-                        ReadDoubleData(mat, complex_data->Re, matvar->data_type, N);
-                        ReadDoubleData(mat, complex_data->Im, matvar->data_type, N);
+                        ReadDoubleData(mat, (double*)complex_data->Re, matvar->data_type, N);
+                        ReadDoubleData(mat, (double*)complex_data->Im, matvar->data_type, N);
                     }
                 }
             } else {
                 matvar->nbytes = N*sizeof(double);
                 matvar->data   = malloc(matvar->nbytes);
                 if ( matvar->data != NULL )
-                    ReadDoubleData(mat, matvar->data, matvar->data_type, N);
+                    ReadDoubleData(mat, (double*)matvar->data, matvar->data_type, N);
             }
             /* Update data type to match format of matvar->data */
             matvar->data_type = MAT_T_DOUBLE;
@@ -221,7 +221,7 @@ Read4(mat_t *mat,matvar_t *matvar)
             if ( NULL == matvar->data )
                 Mat_Critical("Memory allocation failure");
             else
-                ReadUInt8Data(mat,matvar->data,matvar->data_type,N);
+                ReadUInt8Data(mat,(mat_uint8_t*)matvar->data,matvar->data_type,N);
             matvar->data_type = MAT_T_UINT8;
             break;
         default:
@@ -253,7 +253,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
     int err;
     enum matio_classes class_type = MAT_C_EMPTY;
 
-    err = fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
+    err = fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( err != 0 ) {
         Mat_Critical("Couldn't set file position");
         return err;
@@ -288,12 +288,12 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
         else if ( stride[1]*(edge[1]-1)+start[1]+1 > matvar->dims[1] )
             err = 1;
         if ( matvar->isComplex ) {
-            mat_complex_split_t *cdata = data;
+            mat_complex_split_t *cdata = (mat_complex_split_t*)data;
             long nbytes = edge[0]*edge[1]*Mat_SizeOf(matvar->data_type);
 
             ReadDataSlab2(mat,cdata->Re,class_type,matvar->data_type,
                     matvar->dims,start,stride,edge);
-            err = fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            err = fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
             ReadDataSlab2(mat,cdata->Im,class_type,
                 matvar->data_type,matvar->dims,start,stride,edge);
         } else {
@@ -302,7 +302,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
         }
     } else if ( matvar->isComplex ) {
         int i;
-        mat_complex_split_t *cdata = data;
+        mat_complex_split_t *cdata = (mat_complex_split_t*)data;
         long nbytes = Mat_SizeOf(matvar->data_type);
 
         for ( i = 0; i < matvar->rank; i++ )
@@ -310,7 +310,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
 
         ReadDataSlabN(mat,cdata->Re,class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
-        err = fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+        err = fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
         ReadDataSlab2(mat,cdata->Im,class_type,
             matvar->data_type,matvar->dims,start,stride,edge);
     } else {
@@ -340,7 +340,7 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
     size_t i, nmemb = 1;
     int err;
 
-    err = fseek(mat->fp,matvar->internal->datapos,SEEK_SET);
+    err = fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( err != 0 ) {
         Mat_Critical("Couldn't set file position");
         return err;
@@ -355,12 +355,12 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
         return 1;
     }
     if ( matvar->isComplex ) {
-            mat_complex_split_t *complex_data = data;
+            mat_complex_split_t *complex_data = (mat_complex_split_t*)data;
             long nbytes = nmemb*matvar->data_size;
 
             ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
                           matvar->data_type,start,stride,edge);
-            err = fseek(mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            err = fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
             ReadDataSlab1(mat,complex_data->Im,matvar->class_type,
                           matvar->data_type,start,stride,edge);
     } else {
@@ -397,14 +397,14 @@ Mat_VarReadNextInfo4(mat_t *mat)
         return NULL;
 
     matvar->internal->fp   = mat;
-    matvar->internal->fpos = ftell(mat->fp);
+    matvar->internal->fpos = ftell((FILE*)mat->fp);
     if ( matvar->internal->fpos == -1L ) {
         Mat_VarFree(matvar);
         Mat_Critical("Couldn't determine file position");
         return NULL;
     }
 
-    err = fread(&tmp,sizeof(int),1,mat->fp);
+    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( !err ) {
         Mat_VarFree(matvar);
         return NULL;
@@ -426,7 +426,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     tmp -= O*100;
     data_type = floor(tmp / 10.0);
     tmp -= data_type*10;
-    class_type = floor(tmp);
+    class_type = floor(tmp / 1.0);
 
     switch ( M ) {
         case 0:
@@ -486,12 +486,12 @@ Mat_VarReadNextInfo4(mat_t *mat)
             return NULL;
     }
     matvar->rank = 2;
-    matvar->dims = malloc(2*sizeof(*matvar->dims));
+    matvar->dims = (size_t*)malloc(2*sizeof(*matvar->dims));
     if ( NULL == matvar->dims ) {
         Mat_VarFree(matvar);
         return NULL;
     }
-    err = fread(&tmp,sizeof(int),1,mat->fp);
+    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( mat->byteswap )
         Mat_int32Swap(&tmp);
     matvar->dims[0] = tmp;
@@ -499,7 +499,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    err = fread(&tmp,sizeof(int),1,mat->fp);
+    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( mat->byteswap )
         Mat_int32Swap(&tmp);
     matvar->dims[1] = tmp;
@@ -508,12 +508,12 @@ Mat_VarReadNextInfo4(mat_t *mat)
         return NULL;
     }
 
-    err = fread(&(matvar->isComplex),sizeof(int),1,mat->fp);
+    err = fread(&(matvar->isComplex),sizeof(int),1,(FILE*)mat->fp);
     if ( !err ) {
         Mat_VarFree(matvar);
         return NULL;
     }
-    err = fread(&tmp,sizeof(int),1,mat->fp);
+    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( !err ) {
         Mat_VarFree(matvar);
         return NULL;
@@ -525,18 +525,18 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    matvar->name = malloc(tmp);
+    matvar->name = (char*)malloc(tmp);
     if ( NULL == matvar->name ) {
         Mat_VarFree(matvar);
         return NULL;
     }
-    err = fread(matvar->name,1,tmp,mat->fp);
+    err = fread(matvar->name,1,tmp,(FILE*)mat->fp);
     if ( !err ) {
         Mat_VarFree(matvar);
         return NULL;
     }
 
-    matvar->internal->datapos = ftell(mat->fp);
+    matvar->internal->datapos = ftell((FILE*)mat->fp);
     if ( matvar->internal->datapos == -1L ) {
         Mat_VarFree(matvar);
         Mat_Critical("Couldn't determine file position");
@@ -545,7 +545,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     nBytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex )
         nBytes *= 2;
-    if ( fseek(mat->fp,nBytes,SEEK_CUR) != 0 ) {
+    if ( fseek((FILE*)mat->fp,nBytes,SEEK_CUR) != 0 ) {
         Mat_VarFree(matvar);
         Mat_Critical("Couldn't set file position");
         return NULL;

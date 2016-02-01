@@ -70,7 +70,7 @@ strdup_vprintf(const char* format, va_list ap)
     size = mat_vsnprintf(NULL, 0, format, ap2)+1;
     va_end(ap2);
 
-    buffer = malloc(size+1);
+    buffer = (char*)malloc(size+1);
     if ( !buffer )
         return NULL;
 
@@ -143,7 +143,6 @@ mat_logfunc( int log_level, char *message )
             fflush(stdout);
         }
     }
-
 }
 
 /** @brief Logging function handler
@@ -167,6 +166,57 @@ mat_log(int loglevel, const char *format, va_list ap)
     free(buffer);
     return;
 }
+
+#if defined(MAT73) && MAT73
+#define MSG_SIZE 1024
+
+/** @brief HDF5 Error logging function
+ *
+ * @ingroup mat_util
+ * @param n indexed position of the error in the stack
+ * @param err_desc pointer to a data structure describing the error
+ * @param client_data pointer to client data
+ */
+static herr_t
+mat_h5_log_func(unsigned n, const H5E_error_t *err_desc, void *client_data)
+{
+    char maj[MSG_SIZE];
+    char min[MSG_SIZE];
+    char cls[MSG_SIZE];
+
+    if ( H5Eget_class_name(err_desc->cls_id, cls, MSG_SIZE) < 0 )
+        return -1;
+
+    if ( H5Eget_msg(err_desc->maj_num, NULL, maj, MSG_SIZE) < 0 )
+        return -1;
+
+    if ( H5Eget_msg(err_desc->min_num, NULL, min, MSG_SIZE) < 0 )
+        return -1;
+
+    Mat_Critical("%s error #%03u in %s()\n"
+        "      file : %s:%u\n"
+        "      major: %s\n"
+        "      minor: %s",
+        cls, n, err_desc->func_name, err_desc->file_name, err_desc->line,
+        maj, min);
+
+   return 0;
+}
+
+/** @brief HDF5 Error logging function callback
+ *
+ * @ingroup mat_util
+ * @param estack error stack identifier
+ * @param client_data pointer to client data
+ */
+static herr_t
+mat_h5_log_cb(hid_t estack, void *client_data)
+{
+    hid_t estack_id = H5Eget_current_stack();
+    H5Ewalk(estack_id, H5E_WALK_DOWNWARD, mat_h5_log_func, client_data);
+    return H5Eclose_stack(estack_id);
+}
+#endif
 
 /** @var debug
  *  @brief holds the debug level set in @ref Mat_SetDebug
@@ -350,6 +400,9 @@ int
 Mat_LogClose( void )
 {
     logfunc = NULL;
+#if defined(MAT73) && MAT73
+    H5Eset_auto(H5E_DEFAULT, NULL, NULL);
+#endif
     return 1;
 }
 
@@ -363,7 +416,9 @@ int
 Mat_LogInit( const char *prog_name )
 {
     logfunc = &mat_logfunc;
-
+#if defined(MAT73) && MAT73
+    H5Eset_auto(H5E_DEFAULT, mat_h5_log_cb, NULL);
+#endif
     verbose = 0;
     silent  = 0;
 
@@ -383,7 +438,9 @@ Mat_LogInitFunc(const char *prog_name,
 {
     logfunc = log_func;
     progname = prog_name;
-
+#if defined(MAT73) && MAT73
+    H5Eset_auto(H5E_DEFAULT, mat_h5_log_cb, NULL);
+#endif
     verbose = 0;
     silent  = 0;
     return 0;

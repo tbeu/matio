@@ -99,7 +99,7 @@ Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,int *edge)
         N *= edge[i];
         I += start[i]*dimp[i-1];
     }
-    cells = malloc(N*sizeof(matvar_t *));
+    cells = (matvar_t**)malloc(N*sizeof(matvar_t *));
     for ( i = 0; i < N; i+=edge[0] ) {
         for ( j = 0; j < edge[0]; j++ ) {
             cells[i+j] = *((matvar_t **)matvar->data + I);
@@ -143,7 +143,7 @@ Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,int edge)
     matvar_t **cells = NULL;
 
     if ( matvar != NULL ) {
-        cells = malloc(edge*sizeof(matvar_t *));
+        cells = (matvar_t**)malloc(edge*sizeof(matvar_t *));
         I = start;
         for ( i = 0; i < edge; i++ ) {
             cells[i] = *((matvar_t **)matvar->data + I);
@@ -175,7 +175,7 @@ Mat_VarSetCell(matvar_t *matvar,int index,matvar_t *cell)
     for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
 
-    cells = matvar->data;
+    cells = (matvar_t**)matvar->data;
     if ( index < nmemb ) {
         old_cell = cells[index];
         cells[index] = cell;

@@ -72,11 +72,11 @@ static const char *helpstr[] = {
 NULL
 };
 
-static char *mxclass[15] = { "mxCELL_CLASS", "mxSTRUCT_CLASS", "mxOBJECT_CLASS",
+static const char *mxclass[15] = { "mxCELL_CLASS", "mxSTRUCT_CLASS", "mxOBJECT_CLASS",
                              "mxCHAR_CLASS", "mxSPARSE_CLASS", "mxDOUBLE_CLASS",
                              "mxSINGLE_CLASS", "mxINT8_CLASS", "mxUINT8_CLASS",
                              "mxINT16_CLASS", "mxUINT16_CLASS", "mxINT32_CLASS",
-                             "mxUINT32_CLASS","mxINT64_CLASS","mxUINT64_CLASS",
+                             "mxUINT32_CLASS","mxINT64_CLASS","mxUINT64_CLASS"
                             };
 static int printdata = 0;
 static int human_readable = 0;
@@ -91,8 +91,8 @@ static void (*printfunc)(matvar_t *matvar) = NULL;
 static char *
 get_next_token(char *str)
 {
-    char *tok, *tokens = "(){}.";
-    char *next_tok;
+    const char *tokens = "(){}.";
+    char *next_tok, *tok;
 
     next_tok = NULL;
     while (*tokens != '\0') {
@@ -344,9 +344,9 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
             }
             /* Get the rank of the dataset */
             rank   = slab_get_rank(open,close);
-            start  = malloc(rank*sizeof(int));
-            stride = malloc(rank*sizeof(int));
-            edge   = malloc(rank*sizeof(int));
+            start  = (int*)malloc(rank*sizeof(int));
+            stride = (int*)malloc(rank*sizeof(int));
+            edge   = (int*)malloc(rank*sizeof(int));
             for ( j = 0; j < rank; j++ ) {
                 start[j]  = 0;
                 stride[j] = 1;
@@ -362,7 +362,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 if ( matvar->isComplex ) {
                     mat_complex_split_t *z;
                     matvar->data = malloc(sizeof(*z));
-                    z = matvar->data;
+                    z = (mat_complex_split_t*)matvar->data;
                     z->Re = malloc(matvar->nbytes);
                     z->Im = malloc(matvar->nbytes);
                 } else {
@@ -420,7 +420,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 matvar_t *cell, **cells;
 
                 ncells = matvar->nbytes / matvar->data_size;
-                cells = matvar->data;
+                cells = (matvar_t**)matvar->data;
                 next_tok_pos = get_next_token(next_tok_pos+1);
                 if ( next_tok_pos != varname ) {
                     next_tok = *next_tok_pos;
@@ -472,9 +472,9 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
             }
             /* Get the rank of the dataset */
             rank   = slab_get_rank(open,close);
-            start  = malloc(rank*sizeof(int));
-            stride = malloc(rank*sizeof(int));
-            edge   = malloc(rank*sizeof(int));
+            start  = (int*)malloc(rank*sizeof(int));
+            stride = (int*)malloc(rank*sizeof(int));
+            edge   = (int*)malloc(rank*sizeof(int));
             for ( j = 0; j < rank; j++ ) {
                 start[j]  = 0;
                 stride[j] = 1;
@@ -543,7 +543,7 @@ print_whos(matvar_t *matvar)
         printf("%8" SIZE_T_FMTSTR, matvar->dims[0]);
         nbytes = matvar->dims[0];
         for ( i = 1; i < matvar->rank; i++ ) {
-            if ( ceil(log10(matvar->dims[i]))+1 < 32 )
+            if ( ceil(log10((double)matvar->dims[i]))+1 < 32 )
                 cnt += sprintf(size+cnt,"x%" SIZE_T_FMTSTR, matvar->dims[i]);
             nbytes *= matvar->dims[i];
         }
@@ -595,7 +595,7 @@ print_default_number(enum matio_types type, void *data)
         case MAT_T_INT64:
 #if MATIO_HAVE_INTTYPES_H
             printf("%" PRIi64,*(mat_int64_t*)data);
-#elif defined(_MSC_VER) && _MSC_VER < 1800
+#elif defined(_MSC_VER) && _MSC_VER >= 1200
             printf("%I64i",*(mat_int64_t*)data);
 #else
             printf("%lld",(long long)(*(mat_int64_t*)data));
@@ -606,7 +606,7 @@ print_default_number(enum matio_types type, void *data)
         case MAT_T_UINT64:
 #if MATIO_HAVE_INTTYPES_H
             printf("%" PRIu64,*(mat_uint64_t*)data);
-#elif defined(_MSC_VER) && _MSC_VER < 1800
+#elif defined(_MSC_VER) && _MSC_VER >= 1200
             printf("%I64u",*(mat_uint64_t*)data);
 #else
             printf("%llu",(unsigned long long)(*(mat_uint64_t*)data));
@@ -646,9 +646,9 @@ print_default_numeric_2d(matvar_t *matvar)
 
     stride = Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex ) {
-        mat_complex_split_t *complex_data = matvar->data;
-        char *rp = complex_data->Re;
-        char *ip = complex_data->Im;
+        mat_complex_split_t *complex_data = (mat_complex_split_t*)matvar->data;
+        char *rp = (char*)complex_data->Re;
+        char *ip = (char*)complex_data->Im;
         for ( i = 0; i < matvar->dims[0]; i++ ) {
             for ( j = 0; j < matvar->dims[1]; j++ ) {
                 size_t idx = matvar->dims[0]*j+i;
@@ -660,7 +660,7 @@ print_default_numeric_2d(matvar_t *matvar)
             printf("\n");
         }
     } else {
-        char *data = matvar->data;
+        char *data = (char*)matvar->data;
         for ( i = 0; i < matvar->dims[0]; i++ ) {
             for ( j = 0; j < matvar->dims[1]; j++ ) {
                 size_t idx = matvar->dims[0]*j+i;
@@ -679,9 +679,9 @@ print_default_numeric_3d(matvar_t *matvar)
     size_t i, j, k, l, stride;
     stride = Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex ) {
-        mat_complex_split_t *complex_data = matvar->data;
-        char *rp = complex_data->Re;
-        char *ip = complex_data->Im;
+        mat_complex_split_t *complex_data = (mat_complex_split_t*)matvar->data;
+        char *rp = (char*)complex_data->Re;
+        char *ip = (char*)complex_data->Im;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
             Mat_Message("%s(:,:,%lu) = ",matvar->name,k);
             indent++;
@@ -701,7 +701,7 @@ print_default_numeric_3d(matvar_t *matvar)
             printf("\n");
         }
     } else {
-        char *data = matvar->data;
+        char *data = (char*)matvar->data;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
             Mat_Message("%s(:,:,%lu) = ",matvar->name,k);
             indent++;
@@ -816,7 +816,7 @@ print_default(matvar_t *matvar)
 int
 main (int argc, char *argv[])
 {
-    char *prog_name = "matdump";
+    const char *prog_name = "matdump";
     int   i, c, err = EXIT_SUCCESS;
     mat_t    *mat;
     matvar_t *matvar;
