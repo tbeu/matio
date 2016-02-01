@@ -595,7 +595,7 @@ print_default_number(enum matio_types type, void *data)
         case MAT_T_INT64:
 #if MATIO_HAVE_INTTYPES_H
             printf("%" PRIi64,*(mat_int64_t*)data);
-#elif defined(_MSC_VER) && _MSC_VER < 1800
+#elif defined(_MSC_VER) && _MSC_VER >= 1200
             printf("%I64i",*(mat_int64_t*)data);
 #else
             printf("%lld",(long long)(*(mat_int64_t*)data));
@@ -606,7 +606,7 @@ print_default_number(enum matio_types type, void *data)
         case MAT_T_UINT64:
 #if MATIO_HAVE_INTTYPES_H
             printf("%" PRIu64,*(mat_uint64_t*)data);
-#elif defined(_MSC_VER) && _MSC_VER < 1800
+#elif defined(_MSC_VER) && _MSC_VER >= 1200
             printf("%I64u",*(mat_uint64_t*)data);
 #else
             printf("%llu",(unsigned long long)(*(mat_uint64_t*)data));
