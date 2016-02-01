@@ -833,7 +833,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         matvar->dims[1] = 1;
     }
 
-    H5Eset_auto(H5E_DEFAULT,efunc,client_data);
     if ( numel < 1 || nfields < 1 )
         return;
 
