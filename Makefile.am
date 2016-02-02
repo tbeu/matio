@@ -35,6 +35,8 @@ VS_FILES = visual_studio/libmatio/libmatio.vcproj \
            visual_studio/matdump/matdump.vcproj \
            visual_studio/matdump/matdump.vcxproj \
            visual_studio/matdump/matdump.vcxproj.filters \
+           visual_studio/test_mat/test_mat.vcxproj \
+           visual_studio/test_mat/test_mat.vcxproj.filters \
            visual_studio/matio.def \
            visual_studio/matio_vs2008.sln \
            visual_studio/matio.sln \
