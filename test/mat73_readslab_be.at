@@ -1,6 +1,6 @@
 AT_SETUP([Read slab of double-precision array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var70\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var70(:,:,0) = @&t@
     7266 7426 7586 7746 7906 8066 @&t@
@@ -33,7 +33,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of single-precision array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var71\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var71(:,:,0) = @&t@
     7266 7426 7586 7746 7906 8066 @&t@
@@ -66,7 +66,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 64-bit integer array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var72\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var72(:,:,0) = @&t@
     7266 7426 7586 7746 7906 8066 @&t@
@@ -99,7 +99,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 64-bit unsigned integer array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var73\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var73(:,:,0) = @&t@
     7266 7426 7586 7746 7906 8066 @&t@
@@ -132,7 +132,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 32-bit integer array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var74\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var74(:,:,0) = @&t@
     7266 7426 7586 7746 7906 8066 @&t@
@@ -165,7 +165,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 32-bit unsigned integer array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var75\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var75(:,:,0) = @&t@
     7266 7426 7586 7746 7906 8066 @&t@
@@ -198,7 +198,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 16-bit integer array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var76\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var76(:,:,0) = @&t@
     7266 7426 7586 7746 7906 8066 @&t@
@@ -231,7 +231,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 16-bit unsigned integer array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var77\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var77(:,:,0) = @&t@
     7266 7426 7586 7746 7906 8066 @&t@
@@ -264,7 +264,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit integer array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var78\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var78(:,:,0) = @&t@
     1 -92 -60 -52 95 -76 @&t@
@@ -297,7 +297,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit unsigned integer array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var79\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var79(:,:,0) = @&t@
     36 74 142 112 148 136 @&t@
@@ -330,7 +330,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of double-precision complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var80\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var80(:,:,0) = @&t@
     14531 + 14532i 14851 + 14852i 15171 + 15172i 15491 + 15492i 15811 + 15812i 16131 + 16132i @&t@
@@ -363,7 +363,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of single-precision complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var81\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var81(:,:,0) = @&t@
     14531 + 14532i 14851 + 14852i 15171 + 15172i 15491 + 15492i 15811 + 15812i 16131 + 16132i @&t@
@@ -396,7 +396,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 64-bit integer complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var82\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var82(:,:,0) = @&t@
     14531 + 14532i 14851 + 14852i 15171 + 15172i 15491 + 15492i 15811 + 15812i 16131 + 16132i @&t@
@@ -429,7 +429,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 64-bit unsigned integer complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var83\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var83(:,:,0) = @&t@
     14531 + 14532i 14851 + 14852i 15171 + 15172i 15491 + 15492i 15811 + 15812i 16131 + 16132i @&t@
@@ -462,7 +462,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 32-bit integer complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var84\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var84(:,:,0) = @&t@
     14531 + 14532i 14851 + 14852i 15171 + 15172i 15491 + 15492i 15811 + 15812i 16131 + 16132i @&t@
@@ -495,7 +495,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 32-bit unsigned integer complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var85\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var85(:,:,0) = @&t@
     14531 + 14532i 14851 + 14852i 15171 + 15172i 15491 + 15492i 15811 + 15812i 16131 + 16132i @&t@
@@ -528,7 +528,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 16-bit integer complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var86\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var86(:,:,0) = @&t@
     31419 + 12074i -16493 + -9400i 2771 + -10261i -13965 + 16888i -25303 + 5509i 13196 + 15195i @&t@
@@ -561,7 +561,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 16-bit unsigned integer complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var87\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var87(:,:,0) = @&t@
     63490 + 42712i 48615 + 54935i 14063 + 54325i 12093 + 4405i 47337 + 59129i 25576 + 6335i @&t@
@@ -594,7 +594,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit integer complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var88\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var88(:,:,0) = @&t@
     24 + -109i 5 + 103i 79 + -98i -11 + -41i 3 + -95i -99 + -15i @&t@
@@ -627,7 +627,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit unsigned integer complex array])
 AT_KEYWORDS([mat73_readslab readslab])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var89\(2:3:end,4:5:end,8:16:end\)], [0],
 [[var89(:,:,0) = @&t@
     233 + 19i 98 + 36i 145 + 191i 87 + 191i 30 + 24i 142 + 157i @&t@
@@ -660,7 +660,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of double-precision array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var70\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -694,7 +694,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of single-precision array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var71\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -728,7 +728,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 64-bit integer array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var72\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -762,7 +762,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 64-bit unsigned integer array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var73\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -796,7 +796,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 32-bit integer array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var74\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -830,7 +830,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 32-bit unsigned integer array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var75\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -864,7 +864,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 16-bit integer array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var76\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -898,7 +898,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 16-bit unsigned integer array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var77\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -932,7 +932,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 8-bit integer array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var78\(3257:1111:end\)], [0],
 [[61 @&t@
 29 @&t@
@@ -966,7 +966,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 8-bit unsigned integer array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var79\(3257:1111:end\)], [0],
 [[79 @&t@
 206 @&t@
@@ -1000,7 +1000,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of double-precision complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var80\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1034,7 +1034,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of single-precision complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var81\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1068,7 +1068,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 64-bit integer complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var82\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1102,7 +1102,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 64-bit unsigned integer complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var83\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1136,7 +1136,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 32-bit integer complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var84\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1170,7 +1170,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 32-bit unsigned integer complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var85\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1204,7 +1204,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 16-bit integer complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var86\(3257:1111:end\)], [0],
 [[-10654 + 2041i @&t@
 -5682 + -8946i @&t@
@@ -1238,7 +1238,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 16-bit unsigned integer complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var87\(3257:1111:end\)], [0],
 [[18653 + 18059i @&t@
 30454 + 36469i @&t@
@@ -1272,7 +1272,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 8-bit integer complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var88\(3257:1111:end\)], [0],
 [[-58 + 9i @&t@
 37 + -39i @&t@
@@ -1306,7 +1306,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 8-bit unsigned integer complex array])
 AT_KEYWORDS([mat73_readslab readslab read_data_linear])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var89\(3257:1111:end\)], [0],
 [[20 + 13i @&t@
 181 + 222i @&t@
@@ -1340,6 +1340,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of double-precision array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var28.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1349,6 +1350,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of single-precision array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var29.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1358,6 +1360,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 64-bit integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var30.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1367,6 +1370,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 64-bit unsigned integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var31.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1376,6 +1380,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 32-bit integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var32.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1385,6 +1390,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 32-bit unsigned integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var33.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1394,6 +1400,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 16-bit integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var34.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1403,6 +1410,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 16-bit unsigned integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var35.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1412,6 +1420,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var36.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1421,6 +1430,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit unsigned integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var37.field2\(1:1:end,1:1:end\)], [0],
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
@@ -1430,6 +1440,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex double-precision array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var38.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
@@ -1439,6 +1450,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex single-precision array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var39.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
@@ -1448,6 +1460,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex 64-bit integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var40.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
@@ -1457,6 +1470,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex 64-bit unsigned integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var41.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
@@ -1466,6 +1480,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex 32-bit integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var42.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
@@ -1475,6 +1490,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex 32-bit unsigned integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var43.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
@@ -1484,6 +1500,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex 16-bit integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var44.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
@@ -1493,6 +1510,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex 16-bit unsigned integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var45.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
@@ -1502,6 +1520,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex 8-bit integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var46.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
@@ -1511,6 +1530,7 @@ AT_CLEANUP
 
 AT_SETUP([Read slab of complex 8-bit unsigned integer array from structure])
 AT_KEYWORDS([mat73_readslab readslab structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var47.field2\(1:1:end,1:1:end\)], [0],
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@

@@ -660,6 +660,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of double-precision array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var70\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -693,6 +694,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of single-precision array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var71\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -726,6 +728,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 64-bit integer array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var72\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -759,6 +762,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 64-bit unsigned integer array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var73\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -792,6 +796,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 32-bit integer array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var74\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -825,6 +830,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 32-bit unsigned integer array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var75\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -858,6 +864,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 16-bit integer array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var76\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -891,6 +898,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 16-bit unsigned integer array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var77\(3257:1111:end\)], [0],
 [[3257 @&t@
 4368 @&t@
@@ -924,6 +932,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 8-bit integer array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var78\(3257:1111:end\)], [0],
 [[61 @&t@
 29 @&t@
@@ -957,6 +966,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 8-bit unsigned integer array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var79\(3257:1111:end\)], [0],
 [[79 @&t@
 206 @&t@
@@ -990,6 +1000,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of double-precision complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var80\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1023,6 +1034,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of single-precision complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var81\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1056,6 +1068,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 64-bit integer complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var82\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1089,6 +1102,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 64-bit unsigned integer complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var83\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1122,6 +1136,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 32-bit integer complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var84\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1155,6 +1170,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 32-bit unsigned integer complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var85\(3257:1111:end\)], [0],
 [[6513 + 6514i @&t@
 8735 + 8736i @&t@
@@ -1188,6 +1204,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 16-bit integer complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var86\(3257:1111:end\)], [0],
 [[-10654 + 2041i @&t@
 -5682 + -8946i @&t@
@@ -1221,6 +1238,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 16-bit unsigned integer complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var87\(3257:1111:end\)], [0],
 [[18653 + 18059i @&t@
 30454 + 36469i @&t@
@@ -1254,6 +1272,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 8-bit integer complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var88\(3257:1111:end\)], [0],
 [[-58 + 9i @&t@
 37 + -39i @&t@
@@ -1287,6 +1306,7 @@ AT_CLEANUP
 
 AT_SETUP([Read linear slab of 8-bit unsigned integer complex array])
 AT_KEYWORDS([mat5_compressed_readslab readslab read_data_linear])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var89\(3257:1111:end\)], [0],
 [[20 + 13i @&t@
 181 + 222i @&t@
