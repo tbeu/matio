@@ -3938,6 +3938,7 @@ Read5(mat_t *mat, matvar_t *matvar)
     fpos = ftell((FILE*)mat->fp);
     if ( fpos == -1L ) {
         Mat_Critical("Couldn't determine file position");
+        return;
     }
     len = 1;
     byteswap = mat->byteswap;
