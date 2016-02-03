@@ -35,7 +35,7 @@
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
 #else
 #   define SIZE_T_FMTSTR "zu"
