@@ -2167,7 +2167,7 @@ Mat_Create73(const char *matname,const char *hdr_str)
     if ( !fp )
         return NULL;
 
-    fseek(fp,0,SEEK_SET);
+    (void)fseek(fp,0,SEEK_SET);
 
     mat = (mat_t*)malloc(sizeof(*mat));
     if ( mat == NULL ) {

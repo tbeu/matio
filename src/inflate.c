@@ -100,10 +100,7 @@ InflateSkip(mat_t *mat, z_streamp z, int nbytes)
 
     if ( z->avail_in ) {
         long offset = -(long)z->avail_in;
-        err = fseek((FILE*)mat->fp,offset,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateSkip: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,offset,SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
@@ -162,10 +159,7 @@ InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateSkip2: %s - fseek returned %d",matvar->name,err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -278,10 +272,7 @@ InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateVarTag: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -331,10 +322,7 @@ InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateArrayFlags: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -427,10 +415,7 @@ InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateDimensions: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -480,10 +465,7 @@ InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateVarNameTag: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -534,10 +516,7 @@ InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateVarName: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -592,10 +571,7 @@ InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateDataTag: %s - fseek returned %d",matvar->name,err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -646,10 +622,7 @@ InflateDataType(mat_t *mat, z_streamp z, void *buf)
     }
 
     if ( z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateDataType: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)z->avail_in,SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
@@ -719,10 +692,7 @@ InflateData(mat_t *mat, z_streamp z, void *buf, int nBytes)
 
     if ( z->avail_in ) {
         long offset = -(long)z->avail_in;
-        err = fseek((FILE*)mat->fp,offset,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateData: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,offset,SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
@@ -773,10 +743,7 @@ InflateFieldNameLength(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateFieldNameLength: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -827,10 +794,7 @@ InflateFieldNamesTag(mat_t *mat, matvar_t *matvar, void *buf)
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateFieldNamesTag: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }
@@ -889,10 +853,7 @@ InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,
     }
 
     if ( matvar->internal->z->avail_in ) {
-        err = fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        if ( err != 0 ) {
-            Mat_Critical("InflateFieldNames: fseek returned %d",err);
-        }
+        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
         bytesread -= matvar->internal->z->avail_in;
         matvar->internal->z->avail_in = 0;
     }

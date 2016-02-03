@@ -109,11 +109,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         return -1;
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
-    err = fseek((FILE*)mat->fp,0,SEEK_END);         /* Always write at end of file */
-    if ( err != 0 ) {
-        Mat_Critical("Couldn't set file position");
-        return err;
-    }
+    (void)fseek((FILE*)mat->fp,0,SEEK_END);         /* Always write at end of file */
 
     if (matvar->isComplex) {
         complex_data = (mat_complex_split_t*)matvar->data;
@@ -183,10 +179,8 @@ void
 Read4(mat_t *mat,matvar_t *matvar)
 {
     unsigned int N;
-    if ( fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET) != 0 ) {
-        Mat_Critical("Couldn't set file position");
-        return;
-    }
+
+    (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
     N = matvar->dims[0]*matvar->dims[1];
     switch ( matvar->class_type ) {
@@ -251,14 +245,10 @@ int
 ReadData4(mat_t *mat,matvar_t *matvar,void *data,
       int *start,int *stride,int *edge)
 {
-    int err;
+    int err = 0;
     enum matio_classes class_type = MAT_C_EMPTY;
 
-    err = fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
-    if ( err != 0 ) {
-        Mat_Critical("Couldn't set file position");
-        return err;
-    }
+    (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
     switch( matvar->data_type ) {
         case MAT_T_DOUBLE:
@@ -294,7 +284,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
 
             ReadDataSlab2(mat,cdata->Re,class_type,matvar->data_type,
                     matvar->dims,start,stride,edge);
-            err = fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
             ReadDataSlab2(mat,cdata->Im,class_type,
                 matvar->data_type,matvar->dims,start,stride,edge);
         } else {
@@ -311,7 +301,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
 
         ReadDataSlabN(mat,cdata->Re,class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
-        err = fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+        (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
         ReadDataSlab2(mat,cdata->Im,class_type,
             matvar->data_type,matvar->dims,start,stride,edge);
     } else {
@@ -339,13 +329,9 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
                        int stride,int edge)
 {
     size_t i, nmemb = 1;
-    int err;
+    int err = 0;
 
-    err = fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
-    if ( err != 0 ) {
-        Mat_Critical("Couldn't set file position");
-        return err;
-    }
+    (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
     matvar->data_size = Mat_SizeOf(matvar->data_type);
 
@@ -361,7 +347,7 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
 
             ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
                           matvar->data_type,start,stride,edge);
-            err = fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
             ReadDataSlab1(mat,complex_data->Im,matvar->class_type,
                           matvar->data_type,start,stride,edge);
     } else {
@@ -546,11 +532,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     nBytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex )
         nBytes *= 2;
-    if ( fseek((FILE*)mat->fp,nBytes,SEEK_CUR) != 0 ) {
-        Mat_VarFree(matvar);
-        Mat_Critical("Couldn't set file position");
-        return NULL;
-    }
+    (void)fseek((FILE*)mat->fp,nBytes,SEEK_CUR);
 
     return matvar;
 }
