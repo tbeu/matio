@@ -3089,8 +3089,10 @@ int main (int argc, char *argv[])
             mat = Mat_CreateVer("test_mat_copy.mat",NULL,mat_file_ver);
             mat2 = Mat_Open(argv[k++],MAT_ACC_RDONLY);
             if ( mat && mat2 ) {
-                while ( NULL != (matvar = Mat_VarReadNext(mat2)) )
+                while ( NULL != (matvar = Mat_VarReadNext(mat2)) ) {
                     Mat_VarWrite(mat,matvar,compression);
+                    Mat_VarFree(matvar);
+                }
                 Mat_Close(mat);
                 Mat_Close(mat2);
             }
