@@ -1548,8 +1548,8 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                     char *re = (char*)complex_data->Re;
                     char *im = (char*)complex_data->Im;
                     for ( i = 0; i < sparse->njc-1; i++ ) {
-                        for (j = sparse->jc[i];
-                             j<sparse->jc[i+1] && j<sparse->ndata;j++ ) {
+                        for ( j = sparse->jc[i];
+                              j < sparse->jc[i+1] && j < sparse->ndata; j++ ) {
                             printf("    (%d,%d)  ",sparse->ir[j]+1,i+1);
                             Mat_PrintNumber(matvar->data_type,re+j*stride);
                             printf(" + ");
@@ -1560,8 +1560,8 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                 } else {
                     char *data = (char*)sparse->data;
                     for ( i = 0; i < sparse->njc-1; i++ ) {
-                        for (j = sparse->jc[i];
-                             j<sparse->jc[i+1] && j<sparse->ndata;j++ ){
+                        for ( j = sparse->jc[i];
+                              j < sparse->jc[i+1] && j < sparse->ndata; j++ ) {
                             printf("    (%d,%d)  ",sparse->ir[j]+1,i+1);
                             Mat_PrintNumber(matvar->data_type,data+j*stride);
                             printf("\n");
