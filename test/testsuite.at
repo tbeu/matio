@@ -58,7 +58,7 @@ fi
 AT_COLOR_TESTS
 
 AT_BANNER(Read [MAT version 4 (Little Endian)])
-m4_include([mat4_read.at])
+m4_include([mat4_read_le.at])
 m4_include([mat4_readslab_le.at])
 
 AT_BANNER(Read [MAT version 4 (Big Endian)])
