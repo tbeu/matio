@@ -5073,7 +5073,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             break;
         }
         default:
-            Mat_Critical("Read5: %d is not a supported Class", matvar->class_type);
+            Mat_Critical("Read5: %d is not a supported class", matvar->class_type);
     }
     (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
 
