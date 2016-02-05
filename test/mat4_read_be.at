@@ -62,6 +62,42 @@ Class Type: Double Precision Array (complex)
 ], [ignore])
 AT_CLEANUP
 
+AT_SETUP([Read double-precision sparse array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_v4_be.mat var21], [0],
+[      Name: var21
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: Sparse Array
+ Data Type: IEEE 754 double-precision
+{
+    (1,1)  1
+    (2,2)  2
+    (3,3)  3
+    (4,4)  4
+    (5,5)  5
+}
+], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Read double-precision sparse complex array])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_v4_be.mat var22], [0],
+[      Name: var22
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: Sparse Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+    (1,1)  1 + 6i
+    (2,2)  2 + 7i
+    (3,3)  3 + 8i
+    (4,4)  4 + 9i
+    (5,5)  5 + 10i
+}
+], [ignore])
+AT_CLEANUP
+
 AT_SETUP([Read 2D character array])
 AT_KEYWORDS([mat4_read_be])
 AT_CHECK(

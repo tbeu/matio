@@ -30,6 +30,7 @@ VPATH = @srcdir@
 TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat4_read_be.at \
                $(srcdir)/mat4_read_le.at \
+               $(srcdir)/mat4_write.at \
                $(srcdir)/mat5_uncompressed_read_be.at \
                $(srcdir)/mat5_uncompressed_read_le.at \
                $(srcdir)/mat5_uncompressed_write.at \
@@ -50,11 +51,11 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat5_uncompressed_readslab_le.at \
                $(srcdir)/mat73_readslab_be.at \
                $(srcdir)/mat73_readslab_le.at \
+               $(srcdir)/mat4_extended_sparse.at \
                $(srcdir)/mat5_compressed_extended_sparse.at \
                $(srcdir)/mat5_uncompressed_extended_sparse.at \
                $(srcdir)/mat73_compressed_extended_sparse.at \
-               $(srcdir)/mat73_uncompressed_extended_sparse.at \
-               $(srcdir)/mat4_write.at
+               $(srcdir)/mat73_uncompressed_extended_sparse.at
 TESTSUITE = $(srcdir)/testsuite
 
 TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \

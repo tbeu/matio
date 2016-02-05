@@ -1,0 +1,455 @@
+# Copyright (C) 2010-2016   Christopher C. Hulbert
+#
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    1. Redistributions of source code must retain the above copyright notice,
+#       this list of conditions and the following disclaimer.
+#
+#    2. Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+AT_SETUP([Write 2D sparse single-precision array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c single write_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array
+ Data Type: IEEE 754 single-precision
+{
+    (1,1)  1
+    (5,1)  5
+    (2,2)  7
+    (3,2)  8
+    (4,2)  9
+    (1,3)  11
+    (5,3)  15
+    (2,4)  17
+    (3,4)  18
+    (4,4)  19
+    (1,5)  21
+    (5,5)  25
+    (2,6)  27
+    (3,6)  28
+    (4,6)  29
+    (1,7)  31
+    (5,7)  35
+    (2,8)  37
+    (3,8)  38
+    (4,8)  39
+    (1,9)  41
+    (5,9)  45
+    (2,10)  47
+    (3,10)  48
+    (4,10)  49
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
+         [expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write 2D sparse 32-bit integer array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c int32 write_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array
+ Data Type: 32-bit, signed integer
+{
+    (1,1)  1
+    (5,1)  5
+    (2,2)  7
+    (3,2)  8
+    (4,2)  9
+    (1,3)  11
+    (5,3)  15
+    (2,4)  17
+    (3,4)  18
+    (4,4)  19
+    (1,5)  21
+    (5,5)  25
+    (2,6)  27
+    (3,6)  28
+    (4,6)  29
+    (1,7)  31
+    (5,7)  35
+    (2,8)  37
+    (3,8)  38
+    (4,8)  39
+    (1,9)  41
+    (5,9)  45
+    (2,10)  47
+    (3,10)  48
+    (4,10)  49
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
+         [expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write 2D sparse 16-bit integer array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c int16 write_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array
+ Data Type: 16-bit, signed integer
+{
+    (1,1)  1
+    (5,1)  5
+    (2,2)  7
+    (3,2)  8
+    (4,2)  9
+    (1,3)  11
+    (5,3)  15
+    (2,4)  17
+    (3,4)  18
+    (4,4)  19
+    (1,5)  21
+    (5,5)  25
+    (2,6)  27
+    (3,6)  28
+    (4,6)  29
+    (1,7)  31
+    (5,7)  35
+    (2,8)  37
+    (3,8)  38
+    (4,8)  39
+    (1,9)  41
+    (5,9)  45
+    (2,10)  47
+    (3,10)  48
+    (4,10)  49
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
+         [expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write 2D sparse 16-bit unsigned integer array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c uint16 write_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array
+ Data Type: 16-bit, unsigned integer
+{
+    (1,1)  1
+    (5,1)  5
+    (2,2)  7
+    (3,2)  8
+    (4,2)  9
+    (1,3)  11
+    (5,3)  15
+    (2,4)  17
+    (3,4)  18
+    (4,4)  19
+    (1,5)  21
+    (5,5)  25
+    (2,6)  27
+    (3,6)  28
+    (4,6)  29
+    (1,7)  31
+    (5,7)  35
+    (2,8)  37
+    (3,8)  38
+    (4,8)  39
+    (1,9)  41
+    (5,9)  45
+    (2,10)  47
+    (3,10)  48
+    (4,10)  49
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
+         [expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write 2D sparse 8-bit unsigned integer array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c uint8 write_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array
+ Data Type: 8-bit, unsigned integer
+{
+    (1,1)  1
+    (5,1)  5
+    (2,2)  7
+    (3,2)  8
+    (4,2)  9
+    (1,3)  11
+    (5,3)  15
+    (2,4)  17
+    (3,4)  18
+    (4,4)  19
+    (1,5)  21
+    (5,5)  25
+    (2,6)  27
+    (3,6)  28
+    (4,6)  29
+    (1,7)  31
+    (5,7)  35
+    (2,8)  37
+    (3,8)  38
+    (4,8)  39
+    (1,9)  41
+    (5,9)  45
+    (2,10)  47
+    (3,10)  48
+    (4,10)  49
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
+         [expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write 2D sparse complex single-precision array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c single write_complex_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+    (1,1)  1 + 51i
+    (5,1)  5 + 55i
+    (2,2)  7 + 57i
+    (3,2)  8 + 58i
+    (4,2)  9 + 59i
+    (1,3)  11 + 61i
+    (5,3)  15 + 65i
+    (2,4)  17 + 67i
+    (3,4)  18 + 68i
+    (4,4)  19 + 69i
+    (1,5)  21 + 71i
+    (5,5)  25 + 75i
+    (2,6)  27 + 77i
+    (3,6)  28 + 78i
+    (4,6)  29 + 79i
+    (1,7)  31 + 81i
+    (5,7)  35 + 85i
+    (2,8)  37 + 87i
+    (3,8)  38 + 88i
+    (4,8)  39 + 89i
+    (1,9)  41 + 91i
+    (5,9)  45 + 95i
+    (2,10)  47 + 97i
+    (3,10)  48 + 98i
+    (4,10)  49 + 99i
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
+         [0],[expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write 2D sparse complex 32-bit integer complex array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c int32 write_complex_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array (complex)
+ Data Type: 32-bit, signed integer
+{
+    (1,1)  1 + 51i
+    (5,1)  5 + 55i
+    (2,2)  7 + 57i
+    (3,2)  8 + 58i
+    (4,2)  9 + 59i
+    (1,3)  11 + 61i
+    (5,3)  15 + 65i
+    (2,4)  17 + 67i
+    (3,4)  18 + 68i
+    (4,4)  19 + 69i
+    (1,5)  21 + 71i
+    (5,5)  25 + 75i
+    (2,6)  27 + 77i
+    (3,6)  28 + 78i
+    (4,6)  29 + 79i
+    (1,7)  31 + 81i
+    (5,7)  35 + 85i
+    (2,8)  37 + 87i
+    (3,8)  38 + 88i
+    (4,8)  39 + 89i
+    (1,9)  41 + 91i
+    (5,9)  45 + 95i
+    (2,10)  47 + 97i
+    (3,10)  48 + 98i
+    (4,10)  49 + 99i
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
+         [0],[expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write 2D sparse complex 16-bit integer complex array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c int16 write_complex_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array (complex)
+ Data Type: 16-bit, signed integer
+{
+    (1,1)  1 + 51i
+    (5,1)  5 + 55i
+    (2,2)  7 + 57i
+    (3,2)  8 + 58i
+    (4,2)  9 + 59i
+    (1,3)  11 + 61i
+    (5,3)  15 + 65i
+    (2,4)  17 + 67i
+    (3,4)  18 + 68i
+    (4,4)  19 + 69i
+    (1,5)  21 + 71i
+    (5,5)  25 + 75i
+    (2,6)  27 + 77i
+    (3,6)  28 + 78i
+    (4,6)  29 + 79i
+    (1,7)  31 + 81i
+    (5,7)  35 + 85i
+    (2,8)  37 + 87i
+    (3,8)  38 + 88i
+    (4,8)  39 + 89i
+    (1,9)  41 + 91i
+    (5,9)  45 + 95i
+    (2,10)  47 + 97i
+    (3,10)  48 + 98i
+    (4,10)  49 + 99i
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
+         [0],[expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write 2D sparse complex 16-bit unsigned integer complex array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c uint16 write_complex_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+    (1,1)  1 + 51i
+    (5,1)  5 + 55i
+    (2,2)  7 + 57i
+    (3,2)  8 + 58i
+    (4,2)  9 + 59i
+    (1,3)  11 + 61i
+    (5,3)  15 + 65i
+    (2,4)  17 + 67i
+    (3,4)  18 + 68i
+    (4,4)  19 + 69i
+    (1,5)  21 + 71i
+    (5,5)  25 + 75i
+    (2,6)  27 + 77i
+    (3,6)  28 + 78i
+    (4,6)  29 + 79i
+    (1,7)  31 + 81i
+    (5,7)  35 + 85i
+    (2,8)  37 + 87i
+    (3,8)  38 + 88i
+    (4,8)  39 + 89i
+    (1,9)  41 + 91i
+    (5,9)  45 + 95i
+    (2,10)  47 + 97i
+    (3,10)  48 + 98i
+    (4,10)  49 + 99i
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
+         [0],[expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Write 2D sparse complex 8-bit unsigned integer complex array])
+AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 4 -c uint8 write_complex_sparse],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+    (1,1)  1 + 51i
+    (5,1)  5 + 55i
+    (2,2)  7 + 57i
+    (3,2)  8 + 58i
+    (4,2)  9 + 59i
+    (1,3)  11 + 61i
+    (5,3)  15 + 65i
+    (2,4)  17 + 67i
+    (3,4)  18 + 68i
+    (4,4)  19 + 69i
+    (1,5)  21 + 71i
+    (5,5)  25 + 75i
+    (2,6)  27 + 77i
+    (3,6)  28 + 78i
+    (4,6)  29 + 79i
+    (1,7)  31 + 81i
+    (5,7)  35 + 85i
+    (2,8)  37 + 87i
+    (3,8)  38 + 88i
+    (4,8)  39 + 89i
+    (1,9)  41 + 91i
+    (5,9)  45 + 95i
+    (2,10)  47 + 97i
+    (3,10)  48 + 98i
+    (4,10)  49 + 99i
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
+         [0],[expout],[ignore])
+AT_CLEANUP
