@@ -869,12 +869,14 @@ main (int argc, char *argv[])
         }
     }
 
-    if ( (argc-optind) < 1 )
-        Mat_Error("Must specify at least one argument");
+    if ( (argc-optind) < 1 ) {
+        Mat_Critical("Must specify at least one argument");
+        return EXIT_FAILURE;
+    }
 
     mat = Mat_Open( argv[optind],MAT_ACC_RDONLY );
     if ( NULL == mat ) {
-        Mat_Error("Error opening %s\n", argv[optind]);
+        Mat_Critical("Error opening %s\n", argv[optind]);
         return EXIT_FAILURE;
     }
 
