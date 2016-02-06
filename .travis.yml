@@ -37,7 +37,7 @@ env:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --user cpp-coveralls; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --user cpp-coveralls; fi
 
 install:
   - svn co -q https://svn.hdfgroup.uiuc.edu/hdf5/branches/hdf5_1_8_16@28320
