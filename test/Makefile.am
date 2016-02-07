@@ -69,7 +69,8 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/datasets/matio_test_cases_v4_be.mat \
                  $(srcdir)/datasets/matio_test_cases_v4_le.mat \
                  $(srcdir)/datasets/small_v4_be.mat \
-                 $(srcdir)/datasets/small_v4_le.mat
+                 $(srcdir)/datasets/small_v4_le.mat \
+                 $(srcdir)/datasets/large_struct_compressed_le.mat
 if MAT73
 MAT73 = 1
 else
