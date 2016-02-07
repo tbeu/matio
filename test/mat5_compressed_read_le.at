@@ -3788,3 +3788,27 @@ Class Type: Character Array
 }
 ], [ignore])
 AT_CLEANUP
+
+AT_SETUP([Read large structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat getstructfield $srcdir/datasets/large_struct_compressed_le.mat MA C], [0],
+[[      Name: C
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+]], [ignore])
+AT_CLEANUP
+
+AT_SETUP([Copy large structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK(
+[$builddir/test_mat -v 5 -z copy $srcdir/datasets/large_struct_compressed_le.mat getstructfield test_mat_copy.mat MA C], [0],
+[[      Name: C
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+]], [ignore])
+AT_CLEANUP
