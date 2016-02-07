@@ -1890,16 +1890,16 @@ Mat_VarReadNext( mat_t *mat )
 int
 Mat_VarWriteInfo(mat_t *mat, matvar_t *matvar )
 {
+    int err = 0;
+
     if ( mat == NULL || matvar == NULL || mat->fp == NULL )
         return -1;
-    else if ( mat->version != MAT_FT_MAT4 )
+    else if ( mat->version == MAT_FT_MAT5 )
         WriteInfo5(mat,matvar);
-#if 0
-    else if ( mat->version == MAT_FT_MAT4 )
-        WriteInfo4(mat,matvar);
-#endif
+    else
+        err = 1;
 
-    return 0;
+    return err;
 }
 
 /** @brief Writes the given data to the MAT variable
