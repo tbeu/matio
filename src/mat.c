@@ -40,7 +40,7 @@
 #   include <io.h>
 #   define mktemp _mktemp
 #endif
-#if defined(__MINGW32__)
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
 #else
 #   define SIZE_T_FMTSTR "zu"
