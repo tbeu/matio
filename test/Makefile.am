@@ -43,6 +43,7 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat73_compressed_write.at \
                $(srcdir)/struct_api.at \
                $(srcdir)/cell_api.at \
+               $(srcdir)/subscript_api.at \
                $(srcdir)/mat4_readslab_be.at \
                $(srcdir)/mat4_readslab_le.at \
                $(srcdir)/mat5_compressed_readslab_be.at \

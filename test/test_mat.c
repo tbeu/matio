@@ -3350,7 +3350,7 @@ int main (int argc, char *argv[])
             size_t *subs, dims[3] = {256,256,124};
 
             subs = Mat_CalcSubscripts2(3,dims,18921-1);
-            Mat_Message("%" SIZE_T_FMTSTR,"%" SIZE_T_FMTSTR,"%" SIZE_T_FMTSTR,subs[0],subs[1],subs[2]);
+            Mat_Message("(%" SIZE_T_FMTSTR ",%" SIZE_T_FMTSTR ",%" SIZE_T_FMTSTR ")",subs[0],subs[1],subs[2]);
             free(subs);
             k++;
             ntests++;
