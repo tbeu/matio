@@ -3790,6 +3790,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read large structure])
+AT_KEYWORDS([large_struct])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat getstructfield $srcdir/datasets/large_struct_compressed_le.mat MA C], [0],
@@ -3802,6 +3803,7 @@ Class Type: Double Precision Array
 AT_CLEANUP
 
 AT_SETUP([Copy large structure])
+AT_KEYWORDS([large_struct])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat -v 5 -z copy $srcdir/datasets/large_struct_compressed_le.mat getstructfield test_mat_copy.mat MA C], [0],
