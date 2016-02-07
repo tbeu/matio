@@ -2552,12 +2552,12 @@ test_readslab(const char *file, const char *var)
     int   start[2]={0,0},stride[2]={1,1},edge[2]={2,2}, err = 0;
     double ptr[4];
     mat_t  *mat;
-   matvar_t *matvar;
+    matvar_t *matvar;
 
     mat = Mat_Open(file,MAT_ACC_RDONLY);
     if ( mat ) {
         matvar = Mat_VarReadInfo(mat,(char *)var);
-        if ( matvar != NULL ) {
+        if ( matvar != NULL && !matvar->isComplex ) {
             stride[0] = matvar->dims[0]-1;
             stride[1] = matvar->dims[1]-1;
             Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
@@ -2579,7 +2579,7 @@ test_readslab4(const char *file, const char *var)
     int   start[2]={0,0},stride[2]={1,1},edge[2]={2,2}, err = 0;
     double ptr[4];
     mat_t  *mat;
-   matvar_t *matvar;
+    matvar_t *matvar;
 
     mat = Mat_Open((const char *)file,MAT_ACC_RDONLY | MAT_FT_MAT4);
     if ( mat ) {
@@ -2626,12 +2626,17 @@ test_writeslab(void)
                        dims,NULL,0);
         matvar3 = Mat_VarCreate("i",MAT_C_INT32,MAT_T_INT32,2,
                        dims,NULL,0);
-        Mat_VarWriteInfo(mat,matvar);
-        Mat_VarWriteInfo(mat,matvar2);
-        Mat_VarWriteInfo(mat,matvar3);
-        Mat_VarWriteData(mat,matvar3,idata,start,stride,edge);
-        Mat_VarWriteData(mat,matvar,data,start,stride,edge);
-        Mat_VarWriteData(mat,matvar2,fdata,start,stride,edge);
+        err = Mat_VarWriteInfo(mat,matvar);
+        if ( err != 0 )
+            err = Mat_VarWriteInfo(mat,matvar2);
+        if ( err != 0 )
+            err = Mat_VarWriteInfo(mat,matvar3);
+        if ( err != 0 )
+            err = Mat_VarWriteData(mat,matvar3,idata,start,stride,edge);
+        if ( err != 0 )
+            err = Mat_VarWriteData(mat,matvar,data,start,stride,edge);
+        if ( err != 0 )
+            err = Mat_VarWriteData(mat,matvar2,fdata,start,stride,edge);
         Mat_VarFree(matvar);
         Mat_VarFree(matvar2);
         Mat_VarFree(matvar3);
