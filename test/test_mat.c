@@ -607,8 +607,8 @@ static const char *helptest_sub2ind[] = {
     "",
     "  Calculates a linear (single) index from a set of subscript indeces.",
     "  The size of the array used is [256,256,124].  The 1-relative indeces",
-    "  are (233,74,1).  Therefore, the calculated linear index should be",
-    "  18921.",
+    "  are (233,74,1).  Therefore, the calculated 0-relative linear index",
+    "  should be 18920.",
     "",
     NULL
 };
