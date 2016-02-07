@@ -341,9 +341,23 @@ Read4(mat_t *mat,matvar_t *matvar)
                 (void)fseek((FILE*)mat->fp,sparse->nir*Mat_SizeOf(data_type),
                     SEEK_CUR);
                 ReadDoubleData(mat, &tmp, data_type, 1);
-                matvar->dims[1] = tmp;
+                if ( tmp > INT_MAX-1 || tmp < 0 ) {
+                    free(sparse->ir);
+                    free(matvar->data);
+                    matvar->data = NULL;
+                    Mat_Critical("Invalid column dimension for sparse matrix");
+                    return;
+                }
+                matvar->dims[1] = tmp < 0 ? 0 : ( tmp > INT_MAX-1 ? INT_MAX-1 : (size_t)tmp );
                 (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
-                sparse->njc = matvar->dims[1] + 1;
+                if ( matvar->dims[1] > INT_MAX-1 ) {
+                    free(sparse->ir);
+                    free(matvar->data);
+                    matvar->data = NULL;
+                    Mat_Critical("Invalid column dimension for sparse matrix");
+                    return;
+                }
+                sparse->njc = (int)matvar->dims[1] + 1;
                 sparse->jc = (mat_int32_t*)malloc(sparse->njc*sizeof(mat_int32_t));
                 if ( sparse->jc != NULL ) {
                     mat_int32_t *jc;
@@ -462,7 +476,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                                     matvar->data = NULL;
                                     Mat_Critical("Read4: %d is not a supported data type for ",
                                         "extended sparse", data_type);
-                                    break;
+                                    return;
                             }
 #else
                             ReadDoubleData(mat, (double*)complex_data->Re,
@@ -532,7 +546,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                                 matvar->data = NULL;
                                 Mat_Critical("Read4: %d is not a supported data type for ",
                                     "extended sparse", data_type);
-                                break;
+                                return;
                         }
 #else
                         ReadDoubleData(mat, (double*)sparse->data, data_type, sparse->ndata);
