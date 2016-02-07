@@ -26,6 +26,8 @@
 
 AT_INIT([matio testsuite])
 
+AT_COPYRIGHT(Copyright (C) 2010-2016 Christopher C. Hulbert)
+
 m4_divert_push([PREPARE_TESTS])
 # Check for libtool configuration data
 # host_os and with_msvc_ld are used in MATIO_AT_HOST_DATA
