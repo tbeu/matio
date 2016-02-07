@@ -35,7 +35,7 @@ AT_CLEANUP
 AT_SETUP([Calculate the linear index from subscript values])
 AT_KEYWORDS([subscript_api])
 MATIO_AT_HOST_DATA([expout],
-[(18920
+[18920
 ],[ignore])
 AT_CHECK([$builddir/test_mat sub2ind],[0],[expout],[ignore])
 AT_CLEANUP
