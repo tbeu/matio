@@ -11,7 +11,7 @@ int rpl_snprintf(char *, size_t, const char *, ...);
 #define mat_snprintf snprintf
 #endif	/* !HAVE_SNPRINTF */
 
-int main (void)
+int main(int argc, char **argv)
 {
         char buf1[1024];
         char buf2[1024];
