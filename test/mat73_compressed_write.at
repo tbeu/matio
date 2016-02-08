@@ -1136,6 +1136,7 @@ AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_sparse_complex_double;exit'
 AT_CLEANUP
 
 AT_SETUP([Write 2D empty array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_empty_2d_numeric],[0],
@@ -1217,6 +1218,7 @@ AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_char;exit' | $GREP PASSED],
 AT_CLEANUP
 
 AT_SETUP([Write empty structure array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_empty_struct],[0],
@@ -3103,6 +3105,7 @@ AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_logical;exit' | $
 AT_CLEANUP
 
 AT_SETUP([Write empty cell array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_empty_cell],[0],[ignore],[ignore])

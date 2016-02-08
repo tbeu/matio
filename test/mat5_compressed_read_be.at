@@ -442,6 +442,7 @@ Class Type: Sparse Array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read empty array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var23], [0],
@@ -474,6 +475,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var25], [0],
@@ -486,7 +488,9 @@ Fields@<:@0@:>@ {
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read empty structure array with fields])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var26], [0],
@@ -503,7 +507,9 @@ Fields@<:@2@:>@ {
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with empty fields])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var27], [0],
@@ -541,6 +547,7 @@ Class Type: Cell Array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with double-precision fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -590,6 +597,7 @@ Class Type: Double Precision Array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with single-precision fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -639,6 +647,7 @@ Class Type: Single Precision Array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 64-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -688,6 +697,7 @@ Class Type: 64-bit, signed integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 64-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -737,6 +747,7 @@ Class Type: 64-bit, unsigned integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 32-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -786,6 +797,7 @@ Class Type: 32-bit, signed integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 32-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -835,6 +847,7 @@ Class Type: 32-bit, unsigned integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 16-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -884,6 +897,7 @@ Class Type: 16-bit, signed integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 16-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -933,6 +947,7 @@ Class Type: 16-bit, unsigned integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 8-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -982,6 +997,7 @@ Class Type: 8-bit, signed integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 8-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1031,6 +1047,7 @@ Class Type: 8-bit, unsigned integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex double-precision fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1080,6 +1097,7 @@ Class Type: Double Precision Array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex single-precision fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1129,6 +1147,7 @@ Class Type: Single Precision Array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 64-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1178,6 +1197,7 @@ Class Type: 64-bit, signed integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 64-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1227,6 +1247,7 @@ Class Type: 64-bit, unsigned integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 32-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1276,6 +1297,7 @@ Class Type: 32-bit, signed integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 32-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1325,6 +1347,7 @@ Class Type: 32-bit, unsigned integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 16-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1374,6 +1397,7 @@ Class Type: 16-bit, signed integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 16-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1423,6 +1447,7 @@ Class Type: 16-bit, unsigned integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 8-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1472,6 +1497,7 @@ Class Type: 8-bit, signed integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 8-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
@@ -1741,6 +1767,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read empty cell array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var51], [0],
@@ -1755,6 +1782,7 @@ Class Type: Cell Array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty arrays])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var52], [0],
@@ -2685,6 +2713,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty structure arrays])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var66], [0],

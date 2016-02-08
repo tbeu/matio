@@ -442,6 +442,7 @@ Class Type: Sparse Array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read empty array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var23], [0],
@@ -474,6 +475,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var25], [0],
@@ -488,6 +490,7 @@ Fields@<:@0@:>@ {
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array with fields])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var26], [0],
@@ -506,6 +509,7 @@ Fields@<:@2@:>@ {
 AT_CLEANUP
 
 AT_SETUP([Read structure array with empty fields])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var27], [0],
@@ -1763,6 +1767,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read empty cell array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var51], [0],
@@ -1777,6 +1782,7 @@ Class Type: Cell Array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty arrays])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var52], [0],
@@ -2707,6 +2713,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty structure arrays])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_le.mat var66], [0],

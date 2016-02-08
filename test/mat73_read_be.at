@@ -442,6 +442,7 @@ Class Type: Sparse Array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read empty array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var23], [0],
@@ -472,6 +473,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var25], [0],
@@ -486,6 +488,7 @@ Fields@<:@0@:>@ {
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array with fields])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var26], [0],
@@ -504,6 +507,7 @@ Fields@<:@2@:>@ {
 AT_CLEANUP
 
 AT_SETUP([Read structure array with empty fields])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var27], [0],
@@ -1759,7 +1763,23 @@ Class Type: Character Array
 ], [ignore])
 AT_CLEANUP
 
+AT_SETUP([Read empty cell array])
+AT_KEYWORDS([empty])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK(
+[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var51], [0],
+[      Name: var51
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+], [ignore])
+AT_CLEANUP
+
 AT_SETUP([Read cell array with empty arrays])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var52], [0],
@@ -1801,7 +1821,7 @@ Class Type: 16-bit, signed integer array
 Dimensions: 0 x 0
 Class Type: 16-bit, unsigned integer array
  Data Type: 16-bit, unsigned integer
-      Rank: 2 
+      Rank: 2
 Dimensions: 0 x 0
 Class Type: 8-bit, signed integer array
  Data Type: 8-bit, signed integer
@@ -2670,6 +2690,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty structure arrays])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var66], [0],

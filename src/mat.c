@@ -1451,7 +1451,6 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         }
         return;
     } else if ( matvar->data == NULL || matvar->data_size < 1 ) {
-        printf("{\n}\n");
         return;
     } else if ( MAT_C_CELL == matvar->class_type ) {
         matvar_t **cells = (matvar_t **)matvar->data;

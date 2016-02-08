@@ -419,6 +419,7 @@ Class Type: Sparse Array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read empty array])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var23], [0],
 [[      Name: var23
@@ -449,6 +450,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var25], [0],
 [      Name: var25
@@ -462,6 +464,7 @@ Fields@<:@0@:>@ {
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array with fields])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var26], [0],
 [      Name: var26
@@ -479,6 +482,7 @@ Fields@<:@2@:>@ {
 AT_CLEANUP
 
 AT_SETUP([Read structure array with empty fields])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var27], [0],
 [      Name: var27
@@ -1711,6 +1715,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read empty cell array])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var51], [0],
 [      Name: var51
@@ -1724,6 +1729,7 @@ Class Type: Cell Array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty arrays])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var52], [0],
 [      Name: var52
@@ -2639,6 +2645,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty structure arrays])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var66], [0],
 [      Name: var66

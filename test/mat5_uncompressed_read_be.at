@@ -419,6 +419,7 @@ Class Type: Sparse Array (complex)
 AT_CLEANUP
 
 AT_SETUP([Read empty array])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var23], [0],
 [[      Name: var23
@@ -449,6 +450,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var25], [0],
 [      Name: var25
@@ -460,7 +462,9 @@ Fields@<:@0@:>@ {
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read empty structure array with fields])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var26], [0],
 [      Name: var26
@@ -476,7 +480,9 @@ Fields@<:@2@:>@ {
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with empty fields])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var27], [0],
 [      Name: var27
@@ -513,6 +519,7 @@ Class Type: Cell Array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with double-precision fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28], [0],
@@ -561,6 +568,7 @@ Class Type: Double Precision Array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with single-precision fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29], [0],
@@ -609,6 +617,7 @@ Class Type: Single Precision Array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 64-bit integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30], [0],
@@ -657,6 +666,7 @@ Class Type: 64-bit, signed integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 64-bit unsigned integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31], [0],
@@ -705,6 +715,7 @@ Class Type: 64-bit, unsigned integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 32-bit integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32], [0],
@@ -753,6 +764,7 @@ Class Type: 32-bit, signed integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 32-bit unsigned integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33], [0],
@@ -801,6 +813,7 @@ Class Type: 32-bit, unsigned integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 16-bit integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34], [0],
@@ -849,6 +862,7 @@ Class Type: 16-bit, signed integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 16-bit unsigned integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35], [0],
@@ -897,6 +911,7 @@ Class Type: 16-bit, unsigned integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 8-bit integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36], [0],
@@ -945,6 +960,7 @@ Class Type: 8-bit, signed integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with 8-bit unsigned integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37], [0],
@@ -993,6 +1009,7 @@ Class Type: 8-bit, unsigned integer array
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex double-precision fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38], [0],
@@ -1041,6 +1058,7 @@ Class Type: Double Precision Array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex single-precision fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39], [0],
@@ -1089,6 +1107,7 @@ Class Type: Single Precision Array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 64-bit integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40], [0],
@@ -1137,6 +1156,7 @@ Class Type: 64-bit, signed integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 64-bit unsigned integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41], [0],
@@ -1185,6 +1205,7 @@ Class Type: 64-bit, unsigned integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 32-bit integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42], [0],
@@ -1233,6 +1254,7 @@ Class Type: 32-bit, signed integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 32-bit unsigned integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43], [0],
@@ -1281,6 +1303,7 @@ Class Type: 32-bit, unsigned integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 16-bit integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44], [0],
@@ -1329,6 +1352,7 @@ Class Type: 16-bit, signed integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 16-bit unsigned integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45], [0],
@@ -1377,6 +1401,7 @@ Class Type: 16-bit, unsigned integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 8-bit integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46], [0],
@@ -1425,6 +1450,7 @@ Class Type: 8-bit, signed integer array (complex)
 }
 ], [ignore])
 AT_CLEANUP
+
 AT_SETUP([Read structure array with complex 8-bit unsigned integer fields])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47], [0],
@@ -1689,6 +1715,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read empty cell array])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var51], [0],
 [      Name: var51
@@ -1702,6 +1729,7 @@ Class Type: Cell Array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty arrays])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var52], [0],
 [      Name: var52
@@ -2617,6 +2645,7 @@ Class Type: Character Array
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty structure arrays])
+AT_KEYWORDS([empty])
 AT_CHECK(
 [$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var66], [0],
 [      Name: var66

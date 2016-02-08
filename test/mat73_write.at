@@ -1113,6 +1113,7 @@ AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_sparse_complex_double;exit'
 AT_CLEANUP
 
 AT_SETUP([Write 2D empty array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -c double write_empty_2d_numeric],[0],
          [ignore],[ignore])
@@ -1192,6 +1193,7 @@ AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_char;exit' | $GREP PASSED],
 AT_CLEANUP
 
 AT_SETUP([Write empty structure array])
+AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 write_empty_struct],[0],
          [ignore],[ignore])
@@ -3072,22 +3074,16 @@ Fields@<:@4@:>@ {
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
-{
-}
       Name: field2
       Rank: 2
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
-{
-}
       Name: field1
       Rank: 2
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
-{
-}
       Name: field2
       Rank: 2
 Dimensions: 4 x 26
