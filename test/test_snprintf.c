@@ -2,14 +2,21 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "matio_private.h"
+#include "snprintf.c"
+
+#if !HAVE_SNPRINTF
+int rpl_snprintf(char *, size_t, const char *, ...);
+#define mat_snprintf rpl_snprintf
+#else
+#define mat_snprintf snprintf
+#endif	/* !HAVE_SNPRINTF */
 
 int main (void)
 {
         char buf1[1024];
         char buf2[1024];
         char *fp_fmt[] = {
-                "%1.1f", 
+                "%1.1f",
                 "%-1.5f",
                 "%1.5f",
                 "%123.9f",
@@ -26,11 +33,11 @@ int main (void)
                 "-16.16f",
                 NULL
         };
-        double fp_nums[] = { 6442452944.1234, -1.5, 134.21, 91340.2, 341.1234, 203.9, 0.96, 0.996, 
+        double fp_nums[] = { 6442452944.1234, -1.5, 134.21, 91340.2, 341.1234, 203.9, 0.96, 0.996,
                              0.9996, 1.996, 4.136, 5.030201, 0.00205,
                              /* END LIST */ 0};
         char *int_fmt[] = {
-                "%-1.5d", 
+                "%-1.5d",
                 "%1.5d",
                 "%123.9d",
                 "%5.5d",
@@ -135,4 +142,4 @@ int main (void)
          }
 
          return 0;
- }
+}

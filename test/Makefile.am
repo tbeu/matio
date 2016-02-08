@@ -115,8 +115,6 @@ test_mat_LDADD   = $(TEST_LIBS)
 test_mat_LDFLAGS = $(TEST_LFLAGS)
 
 test_snprintf_SOURCES = test_snprintf.c
-test_snprintf_LDADD   = $(TEST_LIBS)
-test_snprintf_LDFLAGS = $(TEST_LFLAGS)
 
 atconfig: $(top_builddir)/config.status
 	cd $(top_builddir) && ./config.status tests/$@
