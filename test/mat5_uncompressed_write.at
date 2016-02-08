@@ -3017,6 +3017,84 @@ AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_logical;exit' | $
 ],[ignore])
 AT_CLEANUP
 
+AT_SETUP([Write structure array with character fields])
+AT_KEYWORDS([bug30])
+AT_CHECK([$builddir/test_mat -v 5 write_struct_char],[0],
+         [ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: a
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields@<:@4@:>@ {
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: field2
+      Rank: 2
+Dimensions: 4 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+abcdefghijklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+1234567890!@#$%^&*()-_=+`~
+@<:@{@:>@}\|;:'",<.>/?          @&t@
+}
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_write_struct_char.mat a],[0],
+         [expout],[ignore])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_DATA([test_write_struct_char.m],
+[
+try
+    load test_write_struct_char.mat
+    expdata(1).field1 = [];
+    expdata(1).field2 = [];
+    expdata(2).field1 = [];
+    expdata(2).field2 = @<:@'abcdefghijklmnopqrstuvwxyz';
+               'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+               '1234567890!@#$%^&*()-_=+`~';
+               '@<:@{@:>@}\|;:''",<.>/?          '@:>@;
+    pass = true;
+    pass = pass && isequal(a,expdata(:));
+    pass = pass && strcmp(class(a(1).field1),class(expdata(1).field1));
+    pass = pass && strcmp(class(a(1).field2),class(expdata(1).field2));
+    pass = pass && strcmp(class(a(2).field1),class(expdata(2).field1));
+    pass = pass && strcmp(class(a(2).field2),class(expdata(2).field2));
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_char;exit' | $GREP PASSED],[0],[PASSED
+],[ignore])
+AT_CLEANUP
+
 AT_SETUP([Write empty cell array])
 AT_CHECK([$builddir/test_mat -v 5 write_empty_cell],[0],[ignore],[ignore])
 MATIO_AT_HOST_DATA([expout],

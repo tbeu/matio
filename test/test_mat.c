@@ -121,6 +121,8 @@ static const char *helptestsstr[] = {
 "                                  double if not set.",
 "write_struct_2d_logical         - Write a structure with 2D logical arrays",
 "                                  to a matlab file.",
+"write_struct_char               - Write a structure with character arrays",
+"                                  to a matlab file.",
 "write_empty_struct              - Write empty structure and structure with",
 "                                  empty fields",
 "",
@@ -403,6 +405,29 @@ static const char *helptest_write_struct_2d_logical[] = {
     NULL
 };
 
+static const char *helptest_write_struct_char[] = {
+    "TEST: write_struct_char",
+    "",
+    "Usage: test_mat write_struct_char",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a structure",
+    "array with one character array. The MAT file is the default file",
+    "version, or set by the -v option. If the MAT file is version 5,",
+    "compression can be enabled using the -z option if built with zlib library",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    a(1).field1 = [];",
+    "    a(1).field2 = [];",
+    "    a(2).field1 = [];",
+    "    a(2).field2 = ['abcdefghijklmnopqrstuvwxyz';",
+    "                   'ABCDEFGHIJKLMNOPQRSTUVWXYZ';",
+    "                   '1234567890!@#$%^&*()-_=+`~';",
+    "                   '[{]}\\|;:''\",<.>/?          '];",
+    "",
+    NULL
+};
+
 static const char *helptest_write_empty_struct[] = {
     "TEST: write_empty_struct",
     "",
@@ -657,6 +682,8 @@ help_test(const char *test)
         Mat_Help(helptest_write_struct_complex_2d_numeric);
     else if ( !strcmp(test,"write_struct_2d_logical") )
         Mat_Help(helptest_write_struct_2d_logical);
+    else if ( !strcmp(test,"write_struct_char") )
+        Mat_Help(helptest_write_struct_char);
     else if ( !strcmp(test,"write_empty_struct") )
         Mat_Help(helptest_write_empty_struct);
     else if ( !strcmp(test,"write_cell_2d_numeric") )
@@ -1079,6 +1106,8 @@ test_write_char(const char *output_name)
         Mat_VarWrite(mat,matvar,compression);
         Mat_VarFree(matvar);
         Mat_Close(mat);
+    } else {
+        err = 1;
     }
     return err;
 }
@@ -1194,10 +1223,11 @@ test_write_empty_struct(const char *output_name)
         Mat_VarFree(struct_matvar);
 
         Mat_Close(mat);
+    } else {
+        err = 1;
     }
     return err;
 }
-
 
 static int
 test_write_struct_2d_logical(const char *output_name)
@@ -1244,6 +1274,37 @@ test_write_struct_2d_logical(const char *output_name)
 
     Mat_Close(mat);
 
+    return err;
+}
+
+static int
+test_write_struct_char(const char *output_name)
+{
+    int    err = 0;
+    mat_t *mat;
+
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
+    if ( mat ) {
+        const char *str = "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
+                        "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
+        size_t num_fields = 2;
+        const char *fieldnames[2] = {"field1", "field2"};
+        size_t    dims[2];
+        matvar_t *matvar, *struct_matvar;
+
+        dims[0] = 2;
+        dims[1] = 1;
+        struct_matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, num_fields);
+        dims[0] = 4;
+        dims[1] = 26;
+        matvar = Mat_VarCreate(fieldnames[1], MAT_C_CHAR, MAT_T_UTF8, 2, dims, (void*)str, 0);
+        Mat_VarSetStructFieldByName(struct_matvar,fieldnames[1],1,matvar);
+        Mat_VarWrite(mat,struct_matvar,compression);
+        Mat_VarFree(struct_matvar);
+        Mat_Close(mat);
+    } else {
+        err = 1;
+    }
     return err;
 }
 
@@ -3174,6 +3235,12 @@ int main (int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_write_struct_2d_logical.mat";
             err += test_write_struct_2d_logical(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"write_struct_char") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_struct_char.mat";
+            err += test_write_struct_char(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"write_struct_2d_numeric") ) {
             k++;
