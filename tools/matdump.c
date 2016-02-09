@@ -531,7 +531,7 @@ static void
 print_whos(matvar_t *matvar)
 {
     int i;
-    size_t nbytes = 0;
+    size_t nbytes;
     char size[32] = {'\0',};
 
     if ( print_whos_first ) {
@@ -542,17 +542,15 @@ print_whos(matvar_t *matvar)
     if ( matvar->rank > 0 ) {
         int cnt = 0;
         printf("%8" SIZE_T_FMTSTR, matvar->dims[0]);
-        nbytes = matvar->dims[0];
         for ( i = 1; i < matvar->rank; i++ ) {
             if ( ceil(log10((double)matvar->dims[i]))+1 < 32 )
                 cnt += sprintf(size+cnt,"x%" SIZE_T_FMTSTR, matvar->dims[i]);
-            nbytes *= matvar->dims[i];
         }
         printf("%-10s",size);
-        nbytes *= Mat_SizeOfClass(matvar->class_type);
     } else {
         printf("                    ");
     }
+    nbytes = Mat_VarGetSize(matvar);
     if ( human_readable ) {
         if ( nbytes > 1073741824L )
             printf(" %10.1fG",(double)nbytes/1073741824.0);
