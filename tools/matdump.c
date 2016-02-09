@@ -60,6 +60,7 @@ static const char *helpstr[] = {
 "",
 "OPTIONS",
 "-d,--data         Print data with header information",
+"-f,--format whos  Turn on 'whos' display mode",
 "-h,--human        Human readable sizes in 'whos' display mode",
 "-v,--verbose      Turn on verbose messages",
 "-H,--help         This output",
