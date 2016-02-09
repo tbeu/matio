@@ -78,7 +78,7 @@ If any of the tests in the testsuite fail, you should report the failure using t
 The configure script used to build the software takes a number of options. This section describes the key options.
 
 * `--enable-mat73=yes`
-This flag en/disables the support for version 7.3 MAT files. The option only makes sense if built with HDF5 as support for version 7.3 files will be disabled if HDF5 is not available.
+This flag en/disables the support for version 7.3 MAT files. The option only makes sense if built with HDF5 as support for version 7.3 files. It will be disabled if HDF5 is not available.
 * `--enable-extended-sparse=yes`
 Enable extended sparse matrix data types not supported in MATLAB. MATLAB only supports double-precision sparse data. With this flag, matio will read sparse data with other types (i.e. single-precision and integer types).
 * `--with-matlab=DIR`
@@ -100,7 +100,7 @@ Visual Studio solutions are provided as [matio_vs2008.sln](visual_studio/matio_v
 * The updated VS2010 solution was tested with Visual Studio 2015 and the [HDF5 1.8.16 Visual Studio pre-built Windows binaries](https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.16/bin/windows/extra/) (vs2015-shared) including zlib.
 
 #### 2.2.4 Testsuite
-A testsuite is available when building with the GNU autotools. To run the testsuite, first configure and build matio. After building run `make check` to run the testsuite. If matio was built without zlib, the compressed variable tests will be skipped. If built without HDF5, the tests for version 7.3 MAT files will be skipped. If the path to the MATLAB application was not specified (`--with-matlab`), the write tests will fail if matio cannot read the file and skip if matio can read the file. The write tests will pass if MATLAB is available and can also read the file.
+A testsuite is available when building with the GNU autotools. To run the testsuite, first configure and build matio. After building run `make check` to run the testsuite. If matio was built without zlib, the compressed variable tests will be skipped. If built without HDF5, the tests for version 7.3 MAT files will be skipped. If the path to the MATLAB application was not specified (`--with-matlab`), the write tests (with the exception of the delete tests) will fail if matio cannot read the file and skip if matio can read the file. The write tests will pass if MATLAB is available and can also read the file.
 
 To report matio testsuite failures, compress the testsuite.log file in the test sub-directory of the build directory. Upload the compressed log file along with a bug report (see Section [1.4](#14-questions-and-reporting-bugs) for information on reporting bugs).
 
