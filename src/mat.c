@@ -1351,21 +1351,26 @@ Mat_VarGetSize(matvar_t *matvar)
     if ( matvar->class_type == MAT_C_STRUCT ) {
         int nfields;
         matvar_t **fields;
-        /* This is really nmemb*nfields, but we'll get a
-         * more accurate count of the bytes by looping over all of them
-         */
+
+        nmemb = 1;
+        for ( i = 0; i < matvar->rank; i++ )
+            nmemb *= matvar->dims[i];
         nfields = matvar->internal->num_fields;
-        fields  = (matvar_t**)matvar->data;
-        for ( i = 0; i < nfields; i++ )
-            bytes += Mat_VarGetSize(fields[i]);
+        if ( nmemb*nfields > 0 ) {
+            fields  = (matvar_t**)matvar->data;
+            if ( NULL != fields )
+                for ( i = 0; i < nmemb*nfields; i++ )
+                    bytes += Mat_VarGetSize(fields[i]);
+        }
     } else if ( matvar->class_type == MAT_C_CELL ) {
         int ncells;
         matvar_t **cells;
 
         ncells = matvar->nbytes / matvar->data_size;
         cells  = (matvar_t**)matvar->data;
-        for ( i = 0; i < ncells; i++ )
-            bytes += Mat_VarGetSize(cells[i]);
+        if ( NULL != cells )
+            for ( i = 0; i < ncells; i++ )
+                bytes += Mat_VarGetSize(cells[i]);
     } else {
         nmemb = 1;
         for ( i = 0; i < matvar->rank; i++ )
