@@ -816,9 +816,9 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 matvar->dims[1] = 1;
                 numel = 1;
             } else {
-                space_id        = H5Dget_space(field_id);
-                matvar->rank    = H5Sget_simple_extent_ndims(space_id);
-                matvar->dims    = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
+                space_id     = H5Dget_space(field_id);
+                matvar->rank = H5Sget_simple_extent_ndims(space_id);
+                matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
                 if (matvar->dims == NULL) {
                     H5Tclose(field_type_id);
                     H5Dclose(field_id);
