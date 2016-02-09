@@ -13,6 +13,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - gcc-4.8-multilib
+      - g++-4.8
       - texlive
       - texinfo
       - valgrind
@@ -37,7 +38,7 @@ env:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --user cpp-coveralls; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
 
 install:
   - svn co -q https://svn.hdfgroup.uiuc.edu/hdf5/branches/hdf5_1_8_16@28320
@@ -57,7 +58,7 @@ script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_snprintf; fi
 
 after_success:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/mat2hdf.c -e share -e patches -e hdf5_1_8_16 -e visual_studio --gcov-options '\-lp'; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/mat2hdf.c -e share -e patches -e hdf5_1_8_16 -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make pdf; fi
 
 notifications:
