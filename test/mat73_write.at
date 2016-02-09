@@ -4922,30 +4922,12 @@ AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var90],[0],[ignore],[ignor
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var91],[0],[ignore],[ignore])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var92],[0],[ignore],[ignore])
 MATIO_AT_HOST_DATA([expout],
-[      Name: var1
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-      Name: var24
-      Rank: 2
-Dimensions: 4 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-abcdefghijklmnopqrstuvwxyz
-ABCDEFGHIJKLMNOPQRSTUVWXYZ
-1234567890!@#$%^&*()-_=+`~
-@<:@{@:>@}\|;:'",<.>/?          @&t@
-}
+[Name                       Size           Bytes          Class             @&t@
+
+var1                       4x5                160B  mxDOUBLE_CLASS    @&t@
+var24                      4x26               208B  mxCHAR_CLASS      @&t@
 ],[ignore])
-AT_CHECK([$builddir/test_mat readvar test_mat_copy.mat var1 readvar test_mat_copy.mat var24],[0],
+AT_CHECK([$builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],
          [expout],[ignore])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var1],[0],[ignore],[ignore])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var24],[0],[ignore],[ignore])
