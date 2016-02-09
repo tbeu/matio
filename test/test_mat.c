@@ -2645,7 +2645,7 @@ test_readslab4(const char *file, const char *var)
     mat = Mat_Open((const char *)file,MAT_ACC_RDONLY | MAT_FT_MAT4);
     if ( mat ) {
         matvar = Mat_VarReadInfo(mat,(char*)var);
-        if ( matvar != NULL ) {
+        if ( matvar != NULL && !matvar->isComplex ) {
             stride[0] = matvar->dims[0]-1;
             stride[1] = matvar->dims[1]-1;
             Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
