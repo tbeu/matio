@@ -4778,3 +4778,126 @@ end
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_logical;exit' | $GREP PASSED],[0],[PASSED
 ],[ignore])
 AT_CLEANUP
+
+AT_SETUP([Delete variables])
+AT_KEYWORDS([delete])
+AT_CHECK([$builddir/test_mat -v 5 copy $srcdir/datasets/matio_test_cases_uncompressed_le.mat],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var2],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var3],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var4],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var5],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var6],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var7],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var8],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var9],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var10],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var11],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var12],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var13],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var14],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var15],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var16],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var17],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var18],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var19],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var20],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var21],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var22],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var23],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var25],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var26],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var27],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var28],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var29],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var30],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var31],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var32],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var33],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var34],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var35],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var36],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var37],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var38],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var39],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var40],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var41],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var42],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var43],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var44],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var45],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var46],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var47],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var48],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var49],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var50],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var51],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var52],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var53],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var54],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var55],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var56],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var57],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var58],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var59],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var60],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var61],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var62],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var63],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var64],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var65],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var66],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var67],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var68],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var69],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var70],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var71],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var72],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var73],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var74],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var75],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var76],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var77],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var78],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var79],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var80],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var81],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var82],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var83],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var84],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var85],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var86],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var87],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var88],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var89],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var90],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var91],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var92],[0],[ignore],[ignore])
+MATIO_AT_HOST_DATA([expout],
+[      Name: var1
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 5 9 13 17 @&t@
+2 6 10 14 18 @&t@
+3 7 11 15 19 @&t@
+4 8 12 16 20 @&t@
+}
+      Name: var24
+      Rank: 2
+Dimensions: 4 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+abcdefghijklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+1234567890!@#$%^&*()-_=+`~
+@<:@{@:>@}\|;:'",<.>/?          @&t@
+}
+],[ignore])
+AT_CHECK([$builddir/test_mat readvar test_mat_copy.mat var1 readvar test_mat_copy.mat var24],[0],
+         [expout],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var1],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var24],[0],[ignore],[ignore])
+AT_CLEANUP
