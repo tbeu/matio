@@ -2868,8 +2868,18 @@ test_write_sparse(enum matio_classes matvar_class,const char *output_name)
         matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,
                        data_type,2,dims,&sparse,MAT_F_DONT_COPY_DATA);
         if ( matvar != NULL ) {
-            Mat_VarWrite(mat,matvar,compression);
+            matvar_t *matvar2;
+
+            matvar2 = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,
+                       data_type,2,dims,matvar->data,0);
             Mat_VarFree(matvar);
+            if ( matvar2 != NULL ) {
+                Mat_VarWrite(mat,matvar2,compression);
+                Mat_VarFree(matvar2);
+            } else {
+                Mat_Critical("test_writesparse: Couldn't create matlab variable");
+                err = 1;
+            }
         } else {
             Mat_Critical("test_writesparse: Couldn't create matlab variable");
             err = 1;
@@ -3026,10 +3036,21 @@ test_write_complex_sparse(enum matio_classes matvar_class,const char *output_nam
         matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,data_type,2,
                                dims,&sparse,MAT_F_COMPLEX|MAT_F_DONT_COPY_DATA);
         if ( matvar != NULL ) {
-            Mat_VarWrite(mat,matvar,compression);
+            matvar_t *matvar2;
+
+            matvar2 = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,
+                       data_type,2,dims,matvar->data,MAT_F_COMPLEX);
             Mat_VarFree(matvar);
+            if ( matvar2 != NULL ) {
+                Mat_VarWrite(mat,matvar2,compression);
+                Mat_VarFree(matvar2);
+            } else {
+                Mat_Critical("test_write_complex_sparse: Couldn't create "
+                         "matlab variable");
+                err = 1;
+            }
         } else {
-            Mat_Critical("test_write_compressed_sparse: Couldn't create "
+            Mat_Critical("test_write_complex_sparse: Couldn't create "
                          "matlab variable");
             err = 1;
         }
