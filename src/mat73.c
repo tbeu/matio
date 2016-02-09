@@ -2699,6 +2699,9 @@ Mat_VarReadNextInfo73( mat_t *mat )
     if( mat == NULL )
         return NULL;
 
+    if ( mat->next_index >= mat->num_datasets )
+        return NULL;
+
     fid = *(hid_t*)mat->fp;
     idx = (hsize_t)mat->next_index;
     mat_data.mat = mat;
