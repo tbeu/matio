@@ -1051,7 +1051,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             }
             H5Tclose(type_id);
 
-            /* If the dataset is a cell array read theinfo of the cells */
+            /* If the dataset is a cell array read the info of the cells */
             if ( MAT_C_CELL == matvar->class_type ) {
                 matvar_t **cells;
                 int i,ncells = 1;
