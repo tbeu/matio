@@ -55,6 +55,11 @@ script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make check; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_snprintf; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -H; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -L; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -V; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -v -H; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -V; fi
 
 after_success:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/mat2hdf.c -e share -e patches -e hdf5_1_8_16 -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
