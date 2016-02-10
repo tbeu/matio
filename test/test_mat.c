@@ -148,6 +148,7 @@ static const char *helptestsstr[] = {
 "   Version 5 MAT File tests",
 "================================================================",
 "copy                    - Copies one matlab file to another",
+"delete                  - Deletes a specific variable from a file",
 "readvar                 - Reads a specific variable from a file",
 "getstructfield          - Tests Mat_VarGetStructField getting fields from a",
 "                          structure",
@@ -178,6 +179,16 @@ static const char *helptest_copy[] = {
     "Usage: test_mat copy FILE",
     "",
     "  Copies FILE to test_mat_copy.mat",
+    "",
+    NULL
+};
+
+static const char *helptest_delete[] = {
+    "TEST: delete",
+    "",
+    "Usage: test_mat delete FILE variable_name",
+    "",
+    "  Deletes variable_name from FILE",
     "",
     NULL
 };
@@ -656,6 +667,8 @@ help_test(const char *test)
 {
     if ( !strcmp(test,"copy") )
         Mat_Help(helptest_copy);
+    if ( !strcmp(test,"delete") )
+        Mat_Help(helptest_delete);
     else if ( !strcmp(test,"readvar") )
         Mat_Help(helptest_readvar);
     else if ( !strcmp(test,"readvarinfo") )
