@@ -841,12 +841,17 @@ main (int argc, char *argv[])
                 Mat_VerbMessage(1,"Printing data\n");
                 break;
             case 'f':
-                if ( NULL != optarg && !strcmp(optarg,"whos") ) {
-                    printfunc = print_whos;
-                    break;
-                }
-                Mat_Warning("%s is not a recognized output format. "
+                if ( NULL != optarg ) {
+                    if ( !strcmp(optarg,"whos") ) {
+                        printfunc = print_whos;
+                    } else {
+                        Mat_Warning("%s is not a recognized output format. "
                               "Using default\n", optarg);
+                    }
+                } else {
+                    Mat_Warning("Missing output format. "
+                            "Using default\n", optarg);
+                }
                 break;
             case 'h':
                 human_readable = 1;
