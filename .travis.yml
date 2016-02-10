@@ -44,8 +44,7 @@ install:
   - svn co -q https://svn.hdfgroup.uiuc.edu/hdf5/branches/hdf5_1_8_16@28320
   - cd hdf5_1_8_16
   - ./configure --quiet --enable-shared --enable-production=no --enable-debug=all --with-pic --disable-deprecated-symbols --disable-hl --with-default-api-version=v18 CFLAGS="-w"
-  - make
-  - make install
+  - make install -C src
   - cd $TRAVIS_BUILD_DIR
 
 before_script:
