@@ -33,14 +33,6 @@ MATIO_AT_HOST_DATA([expout],
 [Name                       Size           Bytes          Class             @&t@
 
 var1                       4x5                160B  mxDOUBLE_CLASS    @&t@
-var2                       4x5                 80B  mxSINGLE_CLASS    @&t@
-var3                       4x5                160B  mxINT64_CLASS     @&t@
-var4                       4x5                160B  mxUINT64_CLASS    @&t@
-var5                       4x5                 80B  mxINT32_CLASS     @&t@
-var6                       4x5                 80B  mxUINT32_CLASS    @&t@
-var7                       4x5                 40B  mxINT16_CLASS     @&t@
-var8                       4x5                 40B  mxUINT16_CLASS    @&t@
-var9                       4x5                 20B  mxINT8_CLASS      @&t@
 var10                      4x5                 20B  mxUINT8_CLASS     @&t@
 var11                      4x5                160B  mxDOUBLE_CLASS    @&t@
 var12                      4x5                 80B  mxSINGLE_CLASS    @&t@
@@ -51,6 +43,7 @@ var16                      4x5                 80B  mxUINT32_CLASS    @&t@
 var17                      4x5                 40B  mxINT16_CLASS     @&t@
 var18                      4x5                 40B  mxUINT16_CLASS    @&t@
 var19                      4x5                 20B  mxINT8_CLASS      @&t@
+var2                       4x5                 80B  mxSINGLE_CLASS    @&t@
 var20                      4x5                 20B  mxUINT8_CLASS     @&t@
 var21                      5x5                  0B  mxSPARSE_CLASS    @&t@
 var22                      5x5                  0B  mxSPARSE_CLASS    @&t@
@@ -61,6 +54,7 @@ var26                      0x1                  0B  mxSTRUCT_CLASS    @&t@
 var27                      1x2                  0B  mxSTRUCT_CLASS    @&t@
 var28                      2x1                208B  mxSTRUCT_CLASS    @&t@
 var29                      2x1                104B  mxSTRUCT_CLASS    @&t@
+var3                       4x5                160B  mxINT64_CLASS     @&t@
 var30                      2x1                208B  mxSTRUCT_CLASS    @&t@
 var31                      2x1                208B  mxSTRUCT_CLASS    @&t@
 var32                      2x1                104B  mxSTRUCT_CLASS    @&t@
@@ -71,6 +65,7 @@ var36                      2x1                 26B  mxSTRUCT_CLASS    @&t@
 var37                      2x1                 26B  mxSTRUCT_CLASS    @&t@
 var38                      2x1                208B  mxSTRUCT_CLASS    @&t@
 var39                      2x1                104B  mxSTRUCT_CLASS    @&t@
+var4                       4x5                160B  mxUINT64_CLASS    @&t@
 var40                      2x1                208B  mxSTRUCT_CLASS    @&t@
 var41                      2x1                208B  mxSTRUCT_CLASS    @&t@
 var42                      2x1                104B  mxSTRUCT_CLASS    @&t@
@@ -81,6 +76,7 @@ var46                      2x1                 26B  mxSTRUCT_CLASS    @&t@
 var47                      2x1                 26B  mxSTRUCT_CLASS    @&t@
 var48                      1x1                  0B  mxSTRUCT_CLASS    @&t@
 var49                      1x1                  0B  mxSTRUCT_CLASS    @&t@
+var5                       4x5                 80B  mxINT32_CLASS     @&t@
 var50                      2x1                208B  mxSTRUCT_CLASS    @&t@
 var51                      0x0                  0B  mxCELL_CLASS      @&t@
 var52                      1x10                 0B  mxCELL_CLASS      @&t@
@@ -91,6 +87,7 @@ var56                      2x3                288B  mxCELL_CLASS      @&t@
 var57                      2x3                144B  mxCELL_CLASS      @&t@
 var58                      2x3                144B  mxCELL_CLASS      @&t@
 var59                      2x3                 72B  mxCELL_CLASS      @&t@
+var6                       4x5                 80B  mxUINT32_CLASS    @&t@
 var60                      2x3                 72B  mxCELL_CLASS      @&t@
 var61                      2x3                 36B  mxCELL_CLASS      @&t@
 var62                      2x3                 36B  mxCELL_CLASS      @&t@
@@ -101,6 +98,7 @@ var66                      1x3                  0B  mxCELL_CLASS      @&t@
 var67                      2x10               2.1K  mxCELL_CLASS      @&t@
 var68                      2x1                  0B  mxCELL_CLASS      @&t@
 var69                      2x1                208B  mxCELL_CLASS      @&t@
+var7                       4x5                 40B  mxINT16_CLASS     @&t@
 var70                     32x32x32          256.0K  mxDOUBLE_CLASS    @&t@
 var71                     32x32x32          128.0K  mxSINGLE_CLASS    @&t@
 var72                     32x32x32          256.0K  mxINT64_CLASS     @&t@
@@ -111,6 +109,7 @@ var76                     32x32x32           64.0K  mxINT16_CLASS     @&t@
 var77                     32x32x32           64.0K  mxUINT16_CLASS    @&t@
 var78                     32x32x32           32.0K  mxINT8_CLASS      @&t@
 var79                     32x32x32           32.0K  mxUINT8_CLASS     @&t@
+var8                       4x5                 40B  mxUINT16_CLASS    @&t@
 var80                     32x32x32          256.0K  mxDOUBLE_CLASS    @&t@
 var81                     32x32x32          128.0K  mxSINGLE_CLASS    @&t@
 var82                     32x32x32          256.0K  mxINT64_CLASS     @&t@
@@ -121,6 +120,7 @@ var86                     32x32x32           64.0K  mxINT16_CLASS     @&t@
 var87                     32x32x32           64.0K  mxUINT16_CLASS    @&t@
 var88                     32x32x32           32.0K  mxINT8_CLASS      @&t@
 var89                     32x32x32           32.0K  mxUINT8_CLASS     @&t@
+var9                       4x5                 20B  mxINT8_CLASS      @&t@
 var90                      5x5                 25B  mxUINT8_CLASS     @&t@
 var91                      2x1                 90B  mxSTRUCT_CLASS    @&t@
 var92                      4x1                 90B  mxCELL_CLASS      @&t@
