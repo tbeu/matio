@@ -490,12 +490,12 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                     cells = Mat_VarGetCellsLinear(matvar,*start,
                                   *stride,*edge);
                     if (matvar->rank == 2 && matvar->dims[0] == 1) {
-                       matvar->dims[1] = *edge;
+                        matvar->dims[1] = *edge;
                     } else if (matvar->rank == 2 && matvar->dims[1] == 1) {
-                       matvar->dims[0] = *edge;
+                        matvar->dims[0] = *edge;
                     } else {
-                       matvar->rank = 1;
-                       matvar->dims[0] = *edge;
+                        matvar->rank = 1;
+                        matvar->dims[0] = *edge;
                     }
                 } else {
                     cells = Mat_VarGetCells(matvar,start,stride,edge);
