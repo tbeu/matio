@@ -615,6 +615,17 @@ WriteCharData(mat_t *mat, void *data, int N,enum matio_types data_type)
                     fwrite(&pad1,1,1,(FILE*)mat->fp);
             break;
         }
+        case MAT_T_UNKNOWN:
+        {
+            /* Sometimes empty char data will have MAT_T_UNKNOWN, so just write
+             * a data tag
+             */
+            nBytes = N*2;
+            data_type = MAT_T_UINT16;
+            fwrite(&data_type,4,1,(FILE*)mat->fp);
+            fwrite(&nBytes,4,1,(FILE*)mat->fp);
+            break;
+        }
         default:
             break;
     }
