@@ -2978,13 +2978,13 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
             mat_int32_t array_name_type = MAT_T_INT8;
             matvar_t **fields = (matvar_t **)matvar->data;
 
+            nfields = matvar->internal->num_fields;
             /* Check for a structure with no fields */
-            if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
-                 matvar->data   == NULL ) {
+            if ( nfields < 1 ) {
                 fieldname_size = 1;
                 uncomp_buf[0] = (fieldname_data_size << 16) |
                                  fieldname_type;
-                uncomp_buf[1] = 1;
+                uncomp_buf[1] = fieldname_size;
                 uncomp_buf[2] = array_name_type;
                 uncomp_buf[3] = 0;
                 z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
@@ -2998,8 +2998,6 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
                 } while ( z->avail_out == 0 );
                 break;
             }
-
-            nfields = matvar->internal->num_fields;
 
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
@@ -3454,7 +3452,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
                 fieldname_size = 1;
                 uncomp_buf[0] = (fieldname_data_size << 16) |
                                  fieldname_type;
-                uncomp_buf[1] = 1;
+                uncomp_buf[1] = fieldname_size;
                 uncomp_buf[2] = array_name_type;
                 uncomp_buf[3] = 0;
                 z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
@@ -3468,6 +3466,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
                 } while ( z->avail_out == 0 );
                 break;
             }
+
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
                 if ( len > maxlen )
@@ -5675,8 +5674,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 mat_int32_t array_name_type = MAT_T_INT8;
                 unsigned   fieldname;
 
+                nfields = matvar->internal->num_fields;
                 /* Check for a structure with no fields */
-                if ( matvar->internal->num_fields < 1 ) {
+                if ( nfields < 1 ) {
 #if 0
                     fwrite(&fieldname_type,2,1,(FILE*)mat->fp);
                     fwrite(&fieldname_data_size,2,1,(FILE*)mat->fp);
@@ -5691,7 +5691,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     fwrite(&nBytes,4,1,(FILE*)mat->fp);
                     break;
                 }
-                nfields = matvar->internal->num_fields;
+
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);
                     if ( len > maxlen )
@@ -5936,12 +5936,13 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 mat_int32_t array_name_type = MAT_T_INT8;
                 matvar_t **fields = (matvar_t **)matvar->data;
 
+                nfields = matvar->internal->num_fields;
                 /* Check for a structure with no fields */
-                if ( matvar->internal->num_fields < 1 ) {
+                if ( nfields < 1 ) {
                     fieldname_size = 1;
                     uncomp_buf[0] = (fieldname_data_size << 16) |
                                      fieldname_type;
-                    uncomp_buf[1] = 1;
+                    uncomp_buf[1] = fieldname_size;
                     uncomp_buf[2] = array_name_type;
                     uncomp_buf[3] = 0;
                     matvar->internal->z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
@@ -5955,7 +5956,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     } while ( matvar->internal->z->avail_out == 0 );
                     break;
                 }
-                nfields = matvar->internal->num_fields;
+
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);
                     if ( len > maxlen )
