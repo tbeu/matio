@@ -1,0 +1,248 @@
+# Copyright (C) 2010-2016   Christopher C. Hulbert
+#
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    1. Redistributions of source code must retain the above copyright notice,
+#       this list of conditions and the following disclaimer.
+#
+#    2. Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+AT_SETUP([Copy variables])
+AT_KEYWORDS([copy])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/matio_test_cases_compressed_le.mat],[0],[],[])
+MATIO_AT_HOST_DATA([expout],
+[Name                       Size           Bytes          Class             @&t@
+
+var1                       4x5                160B  mxDOUBLE_CLASS    @&t@
+var2                       4x5                 80B  mxSINGLE_CLASS    @&t@
+var3                       4x5                160B  mxINT64_CLASS     @&t@
+var4                       4x5                160B  mxUINT64_CLASS    @&t@
+var5                       4x5                 80B  mxINT32_CLASS     @&t@
+var6                       4x5                 80B  mxUINT32_CLASS    @&t@
+var7                       4x5                 40B  mxINT16_CLASS     @&t@
+var8                       4x5                 40B  mxUINT16_CLASS    @&t@
+var9                       4x5                 20B  mxINT8_CLASS      @&t@
+var10                      4x5                 20B  mxUINT8_CLASS     @&t@
+var11                      4x5                160B  mxDOUBLE_CLASS    @&t@
+var12                      4x5                 80B  mxSINGLE_CLASS    @&t@
+var13                      4x5                160B  mxINT64_CLASS     @&t@
+var14                      4x5                160B  mxUINT64_CLASS    @&t@
+var15                      4x5                 80B  mxINT32_CLASS     @&t@
+var16                      4x5                 80B  mxUINT32_CLASS    @&t@
+var17                      4x5                 40B  mxINT16_CLASS     @&t@
+var18                      4x5                 40B  mxUINT16_CLASS    @&t@
+var19                      4x5                 20B  mxINT8_CLASS      @&t@
+var20                      4x5                 20B  mxUINT8_CLASS     @&t@
+var21                      5x5                  0B  mxSPARSE_CLASS    @&t@
+var22                      5x5                  0B  mxSPARSE_CLASS    @&t@
+var23                      0x0                  0B  mxDOUBLE_CLASS    @&t@
+var24                      4x26               208B  mxCHAR_CLASS      @&t@
+var25                      1x1                  0B  mxSTRUCT_CLASS    @&t@
+var26                      0x1                  0B  mxSTRUCT_CLASS    @&t@
+var27                      1x2                  0B  mxSTRUCT_CLASS    @&t@
+var28                      2x1                208B  mxSTRUCT_CLASS    @&t@
+var29                      2x1                104B  mxSTRUCT_CLASS    @&t@
+var30                      2x1                208B  mxSTRUCT_CLASS    @&t@
+var31                      2x1                208B  mxSTRUCT_CLASS    @&t@
+var32                      2x1                104B  mxSTRUCT_CLASS    @&t@
+var33                      2x1                104B  mxSTRUCT_CLASS    @&t@
+var34                      2x1                 52B  mxSTRUCT_CLASS    @&t@
+var35                      2x1                 52B  mxSTRUCT_CLASS    @&t@
+var36                      2x1                 26B  mxSTRUCT_CLASS    @&t@
+var37                      2x1                 26B  mxSTRUCT_CLASS    @&t@
+var38                      2x1                208B  mxSTRUCT_CLASS    @&t@
+var39                      2x1                104B  mxSTRUCT_CLASS    @&t@
+var40                      2x1                208B  mxSTRUCT_CLASS    @&t@
+var41                      2x1                208B  mxSTRUCT_CLASS    @&t@
+var42                      2x1                104B  mxSTRUCT_CLASS    @&t@
+var43                      2x1                104B  mxSTRUCT_CLASS    @&t@
+var44                      2x1                 52B  mxSTRUCT_CLASS    @&t@
+var45                      2x1                 52B  mxSTRUCT_CLASS    @&t@
+var46                      2x1                 26B  mxSTRUCT_CLASS    @&t@
+var47                      2x1                 26B  mxSTRUCT_CLASS    @&t@
+var48                      1x1                  0B  mxSTRUCT_CLASS    @&t@
+var49                      1x1                  0B  mxSTRUCT_CLASS    @&t@
+var50                      2x1                208B  mxSTRUCT_CLASS    @&t@
+var51                      0x0                  0B  mxCELL_CLASS      @&t@
+var52                      1x10                 0B  mxCELL_CLASS      @&t@
+var53                      2x3                288B  mxCELL_CLASS      @&t@
+var54                      2x3                144B  mxCELL_CLASS      @&t@
+var55                      2x3                288B  mxCELL_CLASS      @&t@
+var56                      2x3                288B  mxCELL_CLASS      @&t@
+var57                      2x3                144B  mxCELL_CLASS      @&t@
+var58                      2x3                144B  mxCELL_CLASS      @&t@
+var59                      2x3                 72B  mxCELL_CLASS      @&t@
+var60                      2x3                 72B  mxCELL_CLASS      @&t@
+var61                      2x3                 36B  mxCELL_CLASS      @&t@
+var62                      2x3                 36B  mxCELL_CLASS      @&t@
+var63                      1x2                  0B  mxCELL_CLASS      @&t@
+var64                      2x1                  0B  mxCELL_CLASS      @&t@
+var65                      2x2                208B  mxCELL_CLASS      @&t@
+var66                      1x3                  0B  mxCELL_CLASS      @&t@
+var67                      2x10               2.1K  mxCELL_CLASS      @&t@
+var68                      2x1                  0B  mxCELL_CLASS      @&t@
+var69                      2x1                208B  mxCELL_CLASS      @&t@
+var70                     32x32x32          256.0K  mxDOUBLE_CLASS    @&t@
+var71                     32x32x32          128.0K  mxSINGLE_CLASS    @&t@
+var72                     32x32x32          256.0K  mxINT64_CLASS     @&t@
+var73                     32x32x32          256.0K  mxUINT64_CLASS    @&t@
+var74                     32x32x32          128.0K  mxINT32_CLASS     @&t@
+var75                     32x32x32          128.0K  mxUINT32_CLASS    @&t@
+var76                     32x32x32           64.0K  mxINT16_CLASS     @&t@
+var77                     32x32x32           64.0K  mxUINT16_CLASS    @&t@
+var78                     32x32x32           32.0K  mxINT8_CLASS      @&t@
+var79                     32x32x32           32.0K  mxUINT8_CLASS     @&t@
+var80                     32x32x32          256.0K  mxDOUBLE_CLASS    @&t@
+var81                     32x32x32          128.0K  mxSINGLE_CLASS    @&t@
+var82                     32x32x32          256.0K  mxINT64_CLASS     @&t@
+var83                     32x32x32          256.0K  mxUINT64_CLASS    @&t@
+var84                     32x32x32          128.0K  mxINT32_CLASS     @&t@
+var85                     32x32x32          128.0K  mxUINT32_CLASS    @&t@
+var86                     32x32x32           64.0K  mxINT16_CLASS     @&t@
+var87                     32x32x32           64.0K  mxUINT16_CLASS    @&t@
+var88                     32x32x32           32.0K  mxINT8_CLASS      @&t@
+var89                     32x32x32           32.0K  mxUINT8_CLASS     @&t@
+var90                      5x5                 25B  mxUINT8_CLASS     @&t@
+var91                      2x1                 90B  mxSTRUCT_CLASS    @&t@
+var92                      4x1                 90B  mxCELL_CLASS      @&t@
+],[ignore])
+AT_CHECK([$builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],
+         [expout],[ignore])
+AT_CLEANUP
+
+AT_SETUP([Delete variables])
+AT_KEYWORDS([delete])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/matio_test_cases_compressed_be.mat],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var2],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var3],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var4],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var5],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var6],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var7],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var8],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var9],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var10],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var11],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var12],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var13],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var14],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var15],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var16],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var17],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var18],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var19],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var20],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var21],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var22],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var23],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var25],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var26],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var27],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var28],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var29],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var30],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var31],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var32],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var33],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var34],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var35],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var36],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var37],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var38],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var39],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var40],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var41],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var42],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var43],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var44],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var45],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var46],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var47],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var48],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var49],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var50],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var51],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var52],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var53],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var54],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var55],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var56],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var57],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var58],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var59],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var60],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var61],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var62],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var63],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var64],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var65],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var66],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var67],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var68],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var69],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var70],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var71],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var72],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var73],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var74],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var75],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var76],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var77],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var78],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var79],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var80],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var81],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var82],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var83],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var84],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var85],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var86],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var87],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var88],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var89],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var90],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var91],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var92],[0],[],[])
+MATIO_AT_HOST_DATA([expout],
+[Name                       Size           Bytes          Class             @&t@
+
+var1                       4x5                160B  mxDOUBLE_CLASS    @&t@
+var24                      4x26               208B  mxCHAR_CLASS      @&t@
+],[ignore])
+AT_CHECK([$builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],
+         [expout],[ignore])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var1],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var24],[0],[],[])
+AT_CLEANUP
+
+AT_SETUP([Copy large structure])
+AT_KEYWORDS([copy large_struct])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/large_struct_compressed_le.mat],[0],[],[])
+MATIO_AT_HOST_DATA([expout],
+[Name                       Size           Bytes          Class             @&t@
+
+MA                         1x1              633684  mxSTRUCT_CLASS    @&t@
+],[ignore])
+AT_CHECK([$builddir/../tools/matdump -f whos -d test_mat_copy.mat],[0],
+         [expout],[ignore])
+AT_CLEANUP

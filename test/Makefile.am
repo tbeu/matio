@@ -31,16 +31,21 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat4_read_be.at \
                $(srcdir)/mat4_read_le.at \
                $(srcdir)/mat4_write.at \
+               $(srcdir)/mat4_readwrite.at \
                $(srcdir)/mat5_uncompressed_read_be.at \
                $(srcdir)/mat5_uncompressed_read_le.at \
                $(srcdir)/mat5_uncompressed_write.at \
+               $(srcdir)/mat5_uncompressed_readwrite.at \
                $(srcdir)/mat5_compressed_read_be.at \
                $(srcdir)/mat5_compressed_read_le.at \
                $(srcdir)/mat5_compressed_write.at \
+               $(srcdir)/mat5_compressed_readwrite.at \
                $(srcdir)/mat73_read_be.at \
                $(srcdir)/mat73_read_le.at \
                $(srcdir)/mat73_write.at \
+               $(srcdir)/mat73_readwrite.at \
                $(srcdir)/mat73_compressed_write.at \
+               $(srcdir)/mat73_compressed_readwrite.at \
                $(srcdir)/struct_api.at \
                $(srcdir)/cell_api.at \
                $(srcdir)/subscript_api.at \
