@@ -4369,6 +4369,8 @@ Read5(mat_t *mat, matvar_t *matvar)
             if ( nBytes == 0 ) {
                 matvar->nbytes = 0;
                 matvar->data   = calloc(0,1);
+                if ( matvar->data_type == MAT_T_UNKNOWN )
+                    matvar->data_type = packed_type;
                 break;
             }
             matvar->data_size = sizeof(char);
