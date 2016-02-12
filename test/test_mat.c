@@ -178,7 +178,7 @@ static const char *helptest_copy[] = {
     "",
     "Usage: test_mat copy FILE",
     "",
-    "  Copies FILE to test_mat_copy.mat",
+    "Copies FILE to test_mat_copy.mat",
     "",
     NULL
 };
@@ -188,7 +188,7 @@ static const char *helptest_delete[] = {
     "",
     "Usage: test_mat delete FILE variable_name",
     "",
-    "  Deletes variable_name from FILE",
+    "Deletes variable_name from FILE",
     "",
     NULL
 };
@@ -242,7 +242,7 @@ static const char *helptest_write_2d_logical[] = {
     "",
     "Writes a several variables to a MAT file. The variables are 2d logical",
     "arrays. Variables l1, l2, l4, and l8 if 64-bit integers are available are",
-    " the same except the logical source data are different integer sizes. The",
+    "the same except the logical source data are different integer sizes. The",
     "MAT file is the default file version, or set by the -v option. If the MAT",
     "file is version 5, compression can be enabled using the -z option if",
     "built with zlib library.",
@@ -547,14 +547,14 @@ static const char *helptest_getstructfield[] = {
     "",
     "Usage: test_mat getstructfield FILE structure field",
     "",
-    "  Tests the Mat_GetStructField function by reading fields from",
-    "  a structure. FILE is the name of the input file containing a Matlab",
-    "  structure named structure_name and either the field name or",
-    "  1-relative field index. i.e. to read the data field of the structure",
-    "  created by the write_struct test, use:",
-    "    test_mat getstructfield test_mat_write_struct.mat structure data",
-    "  OR",
-    "    test_mat getstructfield test_mat_write_struct.mat structure 1",
+    "Tests the Mat_GetStructField function by reading fields from",
+    "a structure. FILE is the name of the input file containing a Matlab",
+    "structure named structure_name and either the field name or",
+    "1-relative field index. i.e. to read the data field of the structure",
+    "created by the write_struct test, use:",
+    "  test_mat getstructfield test_mat_write_struct.mat structure data",
+    "OR",
+    "  test_mat getstructfield test_mat_write_struct.mat structure 1",
     "",
     NULL
 };
@@ -641,10 +641,10 @@ static const char *helptest_sub2ind[] = {
     "",
     "Usage: test_mat sub2ind",
     "",
-    "  Calculates a linear (single) index from a set of subscript indeces.",
-    "  The size of the array used is [256,256,124].  The 1-relative indeces",
-    "  are (233,74,1).  Therefore, the calculated 0-relative linear index",
-    "  should be 18920.",
+    "Calculates a linear (single) index from a set of subscript indeces.",
+    "The size of the array used is [256,256,124].  The 1-relative indeces",
+    "are (233,74,1).  Therefore, the calculated 0-relative linear index",
+    "should be 18920.",
     "",
     NULL
 };
@@ -654,10 +654,10 @@ static const char *helptest_ind2sub[] = {
     "",
     "Usage: test_mat ind2sub",
     "",
-    "  Calculates a set of subscript indeces from a linear (single) index.",
-    "  The size of the array used is [256,256,124].  The 1-relative linear",
-    "  index used is 18921.  Therefore, the calculated subscripts should be",
-    "  (233,74,1).",
+    "Calculates a set of subscript indeces from a linear (single) index.",
+    "The size of the array used is [256,256,124].  The 1-relative linear",
+    "index used is 18921.  Therefore, the calculated subscripts should be",
+    "(233,74,1).",
     "",
     NULL
 };
