@@ -647,8 +647,8 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
         ReadDataSlabN(mat,cdata->Re,class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
         (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
-        ReadDataSlab2(mat,cdata->Im,class_type,
-            matvar->data_type,matvar->dims,start,stride,edge);
+        ReadDataSlabN(mat,cdata->Im,class_type,matvar->data_type,
+            matvar->rank,matvar->dims,start,stride,edge);
     } else {
         ReadDataSlabN(mat,data,class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
