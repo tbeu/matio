@@ -41,14 +41,14 @@ Class Type: Double Precision Array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CHECK(
 [$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var1], [0],
 [1 5 9 13 17 @&t@
 2 6 10 14 18 @&t@
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2d double-precision complex array])
@@ -66,14 +66,14 @@ Class Type: Double Precision Array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CHECK(
 [$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var11], [0],
 [1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
 2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse array])
@@ -91,7 +91,7 @@ Class Type: Sparse Array
     (4,4)  4
     (5,5)  5
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse complex array])
@@ -109,7 +109,7 @@ Class Type: Sparse Array (complex)
     (4,4)  4 + 9i
     (5,5)  5 + 10i
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D character array])
@@ -127,7 +127,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 1234567890!@#$%^&*()-_=+`~
 @<:@{@:>@}\|;:'",<.>/?          @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read small v4 file])
@@ -142,5 +142,5 @@ Class Type: Double Precision Array
 {
 3.14159 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP

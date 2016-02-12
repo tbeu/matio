@@ -124,9 +124,9 @@ var9                       4x5                 20B  mxINT8_CLASS      @&t@
 var90                      5x5                 25B  mxUINT8_CLASS     @&t@
 var91                      2x1                 90B  mxSTRUCT_CLASS    @&t@
 var92                      4x1                 90B  mxCELL_CLASS      @&t@
-],[ignore])
+],[])
 AT_CHECK([$builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Delete variables])
@@ -229,9 +229,9 @@ MATIO_AT_HOST_DATA([expout],
 
 var1                       4x5                160B  mxDOUBLE_CLASS    @&t@
 var24                      4x26               208B  mxCHAR_CLASS      @&t@
-],[ignore])
+],[])
 AT_CHECK([$builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var1],[0],[],[])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var24],[0],[],[])
 AT_CLEANUP

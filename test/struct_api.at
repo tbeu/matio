@@ -60,8 +60,8 @@ Fields@<:@2@:>@ {
       Name: field2
       Rank: 0
 }
-],[ignore])
-AT_CHECK([$builddir/test_mat struct_api_create],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat struct_api_create],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Set structure field])
@@ -151,8 +151,8 @@ Class Type: Double Precision Array
 1 @&t@
 }
 }
-],[ignore])
-AT_CHECK([$builddir/test_mat struct_api_setfield],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat struct_api_setfield],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Get structure fieldnames])
@@ -167,8 +167,8 @@ Fieldnames of "b":
   None
 Fieldnames of "NULL":
   None
-],[ignore])
-AT_CHECK([$builddir/test_mat struct_api_getfieldnames],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat struct_api_getfieldnames],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Add fields to structure array])
@@ -216,8 +216,8 @@ Class Type: Double Precision Array
 8 9 @&t@
 }
 }
-],[ignore])
-AT_CHECK([$builddir/test_mat struct_api_addfield],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat struct_api_addfield],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Linearly index a structure])
@@ -484,8 +484,8 @@ Class Type: Double Precision Array (complex)
 8 + 20i @&t@
 }
 }
-],[ignore])
-AT_CHECK([$builddir/test_mat struct_api_getlinear],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat struct_api_getlinear],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Index structure via dimension slices])
@@ -690,6 +690,6 @@ Class Type: Double Precision Array
 -356 @&t@
 }
 }
-],[ignore])
-AT_CHECK([$builddir/test_mat struct_api_get],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat struct_api_get],[0],[expout],[])
 AT_CLEANUP

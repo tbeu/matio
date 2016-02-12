@@ -28,14 +28,14 @@ AT_SETUP([Calculate a set of subscripts from a linear index])
 AT_KEYWORDS([subscript_api])
 MATIO_AT_HOST_DATA([expout],
 [(233,74,1)
-],[ignore])
-AT_CHECK([$builddir/test_mat ind2sub],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat ind2sub],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Calculate the linear index from subscript values])
 AT_KEYWORDS([subscript_api])
 MATIO_AT_HOST_DATA([expout],
 [18920
-],[ignore])
-AT_CHECK([$builddir/test_mat sub2ind],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat sub2ind],[0],[expout],[])
 AT_CLEANUP

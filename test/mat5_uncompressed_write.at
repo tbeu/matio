@@ -25,8 +25,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 AT_SETUP([Write 2D double-precision array])
-AT_CHECK([$builddir/test_mat -v 5 -c double write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c double write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -40,9 +40,9 @@ Class Type: Double Precision Array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_double.m],
 [
@@ -63,12 +63,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_double;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D single-precision array])
-AT_CHECK([$builddir/test_mat -v 5 -c single write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c single write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -82,9 +82,9 @@ Class Type: Single Precision Array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_single.m],
 [
@@ -105,13 +105,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_single;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit integer array])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 5 -c int64 write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c int64 write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -125,9 +125,9 @@ Class Type: 64-bit, signed integer array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int64.m],
 [
@@ -148,13 +148,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int64;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit unsigned integer array])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -168,9 +168,9 @@ Class Type: 64-bit, unsigned integer array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int64.m],
 [
@@ -191,12 +191,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int64;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit integer array])
-AT_CHECK([$builddir/test_mat -v 5 -c int32 write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c int32 write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -210,9 +210,9 @@ Class Type: 32-bit, signed integer array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int32.m],
 [
@@ -233,12 +233,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int32;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit unsigned integer array])
-AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -252,9 +252,9 @@ Class Type: 32-bit, unsigned integer array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int32.m],
 [
@@ -275,12 +275,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int32;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit integer array])
-AT_CHECK([$builddir/test_mat -v 5 -c int16 write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c int16 write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -294,9 +294,9 @@ Class Type: 16-bit, signed integer array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int16.m],
 [
@@ -317,12 +317,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int16;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit unsigned integer array])
-AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -336,9 +336,9 @@ Class Type: 16-bit, unsigned integer array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int16.m],
 [
@@ -359,12 +359,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int16;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit integer array])
-AT_CHECK([$builddir/test_mat -v 5 -c int8 write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c int8 write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -378,9 +378,9 @@ Class Type: 8-bit, signed integer array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int8.m],
 [
@@ -401,12 +401,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int8;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit unsigned integer array])
-AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_2d_numeric],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_2d_numeric],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -420,9 +420,9 @@ Class Type: 8-bit, unsigned integer array
 4 9 14 19 24 29 34 39 44 49 @&t@
 5 10 15 20 25 30 35 40 45 50 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int8.m],
 [
@@ -443,12 +443,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int8;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D double-precision complex array])
 AT_CHECK([$builddir/test_mat -v 5 -c double write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -462,9 +462,9 @@ Class Type: Double Precision Array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_double.m],
 [
@@ -485,12 +485,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_double;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D single-precision complex array])
 AT_CHECK([$builddir/test_mat -v 5 -c single write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -504,9 +504,9 @@ Class Type: Single Precision Array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_single.m],
 [
@@ -527,13 +527,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_single;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit integer complex array])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c int64 write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -547,9 +547,9 @@ Class Type: 64-bit, signed integer array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_int64.m],
 [
@@ -570,13 +570,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int64;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit unsigned integer complex array])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -590,9 +590,9 @@ Class Type: 64-bit, unsigned integer array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_uint64.m],
 [
@@ -613,12 +613,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint64;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit integer complex array])
 AT_CHECK([$builddir/test_mat -v 5 -c int32 write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -632,9 +632,9 @@ Class Type: 32-bit, signed integer array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_int32.m],
 [
@@ -655,12 +655,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int32;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit unsigned integer complex array])
 AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -674,9 +674,9 @@ Class Type: 32-bit, unsigned integer array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_uint32.m],
 [
@@ -697,12 +697,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint32;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit integer complex array])
 AT_CHECK([$builddir/test_mat -v 5 -c int16 write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -716,9 +716,9 @@ Class Type: 16-bit, signed integer array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_int16.m],
 [
@@ -739,12 +739,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int16;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit unsigned integer complex array])
 AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -758,9 +758,9 @@ Class Type: 16-bit, unsigned integer array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_uint16.m],
 [
@@ -781,12 +781,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint16;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit integer complex array])
 AT_CHECK([$builddir/test_mat -v 5 -c int8 write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -800,9 +800,9 @@ Class Type: 8-bit, signed integer array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_int8.m],
 [
@@ -823,12 +823,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int8;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit unsigned integer complex array])
 AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -842,9 +842,9 @@ Class Type: 8-bit, unsigned integer array (complex)
 4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i @&t@
 5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_uint8.m],
 [
@@ -865,12 +865,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint8;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D logical array])
-AT_CHECK([$builddir/test_mat -v 5 write_2d_logical],[0],[ignore],
-         [ignore])
+AT_CHECK([$builddir/test_mat -v 5 write_2d_logical],[0],[],
+         [])
 MATIO_AT_HOST_DATA([expout],
 [      Name: l1
       Rank: 2
@@ -884,9 +884,9 @@ Class Type: 8-bit, unsigned integer array (logical)
 1 0 1 0 1 0 1 0 1 0 @&t@
 0 1 0 1 0 1 0 1 0 1 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_logical.mat l1],[0],
-         [expout],[ignore])
+         [expout],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: l2
       Rank: 2
@@ -900,9 +900,9 @@ Class Type: 16-bit, unsigned integer array (logical)
 1 0 1 0 1 0 1 0 1 0 @&t@
 0 1 0 1 0 1 0 1 0 1 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_logical.mat l2],[0],
-         [expout],[ignore])
+         [expout],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: l4
       Rank: 2
@@ -916,9 +916,9 @@ Class Type: 32-bit, unsigned integer array (logical)
 1 0 1 0 1 0 1 0 1 0 @&t@
 0 1 0 1 0 1 0 1 0 1 @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_2d_logical.mat l4],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_logical.m],
 [
@@ -954,12 +954,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_logical;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse double-precision array])
 AT_CHECK([$builddir/test_mat -v 5 -c double write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -993,9 +993,9 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_sparse_double.m],
 [
@@ -1020,12 +1020,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_sparse_double;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex double-precision array])
 AT_CHECK([$builddir/test_mat -v 5 -c double write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -1059,9 +1059,9 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_sparse_complex_double.m],
 [
@@ -1086,13 +1086,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_sparse_complex_double;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D empty array])
 AT_KEYWORDS([empty])
 AT_CHECK([$builddir/test_mat -v 5 -c double write_empty_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: empty
       Rank: 2
@@ -1101,9 +1101,9 @@ Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
 {
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_2d_numeric.mat empty],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_empty.m],
 [
@@ -1125,11 +1125,11 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write character array])
-AT_CHECK([$builddir/test_mat -v 5 write_char],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat -v 5 write_char],[0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1142,9 +1142,9 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 1234567890!@#$%^&*()-_=+`~
 @<:@{@:>@}\|;:'",<.>/?          @&t@
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_char.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_char.m],
 [
@@ -1166,13 +1166,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_char;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write empty structure array])
 AT_KEYWORDS([empty])
 AT_CHECK([$builddir/test_mat -v 5 write_empty_struct],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: var1
       Rank: 2
@@ -1181,9 +1181,9 @@ Class Type: Structure
  Data Type: Structure
 Fields@<:@0@:>@ {
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_struct.mat var1],[0],
-         [expout],[ignore])
+         [expout],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: var2
       Rank: 2
@@ -1196,9 +1196,9 @@ Fields@<:@2@:>@ {
       Name: field2
       Rank: 0
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_struct.mat var2],[0],
-         [expout],[ignore])
+         [expout],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: var3
       Rank: 2
@@ -1221,9 +1221,9 @@ Class Type: Double Precision Array
 {
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_struct.mat var3],[0],
-         [expout],[ignore])
+         [expout],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: var4
       Rank: 2
@@ -1257,9 +1257,9 @@ Class Type: Cell Array
 {
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_struct.mat var4],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_empty_struct.m],
 [
@@ -1287,12 +1287,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty_struct;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D double-precision fields])
 AT_CHECK([$builddir/test_mat -v 5 write_struct_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1341,9 +1341,9 @@ Class Type: Double Precision Array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1369,12 +1369,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D single-precision fields])
 AT_CHECK([$builddir/test_mat -v 5 -c single write_struct_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1423,9 +1423,9 @@ Class Type: Single Precision Array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1451,13 +1451,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit signed integer fields])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c int64 write_struct_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1506,9 +1506,9 @@ Class Type: 64-bit, signed integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1534,13 +1534,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit unsigned integer fields])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_struct_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1589,9 +1589,9 @@ Class Type: 64-bit, unsigned integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1617,12 +1617,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit signed integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int32 write_struct_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1671,9 +1671,9 @@ Class Type: 32-bit, signed integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1699,12 +1699,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit unsigned integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_struct_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1753,9 +1753,9 @@ Class Type: 32-bit, unsigned integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1781,12 +1781,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit signed integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int16 write_struct_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1835,9 +1835,9 @@ Class Type: 16-bit, signed integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1863,12 +1863,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit unsigned integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_struct_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1917,9 +1917,9 @@ Class Type: 16-bit, unsigned integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1945,12 +1945,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit signed integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int8 write_struct_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -1999,9 +1999,9 @@ Class Type: 8-bit, signed integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -2027,12 +2027,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit unsigned integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_struct_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2081,9 +2081,9 @@ Class Type: 8-bit, unsigned integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -2109,12 +2109,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D double-precision complex fields])
 AT_CHECK([$builddir/test_mat -v 5 write_struct_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2163,9 +2163,9 @@ Class Type: Double Precision Array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2191,12 +2191,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D single-precision complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c single write_struct_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2245,9 +2245,9 @@ Class Type: Single Precision Array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2273,13 +2273,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit signed integer complex fields])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c int64 write_struct_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2328,9 +2328,9 @@ Class Type: 64-bit, signed integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2356,13 +2356,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit unsigned integer complex fields])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_struct_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2411,9 +2411,9 @@ Class Type: 64-bit, unsigned integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2439,12 +2439,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit signed integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int32 write_struct_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2493,9 +2493,9 @@ Class Type: 32-bit, signed integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2521,12 +2521,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit unsigned integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_struct_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2575,9 +2575,9 @@ Class Type: 32-bit, unsigned integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2603,12 +2603,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit signed integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int16 write_struct_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2657,9 +2657,9 @@ Class Type: 16-bit, signed integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2685,12 +2685,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit unsigned integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_struct_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2739,9 +2739,9 @@ Class Type: 16-bit, unsigned integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2767,12 +2767,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit signed integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int8 write_struct_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2821,9 +2821,9 @@ Class Type: 8-bit, signed integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2849,12 +2849,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit unsigned integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_struct_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2903,9 +2903,9 @@ Class Type: 8-bit, unsigned integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -2931,12 +2931,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D logical fields])
 AT_CHECK([$builddir/test_mat -v 5 write_struct_2d_logical],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -2988,9 +2988,9 @@ Class Type: 8-bit, unsigned integer array (logical)
 1 1 1 1 1 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_2d_logical.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_logical.m],
 [
@@ -3016,13 +3016,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_logical;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with character fields])
 AT_KEYWORDS([bug30])
 AT_CHECK([$builddir/test_mat -v 5 write_struct_char],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3063,9 +3063,9 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 @<:@{@:>@}\|;:'",<.>/?          @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_struct_char.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_char.m],
 [
@@ -3094,12 +3094,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_char;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write empty cell array])
 AT_KEYWORDS([empty])
-AT_CHECK([$builddir/test_mat -v 5 write_empty_cell],[0],[ignore],[ignore])
+AT_CHECK([$builddir/test_mat -v 5 write_empty_cell],[0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: var1
       Rank: 2
@@ -3108,9 +3108,9 @@ Class Type: Cell Array
  Data Type: Cell Array
 {
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_cell.mat var1],[0],
-         [expout],[ignore])
+         [expout],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: var2
       Rank: 2
@@ -3131,9 +3131,9 @@ Class Type: Double Precision Array
 {
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_cell.mat var2],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_empty_cell.m],
 [
@@ -3154,12 +3154,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty_cell;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D double-precision fields])
 AT_CHECK([$builddir/test_mat -v 5 write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3204,9 +3204,9 @@ Class Type: Double Precision Array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3230,12 +3230,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D single-precision fields])
 AT_CHECK([$builddir/test_mat -v 5 -c single write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3280,9 +3280,9 @@ Class Type: Single Precision Array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3306,13 +3306,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit signed integer fields])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c int64 write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3357,9 +3357,9 @@ Class Type: 64-bit, signed integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3383,13 +3383,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit unsigned integer fields])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3434,9 +3434,9 @@ Class Type: 64-bit, unsigned integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3460,12 +3460,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit signed integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int32 write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3510,9 +3510,9 @@ Class Type: 32-bit, signed integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3536,12 +3536,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit unsigned integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3586,9 +3586,9 @@ Class Type: 32-bit, unsigned integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3612,12 +3612,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit signed integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int16 write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3662,9 +3662,9 @@ Class Type: 16-bit, signed integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3688,12 +3688,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit unsigned integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3738,9 +3738,9 @@ Class Type: 16-bit, unsigned integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3764,12 +3764,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit signed integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int8 write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3814,9 +3814,9 @@ Class Type: 8-bit, signed integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3840,12 +3840,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit unsigned integer fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_cell_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3890,9 +3890,9 @@ Class Type: 8-bit, unsigned integer array
 39 42 45 48 @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -3916,12 +3916,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D double-precision complex fields])
 AT_CHECK([$builddir/test_mat -v 5 write_cell_complex_2d_numeric],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -3966,9 +3966,9 @@ Class Type: Double Precision Array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -3994,12 +3994,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D single-precision complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c single write_cell_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4044,9 +4044,9 @@ Class Type: Single Precision Array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -4072,13 +4072,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit signed integer complex fields])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c int64 write_cell_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4123,9 +4123,9 @@ Class Type: 64-bit, signed integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -4151,13 +4151,13 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit unsigned integer complex fields])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_cell_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4202,9 +4202,9 @@ Class Type: 64-bit, unsigned integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -4230,12 +4230,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit signed integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int32 write_cell_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4280,9 +4280,9 @@ Class Type: 32-bit, signed integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -4308,12 +4308,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit unsigned integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_cell_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4358,9 +4358,9 @@ Class Type: 32-bit, unsigned integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -4386,12 +4386,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit signed integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int16 write_cell_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4436,9 +4436,9 @@ Class Type: 16-bit, signed integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -4464,12 +4464,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit unsigned integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_cell_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4514,9 +4514,9 @@ Class Type: 16-bit, unsigned integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -4542,12 +4542,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit signed integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c int8 write_cell_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4592,9 +4592,9 @@ Class Type: 8-bit, signed integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -4620,12 +4620,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit unsigned integer complex fields])
 AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_cell_complex_2d_numeric],
-         [0],[ignore],[ignore])
+         [0],[],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4670,9 +4670,9 @@ Class Type: 8-bit, unsigned integer array (complex)
 39 + 89i 42 + 92i 45 + 95i 48 + 98i @&t@
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -4698,12 +4698,12 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D logical fields])
 AT_CHECK([$builddir/test_mat -v 5 write_cell_2d_logical],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: a
       Rank: 2
@@ -4751,9 +4751,9 @@ Class Type: 8-bit, unsigned integer array (logical)
 {
 }
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_logical.mat a],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_logical.m],
 [
@@ -4776,5 +4776,5 @@ else
 end
 ])
 AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_logical;exit' | $GREP PASSED],[0],[PASSED
-],[ignore])
+],[])
 AT_CLEANUP

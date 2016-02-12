@@ -125,8 +125,8 @@ Class Type: Double Precision Array
 5 @&t@
 }
 }
-],[ignore])
-AT_CHECK([$builddir/test_mat cell_api_set],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat cell_api_set],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Linearly index cell array])
@@ -258,8 +258,8 @@ Class Type: Double Precision Array (complex)
 {
 2 + 6i @&t@
 }
-],[ignore])
-AT_CHECK([$builddir/test_mat  cell_api_getlinear],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat  cell_api_getlinear],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Index cell array via dimension slices])
@@ -349,6 +349,6 @@ Class Type: Double Precision Array
 {
 356 @&t@
 }
-],[ignore])
-AT_CHECK([$builddir/test_mat  cell_api_getcells],[0],[expout],[ignore])
+],[])
+AT_CHECK([$builddir/test_mat  cell_api_getcells],[0],[expout],[])
 AT_CLEANUP

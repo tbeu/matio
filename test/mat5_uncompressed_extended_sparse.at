@@ -27,7 +27,7 @@
 AT_SETUP([Write 2D sparse single-precision array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c single write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -61,16 +61,16 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse 64-bit integer array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c int64 write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -104,16 +104,16 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse 64-bit unsigned integer array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -147,15 +147,15 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse 32-bit integer array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int32 write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -189,15 +189,15 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse 32-bit unsigned integer array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -231,15 +231,15 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse 16-bit integer array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int16 write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -273,15 +273,15 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse 16-bit unsigned integer array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -315,15 +315,15 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse 8-bit integer array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int8 write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -357,15 +357,15 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse 8-bit unsigned integer array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -399,15 +399,15 @@ Class Type: Sparse Array
     (3,10)  48
     (4,10)  49
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[ignore])
+         [expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex single-precision array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c single write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -441,16 +441,16 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex 64-bit integer complex array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c int64 write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -484,16 +484,16 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex 64-bit unsigned integer complex array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -527,15 +527,15 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex 32-bit integer complex array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int32 write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -569,15 +569,15 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex 32-bit unsigned integer complex array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -611,15 +611,15 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex 16-bit integer complex array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int16 write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -653,15 +653,15 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex 16-bit unsigned integer complex array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -695,15 +695,15 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex 8-bit integer complex array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int8 write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -737,15 +737,15 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex 8-bit unsigned integer complex array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_complex_sparse],[0],
-         [ignore],[ignore])
+         [],[])
 MATIO_AT_HOST_DATA([expout],
 [      Name: sparse_matrix
       Rank: 2
@@ -779,7 +779,7 @@ Class Type: Sparse Array (complex)
     (3,10)  48 + 98i
     (4,10)  49 + 99i
 }
-],[ignore])
+],[])
 AT_CHECK([$builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[ignore])
+         [0],[expout],[])
 AT_CLEANUP

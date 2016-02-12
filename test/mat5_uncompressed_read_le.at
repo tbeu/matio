@@ -38,14 +38,14 @@ Class Type: Double Precision Array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-]], [ignore])
+]], [])
 AT_CHECK(
 [$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var1], [0],
 [1 5 9 13 17 @&t@
 2 6 10 14 18 @&t@
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision array])
@@ -62,7 +62,7 @@ Class Type: Single Precision Array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer array])
@@ -79,7 +79,7 @@ Class Type: 64-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer array])
@@ -96,7 +96,7 @@ Class Type: 64-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer array])
@@ -113,7 +113,7 @@ Class Type: 32-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer array])
@@ -130,7 +130,7 @@ Class Type: 32-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer array])
@@ -147,7 +147,7 @@ Class Type: 16-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer array])
@@ -164,7 +164,7 @@ Class Type: 16-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer array])
@@ -181,7 +181,7 @@ Class Type: 8-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer array])
@@ -198,7 +198,7 @@ Class Type: 8-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D double-precision complex array])
@@ -215,14 +215,14 @@ Class Type: Double Precision Array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-]], [ignore])
+]], [])
 AT_CHECK(
 [$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var11], [0],
 [1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
 2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision complex array])
@@ -239,7 +239,7 @@ Class Type: Single Precision Array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer complex array])
@@ -256,7 +256,7 @@ Class Type: 64-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer complex array])
@@ -273,7 +273,7 @@ Class Type: 64-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer complex array])
@@ -290,7 +290,7 @@ Class Type: 32-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer complex array])
@@ -307,7 +307,7 @@ Class Type: 32-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer complex array])
@@ -324,7 +324,7 @@ Class Type: 16-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer complex array])
@@ -341,7 +341,7 @@ Class Type: 16-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer complex array])
@@ -358,7 +358,7 @@ Class Type: 8-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer complex array])
@@ -375,7 +375,7 @@ Class Type: 8-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D logical array])
@@ -393,7 +393,7 @@ Class Type: 8-bit, unsigned integer array (logical)
 1 1 1 1 0 @&t@
 1 1 1 1 1 @&t@
 }
-]], [ignore])
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse array])
@@ -411,7 +411,7 @@ Class Type: Sparse Array
     (4,4)  4
     (5,5)  5
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse complex array])
@@ -429,7 +429,7 @@ Class Type: Sparse Array (complex)
     (4,4)  4 + 9i
     (5,5)  5 + 10i
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read empty array])
@@ -443,7 +443,7 @@ Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
 {
 }
-]], [ignore])
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read 2D character array])
@@ -460,7 +460,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 1234567890!@#$%^&*()-_=+`~
 @<:@{@:>@}\|;:'",<.>/?          @&t@
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array])
@@ -474,7 +474,7 @@ Class Type: Structure
  Data Type: Structure
 Fields@<:@0@:>@ {
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array with fields])
@@ -492,7 +492,7 @@ Fields@<:@2@:>@ {
       Name: field2
       Rank: 0
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with empty fields])
@@ -531,7 +531,7 @@ Class Type: Cell Array
 {
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with double-precision fields])
@@ -580,7 +580,7 @@ Class Type: Double Precision Array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with single-precision fields])
@@ -629,7 +629,7 @@ Class Type: Single Precision Array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 64-bit integer fields])
@@ -678,7 +678,7 @@ Class Type: 64-bit, signed integer array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 64-bit unsigned integer fields])
@@ -727,7 +727,7 @@ Class Type: 64-bit, unsigned integer array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 32-bit integer fields])
@@ -776,7 +776,7 @@ Class Type: 32-bit, signed integer array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 32-bit unsigned integer fields])
@@ -825,7 +825,7 @@ Class Type: 32-bit, unsigned integer array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 16-bit integer fields])
@@ -874,7 +874,7 @@ Class Type: 16-bit, signed integer array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 16-bit unsigned integer fields])
@@ -923,7 +923,7 @@ Class Type: 16-bit, unsigned integer array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 8-bit integer fields])
@@ -972,7 +972,7 @@ Class Type: 8-bit, signed integer array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 8-bit unsigned integer fields])
@@ -1021,7 +1021,7 @@ Class Type: 8-bit, unsigned integer array
 17 20 23 26 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex double-precision fields])
@@ -1070,7 +1070,7 @@ Class Type: Double Precision Array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex single-precision fields])
@@ -1119,7 +1119,7 @@ Class Type: Single Precision Array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 64-bit integer fields])
@@ -1168,7 +1168,7 @@ Class Type: 64-bit, signed integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 64-bit unsigned integer fields])
@@ -1217,7 +1217,7 @@ Class Type: 64-bit, unsigned integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 32-bit integer fields])
@@ -1266,7 +1266,7 @@ Class Type: 32-bit, signed integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 32-bit unsigned integer fields])
@@ -1315,7 +1315,7 @@ Class Type: 32-bit, unsigned integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 16-bit integer fields])
@@ -1364,7 +1364,7 @@ Class Type: 16-bit, signed integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 16-bit unsigned integer fields])
@@ -1413,7 +1413,7 @@ Class Type: 16-bit, unsigned integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 8-bit integer fields])
@@ -1462,7 +1462,7 @@ Class Type: 8-bit, signed integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 8-bit unsigned integer fields])
@@ -1511,7 +1511,7 @@ Class Type: 8-bit, unsigned integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with logical fields])
@@ -1570,7 +1570,7 @@ Class Type: 8-bit, unsigned integer array (logical)
 0 0 0 0 1 @&t@
 }
 }
-]], [ignore])
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with double-precision sparse fields])
@@ -1625,7 +1625,7 @@ Class Type: Sparse Array
     (5,4)  20
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex double-precision sparse fields])
@@ -1680,7 +1680,7 @@ Class Type: Sparse Array (complex)
     (5,4)  20 + -40i
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with character fields])
@@ -1725,7 +1725,7 @@ Class Type: Character Array
 @<:@{@:>@}\|;:'",<.>/?          @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read empty cell array])
@@ -1739,7 +1739,7 @@ Class Type: Cell Array
  Data Type: Cell Array
 {
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty arrays])
@@ -1813,7 +1813,7 @@ Class Type: 8-bit, unsigned integer array
 {
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with double-precision arrays])
@@ -1877,7 +1877,7 @@ Class Type: Double Precision Array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with single-precision arrays])
@@ -1941,7 +1941,7 @@ Class Type: Single Precision Array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 64-bit integer arrays])
@@ -2005,7 +2005,7 @@ Class Type: 64-bit, signed integer array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 64-bit unsigned integer arrays])
@@ -2069,7 +2069,7 @@ Class Type: 64-bit, unsigned integer array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 32-bit integer arrays])
@@ -2133,7 +2133,7 @@ Class Type: 32-bit, signed integer array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 32-bit unsigned integer arrays])
@@ -2197,7 +2197,7 @@ Class Type: 32-bit, unsigned integer array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 16-bit integer arrays])
@@ -2261,7 +2261,7 @@ Class Type: 16-bit, signed integer array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 16-bit unsigned integer arrays])
@@ -2325,7 +2325,7 @@ Class Type: 16-bit, unsigned integer array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 8-bit integer arrays])
@@ -2389,7 +2389,7 @@ Class Type: 8-bit, signed integer array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 8-bit unsigned integer arrays])
@@ -2453,7 +2453,7 @@ Class Type: 8-bit, unsigned integer array
 35 36 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with logical arrays])
@@ -2508,7 +2508,7 @@ Class Type: 8-bit, unsigned integer array (logical)
 0 0 0 0 1 @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with double-precision sparse arrays])
@@ -2561,7 +2561,7 @@ Class Type: Sparse Array
     (5,4)  20
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with complex double-precision sparse arrays])
@@ -2614,7 +2614,7 @@ Class Type: Sparse Array (complex)
     (5,4)  20 + -40i
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with character arrays])
@@ -2655,7 +2655,7 @@ Class Type: Character Array
 @<:@{@:>@}\|;:'",<.>/?          @&t@
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty structure arrays])
@@ -2716,7 +2716,7 @@ Class Type: Cell Array
 }
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with structure arrays (numeric fields)])
@@ -3569,7 +3569,7 @@ Class Type: 8-bit, unsigned integer array (complex)
 }
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with structure arrays (sparse fields)])
@@ -3678,7 +3678,7 @@ Class Type: Sparse Array (complex)
 }
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
 
 AT_SETUP([Read cell array structure arrays (character fields)])
@@ -3735,5 +3735,5 @@ Class Type: Character Array
 }
 }
 }
-], [ignore])
+], [])
 AT_CLEANUP
