@@ -1603,3 +1603,203 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compre
 179 + 205i @&t@
 ]], [])
 AT_CLEANUP
+
+AT_SETUP([Read slab of double-precision array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var28.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single-precision array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var29.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of 64-bit integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var30.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of 64-bit unsigned integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var31.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of 32-bit integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var32.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of 32-bit unsigned integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var33.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of 16-bit integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var34.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of 16-bit unsigned integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var35.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of 8-bit integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var36.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of 8-bit unsigned integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var37.field2\(1:1:end,1:1:end\)], [0],
+[[2 5 8 11 @&t@
+3 6 9 12 @&t@
+4 7 10 13 @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double-precision array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var38.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single-precision array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var39.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex 64-bit integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var40.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex 64-bit unsigned integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var41.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex 32-bit integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var42.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex 32-bit unsigned integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var43.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex 16-bit integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var44.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex 16-bit unsigned integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var45.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex 8-bit integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var46.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex 8-bit unsigned integer array from structure])
+AT_KEYWORDS([mat5_compressed_readslab readslab structure])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var47.field2\(1:1:end,1:1:end\)], [0],
+[[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
+3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
+4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CLEANUP
