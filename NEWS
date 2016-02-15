@@ -1,3 +1,24 @@
+Changes in 1.5.4 (16 February 2016)
+* Added support of reading sparse array from v4 MAT files
+* Added support of writing sparse array to v4 MAT files
+* Added support of writing character array to v4 MAT files
+* Added support of autogen.sh on Darwin
+* Added missing Visual Studio project files for test_mat
+* Added missing Visual Studio resource file
+* Enabled C++ compilation
+* Updated snprintf.c to C99 snprintf v1.1
+* Increased testsuite coverage
+* Fixed bug writing complex array to v4 MAT files
+* Fixed bug writing cell containing a struct with fields but empty array to compressed v5 MAT files
+* Fixed bug reading hyperslabs of cells and struct fields from compressed v5 MAT files (broken by v1.5.3)
+* Fixed bug writing empty character array to uncompressed v5 MAT files
+* Fixed bug reading cells and struct fields from HDF5 MAT files
+* Fixed bug printing array dimensions in Mat_VarPrint on MinGW
+* Fixed bug calculating array sizes of structs in Mat_VarGetSize
+* Fixed bug duplicating sparse array in Mat_VarDuplicate
+* Fixed testsuite if zlib/hdf5 dependencies are missing
+* Several other fixes, especially for memory leaks
+
 Changes in 1.5.3 (11 January 2016)
 * Added support for writing numeric arrays to v4 MAT files
 * Added Visual Studio project for test_mat
@@ -14,7 +35,7 @@ Changes in 1.5.3 (11 January 2016)
   Visual Studio versions
 * Various fixes for unused variables, unnecessary initializations, etc. that
   cause compilers to issue diagnostics
-* Several other fixes, especially for memory leak
+* Several other fixes, especially for memory leaks
 
 Changes in 1.5.2 (31 July 2013)
 * Added support for linear data read for v4 and HDF5 MAT files

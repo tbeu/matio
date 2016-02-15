@@ -36,8 +36,8 @@
 @sp 0
 @title 
 @subtitle User Manual
-@subtitle for version 1.5.3
-@subtitle January 2016
+@subtitle for version 1.5.4
+@subtitle February 2016
 @author Christopher C. Hulbert
 @page
 @vskip 0pt plus 1filll
