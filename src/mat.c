@@ -976,7 +976,45 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     if ( (in->internal->z != NULL) && (NULL != (out->internal->z = (z_streamp)malloc(sizeof(z_stream)))) )
         inflateCopy(out->internal->z,in->internal->z);
     if ( in->internal->data != NULL ) {
-        if ( out->isComplex ) {
+        if ( in->class_type == MAT_C_SPARSE ) {
+            out->internal->data = malloc(sizeof(mat_sparse_t));
+            if ( out->internal->data != NULL ) {
+                mat_sparse_t *out_sparse = (mat_sparse_t*)out->internal->data;
+                mat_sparse_t *in_sparse  = (mat_sparse_t*)in->internal->data;
+                out_sparse->nzmax = in_sparse->nzmax;
+                out_sparse->nir = in_sparse->nir;
+                out_sparse->ir = (int*)malloc(in_sparse->nir*sizeof(int));
+                if ( out_sparse->ir != NULL )
+                    memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(int));
+                out_sparse->njc = in_sparse->njc;
+                out_sparse->jc = (int*)malloc(in_sparse->njc*sizeof(int));
+                if ( out_sparse->jc != NULL )
+                    memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(int));
+                out_sparse->ndata = in_sparse->ndata;
+                if ( out->isComplex && NULL != in_sparse->data ) {
+                    out_sparse->data = malloc(sizeof(mat_complex_split_t));
+                    if ( out_sparse->data != NULL ) {
+                        mat_complex_split_t *out_data = (mat_complex_split_t*)out_sparse->data;
+                        mat_complex_split_t *in_data  = (mat_complex_split_t*)in_sparse->data;
+                        out_data->Re = malloc(
+                            in_sparse->ndata*Mat_SizeOf(in->data_type));
+                        if ( NULL != out_data->Re )
+                            memcpy(out_data->Re,in_data->Re,
+                                in_sparse->ndata*Mat_SizeOf(in->data_type));
+                        out_data->Im = malloc(
+                            in_sparse->ndata*Mat_SizeOf(in->data_type));
+                        if ( NULL != out_data->Im )
+                            memcpy(out_data->Im,in_data->Im,
+                                in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    }
+                } else if ( in_sparse->data != NULL ) {
+                    out_sparse->data = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    if ( NULL != out_sparse->data )
+                        memcpy(out_sparse->data, in_sparse->data,
+                            in_sparse->ndata*Mat_SizeOf(in->data_type));
+                }
+            }
+        } else if ( out->isComplex ) {
             out->internal->data = malloc(sizeof(mat_complex_split_t));
             if ( out->internal->data != NULL ) {
                 mat_complex_split_t *out_data = (mat_complex_split_t*)out->internal->data;
@@ -1020,6 +1058,39 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
             outcells = (matvar_t **)out->data;
             for ( i = 0; i < ncells; i++ ) {
                 outcells[i] = Mat_VarDuplicate(incells[i],opt);
+            }
+        }
+    } else if ( (in->data != NULL) && (in->class_type == MAT_C_SPARSE) ) {
+        out->data = malloc(sizeof(mat_sparse_t));
+        if ( out->data != NULL ) {
+            mat_sparse_t *out_sparse = (mat_sparse_t*)out->data;
+            mat_sparse_t *in_sparse  = (mat_sparse_t*)in->data;
+            out_sparse->nzmax = in_sparse->nzmax;
+            out_sparse->nir = in_sparse->nir;
+            out_sparse->ir = (int*)malloc(in_sparse->nir*sizeof(int));
+            if ( out_sparse->ir != NULL )
+                memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(int));
+            out_sparse->njc = in_sparse->njc;
+            out_sparse->jc = (int*)malloc(in_sparse->njc*sizeof(int));
+            if ( out_sparse->jc != NULL )
+                memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(int));
+            out_sparse->ndata = in_sparse->ndata;
+            if ( out->isComplex && NULL != in_sparse->data ) {
+                out_sparse->data = malloc(sizeof(mat_complex_split_t));
+                if ( out_sparse->data != NULL ) {
+                    mat_complex_split_t *out_data = (mat_complex_split_t*)out_sparse->data;
+                    mat_complex_split_t *in_data  = (mat_complex_split_t*)in_sparse->data;
+                    out_data->Re = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    if ( NULL != out_data->Re )
+                        memcpy(out_data->Re,in_data->Re,in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    out_data->Im = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    if ( NULL != out_data->Im )
+                        memcpy(out_data->Im,in_data->Im,in_sparse->ndata*Mat_SizeOf(in->data_type));
+                }
+            } else if ( in_sparse->data != NULL ) {
+                out_sparse->data = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                if ( NULL != out_sparse->data )
+                    memcpy(out_sparse->data, in_sparse->data, in_sparse->ndata*Mat_SizeOf(in->data_type));
             }
         }
     } else if ( in->data != NULL ) {
@@ -1139,7 +1210,24 @@ Mat_VarFree(matvar_t *matvar)
         if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             inflateEnd(matvar->internal->z);
             free(matvar->internal->z);
-            if ( matvar->isComplex && NULL != matvar->internal->data ) {
+            if ( (matvar->internal->data != NULL) && (matvar->class_type == MAT_C_SPARSE) ) {
+                mat_sparse_t *sparse;
+                sparse = (mat_sparse_t*)matvar->internal->data;
+                if ( sparse->ir != NULL )
+                    free(sparse->ir);
+                if ( sparse->jc != NULL )
+                    free(sparse->jc);
+                if ( matvar->isComplex && NULL != sparse->data ) {
+                    mat_complex_split_t *complex_data = (mat_complex_split_t*)sparse->data;
+                    free(complex_data->Re);
+                    free(complex_data->Im);
+                    free(complex_data);
+                } else if ( sparse->data != NULL ) {
+                    free(sparse->data);
+                }
+                free(sparse);
+            }
+            else if ( (matvar->internal->data != NULL) && matvar->isComplex ) {
                 mat_complex_split_t *complex_data =
                     (mat_complex_split_t*)matvar->internal->data;
                 free(complex_data->Re);
