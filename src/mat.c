@@ -531,6 +531,7 @@ Mat_VarCalloc(void)
             matvar->internal->num_fields = 0;
 #if defined(HAVE_ZLIB)
             matvar->internal->z          = NULL;
+            matvar->internal->data       = NULL;
 #endif
         }
     }
@@ -951,6 +952,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->internal->datapos  = in->internal->datapos;
 #if defined(HAVE_ZLIB)
     out->internal->z        = NULL;
+    out->internal->data     = NULL;
 #endif
     out->internal->num_fields = in->internal->num_fields;
     if ( NULL != in->internal->fieldnames && in->internal->num_fields > 0 ) {
@@ -969,9 +971,12 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->dims = (size_t*)malloc(in->rank*sizeof(*out->dims));
     if ( out->dims != NULL )
         memcpy(out->dims,in->dims,in->rank*sizeof(*out->dims));
+
 #if defined(HAVE_ZLIB)
     if ( (in->internal->z != NULL) && (NULL != (out->internal->z = (z_streamp)malloc(sizeof(z_stream)))) )
         inflateCopy(out->internal->z,in->internal->z);
+    if ( (in->internal->data != NULL) && (NULL != (out->internal->data = malloc(in->nbytes))) )
+        memcpy(out->internal->data, in->internal->data, in->nbytes);
 #endif
 
     if ( !opt ) {
@@ -1119,6 +1124,8 @@ Mat_VarFree(matvar_t *matvar)
         if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             inflateEnd(matvar->internal->z);
             free(matvar->internal->z);
+            if ( NULL != matvar->internal->data )
+                free(matvar->internal->data);
         }
 #endif
 #if defined(MAT73) && MAT73

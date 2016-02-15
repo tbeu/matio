@@ -1910,14 +1910,16 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                                than the zlib inflate state (approximately) */
                             cells[i]->internal->fp = mat;
                             Read5(mat,cells[i]);
+                            cells[i]->internal->data = cells[i]->data;
+                            cells[i]->data = NULL;
                         }
                         (void)fseek((FILE*)mat->fp,cells[i]->internal->datapos,SEEK_SET);
                     } else {
                         Mat_Critical("Couldn't determine file position");
                     }
-                    if ( cells[i]->data != NULL && (nbytes <= (1 << MAX_WBITS) ||
-                        cells[i]->class_type == MAT_C_STRUCT ||
-                        cells[i]->class_type == MAT_C_CELL) ) {
+                    if ( cells[i]->internal->data != NULL ||
+                         cells[i]->class_type == MAT_C_STRUCT ||
+                         cells[i]->class_type == MAT_C_CELL ) {
                         /* Memory optimization: Free inflate state */
                         inflateEnd(cells[i]->internal->z);
                         free(cells[i]->internal->z);
@@ -2240,14 +2242,16 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                                than the zlib inflate state (approximately) */
                             fields[i]->internal->fp = mat;
                             Read5(mat,fields[i]);
+                            fields[i]->internal->data = fields[i]->data;
+                            fields[i]->data = NULL;
                         }
                         (void)fseek((FILE*)mat->fp,fields[i]->internal->datapos,SEEK_SET);
                     } else {
                         Mat_Critical("Couldn't determine file position");
                     }
-                    if ( fields[i]->data != NULL && (nbytes <= (1 << MAX_WBITS) ||
-                        fields[i]->class_type == MAT_C_STRUCT ||
-                        fields[i]->class_type == MAT_C_CELL) ) {
+                    if ( fields[i]->internal->data != NULL ||
+                         fields[i]->class_type == MAT_C_STRUCT ||
+                         fields[i]->class_type == MAT_C_CELL ) {
                         /* Memory optimization: Free inflate state */
                         inflateEnd(fields[i]->internal->z);
                         free(fields[i]->internal->z);
@@ -3939,12 +3943,14 @@ Read5(mat_t *mat, matvar_t *matvar)
         return;
     else if ( matvar->rank == 0 )        /* An empty data set */
         return;
-    else if ( matvar->class_type != MAT_C_STRUCT &&
-        matvar->class_type != MAT_C_CELL && matvar->data != NULL ) {
+#if defined(HAVE_ZLIB)
+    else if ( NULL != matvar->internal->data ) {
         /* Data already read in ReadNextStructField or ReadNextCell */
+        matvar->data = matvar->internal->data;
+        matvar->internal->data = NULL;
         return;
     }
-
+#endif
     fpos = ftell((FILE*)mat->fp);
     if ( fpos == -1L ) {
         Mat_Critical("Couldn't determine file position");
@@ -5090,6 +5096,1159 @@ Read5(mat_t *mat, matvar_t *matvar)
     return;
 }
 
+#if defined(HAVE_ZLIB)
+static int
+GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
+    enum matio_types data_type, size_t *dims, int *start, int *stride, int *edge,
+    int rank, size_t nbytes)
+{
+    int err = 0;
+    int data_size = Mat_SizeOf(data_type);
+
+    if ( rank == 2 ) {
+        if ( stride[0]*(edge[0]-1)+start[0]+1 > dims[0] )
+            err = 1;
+        else if ( stride[1]*(edge[1]-1)+start[1]+1 > dims[1] )
+            err = 1;
+        else if ( (stride[0] == 1 && edge[0] == dims[0]) &&
+                  (stride[1] == 1) )
+            memcpy(data_out, data_in, nbytes);
+        else {
+            int i, j;
+
+            switch ( class_type ) {
+                case MAT_C_DOUBLE:
+                {
+                    double *ptr = (double *)data_out;
+                    double *ptr_in = (double *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+                case MAT_C_SINGLE:
+                {
+                    float *ptr = (float *)data_out;
+                    float *ptr_in = (float *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+#ifdef HAVE_MAT_INT64_T
+                case MAT_C_INT64:
+                {
+                    mat_int64_t *ptr = (mat_int64_t *)data_out;
+                    mat_int64_t *ptr_in = (mat_int64_t *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
+                case MAT_C_UINT64:
+                {
+                    mat_uint64_t *ptr = (mat_uint64_t *)data_out;
+                    mat_uint64_t *ptr_in = (mat_uint64_t *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+#endif /* HAVE_MAT_UINT64_T */
+                case MAT_C_INT32:
+                {
+                    mat_int32_t *ptr = (mat_int32_t *)data_out;
+                    mat_int32_t *ptr_in = (mat_int32_t *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+                case MAT_C_UINT32:
+                {
+                    mat_uint32_t *ptr = (mat_uint32_t *)data_out;
+                    mat_uint32_t *ptr_in = (mat_uint32_t *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+                case MAT_C_INT16:
+                {
+                    mat_int16_t *ptr = (mat_int16_t *)data_out;
+                    mat_int16_t *ptr_in = (mat_int16_t *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+                case MAT_C_UINT16:
+                {
+                    mat_uint16_t *ptr = (mat_uint16_t *)data_out;
+                    mat_uint16_t *ptr_in = (mat_uint16_t *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+                case MAT_C_INT8:
+                {
+                    mat_int8_t *ptr = (mat_int8_t *)data_out;
+                    mat_int8_t *ptr_in = (mat_int8_t *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+                case MAT_C_UINT8:
+                {
+                    mat_uint8_t *ptr = (mat_uint8_t *)data_out;
+                    mat_uint8_t *ptr_in = (mat_uint8_t *)data_in;
+
+                    ptr_in += start[1]*dims[0] + start[0];
+                    for ( i = 0; i < edge[1]; i++ ) {
+                        for ( j = 0; j < edge[0]; j++ )
+                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
+                        ptr_in += stride[1]*dims[0];
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    } else {
+        int nBytes = 0, i, j, N, I = 0;
+        int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
+
+        switch ( class_type ) {
+            case MAT_C_DOUBLE:
+            {
+                double *ptr = (double *)data_out;
+                double *ptr_in = (double *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case MAT_C_SINGLE:
+            {
+                float *ptr = (float *)data_out;
+                float *ptr_in = (float *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+#ifdef HAVE_MAT_INT64_T
+            case MAT_C_INT64:
+            {
+                mat_int64_t *ptr = (mat_int64_t *)data_out;
+                mat_int64_t *ptr_in = (mat_int64_t *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
+            case MAT_C_UINT64:
+            {
+                mat_uint64_t *ptr = (mat_uint64_t *)data_out;
+                mat_uint64_t *ptr_in = (mat_uint64_t *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+#endif /* HAVE_MAT_UINT64_T */
+            case MAT_C_INT32:
+            {
+                mat_int32_t *ptr = (mat_int32_t *)data_out;
+                mat_int32_t *ptr_in = (mat_int32_t *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case MAT_C_UINT32:
+            {
+                mat_int32_t *ptr = (mat_int32_t *)data_out;
+                mat_int32_t *ptr_in = (mat_int32_t *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case MAT_C_INT16:
+            {
+                mat_int16_t *ptr = (mat_int16_t *)data_out;
+                mat_int16_t *ptr_in = (mat_int16_t *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case MAT_C_UINT16:
+            {
+                mat_uint16_t *ptr = (mat_uint16_t *)data_out;
+                mat_uint16_t *ptr_in = (mat_uint16_t *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case MAT_C_INT8:
+            {
+                mat_int8_t *ptr = (mat_int8_t *)data_out;
+                mat_int8_t *ptr_in = (mat_int8_t *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case MAT_C_UINT8:
+            {
+                mat_uint8_t *ptr = (mat_uint8_t *)data_out;
+                mat_uint8_t *ptr_in = (mat_uint8_t *)data_in;
+
+                inc[0]  = stride[0]-1;
+                dimp[0] = dims[0];
+                N       = edge[0];
+                I       = 0; /* start[0]; */
+                for ( i = 1; i < rank; i++ ) {
+                    inc[i]  = stride[i]-1;
+                    dimp[i] = dims[i-1];
+                    for ( j = i; j--; ) {
+                        inc[i]  *= dims[j];
+                        dimp[i] *= dims[j+1];
+                    }
+                    N *= edge[i];
+                    I += dimp[i-1]*start[i];
+                }
+                ptr_in += I;
+                if ( stride[0] == 1 ) {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
+                        I += dims[0]-start[0];
+                        ptr_in += dims[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += (dimp[j-1]*start[j]);
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for ( i = 0; i < N; i+=edge[0] ) {
+                        if ( start[0] ) {
+                            ptr_in += start[0];
+                            I += start[0];
+                        }
+                        for ( j = 0; j < edge[0]; j++ ) {
+                            memcpy(ptr+i+j, ptr_in, data_size);
+                            ptr_in += stride[0];
+                            I += stride[0];
+                        }
+                        I += dims[0]-edge[0]*stride[0]-start[0];
+                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
+                        for ( j = 1; j < rank; j++ ) {
+                            cnt[j]++;
+                            if ( (cnt[j] % edge[j]) == 0 ) {
+                                cnt[j] = 0;
+                                if ( (I % dimp[j]) != 0 ) {
+                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
+                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
+                                } else if ( start[j] ) {
+                                    ptr_in += dimp[j-1]*start[j];
+                                    I += dimp[j-1]*start[j];
+                                }
+                            } else {
+                                I += inc[j];
+                                ptr_in += inc[j];
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    return err;
+}
+
+static int
+GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
+    enum matio_types data_type, int start, int stride, int edge)
+{
+    int data_size = Mat_SizeOf(data_type);
+
+    switch ( class_type ) {
+        case MAT_C_DOUBLE:
+        {
+            double *ptr = (double *)data_out;
+            double *ptr_in = (double*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+        case MAT_C_SINGLE:
+        {
+            float *ptr = (float *)data_out;
+            float *ptr_in = (float*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+#ifdef HAVE_MAT_INT64_T
+        case MAT_C_INT64:
+        {
+            mat_int64_t *ptr = (mat_int64_t *)data_out;
+            mat_int64_t *ptr_in = (mat_int64_t*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_C_UINT64:
+        {
+            mat_uint64_t *ptr = (mat_uint64_t *)data_out;
+            mat_uint64_t *ptr_in = (mat_uint64_t*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+#endif /* HAVE_MAT_UINT64_T */
+        case MAT_C_INT32:
+        {
+            mat_int32_t *ptr = (mat_int32_t *)data_out;
+            mat_int32_t *ptr_in = (mat_int32_t*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+        case MAT_C_UINT32:
+        {
+            mat_uint32_t *ptr = (mat_uint32_t *)data_out;
+            mat_uint32_t *ptr_in = (mat_uint32_t*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+        case MAT_C_INT16:
+        {
+            mat_int16_t *ptr = (mat_int16_t *)data_out;
+            mat_int16_t *ptr_in = (mat_int16_t*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+        case MAT_C_UINT16:
+        {
+            mat_uint16_t *ptr = (mat_uint16_t *)data_out;
+            mat_uint16_t *ptr_in = (mat_uint16_t*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+        case MAT_C_INT8:
+        {
+            mat_int8_t *ptr = (mat_int8_t *)data_out;
+            mat_int8_t *ptr_in = (mat_int8_t*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+        case MAT_C_UINT8:
+        {
+            mat_uint8_t *ptr = (mat_uint8_t *)data_out;
+            mat_uint8_t *ptr_in = (mat_uint8_t*)data_in;
+
+            ptr_in += start;
+            if ( !stride ) {
+                memcpy(ptr, ptr_in, edge*data_size);
+            } else {
+                int i;
+                for ( i = 0; i < edge; i++ )
+                    memcpy(ptr++, ptr_in+i*stride, data_size);
+            }
+            break;
+        }
+        default:
+            break;
+    }
+    return 0;
+}
+#endif
+
 /** @if mat_devman
  * @brief Reads a slab of data from the mat variable @c matvar
  *
@@ -5130,9 +6289,32 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
         }
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
+        if ( NULL != matvar->internal->data ) {
+            /* Data already read in ReadNextStructField or ReadNextCell */
+            if ( matvar->isComplex ) {
+                mat_complex_split_t *ci, *co;
+
+                co = (mat_complex_split_t*)data;
+                ci = (mat_complex_split_t*)matvar->internal->data;
+                err = GetDataSlab(ci->Re, co->Re, matvar->class_type,
+                    matvar->data_type, matvar->dims, start, stride, edge,
+                    matvar->rank, matvar->nbytes);
+                if ( err == 0 )
+                    err = GetDataSlab(ci->Im, co->Im, matvar->class_type,
+                        matvar->data_type, matvar->dims, start, stride, edge,
+                        matvar->rank, matvar->nbytes);
+                return err;
+            } else {
+                return GetDataSlab(matvar->internal->data, data, matvar->class_type,
+                    matvar->data_type, matvar->dims, start, stride, edge,
+                    matvar->rank, matvar->nbytes);
+            }
+        }
+
         err = inflateCopy(&z,matvar->internal->z);
         if ( err != Z_OK ) {
             Mat_Critical("inflateCopy returned error %s",zError(err));
+            return -1;
         }
         z.avail_in = 0;
         InflateDataType(mat,&z,tag);
@@ -5288,7 +6470,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
     if ( err )
         return err;
 
-    switch(matvar->class_type) {
+    switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
             matvar->data_type = MAT_T_DOUBLE;
             matvar->data_size = sizeof(double);
@@ -5381,10 +6563,30 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
         }
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
+        if ( NULL != matvar->internal->data ) {
+            /* Data already read in ReadNextStructField or ReadNextCell */
+            if ( matvar->isComplex ) {
+                mat_complex_split_t *ci, *co;
+
+                co = (mat_complex_split_t*)data;
+                ci = (mat_complex_split_t*)matvar->internal->data;
+                err = GetDataLinear(ci->Re, co->Re, matvar->class_type,
+                    matvar->data_type, start, stride, edge);
+                if ( err == 0 )
+                    err = GetDataLinear(ci->Im, co->Im, matvar->class_type,
+                        matvar->data_type, start, stride, edge);
+                return err;
+            } else {
+                return GetDataLinear(matvar->internal->data, data, matvar->class_type,
+                    matvar->data_type, start, stride, edge);
+            }
+        }
+
         matvar->internal->z->avail_in = 0;
         err = inflateCopy(&z,matvar->internal->z);
         if ( err != Z_OK ) {
             Mat_Critical("inflateCopy returned error %s",zError(err));
+            return -1;
         }
         InflateDataType(mat,&z,tag);
         if ( mat->byteswap ) {
