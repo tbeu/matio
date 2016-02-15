@@ -3629,6 +3629,75 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
  *-------------------------------------------------------------------
  */
 
+#define READ_DATA_SLABN_RANK_LOOP \
+    do { \
+        for ( j = 1; j < rank; j++ ) { \
+            cnt[j]++; \
+            if ( (cnt[j] % edge[j]) == 0 ) { \
+                cnt[j] = 0; \
+                if ( (I % dimp[j]) != 0 ) { \
+                    (void)fseek((FILE*)mat->fp,data_size*(dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]),SEEK_CUR); \
+                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]; \
+                } else if ( start[j] ) { \
+                    (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),SEEK_CUR); \
+                    I += dimp[j-1]*start[j]; \
+                } \
+            } else { \
+                I += inc[j]; \
+                (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR); \
+                break; \
+            } \
+        } \
+    } while (0)
+
+#define READ_DATA_SLABN(ReadDataFunc) \
+    do { \
+        inc[0]  = stride[0]-1; \
+        dimp[0] = dims[0]; \
+        N       = edge[0]; \
+        I       = 0; /* start[0]; */ \
+        for ( i = 1; i < rank; i++ ) { \
+            inc[i]  = stride[i]-1; \
+            dimp[i] = dims[i-1]; \
+            for ( j = i; j--; ) { \
+                inc[i]  *= dims[j]; \
+                dimp[i] *= dims[j+1]; \
+            } \
+            N *= edge[i]; \
+            I += dimp[i-1]*start[i]; \
+        } \
+        (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR); \
+        if ( stride[0] == 1 ) { \
+            for ( i = 0; i < N; i+=edge[0] ) { \
+                if ( start[0] ) { \
+                    (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR); \
+                    I += start[0]; \
+                } \
+                ReadDataFunc(mat,ptr+i,data_type,edge[0]); \
+                I += dims[0]-start[0]; \
+                (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]), \
+                    SEEK_CUR); \
+                READ_DATA_SLABN_RANK_LOOP; \
+            } \
+        } else { \
+            for ( i = 0; i < N; i+=edge[0] ) { \
+                if ( start[0] ) { \
+                    (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR); \
+                    I += start[0]; \
+                } \
+                for ( j = 0; j < edge[0]; j++ ) { \
+                    ReadDataFunc(mat,ptr+i+j,data_type,1); \
+                    (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR); \
+                    I += stride[0]; \
+                } \
+                I += dims[0]-edge[0]*stride[0]-start[0]; \
+                (void)fseek((FILE*)mat->fp,data_size* \
+                    (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR); \
+                READ_DATA_SLABN_RANK_LOOP; \
+            } \
+        } \
+    } while (0)
+
 /** @brief Reads data of type @c data_type by user-defined dimensions
  *
  * @ingroup mat_internal
@@ -3664,263 +3733,20 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
         case MAT_C_DOUBLE:
         {
             double *ptr = (double*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadDoubleData(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadDoubleData(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
+            READ_DATA_SLABN(ReadDoubleData);
             break;
         }
         case MAT_C_SINGLE:
         {
             float *ptr = (float*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadSingleData(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadSingleData(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
-            break;
+            READ_DATA_SLABN(ReadSingleData);
+           break;
         }
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
             mat_int64_t *ptr = (mat_int64_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadInt64Data(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadInt64Data(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
+            READ_DATA_SLABN(ReadInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
@@ -3928,611 +3754,44 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
         case MAT_C_UINT64:
         {
             mat_uint64_t *ptr = (mat_uint64_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadUInt64Data(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadUInt64Data(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
+            READ_DATA_SLABN(ReadUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
             mat_int32_t *ptr = (mat_int32_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadInt32Data(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadInt32Data(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
+            READ_DATA_SLABN(ReadInt32Data);
             break;
         }
         case MAT_C_UINT32:
         {
             mat_uint32_t *ptr = (mat_uint32_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadUInt32Data(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadUInt32Data(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
+            READ_DATA_SLABN(ReadUInt32Data);
             break;
         }
         case MAT_C_INT16:
         {
             mat_int16_t *ptr = (mat_int16_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadInt16Data(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadInt16Data(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
+            READ_DATA_SLABN(ReadInt16Data);
             break;
         }
         case MAT_C_UINT16:
         {
             mat_uint16_t *ptr = (mat_uint16_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadUInt16Data(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadUInt16Data(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
+            READ_DATA_SLABN(ReadUInt16Data);
             break;
         }
         case MAT_C_INT8:
         {
             mat_int8_t *ptr = (mat_int8_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadInt8Data(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadInt8Data(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
+            READ_DATA_SLABN(ReadInt8Data);
             break;
         }
         case MAT_C_UINT8:
         {
             mat_uint8_t *ptr = (mat_uint8_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0; /* start[0]; */
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    ReadUInt8Data(mat,ptr+i,data_type,edge[0]);
-                    I += dims[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]),
-                        SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j])+
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadUInt8Data(mat,ptr+i+j,data_type,1);
-                        (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR);
-                        I += stride[0];
-                    }
-                    I += dims[0]-edge[0]*stride[0]-start[0];
-                    (void)fseek((FILE*)mat->fp,data_size*
-                        (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                (void)fseek((FILE*)mat->fp,data_size*
-                                    (dimp[j]-(I % dimp[j]) +
-                                    dimp[j-1]*start[j]),SEEK_CUR);
-                                I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                            } else if ( start[j] ) {
-                                (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),
-                                    SEEK_CUR);
-                                I += dimp[j-1]*start[j];
-                            }
-                        } else {
-                            I += inc[j];
-                            (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR);
-                            break;
-                        }
-                    }
-                }
-            }
+            READ_DATA_SLABN(ReadUInt8Data);
             break;
         }
         default:
@@ -4541,7 +3800,81 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
     return nBytes;
 }
 
+#undef READ_DATA_SLABN
+#undef READ_DATA_SLABN_RANK_LOOP
+
 #if defined(HAVE_ZLIB)
+#define READ_COMPRESSED_DATA_SLABN_RANK_LOOP \
+    do { \
+        for ( j = 1; j < rank; j++ ) { \
+            cnt[j]++; \
+            if ( (cnt[j] % edge[j]) == 0 ) { \
+                cnt[j] = 0; \
+                if ( (I % dimp[j]) != 0 ) { \
+                    InflateSkipData(mat,&z_copy,data_type, dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]); \
+                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]; \
+                } else if ( start[j] ) { \
+                    InflateSkipData(mat,&z_copy,data_type, dimp[j-1]*start[j]); \
+                    I += dimp[j-1]*start[j]; \
+                } \
+            } else { \
+                if ( inc[j] ) { \
+                    I += inc[j]; \
+                    InflateSkipData(mat,&z_copy,data_type,inc[j]); \
+                } \
+                break; \
+            } \
+        } \
+    } while (0)
+
+#define READ_COMPRESSED_DATA_SLABN(ReadDataFunc) \
+    do { \
+        inc[0]  = stride[0]-1; \
+        dimp[0] = dims[0]; \
+        N       = edge[0]; \
+        I       = 0; \
+        for ( i = 1; i < rank; i++ ) { \
+            inc[i]  = stride[i]-1; \
+            dimp[i] = dims[i-1]; \
+            for ( j = i; j--; ) { \
+                inc[i]  *= dims[j]; \
+                dimp[i] *= dims[j+1]; \
+            } \
+            N *= edge[i]; \
+            I += dimp[i-1]*start[i]; \
+        } \
+        /* Skip all data to the starting indices */ \
+        InflateSkipData(mat,&z_copy,data_type,I); \
+        if ( stride[0] == 1 ) { \
+            for ( i = 0; i < N; i+=edge[0] ) { \
+                if ( start[0] ) { \
+                    InflateSkipData(mat,&z_copy,data_type,start[0]); \
+                    I += start[0]; \
+                } \
+                ReadDataFunc(mat,&z_copy,ptr+i,data_type,edge[0]); \
+                InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]); \
+                I += dims[0]-start[0]; \
+                READ_COMPRESSED_DATA_SLABN_RANK_LOOP; \
+            } \
+        } else { \
+            for ( i = 0; i < N; i+=edge[0] ) { \
+                if ( start[0] ) { \
+                    InflateSkipData(mat,&z_copy,data_type,start[0]); \
+                    I += start[0]; \
+                } \
+                for ( j = 0; j < edge[0]-1; j++ ) { \
+                    ReadDataFunc(mat,&z_copy,ptr+i+j,data_type,1); \
+                    InflateSkipData(mat,&z_copy,data_type,(stride[0]-1)); \
+                    I += stride[0]; \
+                } \
+                ReadDataFunc(mat,&z_copy,ptr+i+j,data_type,1); \
+                I += dims[0]-(edge[0]-1)*stride[0]-start[0]; \
+                InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1); \
+                READ_COMPRESSED_DATA_SLABN_RANK_LOOP; \
+            } \
+        } \
+    } while (0)
+
 /** @brief Reads data of type @c data_type by user-defined dimensions
  *
  * @ingroup mat_internal
@@ -4577,921 +3910,66 @@ ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
     switch ( class_type ) {
         case MAT_C_DOUBLE:
         {
-            double *ptr;
-
-            ptr     = (double*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedDoubleData(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedDoubleData(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedDoubleData(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-#if 0
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        InflateSkipData(mat,&z_copy,data_type,
-                              dims[0]-edge[0]*stride[0]-start[0]);
-#endif
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            double *ptr = (double*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedDoubleData);
             break;
         }
         case MAT_C_SINGLE:
         {
-            float *ptr;
-
-            ptr     = (float*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedSingleData(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedSingleData(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedSingleData(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            float *ptr = (float*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
-            mat_int64_t *ptr;
-
-            ptr     = (mat_int64_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedInt64Data(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedInt64Data(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedInt64Data(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            mat_int64_t *ptr = (mat_int64_t*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
         {
-            mat_uint64_t *ptr;
-
-            ptr     = (mat_uint64_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedUInt64Data(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedUInt64Data(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedUInt64Data(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            mat_uint64_t *ptr = (mat_uint64_t*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
-            mat_int32_t *ptr;
-
-            ptr     = (mat_int32_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedInt32Data(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedInt32Data(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedInt32Data(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            mat_int32_t *ptr = (mat_int32_t*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedInt32Data);
             break;
         }
         case MAT_C_UINT32:
         {
-            mat_uint32_t *ptr;
-
-            ptr     = (mat_uint32_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedUInt32Data(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedUInt32Data(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedUInt32Data(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            mat_uint32_t *ptr = (mat_uint32_t*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedUInt32Data);
             break;
         }
         case MAT_C_INT16:
         {
-            mat_int16_t *ptr;
-
-            ptr     = (mat_int16_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedInt16Data(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedInt16Data(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedInt16Data(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            mat_int16_t *ptr = (mat_int16_t*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedInt16Data);
             break;
         }
         case MAT_C_UINT16:
         {
-            mat_uint16_t *ptr;
-
-            ptr     = (mat_uint16_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedUInt16Data(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedUInt16Data(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedUInt16Data(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            mat_uint16_t *ptr = (mat_uint16_t*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedUInt16Data);
             break;
         }
         case MAT_C_INT8:
         {
-            mat_int8_t *ptr;
-
-            ptr     = (mat_int8_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedInt8Data(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedInt8Data(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedInt8Data(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            mat_int8_t *ptr = (mat_int8_t*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedInt8Data);
             break;
         }
         case MAT_C_UINT8:
         {
-            mat_uint8_t *ptr;
-
-            ptr     = (mat_uint8_t*)data;
-            inc[0]  = stride[0]-1;
-            dimp[0] = dims[0];
-            N       = edge[0];
-            I       = 0;
-            for ( i = 1; i < rank; i++ ) {
-                inc[i]  = stride[i]-1;
-                dimp[i] = dims[i-1];
-                for ( j = i; j--; ) {
-                    inc[i]  *= dims[j];
-                    dimp[i] *= dims[j+1];
-                }
-                N *= edge[i];
-                I += dimp[i-1]*start[i];
-            }
-            /* Skip all data to the starting indices */
-            InflateSkipData(mat,&z_copy,data_type,I);
-            if ( stride[0] == 1 ) {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    ReadCompressedUInt8Data(mat,&z_copy,ptr+i,data_type,edge[0]);
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
-                    I += dims[0]-start[0];
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for ( i = 0; i < N; i+=edge[0] ) {
-                    if ( start[0] ) {
-                        InflateSkipData(mat,&z_copy,data_type,start[0]);
-                        I += start[0];
-                    }
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedUInt8Data(mat,&z_copy,ptr+i+j,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
-                        I += stride[0];
-                    }
-                    ReadCompressedUInt8Data(mat,&z_copy,ptr+i+j,data_type,1);
-                    I += dims[0]-(edge[0]-1)*stride[0]-start[0];
-                    InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
-                    for ( j = 1; j < rank; j++ ) {
-                        cnt[j]++;
-                        if ( (cnt[j] % edge[j]) == 0 ) {
-                            cnt[j] = 0;
-                            if ( (I % dimp[j]) != 0 ) {
-                                InflateSkipData(mat,&z_copy,data_type,
-                                      dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]);
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    InflateSkipData(mat,&z_copy,data_type,
-                                        dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                        } else {
-                            if ( inc[j] ) {
-                                I += inc[j];
-                                InflateSkipData(mat,&z_copy,data_type,inc[j]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            mat_uint8_t *ptr = (mat_uint8_t*)data;
+            READ_COMPRESSED_DATA_SLABN(ReadCompressedUInt8Data);
             break;
         }
         default:
@@ -5500,6 +3978,9 @@ ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
     inflateEnd(&z_copy);
     return nBytes;
 }
+
+#undef READ_COMPRESSED_DATA_SLABN
+#undef READ_COMPRESSED_DATA_SLABN_RANK_LOOP
 #endif
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 1-D

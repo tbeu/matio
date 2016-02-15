@@ -5097,6 +5097,83 @@ Read5(mat_t *mat, matvar_t *matvar)
 }
 
 #if defined(HAVE_ZLIB)
+#define GET_DATA_SLABN_RANK_LOOP \
+    do { \
+        for ( j = 1; j < rank; j++ ) { \
+            cnt[j]++; \
+            if ( (cnt[j] % edge[j]) == 0 ) { \
+                cnt[j] = 0; \
+                if ( (I % dimp[j]) != 0 ) { \
+                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]; \
+                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]; \
+                } else if ( start[j] ) { \
+                    ptr_in += dimp[j-1]*start[j]; \
+                    I += dimp[j-1]*start[j]; \
+                } \
+            } else { \
+                I += inc[j]; \
+                ptr_in += inc[j]; \
+                break; \
+            } \
+        } \
+    } while (0)
+
+#define GET_DATA_SLAB2 \
+    do { \
+        ptr_in += start[1]*dims[0] + start[0]; \
+        for ( i = 0; i < edge[1]; i++ ) { \
+            for ( j = 0; j < edge[0]; j++ ) \
+                memcpy(ptr++, ptr_in+j*stride[0], data_size); \
+            ptr_in += stride[1]*dims[0]; \
+        } \
+    } while (0)
+
+#define GET_DATA_SLABN \
+    do { \
+        inc[0]  = stride[0]-1; \
+        dimp[0] = dims[0]; \
+        N       = edge[0]; \
+        I       = 0; /* start[0]; */ \
+        for ( i = 1; i < rank; i++ ) { \
+            inc[i]  = stride[i]-1; \
+            dimp[i] = dims[i-1]; \
+            for ( j = i; j--; ) { \
+                inc[i]  *= dims[j]; \
+                dimp[i] *= dims[j+1]; \
+            } \
+            N *= edge[i]; \
+            I += dimp[i-1]*start[i]; \
+        } \
+        ptr_in += I; \
+        if ( stride[0] == 1 ) { \
+            for ( i = 0; i < N; i+=edge[0] ) { \
+                if ( start[0] ) { \
+                    ptr_in += start[0]; \
+                    I += start[0]; \
+                } \
+                memcpy(ptr+i, ptr_in, edge[0]*data_size); \
+                I += dims[0]-start[0]; \
+                ptr_in += dims[0]-start[0]; \
+                GET_DATA_SLABN_RANK_LOOP; \
+            } \
+        } else { \
+            for ( i = 0; i < N; i+=edge[0] ) { \
+                if ( start[0] ) { \
+                    ptr_in += start[0]; \
+                    I += start[0]; \
+                } \
+                for ( j = 0; j < edge[0]; j++ ) { \
+                    memcpy(ptr+i+j, ptr_in, data_size); \
+                    ptr_in += stride[0]; \
+                    I += stride[0]; \
+                } \
+                I += dims[0]-edge[0]*stride[0]-start[0]; \
+                ptr_in += dims[0]-edge[0]*stride[0]-start[0]; \
+                GET_DATA_SLABN_RANK_LOOP; \
+            } \
+        } \
+    } while (0)
+
 static int
 GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
     enum matio_types data_type, size_t *dims, int *start, int *stride, int *edge,
@@ -5121,26 +5198,14 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                 {
                     double *ptr = (double *)data_out;
                     double *ptr_in = (double *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
                 case MAT_C_SINGLE:
                 {
                     float *ptr = (float *)data_out;
                     float *ptr_in = (float *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
 #ifdef HAVE_MAT_INT64_T
@@ -5148,13 +5213,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                 {
                     mat_int64_t *ptr = (mat_int64_t *)data_out;
                     mat_int64_t *ptr_in = (mat_int64_t *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
 #endif /* HAVE_MAT_INT64_T */
@@ -5163,13 +5222,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                 {
                     mat_uint64_t *ptr = (mat_uint64_t *)data_out;
                     mat_uint64_t *ptr_in = (mat_uint64_t *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
 #endif /* HAVE_MAT_UINT64_T */
@@ -5177,81 +5230,46 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                 {
                     mat_int32_t *ptr = (mat_int32_t *)data_out;
                     mat_int32_t *ptr_in = (mat_int32_t *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
                 case MAT_C_UINT32:
                 {
                     mat_uint32_t *ptr = (mat_uint32_t *)data_out;
                     mat_uint32_t *ptr_in = (mat_uint32_t *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
                 case MAT_C_INT16:
                 {
                     mat_int16_t *ptr = (mat_int16_t *)data_out;
                     mat_int16_t *ptr_in = (mat_int16_t *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
                 case MAT_C_UINT16:
                 {
                     mat_uint16_t *ptr = (mat_uint16_t *)data_out;
                     mat_uint16_t *ptr_in = (mat_uint16_t *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
                 case MAT_C_INT8:
                 {
                     mat_int8_t *ptr = (mat_int8_t *)data_out;
                     mat_int8_t *ptr_in = (mat_int8_t *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
                 case MAT_C_UINT8:
                 {
                     mat_uint8_t *ptr = (mat_uint8_t *)data_out;
                     mat_uint8_t *ptr_in = (mat_uint8_t *)data_in;
-
-                    ptr_in += start[1]*dims[0] + start[0];
-                    for ( i = 0; i < edge[1]; i++ ) {
-                        for ( j = 0; j < edge[0]; j++ )
-                            memcpy(ptr++, ptr_in+j*stride[0], data_size);
-                        ptr_in += stride[1]*dims[0];
-                    }
+                    GET_DATA_SLAB2;
                     break;
                 }
                 default:
+                    err = 1;
                     break;
             }
         }
@@ -5264,162 +5282,14 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
             {
                 double *ptr = (double *)data_out;
                 double *ptr_in = (double *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                GET_DATA_SLABN;
                 break;
             }
             case MAT_C_SINGLE:
             {
                 float *ptr = (float *)data_out;
                 float *ptr_in = (float *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                GET_DATA_SLABN;
                 break;
             }
 #ifdef HAVE_MAT_INT64_T
@@ -5427,81 +5297,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
             {
                 mat_int64_t *ptr = (mat_int64_t *)data_out;
                 mat_int64_t *ptr_in = (mat_int64_t *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                GET_DATA_SLABN;
                 break;
             }
 #endif /* HAVE_MAT_INT64_T */
@@ -5510,81 +5306,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
             {
                 mat_uint64_t *ptr = (mat_uint64_t *)data_out;
                 mat_uint64_t *ptr_in = (mat_uint64_t *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                GET_DATA_SLABN;
                 break;
             }
 #endif /* HAVE_MAT_UINT64_T */
@@ -5592,499 +5314,74 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
             {
                 mat_int32_t *ptr = (mat_int32_t *)data_out;
                 mat_int32_t *ptr_in = (mat_int32_t *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                GET_DATA_SLABN;
                 break;
             }
             case MAT_C_UINT32:
             {
-                mat_int32_t *ptr = (mat_int32_t *)data_out;
-                mat_int32_t *ptr_in = (mat_int32_t *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                mat_uint32_t *ptr = (mat_uint32_t *)data_out;
+                mat_uint32_t *ptr_in = (mat_uint32_t *)data_in;
+                GET_DATA_SLABN;
                 break;
             }
             case MAT_C_INT16:
             {
                 mat_int16_t *ptr = (mat_int16_t *)data_out;
                 mat_int16_t *ptr_in = (mat_int16_t *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                GET_DATA_SLABN;
                 break;
             }
             case MAT_C_UINT16:
             {
                 mat_uint16_t *ptr = (mat_uint16_t *)data_out;
                 mat_uint16_t *ptr_in = (mat_uint16_t *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                GET_DATA_SLABN;
                 break;
             }
             case MAT_C_INT8:
             {
                 mat_int8_t *ptr = (mat_int8_t *)data_out;
                 mat_int8_t *ptr_in = (mat_int8_t *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                GET_DATA_SLABN;
                 break;
             }
             case MAT_C_UINT8:
             {
                 mat_uint8_t *ptr = (mat_uint8_t *)data_out;
                 mat_uint8_t *ptr_in = (mat_uint8_t *)data_in;
-
-                inc[0]  = stride[0]-1;
-                dimp[0] = dims[0];
-                N       = edge[0];
-                I       = 0; /* start[0]; */
-                for ( i = 1; i < rank; i++ ) {
-                    inc[i]  = stride[i]-1;
-                    dimp[i] = dims[i-1];
-                    for ( j = i; j--; ) {
-                        inc[i]  *= dims[j];
-                        dimp[i] *= dims[j+1];
-                    }
-                    N *= edge[i];
-                    I += dimp[i-1]*start[i];
-                }
-                ptr_in += I;
-                if ( stride[0] == 1 ) {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        memcpy(ptr+i, ptr_in, edge[0]*data_size);
-                        I += dims[0]-start[0];
-                        ptr_in += dims[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += (dimp[j-1]*start[j]);
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    for ( i = 0; i < N; i+=edge[0] ) {
-                        if ( start[0] ) {
-                            ptr_in += start[0];
-                            I += start[0];
-                        }
-                        for ( j = 0; j < edge[0]; j++ ) {
-                            memcpy(ptr+i+j, ptr_in, data_size);
-                            ptr_in += stride[0];
-                            I += stride[0];
-                        }
-                        I += dims[0]-edge[0]*stride[0]-start[0];
-                        ptr_in += dims[0]-edge[0]*stride[0]-start[0];
-                        for ( j = 1; j < rank; j++ ) {
-                            cnt[j]++;
-                            if ( (cnt[j] % edge[j]) == 0 ) {
-                                cnt[j] = 0;
-                                if ( (I % dimp[j]) != 0 ) {
-                                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j];
-                                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j];
-                                } else if ( start[j] ) {
-                                    ptr_in += dimp[j-1]*start[j];
-                                    I += dimp[j-1]*start[j];
-                                }
-                            } else {
-                                I += inc[j];
-                                ptr_in += inc[j];
-                                break;
-                            }
-                        }
-                    }
-                }
+                GET_DATA_SLABN;
                 break;
             }
             default:
+                err = 1;
                 break;
         }
     }
     return err;
 }
 
+#undef GET_DATA_SLABN
+#undef GET_DATA_SLAB2
+#undef GET_DATA_SLABN_RANK_LOOP
+
+#define GET_DATA_LINEAR \
+    do { \
+        ptr_in += start; \
+        if ( !stride ) { \
+            memcpy(ptr, ptr_in, edge*data_size); \
+        } else { \
+            int i; \
+            for ( i = 0; i < edge; i++ ) \
+                memcpy(ptr++, ptr_in+i*stride, data_size); \
+        } \
+    } while (0)
+
+
 static int
 GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
     enum matio_types data_type, int start, int stride, int edge)
 {
+    int err = 0;
     int data_size = Mat_SizeOf(data_type);
 
     switch ( class_type ) {
@@ -6092,30 +5389,14 @@ GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
         {
             double *ptr = (double *)data_out;
             double *ptr_in = (double*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
         case MAT_C_SINGLE:
         {
             float *ptr = (float *)data_out;
             float *ptr_in = (float*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
 #ifdef HAVE_MAT_INT64_T
@@ -6123,15 +5404,7 @@ GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
         {
             mat_int64_t *ptr = (mat_int64_t *)data_out;
             mat_int64_t *ptr_in = (mat_int64_t*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
@@ -6140,15 +5413,7 @@ GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
         {
             mat_uint64_t *ptr = (mat_uint64_t *)data_out;
             mat_uint64_t *ptr_in = (mat_uint64_t*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
@@ -6156,97 +5421,52 @@ GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
         {
             mat_int32_t *ptr = (mat_int32_t *)data_out;
             mat_int32_t *ptr_in = (mat_int32_t*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
         case MAT_C_UINT32:
         {
             mat_uint32_t *ptr = (mat_uint32_t *)data_out;
             mat_uint32_t *ptr_in = (mat_uint32_t*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
         case MAT_C_INT16:
         {
             mat_int16_t *ptr = (mat_int16_t *)data_out;
             mat_int16_t *ptr_in = (mat_int16_t*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
         case MAT_C_UINT16:
         {
             mat_uint16_t *ptr = (mat_uint16_t *)data_out;
             mat_uint16_t *ptr_in = (mat_uint16_t*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
         case MAT_C_INT8:
         {
             mat_int8_t *ptr = (mat_int8_t *)data_out;
             mat_int8_t *ptr_in = (mat_int8_t*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
         case MAT_C_UINT8:
         {
             mat_uint8_t *ptr = (mat_uint8_t *)data_out;
             mat_uint8_t *ptr_in = (mat_uint8_t*)data_in;
-
-            ptr_in += start;
-            if ( !stride ) {
-                memcpy(ptr, ptr_in, edge*data_size);
-            } else {
-                int i;
-                for ( i = 0; i < edge; i++ )
-                    memcpy(ptr++, ptr_in+i*stride, data_size);
-            }
+            GET_DATA_LINEAR;
             break;
         }
         default:
+            err = 1;
             break;
     }
-    return 0;
+    return err;
 }
+
+#undef GET_DATA_LINEAR
 #endif
 
 /** @if mat_devman
