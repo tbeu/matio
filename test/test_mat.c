@@ -3190,8 +3190,14 @@ int main (int argc, char *argv[])
             mat2 = Mat_Open(argv[k++],MAT_ACC_RDONLY);
             if ( mat && mat2 ) {
                 while ( NULL != (matvar = Mat_VarReadNext(mat2)) ) {
-                    Mat_VarWrite(mat,matvar,compression);
+                    matvar_t* copy = Mat_VarDuplicate(matvar, 1);
                     Mat_VarFree(matvar);
+                    if ( NULL != copy ) {
+                        Mat_VarWrite(mat,copy,compression);
+                        Mat_VarFree(copy);
+                    } else {
+                        err++;
+                    }
                 }
                 Mat_Close(mat);
                 Mat_Close(mat2);
