@@ -975,8 +975,23 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 #if defined(HAVE_ZLIB)
     if ( (in->internal->z != NULL) && (NULL != (out->internal->z = (z_streamp)malloc(sizeof(z_stream)))) )
         inflateCopy(out->internal->z,in->internal->z);
-    if ( (in->internal->data != NULL) && (NULL != (out->internal->data = malloc(in->nbytes))) )
-        memcpy(out->internal->data, in->internal->data, in->nbytes);
+    if ( in->internal->data != NULL ) {
+        if ( out->isComplex ) {
+            out->internal->data = malloc(sizeof(mat_complex_split_t));
+            if ( out->internal->data != NULL ) {
+                mat_complex_split_t *out_data = (mat_complex_split_t*)out->internal->data;
+                mat_complex_split_t *in_data  = (mat_complex_split_t*)in->internal->data;
+                out_data->Re = malloc(out->nbytes);
+                if ( NULL != out_data->Re )
+                    memcpy(out_data->Re,in_data->Re,out->nbytes);
+                out_data->Im = malloc(out->nbytes);
+                if ( NULL != out_data->Im )
+                    memcpy(out_data->Im,in_data->Im,out->nbytes);
+            }
+        } else if ( NULL != (out->internal->data = malloc(in->nbytes)) ) {
+            memcpy(out->internal->data, in->internal->data, in->nbytes);
+        }
+    }
 #endif
 
     if ( !opt ) {
@@ -1124,8 +1139,15 @@ Mat_VarFree(matvar_t *matvar)
         if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             inflateEnd(matvar->internal->z);
             free(matvar->internal->z);
-            if ( NULL != matvar->internal->data )
+            if ( matvar->isComplex && NULL != matvar->internal->data ) {
+                mat_complex_split_t *complex_data =
+                    (mat_complex_split_t*)matvar->internal->data;
+                free(complex_data->Re);
+                free(complex_data->Im);
+                free(complex_data);
+            } else if ( NULL != matvar->internal->data ) {
                 free(matvar->internal->data);
+            }
         }
 #endif
 #if defined(MAT73) && MAT73
