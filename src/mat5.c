@@ -1974,7 +1974,8 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             } else if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
-                Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
+                Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,
+                    ftell((FILE*)mat->fp));
                 break;
             }
             cells[i]->compression = MAT_COMPRESSION_NONE;
@@ -2346,7 +2347,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
-                Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
+                Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,
+                    ftell((FILE*)mat->fp));
                 return bytesread;
             } else if ( nBytes == 0 ) {
                 fields[i]->rank = 0;
