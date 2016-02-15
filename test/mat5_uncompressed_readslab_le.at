@@ -1571,6 +1571,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 6 9 12 @&t@
 4 7 10 13 @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var28.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var28.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of single-precision array from structure])
@@ -1579,6 +1588,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
 4 7 10 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var29.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var29.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -1589,6 +1607,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 6 9 12 @&t@
 4 7 10 13 @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var30.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var30.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 64-bit unsigned integer array from structure])
@@ -1597,6 +1624,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
 4 7 10 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var31.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var31.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -1607,6 +1643,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 6 9 12 @&t@
 4 7 10 13 @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var32.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var32.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 32-bit unsigned integer array from structure])
@@ -1615,6 +1660,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
 4 7 10 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var33.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var33.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -1625,6 +1679,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 6 9 12 @&t@
 4 7 10 13 @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var34.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var34.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 16-bit unsigned integer array from structure])
@@ -1633,6 +1696,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
 4 7 10 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var35.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var35.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -1643,6 +1715,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 6 9 12 @&t@
 4 7 10 13 @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var36.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var36.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit unsigned integer array from structure])
@@ -1651,6 +1732,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 5 8 11 @&t@
 3 6 9 12 @&t@
 4 7 10 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var37.field2\(1:2:3,2:2:4\)], [0],
+[[5 11 @&t@
+7 13 @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var37.field2\(2:3:10\)], [0],
+[[3 @&t@
+6 @&t@
+9 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -1661,6 +1751,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var38.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var38.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of complex single-precision array from structure])
@@ -1669,6 +1768,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var39.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var39.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
 ]], [])
 AT_CLEANUP
 
@@ -1679,6 +1787,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var40.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var40.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of complex 64-bit unsigned integer array from structure])
@@ -1687,6 +1804,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var41.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var41.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
 ]], [])
 AT_CLEANUP
 
@@ -1697,6 +1823,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var42.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var42.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of complex 32-bit unsigned integer array from structure])
@@ -1705,6 +1840,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var43.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var43.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
 ]], [])
 AT_CLEANUP
 
@@ -1715,6 +1859,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var44.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var44.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of complex 16-bit unsigned integer array from structure])
@@ -1723,6 +1876,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var45.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var45.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
 ]], [])
 AT_CLEANUP
 
@@ -1733,6 +1895,15 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
 ]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var46.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var46.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of complex 8-bit unsigned integer array from structure])
@@ -1741,5 +1912,14 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncomp
 [[2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
 3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
 4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var47.field2\(1:2:3,2:2:4\)], [0],
+[[5 + 55i 11 + 61i @&t@
+7 + 57i 13 + 63i @&t@
+]], [])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_le.mat var47.field2\(2:3:10\)], [0],
+[[3 + 53i @&t@
+6 + 56i @&t@
+9 + 59i @&t@
 ]], [])
 AT_CLEANUP
