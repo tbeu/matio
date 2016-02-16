@@ -559,9 +559,9 @@ print_whos(matvar_t *matvar)
         else if ( nbytes > 1024 )
             printf(" %10.1fK",(double)nbytes/1024.0);
         else
-            printf(" %10luB",nbytes);
+            printf(" %10" SIZE_T_FMTSTR "B",nbytes);
     } else {
-        printf("  %10lu",nbytes);
+        printf("  %10" SIZE_T_FMTSTR,nbytes);
     }
     printf("  %-18s\n",mxclass[matvar->class_type-1]);
 
