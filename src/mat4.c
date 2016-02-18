@@ -315,8 +315,8 @@ Read4(mat_t *mat,matvar_t *matvar)
                 /* matvar->dims[1] either is 3 for real or 4 for complex sparse */
                 matvar->isComplex = matvar->dims[1] == 4 ? 1 : 0;
                 sparse = (mat_sparse_t*)matvar->data;
-                sparse->nzmax = 0;
                 sparse->nir = matvar->dims[0] - 1;
+                sparse->nzmax = sparse->nir;
                 sparse->ir = (mat_int32_t*)malloc(sparse->nir*sizeof(mat_int32_t));
                 if ( sparse->ir != NULL ) {
                     ReadInt32Data(mat, sparse->ir, data_type, sparse->nir);
