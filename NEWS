@@ -1,4 +1,4 @@
-Changes in 1.5.4 (16 February 2016)
+Changes in 1.5.5 (19 February 2016)
 * Added support of reading sparse array from v4 MAT files
 * Added support of writing sparse array to v4 MAT files
 * Added support of writing character array to v4 MAT files
