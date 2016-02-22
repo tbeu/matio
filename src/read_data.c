@@ -3740,7 +3740,7 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
         {
             float *ptr = (float*)data;
             READ_DATA_SLABN(ReadSingleData);
-           break;
+            break;
         }
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
