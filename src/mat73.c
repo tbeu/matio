@@ -2196,12 +2196,13 @@ Mat_Create73(const char *matname,const char *hdr_str)
     if ( hdr_str == NULL ) {
         err = mat_snprintf(mat->header,116,"MATLAB 7.3 MAT-file, Platform: %s, "
                 "Created by: libmatio v%d.%d.%d on %s HDF5 schema 0.5",
-                MATIO_PLATFORM,MATIO_MAJOR_VERSION,MATIO_MINOR_VERSION,
-                MATIO_RELEASE_LEVEL,ctime(&t));
-        mat->header[115] = '\0';    /* Just to make sure it's NULL terminated */    } else {
+                MATIO_PLATFORM, MATIO_MAJOR_VERSION, MATIO_MINOR_VERSION,
+                MATIO_RELEASE_LEVEL, ctime(&t));
+    } else {
         err = mat_snprintf(mat->header,116,"%s",hdr_str);
     }
-    mat->header[err] = ' ';
+    if ( err >= 116 )
+        mat->header[115] = '\0'; /* Just to make sure it's NULL terminated */
     memset(mat->subsys_offset,' ',8);
     mat->version = (int)0x0200;
     endian = 0x4d49;

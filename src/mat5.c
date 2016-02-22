@@ -522,10 +522,11 @@ Mat_Create5(const char *matname,const char *hdr_str)
                 "Created by: libmatio v%d.%d.%d on %s", MATIO_PLATFORM,
                 MATIO_MAJOR_VERSION, MATIO_MINOR_VERSION, MATIO_RELEASE_LEVEL,
                 ctime(&t));
-        mat->header[115] = '\0';    /* Just to make sure it's NULL terminated */    } else {
+    } else {
         err = mat_snprintf(mat->header,116,"%s",hdr_str);
     }
-    mat->header[err] = ' ';
+    if ( err >= 116 )
+        mat->header[115] = '\0'; /* Just to make sure it's NULL terminated */
     memset(mat->subsys_offset,' ',8);
     mat->version = (int)0x0100;
     endian = 0x4d49;
