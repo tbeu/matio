@@ -183,6 +183,8 @@ Mat_CreateVer(const char *matname,const char *hdr_str,enum mat_ft mat_file_ver)
             mat = Mat_Create73(matname,hdr_str);
 #endif
             break;
+        default:
+            break;
     }
 
     return mat;
