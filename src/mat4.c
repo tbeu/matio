@@ -131,7 +131,6 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
 
     mat_int32_t nmemb = 1, i;
     Fmatrix x;
-    int err;
 
     if ( NULL == mat || NULL == matvar || NULL == matvar->name || matvar->rank != 2 )
         return -1;
@@ -335,7 +334,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 Mat_Critical("Memory allocation failure");
             else {
                 double tmp;
-                int i, j;
+                int i;
                 mat_sparse_t* sparse;
                 long fpos;
                 enum matio_types data_type = MAT_T_DOUBLE;
