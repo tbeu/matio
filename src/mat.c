@@ -36,6 +36,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#if HAVE_INTTYPES_H
+#   include <inttypes.h>
+#endif
 #if defined(_WIN64) || defined(_WIN32)
 #   include <io.h>
 #   define mktemp _mktemp
