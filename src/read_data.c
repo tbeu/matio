@@ -3983,6 +3983,18 @@ ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
 #undef READ_COMPRESSED_DATA_SLABN_RANK_LOOP
 #endif
 
+#define READ_DATA_SLAB1(ReadDataFunc) \
+    do { \
+        if ( !stride ) { \
+            bytesread+=ReadDataFunc(mat,ptr,data_type,edge); \
+        } else { \
+            for ( i = 0; i < edge; i++ ) { \
+                bytesread+=ReadDataFunc(mat,ptr+i,data_type,1); \
+                (void)fseek((FILE*)mat->fp,stride,SEEK_CUR); \
+            } \
+        } \
+    } while (0)
+
 /** @brief Reads data of type @c data_type by user-defined dimensions for 1-D
  *         data
  *
@@ -4008,117 +4020,117 @@ ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
     (void)fseek((FILE*)mat->fp,start*data_size,SEEK_CUR);
 
     stride = data_size*(stride-1);
-    switch(class_type) {
+    switch ( class_type ) {
         case MAT_C_DOUBLE:
-            if ( !stride ) {
-                bytesread+=ReadDoubleData(mat,(double*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadDoubleData(mat,(double*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            double *ptr = (double*)data;
+            READ_DATA_SLAB1(ReadDoubleData);
             break;
+        }
         case MAT_C_SINGLE:
-            if ( !stride ) {
-                bytesread+=ReadSingleData(mat,(float*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadSingleData(mat,(float*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            float *ptr = (float*)data;
+            READ_DATA_SLAB1(ReadSingleData);
             break;
+        }
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
-            if ( !stride ) {
-                bytesread+=ReadInt64Data(mat,(mat_int64_t*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadInt64Data(mat,(mat_int64_t*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            mat_int64_t *ptr = (mat_int64_t*)data;
+            READ_DATA_SLAB1(ReadInt64Data);
             break;
+        }
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
-            if ( !stride ) {
-                bytesread+=ReadUInt64Data(mat,(mat_uint64_t*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadUInt64Data(mat,(mat_uint64_t*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            mat_uint64_t *ptr = (mat_uint64_t*)data;
+            READ_DATA_SLAB1(ReadUInt64Data);
             break;
+        }
 #endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
-            if ( !stride ) {
-                bytesread+=ReadInt32Data(mat,(mat_int32_t*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadInt32Data(mat,(mat_int32_t*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            mat_int32_t *ptr = (mat_int32_t*)data;
+            READ_DATA_SLAB1(ReadInt32Data);
             break;
+        }
         case MAT_C_UINT32:
-            if ( !stride ) {
-                bytesread+=ReadUInt32Data(mat,(mat_uint32_t*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadUInt32Data(mat,(mat_uint32_t*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            mat_uint32_t *ptr = (mat_uint32_t*)data;
+            READ_DATA_SLAB1(ReadUInt32Data);
             break;
+        }
         case MAT_C_INT16:
-            if ( !stride ) {
-                bytesread+=ReadInt16Data(mat,(mat_int16_t*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadInt16Data(mat,(mat_int16_t*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            mat_int16_t *ptr = (mat_int16_t*)data;
+            READ_DATA_SLAB1(ReadInt16Data);
             break;
+        }
         case MAT_C_UINT16:
-            if ( !stride ) {
-                bytesread+=ReadUInt16Data(mat,(mat_uint16_t*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadUInt16Data(mat,(mat_uint16_t*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            mat_uint16_t *ptr = (mat_uint16_t*)data;
+            READ_DATA_SLAB1(ReadUInt16Data);
             break;
+        }
         case MAT_C_INT8:
-            if ( !stride ) {
-                bytesread+=ReadInt8Data(mat,(mat_int8_t*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadInt8Data(mat,(mat_int8_t*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            mat_int8_t *ptr = (mat_int8_t*)data;
+            READ_DATA_SLAB1(ReadInt8Data);
             break;
+        }
         case MAT_C_UINT8:
-            if ( !stride ) {
-                bytesread+=ReadUInt8Data(mat,(mat_uint8_t*)data,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    bytesread+=ReadUInt8Data(mat,(mat_uint8_t*)data+i,data_type,1);
-                    (void)fseek((FILE*)mat->fp,stride,SEEK_CUR);
-                }
-            }
+        {
+            mat_uint8_t *ptr = (mat_uint8_t*)data;
+            READ_DATA_SLAB1(ReadUInt8Data);
             break;
+        }
         default:
             return 0;
     }
 
     return bytesread;
 }
+
+#undef READ_DATA_SLAB1
+
+#define READ_DATA_SLAB2(ReadDataFunc) \
+    do { \
+        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */ \
+        /* data so get rid of the loops. */ \
+        if ( (stride[0] == 1 && edge[0] == dims[0]) && \
+             (stride[1] == 1) ) { \
+            ReadDataFunc(mat,ptr,data_type,edge[0]*edge[1]); \
+        } else { \
+            row_stride = (stride[0]-1)*data_size; \
+            col_stride = stride[1]*dims[0]*data_size; \
+            pos = ftell((FILE*)mat->fp); \
+            if ( pos == -1L ) { \
+                Mat_Critical("Couldn't determine file position"); \
+                return -1; \
+            } \
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR); \
+            for ( i = 0; i < edge[1]; i++ ) { \
+                pos = ftell((FILE*)mat->fp); \
+                if ( pos == -1L ) { \
+                    Mat_Critical("Couldn't determine file position"); \
+                    return -1; \
+                } \
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR); \
+                for ( j = 0; j < edge[0]; j++ ) { \
+                    ReadDataFunc(mat,ptr++,data_type,1); \
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR); \
+                } \
+                pos2 = ftell((FILE*)mat->fp); \
+                if ( pos2 == -1L ) { \
+                    Mat_Critical("Couldn't determine file position"); \
+                    return -1; \
+                } \
+                pos +=col_stride-pos2; \
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR); \
+            } \
+        } \
+    } while (0)
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
  *         data
@@ -4151,354 +4163,66 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
     switch ( class_type ) {
         case MAT_C_DOUBLE:
         {
-            double *ptr;
-
-            ptr = (double *)data;
-            /* If stride[0] is 1 and stride[1] is 1, we are reading all of the
-             * data so get rid of the loops.
-             */
-            if ( (stride[0] == 1 && edge[0] == dims[0]) &&
-                 (stride[1] == 1) ) {
-                ReadDoubleData(mat,ptr,data_type,edge[0]*edge[1]);
-            } else {
-                row_stride = (stride[0]-1)*data_size;
-                col_stride = stride[1]*dims[0]*data_size;
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-                for ( i = 0; i < edge[1]; i++ ) {
-                    pos = ftell((FILE*)mat->fp);
-                    if ( pos == -1L ) {
-                        Mat_Critical("Couldn't determine file position");
-                        return -1;
-                    }
-                    (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                    for ( j = 0; j < edge[0]; j++ ) {
-                        ReadDoubleData(mat,ptr++,data_type,1);
-                        (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                    }
-                    pos2 = ftell((FILE*)mat->fp);
-                    if ( pos2 == -1L ) {
-                        Mat_Critical("Couldn't determine file position");
-                        return -1;
-                    }
-                    pos +=col_stride-pos2;
-                    (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-                }
-            }
+            double *ptr = (double*)data;
+            READ_DATA_SLAB2(ReadDoubleData);
             break;
         }
         case MAT_C_SINGLE:
         {
-            float *ptr;
-
-            ptr = (float *)data;
-            row_stride = (stride[0]-1)*data_size;
-            col_stride = stride[1]*dims[0]*data_size;
-            pos = ftell((FILE*)mat->fp);
-            if ( pos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                return -1;
-            }
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-            for ( i = 0; i < edge[1]; i++ ) {
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                for ( j = 0; j < edge[0]; j++ ) {
-                    ReadSingleData(mat,ptr++,data_type,1);
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                }
-                pos2 = ftell((FILE*)mat->fp);
-                if ( pos2 == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                pos +=col_stride-pos2;
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-            }
+            float *ptr = (float*)data;
+            READ_DATA_SLAB2(ReadSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
-            mat_int64_t *ptr;
-
-            ptr = (mat_int64_t *)data;
-            row_stride = (stride[0]-1)*data_size;
-            col_stride = stride[1]*dims[0]*data_size;
-            pos = ftell((FILE*)mat->fp);
-            if ( pos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                return -1;
-            }
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-            for ( i = 0; i < edge[1]; i++ ) {
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                for ( j = 0; j < edge[0]; j++ ) {
-                    ReadInt64Data(mat,ptr++,data_type,1);
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                }
-                pos2 = ftell((FILE*)mat->fp);
-                if ( pos2 == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                pos +=col_stride-pos2;
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-            }
+            mat_int64_t *ptr = (mat_int64_t*)data;
+            READ_DATA_SLAB2(ReadInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
         {
-            mat_uint64_t *ptr;
-
-            ptr = (mat_uint64_t *)data;
-            row_stride = (stride[0]-1)*data_size;
-            col_stride = stride[1]*dims[0]*data_size;
-            pos = ftell((FILE*)mat->fp);
-            if ( pos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                return -1;
-            }
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-            for ( i = 0; i < edge[1]; i++ ) {
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                for ( j = 0; j < edge[0]; j++ ) {
-                    ReadUInt64Data(mat,ptr++,data_type,1);
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                }
-                pos2 = ftell((FILE*)mat->fp);
-                if ( pos2 == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                pos +=col_stride-pos2;
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-            }
+            mat_uint64_t *ptr = (mat_uint64_t*)data;
+            READ_DATA_SLAB2(ReadUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
-            mat_int32_t *ptr;
-
-            ptr = (mat_int32_t *)data;
-            row_stride = (stride[0]-1)*data_size;
-            col_stride = stride[1]*dims[0]*data_size;
-            pos = ftell((FILE*)mat->fp);
-            if ( pos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                return -1;
-            }
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-            for ( i = 0; i < edge[1]; i++ ) {
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                for ( j = 0; j < edge[0]; j++ ) {
-                    ReadInt32Data(mat,ptr++,data_type,1);
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                }
-                pos2 = ftell((FILE*)mat->fp);
-                if ( pos2 == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                pos +=col_stride-pos2;
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-            }
+            mat_int32_t *ptr = (mat_int32_t*)data;
+            READ_DATA_SLAB2(ReadInt32Data);
             break;
         }
         case MAT_C_UINT32:
         {
-            mat_uint32_t *ptr;
-
-            ptr = (mat_uint32_t *)data;
-            row_stride = (stride[0]-1)*data_size;
-            col_stride = stride[1]*dims[0]*data_size;
-            pos = ftell((FILE*)mat->fp);
-            if ( pos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                return -1;
-            }
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-            for ( i = 0; i < edge[1]; i++ ) {
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                for ( j = 0; j < edge[0]; j++ ) {
-                    ReadUInt32Data(mat,ptr++,data_type,1);
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                }
-                pos2 = ftell((FILE*)mat->fp);
-                if ( pos2 == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                pos +=col_stride-pos2;
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-            }
+            mat_uint32_t *ptr = (mat_uint32_t*)data;
+            READ_DATA_SLAB2(ReadUInt32Data);
             break;
         }
         case MAT_C_INT16:
         {
-            mat_int16_t *ptr;
-
-            ptr = (mat_int16_t *)data;
-            row_stride = (stride[0]-1)*data_size;
-            col_stride = stride[1]*dims[0]*data_size;
-            pos = ftell((FILE*)mat->fp);
-            if ( pos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                return -1;
-            }
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-            for ( i = 0; i < edge[1]; i++ ) {
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                for ( j = 0; j < edge[0]; j++ ) {
-                    ReadInt16Data(mat,ptr++,data_type,1);
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                }
-                pos2 = ftell((FILE*)mat->fp);
-                if ( pos2 == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                pos +=col_stride-pos2;
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-            }
+            mat_int16_t *ptr = (mat_int16_t*)data;
+            READ_DATA_SLAB2(ReadInt16Data);
             break;
         }
         case MAT_C_UINT16:
         {
-            mat_uint16_t *ptr;
-
-            ptr = (mat_uint16_t *)data;
-            row_stride = (stride[0]-1)*data_size;
-            col_stride = stride[1]*dims[0]*data_size;
-            pos = ftell((FILE*)mat->fp);
-            if ( pos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                return -1;
-            }
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-            for ( i = 0; i < edge[1]; i++ ) {
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                for ( j = 0; j < edge[0]; j++ ) {
-                    ReadUInt16Data(mat,ptr++,data_type,1);
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                }
-                pos2 = ftell((FILE*)mat->fp);
-                if ( pos2 == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                pos +=col_stride-pos2;
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-            }
+            mat_uint16_t *ptr = (mat_uint16_t*)data;
+            READ_DATA_SLAB2(ReadUInt16Data);
             break;
         }
         case MAT_C_INT8:
         {
-            mat_int8_t *ptr;
-
-            ptr = (mat_int8_t *)data;
-            row_stride = (stride[0]-1)*data_size;
-            col_stride = stride[1]*dims[0]*data_size;
-            pos = ftell((FILE*)mat->fp);
-            if ( pos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                return -1;
-            }
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-            for ( i = 0; i < edge[1]; i++ ) {
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                for ( j = 0; j < edge[0]; j++ ) {
-                    ReadInt8Data(mat,ptr++,data_type,1);
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                }
-                pos2 = ftell((FILE*)mat->fp);
-                if ( pos2 == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                pos +=col_stride-pos2;
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-            }
+            mat_int8_t *ptr = (mat_int8_t*)data;
+            READ_DATA_SLAB2(ReadInt8Data);
             break;
         }
         case MAT_C_UINT8:
         {
-            mat_uint8_t *ptr;
-
-            ptr = (mat_uint8_t *)data;
-            row_stride = (stride[0]-1)*data_size;
-            col_stride = stride[1]*dims[0]*data_size;
-            pos = ftell((FILE*)mat->fp);
-            if ( pos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                return -1;
-            }
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
-            for ( i = 0; i < edge[1]; i++ ) {
-                pos = ftell((FILE*)mat->fp);
-                if ( pos == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
-                for ( j = 0; j < edge[0]; j++ ) {
-                    ReadUInt8Data(mat,ptr++,data_type,1);
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
-                }
-                pos2 = ftell((FILE*)mat->fp);
-                if ( pos2 == -1L ) {
-                    Mat_Critical("Couldn't determine file position");
-                    return -1;
-                }
-                pos +=col_stride-pos2;
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
-            }
+            mat_uint8_t *ptr = (mat_uint8_t*)data;
+            READ_DATA_SLAB2(ReadUInt8Data);
             break;
         }
         default:
@@ -4507,7 +4231,21 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
     return nBytes;
 }
 
+#undef READ_DATA_SLAB2
+
 #if defined(HAVE_ZLIB)
+#define READ_COMPRESSED_DATA_SLAB1(ReadDataFunc) \
+    do { \
+        if ( !stride ) { \
+            nBytes+=ReadDataFunc(mat,&z_copy,ptr,data_type,edge); \
+        } else { \
+            for ( i = 0; i < edge; i++ ) { \
+                nBytes+=ReadDataFunc(mat,&z_copy,ptr+i,data_type,1); \
+                InflateSkipData(mat,&z_copy,data_type,stride); \
+            } \
+        } \
+    } while (0)
+
 /** @brief Reads data of type @c data_type by user-defined dimensions for 1-D
  *         data
  *
@@ -4541,41 +4279,20 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
         case MAT_C_DOUBLE:
         {
             double *ptr = (double*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedDoubleData(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedDoubleData(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedDoubleData);
             break;
         }
         case MAT_C_SINGLE:
         {
             float *ptr = (float*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedSingleData(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedSingleData(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
             mat_int64_t *ptr = (mat_int64_t*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedInt64Data(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedInt64Data(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
@@ -4583,93 +4300,44 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
         case MAT_C_UINT64:
         {
             mat_uint64_t *ptr = (mat_uint64_t*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedUInt64Data(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedUInt64Data(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
             mat_int32_t *ptr = (mat_int32_t*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedInt32Data(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedInt32Data(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedInt32Data);
             break;
         }
         case MAT_C_UINT32:
         {
             mat_uint32_t *ptr = (mat_uint32_t*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedUInt32Data(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedUInt32Data(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedUInt32Data);
             break;
         }
         case MAT_C_INT16:
         {
             mat_int16_t *ptr = (mat_int16_t*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedInt16Data(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedInt16Data(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedInt16Data);
             break;
         }
         case MAT_C_UINT16:
         {
             mat_uint16_t *ptr = (mat_uint16_t*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedUInt16Data(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedUInt16Data(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedUInt16Data);
             break;
         }
         case MAT_C_INT8:
         {
             mat_int8_t *ptr = (mat_int8_t*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedInt8Data(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedInt8Data(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedInt8Data);
             break;
         }
         case MAT_C_UINT8:
         {
             mat_uint8_t *ptr = (mat_uint8_t*)data;
-            if ( !stride ) {
-                nBytes+=ReadCompressedUInt8Data(mat,&z_copy,ptr,data_type,edge);
-            } else {
-                for ( i = 0; i < edge; i++ ) {
-                    nBytes+=ReadCompressedUInt8Data(mat,&z_copy,ptr+i,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,stride);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB1(ReadCompressedUInt8Data);
             break;
         }
         default:
@@ -4678,6 +4346,42 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
     inflateEnd(&z_copy);
     return nBytes;
 }
+
+#undef READ_COMPRESSED_DATA_SLAB1
+
+#define READ_COMPRESSED_DATA_SLAB2(ReadDataFunc) \
+    do {\
+        row_stride = (stride[0]-1); \
+        col_stride = (stride[1]-1)*dims[0]; \
+        InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]); \
+        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */ \
+        /* data so get rid of the loops.  If stride[0] is 1 and stride[1] */ \
+        /* is not 0, we are reading whole columns, so get rid of inner loop */ \
+        /* to speed up the code */ \
+        if ( (stride[0] == 1 && edge[0] == dims[0]) && \
+             (stride[1] == 1) ) { \
+            ReadDataFunc(mat,&z_copy,ptr,data_type,edge[0]*edge[1]); \
+        } else if ( stride[0] == 1 ) { \
+            for ( i = 0; i < edge[1]; i++ ) { \
+                InflateSkipData(mat,&z_copy,data_type,start[0]); \
+                ReadDataFunc(mat,&z_copy,ptr,data_type,edge[0]); \
+                ptr += edge[0]; \
+                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride; \
+                InflateSkipData(mat,&z_copy,data_type,pos); \
+            } \
+        } else { \
+            for ( i = 0; i < edge[1]; i++ ) { \
+                InflateSkipData(mat,&z_copy,data_type,start[0]); \
+                for ( j = 0; j < edge[0]-1; j++ ) { \
+                    ReadDataFunc(mat,&z_copy,ptr++,data_type,1); \
+                    InflateSkipData(mat,&z_copy,data_type,row_stride); \
+                } \
+                ReadDataFunc(mat,&z_copy,ptr++,data_type,1); \
+                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride; \
+                InflateSkipData(mat,&z_copy,data_type,pos); \
+            } \
+        } \
+    } while (0)
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
  *         data
@@ -4713,75 +4417,20 @@ ReadCompressedDataSlab2(mat_t *mat,z_streamp z,void *data,
         case MAT_C_DOUBLE:
         {
             double *ptr = (double*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            /* If stride[0] is 1 and stride[1] is 1, we are reading all of the
-             * data so get rid of the loops.  If stride[0] is 1 and stride[1]
-             * is not 0, we are reading whole columns, so get rid of inner loop
-             * to speed up the code
-             */
-            if ( (stride[0] == 1 && edge[0] == dims[0]) &&
-                 (stride[1] == 1) ) {
-                ReadCompressedDoubleData(mat,&z_copy,ptr,data_type,
-                                         edge[0]*edge[1]);
-            } else if ( stride[0] == 1 ) {
-                for ( i = 0; i < edge[1]; i++ ) {
-                    InflateSkipData(mat,&z_copy,data_type,start[0]);
-                    ReadCompressedDoubleData(mat,&z_copy,ptr,data_type,edge[0]);
-                    ptr += edge[0];
-                    pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                    InflateSkipData(mat,&z_copy,data_type,pos);
-                }
-            } else {
-                for ( i = 0; i < edge[1]; i++ ) {
-                    InflateSkipData(mat,&z_copy,data_type,start[0]);
-                    for ( j = 0; j < edge[0]-1; j++ ) {
-                        ReadCompressedDoubleData(mat,&z_copy,ptr++,data_type,1);
-                        InflateSkipData(mat,&z_copy,data_type,row_stride);
-                    }
-                    ReadCompressedDoubleData(mat,&z_copy,ptr++,data_type,1);
-                    pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                    InflateSkipData(mat,&z_copy,data_type,pos);
-                }
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedDoubleData);
             break;
         }
         case MAT_C_SINGLE:
         {
             float *ptr = (float*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedSingleData(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedSingleData(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
         {
             mat_int64_t *ptr = (mat_int64_t*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedInt64Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedInt64Data(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
@@ -4789,146 +4438,44 @@ ReadCompressedDataSlab2(mat_t *mat,z_streamp z,void *data,
         case MAT_C_UINT64:
         {
             mat_uint64_t *ptr = (mat_uint64_t*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedUInt64Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedUInt64Data(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
         case MAT_C_INT32:
         {
             mat_int32_t *ptr = (mat_int32_t*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedInt32Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedInt32Data(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedInt32Data);
             break;
         }
         case MAT_C_UINT32:
         {
             mat_uint32_t *ptr = (mat_uint32_t*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedUInt32Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedUInt32Data(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedUInt32Data);
             break;
         }
         case MAT_C_INT16:
         {
             mat_int16_t *ptr = (mat_int16_t*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedInt16Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedInt16Data(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedInt16Data);
             break;
         }
         case MAT_C_UINT16:
         {
             mat_uint16_t *ptr = (mat_uint16_t*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedUInt16Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedUInt16Data(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedUInt16Data);
             break;
         }
         case MAT_C_INT8:
         {
             mat_int8_t *ptr = (mat_int8_t*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedInt8Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedInt8Data(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedInt8Data);
             break;
         }
         case MAT_C_UINT8:
         {
             mat_uint8_t *ptr = (mat_uint8_t*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedUInt8Data(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedUInt8Data(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
-            break;
-        }
-        case MAT_C_CHAR:
-        {
-            char *ptr = (char*)data;
-            row_stride = (stride[0]-1);
-            col_stride = (stride[1]-1)*dims[0];
-            InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]);
-            for ( i = 0; i < edge[1]; i++ ) {
-                InflateSkipData(mat,&z_copy,data_type,start[0]);
-                for ( j = 0; j < edge[0]-1; j++ ) {
-                    ReadCompressedCharData(mat,&z_copy,ptr++,data_type,1);
-                    InflateSkipData(mat,&z_copy,data_type,row_stride);
-                }
-                ReadCompressedCharData(mat,&z_copy,ptr++,data_type,1);
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride;
-                InflateSkipData(mat,&z_copy,data_type,pos);
-            }
+            READ_COMPRESSED_DATA_SLAB2(ReadCompressedUInt8Data);
             break;
         }
         default:
@@ -4937,6 +4484,8 @@ ReadCompressedDataSlab2(mat_t *mat,z_streamp z,void *data,
     inflateEnd(&z_copy);
     return nBytes;
 }
+
+#undef READ_COMPRESSED_DATA_SLAB2
 #endif
 
 /** @endcond */
