@@ -67,6 +67,14 @@ var70(:,:,1) = @&t@
     26464 26496 26528 @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var70], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var70\(2:30:end,4:50:end\)], [0],
+[[386 6786 13186 19586 25986 32386 @&t@
+416 6816 13216 19616 26016 32416 @&t@
+446 6846 13246 19646 26046 32446 @&t@
+476 6876 13276 19676 26076 32476 @&t@
+506 6906 13306 19706 26106 32506 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of single-precision array])
@@ -111,6 +119,14 @@ var71(:,:,1) = @&t@
     26463 26495 26527 @&t@
     26464 26496 26528 @&t@
 
+]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var71], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var71\(2:30:end,4:50:end\)], [0],
+[[386 6786 13186 19586 25986 32386 @&t@
+416 6816 13216 19616 26016 32416 @&t@
+446 6846 13246 19646 26046 32446 @&t@
+476 6876 13276 19676 26076 32476 @&t@
+506 6906 13306 19706 26106 32506 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -157,6 +173,14 @@ var72(:,:,1) = @&t@
     26464 26496 26528 @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var72], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var72\(2:30:end,4:50:end\)], [0],
+[[386 6786 13186 19586 25986 32386 @&t@
+416 6816 13216 19616 26016 32416 @&t@
+446 6846 13246 19646 26046 32446 @&t@
+476 6876 13276 19676 26076 32476 @&t@
+506 6906 13306 19706 26106 32506 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 64-bit unsigned integer array])
@@ -201,6 +225,14 @@ var73(:,:,1) = @&t@
     26463 26495 26527 @&t@
     26464 26496 26528 @&t@
 
+]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var73], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var73\(2:30:end,4:50:end\)], [0],
+[[386 6786 13186 19586 25986 32386 @&t@
+416 6816 13216 19616 26016 32416 @&t@
+446 6846 13246 19646 26046 32446 @&t@
+476 6876 13276 19676 26076 32476 @&t@
+506 6906 13306 19706 26106 32506 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -247,6 +279,14 @@ var74(:,:,1) = @&t@
     26464 26496 26528 @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var74], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var74\(2:30:end,4:50:end\)], [0],
+[[386 6786 13186 19586 25986 32386 @&t@
+416 6816 13216 19616 26016 32416 @&t@
+446 6846 13246 19646 26046 32446 @&t@
+476 6876 13276 19676 26076 32476 @&t@
+506 6906 13306 19706 26106 32506 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 32-bit unsigned integer array])
@@ -291,6 +331,14 @@ var75(:,:,1) = @&t@
     26463 26495 26527 @&t@
     26464 26496 26528 @&t@
 
+]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var75], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var75\(2:30:end,4:50:end\)], [0],
+[[386 6786 13186 19586 25986 32386 @&t@
+416 6816 13216 19616 26016 32416 @&t@
+446 6846 13246 19646 26046 32446 @&t@
+476 6876 13276 19676 26076 32476 @&t@
+506 6906 13306 19706 26106 32506 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -337,6 +385,14 @@ var76(:,:,1) = @&t@
     26464 26496 26528 @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var76], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var76\(2:30:end,4:50:end\)], [0],
+[[386 6786 13186 19586 25986 32386 @&t@
+416 6816 13216 19616 26016 32416 @&t@
+446 6846 13246 19646 26046 32446 @&t@
+476 6876 13276 19676 26076 32476 @&t@
+506 6906 13306 19706 26106 32506 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 16-bit unsigned integer array])
@@ -381,6 +437,14 @@ var77(:,:,1) = @&t@
     26463 26495 26527 @&t@
     26464 26496 26528 @&t@
 
+]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var77], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var77\(2:30:end,4:50:end\)], [0],
+[[386 6786 13186 19586 25986 32386 @&t@
+416 6816 13216 19616 26016 32416 @&t@
+446 6846 13246 19646 26046 32446 @&t@
+476 6876 13276 19676 26076 32476 @&t@
+506 6906 13306 19706 26106 32506 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -427,6 +491,14 @@ var78(:,:,1) = @&t@
     80 -31 65 @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var78], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var78\(2:30:end,4:50:end\)], [0],
+[[72 56 109 32 -4 -104 @&t@
+-115 -47 -82 -46 121 -121 @&t@
+27 108 126 35 -64 66 @&t@
+-96 -17 -102 -120 -11 44 @&t@
+-96 -32 63 -124 -44 -96 @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit unsigned integer array])
@@ -471,6 +543,14 @@ var79(:,:,1) = @&t@
     11 2 201 @&t@
     104 157 70 @&t@
 
+]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var79], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var79\(2:30:end,4:50:end\)], [0],
+[[140 141 150 31 131 66 @&t@
+248 126 75 248 186 4 @&t@
+23 95 48 68 101 57 @&t@
+216 48 235 44 210 126 @&t@
+38 243 145 100 205 133 @&t@
 ]], [])
 AT_CLEANUP
 
@@ -517,6 +597,14 @@ var80(:,:,1) = @&t@
     52927 + 52928i 52991 + 52992i 53055 + 53056i @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var80], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var80\(2:30:end,4:50:end\)], [0],
+[[771 + 772i 13571 + 13572i 26371 + 26372i 39171 + 39172i 51971 + 51972i 64771 + 64772i @&t@
+831 + 832i 13631 + 13632i 26431 + 26432i 39231 + 39232i 52031 + 52032i 64831 + 64832i @&t@
+891 + 892i 13691 + 13692i 26491 + 26492i 39291 + 39292i 52091 + 52092i 64891 + 64892i @&t@
+951 + 952i 13751 + 13752i 26551 + 26552i 39351 + 39352i 52151 + 52152i 64951 + 64952i @&t@
+1011 + 1012i 13811 + 13812i 26611 + 26612i 39411 + 39412i 52211 + 52212i 65011 + 65012i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of single-precision complex array])
@@ -561,6 +649,14 @@ var81(:,:,1) = @&t@
     52925 + 52926i 52989 + 52990i 53053 + 53054i @&t@
     52927 + 52928i 52991 + 52992i 53055 + 53056i @&t@
 
+]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var81], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var81\(2:30:end,4:50:end\)], [0],
+[[771 + 772i 13571 + 13572i 26371 + 26372i 39171 + 39172i 51971 + 51972i 64771 + 64772i @&t@
+831 + 832i 13631 + 13632i 26431 + 26432i 39231 + 39232i 52031 + 52032i 64831 + 64832i @&t@
+891 + 892i 13691 + 13692i 26491 + 26492i 39291 + 39292i 52091 + 52092i 64891 + 64892i @&t@
+951 + 952i 13751 + 13752i 26551 + 26552i 39351 + 39352i 52151 + 52152i 64951 + 64952i @&t@
+1011 + 1012i 13811 + 13812i 26611 + 26612i 39411 + 39412i 52211 + 52212i 65011 + 65012i @&t@
 ]], [])
 AT_CLEANUP
 
@@ -607,6 +703,14 @@ var82(:,:,1) = @&t@
     52927 + 52928i 52991 + 52992i 53055 + 53056i @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var82], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var82\(2:30:end,4:50:end\)], [0],
+[[771 + 772i 13571 + 13572i 26371 + 26372i 39171 + 39172i 51971 + 51972i 64771 + 64772i @&t@
+831 + 832i 13631 + 13632i 26431 + 26432i 39231 + 39232i 52031 + 52032i 64831 + 64832i @&t@
+891 + 892i 13691 + 13692i 26491 + 26492i 39291 + 39292i 52091 + 52092i 64891 + 64892i @&t@
+951 + 952i 13751 + 13752i 26551 + 26552i 39351 + 39352i 52151 + 52152i 64951 + 64952i @&t@
+1011 + 1012i 13811 + 13812i 26611 + 26612i 39411 + 39412i 52211 + 52212i 65011 + 65012i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 64-bit unsigned integer complex array])
@@ -651,6 +755,14 @@ var83(:,:,1) = @&t@
     52925 + 52926i 52989 + 52990i 53053 + 53054i @&t@
     52927 + 52928i 52991 + 52992i 53055 + 53056i @&t@
 
+]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var83], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var83\(2:30:end,4:50:end\)], [0],
+[[771 + 772i 13571 + 13572i 26371 + 26372i 39171 + 39172i 51971 + 51972i 64771 + 64772i @&t@
+831 + 832i 13631 + 13632i 26431 + 26432i 39231 + 39232i 52031 + 52032i 64831 + 64832i @&t@
+891 + 892i 13691 + 13692i 26491 + 26492i 39291 + 39292i 52091 + 52092i 64891 + 64892i @&t@
+951 + 952i 13751 + 13752i 26551 + 26552i 39351 + 39352i 52151 + 52152i 64951 + 64952i @&t@
+1011 + 1012i 13811 + 13812i 26611 + 26612i 39411 + 39412i 52211 + 52212i 65011 + 65012i @&t@
 ]], [])
 AT_CLEANUP
 
@@ -697,6 +809,14 @@ var84(:,:,1) = @&t@
     52927 + 52928i 52991 + 52992i 53055 + 53056i @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var84], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var84\(2:30:end,4:50:end\)], [0],
+[[771 + 772i 13571 + 13572i 26371 + 26372i 39171 + 39172i 51971 + 51972i 64771 + 64772i @&t@
+831 + 832i 13631 + 13632i 26431 + 26432i 39231 + 39232i 52031 + 52032i 64831 + 64832i @&t@
+891 + 892i 13691 + 13692i 26491 + 26492i 39291 + 39292i 52091 + 52092i 64891 + 64892i @&t@
+951 + 952i 13751 + 13752i 26551 + 26552i 39351 + 39352i 52151 + 52152i 64951 + 64952i @&t@
+1011 + 1012i 13811 + 13812i 26611 + 26612i 39411 + 39412i 52211 + 52212i 65011 + 65012i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 32-bit unsigned integer complex array])
@@ -742,6 +862,14 @@ var85(:,:,1) = @&t@
     52927 + 52928i 52991 + 52992i 53055 + 53056i @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var85], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var85\(2:30:end,4:50:end\)], [0],
+[[771 + 772i 13571 + 13572i 26371 + 26372i 39171 + 39172i 51971 + 51972i 64771 + 64772i @&t@
+831 + 832i 13631 + 13632i 26431 + 26432i 39231 + 39232i 52031 + 52032i 64831 + 64832i @&t@
+891 + 892i 13691 + 13692i 26491 + 26492i 39291 + 39292i 52091 + 52092i 64891 + 64892i @&t@
+951 + 952i 13751 + 13752i 26551 + 26552i 39351 + 39352i 52151 + 52152i 64951 + 64952i @&t@
+1011 + 1012i 13811 + 13812i 26611 + 26612i 39411 + 39412i 52211 + 52212i 65011 + 65012i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 16-bit integer complex array])
@@ -769,7 +897,7 @@ var86(:,:,1) = @&t@
     9911 + -20183i 19480 + -25157i -5438 + 17227i -27961 + -5378i 9084 + 8866i 24485 + 27017i @&t@
     -28341 + 22322i -24243 + -10527i 6325 + 19908i 22850 + -7463i 12787 + 16795i 7898 + 4210i @&t@
     3508 + -7880i 4464 + 28510i 16761 + 20643i -17585 + 883i 27522 + 650i 8062 + 28365i @&t@
-    20369 + -482i -6616 + -24233i 18192 + -20736i -1421 + -6768i 7219 + -25890i -28910 + -21963i @&t@ 
+    20369 + -482i -6616 + -24233i 18192 + -20736i -1421 + -6768i 7219 + -25890i -28910 + -21963i @&t@
     -4578 + 21351i -14599 + -1762i -18629 + 17622i 28956 + -7833i -16811 + -5838i 7298 + -10445i @&t@
     18426 + 31578i -19424 + 6424i 2759 + -21496i 19321 + -31347i 22569 + 6221i 29980 + 25776i @&t@
     -26016 + 17152i -29786 + 14220i 15764 + 18250i 22739 + -27552i 21757 + -28407i 5019 + -2720i @&t@
@@ -786,6 +914,14 @@ var86(:,:,1) = @&t@
     -19240 + 25216i 29787 + 23175i -31514 + 13054i @&t@
     -7020 + -4668i 23666 + -28064i 14353 + -6937i @&t@
 
+]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var86], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var86\(2:30:end,4:50:end\)], [0],
+[[3197 + -15580i 26983 + 1674i 19017 + -13633i 17899 + -5005i -19803 + -7141i 9259 + -23702i @&t@
+-21074 + -22857i -14743 + -14882i -4528 + -27055i -6922 + 94i 20968 + -2378i -30373 + -10440i @&t@
+-16360 + -26146i -4730 + -436i 22231 + -19674i 25894 + -577i -26725 + 28212i -12532 + -14551i @&t@
+-8341 + -27457i -27873 + -29816i -17235 + -2203i -16712 + 25670i 32554 + 26389i -32002 + 10688i @&t@
+28735 + 18372i 7309 + -25871i -21973 + -10620i 15266 + 17841i 8866 + -25612i 10256 + -31572i @&t@
 ]], [])
 AT_CLEANUP
 
@@ -832,6 +968,14 @@ var87(:,:,1) = @&t@
     28940 + 53064i 55604 + 3462i 21441 + 45581i @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var87], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var87\(2:30:end,4:50:end\)], [0],
+[[1065 + 13673i 46563 + 42814i 4378 + 20386i 27677 + 53988i 32691 + 42830i 5451 + 8079i @&t@
+41837 + 33959i 11654 + 43607i 59303 + 58707i 30023 + 33025i 9068 + 42213i 3868 + 59473i @&t@
+1735 + 61140i 31814 + 14734i 40961 + 46446i 55189 + 48060i 5127 + 16861i 10939 + 56934i @&t@
+47224 + 2885i 13578 + 22852i 36566 + 55659i 31837 + 40116i 31594 + 36753i 24437 + 8522i @&t@
+51880 + 42347i 23524 + 42823i 42536 + 48968i 7207 + 62874i 45104 + 54788i 25721 + 52038i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit integer complex array])
@@ -877,6 +1021,14 @@ var88(:,:,1) = @&t@
     -25 + -119i 121 + -34i -38 + -111i @&t@
 
 ]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var88], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var88\(2:30:end,4:50:end\)], [0],
+[[-103 + 16i -112 + 72i -112 + -108i -41 + -5i 13 + 9i -90 + 74i @&t@
+22 + -99i 7 + -87i -106 + 102i -106 + -60i 56 + 90i 33 + -43i @&t@
+-120 + 91i -13 + 52i 83 + -64i -66 + -123i 101 + -82i -43 + -28i @&t@
+39 + 111i 26 + 6i -98 + 47i 30 + 42i 7 + -109i 83 + 93i @&t@
+-119 + 91i -27 + -10i -63 + -71i -99 + -52i 96 + -104i -26 + 75i @&t@
+]], [])
 AT_CLEANUP
 
 AT_SETUP([Read slab of 8-bit unsigned integer complex array])
@@ -921,6 +1073,14 @@ var89(:,:,1) = @&t@
     203 + 134i 55 + 124i 221 + 158i @&t@
     233 + 73i 71 + 0i 99 + 86i @&t@
 
+]], [])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var89], [0], [], [])
+AT_CHECK([$builddir/../tools/matdump -d test_write_reshape32x32x32.mat var89\(2:30:end,4:50:end\)], [0],
+[[95 + 215i 18 + 212i 53 + 182i 95 + 50i 195 + 143i 246 + 168i @&t@
+221 + 136i 225 + 136i 86 + 135i 96 + 82i 24 + 65i 40 + 160i @&t@
+104 + 26i 150 + 209i 100 + 178i 231 + 137i 48 + 214i 183 + 181i @&t@
+188 + 180i 17 + 237i 212 + 184i 132 + 235i 230 + 58i 244 + 216i @&t@
+210 + 14i 136 + 12i 169 + 76i 18 + 81i 162 + 68i 74 + 200i @&t@
 ]], [])
 AT_CLEANUP
 

@@ -3422,6 +3422,7 @@ int main (int argc, char *argv[])
             test_readslab4(argv[k],argv[k+1]);
             k+=2;
             ntests++;
+    #if 0
         } else if ( !strcasecmp(argv[k],"slab3") ) {
             int   start[3]={1,1,1},stride[3]={1,1,1},edge[3]={1,1,1};
             int j, l;
@@ -3446,6 +3447,7 @@ int main (int argc, char *argv[])
                 Mat_Close(mat);
             }
             ntests++;
+    #endif
         } else if ( !strcasecmp(argv[k],"write_sparse") ) {
             k++;
             if ( NULL == output_name )
@@ -3469,11 +3471,36 @@ int main (int argc, char *argv[])
         } else if ( !strcasecmp(argv[k],"sub2ind") ) {
             size_t dims[3] = {256,256,124}, index[3] = {233,74,1};
             size_t linear_index = 0;
-            int err;
 
-            err = Mat_CalcSingleSubscript2(3,dims,index,&linear_index);
+            err += Mat_CalcSingleSubscript2(3,dims,index,&linear_index);
             Mat_Message("%" SIZE_T_FMTSTR,linear_index);
             k++;
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"reshape32x32x32") ) {
+            k++;
+            mat = Mat_Open(argv[k++],MAT_ACC_RDONLY);
+            if ( NULL != mat ) {
+                matvar = Mat_VarRead(mat,argv[k++]);
+                if ( matvar ) {
+                    if ( matvar->rank == 3 && matvar->dims[0] == 32 &&
+                        matvar->dims[1] == 32 && matvar->dims[2] == 32 ) {
+                        mat_t* mat2;
+                        matvar->rank = 2;
+                        matvar->dims[0] = 128;
+                        matvar->dims[1] = 256;
+                        matvar->dims[2] = 1;
+                        if ( NULL == output_name )
+                            output_name = "test_write_reshape32x32x32.mat";
+                        mat2 = Mat_CreateVer(output_name,NULL,mat_file_ver);
+                        if ( NULL != mat2 ) {
+                            Mat_VarWrite(mat2, matvar, compression);
+                            Mat_Close(mat2);
+                        }
+                    }
+                    Mat_VarFree(matvar);
+                }
+                Mat_Close(mat);
+            }
             ntests++;
         } else {
             Mat_Critical("Unrecognized test %s", argv[k]);
