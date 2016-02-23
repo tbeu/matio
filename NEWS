@@ -1,3 +1,7 @@
+Changes in 1.5.6 (23 February 2016)
+* Fixed bug writing array to v4 MAT files on big endian architecture
+* Fixed bug writing header with more than 127 characters to v5 or HDF5 MAT files
+
 Changes in 1.5.5 (19 February 2016)
 * Added support of reading sparse array from v4 MAT files
 * Added support of writing sparse array to v4 MAT files
