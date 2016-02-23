@@ -363,7 +363,7 @@ fmat_varwrite_c(struct fmat_t *mat,struct fmatvar_t *matvar,void *data,
     if ( (mat == NULL) || (matvar == NULL) || (data == NULL) ||
          (compress == NULL) )
         err =  1;
-    else if ( (matvar->matvar_t_c_ptr->name == NULL) || 
+    else if ( (matvar->matvar_t_c_ptr->name == NULL) ||
               (matvar->matvar_t_c_ptr->dims == NULL) )
         err = 2;
     else {
@@ -420,7 +420,7 @@ fmat_varfree_c(struct fmatvar_t *matvar)
     }
 }
 
-int 
+int
 fmat_vargetnumberoffields_c(struct fmatvar_t *matvar)
 {
     int nfields;

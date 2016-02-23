@@ -69,7 +69,7 @@ EXTERN mat_t *Mat_Create5(const char *matname,const char *hdr_str);
 
 matvar_t *Mat_VarReadNextInfo5( mat_t *mat );
 void      Read5(mat_t *mat, matvar_t *matvar);
-int       ReadData5(mat_t *mat,matvar_t *matvar,void *data, 
+int       ReadData5(mat_t *mat,matvar_t *matvar,void *data,
               int *start,int *stride,int *edge);
 int       Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,
               int start,int stride,int edge);
