@@ -37,6 +37,7 @@
 #include <math.h>
 #include <time.h>
 #if HAVE_INTTYPES_H
+#   define __STDC_FORMAT_MACROS
 #   include <inttypes.h>
 #endif
 #if defined(_WIN64) || defined(_WIN32)
