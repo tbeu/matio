@@ -76,29 +76,29 @@ struct h5_read_group_info_iter_data {
  *===========================================================================
  */
 static enum matio_classes Mat_class_str_to_id(const char *name);
-static hid_t Mat_class_type_to_hid_t(enum matio_classes class_type);
-static hid_t Mat_data_type_to_hid_t(enum matio_types data_type);
-static hid_t Mat_dims_type_to_hid_t(void);
-static void  Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims);
-static void  Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id);
-static void  Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
-static void  Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
-static void  Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat);
-static void  Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat);
-static int   Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,
+static hid_t  Mat_class_type_to_hid_t(enum matio_classes class_type);
+static hid_t  Mat_data_type_to_hid_t(enum matio_types data_type);
+static hid_t  Mat_dims_type_to_hid_t(void);
+static void   Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims);
+static void   Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id);
+static void   Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
+static void   Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
+static void   Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat);
+static void   Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat);
+static int    Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,
+                                 hid_t *refs_id);
+static int    Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name);
+static int    Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,
+                  size_t *dims);
+static int    Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name);
+static int    Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,
+                                   hid_t *refs_id);
+static int    Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,
                                 hid_t *refs_id);
-static int   Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name);
-static int   Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,
-                 size_t *dims);
-static int   Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name);
-static int   Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,
-                                  hid_t *refs_id);
-static int   Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,
-                                hid_t *refs_id);
-herr_t       Mat_VarReadNextInfoIterate(hid_t id, const char *name,
-                                        const H5L_info_t *info, void *op_data);
-herr_t       Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name,
-                                        const H5L_info_t *info, void *op_data);
+static herr_t Mat_VarReadNextInfoIterate(hid_t id, const char *name,
+                                         const H5L_info_t *info, void *op_data);
+static herr_t Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name,
+                                         const H5L_info_t *info, void *op_data);
 
 static enum matio_classes
 Mat_class_str_to_id(const char *name)
@@ -931,7 +931,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     }
 }
 
-herr_t
+static herr_t
 Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *info, void *op_data)
 {
     matvar_t  *matvar;
@@ -2713,7 +2713,7 @@ Mat_VarReadNextInfo73( mat_t *mat )
     return mat_data.matvar;
 }
 
-herr_t
+static herr_t
 Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, void *op_data)
 {
     mat_t *mat;
