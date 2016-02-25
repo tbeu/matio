@@ -2721,7 +2721,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
     H5O_info_t object_info;
     struct mat_read_next_iter_data *mat_data;
 
-    //* FIXME: follow symlinks, datatypes? */
+    /* FIXME: follow symlinks, datatypes? */
 
     /* Check that this is not the /#refs# group */
     if ( 0 == strcmp(name, "#refs#") )
