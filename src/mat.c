@@ -104,7 +104,7 @@ Mat_PrintNumber(enum matio_types type, void *data)
 #elif defined(HAVE_UNSIGNED_LONG_LONG_INT)
             printf("%llu",(unsigned long long)(*(mat_uint64_t*)data));
 #else
-            printf("%lu",(long)(*(mat_uint64_t*)data));
+            printf("%lu",(unsigned long)(*(mat_uint64_t*)data));
 #endif
             break;
 #endif
