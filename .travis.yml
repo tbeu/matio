@@ -46,6 +46,14 @@ install:
   - ./configure --quiet --enable-shared --enable-production=no --enable-debug=all --with-pic --disable-deprecated-symbols --disable-hl --with-default-api-version=v18 CFLAGS="-w"
   - make install -C src
   - cd $TRAVIS_BUILD_DIR
+  - mkdir MSL
+  - cd MSL
+  - git init
+  - git remote add -f origin https://github.com/svn2github/Modelica_StandardLibrary
+  - git config core.sparseCheckout true
+  - echo "Modelica/Resources/Data/Tables/" >> .git/info/sparse-checkout
+  - git pull origin master
+  - cd $TRAVIS_BUILD_DIR
 
 before_script:
   - ./autogen.sh
@@ -60,6 +68,9 @@ script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -V; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -v -H; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -V; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v6.mat s; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.mat s; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
 
 after_success:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/mat2hdf.c -e share -e patches -e hdf5_1_8_16 -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
