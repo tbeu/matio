@@ -89,12 +89,12 @@ static int    Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,
                                  hid_t *refs_id);
 static int    Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name);
 static int    Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,
-                  size_t *dims);
+                                       size_t *dims);
 static int    Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name);
 static int    Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,
                                    hid_t *refs_id);
 static int    Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,
-                                hid_t *refs_id);
+                                 hid_t *refs_id);
 static herr_t Mat_VarReadNextInfoIterate(hid_t id, const char *name,
                                          const H5L_info_t *info, void *op_data);
 static herr_t Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name,
