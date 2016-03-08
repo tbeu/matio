@@ -953,21 +953,12 @@ Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *in
     matvar = group_data->matvar;
 
     switch ( object_info.type ) {
-        case H5O_TYPE_DATASET:
-        {
-            if ( matvar != NULL ) {
-                matvar->internal->fieldnames[group_data->nfields] =
-                    (char*)calloc(strlen(name)+1,sizeof(char));
-                strcpy(matvar->internal->fieldnames[group_data->nfields], name);
-            }
-            group_data->nfields++;
-            break;
-        }
         case H5O_TYPE_GROUP:
-        {
             /* Check that this is not the /#refs# group */
             if ( 0 == strcmp(name,"#refs#") )
                 return 0;
+            /* Fall through */
+        case H5O_TYPE_DATASET:
             if ( matvar != NULL ) {
                 matvar->internal->fieldnames[group_data->nfields] =
                     (char*)calloc(strlen(name)+1,sizeof(char));
@@ -975,8 +966,8 @@ Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *in
             }
             group_data->nfields++;
             break;
-        }
         default:
+            /* Not possible to get here */
             break;
     }
     return 1;
