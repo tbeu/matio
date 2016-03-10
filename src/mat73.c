@@ -2720,7 +2720,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
     /* FIXME: follow symlinks, datatypes? */
 
     /* Check that this is not the /#refs# group */
-    if ( 0 == strcmp(name, "#refs#") )
+    if ( 0 == strcmp(name, "#refs#") || 0 == strcmp(name, "#subsystem#") )
         return 0;
 
     H5Oget_info_by_name(fid, name, &object_info, H5P_DEFAULT);
