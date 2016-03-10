@@ -2320,10 +2320,12 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 dset_id = matvar->internal->id;
                 H5Iinc_ref(dset_id);
             }
-            matvar->data = malloc(matvar->nbytes);
-            if ( NULL != matvar->data ) {
-                H5Dread(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
-                        H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
+            if ( matvar->nbytes > 0 ) {
+                matvar->data = malloc(matvar->nbytes);
+                if ( NULL != matvar->data ) {
+                    H5Dread(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
+                            H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
+                }
             }
             break;
         case MAT_C_STRUCT:
