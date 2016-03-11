@@ -27,7 +27,7 @@ Matio is an open-source library for reading/writing MATLAB MAT files.
 This library is designed for use by programs/libraries that do not have access or do not want to rely on MATLAB's shared library.
 
 ### 1.1 Contact
-You can contact the Christopher Hulbert through email at chulbe2lsu@users.sourceforge.net and Thomas Beutlich through email at t-beu@users.sourceforge.net.
+You can contact Christopher Hulbert through email at chulbe2lsu@users.sourceforge.net and Thomas Beutlich through email at t-beu@users.sourceforge.net.
 
 ### 1.2 Acknowledgements
 The following people/organizations have helped in the development of matio through patches, bug reports, and/or testing:
