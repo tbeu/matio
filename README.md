@@ -43,7 +43,7 @@ The following people/organizations have helped in the development of matio throu
 * Steven Leibman <sleibman@alum.mit.edu>
 
 ### 1.3 Contributing
-Part of my reason for releasing this software is I have many other projects to work on and have many features I would still like to implement. If you make changes, I would appreciate your contributions and more than likely will include them in future releases. If you are interested in collaborations, contact me via email (see Section [1.1](#11-contact)).
+If you are interested in collaborations, contact us via email (see Section [1.1](#11-contact)).
 
 ### 1.4 Questions and Reporting Bugs
 Questions can be asked using the forums on the sourceforge site hosting matio ([http://sourceforge.net/projects/matio/forums](http://sourceforge.net/projects/matio/forums)).
@@ -54,7 +54,7 @@ Bugs, enhancements, etc. should be submitted using one of the trackers on the so
 This section describes how to build matio. Section [2.1](#21-dependencies) describes the dependencies, Section [2.2](#22-building-matio) how to build/test matio, and Section [2.3](#23-platforms) documents the platforms matio has been tested on.
 
 ### 2.1 Dependencies
-MATIO has two optional dependencies. These are not required for the software to work, but without them some files may be unreadable. Zlib is required to read/write level 5 MAT files that use compression. HDF5 is required to work with newer MAT files that use the HDF5-format files.
+Matio has two optional dependencies. These are not required for the software to work, but without them some files may be unreadable. Zlib is required to read/write level 5 MAT files that use compression. HDF5 is required to work with newer MAT files that use the HDF5-format files.
 
 #### 2.1.1 zlib
 To support compressed MAT files, zlib 1.2.3 or greater is required. The zlib software can be downloaded from http://zlib.net/.
