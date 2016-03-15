@@ -23,8 +23,8 @@ MATLAB MAT file I/O library
 3. [License](#30-license)
 
 ## 1.0 Introduction
-Matio is an open-source library for reading/writing MATLAB MAT files.
-This library is designed for use by programs/libraries that do not have access or do not want to rely on MATLAB's shared library.
+Matio is an open-source C library for reading and writing MATLAB MAT files.
+This library is designed for use by programs/libraries that do not have access or do not want to rely on MATLAB's shared libraries.
 
 ### 1.1 Contact
 You can contact Christopher Hulbert through email at chulbe2lsu@users.sourceforge.net and Thomas Beutlich through email at t-beu@users.sourceforge.net.
@@ -112,3 +112,5 @@ The library has been tested/used on Linux, Windows, OS X, and AIX including both
 
 ## 3.0 License
 This software is provided under a Simplified BSD license. See the [COPYING](COPYING) file for details on the license.
+
+<sub>MATLAB is a registered trademark of The MathWorks, Inc.</sub>
