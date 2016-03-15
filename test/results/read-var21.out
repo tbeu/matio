@@ -1,0 +1,12 @@
+      Name: var21
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: Sparse Array
+ Data Type: IEEE 754 double-precision
+{
+    (1,1)  1
+    (2,2)  2
+    (3,3)  3
+    (4,4)  4
+    (5,5)  5
+}

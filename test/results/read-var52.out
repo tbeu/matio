@@ -1,0 +1,67 @@
+      Name: var52
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+}
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+}
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+}
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+}
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+}
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+}
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+}
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+}
+}

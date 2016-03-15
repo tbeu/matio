@@ -1,0 +1,11 @@
+      Name: var17
+      Rank: 2
+Dimensions: 4 x 5
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i 
+2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i 
+3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i 
+4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i 
+}

@@ -1,0 +1,57 @@
+      Name: var66
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: field1
+      Rank: 0
+      Name: field2
+      Rank: 0
+}
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+}
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+}
+}
