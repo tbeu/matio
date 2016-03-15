@@ -465,6 +465,8 @@ AT_CHECK(
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
 ]], [])
 AT_CLEANUP
 
@@ -536,11 +538,15 @@ Fields@<:@4@:>@ {
 Dimensions: 0 x 1
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
       Name: field2
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Character Array
  Data Type: 8-bit, unsigned integer
+{
+}
       Name: field1
       Rank: 2
 Dimensions: 0 x 1
@@ -1807,42 +1813,62 @@ Class Type: Cell Array
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
       Rank: 2
 Dimensions: 0 x 0
 Class Type: Single Precision Array
  Data Type: IEEE 754 single-precision
+{
+}
       Rank: 2
 Dimensions: 0 x 0
 Class Type: 64-bit, signed integer array
  Data Type: 64-bit, signed integer
+{
+}
       Rank: 2
 Dimensions: 0 x 0
 Class Type: 64-bit, unsigned integer array
  Data Type: 64-bit, unsigned integer
+{
+}
       Rank: 2
 Dimensions: 0 x 0
 Class Type: 32-bit, signed integer array
  Data Type: 32-bit, signed integer
+{
+}
       Rank: 2
 Dimensions: 0 x 0
 Class Type: 32-bit, unsigned integer array
  Data Type: 32-bit, unsigned integer
+{
+}
       Rank: 2
 Dimensions: 0 x 0
 Class Type: 16-bit, signed integer array
  Data Type: 16-bit, signed integer
+{
+}
       Rank: 2
 Dimensions: 0 x 0
 Class Type: 16-bit, unsigned integer array
  Data Type: 16-bit, unsigned integer
+{
+}
       Rank: 2
 Dimensions: 0 x 0
 Class Type: 8-bit, signed integer array
  Data Type: 8-bit, signed integer
+{
+}
       Rank: 2
 Dimensions: 0 x 0
 Class Type: 8-bit, unsigned integer array
  Data Type: 8-bit, unsigned integer
+{
+}
 }
 ], [])
 AT_CLEANUP
@@ -2740,11 +2766,15 @@ Fields@<:@4@:>@ {
 Dimensions: 0 x 1
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
       Name: field2
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Character Array
  Data Type: 8-bit, unsigned integer
+{
+}
       Name: field1
       Rank: 2
 Dimensions: 0 x 1
