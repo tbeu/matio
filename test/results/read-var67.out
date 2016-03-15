@@ -1,0 +1,847 @@
+      Name: var67
+      Rank: 2
+Dimensions: 2 x 10
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array (complex)
+ Data Type: IEEE 754 single-precision
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, signed integer array (complex)
+ Data Type: 64-bit, signed integer
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, signed integer array (complex)
+ Data Type: 64-bit, signed integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, signed integer array (complex)
+ Data Type: 64-bit, signed integer
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, signed integer array (complex)
+ Data Type: 64-bit, signed integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array (complex)
+ Data Type: 64-bit, unsigned integer
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, unsigned integer array (complex)
+ Data Type: 64-bit, unsigned integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array (complex)
+ Data Type: 64-bit, unsigned integer
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 64-bit, unsigned integer array (complex)
+ Data Type: 64-bit, unsigned integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array (complex)
+ Data Type: 32-bit, unsigned integer
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, unsigned integer array (complex)
+ Data Type: 32-bit, unsigned integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array (complex)
+ Data Type: 32-bit, unsigned integer
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, unsigned integer array (complex)
+ Data Type: 32-bit, unsigned integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, signed integer array
+ Data Type: 16-bit, signed integer
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, signed integer array (complex)
+ Data Type: 16-bit, signed integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array (complex)
+ Data Type: 16-bit, unsigned integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, signed integer array
+ Data Type: 8-bit, signed integer
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, signed integer array (complex)
+ Data Type: 8-bit, signed integer
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, signed integer array (complex)
+ Data Type: 8-bit, signed integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, signed integer array (complex)
+ Data Type: 8-bit, signed integer
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, signed integer array (complex)
+ Data Type: 8-bit, signed integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+1 + 51i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, unsigned integer array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+4 + 54i 7 + 57i 10 + 60i 13 + 63i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+14 + 64i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 8-bit, unsigned integer array (complex)
+ Data Type: 8-bit, unsigned integer
+{
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+16 + 66i 19 + 69i 22 + 72i 25 + 75i 
+17 + 67i 20 + 70i 23 + 73i 26 + 76i 
+}
+}
+}

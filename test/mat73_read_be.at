@@ -27,3791 +27,613 @@
 AT_SETUP([Read 2D double-precision array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var1], [0],
-[[      Name: var1
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-]], [])
+[cp $srcdir/results/read-var1.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var1], [0],
+[expout], [])
 AT_CHECK(
-[$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var1], [0],
-[1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-], [])
-AT_CLEANUP
+[cp $srcdir/results/dump-var1.out expout
+$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var1], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D single-precision array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var2], [0],
-[      Name: var2
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var2.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var2], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 64-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var3], [0],
-[      Name: var3
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var3.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var3], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 64-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var4], [0],
-[      Name: var4
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var4.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var4], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 32-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var5], [0],
-[      Name: var5
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var5.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var5], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 32-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var6], [0],
-[      Name: var6
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var6.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var6], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 16-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var7], [0],
-[      Name: var7
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var7.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var7], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 16-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var8], [0],
-[      Name: var8
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var8.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var8], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 8-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var9], [0],
-[      Name: var9
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var9.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var9], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 8-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var10], [0],
-[      Name: var10
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var10.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var10], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D double-precision complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var11], [0],
-[[      Name: var11
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Double Precision Array (complex)
- Data Type: IEEE 754 double-precision
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-]], [])
+[cp $srcdir/results/read-var11.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var11], [0],
+[expout], [])
 AT_CHECK(
-[$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var11], [0],
-[1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-], [])
-AT_CLEANUP
+[cp $srcdir/results/dump-var11.out expout
+$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var11], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D single-precision complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var12], [0],
-[      Name: var12
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Single Precision Array (complex)
- Data Type: IEEE 754 single-precision
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var12.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var12], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 64-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var13], [0],
-[      Name: var13
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 64-bit, signed integer array (complex)
- Data Type: 64-bit, signed integer
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var13.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var13], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 64-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var14], [0],
-[      Name: var14
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 64-bit, unsigned integer array (complex)
- Data Type: 64-bit, unsigned integer
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var14.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var14], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 32-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var15], [0],
-[      Name: var15
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 32-bit, signed integer array (complex)
- Data Type: 32-bit, signed integer
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var15.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var15], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 32-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var16], [0],
-[      Name: var16
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 32-bit, unsigned integer array (complex)
- Data Type: 32-bit, unsigned integer
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var16.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var16], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 16-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var17], [0],
-[      Name: var17
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 16-bit, signed integer array (complex)
- Data Type: 16-bit, signed integer
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var17.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var17], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 16-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var18], [0],
-[      Name: var18
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 16-bit, unsigned integer array (complex)
- Data Type: 16-bit, unsigned integer
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var18.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var18], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 8-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var19], [0],
-[      Name: var19
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 8-bit, signed integer array (complex)
- Data Type: 8-bit, signed integer
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var19.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var19], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D 8-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var20], [0],
-[      Name: var20
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 8-bit, unsigned integer array (complex)
- Data Type: 8-bit, unsigned integer
-{
-1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var20.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var20], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D logical array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var90], [0],
-[[      Name: var90
-      Rank: 2
-Dimensions: 5 x 5
-Class Type: 8-bit, unsigned integer array (logical)
- Data Type: 8-bit, unsigned integer
-{
-1 0 0 0 0 @&t@
-1 1 0 0 0 @&t@
-1 1 1 0 0 @&t@
-1 1 1 1 0 @&t@
-1 1 1 1 1 @&t@
-}
-]], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var90.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var90], [0],
+[expout], [])
+AT_CLEANUP(expout)
+
+AT_SETUP([Read 2D logical array])
+AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_CHECK(
+[cp $srcdir/results/read-var90.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var90], [0],
+[expout], [ignore])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read double-precision sparse array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var21], [0],
-[      Name: var21
-      Rank: 2
-Dimensions: 5 x 5
-Class Type: Sparse Array
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1
-    (2,2)  2
-    (3,3)  3
-    (4,4)  4
-    (5,5)  5
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var21.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var21], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read double-precision sparse complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var22], [0],
-[      Name: var22
-      Rank: 2
-Dimensions: 5 x 5
-Class Type: Sparse Array (complex)
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1 + 6i
-    (2,2)  2 + 7i
-    (3,3)  3 + 8i
-    (4,4)  4 + 9i
-    (5,5)  5 + 10i
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var22.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var22], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read empty array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var23], [0],
-[[      Name: var23
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-}
-]], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var23.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var23], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read 2D character array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var24], [0],
-[      Name: var24
-      Rank: 2
-Dimensions: 4 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-abcdefghijklmnopqrstuvwxyz
-ABCDEFGHIJKLMNOPQRSTUVWXYZ
-1234567890!@#$%^&*()-_=+`~
-@<:@{@:>@}\|;:'",<.>/?          @&t@
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var24.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var24], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read empty structure array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var25], [0],
-[      Name: var25
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@0@:>@ {
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var25.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var25], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read empty structure array with fields])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var26], [0],
-[      Name: var26
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@2@:>@ {
-      Name: field1
-      Rank: 0
-      Name: field2
-      Rank: 0
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var26.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var26], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with empty fields])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var27], [0],
-[      Name: var27
-      Rank: 2
-Dimensions: 1 x 2
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-}
-      Name: field2
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-}
-      Name: field1
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@0@:>@ {
-}
-      Name: field2
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Cell Array
- Data Type: Cell Array
-{
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var27.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var27], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with double-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var28], [0],
-[      Name: var28
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var28.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var28], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with single-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var29], [0],
-[      Name: var29
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var29.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var29], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with 64-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var30], [0],
-[      Name: var30
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var30.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var30], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with 64-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var31], [0],
-[      Name: var31
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var31.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var31], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with 32-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var32], [0],
-[      Name: var32
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var32.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var32], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with 32-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var33], [0],
-[      Name: var33
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var33.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var33], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with 16-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var34], [0],
-[      Name: var34
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var34.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var34], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with 16-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var35], [0],
-[      Name: var35
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var35.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var35], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with 8-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var36], [0],
-[      Name: var36
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var36.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var36], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with 8-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var37], [0],
-[      Name: var37
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var37.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var37], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex double-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var38], [0],
-[      Name: var38
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Double Precision Array (complex)
- Data Type: IEEE 754 double-precision
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Double Precision Array (complex)
- Data Type: IEEE 754 double-precision
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Double Precision Array (complex)
- Data Type: IEEE 754 double-precision
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Double Precision Array (complex)
- Data Type: IEEE 754 double-precision
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var38.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var38], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex single-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var39], [0],
-[      Name: var39
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Single Precision Array (complex)
- Data Type: IEEE 754 single-precision
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Single Precision Array (complex)
- Data Type: IEEE 754 single-precision
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Single Precision Array (complex)
- Data Type: IEEE 754 single-precision
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Single Precision Array (complex)
- Data Type: IEEE 754 single-precision
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var39.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var39], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex 64-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var40], [0],
-[      Name: var40
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, signed integer array (complex)
- Data Type: 64-bit, signed integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, signed integer array (complex)
- Data Type: 64-bit, signed integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, signed integer array (complex)
- Data Type: 64-bit, signed integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, signed integer array (complex)
- Data Type: 64-bit, signed integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var40.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var40], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex 64-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var41], [0],
-[      Name: var41
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, unsigned integer array (complex)
- Data Type: 64-bit, unsigned integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, unsigned integer array (complex)
- Data Type: 64-bit, unsigned integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, unsigned integer array (complex)
- Data Type: 64-bit, unsigned integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, unsigned integer array (complex)
- Data Type: 64-bit, unsigned integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var41.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var41], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex 32-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var42], [0],
-[      Name: var42
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, signed integer array (complex)
- Data Type: 32-bit, signed integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, signed integer array (complex)
- Data Type: 32-bit, signed integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, signed integer array (complex)
- Data Type: 32-bit, signed integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, signed integer array (complex)
- Data Type: 32-bit, signed integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var42.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var42], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex 32-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var43], [0],
-[      Name: var43
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array (complex)
- Data Type: 32-bit, unsigned integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, unsigned integer array (complex)
- Data Type: 32-bit, unsigned integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array (complex)
- Data Type: 32-bit, unsigned integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, unsigned integer array (complex)
- Data Type: 32-bit, unsigned integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var43.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var43], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex 16-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var44], [0],
-[      Name: var44
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, signed integer array (complex)
- Data Type: 16-bit, signed integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, signed integer array (complex)
- Data Type: 16-bit, signed integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, signed integer array (complex)
- Data Type: 16-bit, signed integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, signed integer array (complex)
- Data Type: 16-bit, signed integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var44.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var44], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex 16-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var45], [0],
-[      Name: var45
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, unsigned integer array (complex)
- Data Type: 16-bit, unsigned integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, unsigned integer array (complex)
- Data Type: 16-bit, unsigned integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, unsigned integer array (complex)
- Data Type: 16-bit, unsigned integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, unsigned integer array (complex)
- Data Type: 16-bit, unsigned integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var45.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var45], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex 8-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var46], [0],
-[      Name: var46
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, signed integer array (complex)
- Data Type: 8-bit, signed integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, signed integer array (complex)
- Data Type: 8-bit, signed integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, signed integer array (complex)
- Data Type: 8-bit, signed integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, signed integer array (complex)
- Data Type: 8-bit, signed integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var46.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var46], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex 8-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var47], [0],
-[      Name: var47
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, unsigned integer array (complex)
- Data Type: 8-bit, unsigned integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, unsigned integer array (complex)
- Data Type: 8-bit, unsigned integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, unsigned integer array (complex)
- Data Type: 8-bit, unsigned integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, unsigned integer array (complex)
- Data Type: 8-bit, unsigned integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var47.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var47], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with logical fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var91], [0],
-[[      Name: var91
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields[4] {
-      Name: field1
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 8-bit, unsigned integer array (logical)
- Data Type: 8-bit, unsigned integer
-{
-0 0 0 0 0 @&t@
-1 1 1 1 1 @&t@
-0 0 0 0 0 @&t@
-1 1 1 1 1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 8-bit, unsigned integer array (logical)
- Data Type: 8-bit, unsigned integer
-{
-1 1 1 1 1 @&t@
-0 0 0 0 0 @&t@
-1 1 1 1 1 @&t@
-0 0 0 0 0 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 5 x 5
-Class Type: 8-bit, unsigned integer array (logical)
- Data Type: 8-bit, unsigned integer
-{
-1 0 0 0 0 @&t@
-1 1 0 0 0 @&t@
-1 1 1 0 0 @&t@
-1 1 1 1 0 @&t@
-1 1 1 1 1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 5 x 5
-Class Type: 8-bit, unsigned integer array (logical)
- Data Type: 8-bit, unsigned integer
-{
-1 1 1 1 1 @&t@
-0 1 1 1 1 @&t@
-0 0 1 1 1 @&t@
-0 0 0 1 1 @&t@
-0 0 0 0 1 @&t@
-}
-}
-]], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var91.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var91], [0],
+[expout], [])
+AT_CLEANUP(expout)
+
+AT_SETUP([Read structure array with logical fields])
+AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
+AT_CHECK(
+[cp $srcdir/results/read-var91.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var91], [0],
+[expout], [ignore])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with double-precision sparse fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var48], [0],
-[      Name: var48
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@2@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Sparse Array
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1
-    (1,2)  5
-    (2,2)  6
-    (1,3)  9
-    (2,3)  10
-    (3,3)  11
-    (1,4)  13
-    (2,4)  14
-    (3,4)  15
-    (4,4)  16
-    (1,5)  17
-    (2,5)  18
-    (3,5)  19
-    (4,5)  20
-}
-      Name: field2
-      Rank: 2
-Dimensions: 5 x 4
-Class Type: Sparse Array
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1
-    (2,1)  5
-    (3,1)  9
-    (4,1)  13
-    (5,1)  17
-    (2,2)  6
-    (3,2)  10
-    (4,2)  14
-    (5,2)  18
-    (3,3)  11
-    (4,3)  15
-    (5,3)  19
-    (4,4)  16
-    (5,4)  20
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var48.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var48], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with complex double-precision sparse fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var49], [0],
-[      Name: var49
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@2@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Sparse Array (complex)
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1 + 21i
-    (1,2)  5 + 25i
-    (2,2)  6 + 26i
-    (1,3)  9 + 29i
-    (2,3)  10 + 30i
-    (3,3)  11 + 31i
-    (1,4)  13 + 33i
-    (2,4)  14 + 34i
-    (3,4)  15 + 35i
-    (4,4)  16 + 36i
-    (1,5)  17 + 37i
-    (2,5)  18 + 38i
-    (3,5)  19 + 39i
-    (4,5)  20 + 40i
-}
-      Name: field2
-      Rank: 2
-Dimensions: 5 x 4
-Class Type: Sparse Array (complex)
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1 + -21i
-    (2,1)  5 + -25i
-    (3,1)  9 + -29i
-    (4,1)  13 + -33i
-    (5,1)  17 + -37i
-    (2,2)  6 + -26i
-    (3,2)  10 + -30i
-    (4,2)  14 + -34i
-    (5,2)  18 + -38i
-    (3,3)  11 + -31i
-    (4,3)  15 + -35i
-    (5,3)  19 + -39i
-    (4,4)  16 + -36i
-    (5,4)  20 + -40i
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var49.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var49], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read structure array with character fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var50], [0],
-[      Name: var50
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-abcdefghijklmnopqrstuvwxyz
-}
-      Name: field2
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-ABCDEFGHIJKLMNOPQRSTUVWXYZ
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-1234567890!@#$%^&*()-_=+`~
-}
-      Name: field2
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-@<:@{@:>@}\|;:'",<.>/?          @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var50.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var50], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read empty cell array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var51], [0],
-[      Name: var51
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: Cell Array
- Data Type: Cell Array
-{
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var51.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var51], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with empty arrays])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var52], [0],
-[      Name: var52
-      Rank: 2
-Dimensions: 1 x 10
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-}
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-}
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-}
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-}
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-}
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-}
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-}
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-}
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-}
-      Rank: 2
-Dimensions: 0 x 0
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var52.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var52], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with double-precision arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var53], [0],
-[      Name: var53
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var53.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var53], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with single-precision arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var54], [0],
-[      Name: var54
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var54.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var54], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with 64-bit integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var55], [0],
-[      Name: var55
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var55.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var55], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with 64-bit unsigned integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var56], [0],
-[      Name: var56
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var56.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var56], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with 32-bit integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var57], [0],
-[      Name: var57
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var57.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var57], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with 32-bit unsigned integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var58], [0],
-[      Name: var58
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var58.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var58], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with 16-bit integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var59], [0],
-[      Name: var59
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var59.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var59], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with 16-bit unsigned integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var60], [0],
-[      Name: var60
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var60.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var60], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with 8-bit integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var61], [0],
-[      Name: var61
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var61.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var61], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with 8-bit unsigned integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var62], [0],
-[      Name: var62
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-1 2 @&t@
-3 4 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-19 20 @&t@
-21 22 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 3
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-5 6 7 @&t@
-8 9 10 @&t@
-}
-      Rank: 2
-Dimensions: 3 x 2
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-23 24 @&t@
-25 26 @&t@
-27 28 @&t@
-}
-      Rank: 2
-Dimensions: 2 x 4
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-11 12 13 14 @&t@
-15 16 17 18 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 2
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-29 30 @&t@
-31 32 @&t@
-33 34 @&t@
-35 36 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var62.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var62], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with logical arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var92], [0],
-[      Name: var92
-      Rank: 2
-Dimensions: 4 x 1
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 8-bit, unsigned integer array (logical)
- Data Type: 8-bit, unsigned integer
-{
-0 0 0 0 0 @&t@
-1 1 1 1 1 @&t@
-0 0 0 0 0 @&t@
-1 1 1 1 1 @&t@
-}
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: 8-bit, unsigned integer array (logical)
- Data Type: 8-bit, unsigned integer
-{
-1 1 1 1 1 @&t@
-0 0 0 0 0 @&t@
-1 1 1 1 1 @&t@
-0 0 0 0 0 @&t@
-}
-      Rank: 2
-Dimensions: 5 x 5
-Class Type: 8-bit, unsigned integer array (logical)
- Data Type: 8-bit, unsigned integer
-{
-1 0 0 0 0 @&t@
-1 1 0 0 0 @&t@
-1 1 1 0 0 @&t@
-1 1 1 1 0 @&t@
-1 1 1 1 1 @&t@
-}
-      Rank: 2
-Dimensions: 5 x 5
-Class Type: 8-bit, unsigned integer array (logical)
- Data Type: 8-bit, unsigned integer
-{
-1 1 1 1 1 @&t@
-0 1 1 1 1 @&t@
-0 0 1 1 1 @&t@
-0 0 0 1 1 @&t@
-0 0 0 0 1 @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var92.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var92], [0],
+[expout], [])
+AT_CLEANUP(expout)
+
+AT_SETUP([Read cell array with logical arrays])
+AT_CHECK(
+[cp $srcdir/results/read-var92.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var92], [0],
+[expout], [ignore])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with double-precision sparse arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var63], [0],
-[      Name: var63
-      Rank: 2
-Dimensions: 1 x 2
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Sparse Array
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1
-    (1,2)  5
-    (2,2)  6
-    (1,3)  9
-    (2,3)  10
-    (3,3)  11
-    (1,4)  13
-    (2,4)  14
-    (3,4)  15
-    (4,4)  16
-    (1,5)  17
-    (2,5)  18
-    (3,5)  19
-    (4,5)  20
-}
-      Rank: 2
-Dimensions: 5 x 4
-Class Type: Sparse Array
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1
-    (2,1)  5
-    (3,1)  9
-    (4,1)  13
-    (5,1)  17
-    (2,2)  6
-    (3,2)  10
-    (4,2)  14
-    (5,2)  18
-    (3,3)  11
-    (4,3)  15
-    (5,3)  19
-    (4,4)  16
-    (5,4)  20
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var63.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var63], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with complex double-precision sparse arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var64], [0],
-[      Name: var64
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Sparse Array (complex)
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1 + 21i
-    (1,2)  5 + 25i
-    (2,2)  6 + 26i
-    (1,3)  9 + 29i
-    (2,3)  10 + 30i
-    (3,3)  11 + 31i
-    (1,4)  13 + 33i
-    (2,4)  14 + 34i
-    (3,4)  15 + 35i
-    (4,4)  16 + 36i
-    (1,5)  17 + 37i
-    (2,5)  18 + 38i
-    (3,5)  19 + 39i
-    (4,5)  20 + 40i
-}
-      Rank: 2
-Dimensions: 5 x 4
-Class Type: Sparse Array (complex)
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1 + -21i
-    (2,1)  5 + -25i
-    (3,1)  9 + -29i
-    (4,1)  13 + -33i
-    (5,1)  17 + -37i
-    (2,2)  6 + -26i
-    (3,2)  10 + -30i
-    (4,2)  14 + -34i
-    (5,2)  18 + -38i
-    (3,3)  11 + -31i
-    (4,3)  15 + -35i
-    (5,3)  19 + -39i
-    (4,4)  16 + -36i
-    (5,4)  20 + -40i
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var64.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var64], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with character arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var65], [0],
-[      Name: var65
-      Rank: 2
-Dimensions: 2 x 2
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-abcdefghijklmnopqrstuvwxyz
-}
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-ABCDEFGHIJKLMNOPQRSTUVWXYZ
-}
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-1234567890!@#$%^&*()-_=+`~
-}
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-@<:@{@:>@}\|;:'",<.>/?          @&t@
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var65.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var65], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with empty structure arrays])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var66], [0],
-[      Name: var66
-      Rank: 2
-Dimensions: 1 x 3
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@0@:>@ {
-}
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@2@:>@ {
-      Name: field1
-      Rank: 0
-      Name: field2
-      Rank: 0
-}
-      Rank: 2
-Dimensions: 1 x 2
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-}
-      Name: field2
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-}
-      Name: field1
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@0@:>@ {
-}
-      Name: field2
-      Rank: 2
-Dimensions: 0 x 1
-Class Type: Cell Array
- Data Type: Cell Array
-{
-}
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var66.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var66], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with structure arrays (numeric fields)])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var67], [0],
-[      Name: var67
-      Rank: 2
-Dimensions: 2 x 10
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Double Precision Array
- Data Type: IEEE 754 double-precision
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Double Precision Array (complex)
- Data Type: IEEE 754 double-precision
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Double Precision Array (complex)
- Data Type: IEEE 754 double-precision
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Double Precision Array (complex)
- Data Type: IEEE 754 double-precision
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Double Precision Array (complex)
- Data Type: IEEE 754 double-precision
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Single Precision Array
- Data Type: IEEE 754 single-precision
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Single Precision Array (complex)
- Data Type: IEEE 754 single-precision
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Single Precision Array (complex)
- Data Type: IEEE 754 single-precision
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Single Precision Array (complex)
- Data Type: IEEE 754 single-precision
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: Single Precision Array (complex)
- Data Type: IEEE 754 single-precision
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, signed integer array
- Data Type: 64-bit, signed integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, signed integer array (complex)
- Data Type: 64-bit, signed integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, signed integer array (complex)
- Data Type: 64-bit, signed integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, signed integer array (complex)
- Data Type: 64-bit, signed integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, signed integer array (complex)
- Data Type: 64-bit, signed integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, unsigned integer array
- Data Type: 64-bit, unsigned integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, unsigned integer array (complex)
- Data Type: 64-bit, unsigned integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, unsigned integer array (complex)
- Data Type: 64-bit, unsigned integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 64-bit, unsigned integer array (complex)
- Data Type: 64-bit, unsigned integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 64-bit, unsigned integer array (complex)
- Data Type: 64-bit, unsigned integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, signed integer array
- Data Type: 32-bit, signed integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, signed integer array (complex)
- Data Type: 32-bit, signed integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, signed integer array (complex)
- Data Type: 32-bit, signed integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, signed integer array (complex)
- Data Type: 32-bit, signed integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, signed integer array (complex)
- Data Type: 32-bit, signed integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array (complex)
- Data Type: 32-bit, unsigned integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, unsigned integer array (complex)
- Data Type: 32-bit, unsigned integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array (complex)
- Data Type: 32-bit, unsigned integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 32-bit, unsigned integer array (complex)
- Data Type: 32-bit, unsigned integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, signed integer array
- Data Type: 16-bit, signed integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, signed integer array (complex)
- Data Type: 16-bit, signed integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, signed integer array (complex)
- Data Type: 16-bit, signed integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, signed integer array (complex)
- Data Type: 16-bit, signed integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, signed integer array (complex)
- Data Type: 16-bit, signed integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, unsigned integer array
- Data Type: 16-bit, unsigned integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, unsigned integer array (complex)
- Data Type: 16-bit, unsigned integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, unsigned integer array (complex)
- Data Type: 16-bit, unsigned integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 16-bit, unsigned integer array (complex)
- Data Type: 16-bit, unsigned integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 16-bit, unsigned integer array (complex)
- Data Type: 16-bit, unsigned integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, signed integer array
- Data Type: 8-bit, signed integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, signed integer array (complex)
- Data Type: 8-bit, signed integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, signed integer array (complex)
- Data Type: 8-bit, signed integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, signed integer array (complex)
- Data Type: 8-bit, signed integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, signed integer array (complex)
- Data Type: 8-bit, signed integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-1 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-2 5 8 11 @&t@
-3 6 9 12 @&t@
-4 7 10 13 @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-14 @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, unsigned integer array
- Data Type: 8-bit, unsigned integer
-{
-15 18 21 24 @&t@
-16 19 22 25 @&t@
-17 20 23 26 @&t@
-}
-}
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@4@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, unsigned integer array (complex)
- Data Type: 8-bit, unsigned integer
-{
-1 + 51i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, unsigned integer array (complex)
- Data Type: 8-bit, unsigned integer
-{
-2 + 52i 5 + 55i 8 + 58i 11 + 61i @&t@
-3 + 53i 6 + 56i 9 + 59i 12 + 62i @&t@
-4 + 54i 7 + 57i 10 + 60i 13 + 63i @&t@
-}
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: 8-bit, unsigned integer array (complex)
- Data Type: 8-bit, unsigned integer
-{
-14 + 64i @&t@
-}
-      Name: field2
-      Rank: 2
-Dimensions: 3 x 4
-Class Type: 8-bit, unsigned integer array (complex)
- Data Type: 8-bit, unsigned integer
-{
-15 + 65i 18 + 68i 21 + 71i 24 + 74i @&t@
-16 + 66i 19 + 69i 22 + 72i 25 + 75i @&t@
-17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
-}
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var67.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var67], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array with structure arrays (sparse fields)])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var68], [0],
-[      Name: var68
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@2@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Sparse Array
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1
-    (1,2)  5
-    (2,2)  6
-    (1,3)  9
-    (2,3)  10
-    (3,3)  11
-    (1,4)  13
-    (2,4)  14
-    (3,4)  15
-    (4,4)  16
-    (1,5)  17
-    (2,5)  18
-    (3,5)  19
-    (4,5)  20
-}
-      Name: field2
-      Rank: 2
-Dimensions: 5 x 4
-Class Type: Sparse Array
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1
-    (2,1)  5
-    (3,1)  9
-    (4,1)  13
-    (5,1)  17
-    (2,2)  6
-    (3,2)  10
-    (4,2)  14
-    (5,2)  18
-    (3,3)  11
-    (4,3)  15
-    (5,3)  19
-    (4,4)  16
-    (5,4)  20
-}
-}
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@2@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 4 x 5
-Class Type: Sparse Array (complex)
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1 + 21i
-    (1,2)  5 + 25i
-    (2,2)  6 + 26i
-    (1,3)  9 + 29i
-    (2,3)  10 + 30i
-    (3,3)  11 + 31i
-    (1,4)  13 + 33i
-    (2,4)  14 + 34i
-    (3,4)  15 + 35i
-    (4,4)  16 + 36i
-    (1,5)  17 + 37i
-    (2,5)  18 + 38i
-    (3,5)  19 + 39i
-    (4,5)  20 + 40i
-}
-      Name: field2
-      Rank: 2
-Dimensions: 5 x 4
-Class Type: Sparse Array (complex)
- Data Type: IEEE 754 double-precision
-{
-    (1,1)  1 + -21i
-    (2,1)  5 + -25i
-    (3,1)  9 + -29i
-    (4,1)  13 + -33i
-    (5,1)  17 + -37i
-    (2,2)  6 + -26i
-    (3,2)  10 + -30i
-    (4,2)  14 + -34i
-    (5,2)  18 + -38i
-    (3,3)  11 + -31i
-    (4,3)  15 + -35i
-    (5,3)  19 + -39i
-    (4,4)  16 + -36i
-    (5,4)  20 + -40i
-}
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var68.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var68], [0],
+[expout], [])
+AT_CLEANUP(expout)
 
 AT_SETUP([Read cell array structure arrays (character fields)])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var69], [0],
-[      Name: var69
-      Rank: 2
-Dimensions: 2 x 1
-Class Type: Cell Array
- Data Type: Cell Array
-{
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@2@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-abcdefghijklmnopqrstuvwxyz
-}
-      Name: field2
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-ABCDEFGHIJKLMNOPQRSTUVWXYZ
-}
-}
-      Rank: 2
-Dimensions: 1 x 1
-Class Type: Structure
- Data Type: Structure
-Fields@<:@2@:>@ {
-      Name: field1
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-1234567890!@#$%^&*()-_=+`~
-}
-      Name: field2
-      Rank: 2
-Dimensions: 1 x 26
-Class Type: Character Array
- Data Type: 8-bit, unsigned integer
-{
-@<:@{@:>@}\|;:'",<.>/?          @&t@
-}
-}
-}
-], [])
-AT_CLEANUP
+[cp $srcdir/results/read-var69.out expout
+$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var69], [0],
+[expout], [])
+AT_CLEANUP(expout)
