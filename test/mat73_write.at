@@ -1123,6 +1123,8 @@ MATIO_AT_HOST_DATA([expout],
 Dimensions: 0 x 10
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
 ],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_2d_numeric.mat empty],[0],
          [expout],[])
@@ -1235,11 +1237,15 @@ Fields@<:@2@:>@ {
 Dimensions: 0 x 1
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
       Name: field2
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
 }
 ],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_struct.mat var3],[0],
@@ -1256,11 +1262,15 @@ Fields@<:@4@:>@ {
 Dimensions: 0 x 1
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
       Name: field2
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Character Array
  Data Type: 8-bit, unsigned integer
+{
+}
       Name: field1
       Rank: 2
 Dimensions: 0 x 1
@@ -3013,6 +3023,8 @@ Class Type: 8-bit, unsigned integer array (logical)
 Dimensions: 0 x 5
 Class Type: 8-bit, unsigned integer array (logical)
  Data Type: 8-bit, unsigned integer
+{
+}
       Name: field2
       Rank: 2
 Dimensions: 5 x 5
@@ -3074,16 +3086,22 @@ Fields@<:@4@:>@ {
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
       Name: field2
       Rank: 2
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
       Name: field1
       Rank: 2
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
       Name: field2
       Rank: 2
 Dimensions: 4 x 26
@@ -3155,10 +3173,14 @@ Class Type: Cell Array
 Dimensions: 0 x 1
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
 }
 ],[])
 AT_CHECK([$builddir/test_mat readvar test_write_empty_cell.mat var2],[0],
@@ -4798,6 +4820,8 @@ Class Type: 8-bit, unsigned integer array (logical)
 Dimensions: 0 x 5
 Class Type: 8-bit, unsigned integer array (logical)
  Data Type: 8-bit, unsigned integer
+{
+}
 }
 ],[])
 AT_CHECK([$builddir/test_mat readvar test_write_cell_2d_logical.mat a],[0],

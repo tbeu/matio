@@ -1,0 +1,39 @@
+      Name: var50
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+abcdefghijklmnopqrstuvwxyz
+}
+      Name: field2
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+1234567890!@#$%^&*()-_=+`~
+}
+      Name: field2
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+[{]}\|;:'",<.>/?          
+}
+}

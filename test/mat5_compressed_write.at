@@ -1268,6 +1268,8 @@ Class Type: Double Precision Array
       Rank: 2
 Dimensions: 0 x 1
 Class Type: Character Array
+{
+}
       Name: field1
       Rank: 2
 Dimensions: 0 x 1
