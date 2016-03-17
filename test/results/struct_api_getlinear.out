@@ -1,0 +1,261 @@
+      Name: a
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[12] {
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+13 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+1 + 13i 
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+16 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+4 + 16i 
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+7 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+19 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+7 + 19i 
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+10 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+22 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+10 + 22i 
+}
+}
+      Name: a
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[9] {
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+12 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+0 + 12i 
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+13 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+1 + 13i 
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+14 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+2 + 14i 
+}
+}
+      Name: a
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[9] {
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+12 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+0 + 12i 
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+16 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+4 + 16i 
+}
+      Name: r
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+8 
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+20 
+}
+      Name: z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array (complex)
+ Data Type: IEEE 754 double-precision
+{
+8 + 20i 
+}
+}

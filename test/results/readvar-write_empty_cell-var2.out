@@ -1,0 +1,19 @@
+      Name: var2
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}

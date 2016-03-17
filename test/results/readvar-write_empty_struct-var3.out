@@ -1,0 +1,21 @@
+      Name: var3
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
