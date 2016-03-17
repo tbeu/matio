@@ -208,51 +208,7 @@ AC_TYPE_SIZE_T
 AC_TYPE_INTMAX_T
 AC_TYPE_UINTMAX_T
 AC_TYPE_UINTPTR_T
-
-AC_CACHE_CHECK([for va_copy()],matio_cv_have_va_copy,[
-	AC_LINK_IFELSE([AC_LANG_SOURCE([[
-    #include <stdarg.h>
-	void f (int i, ...) {
-	va_list args1, args2;
-	va_start (args1, i);
-	va_copy (args2, args1);
-	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
-	  exit (1);
-	va_end (args1); va_end (args2);
-	}
-	int main() {
-	  f (0, 42);
-	  return 0;
-	}]])],
-	[matio_cv_have_va_copy=yes],
-	[matio_cv_have_va_copy=no])
-])
-if test "$matio_cv_have_va_copy" = "no"
-then
-    AC_CACHE_CHECK([for __va_copy()],matio_cv_have___va_copy,[
-        AC_LINK_IFELSE([AC_LANG_SOURCE([[#include <stdarg.h>
-            void f (int i, ...) {
-                va_list args1, args2;
-                va_start (args1, i);
-                __va_copy (args2, args1);
-                if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
-                    exit (1);
-                va_end (args1); va_end (args2);
-            }
-            int main() {
-                f (0, 42);
-                return 0;
-            }]])],
-	[matio_cv_have___va_copy=yes],
-	[matio_cv_have___va_copy=no])
-    ])
-    if test "matio_cv_have___va_copy" = "yes"
-    then
-        AC_DEFINE_UNQUOTED([HAVE___VA_COPY],[1],[Define to 1 if you have the `__va_copy' function or macro.])
-    fi
-else
-    AC_DEFINE_UNQUOTED([HAVE_VA_COPY],[1],[Define to 1 if you have the `va_copy' function or macro.])
-fi
+AC_CHECK_VA_COPY
 
 AC_CACHE_CHECK([for vsnprintf()],matio_cv_have_vsnprintf,[
         AC_LINK_IFELSE([AC_LANG_SOURCE([[
