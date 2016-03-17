@@ -1,0 +1,12 @@
+      Name: d
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.#INF 6 11 16 21 
+2 1.#INF 12 17 22 
+3 8 1.#INF 18 23 
+4 9 14 1.#INF 24 
+5 10 15 20 1.#INF 
+}

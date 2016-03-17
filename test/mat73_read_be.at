@@ -34,7 +34,7 @@ AT_CHECK(
 [cp $srcdir/results/dump-var1.out expout
 $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var1], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -42,7 +42,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var2.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var2], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -50,7 +50,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var3.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var3], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -58,7 +58,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var4.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var4], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -66,7 +66,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var5.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var5], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -74,7 +74,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var6.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var6], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -82,7 +82,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var7.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var7], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -90,7 +90,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var8.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var8], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -98,7 +98,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var9.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var9], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -106,7 +106,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var10.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var10], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D double-precision complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -118,7 +118,7 @@ AT_CHECK(
 [cp $srcdir/results/dump-var11.out expout
 $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_be.mat var11], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -126,7 +126,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var12.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var12], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -134,7 +134,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var13.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var13], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -142,7 +142,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var14.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var14], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -150,7 +150,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var15.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var15], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -158,7 +158,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var16.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var16], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -166,7 +166,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var17.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var17], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -174,7 +174,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var18.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var18], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -182,7 +182,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var19.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var19], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -190,7 +190,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var20.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var20], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D logical array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -198,7 +198,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var90.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var90], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D logical array])
 AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
@@ -206,7 +206,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var90.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var90], [0],
 [expout], [ignore])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -214,7 +214,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var21.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var21], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -222,7 +222,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var22.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var22], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read empty array])
 AT_KEYWORDS([empty])
@@ -231,7 +231,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var23.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var23], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read 2D character array])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -239,7 +239,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var24.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var24], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read empty structure array])
 AT_KEYWORDS([empty])
@@ -248,7 +248,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var25.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var25], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read empty structure array with fields])
 AT_KEYWORDS([empty])
@@ -257,7 +257,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var26.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var26], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with empty fields])
 AT_KEYWORDS([empty])
@@ -266,7 +266,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var27.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var27], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with double-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -274,7 +274,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var28.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var28], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with single-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -282,7 +282,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var29.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var29], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with 64-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -290,7 +290,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var30.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var30], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with 64-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -298,7 +298,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var31.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var31], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with 32-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -306,7 +306,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var32.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var32], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with 32-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -314,7 +314,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var33.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var33], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with 16-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -322,7 +322,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var34.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var34], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with 16-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -330,7 +330,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var35.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var35], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with 8-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -338,7 +338,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var36.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var36], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with 8-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -346,7 +346,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var37.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var37], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex double-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -354,7 +354,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var38.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var38], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex single-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -362,7 +362,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var39.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var39], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 64-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -370,7 +370,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var40.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var40], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 64-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -378,7 +378,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var41.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var41], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 32-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -386,7 +386,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var42.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var42], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 32-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -394,7 +394,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var43.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var43], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 16-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -402,7 +402,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var44.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var44], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 16-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -410,7 +410,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var45.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var45], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 8-bit integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -418,7 +418,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var46.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var46], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 8-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -426,7 +426,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var47.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var47], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with logical fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -434,7 +434,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var91.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var91], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with logical fields])
 AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
@@ -442,7 +442,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var91.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var91], [0],
 [expout], [ignore])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with double-precision sparse fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -450,7 +450,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var48.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var48], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with complex double-precision sparse fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -458,7 +458,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var49.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var49], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read structure array with character fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -466,7 +466,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var50.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var50], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read empty cell array])
 AT_KEYWORDS([empty])
@@ -475,7 +475,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var51.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var51], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with empty arrays])
 AT_KEYWORDS([empty])
@@ -484,7 +484,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var52.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var52], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with double-precision arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -492,7 +492,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var53.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var53], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with single-precision arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -500,7 +500,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var54.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var54], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with 64-bit integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -508,7 +508,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var55.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var55], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with 64-bit unsigned integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -516,7 +516,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var56.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var56], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with 32-bit integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -524,7 +524,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var57.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var57], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with 32-bit unsigned integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -532,7 +532,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var58.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var58], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with 16-bit integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -540,7 +540,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var59.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var59], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with 16-bit unsigned integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -548,7 +548,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var60.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var60], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with 8-bit integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -556,7 +556,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var61.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var61], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with 8-bit unsigned integer arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -564,7 +564,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var62.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var62], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with logical arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -572,14 +572,14 @@ AT_CHECK(
 [cp $srcdir/results/read-var92.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var92], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with logical arrays])
 AT_CHECK(
 [cp $srcdir/results/read-var92.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var92], [0],
 [expout], [ignore])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with double-precision sparse arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -587,7 +587,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var63.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var63], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with complex double-precision sparse arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -595,7 +595,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var64.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var64], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with character arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -603,7 +603,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var65.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var65], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with empty structure arrays])
 AT_KEYWORDS([empty])
@@ -612,7 +612,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var66.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var66], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with structure arrays (numeric fields)])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -620,7 +620,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var67.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var67], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array with structure arrays (sparse fields)])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -628,7 +628,7 @@ AT_CHECK(
 [cp $srcdir/results/read-var68.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var68], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP
 
 AT_SETUP([Read cell array structure arrays (character fields)])
 AT_SKIP_IF([test $MAT73 -ne 1])
@@ -636,4 +636,4 @@ AT_CHECK(
 [cp $srcdir/results/read-var69.out expout
 $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_be.mat var69], [0],
 [expout], [])
-AT_CLEANUP(expout)
+AT_CLEANUP

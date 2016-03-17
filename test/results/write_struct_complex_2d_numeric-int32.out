@@ -1,0 +1,47 @@
+      Name: a
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+1 + 51i 4 + 54i 7 + 57i 10 + 60i 
+2 + 52i 5 + 55i 8 + 58i 11 + 61i 
+3 + 53i 6 + 56i 9 + 59i 12 + 62i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+13 + 63i 16 + 66i 19 + 69i 22 + 72i 
+14 + 64i 17 + 67i 20 + 70i 23 + 73i 
+15 + 65i 18 + 68i 21 + 71i 24 + 74i 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+25 + 75i 28 + 78i 31 + 81i 34 + 84i 
+26 + 76i 29 + 79i 32 + 82i 35 + 85i 
+27 + 77i 30 + 80i 33 + 83i 36 + 86i 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+37 + 87i 40 + 90i 43 + 93i 46 + 96i 
+38 + 88i 41 + 91i 44 + 94i 47 + 97i 
+39 + 89i 42 + 92i 45 + 95i 48 + 98i 
+}
+}

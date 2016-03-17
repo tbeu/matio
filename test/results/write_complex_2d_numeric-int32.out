@@ -1,0 +1,12 @@
+      Name: a
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: 32-bit, signed integer array (complex)
+ Data Type: 32-bit, signed integer
+{
+1 + 51i 6 + 56i 11 + 61i 16 + 66i 21 + 71i 26 + 76i 31 + 81i 36 + 86i 41 + 91i 46 + 96i 
+2 + 52i 7 + 57i 12 + 62i 17 + 67i 22 + 72i 27 + 77i 32 + 82i 37 + 87i 42 + 92i 47 + 97i 
+3 + 53i 8 + 58i 13 + 63i 18 + 68i 23 + 73i 28 + 78i 33 + 83i 38 + 88i 43 + 93i 48 + 98i 
+4 + 54i 9 + 59i 14 + 64i 19 + 69i 24 + 74i 29 + 79i 34 + 84i 39 + 89i 44 + 94i 49 + 99i 
+5 + 55i 10 + 60i 15 + 65i 20 + 70i 25 + 75i 30 + 80i 35 + 85i 40 + 90i 45 + 95i 50 + 100i 
+}

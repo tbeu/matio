@@ -1,0 +1,46 @@
+      Name: a
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: 32-bit, unsigned integer array (logical)
+ Data Type: 32-bit, unsigned integer
+{
+1 1 1 1 1 
+0 1 1 1 1 
+0 0 1 1 1 
+0 0 0 1 1 
+0 0 0 0 1 
+}
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: 16-bit, unsigned integer array (logical)
+ Data Type: 16-bit, unsigned integer
+{
+1 0 0 0 0 
+1 1 0 0 0 
+1 1 1 0 0 
+1 1 1 1 0 
+1 1 1 1 1 
+}
+      Rank: 2
+Dimensions: 5 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 0 0 0 0 
+0 1 0 0 0 
+0 0 1 0 0 
+0 0 0 1 0 
+0 0 0 0 1 
+}
+      Rank: 2
+Dimensions: 0 x 5
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+}
+}
