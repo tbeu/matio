@@ -27,7 +27,7 @@
 AT_SETUP([Copy variables])
 AT_KEYWORDS([copy])
 AT_CHECK([$builddir/test_mat -v 4 copy $srcdir/datasets/matio_test_cases_v4_le.mat],[0],[],[])
-AT_CHECK([cp $srcdir/results/dump-mat_copy.out expout
+AT_CHECK([cp $srcdir/results/dump-mat_copy-4.out expout
           $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],
          [expout],[])
 AT_CLEANUP
