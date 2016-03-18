@@ -1,0 +1,58 @@
+      Name: var55
+      Rank: 2
+Dimensions: 2 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 2 x 2
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+1 2 
+3 4 
+}
+      Rank: 2
+Dimensions: 2 x 2
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+19 20 
+21 22 
+}
+      Rank: 2
+Dimensions: 2 x 3
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+5 6 7 
+8 9 10 
+}
+      Rank: 2
+Dimensions: 3 x 2
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+23 24 
+25 26 
+27 28 
+}
+      Rank: 2
+Dimensions: 2 x 4
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+11 12 13 14 
+15 16 17 18 
+}
+      Rank: 2
+Dimensions: 4 x 2
+Class Type: 64-bit, signed integer array
+ Data Type: 64-bit, signed integer
+{
+29 30 
+31 32 
+33 34 
+35 36 
+}
+}

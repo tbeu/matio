@@ -1,0 +1,43 @@
+      Name: var35
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+1 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+2 5 8 11 
+3 6 9 12 
+4 7 10 13 
+}
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+14 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: 16-bit, unsigned integer array
+ Data Type: 16-bit, unsigned integer
+{
+15 18 21 24 
+16 19 22 25 
+17 20 23 26 
+}
+}

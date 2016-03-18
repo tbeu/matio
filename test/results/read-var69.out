@@ -1,0 +1,51 @@
+      Name: var69
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+abcdefghijklmnopqrstuvwxyz
+}
+      Name: field2
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: field1
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+1234567890!@#$%^&*()-_=+`~
+}
+      Name: field2
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+[{]}\|;:'",<.>/?          
+}
+}
+}
