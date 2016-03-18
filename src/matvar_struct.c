@@ -58,7 +58,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
     if ( NULL != name )
         matvar->name = strdup(name);
     matvar->rank = rank;
-    matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
+    matvar->dims = NEW_ARRAY(size_t,matvar->rank);
     for ( i = 0; i < matvar->rank; i++ ) {
         matvar->dims[i] = dims[i];
         nmemb *= dims[i];
@@ -70,8 +70,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
 
     if ( nfields ) {
         matvar->internal->num_fields = nfields;
-        matvar->internal->fieldnames =
-            (char**)malloc(nfields*sizeof(*matvar->internal->fieldnames));
+        matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
         if ( NULL == matvar->internal->fieldnames ) {
             Mat_VarFree(matvar);
             matvar = NULL;
@@ -89,7 +88,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
         if ( NULL != matvar && nmemb > 0 && nfields > 0 ) {
             matvar_t **field_vars;
             matvar->nbytes = nmemb*nfields*matvar->data_size;
-            matvar->data = malloc(matvar->nbytes);
+            matvar->data = NEW_ARRAY(char,matvar->nbytes);
             field_vars = (matvar_t**)matvar->data;
             for ( i = 0; i < nfields*nmemb; i++ )
                 field_vars[i] = NULL;
@@ -128,7 +127,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
             nfields*sizeof(*matvar->internal->fieldnames));
     matvar->internal->fieldnames[nfields-1] = strdup(fieldname);
 
-    new_data = (matvar_t**)malloc(nfields*nmemb*sizeof(*new_data));
+    new_data = NEW_ARRAY(matvar_t*,nfields*nmemb);
     if ( new_data == NULL )
         return -1;
 
@@ -366,7 +365,7 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
     }
     I *= nfields;
     struct_slab->nbytes    = N*nfields*sizeof(matvar_t *);
-    struct_slab->data = malloc(struct_slab->nbytes);
+    struct_slab->data = NEW_ARRAY(char,struct_slab->nbytes);
     if ( struct_slab->data == NULL ) {
         Mat_VarFree(struct_slab);
         return NULL;
@@ -440,7 +439,7 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
         nfields = matvar->internal->num_fields;
 
         struct_slab->nbytes = edge*nfields*sizeof(matvar_t *);
-        struct_slab->data = malloc(struct_slab->nbytes);
+        struct_slab->data = NEW_ARRAY(char,struct_slab->nbytes);
         struct_slab->dims[0] = edge;
         struct_slab->dims[1] = 1;
         fields = (matvar_t**)struct_slab->data;

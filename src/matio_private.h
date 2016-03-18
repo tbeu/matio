@@ -52,6 +52,18 @@
 #   define ZLIB_BYTE_PTR(a) ((Bytef *)(a))
 #endif
 
+#ifdef __cplusplus
+    #define TRY try {
+    #define NEW(type) new type
+    #define NEW_ARRAY(type,size) new type[size]
+    #define CATCH(e) } catch(...) 
+#else
+    #define TRY 
+    #define NEW(type) (type*) malloc(sizeof(type))
+    #define NEW_ARRAY(type,size) (type*) malloc(size*sizeof(type))
+    #define CATCH(e) if (e) 
+#endif
+
 /** @if mat_devman
  * @brief Matlab MAT File information
  *

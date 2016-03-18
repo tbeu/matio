@@ -226,7 +226,7 @@ Mat_Open(const char *matname,int mode)
         return NULL;
     }
 
-    mat = (mat_t*)malloc(sizeof(*mat));
+    mat = NEW(mat_t);
     if ( NULL == mat ) {
         fclose(fp);
         Mat_Critical("Couldn't allocate memory for the MAT file");
@@ -329,7 +329,7 @@ Mat_Open(const char *matname,int mode)
         fclose((FILE*)mat->fp);
 #if defined(MAT73) && MAT73
 
-        mat->fp = malloc(sizeof(hid_t));
+        mat->fp = NEW(hid_t);
 
         if ( (mode & 0x01) == MAT_ACC_RDONLY )
             *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDONLY,H5P_DEFAULT);
@@ -506,7 +506,7 @@ Mat_VarCalloc(void)
 {
     matvar_t *matvar;
 
-    matvar = (matvar_t*)malloc(sizeof(*matvar));
+    matvar = NEW(matvar_t);
 
     if ( NULL != matvar ) {
         matvar->nbytes       = 0;
@@ -522,7 +522,7 @@ Mat_VarCalloc(void)
         matvar->data         = NULL;
         matvar->mem_conserve = 0;
         matvar->compression  = MAT_COMPRESSION_NONE;
-        matvar->internal     = (struct matvar_internal*)malloc(sizeof(*matvar->internal));
+        matvar->internal     = NEW(struct matvar_internal);
         if ( NULL == matvar->internal ) {
             free(matvar);
             matvar = NULL;
@@ -564,7 +564,7 @@ Mat_VarCalloc(void)
  *     int rank=2, dims[2] = {3,2}, nfields = 3;
  *     matvar_t **vars;
  *
- *     vars = malloc((3*2*nfields+1)*sizeof(matvar_t *));
+ *     vars = NEW_ARRAY(matvar_t,3*2*nfields+1);
  *     vars[0]             = Mat_VarCreate(...);
  *        :
  *     vars[3*2*nfields-1] = Mat_VarCreate(...);
@@ -577,7 +577,7 @@ Mat_VarCalloc(void)
  *     int rank=2, dims[2] = {3,2};
  *     matvar_t **vars;
  *
- *     vars = malloc(3*2*sizeof(matvar_t *));
+ *     vars = NEW_ARRAY(matvar_t,3*2);
  *     vars[0]             = Mat_VarCreate(...);
  *        :
  *     vars[5] = Mat_VarCreate(...);
@@ -621,7 +621,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     if ( name )
         matvar->name = strdup_printf("%s",name);
     matvar->rank = rank;
-    matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
+    matvar->dims = NEW_ARRAY(size_t,matvar->rank);
     for ( i = 0; i < matvar->rank; i++ ) {
         matvar->dims[i] = dims[i];
         nmemb *= dims[i];
@@ -718,28 +718,28 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         mat_sparse_t *sparse_data, *sparse_data_in;
 
         sparse_data_in = (mat_sparse_t*)data;
-        sparse_data    = (mat_sparse_t*)malloc(sizeof(mat_sparse_t));
+        sparse_data    = NEW(mat_sparse_t);
         if ( NULL != sparse_data ) {
             sparse_data->nzmax = sparse_data_in->nzmax;
             sparse_data->nir   = sparse_data_in->nir;
             sparse_data->njc   = sparse_data_in->njc;
             sparse_data->ndata = sparse_data_in->ndata;
-            sparse_data->ir = (int*)malloc(sparse_data->nir*sizeof(*sparse_data->ir));
+            sparse_data->ir = NEW_ARRAY(int,sparse_data->nir);
             if ( NULL != sparse_data->ir )
                 memcpy(sparse_data->ir,sparse_data_in->ir,
                        sparse_data->nir*sizeof(*sparse_data->ir));
-            sparse_data->jc = (int*)malloc(sparse_data->njc*sizeof(*sparse_data->jc));
+            sparse_data->jc = NEW_ARRAY(int,sparse_data->njc);
             if ( NULL != sparse_data->jc )
                 memcpy(sparse_data->jc,sparse_data_in->jc,
                        sparse_data->njc*sizeof(*sparse_data->jc));
             if ( matvar->isComplex ) {
-                sparse_data->data = malloc(sizeof(mat_complex_split_t));
+                sparse_data->data = NEW(mat_complex_split_t);
                 if ( NULL != sparse_data->data ) {
                     mat_complex_split_t *complex_data,*complex_data_in;
                     complex_data     = (mat_complex_split_t*)sparse_data->data;
                     complex_data_in  = (mat_complex_split_t*)sparse_data_in->data;
-                    complex_data->Re = malloc(sparse_data->ndata*data_size);
-                    complex_data->Im = malloc(sparse_data->ndata*data_size);
+                    complex_data->Re = NEW_ARRAY(char,sparse_data->ndata*data_size);
+                    complex_data->Im = NEW_ARRAY(char,sparse_data->ndata*data_size);
                     if ( NULL != complex_data->Re )
                         memcpy(complex_data->Re,complex_data_in->Re,
                                sparse_data->ndata*data_size);
@@ -748,7 +748,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                                sparse_data->ndata*data_size);
                 }
             } else {
-                sparse_data->data = malloc(sparse_data->ndata*data_size);
+                sparse_data->data = NEW_ARRAY(char,sparse_data->ndata*data_size);
                 if ( NULL != sparse_data->data )
                     memcpy(sparse_data->data,sparse_data_in->data,
                            sparse_data->ndata*data_size);
@@ -757,20 +757,20 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         matvar->data = sparse_data;
     } else {
         if ( matvar->isComplex ) {
-            matvar->data   = malloc(sizeof(mat_complex_split_t));
+            matvar->data   = NEW(mat_complex_split_t);
             if ( NULL != matvar->data && matvar->nbytes > 0 ) {
                 mat_complex_split_t *complex_data    = (mat_complex_split_t*)matvar->data;
                 mat_complex_split_t *complex_data_in = (mat_complex_split_t*)data;
 
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
+                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
                 if ( NULL != complex_data->Re )
                     memcpy(complex_data->Re,complex_data_in->Re,matvar->nbytes);
                 if ( NULL != complex_data->Im )
                     memcpy(complex_data->Im,complex_data_in->Im,matvar->nbytes);
             }
         } else if ( matvar->nbytes > 0 ) {
-            matvar->data   = malloc(matvar->nbytes);
+            matvar->data   = NEW_ARRAY(char,matvar->nbytes);
             if ( NULL != matvar->data )
                 memcpy(matvar->data,data,matvar->nbytes);
         }
@@ -971,68 +971,66 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         }
     }
 
-    if (in->name != NULL && (NULL != (out->name = (char*)malloc(strlen(in->name)+1))))
+    if (in->name != NULL && (NULL != (out->name = NEW_ARRAY(char,strlen(in->name)+1))))
         memcpy(out->name,in->name,strlen(in->name)+1);
 
-    out->dims = (size_t*)malloc(in->rank*sizeof(*out->dims));
+    out->dims = NEW_ARRAY(size_t,in->rank);
     if ( out->dims != NULL )
         memcpy(out->dims,in->dims,in->rank*sizeof(*out->dims));
 
 #if defined(HAVE_ZLIB)
-    if ( (in->internal->z != NULL) && (NULL != (out->internal->z = (z_streamp)malloc(sizeof(z_stream)))) )
+    if ( (in->internal->z != NULL) && (NULL != (out->internal->z = NEW(z_stream))) )
         inflateCopy(out->internal->z,in->internal->z);
     if ( in->internal->data != NULL ) {
         if ( in->class_type == MAT_C_SPARSE ) {
-            out->internal->data = malloc(sizeof(mat_sparse_t));
+            out->internal->data = NEW(mat_sparse_t);
             if ( out->internal->data != NULL ) {
                 mat_sparse_t *out_sparse = (mat_sparse_t*)out->internal->data;
                 mat_sparse_t *in_sparse  = (mat_sparse_t*)in->internal->data;
                 out_sparse->nzmax = in_sparse->nzmax;
                 out_sparse->nir = in_sparse->nir;
-                out_sparse->ir = (int*)malloc(in_sparse->nir*sizeof(int));
+                out_sparse->ir = NEW_ARRAY(int,in_sparse->nir);
                 if ( out_sparse->ir != NULL )
                     memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(int));
                 out_sparse->njc = in_sparse->njc;
-                out_sparse->jc = (int*)malloc(in_sparse->njc*sizeof(int));
+                out_sparse->jc = NEW_ARRAY(int,in_sparse->njc);
                 if ( out_sparse->jc != NULL )
                     memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(int));
                 out_sparse->ndata = in_sparse->ndata;
                 if ( out->isComplex && NULL != in_sparse->data ) {
-                    out_sparse->data = malloc(sizeof(mat_complex_split_t));
+                    out_sparse->data = NEW(mat_complex_split_t);
                     if ( out_sparse->data != NULL ) {
                         mat_complex_split_t *out_data = (mat_complex_split_t*)out_sparse->data;
                         mat_complex_split_t *in_data  = (mat_complex_split_t*)in_sparse->data;
-                        out_data->Re = malloc(
-                            in_sparse->ndata*Mat_SizeOf(in->data_type));
+                        out_data->Re = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                         if ( NULL != out_data->Re )
                             memcpy(out_data->Re,in_data->Re,
                                 in_sparse->ndata*Mat_SizeOf(in->data_type));
-                        out_data->Im = malloc(
-                            in_sparse->ndata*Mat_SizeOf(in->data_type));
+                        out_data->Im = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                         if ( NULL != out_data->Im )
                             memcpy(out_data->Im,in_data->Im,
                                 in_sparse->ndata*Mat_SizeOf(in->data_type));
                     }
                 } else if ( in_sparse->data != NULL ) {
-                    out_sparse->data = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    out_sparse->data = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                     if ( NULL != out_sparse->data )
                         memcpy(out_sparse->data, in_sparse->data,
                             in_sparse->ndata*Mat_SizeOf(in->data_type));
                 }
             }
         } else if ( out->isComplex ) {
-            out->internal->data = malloc(sizeof(mat_complex_split_t));
+            out->internal->data = NEW(mat_complex_split_t);
             if ( out->internal->data != NULL ) {
                 mat_complex_split_t *out_data = (mat_complex_split_t*)out->internal->data;
                 mat_complex_split_t *in_data  = (mat_complex_split_t*)in->internal->data;
-                out_data->Re = malloc(out->nbytes);
+                out_data->Re = NEW_ARRAY(char,out->nbytes);
                 if ( NULL != out_data->Re )
                     memcpy(out_data->Re,in_data->Re,out->nbytes);
-                out_data->Im = malloc(out->nbytes);
+                out_data->Im = NEW_ARRAY(char,out->nbytes);
                 if ( NULL != out_data->Im )
                     memcpy(out_data->Im,in_data->Im,out->nbytes);
             }
-        } else if ( NULL != (out->internal->data = malloc(in->nbytes)) ) {
+        } else if ( NULL != (out->internal->data = NEW_ARRAY(char,in->nbytes)) ) {
             memcpy(out->internal->data, in->internal->data, in->nbytes);
         }
     }
@@ -1044,7 +1042,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         matvar_t **infields, **outfields;
         int nfields = 0;
 
-        out->data = malloc(in->nbytes);
+        out->data = NEW_ARRAY(char,in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
             nfields   = in->nbytes / in->data_size;
             infields  = (matvar_t **)in->data;
@@ -1057,7 +1055,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         matvar_t **incells, **outcells;
         int ncells = 0;
 
-        out->data = malloc(in->nbytes);
+        out->data = NEW_ARRAY(char,in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
             ncells   = in->nbytes / in->data_size;
             incells  = (matvar_t **)in->data;
@@ -1067,53 +1065,53 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
             }
         }
     } else if ( (in->data != NULL) && (in->class_type == MAT_C_SPARSE) ) {
-        out->data = malloc(sizeof(mat_sparse_t));
+        out->data = NEW(mat_sparse_t);
         if ( out->data != NULL ) {
             mat_sparse_t *out_sparse = (mat_sparse_t*)out->data;
             mat_sparse_t *in_sparse  = (mat_sparse_t*)in->data;
             out_sparse->nzmax = in_sparse->nzmax;
             out_sparse->nir = in_sparse->nir;
-            out_sparse->ir = (int*)malloc(in_sparse->nir*sizeof(int));
+            out_sparse->ir = NEW_ARRAY(int,in_sparse->nir);
             if ( out_sparse->ir != NULL )
                 memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(int));
             out_sparse->njc = in_sparse->njc;
-            out_sparse->jc = (int*)malloc(in_sparse->njc*sizeof(int));
+            out_sparse->jc = NEW_ARRAY(int,in_sparse->njc);
             if ( out_sparse->jc != NULL )
                 memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(int));
             out_sparse->ndata = in_sparse->ndata;
             if ( out->isComplex && NULL != in_sparse->data ) {
-                out_sparse->data = malloc(sizeof(mat_complex_split_t));
+                out_sparse->data = NEW(mat_complex_split_t);
                 if ( out_sparse->data != NULL ) {
                     mat_complex_split_t *out_data = (mat_complex_split_t*)out_sparse->data;
                     mat_complex_split_t *in_data  = (mat_complex_split_t*)in_sparse->data;
-                    out_data->Re = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    out_data->Re = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                     if ( NULL != out_data->Re )
                         memcpy(out_data->Re,in_data->Re,in_sparse->ndata*Mat_SizeOf(in->data_type));
-                    out_data->Im = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    out_data->Im = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                     if ( NULL != out_data->Im )
                         memcpy(out_data->Im,in_data->Im,in_sparse->ndata*Mat_SizeOf(in->data_type));
                 }
             } else if ( in_sparse->data != NULL ) {
-                out_sparse->data = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                out_sparse->data = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                 if ( NULL != out_sparse->data )
                     memcpy(out_sparse->data, in_sparse->data, in_sparse->ndata*Mat_SizeOf(in->data_type));
             }
         }
     } else if ( in->data != NULL ) {
         if ( out->isComplex ) {
-            out->data = malloc(sizeof(mat_complex_split_t));
+            out->data = NEW(mat_complex_split_t);
             if ( out->data != NULL ) {
                 mat_complex_split_t *out_data = (mat_complex_split_t*)out->data;
                 mat_complex_split_t *in_data  = (mat_complex_split_t*)in->data;
-                out_data->Re = malloc(out->nbytes);
+                out_data->Re = NEW_ARRAY(char,out->nbytes);
                 if ( NULL != out_data->Re )
                     memcpy(out_data->Re,in_data->Re,out->nbytes);
-                out_data->Im = malloc(out->nbytes);
+                out_data->Im = NEW_ARRAY(char,out->nbytes);
                 if ( NULL != out_data->Im )
                     memcpy(out_data->Im,in_data->Im,out->nbytes);
             }
         } else {
-            out->data = malloc(in->nbytes);
+            out->data = NEW_ARRAY(char,in->nbytes);
             if ( out->data != NULL )
                 memcpy(out->data,in->data,in->nbytes);
         }
@@ -1405,7 +1403,7 @@ Mat_CalcSubscripts(int rank,int *dims,int index)
     int i, j, k, *subs;
     double l;
 
-    subs = (int*)malloc(rank*sizeof(int));
+    subs = NEW_ARRAY(int,rank);
     l = index;
     for ( i = rank; i--; ) {
         k = 1;
@@ -1444,7 +1442,7 @@ Mat_CalcSubscripts2(int rank,size_t *dims,size_t index)
     size_t *subs;
     double l;
 
-    subs = (size_t*)malloc(rank*sizeof(size_t));
+    subs = NEW_ARRAY(size_t,rank);
     l = (double)index;
     for ( i = rank; i--; ) {
         int j;

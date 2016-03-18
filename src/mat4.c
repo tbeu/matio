@@ -86,7 +86,7 @@ Mat_Create4(const char* matname)
     if ( !fp )
         return NULL;
 
-    mat = (mat_t*)malloc(sizeof(*mat));
+    mat = NEW(mat_t);
     if ( NULL == mat ) {
         fclose(fp);
         Mat_Critical("Couldn't allocate memory for the MAT file");
@@ -299,10 +299,10 @@ Read4(mat_t *mat,matvar_t *matvar)
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = NEW(mat_complex_split_t);
                 if ( complex_data != NULL ) {
-                    complex_data->Re = malloc(matvar->nbytes);
-                    complex_data->Im = malloc(matvar->nbytes);
+                    complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
+                    complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
                     matvar->data     = complex_data;
                     if ( complex_data->Re != NULL && complex_data->Im != NULL ) {
                         ReadDoubleData(mat, (double*)complex_data->Re, matvar->data_type, N);
@@ -310,7 +310,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                     }
                 }
             } else {
-                matvar->data = malloc(matvar->nbytes);
+                matvar->data = NEW_ARRAY(char,matvar->nbytes);
                 if ( matvar->data != NULL )
                     ReadDoubleData(mat, (double*)matvar->data, matvar->data_type, N);
             }
@@ -320,7 +320,7 @@ Read4(mat_t *mat,matvar_t *matvar)
         case MAT_C_CHAR:
             matvar->data_size = 1;
             matvar->nbytes = N;
-            matvar->data = malloc(matvar->nbytes);
+            matvar->data = NEW_ARRAY(char,matvar->nbytes);
             if ( NULL == matvar->data )
                 Mat_Critical("Memory allocation failure");
             else
@@ -329,7 +329,7 @@ Read4(mat_t *mat,matvar_t *matvar)
             break;
         case MAT_C_SPARSE:
             matvar->data_size = sizeof(mat_sparse_t);
-            matvar->data      = malloc(matvar->data_size);
+            matvar->data      = NEW_ARRAY(char,matvar->data_size);
             if ( matvar->data == NULL )
                 Mat_Critical("Memory allocation failure");
             else {
@@ -344,7 +344,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 sparse = (mat_sparse_t*)matvar->data;
                 sparse->nir = matvar->dims[0] - 1;
                 sparse->nzmax = sparse->nir;
-                sparse->ir = (mat_int32_t*)malloc(sparse->nir*sizeof(mat_int32_t));
+                sparse->ir = NEW_ARRAY(mat_int32_t,sparse->nir);
                 if ( sparse->ir != NULL ) {
                     ReadInt32Data(mat, sparse->ir, data_type, sparse->nir);
                     for ( i = 0; i < sparse->nir; i++ )
@@ -386,10 +386,10 @@ Read4(mat_t *mat,matvar_t *matvar)
                     return;
                 }
                 sparse->njc = (int)matvar->dims[1] + 1;
-                sparse->jc = (mat_int32_t*)malloc(sparse->njc*sizeof(mat_int32_t));
+                sparse->jc = NEW_ARRAY(mat_int32_t,sparse->njc);
                 if ( sparse->jc != NULL ) {
                     mat_int32_t *jc;
-                    jc = (mat_int32_t*)malloc(sparse->nir*sizeof(mat_int32_t));
+                    jc = NEW_ARRAY(mat_int32_t,sparse->nir);
                     if ( jc != NULL ) {
                         int j = 0;
                         sparse->jc[0] = 0;
@@ -423,10 +423,10 @@ Read4(mat_t *mat,matvar_t *matvar)
                 if ( matvar->isComplex ) {
                     mat_complex_split_t *complex_data;
 
-                    complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                    complex_data = NEW(mat_complex_split_t);
                     if ( complex_data != NULL ) {
-                        complex_data->Re = malloc(sparse->ndata*Mat_SizeOf(data_type));
-                        complex_data->Im = malloc(sparse->ndata*Mat_SizeOf(data_type));
+                        complex_data->Re = NEW_ARRAY(char,sparse->ndata*Mat_SizeOf(data_type));
+                        complex_data->Im = NEW_ARRAY(char,sparse->ndata*Mat_SizeOf(data_type));
                         sparse->data     = complex_data;
                         if ( complex_data->Re != NULL && complex_data->Im != NULL ) {
 #if defined(EXTENDED_SPARSE)
@@ -517,7 +517,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                         }
                     }
                 } else {
-                    sparse->data = malloc(sparse->ndata*Mat_SizeOf(data_type));
+                    sparse->data = NEW_ARRAY(char,sparse->ndata*Mat_SizeOf(data_type));
                     if ( sparse->data != NULL ) {
 #if defined(EXTENDED_SPARSE)
                         switch ( data_type ) {
@@ -845,7 +845,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
             return NULL;
     }
     matvar->rank = 2;
-    matvar->dims = (size_t*)malloc(2*sizeof(*matvar->dims));
+    matvar->dims = NEW_ARRAY(size_t,2);
     if ( NULL == matvar->dims ) {
         Mat_VarFree(matvar);
         return NULL;
@@ -884,7 +884,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    matvar->name = (char*)malloc(tmp);
+    matvar->name = NEW_ARRAY(char,tmp);
     if ( NULL == matvar->name ) {
         Mat_VarFree(matvar);
         return NULL;

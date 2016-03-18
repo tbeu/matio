@@ -1387,7 +1387,7 @@ rpl_vasprintf(char **ret, const char *format, va_list ap)
     len = vsnprintf(NULL, 0, format, aq);
 #endif
     VA_END_COPY(aq);
-    if (len < 0 || (*ret = (char*)malloc(size = len + 1)) == NULL)
+    if (len < 0 || (*ret = NEW_ARRAY(char,size = len + 1)) == NULL)
         return -1;
 #if !HAVE_VSNPRINTF
     return rpl_vsnprintf(*ret, size, format, ap);
