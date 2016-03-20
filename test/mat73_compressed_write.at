@@ -27,11 +27,9 @@
 AT_SETUP([Write 2D double-precision array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-double.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_double.m],
 [
@@ -51,18 +49,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_double;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_double;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D single-precision array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-single.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_single.m],
 [
@@ -82,19 +77,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_single;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_single;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-int64.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int64.m],
 [
@@ -114,19 +106,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int64;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int64;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-uint64.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int64.m],
 [
@@ -146,18 +135,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int64;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int64;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-int32.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int32.m],
 [
@@ -177,18 +163,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int32;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int32;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-uint32.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int32.m],
 [
@@ -208,18 +191,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int32;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int32;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-int16.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int16.m],
 [
@@ -239,18 +219,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int16;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int16;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-uint16.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int16.m],
 [
@@ -270,18 +247,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int16;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int16;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-int8.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int8.m],
 [
@@ -301,18 +275,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int8;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int8;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit unsigned integer array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_2d_numeric],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-uint8.out expout
-          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_numeric_int8.m],
 [
@@ -332,18 +303,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int8;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_numeric_int8;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D double-precision complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-double.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_double.m],
 [
@@ -363,18 +331,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_double;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_double;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D single-precision complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-single.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_single.m],
 [
@@ -394,19 +359,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_single;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_single;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-int64.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_int64.m],
 [
@@ -426,19 +388,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int64;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int64;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-uint64.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_uint64.m],
 [
@@ -458,18 +417,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint64;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint64;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-int32.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_int32.m],
 [
@@ -489,18 +445,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int32;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int32;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-uint32.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_uint32.m],
 [
@@ -520,18 +473,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint32;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint32;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-int16.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_int16.m],
 [
@@ -551,18 +501,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int16;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int16;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-uint16.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_uint16.m],
 [
@@ -582,18 +529,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint16;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint16;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-int8.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_int8.m],
 [
@@ -613,18 +557,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int8;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_int8;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit unsigned integer complex array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-uint8.out expout
-          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_complex_2d_numeric_uint8.m],
 [
@@ -644,24 +585,19 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint8;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_complex_2d_numeric_uint8;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D logical array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z write_2d_logical],[0],[],
-         [])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_2d_logical],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-l1-logical.out expout
-          $builddir/test_mat readvar test_write_2d_logical.mat l1],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_logical.mat l1],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-73-l2-logical.out expout
-          $builddir/test_mat readvar test_write_2d_logical.mat l2],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_logical.mat l2],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/write_2d_numeric-73-l4-logical.out expout
-          $builddir/test_mat readvar test_write_2d_logical.mat l4],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_2d_logical.mat l4],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_2d_logical.m],
 [
@@ -696,18 +632,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_logical;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_2d_logical;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse double-precision array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_sparse],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-double.out expout
-          $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_sparse_double.m],
 [
@@ -731,18 +664,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_sparse_double;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_sparse_double;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex double-precision array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_complex_sparse],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_complex_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-double.out expout
-          $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_sparse_complex_double.m],
 [
@@ -766,19 +696,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_sparse_complex_double;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_sparse_complex_double;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D empty array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_empty_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_empty_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_2d_numeric-empty.out expout
-          $builddir/test_mat readvar test_write_empty_2d_numeric.mat empty],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_empty_2d_numeric.mat empty],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_empty.m],
 [
@@ -799,8 +726,7 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write character array])
@@ -808,8 +734,7 @@ AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_char],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_char-a.out expout
-          $builddir/test_mat readvar test_write_char.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_char.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_char.m],
 [
@@ -830,28 +755,22 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_char;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_char;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write empty structure array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z write_empty_struct],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_empty_struct],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var1.out expout
-          $builddir/test_mat readvar test_write_empty_struct.mat var1],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_empty_struct.mat var1],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var2.out expout
-          $builddir/test_mat readvar test_write_empty_struct.mat var2],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_empty_struct.mat var2],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var3.out expout
-          $builddir/test_mat readvar test_write_empty_struct.mat var3],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_empty_struct.mat var3],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-73-var4.out expout
-          $builddir/test_mat readvar test_write_empty_struct.mat var4],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_empty_struct.mat var4],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_empty_struct.m],
 [
@@ -878,18 +797,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty_struct;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty_struct;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D double-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-double.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -914,18 +830,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D single-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_struct_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-single.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -950,19 +863,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit signed integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_struct_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-int64.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -987,19 +897,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_struct_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-uint64.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1024,18 +931,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit signed integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_struct_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-int32.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1060,18 +964,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_struct_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-uint32.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1096,18 +997,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit signed integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_struct_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-int16.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1132,18 +1030,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_struct_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-uint16.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1168,18 +1063,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit signed integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_struct_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-int8.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1204,18 +1096,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_struct_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_struct_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-uint8.out expout
-          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_numeric.m],
 [
@@ -1240,18 +1129,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D double-precision complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-double.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1276,18 +1162,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D single-precision complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_struct_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-single.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1312,19 +1195,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit signed integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_struct_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-int64.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1349,19 +1229,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit unsigned integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_struct_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-uint64.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1386,18 +1263,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit signed integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_struct_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-int32.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1422,18 +1296,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit unsigned integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_struct_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-uint32.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1458,18 +1329,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit signed integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_struct_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-int16.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1494,18 +1362,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit unsigned integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_struct_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-uint16.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1530,18 +1395,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit signed integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_struct_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-int8.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1566,18 +1428,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit unsigned integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_struct_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_struct_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-uint8.out expout
-          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_complex_2d_numeric.m],
 [
@@ -1602,18 +1461,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D logical fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_2d_logical],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_2d_logical],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-73-logical.out expout
-          $builddir/test_mat readvar test_write_struct_2d_logical.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_struct_2d_logical.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_struct_2d_logical.m],
 [
@@ -1638,8 +1494,7 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_logical;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_struct_2d_logical;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 dnf write_struct_char missing TODO
 AT_SETUP([Write empty cell array])
@@ -1648,11 +1503,9 @@ AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_empty_cell],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_cell-var1.out expout
-          $builddir/test_mat readvar test_write_empty_cell.mat var1],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_empty_cell.mat var1],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_cell-var2.out expout
-          $builddir/test_mat readvar test_write_empty_cell.mat var2],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_empty_cell.mat var2],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_empty_cell.m],
 [
@@ -1672,18 +1525,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty_cell;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_empty_cell;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D double-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-double.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -1706,18 +1556,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D single-precision fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-single.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -1740,19 +1587,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit signed integer fields])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-int64.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -1775,19 +1619,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit unsigned integer fields])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-uint64.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -1810,18 +1651,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit signed integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-int32.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -1844,18 +1682,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-uint32.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -1878,18 +1713,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit signed integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-int16.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -1912,18 +1744,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-uint16.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -1946,18 +1775,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit signed integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-int8.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -1980,18 +1806,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit unsigned integer fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_cell_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_cell_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-uint8.out expout
-          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_numeric.m],
 [
@@ -2014,18 +1837,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D double-precision complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_complex_2d_numeric],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-double.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2050,18 +1870,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D single-precision complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_cell_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-single.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2086,19 +1903,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit signed integer complex fields])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_cell_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-int64.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2123,19 +1937,16 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit unsigned integer complex fields])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_cell_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-uint64.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2160,18 +1971,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit signed integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_cell_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-int32.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2196,18 +2004,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit unsigned integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_cell_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-uint32.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2232,18 +2037,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit signed integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_cell_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-int16.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2268,18 +2070,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit unsigned integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_cell_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-uint16.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2304,18 +2103,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit signed integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_cell_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-int8.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2340,18 +2136,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit unsigned integer complex fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_cell_complex_2d_numeric],
-         [0],[],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_cell_complex_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-uint8.out expout
-          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],
-         [0],[expout],[])
+          $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_complex_2d_numeric.m],
 [
@@ -2376,18 +2169,15 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_complex_2d_numeric;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D logical fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $MAT73 -ne 1])
-AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_2d_logical],[0],
-         [],[])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_2d_logical],[0],[],[])
 AT_CHECK([cp $srcdir/results/write_cell_numeric-73-logical.out expout
-          $builddir/test_mat readvar test_write_cell_2d_logical.mat a],[0],
-         [expout],[])
+          $builddir/test_mat readvar test_write_cell_2d_logical.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_DATA([test_write_cell_2d_logical.m],
 [
@@ -2409,6 +2199,5 @@ else
     fprintf('FAILED\n');
 end
 ])
-AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_logical;exit' | $GREP PASSED],[0],[PASSED
-],[])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_2d_logical;exit' | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP

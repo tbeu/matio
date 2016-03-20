@@ -28,8 +28,7 @@ AT_SETUP([Copy variables])
 AT_KEYWORDS([copy])
 AT_CHECK([$builddir/test_mat -v 5 copy $srcdir/datasets/matio_test_cases_uncompressed_le.mat],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-mat_copy-5.out expout
-          $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],
-         [expout],[])
+          $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Delete variables])
@@ -126,8 +125,7 @@ AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var90],[0],[],[])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var91],[0],[],[])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var92],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-mat_copy-partial.out expout
-          $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],
-         [expout],[])
+          $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],[expout],[])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var1],[0],[],[])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var24],[0],[],[])
 AT_CLEANUP

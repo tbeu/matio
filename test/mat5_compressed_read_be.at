@@ -26,8 +26,7 @@
 
 AT_SETUP([Read 2D double-precision array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var1], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var1],[0],
 [[      Name: var1
       Rank: 2
 Dimensions: 4 x 5
@@ -39,20 +38,18 @@ Class Type: Double Precision Array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-]], [])
-AT_CHECK(
-[$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var1], [0],
+]],[])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var1],[0],
 [1 5 9 13 17 @&t@
 2 6 10 14 18 @&t@
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var2], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var2],[0],
 [      Name: var2
       Rank: 2
 Dimensions: 4 x 5
@@ -64,13 +61,12 @@ Class Type: Single Precision Array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var3], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var3],[0],
 [      Name: var3
       Rank: 2
 Dimensions: 4 x 5
@@ -82,13 +78,12 @@ Class Type: 64-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var4], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var4],[0],
 [      Name: var4
       Rank: 2
 Dimensions: 4 x 5
@@ -100,13 +95,12 @@ Class Type: 64-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var5], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var5],[0],
 [      Name: var5
       Rank: 2
 Dimensions: 4 x 5
@@ -118,13 +112,12 @@ Class Type: 32-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var6], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var6],[0],
 [      Name: var6
       Rank: 2
 Dimensions: 4 x 5
@@ -136,13 +129,12 @@ Class Type: 32-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var7], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var7],[0],
 [      Name: var7
       Rank: 2
 Dimensions: 4 x 5
@@ -154,13 +146,12 @@ Class Type: 16-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var8], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var8],[0],
 [      Name: var8
       Rank: 2
 Dimensions: 4 x 5
@@ -172,13 +163,12 @@ Class Type: 16-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var9], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var9],[0],
 [      Name: var9
       Rank: 2
 Dimensions: 4 x 5
@@ -190,13 +180,12 @@ Class Type: 8-bit, signed integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var10], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var10],[0],
 [      Name: var10
       Rank: 2
 Dimensions: 4 x 5
@@ -208,13 +197,12 @@ Class Type: 8-bit, unsigned integer array
 3 7 11 15 19 @&t@
 4 8 12 16 20 @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D double-precision complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var11], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var11],[0],
 [[      Name: var11
       Rank: 2
 Dimensions: 4 x 5
@@ -226,20 +214,18 @@ Class Type: Double Precision Array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-]], [])
-AT_CHECK(
-[$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var11], [0],
+]],[])
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var11],[0],
 [1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
 2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D single-precision complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var12], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var12],[0],
 [      Name: var12
       Rank: 2
 Dimensions: 4 x 5
@@ -251,13 +237,12 @@ Class Type: Single Precision Array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var13], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var13],[0],
 [      Name: var13
       Rank: 2
 Dimensions: 4 x 5
@@ -269,13 +254,12 @@ Class Type: 64-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 64-bit unsigned integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var14], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var14],[0],
 [      Name: var14
       Rank: 2
 Dimensions: 4 x 5
@@ -287,13 +271,12 @@ Class Type: 64-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var15], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var15],[0],
 [      Name: var15
       Rank: 2
 Dimensions: 4 x 5
@@ -305,13 +288,12 @@ Class Type: 32-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 32-bit unsigned integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var16], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var16],[0],
 [      Name: var16
       Rank: 2
 Dimensions: 4 x 5
@@ -323,13 +305,12 @@ Class Type: 32-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var17], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var17],[0],
 [      Name: var17
       Rank: 2
 Dimensions: 4 x 5
@@ -341,13 +322,12 @@ Class Type: 16-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 16-bit unsigned integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var18], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var18],[0],
 [      Name: var18
       Rank: 2
 Dimensions: 4 x 5
@@ -359,13 +339,12 @@ Class Type: 16-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var19], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var19],[0],
 [      Name: var19
       Rank: 2
 Dimensions: 4 x 5
@@ -377,13 +356,12 @@ Class Type: 8-bit, signed integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D 8-bit unsigned integer complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var20], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var20],[0],
 [      Name: var20
       Rank: 2
 Dimensions: 4 x 5
@@ -395,13 +373,12 @@ Class Type: 8-bit, unsigned integer array (complex)
 3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
 4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D logical array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var90], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var90],[0],
 [[      Name: var90
       Rank: 2
 Dimensions: 5 x 5
@@ -414,13 +391,12 @@ Class Type: 8-bit, unsigned integer array (logical)
 1 1 1 1 0 @&t@
 1 1 1 1 1 @&t@
 }
-]], [])
+]],[])
 AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var21], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var21],[0],
 [      Name: var21
       Rank: 2
 Dimensions: 5 x 5
@@ -433,13 +409,12 @@ Class Type: Sparse Array
     (4,4)  4
     (5,5)  5
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read double-precision sparse complex array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var22], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var22],[0],
 [      Name: var22
       Rank: 2
 Dimensions: 5 x 5
@@ -452,14 +427,13 @@ Class Type: Sparse Array (complex)
     (4,4)  4 + 9i
     (5,5)  5 + 10i
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read empty array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var23], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var23],[0],
 [[      Name: var23
       Rank: 2
 Dimensions: 0 x 0
@@ -467,13 +441,12 @@ Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
 {
 }
-]], [])
+]],[])
 AT_CLEANUP
 
 AT_SETUP([Read 2D character array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var24], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var24],[0],
 [      Name: var24
       Rank: 2
 Dimensions: 4 x 26
@@ -485,14 +458,13 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 1234567890!@#$%^&*()-_=+`~
 @<:@{@:>@}\|;:'",<.>/?          @&t@
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var25], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var25],[0],
 [      Name: var25
       Rank: 2
 Dimensions: 1 x 1
@@ -500,14 +472,13 @@ Class Type: Structure
  Data Type: Structure
 Fields@<:@0@:>@ {
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read empty structure array with fields])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var26], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var26],[0],
 [      Name: var26
       Rank: 2
 Dimensions: 0 x 1
@@ -519,14 +490,13 @@ Fields@<:@2@:>@ {
       Name: field2
       Rank: 0
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with empty fields])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var27], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var27],[0],
 [      Name: var27
       Rank: 2
 Dimensions: 1 x 2
@@ -561,13 +531,12 @@ Class Type: Cell Array
 {
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with double-precision fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var28], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var28],[0],
 [      Name: var28
       Rank: 2
 Dimensions: 2 x 1
@@ -611,13 +580,12 @@ Class Type: Double Precision Array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with single-precision fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var29], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var29],[0],
 [      Name: var29
       Rank: 2
 Dimensions: 2 x 1
@@ -661,13 +629,12 @@ Class Type: Single Precision Array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 64-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var30], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var30],[0],
 [      Name: var30
       Rank: 2
 Dimensions: 2 x 1
@@ -711,13 +678,12 @@ Class Type: 64-bit, signed integer array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 64-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var31], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var31],[0],
 [      Name: var31
       Rank: 2
 Dimensions: 2 x 1
@@ -761,13 +727,12 @@ Class Type: 64-bit, unsigned integer array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 32-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var32], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var32],[0],
 [      Name: var32
       Rank: 2
 Dimensions: 2 x 1
@@ -811,13 +776,12 @@ Class Type: 32-bit, signed integer array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 32-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var33], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var33],[0],
 [      Name: var33
       Rank: 2
 Dimensions: 2 x 1
@@ -861,13 +825,12 @@ Class Type: 32-bit, unsigned integer array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 16-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var34], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var34],[0],
 [      Name: var34
       Rank: 2
 Dimensions: 2 x 1
@@ -911,13 +874,12 @@ Class Type: 16-bit, signed integer array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 16-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var35], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var35],[0],
 [      Name: var35
       Rank: 2
 Dimensions: 2 x 1
@@ -961,13 +923,12 @@ Class Type: 16-bit, unsigned integer array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 8-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var36], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var36],[0],
 [      Name: var36
       Rank: 2
 Dimensions: 2 x 1
@@ -1011,13 +972,12 @@ Class Type: 8-bit, signed integer array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with 8-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var37], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var37],[0],
 [      Name: var37
       Rank: 2
 Dimensions: 2 x 1
@@ -1061,13 +1021,12 @@ Class Type: 8-bit, unsigned integer array
 17 20 23 26 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex double-precision fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var38], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var38],[0],
 [      Name: var38
       Rank: 2
 Dimensions: 2 x 1
@@ -1111,13 +1070,12 @@ Class Type: Double Precision Array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex single-precision fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var39], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var39],[0],
 [      Name: var39
       Rank: 2
 Dimensions: 2 x 1
@@ -1161,13 +1119,12 @@ Class Type: Single Precision Array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 64-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var40], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var40],[0],
 [      Name: var40
       Rank: 2
 Dimensions: 2 x 1
@@ -1211,13 +1168,12 @@ Class Type: 64-bit, signed integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 64-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var41], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var41],[0],
 [      Name: var41
       Rank: 2
 Dimensions: 2 x 1
@@ -1261,13 +1217,12 @@ Class Type: 64-bit, unsigned integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 32-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var42], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var42],[0],
 [      Name: var42
       Rank: 2
 Dimensions: 2 x 1
@@ -1311,13 +1266,12 @@ Class Type: 32-bit, signed integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 32-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var43], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var43],[0],
 [      Name: var43
       Rank: 2
 Dimensions: 2 x 1
@@ -1361,13 +1315,12 @@ Class Type: 32-bit, unsigned integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 16-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var44], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var44],[0],
 [      Name: var44
       Rank: 2
 Dimensions: 2 x 1
@@ -1411,13 +1364,12 @@ Class Type: 16-bit, signed integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 16-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var45], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var45],[0],
 [      Name: var45
       Rank: 2
 Dimensions: 2 x 1
@@ -1461,13 +1413,12 @@ Class Type: 16-bit, unsigned integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 8-bit integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var46], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var46],[0],
 [      Name: var46
       Rank: 2
 Dimensions: 2 x 1
@@ -1511,13 +1462,12 @@ Class Type: 8-bit, signed integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex 8-bit unsigned integer fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var47], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var47],[0],
 [      Name: var47
       Rank: 2
 Dimensions: 2 x 1
@@ -1561,13 +1511,12 @@ Class Type: 8-bit, unsigned integer array (complex)
 17 + 67i 20 + 70i 23 + 73i 26 + 76i @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with logical fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var91], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var91],[0],
 [[      Name: var91
       Rank: 2
 Dimensions: 2 x 1
@@ -1621,13 +1570,12 @@ Class Type: 8-bit, unsigned integer array (logical)
 0 0 0 0 1 @&t@
 }
 }
-]], [])
+]],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with double-precision sparse fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var48], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var48],[0],
 [      Name: var48
       Rank: 2
 Dimensions: 1 x 1
@@ -1677,13 +1625,12 @@ Class Type: Sparse Array
     (5,4)  20
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with complex double-precision sparse fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var49], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var49],[0],
 [      Name: var49
       Rank: 2
 Dimensions: 1 x 1
@@ -1733,13 +1680,12 @@ Class Type: Sparse Array (complex)
     (5,4)  20 + -40i
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read structure array with character fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var50], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var50],[0],
 [      Name: var50
       Rank: 2
 Dimensions: 2 x 1
@@ -1779,14 +1725,13 @@ Class Type: Character Array
 @<:@{@:>@}\|;:'",<.>/?          @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read empty cell array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var51], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var51],[0],
 [      Name: var51
       Rank: 2
 Dimensions: 0 x 0
@@ -1794,14 +1739,13 @@ Class Type: Cell Array
  Data Type: Cell Array
 {
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty arrays])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var52], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var52],[0],
 [      Name: var52
       Rank: 2
 Dimensions: 1 x 10
@@ -1869,13 +1813,12 @@ Class Type: 8-bit, unsigned integer array
 {
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with double-precision arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var53], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var53],[0],
 [      Name: var53
       Rank: 2
 Dimensions: 2 x 3
@@ -1934,13 +1877,12 @@ Class Type: Double Precision Array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with single-precision arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var54], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var54],[0],
 [      Name: var54
       Rank: 2
 Dimensions: 2 x 3
@@ -1999,13 +1941,12 @@ Class Type: Single Precision Array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 64-bit integer arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var55], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var55],[0],
 [      Name: var55
       Rank: 2
 Dimensions: 2 x 3
@@ -2064,13 +2005,12 @@ Class Type: 64-bit, signed integer array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 64-bit unsigned integer arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var56], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var56],[0],
 [      Name: var56
       Rank: 2
 Dimensions: 2 x 3
@@ -2129,13 +2069,12 @@ Class Type: 64-bit, unsigned integer array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 32-bit integer arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var57], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var57],[0],
 [      Name: var57
       Rank: 2
 Dimensions: 2 x 3
@@ -2194,13 +2133,12 @@ Class Type: 32-bit, signed integer array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 32-bit unsigned integer arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var58], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var58],[0],
 [      Name: var58
       Rank: 2
 Dimensions: 2 x 3
@@ -2259,13 +2197,12 @@ Class Type: 32-bit, unsigned integer array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 16-bit integer arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var59], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var59],[0],
 [      Name: var59
       Rank: 2
 Dimensions: 2 x 3
@@ -2324,13 +2261,12 @@ Class Type: 16-bit, signed integer array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 16-bit unsigned integer arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var60], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var60],[0],
 [      Name: var60
       Rank: 2
 Dimensions: 2 x 3
@@ -2389,13 +2325,12 @@ Class Type: 16-bit, unsigned integer array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 8-bit integer arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var61], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var61],[0],
 [      Name: var61
       Rank: 2
 Dimensions: 2 x 3
@@ -2454,13 +2389,12 @@ Class Type: 8-bit, signed integer array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with 8-bit unsigned integer arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var62], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var62],[0],
 [      Name: var62
       Rank: 2
 Dimensions: 2 x 3
@@ -2519,13 +2453,12 @@ Class Type: 8-bit, unsigned integer array
 35 36 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with logical arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var92], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var92],[0],
 [      Name: var92
       Rank: 2
 Dimensions: 4 x 1
@@ -2575,13 +2508,12 @@ Class Type: 8-bit, unsigned integer array (logical)
 0 0 0 0 1 @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with double-precision sparse arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var63], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var63],[0],
 [      Name: var63
       Rank: 2
 Dimensions: 1 x 2
@@ -2629,13 +2561,12 @@ Class Type: Sparse Array
     (5,4)  20
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with complex double-precision sparse arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var64], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var64],[0],
 [      Name: var64
       Rank: 2
 Dimensions: 2 x 1
@@ -2683,13 +2614,12 @@ Class Type: Sparse Array (complex)
     (5,4)  20 + -40i
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with character arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var65], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var65],[0],
 [      Name: var65
       Rank: 2
 Dimensions: 2 x 2
@@ -2725,14 +2655,13 @@ Class Type: Character Array
 @<:@{@:>@}\|;:'",<.>/?          @&t@
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty structure arrays])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var66], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var66],[0],
 [      Name: var66
       Rank: 2
 Dimensions: 1 x 3
@@ -2789,13 +2718,12 @@ Class Type: Cell Array
 }
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with structure arrays (numeric fields)])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var67], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var67],[0],
 [      Name: var67
       Rank: 2
 Dimensions: 2 x 10
@@ -3643,13 +3571,12 @@ Class Type: 8-bit, unsigned integer array (complex)
 }
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with structure arrays (sparse fields)])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var68], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var68],[0],
 [      Name: var68
       Rank: 2
 Dimensions: 2 x 1
@@ -3753,13 +3680,12 @@ Class Type: Sparse Array (complex)
 }
 }
 }
-], [])
+],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array structure arrays (character fields)])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK(
-[$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var69], [0],
+AT_CHECK([$builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var69],[0],
 [      Name: var69
       Rank: 2
 Dimensions: 2 x 1
@@ -3811,5 +3737,5 @@ Class Type: Character Array
 }
 }
 }
-], [])
+],[])
 AT_CLEANUP

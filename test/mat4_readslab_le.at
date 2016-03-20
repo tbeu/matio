@@ -28,7 +28,7 @@ AT_TESTED([test_mat])
 
 AT_SETUP([Read linear slab of double-precision array])
 AT_KEYWORDS([mat4_readslab readslab read_data_linear])
-AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var1\(2:3:end\)], [0],
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var1\(2:3:end\)],[0],
 [[2 @&t@
 5 @&t@
 8 @&t@
@@ -36,12 +36,12 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.
 14 @&t@
 17 @&t@
 20 @&t@
-]], [])
+]],[])
 AT_CLEANUP
 
 AT_SETUP([Read linear slab of complex double-precision array])
 AT_KEYWORDS([mat4_readslab readslab read_data_linear])
-AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var11\(2:3:end\)], [0],
+AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var11\(2:3:end\)],[0],
 [[2 + 22i @&t@
 5 + 25i @&t@
 8 + 28i @&t@
@@ -49,25 +49,17 @@ AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.
 14 + 34i @&t@
 17 + 37i @&t@
 20 + 40i @&t@
-]], [])
+]],[])
 AT_CLEANUP
 
 AT_SETUP([Read slab of double-precision array])
 AT_KEYWORDS([mat4_readslab readslab])
-AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var1\(1:1:end,1:1:end\)], [0],
-[[1 5 9 13 17 @&t@
-2 6 10 14 18 @&t@
-3 7 11 15 19 @&t@
-4 8 12 16 20 @&t@
-]], [])
+AT_CHECK([cp $srcdir/results/dump-var1.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var1\(1:1:end,1:1:end\)],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Read slab of complex double-precision array])
 AT_KEYWORDS([mat4_readslab readslab])
-AT_CHECK([$builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var11\(1:1:end,1:1:end\)], [0],
-[[1 + 21i 5 + 25i 9 + 29i 13 + 33i 17 + 37i @&t@
-2 + 22i 6 + 26i 10 + 30i 14 + 34i 18 + 38i @&t@
-3 + 23i 7 + 27i 11 + 31i 15 + 35i 19 + 39i @&t@
-4 + 24i 8 + 28i 12 + 32i 16 + 36i 20 + 40i @&t@
-]], [])
+AT_CHECK([cp $srcdir/results/dump-var11.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_le.mat var11\(1:1:end,1:1:end\)],[0],[expout],[])
 AT_CLEANUP
