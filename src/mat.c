@@ -322,7 +322,7 @@ Mat_Open(const char *matname,int mode)
     if ( NULL == mat )
         return mat;
 
-    mat->filename = strdup_printf("%s",matname);
+    mat->filename = STRDUP(matname);
     mat->mode = mode;
 
     if ( mat->version == 0x0200 ) {
@@ -619,7 +619,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     matvar->isGlobal    = opt & MAT_F_GLOBAL;
     matvar->isLogical   = opt & MAT_F_LOGICAL;
     if ( name )
-        matvar->name = strdup_printf("%s",name);
+        matvar->name = STRDUP(name);
     matvar->rank = rank;
     matvar->dims = NEW_ARRAY(size_t,matvar->rank);
     for ( i = 0; i < matvar->rank; i++ ) {
@@ -687,7 +687,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                 if ( nfields ) {
                     matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
                     for ( i = 0; i < nfields; i++ )
-                        matvar->internal->fieldnames[i] = strdup(fields[i]->name);
+                        matvar->internal->fieldnames[i] = STRDUP(fields[i]->name);
                     nmemb *= nfields;
                 }
             }
@@ -865,7 +865,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
             Mat_Close(tmp);
 
             if (err == 0) {
-                char *new_name = strdup_printf("%s",mat->filename);
+                char *new_name = STRDUP(mat->filename);
 #if defined(MAT73) && MAT73
                 if ( mat_file_ver == MAT_FT_MAT73 ) {
                     if ( mat->refs_id > -1 )
@@ -949,7 +949,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->data = NULL;
 
     if ( NULL != in->internal->hdf5_name )
-        out->internal->hdf5_name = strdup(in->internal->hdf5_name);
+        out->internal->hdf5_name = STRDUP(in->internal->hdf5_name);
 
     out->internal->hdf5_ref = in->internal->hdf5_ref;
     out->internal->id       = in->internal->id;
@@ -964,7 +964,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         out->internal->fieldnames = NEW_ARRAY(char*,in->internal->num_fields);
         for ( i = 0; i < in->internal->num_fields; i++ )
             out->internal->fieldnames[i] = ( NULL != in->internal->fieldnames[i] ) ?
-                                                strdup(in->internal->fieldnames[i]) : 0;
+                                                STRDUP(in->internal->fieldnames[i]) : 0;
     }
 
     if (in->name != NULL && (NULL != (out->name = NEW_ARRAY(char,strlen(in->name)+1))))

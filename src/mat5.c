@@ -511,7 +511,7 @@ Mat_Create5(const char *matname,const char *hdr_str)
 
     t = time(NULL);
     mat->fp       = fp;
-    mat->filename = strdup_printf("%s",matname);
+    mat->filename = STRDUP(matname);
     mat->mode     = MAT_ACC_RDWR;
     mat->byteswap = 0;
     mat->header   = NEW_ARRAY(char,128);
@@ -2147,7 +2147,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         for ( i = 0; i < nmemb; i++ ) {
             for ( j = 0; j < nfields; j++ ) {
                 fields[i*nfields+j] = Mat_VarCalloc();
-                fields[i*nfields+j]->name = strdup(matvar->internal->fieldnames[j]);
+                fields[i*nfields+j]->name = STRDUP(matvar->internal->fieldnames[j]);
             }
         }
 
@@ -2323,7 +2323,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         for ( i = 0; i < nmemb; i++ ) {
             for ( j = 0; j < nfields; j++ ) {
                 fields[i*nfields+j] = Mat_VarCalloc();
-                fields[i*nfields+j]->name = strdup(matvar->internal->fieldnames[j]);
+                fields[i*nfields+j]->name = STRDUP(matvar->internal->fieldnames[j]);
             }
         }
 

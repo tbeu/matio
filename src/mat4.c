@@ -101,7 +101,7 @@ Mat_Create4(const char* matname)
     mat->bof           = 0;
     mat->next_index    = 0;
     mat->refs_id       = -1;
-    mat->filename      = strdup_printf("%s",matname);
+    mat->filename      = STRDUP(matname);
     mat->mode          = 0;
 
     Mat_Rewind(mat);

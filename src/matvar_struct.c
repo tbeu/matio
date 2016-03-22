@@ -56,7 +56,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
 
     matvar->compression = MAT_COMPRESSION_NONE;
     if ( NULL != name )
-        matvar->name = strdup(name);
+        matvar->name = STRDUP(name);
     matvar->rank = rank;
     matvar->dims = NEW_ARRAY(size_t,matvar->rank);
     for ( i = 0; i < matvar->rank; i++ ) {
@@ -81,7 +81,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
                     matvar = NULL;
                     break;
                 } else {
-                    matvar->internal->fieldnames[i] = strdup(fields[i]);
+                    matvar->internal->fieldnames[i] = STRDUP(fields[i]);
                 }
             }
         }
@@ -126,7 +126,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
     memcpy(fieldnames,matvar->internal->fieldnames,(nfields-1)*sizeof(char*));
     DELETE_ARRAY(matvar->internal->fieldnames);
     matvar->internal->fieldnames = fieldnames;
-    matvar->internal->fieldnames[nfields-1] = strdup(fieldname);
+    matvar->internal->fieldnames[nfields-1] = STRDUP(fieldname);
 
     new_data = NEW_ARRAY(matvar_t*,nfields*nmemb);
     if ( new_data == NULL )
@@ -501,7 +501,7 @@ Mat_VarSetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index,
         if ( NULL != field->name ) {
             DELETE_ARRAY(field->name);
         }
-        field->name = strdup(matvar->internal->fieldnames[field_index]);
+        field->name = STRDUP(matvar->internal->fieldnames[field_index]);
     }
 
     return old_field;
@@ -550,7 +550,7 @@ Mat_VarSetStructFieldByName(matvar_t *matvar,const char *field_name,
         if ( NULL != field->name ) {
             DELETE_ARRAY(field->name);
         }
-        field->name = strdup(matvar->internal->fieldnames[field_index]);
+        field->name = STRDUP(matvar->internal->fieldnames[field_index]);
     }
 
     return old_field;

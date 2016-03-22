@@ -888,7 +888,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                         hid_t ref_id;
                         fields[l*nfields+k] = Mat_VarCalloc();
                         fields[l*nfields+k]->name =
-                            strdup(matvar->internal->fieldnames[k]);
+                            STRDUP(matvar->internal->fieldnames[k]);
                         fields[l*nfields+k]->internal->hdf5_ref=ref_ids[l];
                         /* Get the HDF5 name of the variable */
                         name_len = H5Iget_name(field_id,NULL,0);
@@ -912,7 +912,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                     fields[k] = Mat_VarCalloc();
                     fields[k]->internal->fp   = mat;
                     fields[k]->name =
-                        strdup(matvar->internal->fieldnames[k]);
+                        STRDUP(matvar->internal->fieldnames[k]);
                     Mat_H5ReadDatasetInfo(mat,fields[k],field_id);
                 }
                 H5Dclose(field_id);
@@ -922,7 +922,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 if ( -1 < field_id ) {
                     fields[k] = Mat_VarCalloc();
                     fields[k]->internal->fp   = mat;
-                    fields[k]->name = strdup(matvar->internal->fieldnames[k]);
+                    fields[k]->name = STRDUP(matvar->internal->fieldnames[k]);
                     Mat_H5ReadGroupInfo(mat,fields[k],field_id);
                     H5Gclose(field_id);
                 }
@@ -2175,7 +2175,7 @@ Mat_Create73(const char *matname,const char *hdr_str)
     mat->refs_id          = -1;
 
     t = time(NULL);
-    mat->filename = strdup_printf("%s",matname);
+    mat->filename = STRDUP(matname);
     mat->mode     = MAT_ACC_RDWR;
     mat->byteswap = 0;
     mat->header   = NEW_ARRAY(char,128);
