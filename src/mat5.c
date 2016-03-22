@@ -1770,7 +1770,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
         ncells *= matvar->dims[i];
     matvar->data_size = sizeof(matvar_t *);
     matvar->nbytes    = ncells*matvar->data_size;
-    matvar->data      = NEW_ARRAY(char,matvar->nbytes);
+    matvar->data      = NEW_BUFFER(matvar->nbytes);
     if ( !matvar->data ) {
         Mat_Critical("Couldn't allocate memory for %s->data",matvar->name);
         return bytesread;
@@ -1895,7 +1895,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                     cells[i]->name[len] = '\0';
                 }
             }
-            cells[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
+            cells[i]->internal->z = NEW(z_stream);
             if ( cells[i]->internal->z != NULL ) {
                 err = inflateCopy(cells[i]->internal->z,matvar->internal->z);
                 if ( err == Z_OK ) {
@@ -1923,7 +1923,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                          cells[i]->class_type == MAT_C_CELL ) {
                         /* Memory optimization: Free inflate state */
                         inflateEnd(cells[i]->internal->z);
-                        free(cells[i]->internal->z);
+                        DELETE_ARRAY(cells[i]->internal->z);
                         cells[i]->internal->z = NULL;
                     }
                 } else {
@@ -2122,15 +2122,14 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             ptr = NEW_ARRAY(char,nfields*fieldname_size+i);
             bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
             matvar->internal->num_fields = nfields;
-            matvar->internal->fieldnames =
-                (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
+            matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
             for ( i = 0; i < nfields; i++ ) {
                 matvar->internal->fieldnames[i] = NEW_ARRAY(char,fieldname_size);
                 memcpy(matvar->internal->fieldnames[i],ptr+i*fieldname_size,
                        fieldname_size);
                 matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
             }
-            free(ptr);
+            DELETE_ARRAY(ptr);
         } else {
             matvar->internal->num_fields = 0;
             matvar->internal->fieldnames = NULL;
@@ -2140,7 +2139,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         if ( !matvar->nbytes )
             return bytesread;
 
-        matvar->data = NEW_ARRAY(char,matvar->nbytes);
+        matvar->data = NEW_BUFFER(matvar->nbytes);
         if ( !matvar->data )
             return bytesread;
 
@@ -2227,7 +2226,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
             bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
             nbytes -= 8;
-            fields[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
+            fields[i]->internal->z = NEW(z_stream);
             if ( fields[i]->internal->z != NULL ) {
                 err = inflateCopy(fields[i]->internal->z,matvar->internal->z);
                 if ( err == Z_OK ) {
@@ -2255,7 +2254,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                          fields[i]->class_type == MAT_C_CELL ) {
                         /* Memory optimization: Free inflate state */
                         inflateEnd(fields[i]->internal->z);
-                        free(fields[i]->internal->z);
+                        DELETE_ARRAY(fields[i]->internal->z);
                         fields[i]->internal->z = NULL;
                     }
                 } else {
@@ -2296,8 +2295,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
         if ( nfields ) {
             matvar->internal->num_fields = nfields;
-            matvar->internal->fieldnames =
-                (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
+            matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
             for ( i = 0; i < nfields; i++ ) {
                 matvar->internal->fieldnames[i] = NEW_ARRAY(char,fieldname_size);
                 bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,(FILE*)mat->fp);
@@ -2317,7 +2315,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         if ( !matvar->nbytes )
             return bytesread;
 
-        matvar->data = NEW_ARRAY(char,matvar->nbytes);
+        matvar->data = NEW_BUFFER(matvar->nbytes);
         if ( !matvar->data )
             return bytesread;
 
@@ -2779,13 +2777,14 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             fwrite(&pad1,1,1,(FILE*)mat->fp);
             nBytes = nfields*fieldname_size;
             fwrite(&nBytes,4,1,(FILE*)mat->fp);
-            padzero = (char*)calloc(fieldname_size,1);
+            padzero = NEW_ARRAY(char,fieldname_size);
+            memset(padzero,0,fieldname_size);
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
                 fwrite(matvar->internal->fieldnames[i],1,len,(FILE*)mat->fp);
                 fwrite(padzero,1,fieldname_size-len,(FILE*)mat->fp);
             }
-            free(padzero);
+            DELETE_ARRAY(padzero);
             for ( i = 0; i < nmemb*nfields; i++ )
                 WriteStructField(mat,fields[i]);
             break;
@@ -3029,7 +3028,6 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
             uncomp_buf[2] = array_name_type;
             uncomp_buf[3] = nfields*fieldname_size;
 
-            padzero = (unsigned char*)calloc(fieldname_size,1);
             z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
             z->avail_in = 16;
             do {
@@ -3039,6 +3037,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-z->avail_out,(FILE*)mat->fp);
             } while ( z->avail_out == 0 );
+            padzero = NEW_ARRAY(unsigned char,fieldname_size);
             for ( i = 0; i < nfields; i++ ) {
                 memset(padzero,'\0',fieldname_size);
                 memcpy(padzero,matvar->internal->fieldnames[i],
@@ -3053,7 +3052,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
                         buf_size*sizeof(*comp_buf)-z->avail_out,(FILE*)mat->fp);
                 } while ( z->avail_out == 0 );
             }
-            free(padzero);
+            DELETE_ARRAY(padzero);
             for ( i = 0; i < nmemb*nfields; i++ )
                 byteswritten +=
                     WriteCompressedStructField(mat,fields[i],z);
@@ -3241,13 +3240,14 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
             fwrite(&array_name_type,4,1,(FILE*)mat->fp);
             nBytes = nfields*fieldname_size;
             fwrite(&nBytes,4,1,(FILE*)mat->fp);
-            padzero = (char*)calloc(fieldname_size,1);
+            padzero = NEW_ARRAY(char,fieldname_size);
+            memset(padzero,0,fieldname_size);
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
                 fwrite(matvar->internal->fieldnames[i],1,len,(FILE*)mat->fp);
                 fwrite(padzero,1,fieldname_size-len,(FILE*)mat->fp);
             }
-            free(padzero);
+            DELETE_ARRAY(padzero);
             for ( i = 0; i < nmemb*nfields; i++ )
                 WriteStructField(mat,fields[i]);
             break;
@@ -3497,7 +3497,6 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
             uncomp_buf[2] = array_name_type;
             uncomp_buf[3] = nfields*fieldname_size;
 
-            padzero = (unsigned char*)calloc(fieldname_size,1);
             z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
             z->avail_in = 16;
             do {
@@ -3507,6 +3506,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-z->avail_out,(FILE*)mat->fp);
             } while ( z->avail_out == 0 );
+            padzero = NEW_ARRAY(unsigned char,fieldname_size);
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
                 memset(padzero,'\0',fieldname_size);
@@ -3521,7 +3521,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
                         buf_size*sizeof(*comp_buf)-z->avail_out,(FILE*)mat->fp);
                 } while ( z->avail_out == 0 );
             }
-            free(padzero);
+            DELETE_ARRAY(padzero);
             for ( i = 0; i < nmemb*nfields; i++ )
                 byteswritten +=
                     WriteCompressedStructField(mat,fields[i],z);
@@ -3985,14 +3985,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4001,7 +4001,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4022,14 +4022,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4038,7 +4038,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4060,14 +4060,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4076,7 +4076,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4099,14 +4099,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4115,7 +4115,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4137,14 +4137,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4153,7 +4153,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4174,14 +4174,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4190,7 +4190,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4211,14 +4211,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4227,7 +4227,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4248,14 +4248,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4264,7 +4264,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4285,14 +4285,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4301,7 +4301,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4322,14 +4322,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
-                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Re = NEW_BUFFER(matvar->nbytes);
+                complex_data->Im = NEW_BUFFER(matvar->nbytes);
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
                     break;
                 }
@@ -4338,7 +4338,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->data = complex_data;
             } else {
                 matvar->nbytes = len*matvar->data_size;
-                matvar->data   = NEW_ARRAY(char,matvar->nbytes);
+                matvar->data   = NEW_BUFFER(matvar->nbytes);
                 if ( !matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
@@ -4386,14 +4386,14 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             if ( nBytes == 0 ) {
                 matvar->nbytes = 0;
-                matvar->data   = calloc(0,1);
+                matvar->data   = NEW_BUFFER(0);
                 break;
             }
             matvar->data_size = sizeof(char);
             /* FIXME: */
             matvar->data_type = MAT_T_UINT8;
             matvar->nbytes = len*matvar->data_size;
-            matvar->data   = calloc(matvar->nbytes+1,1);
+            matvar->data   = NEW_BUFFER(matvar->nbytes+1);
             if ( !matvar->data ) {
                 Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                 break;
@@ -4462,7 +4462,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             mat_sparse_t *data;
 
             matvar->data_size = sizeof(mat_sparse_t);
-            matvar->data      = NEW_ARRAY(char,matvar->data_size);
+            matvar->data      = NEW_BUFFER(matvar->data_size);
             if ( matvar->data == NULL ) {
                 Mat_Critical("ReadData: Allocation of data pointer failed");
                 break;
@@ -4654,16 +4654,16 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
                     break;
                 }
-                complex_data->Re = NEW_ARRAY(char,data->ndata*
+                complex_data->Re = NEW_BUFFER(data->ndata*
                                           Mat_SizeOf(matvar->data_type));
-                complex_data->Im = NEW_ARRAY(char,data->ndata*
+                complex_data->Im = NEW_BUFFER(data->ndata*
                                           Mat_SizeOf(matvar->data_type));
                 if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
                     if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Re);
                     if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
+                        DELETE_BUFFER(complex_data->Im);
+                    DELETE(complex_data);
                     Mat_Critical("Failed to allocate %d bytes",
                                  data->ndata* Mat_SizeOf(matvar->data_type));
                     break;
@@ -4940,7 +4940,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 }
                 data->data = complex_data;
             } else { /* isComplex */
-                data->data = NEW_ARRAY(char,data->ndata*Mat_SizeOf(matvar->data_type));
+                data->data = NEW_BUFFER(data->ndata*Mat_SizeOf(matvar->data_type));
                 if ( data->data == NULL ) {
                     Mat_Critical("Failed to allocate %d bytes",
                                  data->ndata*Mat_SizeOf(MAT_T_DOUBLE));
@@ -6146,13 +6146,14 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 fwrite(&array_name_type,4,1,(FILE*)mat->fp);
                 nBytes = nfields*fieldname_size;
                 fwrite(&nBytes,4,1,(FILE*)mat->fp);
-                padzero = (char*)calloc(fieldname_size,1);
+                padzero = NEW_ARRAY(char,fieldname_size);
+                memset(padzero,0,fieldname_size);
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);
                     fwrite(matvar->internal->fieldnames[i],1,len,(FILE*)mat->fp);
                     fwrite(padzero,1,fieldname_size-len,(FILE*)mat->fp);
                 }
-                free(padzero);
+                DELETE_ARRAY(padzero);
                 for ( i = 0; i < nmemb*nfields; i++ )
                     WriteStructField(mat,fields[i]);
                 break;
@@ -6202,12 +6203,12 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
 
         if (matvar->internal->z != NULL) {
             inflateEnd(matvar->internal->z);
-            free(matvar->internal->z);
+            DELETE_ARRAY(matvar->internal->z);
         }
-        matvar->internal->z = (z_streamp)calloc(1,sizeof(*matvar->internal->z));
+        matvar->internal->z = NEW(z_stream);
         err = deflateInit(matvar->internal->z,Z_DEFAULT_COMPRESSION);
         if ( err != Z_OK ) {
-            free(matvar->internal->z);
+            DELETE_ARRAY(matvar->internal->z);
             matvar->internal->z = NULL;
             Mat_Critical("deflateInit returned %s",zError(err));
             return -1;
@@ -6405,7 +6406,6 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 uncomp_buf[2] = array_name_type;
                 uncomp_buf[3] = nfields*fieldname_size;
 
-                padzero = (unsigned char*)calloc(fieldname_size,1);
                 matvar->internal->z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
                 matvar->internal->z->avail_in = 16;
                 do {
@@ -6415,6 +6415,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     byteswritten += fwrite(comp_buf,1,
                         buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,(FILE*)mat->fp);
                 } while ( matvar->internal->z->avail_out == 0 );
+                padzero = NEW_ARRAY(unsigned char,fieldname_size);
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);
                     memset(padzero,'\0',fieldname_size);
@@ -6430,7 +6431,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                             (FILE*)mat->fp);
                     } while ( matvar->internal->z->avail_out == 0 );
                 }
-                free(padzero);
+                DELETE_ARRAY(padzero);
                 for ( i = 0; i < nmemb*nfields; i++ )
                     byteswritten +=
                         WriteCompressedStructField(mat,fields[i],matvar->internal->z);
@@ -6479,7 +6480,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 fwrite(&pad1,1,1,(FILE*)mat->fp);
 #endif
         (void)deflateEnd(matvar->internal->z);
-        free(matvar->internal->z);
+        DELETE_ARRAY(matvar->internal->z);
         matvar->internal->z = NULL;
 #endif
     }
@@ -6648,13 +6649,14 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
                 fwrite(&array_name_type,4,1,(FILE*)mat->fp);
                 nBytes = nfields*fieldname_size;
                 fwrite(&nBytes,4,1,(FILE*)mat->fp);
-                padzero = (char*)calloc(fieldname_size,1);
+                padzero = NEW_ARRAY(char,fieldname_size);
+                memset(padzero,0,fieldname_size);
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);
                     fwrite(matvar->internal->fieldnames[i],1,len,(FILE*)mat->fp);
                     fwrite(padzero,1,fieldname_size-len,(FILE*)mat->fp);
                 }
-                free(padzero);
+                DELETE_ARRAY(padzero);
                 for ( i = 0; i < nfields; i++ )
                     WriteInfo5(mat,fields[i]);
                 break;
@@ -6676,10 +6678,10 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         int buf_size = 512, err;
         size_t byteswritten = 0;
 
-        matvar->internal->z = (z_streamp)calloc(1,sizeof(*matvar->internal->z));
+        matvar->internal->z = NEW(z_stream);
         err = deflateInit(matvar->internal->z,Z_DEFAULT_COMPRESSION);
         if ( err != Z_OK ) {
-            free(matvar->internal->z);
+            DELETE_ARRAY(matvar->internal->z);
             matvar->internal->z = NULL;
             Mat_Critical("deflateInit returned %s",zError(err));
             return;
@@ -6820,7 +6822,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         Mat_Critical("deflate with Z_FINISH returned %s, byteswritten = %u",zError(err),byteswritten);
 #if 1
         (void)deflateEnd(matvar->internal->z);
-        free(matvar->internal->z);
+        DELETE_ARRAY(matvar->internal->z);
         matvar->internal->z = NULL;
 #else
         memcpy(matvar->internal->z,&z_save,sizeof(*matvar->internal->z));
@@ -6892,7 +6894,8 @@ Mat_VarReadNextInfo5( mat_t *mat )
 
             matvar->internal->fp = mat;
             matvar->internal->fpos = fpos;
-            matvar->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
+            matvar->internal->z = NEW(z_stream);
+            memset(matvar->internal->z,0,sizeof(z_stream));
             err = inflateInit(matvar->internal->z);
             if ( err != Z_OK ) {
                 Mat_VarFree(matvar);

@@ -122,9 +122,10 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 
     nfields = matvar->internal->num_fields+1;
     matvar->internal->num_fields = nfields;
-    matvar->internal->fieldnames =
-    (char**)realloc(matvar->internal->fieldnames,
-            nfields*sizeof(*matvar->internal->fieldnames));
+    char** fieldnames = NEW_ARRAY(char*,nfields);
+    memcpy(fieldnames,matvar->internal->fieldnames,(nfields-1)*sizeof(char*));
+    DELETE_ARRAY(matvar->internal->fieldnames);
+    matvar->internal->fieldnames = fieldnames;
     matvar->internal->fieldnames[nfields-1] = strdup(fieldname);
 
     new_data = NEW_ARRAY(matvar_t*,nfields*nmemb);
@@ -138,7 +139,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
         new_data[cnt++] = NULL;
     }
 
-    free(matvar->data);
+    DELETE_ARRAY(matvar->data);
     matvar->data = new_data;
     matvar->nbytes = nfields*nmemb*sizeof(*new_data);
 
@@ -498,7 +499,7 @@ Mat_VarSetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index,
         old_field = fields[index*nfields+field_index];
         fields[index*nfields+field_index] = field;
         if ( NULL != field->name ) {
-            free(field->name);
+            DELETE_ARRAY(field->name);
         }
         field->name = strdup(matvar->internal->fieldnames[field_index]);
     }
@@ -547,7 +548,7 @@ Mat_VarSetStructFieldByName(matvar_t *matvar,const char *field_name,
         old_field = fields[index*nfields+field_index];
         fields[index*nfields+field_index] = field;
         if ( NULL != field->name ) {
-            free(field->name);
+            DELETE_ARRAY(field->name);
         }
         field->name = strdup(matvar->internal->fieldnames[field_index]);
     }

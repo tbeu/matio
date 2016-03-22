@@ -56,12 +56,20 @@
     #define TRY try {
     #define NEW(type) new type
     #define NEW_ARRAY(type,size) new type[size]
+    #define NEW_BUFFER(size) NEW_ARRAY(char,size)
     #define CATCH(e) } catch(...) 
+    #define DELETE(v) delete v
+    #define DELETE_ARRAY(v) delete[] v
+    #define DELETE_BUFFER(v) DELETE_ARRAY(static_cast<char*>(v))
 #else
     #define TRY 
     #define NEW(type) (type*) malloc(sizeof(type))
     #define NEW_ARRAY(type,size) (type*) malloc(size*sizeof(type))
+    #define NEW_BUFFER(size) NEW_ARRAY(char,size)
     #define CATCH(e) if (e) 
+    #define DELETE(v) free(v)
+    #define DELETE_ARRAY(v) free(v)
+    #define DELETE_BUFFER(v) DELETE_ARRAY(v)
 #endif
 
 /** @if mat_devman

@@ -163,7 +163,7 @@ mat_log(int loglevel, const char *format, va_list ap)
     if ( !logfunc ) return;
     buffer = strdup_vprintf(format, ap);
     (*logfunc)(loglevel,buffer);
-    free(buffer);
+    DELETE_ARRAY(buffer);
     return;
 }
 
