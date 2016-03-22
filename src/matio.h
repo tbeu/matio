@@ -224,8 +224,6 @@ typedef struct mat_sparse_t {
 EXTERN void Mat_GetLibraryVersion(int *major,int *minor,int *release);
 
 /*     io.c         */
-EXTERN char  *strdup_vprintf(const char *format, va_list ap);
-EXTERN char  *strdup_printf(const char *format, ...);
 EXTERN int    Mat_SetVerbose( int verb, int s );
 EXTERN int    Mat_SetDebug( int d );
 EXTERN void   Mat_Critical( const char *format, ... );
@@ -266,6 +264,7 @@ EXTERN void       Mat_VarFree(matvar_t *matvar);
 EXTERN matvar_t  *Mat_VarGetCell(matvar_t *matvar,int index);
 EXTERN matvar_t **Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,
                       int *edge);
+
 EXTERN matvar_t **Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,
                       int edge);
 EXTERN size_t     Mat_VarGetSize(matvar_t *matvar);

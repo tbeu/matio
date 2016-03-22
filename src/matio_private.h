@@ -61,6 +61,12 @@
     #define DELETE(v) delete v
     #define DELETE_ARRAY(v) delete[] v
     #define DELETE_BUFFER(v) DELETE_ARRAY(static_cast<char*>(v))
+    inline char* STRDUP(const char* s) {
+        const unsigned sz = strlen(s)+1;
+        char* str = NEW_ARRAY(char,sz);
+        memcpy(str,s,sz);
+        return str;
+    }
 #else
     #define TRY 
     #define NEW(type) (type*) malloc(sizeof(type))
@@ -70,6 +76,7 @@
     #define DELETE(v) free(v)
     #define DELETE_ARRAY(v) free(v)
     #define DELETE_BUFFER(v) DELETE_ARRAY(v)
+    #define STRDUP strdup
 #endif
 
 /** @if mat_devman
