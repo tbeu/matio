@@ -113,6 +113,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 {
     int       i, f, nfields, nmemb, cnt = 0;
     matvar_t **new_data, **old_data;
+    char     **fieldnames;
 
     if ( matvar == NULL || fieldname == NULL )
         return -1;
@@ -122,7 +123,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 
     nfields = matvar->internal->num_fields+1;
     matvar->internal->num_fields = nfields;
-    char** fieldnames = NEW_ARRAY(char*,nfields);
+    fieldnames = NEW_ARRAY(char*,nfields);
     memcpy(fieldnames,matvar->internal->fieldnames,(nfields-1)*sizeof(char*));
     DELETE_ARRAY(matvar->internal->fieldnames);
     matvar->internal->fieldnames = fieldnames;
