@@ -369,7 +369,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 sparse->ir = NEW_ARRAY(mat_int32_t,sparse->nir);
 
             } CATCH(sparse->ir==NULL) {
-                DELETE_ARRAY(matvar->data);
+                DELETE_BUFFER(matvar->data);
                 matvar->data = NULL;
                 V_END(Mat_Critical("Memory allocation failure"));
             }
@@ -385,7 +385,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 fpos = ftell((FILE*)mat->fp);
             } CATCH(fpos==-1L) {
                 DELETE_ARRAY(sparse->ir);
-                DELETE_ARRAY(matvar->data);
+                DELETE_BUFFER(matvar->data);
                 matvar->data = NULL;
                 V_END(Mat_Critical("Couldn't determine file position"));
             }
@@ -396,7 +396,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 ReadDoubleData(mat, &tmp, data_type, 1);
             } CATCH ( tmp > INT_MAX-1 || tmp < 0 ) {
                 DELETE_ARRAY(sparse->ir);
-                DELETE_ARRAY(matvar->data);
+                DELETE_BUFFER(matvar->data);
                 matvar->data = NULL;
                 V_END(Mat_Critical("Invalid column dimension for sparse matrix"));
             }
@@ -406,7 +406,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
             } CATCH ( matvar->dims[1] > INT_MAX-1 ) {
                 DELETE_ARRAY(sparse->ir);
-                DELETE_ARRAY(matvar->data);
+                DELETE_BUFFER(matvar->data);
                 matvar->data = NULL;
                 V_END(Mat_Critical("Invalid column dimension for sparse matrix"));
             }
@@ -416,7 +416,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 sparse->jc = NEW_ARRAY(mat_int32_t,sparse->njc);
             } CATCH(sparse->jc == NULL) {
                 DELETE_ARRAY(sparse->ir);
-                DELETE_ARRAY(matvar->data);
+                DELETE_BUFFER(matvar->data);
                 matvar->data = NULL;
                 V_END(Mat_Critical("Memory allocation failure"));
             }
@@ -426,7 +426,7 @@ Read4(mat_t *mat,matvar_t *matvar)
             } CATCH( jc == NULL ) {
                 DELETE_ARRAY(sparse->jc);
                 DELETE_ARRAY(sparse->ir);
-                DELETE_ARRAY(matvar->data);
+                DELETE_BUFFER(matvar->data);
                 matvar->data = NULL;
                 V_END(Mat_Critical("Memory allocation failure"));
             }
@@ -454,7 +454,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 } CATCH( complex_data == NULL ) {
                     DELETE_ARRAY(sparse->jc);
                     DELETE_ARRAY(sparse->ir);
-                    DELETE_ARRAY(matvar->data);
+                    DELETE_BUFFER(matvar->data);
                     matvar->data = NULL;
                     V_END(Mat_Critical("Memory allocation failure"));
                 }
@@ -467,7 +467,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                     DELETE(complex_data);
                     DELETE_ARRAY(sparse->jc);
                     DELETE_ARRAY(sparse->ir);
-                    DELETE_ARRAY(matvar->data);
+                    DELETE_BUFFER(matvar->data);
                     matvar->data = NULL;
                     V_END(Mat_Critical("Memory allocation failure"));
                 }
@@ -537,12 +537,12 @@ Read4(mat_t *mat,matvar_t *matvar)
                         break;
                     }
                     default:
-                        DELETE_ARRAY(complex_data->Re);
-                        DELETE_ARRAY(complex_data->Im);
+                        DELETE_BUFFER(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Im);
                         DELETE(complex_data);
                         DELETE_ARRAY(sparse->jc);
                         DELETE_ARRAY(sparse->ir);
-                        DELETE_ARRAY(matvar->data);
+                        DELETE_BUFFER(matvar->data);
                         matvar->data = NULL;
                         V_END(Mat_Critical("Read4: %d is not a supported data type for ",
                               "extended sparse", data_type));
@@ -561,7 +561,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 } CATCH( sparse->data == NULL ) {
                     DELETE_ARRAY(sparse->jc);
                     DELETE_ARRAY(sparse->ir);
-                    DELETE_ARRAY(matvar->data);
+                    DELETE_BUFFER(matvar->data);
                     matvar->data = NULL;
                     V_END(Mat_Critical("Memory allocation failure"));
                 }
@@ -613,10 +613,10 @@ Read4(mat_t *mat,matvar_t *matvar)
                         break;
                     }
                     default:
-                        DELETE_ARRAY(sparse->data);
+                        DELETE_BUFFER(sparse->data);
                         DELETE_ARRAY(sparse->jc);
                         DELETE_ARRAY(sparse->ir);
-                        DELETE_ARRAY(matvar->data);
+                        DELETE_BUFFER(matvar->data);
                         matvar->data = NULL;
                         V_END(Mat_Critical("Read4: %d is not a supported data type for ",
                                  "extended sparse", data_type));
