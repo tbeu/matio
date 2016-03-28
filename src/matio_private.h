@@ -53,6 +53,7 @@
 #endif
 
 #ifdef __cplusplus
+    #include <string.h>
     #define TRY try {
     #define NEW(type) new type
     #define NEW_ARRAY(type,size) new type[size]
@@ -67,6 +68,8 @@
         memcpy(str,s,sz);
         return str;
     }
+    #define END(x) x
+    #define V_END(x) x
 #else
     #define TRY 
     #define NEW(type) (type*) malloc(sizeof(type))
@@ -77,6 +80,8 @@
     #define DELETE_ARRAY(v) free(v)
     #define DELETE_BUFFER(v) DELETE_ARRAY(v)
     #define STRDUP strdup
+    #define END(x)    do { x; return NULL; } while(0)
+    #define V_END(x)  do { x; return; } while(0)
 #endif
 
 /** @if mat_devman
