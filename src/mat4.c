@@ -90,7 +90,7 @@ Mat_Create4(const char* matname)
         mat = NEW(mat_t);
     } CATCH(mat==NULL) {
         fclose(fp);
-        END(Mat_Critical("Couldn't allocate memory for the MAT file"));
+        END(Mat_Critical("Couldn't allocate memory for the MAT file"),NULL);
     }
 
     mat->header        = NULL;
@@ -787,16 +787,16 @@ Mat_VarReadNextInfo4(mat_t *mat)
     } endian;
 
     if ( mat == NULL || mat->fp == NULL )
-        END(Mat_Critical("Bad mat descriptor"));
+        END(Mat_Critical("Bad mat descriptor"),NULL);
     else if ( NULL == (matvar = Mat_VarCalloc()) )
-        END(Mat_Critical("Memory allocation failure"));
+        END(Mat_Critical("Memory allocation failure"),NULL);
 
     TRY {
         matvar->internal->fp   = mat;
         matvar->internal->fpos = ftell((FILE*)mat->fp);
     } CATCH ( matvar->internal->fpos == -1L ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Couldn't determine file position"));
+        END(Mat_Critical("Couldn't determine file position"),NULL);
     }
 
     err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
@@ -811,7 +811,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     if ( tmp < 0 || tmp > 4052 ) {
         if ( Mat_int32Swap(&tmp) > 4052 ) {
             Mat_VarFree(matvar);
-            END(Mat_Critical("Bad data descriptor"));
+            END(Mat_Critical("Bad data descriptor"),NULL);
         }
     }
 
@@ -835,12 +835,12 @@ Mat_VarReadNextInfo4(mat_t *mat)
         default:
             /* VAX, Cray, or bogus */
             Mat_VarFree(matvar);
-            END(Mat_Critical("Wrong/Unsupported floating point format"));
+            END(Mat_Critical("Wrong/Unsupported floating point format"),NULL);
     }
     /* O must be zero */
     if ( 0 != O ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Bad data descriptor"));
+        END(Mat_Critical("Bad data descriptor"),NULL);
     }
     /* Convert the V4 data type */
     switch ( data_type ) {
@@ -864,7 +864,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
             break;
         default:
             Mat_VarFree(matvar);
-            END(Mat_Critical("Wrong data type"));
+            END(Mat_Critical("Wrong data type"),NULL);
     }
     switch ( class_type ) {
         case 0:
@@ -878,14 +878,14 @@ Mat_VarReadNextInfo4(mat_t *mat)
             break;
         default:
             Mat_VarFree(matvar);
-            END(Mat_Critical("Wrong class type"));
+            END(Mat_Critical("Wrong class type"),NULL);
     }
     matvar->rank = 2;
     TRY {
         matvar->dims = NEW_ARRAY(size_t,2);
     } CATCH ( NULL == matvar->dims ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Memory allocation failure"));
+        END(Mat_Critical("Memory allocation failure"),NULL);
     }
 
     TRY {
@@ -895,7 +895,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         matvar->dims[0] = tmp;
     } CATCH ( !err ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Couldn't read data from file"));
+        END(Mat_Critical("Couldn't read data from file"),NULL);
     }
 
     TRY {
@@ -905,7 +905,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         matvar->dims[1] = tmp;
     } CATCH( !err ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Couldn't read data from file"));
+        END(Mat_Critical("Couldn't read data from file"),NULL);
     }
 
     TRY {
@@ -913,7 +913,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         //  No byte swap here. This is stange. TODO: POSSIBLE BUG.
     } CATCH( !err ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Couldn't read data from file"));
+        END(Mat_Critical("Couldn't read data from file"),NULL);
     }
 
     TRY {
@@ -922,32 +922,32 @@ Mat_VarReadNextInfo4(mat_t *mat)
             Mat_int32Swap(&tmp);
     } CATCH( !err ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Couldn't read data from file"));
+        END(Mat_Critical("Couldn't read data from file"),NULL);
     }
     /* Check that the length of the variable name is at least 1 */
     if ( tmp < 1 ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Length of variable name must be at least 1"));
+        END(Mat_Critical("Length of variable name must be at least 1"),NULL);
     }
 
     TRY {
         matvar->name = NEW_ARRAY(char,tmp);
     } CATCH ( NULL == matvar->name ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Memory allocation failure"));
+        END(Mat_Critical("Memory allocation failure"),NULL);
     }
 
     TRY {
         err = fread(matvar->name,1,tmp,(FILE*)mat->fp);
     } CATCH( !err ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Couldn't read data from file"));
+        END(Mat_Critical("Couldn't read data from file"),NULL);
     }
 
     matvar->internal->datapos = ftell((FILE*)mat->fp);
     if ( matvar->internal->datapos == -1L ) {
         Mat_VarFree(matvar);
-        END(Mat_Critical("Couldn't determine file position"));
+        END(Mat_Critical("Couldn't determine file position"),NULL);
     }
     nBytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex )

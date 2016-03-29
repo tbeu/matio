@@ -100,7 +100,13 @@ Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,int *edge)
         N *= edge[i];
         I += start[i]*dimp[i-1];
     }
-    cells = NEW_ARRAY(matvar_t*,N);
+
+    TRY {
+        cells = NEW_ARRAY(matvar_t*,N);
+    } CATCH(cells==NULL) {
+        END(Mat_Critical("Memory allocation failure"),NULL);
+    }
+
     for ( i = 0; i < N; i+=edge[0] ) {
         for ( j = 0; j < edge[0]; j++ ) {
             cells[i+j] = *((matvar_t **)matvar->data + I);
@@ -144,7 +150,11 @@ Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,int edge)
     matvar_t **cells = NULL;
 
     if ( matvar != NULL ) {
-        cells = NEW_ARRAY(matvar_t*,edge);
+        TRY {
+            cells = NEW_ARRAY(matvar_t*,edge);
+        } CATCH(cells==NULL) {
+            END(Mat_Critical("Memory allocation failure"),NULL);
+        }
         I = start;
         for ( i = 0; i < edge; i++ ) {
             cells[i] = *((matvar_t **)matvar->data + I);

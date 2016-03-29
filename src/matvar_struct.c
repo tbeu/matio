@@ -58,7 +58,13 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
     if ( NULL != name )
         matvar->name = STRDUP(name);
     matvar->rank = rank;
-    matvar->dims = NEW_ARRAY(size_t,matvar->rank);
+
+    TRY {
+        matvar->dims = NEW_ARRAY(size_t,matvar->rank);
+    } CATCH(matvar->dims==NULL) {
+        END(Mat_Critical("Memory allocation failure"),NULL);
+    }
+
     for ( i = 0; i < matvar->rank; i++ ) {
         matvar->dims[i] = dims[i];
         nmemb *= dims[i];
@@ -70,25 +76,37 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
 
     if ( nfields ) {
         matvar->internal->num_fields = nfields;
-        matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
-        if ( NULL == matvar->internal->fieldnames ) {
+
+        TRY {
+            matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
+        } CATCH ( NULL == matvar->internal->fieldnames ) {
             Mat_VarFree(matvar);
             matvar = NULL;
-        } else {
-            for ( i = 0; i < nfields; i++ ) {
-                if ( NULL == fields[i] ) {
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
-                    break;
-                } else {
-                    matvar->internal->fieldnames[i] = STRDUP(fields[i]);
-                }
+            END(Mat_Critical("Memory allocation failure"),NULL);
+        }
+
+        for ( i = 0; i < nfields; i++ ) {
+            if ( NULL == fields[i] ) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+                break;
+            } else {
+                matvar->internal->fieldnames[i] = STRDUP(fields[i]);
             }
         }
+
         if ( NULL != matvar && nmemb > 0 && nfields > 0 ) {
             matvar_t **field_vars;
             matvar->nbytes = nmemb*nfields*matvar->data_size;
-            matvar->data = NEW_ARRAY(char,matvar->nbytes);
+
+            TRY {
+                matvar->data = NEW_ARRAY(char,matvar->nbytes);
+            } CATCH(matvar->data==NULL) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+                END(Mat_Critical("Memory allocation failure"),NULL);
+            }
+
             field_vars = (matvar_t**)matvar->data;
             for ( i = 0; i < nfields*nmemb; i++ )
                 field_vars[i] = NULL;
@@ -123,15 +141,24 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 
     nfields = matvar->internal->num_fields+1;
     matvar->internal->num_fields = nfields;
-    fieldnames = NEW_ARRAY(char*,nfields);
+
+    TRY {
+        fieldnames = NEW_ARRAY(char*,nfields);
+    } CATCH(fieldnames==NULL) {
+        END(Mat_Critical("Memory allocation failure"),-1);
+    }
+
     memcpy(fieldnames,matvar->internal->fieldnames,(nfields-1)*sizeof(char*));
     DELETE_ARRAY(matvar->internal->fieldnames);
     matvar->internal->fieldnames = fieldnames;
     matvar->internal->fieldnames[nfields-1] = STRDUP(fieldname);
 
-    new_data = NEW_ARRAY(matvar_t*,nfields*nmemb);
-    if ( new_data == NULL )
-        return -1;
+    TRY {
+        new_data = NEW_ARRAY(matvar_t*,nfields*nmemb);
+    } CATCH ( new_data == NULL ) {
+        DELETE_ARRAY(fieldnames);
+        END(Mat_Critical("Memory allocation failure"),-1);
+    }
 
     old_data = (matvar_t**)matvar->data;
     for ( i = 0; i < nmemb; i++ ) {
@@ -366,12 +393,15 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
         struct_slab->dims[i] = edge[i];
     }
     I *= nfields;
-    struct_slab->nbytes    = N*nfields*sizeof(matvar_t *);
-    struct_slab->data = NEW_ARRAY(char,struct_slab->nbytes);
-    if ( struct_slab->data == NULL ) {
+
+    TRY {
+        struct_slab->nbytes = N*nfields*sizeof(matvar_t *);
+        struct_slab->data   = NEW_ARRAY(char,struct_slab->nbytes);
+    } CATCH ( struct_slab->data == NULL ) {
         Mat_VarFree(struct_slab);
-        return NULL;
+        END(Mat_Critical("Memory allocation failure"),NULL);
     }
+
     fields = (matvar_t**)struct_slab->data;
     for ( i = 0; i < N; i+=edge[0] ) {
         for ( j = 0; j < edge[0]; j++ ) {

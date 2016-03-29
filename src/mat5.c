@@ -493,10 +493,11 @@ Mat_Create5(const char *matname,const char *hdr_str)
     if ( !fp )
         return NULL;
 
-    mat = NEW(mat_t);
-    if ( mat == NULL ) {
+    TRY {
+        mat = NEW(mat_t);
+    } CATCH( mat == NULL ) {
         fclose(fp);
-        return NULL;
+        END(Mat_Critical("Couldn't allocate memory for the MAT file"),NULL);
     }
 
     mat->fp            = NULL;
@@ -514,8 +515,15 @@ Mat_Create5(const char *matname,const char *hdr_str)
     mat->filename = STRDUP(matname);
     mat->mode     = MAT_ACC_RDWR;
     mat->byteswap = 0;
-    mat->header   = NEW_ARRAY(char,128);
-    mat->subsys_offset = NEW_ARRAY(char,8);
+
+    TRY {
+        mat->header = NEW_ARRAY(char,128);
+    } CATCH(mat->header==NULL) {
+        fclose(fp);
+        mat->fp = NULL;
+        END(Mat_Critical("Memory allocation failure"),NULL);
+    }
+
     memset(mat->header,' ',128);
     if ( hdr_str == NULL ) {
         err = mat_snprintf(mat->header,116,"MATLAB 5.0 MAT-file, Platform: %s, "
@@ -527,6 +535,17 @@ Mat_Create5(const char *matname,const char *hdr_str)
     }
     if ( err >= 116 )
         mat->header[115] = '\0'; /* Just to make sure it's NULL terminated */
+
+    TRY {
+        mat->subsys_offset = NEW_ARRAY(char,8);
+    } CATCH(mat->subsys_offset==NULL) {
+        DELETE_ARRAY(mat->header);
+        mat->header = NULL;
+        fclose(fp);
+        mat->fp = NULL;
+        END(Mat_Critical("Memory allocation failure"),NULL);
+    }
+
     memset(mat->subsys_offset,' ',8);
     mat->version = (int)0x0100;
     endian = 0x4d49;
@@ -1770,10 +1789,11 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
         ncells *= matvar->dims[i];
     matvar->data_size = sizeof(matvar_t *);
     matvar->nbytes    = ncells*matvar->data_size;
-    matvar->data      = NEW_BUFFER(matvar->nbytes);
-    if ( !matvar->data ) {
-        Mat_Critical("Couldn't allocate memory for %s->data",matvar->name);
-        return bytesread;
+
+    TRY {
+        matvar->data = NEW_BUFFER(matvar->nbytes);
+    } CATCH( !matvar->data ) {
+        END(Mat_Critical("Couldn't allocate memory for %s->data",matvar->name),bytesread);
     }
     cells = (matvar_t **)matvar->data;
 
@@ -1855,7 +1875,18 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 cells[i]->rank = uncomp_buf[1];
                 nbytes -= cells[i]->rank;
                 cells[i]->rank /= 4;
-                cells[i]->dims = NEW_ARRAY(size_t,cells[i]->rank);
+
+                TRY {
+                    cells[i]->dims = NEW_ARRAY(size_t,cells[i]->rank);
+                } CATCH(cells[i]->dims==NULL) {
+                    for (int k=0;k<i;++k) {
+                        DELETE_ARRAY(cells[k]->dims);
+                        DELETE_ARRAY(cells[k]->name);
+                    }
+                    DELETE_BUFFER(matvar->data);
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
+
                 if ( mat->byteswap ) {
                     for ( j = 0; j < cells[i]->rank; j++ )
                         cells[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
@@ -1881,57 +1912,91 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 
                     if ( len % 8 > 0 )
                         len = len+(8-(len % 8));
-                    cells[i]->name = NEW_ARRAY(char,len+1);
-                    /* Inflate variable name */
-                    bytesread += InflateVarName(mat,matvar,cells[i]->name,len);
-                    cells[i]->name[len] = '\0';
-                    nbytes -= len;
                 } else if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
                            ((uncomp_buf[0] & 0xffff0000) != 0x00) ) {
                     /* Name packed in tag */
                     len = (uncomp_buf[0] & 0xffff0000) >> 16;
+                }
+
+                TRY {
                     cells[i]->name = NEW_ARRAY(char,len+1);
+                } CATCH(cells[i]->name==NULL) {
+                    for (int k=0;k<i;++k) {
+                        DELETE_ARRAY(cells[k]->dims);
+                        DELETE_ARRAY(cells[k]->name);
+                    }
+                    DELETE_ARRAY(cells[i]->dims);
+                    DELETE_BUFFER(matvar->data);
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
+
+                if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
+                    /* Inflate variable name */
+                    bytesread += InflateVarName(mat,matvar,cells[i]->name,len);
+                    nbytes -= len;
+                } else if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                           ((uncomp_buf[0] & 0xffff0000) != 0x00) ) {
+                    /* Name packed in tag */
                     memcpy(cells[i]->name,uncomp_buf+1,len);
-                    cells[i]->name[len] = '\0';
                 }
+                cells[i]->name[len] = '\0';
             }
-            cells[i]->internal->z = NEW(z_stream);
-            if ( cells[i]->internal->z != NULL ) {
-                err = inflateCopy(cells[i]->internal->z,matvar->internal->z);
-                if ( err == Z_OK ) {
-                    cells[i]->internal->datapos = ftell((FILE*)mat->fp);
-                    if ( cells[i]->internal->datapos != -1L ) {
-                        cells[i]->internal->datapos -= matvar->internal->z->avail_in;
-                        if ( cells[i]->class_type == MAT_C_STRUCT )
-                            bytesread+=ReadNextStructField(mat,cells[i]);
-                        else if ( cells[i]->class_type == MAT_C_CELL )
-                            bytesread+=ReadNextCell(mat,cells[i]);
-                        else if ( nbytes <= (1 << MAX_WBITS) ) {
-                            /* Memory optimization: Read data if less in size
-                               than the zlib inflate state (approximately) */
-                            cells[i]->internal->fp = mat;
-                            Read5(mat,cells[i]);
-                            cells[i]->internal->data = cells[i]->data;
-                            cells[i]->data = NULL;
-                        }
-                        (void)fseek((FILE*)mat->fp,cells[i]->internal->datapos,SEEK_SET);
-                    } else {
-                        Mat_Critical("Couldn't determine file position");
-                    }
-                    if ( cells[i]->internal->data != NULL ||
-                         cells[i]->class_type == MAT_C_STRUCT ||
-                         cells[i]->class_type == MAT_C_CELL ) {
-                        /* Memory optimization: Free inflate state */
-                        inflateEnd(cells[i]->internal->z);
-                        DELETE_ARRAY(cells[i]->internal->z);
-                        cells[i]->internal->z = NULL;
-                    }
-                } else {
-                    Mat_Critical("inflateCopy returned error %s",zError(err));
+
+            TRY {
+                cells[i]->internal->z = NEW(z_stream);
+            } CATCH(cells[i]->internal->z == NULL ) {
+                for (int k=0;k<=i;++k) {
+                    DELETE_ARRAY(cells[k]->dims);
+                    DELETE_ARRAY(cells[k]->name);
                 }
-            } else {
-                Mat_Critical("Couldn't allocate memory");
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("Couldn't allocate memory"),0);
             }
+
+            err = inflateCopy(cells[i]->internal->z,matvar->internal->z);
+            if ( err != Z_OK ) {
+                for (int k=0;k<=i;++k) {
+                    DELETE_ARRAY(cells[k]->dims);
+                    DELETE_ARRAY(cells[k]->name);
+                }
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("inflateCopy returned error %s",zError(err)),0);
+            }
+
+            cells[i]->internal->datapos = ftell((FILE*)mat->fp);
+            if ( cells[i]->internal->datapos == -1L ) {
+                for (int k=0;k<=i;++k) {
+                    DELETE_ARRAY(cells[k]->dims);
+                    DELETE_ARRAY(cells[k]->name);
+                }
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("Couldn't determine file position"),0);
+            }
+
+            cells[i]->internal->datapos -= matvar->internal->z->avail_in;
+            if ( cells[i]->class_type == MAT_C_STRUCT )
+                bytesread+=ReadNextStructField(mat,cells[i]);
+            else if ( cells[i]->class_type == MAT_C_CELL )
+                bytesread+=ReadNextCell(mat,cells[i]);
+            else if ( nbytes <= (1 << MAX_WBITS) ) {
+                /* Memory optimization: Read data if less in size
+                   than the zlib inflate state (approximately) */
+                cells[i]->internal->fp = mat;
+                Read5(mat,cells[i]);
+                cells[i]->internal->data = cells[i]->data;
+                cells[i]->data = NULL;
+            }
+            (void)fseek((FILE*)mat->fp,cells[i]->internal->datapos,SEEK_SET);
+
+            if ( cells[i]->internal->data != NULL ||
+                 cells[i]->class_type == MAT_C_STRUCT ||
+                 cells[i]->class_type == MAT_C_CELL ) {
+                /* Memory optimization: Free inflate state */
+                inflateEnd(cells[i]->internal->z);
+                DELETE_ARRAY(cells[i]->internal->z);
+                cells[i]->internal->z = NULL;
+            }
+
             bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
         }
 #else
@@ -1947,14 +2012,22 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             int cell_bytes_read,name_len;
             cells[i] = Mat_VarCalloc();
             if ( !cells[i] ) {
-                Mat_Critical("Couldn't allocate memory for cell %d", i);
-                continue;
+                for (int k=0;k<i;++k) {
+                    Mat_VarFree(cells[k]);
+                    cells[k] = NULL;
+                }
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("Couldn't allocate memory for cell %d", i),0);
             }
 
             cells[i]->internal->fpos = ftell((FILE*)mat->fp);
             if ( cells[i]->internal->fpos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                continue;
+                for (int k=0;k<=i;++k) {
+                    Mat_VarFree(cells[k]);
+                    cells[k] = NULL;
+                }
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("Couldn't determine file position"),0);
             }
 
             /* Read variable tag for cell */
@@ -1973,11 +2046,13 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 /* empty cell */
                 continue;
             } else if ( buf[0] != MAT_T_MATRIX ) {
-                Mat_VarFree(cells[i]);
-                cells[i] = NULL;
-                Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,
-                    ftell((FILE*)mat->fp));
-                break;
+                for (int k=0;k<=i;++k) {
+                    Mat_VarFree(cells[k]);
+                    cells[k] = NULL;
+                }
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,
+                        ftell((FILE*)mat->fp)),0);
             }
             cells[i]->compression = MAT_COMPRESSION_NONE;
 #if defined(HAVE_ZLIB)
@@ -2014,7 +2089,17 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 nBytes-=nbytes;
 
                 cells[i]->rank = nbytes / 4;
-                cells[i]->dims = NEW_ARRAY(size_t,cells[i]->rank);
+
+                TRY {
+                    cells[i]->dims = NEW_ARRAY(size_t,cells[i]->rank);
+                } CATCH(cells[i]->dims==NULL) {
+                    for (int k=0;k<=i;++k) {
+                        Mat_VarFree(cells[k]);
+                        cells[k] = NULL;
+                    }
+                    DELETE_BUFFER(matvar->data);
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
 
                 /* Assumes rank <= 16 */
                 if ( cells[i]->rank % 2 != 0 ) {
@@ -2050,15 +2135,20 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 }
             }
             cells[i]->internal->datapos = ftell((FILE*)mat->fp);
-            if ( cells[i]->internal->datapos != -1L ) {
-                if ( cells[i]->class_type == MAT_C_STRUCT )
-                    bytesread+=ReadNextStructField(mat,cells[i]);
-                if ( cells[i]->class_type == MAT_C_CELL )
-                    bytesread+=ReadNextCell(mat,cells[i]);
-                (void)fseek((FILE*)mat->fp,cells[i]->internal->datapos+nBytes,SEEK_SET);
-            } else {
-                Mat_Critical("Couldn't determine file position");
+            if ( cells[i]->internal->datapos == -1L ) {
+                for (int k=0;k<=i;++k) {
+                    Mat_VarFree(cells[k]);
+                    cells[k] = NULL;
+                }
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("Couldn't determine file position"),0);
             }
+
+            if ( cells[i]->class_type == MAT_C_STRUCT )
+                bytesread+=ReadNextStructField(mat,cells[i]);
+            if ( cells[i]->class_type == MAT_C_CELL )
+                bytesread+=ReadNextCell(mat,cells[i]);
+            (void)fseek((FILE*)mat->fp,cells[i]->internal->datapos+nBytes,SEEK_SET);
         }
     }
 
@@ -2119,12 +2209,33 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         else
             i = 0;
         if ( nfields ) {
-            ptr = NEW_ARRAY(char,nfields*fieldname_size+i);
+
+            TRY {
+                ptr = NEW_ARRAY(char,nfields*fieldname_size+i);
+            } CATCH(ptr==NULL) {
+                END(Mat_Critical("Memory allocation failure"),0);
+            }
+
             bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
             matvar->internal->num_fields = nfields;
-            matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
+
+            TRY {
+                matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
+            } CATCH(matvar->internal->fieldnames==NULL) {
+                DELETE_ARRAY(ptr);
+                END(Mat_Critical("Memory allocation failure"),0);
+            }
+
             for ( i = 0; i < nfields; i++ ) {
-                matvar->internal->fieldnames[i] = NEW_ARRAY(char,fieldname_size);
+                TRY {
+                    matvar->internal->fieldnames[i] = NEW_ARRAY(char,fieldname_size);
+                } CATCH(matvar->internal->fieldnames[i]==NULL) {
+                    for (int k=0;k<i;++i)
+                        DELETE_ARRAY(matvar->internal->fieldnames[k]);
+                    DELETE_ARRAY(matvar->internal->fieldnames);
+                    DELETE_ARRAY(ptr);
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
                 memcpy(matvar->internal->fieldnames[i],ptr+i*fieldname_size,
                        fieldname_size);
                 matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
@@ -2139,13 +2250,15 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         if ( !matvar->nbytes )
             return bytesread;
 
-        matvar->data = NEW_BUFFER(matvar->nbytes);
-        if ( !matvar->data )
-            return bytesread;
+        TRY {
+            matvar->data = NEW_BUFFER(matvar->nbytes);
+        } CATCH(matvar->data==NULL) {
+            END(Mat_Critical("Memory allocation failure"),0);
+        }
 
         fields = (matvar_t**)matvar->data;
         for ( i = 0; i < nmemb; i++ ) {
-            for ( j = 0; j < nfields; j++ ) {
+            for (j = 0; j < nfields; j++ ) {
                 fields[i*nfields+j] = Mat_VarCalloc();
                 fields[i*nfields+j]->name = STRDUP(matvar->internal->fieldnames[j]);
             }
@@ -2154,11 +2267,11 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         for ( i = 0; i < nmemb*nfields; i++ ) {
             fields[i]->internal->fpos = ftell((FILE*)mat->fp);
             if ( fields[i]->internal->fpos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                continue;
-            } else {
-                fields[i]->internal->fpos -= matvar->internal->z->avail_in;
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("Couldn't determine file position"),0);
             }
+
+            fields[i]->internal->fpos -= matvar->internal->z->avail_in;
             /* Read variable tag for struct field */
             bytesread += InflateVarTag(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
@@ -2167,10 +2280,12 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
             nbytes = uncomp_buf[1];
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
-                Mat_VarFree(fields[i]);
-                fields[i] = NULL;
-                Mat_Critical("fields[%d], Uncompressed type not MAT_T_MATRIX",i);
-                continue;
+                for (int k=0;k<=nfields;++k) {
+                    Mat_VarFree(fields[k]);
+                    fields[k] = NULL;
+                }
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("fields[%d], Uncompressed type not MAT_T_MATRIX",i),0);
             } else if ( nbytes == 0 ) {
                 fields[i]->rank = 0;
                 continue;
@@ -2196,9 +2311,14 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                    fields[i]->nbytes      = uncomp_buf[3];
                }
             } else {
-                Mat_Critical("Expected MAT_T_UINT32 for Array Tags, got %d",
-                    uncomp_buf[0]);
+                for (int k=0;k<=nfields;++k) {
+                    Mat_VarFree(fields[k]);
+                    fields[k] = NULL;
+                }
+                DELETE_BUFFER(matvar->data);
                 bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
+                END(Mat_Critical("Expected MAT_T_UINT32 for Array Tags, got %d",
+                    uncomp_buf[0]),0);
             }
             bytesread += InflateDimensions(mat,matvar,uncomp_buf);
             nbytes -= 8;
@@ -2213,7 +2333,18 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 fields[i]->rank = uncomp_buf[1];
                 nbytes -= fields[i]->rank;
                 fields[i]->rank /= 4;
-                fields[i]->dims = NEW_ARRAY(size_t,fields[i]->rank);
+
+                TRY {
+                    fields[i]->dims = NEW_ARRAY(size_t,fields[i]->rank);
+                } CATCH(fields[i]->dims==NULL) {
+                    for (int k=0;k<=nfields;++k) {
+                        Mat_VarFree(fields[k]);
+                        fields[k] = NULL;
+                    }
+                    DELETE_BUFFER(matvar->data);
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
+
                 if ( mat->byteswap ) {
                     for ( j = 0; j < fields[i]->rank; j++ )
                         fields[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
@@ -2226,47 +2357,66 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
             bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
             nbytes -= 8;
-            fields[i]->internal->z = NEW(z_stream);
-            if ( fields[i]->internal->z != NULL ) {
-                err = inflateCopy(fields[i]->internal->z,matvar->internal->z);
-                if ( err == Z_OK ) {
-                    fields[i]->internal->datapos = ftell((FILE*)mat->fp);
-                    if ( fields[i]->internal->datapos != -1L ) {
-                        fields[i]->internal->datapos -= matvar->internal->z->avail_in;
-                        if ( fields[i]->class_type == MAT_C_STRUCT )
-                            bytesread+=ReadNextStructField(mat,fields[i]);
-                        else if ( fields[i]->class_type == MAT_C_CELL )
-                            bytesread+=ReadNextCell(mat,fields[i]);
-                        else if ( nbytes <= (1 << MAX_WBITS) ) {
-                            /* Memory optimization: Read data if less in size
-                               than the zlib inflate state (approximately) */
-                            fields[i]->internal->fp = mat;
-                            Read5(mat,fields[i]);
-                            fields[i]->internal->data = fields[i]->data;
-                            fields[i]->data = NULL;
-                        }
-                        (void)fseek((FILE*)mat->fp,fields[i]->internal->datapos,SEEK_SET);
-                    } else {
-                        Mat_Critical("Couldn't determine file position");
-                    }
-                    if ( fields[i]->internal->data != NULL ||
-                         fields[i]->class_type == MAT_C_STRUCT ||
-                         fields[i]->class_type == MAT_C_CELL ) {
-                        /* Memory optimization: Free inflate state */
-                        inflateEnd(fields[i]->internal->z);
-                        DELETE_ARRAY(fields[i]->internal->z);
-                        fields[i]->internal->z = NULL;
-                    }
-                } else {
-                    Mat_Critical("inflateCopy returned error %s",zError(err));
+
+            TRY {
+                fields[i]->internal->z = NEW(z_stream);
+            } CATCH( fields[i]->internal->z == NULL ) {
+                for (int k=0;k<=nfields;++k) {
+                    Mat_VarFree(fields[k]);
+                    fields[k] = NULL;
                 }
-            } else {
-                Mat_Critical("Couldn't allocate memory");
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("Couldn't allocate memory"),0);
+            }
+
+            TRY {
+                err = inflateCopy(fields[i]->internal->z,matvar->internal->z);
+            } CATCH( err != Z_OK ) {
+                for (int k=0;k<=nfields;++k) {
+                    Mat_VarFree(fields[k]);
+                    fields[k] = NULL;
+                }
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("inflateCopy returned error %s",zError(err)),0);
+            }
+
+            fields[i]->internal->datapos = ftell((FILE*)mat->fp);
+            if ( fields[i]->internal->datapos == -1L ) {
+                for (int k=0;k<=nfields;++k) {
+                    Mat_VarFree(fields[k]);
+                    fields[k] = NULL;
+                }
+                DELETE_BUFFER(matvar->data);
+                END(Mat_Critical("Couldn't determine file position"),0);
+            }
+
+            fields[i]->internal->datapos -= matvar->internal->z->avail_in;
+            if ( fields[i]->class_type == MAT_C_STRUCT )
+                bytesread+=ReadNextStructField(mat,fields[i]);
+            else if ( fields[i]->class_type == MAT_C_CELL )
+                bytesread+=ReadNextCell(mat,fields[i]);
+            else if ( nbytes <= (1 << MAX_WBITS) ) {
+                /* Memory optimization: Read data if less in size
+                   than the zlib inflate state (approximately) */
+                fields[i]->internal->fp = mat;
+                Read5(mat,fields[i]);
+                fields[i]->internal->data = fields[i]->data;
+                fields[i]->data = NULL;
+            }
+
+            (void)fseek((FILE*)mat->fp,fields[i]->internal->datapos,SEEK_SET);
+            if ( fields[i]->internal->data != NULL ||
+                 fields[i]->class_type == MAT_C_STRUCT ||
+                 fields[i]->class_type == MAT_C_CELL ) {
+                /* Memory optimization: Free inflate state */
+                inflateEnd(fields[i]->internal->z);
+                DELETE_ARRAY(fields[i]->internal->z);
+                fields[i]->internal->z = NULL;
             }
             bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
         }
 #else
-        Mat_Critical("Not compiled with zlib support");
+        END(Mat_Critical("Not compiled with zlib support"),0);
 #endif
     } else {
         mat_uint32_t buf[16] = {0,};
@@ -2295,9 +2445,25 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
         if ( nfields ) {
             matvar->internal->num_fields = nfields;
-            matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
+
+            TRY {
+                matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
+            } CATCH(matvar->internal->fieldnames==NULL) {
+                END(Mat_Critical("Memory allocation failure"),0);
+            }
+
             for ( i = 0; i < nfields; i++ ) {
-                matvar->internal->fieldnames[i] = NEW_ARRAY(char,fieldname_size);
+                TRY {
+                    matvar->internal->fieldnames[i] = NEW_ARRAY(char,fieldname_size);
+                } CATCH(matvar->internal->fieldnames[i]==NULL) {
+                    for (int k=0;k<i;+k) {
+                        Mat_VarFree(fields[k]);
+                        fields[k] = NULL;
+                    }
+                    DELETE_ARRAY(matvar->internal->fieldnames);
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
+                    
                 bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,(FILE*)mat->fp);
                 matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
             }
@@ -2315,9 +2481,12 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         if ( !matvar->nbytes )
             return bytesread;
 
-        matvar->data = NEW_BUFFER(matvar->nbytes);
-        if ( !matvar->data )
-            return bytesread;
+        TRY {
+            matvar->data = NEW_BUFFER(matvar->nbytes);
+        } CATCH(!matvar->data) {
+            DELETE_ARRAY(matvar->internal->fieldnames);
+            END(Mat_Critical("Memory allocation failure"),0);
+        }
 
         fields = (matvar_t**)matvar->data;
         for ( i = 0; i < nmemb; i++ ) {
@@ -2331,8 +2500,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
             fields[i]->internal->fpos = ftell((FILE*)mat->fp);
             if ( fields[i]->internal->fpos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                continue;
+                END(Mat_Critical("Couldn't determine file position"),0);
             }
 
             /* Read variable tag for struct field */
@@ -2345,9 +2513,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
-                Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,
-                    ftell((FILE*)mat->fp));
-                return bytesread;
+                END(Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,
+                         ftell((FILE*)mat->fp)),0);
             } else if ( nBytes == 0 ) {
                 fields[i]->rank = 0;
                 continue;
@@ -2388,7 +2555,11 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 nBytes-=nbytes;
 
                 fields[i]->rank = nbytes / 4;
-                fields[i]->dims = NEW_ARRAY(size_t,fields[i]->rank);
+                TRY {
+                    fields[i]->dims = NEW_ARRAY(size_t,fields[i]->rank);
+                } CATCH(fields[i]->dims==NULL) {
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
 
                 /* Assumes rank <= 16 */
                 if ( fields[i]->rank % 2 != 0 ) {
@@ -2416,7 +2587,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                     bytesread+=ReadNextCell(mat,fields[i]);
                 (void)fseek((FILE*)mat->fp,fields[i]->internal->datapos+nBytes,SEEK_SET);
             } else {
-                Mat_Critical("Couldn't determine file position");
+                END(Mat_Critical("Couldn't determine file position"),0);
             }
         }
     }
@@ -2441,18 +2612,20 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
     for ( i = 0; i < matvar->rank; i++ )
         nfunctions *= matvar->dims[i];
 
-    matvar->data = NEW_ARRAY(matvar_t*,nfunctions);
-    if ( matvar->data != NULL ) {
-        matvar->data_size = sizeof(matvar_t *);
-        matvar->nbytes    = nfunctions*matvar->data_size;
-        functions = (matvar_t**)matvar->data;
-        for ( i = 0; i < nfunctions; i++ )
-            functions[i] = Mat_VarReadNextInfo(mat);
-    } else {
+    TRY {
+        matvar->data = NEW_ARRAY(matvar_t*,nfunctions);
+    } CATCH( matvar->data == NULL ) {
         bytesread = 0;
         matvar->data_size = 0;
         matvar->nbytes    = 0;
+        END(Mat_Critical("Memory allocation failure"),0);
     }
+
+    matvar->data_size = sizeof(matvar_t *);
+    matvar->nbytes    = nfunctions*matvar->data_size;
+    functions = (matvar_t**)matvar->data;
+    for ( i = 0; i < nfunctions; i++ )
+        functions[i] = Mat_VarReadNextInfo(mat);
 
     return bytesread;
 }
@@ -2777,7 +2950,13 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             fwrite(&pad1,1,1,(FILE*)mat->fp);
             nBytes = nfields*fieldname_size;
             fwrite(&nBytes,4,1,(FILE*)mat->fp);
-            padzero = NEW_ARRAY(char,fieldname_size);
+
+            TRY {
+                padzero = NEW_ARRAY(char,fieldname_size);
+            } CATCH(padzero==NULL) {
+                END(Mat_Critical("Memory allocation failure"),0);
+            }
+
             memset(padzero,0,fieldname_size);
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
@@ -3037,7 +3216,13 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-z->avail_out,(FILE*)mat->fp);
             } while ( z->avail_out == 0 );
-            padzero = NEW_ARRAY(unsigned char,fieldname_size);
+
+            TRY {
+                padzero = NEW_ARRAY(unsigned char,fieldname_size);
+            } CATCH(padzero==NULL) {
+                END(Mat_Critical("Memory allocation failure"),0);
+            }
+
             for ( i = 0; i < nfields; i++ ) {
                 memset(padzero,'\0',fieldname_size);
                 memcpy(padzero,matvar->internal->fieldnames[i],
@@ -3240,7 +3425,13 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
             fwrite(&array_name_type,4,1,(FILE*)mat->fp);
             nBytes = nfields*fieldname_size;
             fwrite(&nBytes,4,1,(FILE*)mat->fp);
-            padzero = NEW_ARRAY(char,fieldname_size);
+
+            TRY {
+                padzero = NEW_ARRAY(char,fieldname_size);
+            } CATCH(padzero==NULL) {
+                END(Mat_Critical("Memory allocation failure"),0);
+            }
+
             memset(padzero,0,fieldname_size);
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
@@ -3506,7 +3697,13 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
                 byteswritten += fwrite(comp_buf,1,
                     buf_size*sizeof(*comp_buf)-z->avail_out,(FILE*)mat->fp);
             } while ( z->avail_out == 0 );
-            padzero = NEW_ARRAY(unsigned char,fieldname_size);
+
+            TRY {
+                padzero = NEW_ARRAY(unsigned char,fieldname_size);
+            } CATCH(padzero==NULL) {
+                END(Mat_Critical("Memory allocation failure"),0);
+            }
+
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
                 memset(padzero,'\0',fieldname_size);
@@ -6146,7 +6343,13 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                 fwrite(&array_name_type,4,1,(FILE*)mat->fp);
                 nBytes = nfields*fieldname_size;
                 fwrite(&nBytes,4,1,(FILE*)mat->fp);
-                padzero = NEW_ARRAY(char,fieldname_size);
+
+                TRY {
+                    padzero = NEW_ARRAY(char,fieldname_size);
+                } CATCH(padzero==NULL) {
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
+
                 memset(padzero,0,fieldname_size);
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);
@@ -6415,7 +6618,13 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     byteswritten += fwrite(comp_buf,1,
                         buf_size*sizeof(*comp_buf)-matvar->internal->z->avail_out,(FILE*)mat->fp);
                 } while ( matvar->internal->z->avail_out == 0 );
-                padzero = NEW_ARRAY(unsigned char,fieldname_size);
+
+                TRY {
+                    padzero = NEW_ARRAY(unsigned char,fieldname_size);
+                } CATCH(padzero==NULL) {
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
+
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);
                     memset(padzero,'\0',fieldname_size);
@@ -6649,7 +6858,13 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
                 fwrite(&array_name_type,4,1,(FILE*)mat->fp);
                 nBytes = nfields*fieldname_size;
                 fwrite(&nBytes,4,1,(FILE*)mat->fp);
-                padzero = NEW_ARRAY(char,fieldname_size);
+
+                TRY {
+                    padzero = NEW_ARRAY(char,fieldname_size);
+                } CATCH(padzero==NULL) {
+                    END(Mat_Critical("Memory allocation failure"),0);
+                }
+
                 memset(padzero,0,fieldname_size);
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);

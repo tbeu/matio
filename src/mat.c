@@ -506,41 +506,46 @@ Mat_VarCalloc(void)
 {
     matvar_t *matvar;
 
-    matvar = NEW(matvar_t);
-
-    if ( NULL != matvar ) {
-        matvar->nbytes       = 0;
-        matvar->rank         = 0;
-        matvar->data_type    = MAT_T_UNKNOWN;
-        matvar->data_size    = 0;
-        matvar->class_type   = MAT_C_EMPTY;
-        matvar->isComplex    = 0;
-        matvar->isGlobal     = 0;
-        matvar->isLogical    = 0;
-        matvar->dims         = NULL;
-        matvar->name         = NULL;
-        matvar->data         = NULL;
-        matvar->mem_conserve = 0;
-        matvar->compression  = MAT_COMPRESSION_NONE;
-        matvar->internal     = NEW(struct matvar_internal);
-        if ( NULL == matvar->internal ) {
-            DELETE_ARRAY(matvar);
-            matvar = NULL;
-        } else {
-            matvar->internal->hdf5_name = NULL;
-            matvar->internal->hdf5_ref  =  0;
-            matvar->internal->id        = -1;
-            matvar->internal->fp = NULL;
-            matvar->internal->fpos       = 0;
-            matvar->internal->datapos    = 0;
-            matvar->internal->fieldnames = NULL;
-            matvar->internal->num_fields = 0;
-#if defined(HAVE_ZLIB)
-            matvar->internal->z          = NULL;
-            matvar->internal->data       = NULL;
-#endif
-        }
+    TRY {
+        matvar = NEW(matvar_t);
+    } CATCH(matvar==NULL) {
+        END(Mat_Critical("Memory allocation failure"),NULL);
     }
+
+    matvar->nbytes       = 0;
+    matvar->rank         = 0;
+    matvar->data_type    = MAT_T_UNKNOWN;
+    matvar->data_size    = 0;
+    matvar->class_type   = MAT_C_EMPTY;
+    matvar->isComplex    = 0;
+    matvar->isGlobal     = 0;
+    matvar->isLogical    = 0;
+    matvar->dims         = NULL;
+    matvar->name         = NULL;
+    matvar->data         = NULL;
+    matvar->mem_conserve = 0;
+    matvar->compression  = MAT_COMPRESSION_NONE;
+
+    TRY {
+        matvar->internal = NEW(struct matvar_internal);
+    } CATCH(matvar->internal==NULL) {
+        DELETE(matvar);
+        matvar = NULL;
+        END(Mat_Critical("Memory allocation failure"),NULL);
+    }
+
+    matvar->internal->hdf5_name = NULL;
+    matvar->internal->hdf5_ref  =  0;
+    matvar->internal->id        = -1;
+    matvar->internal->fp = NULL;
+    matvar->internal->fpos       = 0;
+    matvar->internal->datapos    = 0;
+    matvar->internal->fieldnames = NULL;
+    matvar->internal->num_fields = 0;
+#if defined(HAVE_ZLIB)
+    matvar->internal->z          = NULL;
+    matvar->internal->data       = NULL;
+#endif
 
     return matvar;
 }
