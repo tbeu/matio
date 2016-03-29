@@ -221,92 +221,92 @@ typedef struct mat_sparse_t {
 } mat_sparse_t;
 
 /* Library function */
-EXTERN void Mat_GetLibraryVersion(int *major,int *minor,int *release);
+EXTERN MATIO_EXPORT void Mat_GetLibraryVersion(int *major,int *minor,int *release);
 
 /*     io.c         */
-EXTERN char  *strdup_vprintf(const char *format, va_list ap);
-EXTERN char  *strdup_printf(const char *format, ...);
-EXTERN int    Mat_SetVerbose( int verb, int s );
-EXTERN int    Mat_SetDebug( int d );
-EXTERN void   Mat_Critical( const char *format, ... );
-EXTERN MATIO_NORETURN void Mat_Error( const char *format, ... ) MATIO_NORETURNATTR;
-EXTERN void   Mat_Help( const char *helpstr[] );
-EXTERN int    Mat_LogInit( const char *progname );
-EXTERN int    Mat_LogClose(void);
-EXTERN int    Mat_LogInitFunc(const char *prog_name,
-                    void (*log_func)(int log_level, char *message) );
-EXTERN int    Mat_Message( const char *format, ... );
-EXTERN int    Mat_DebugMessage( int level, const char *format, ... );
-EXTERN int    Mat_VerbMessage( int level, const char *format, ... );
-EXTERN void   Mat_Warning( const char *format, ... );
-EXTERN size_t Mat_SizeOf(enum matio_types data_type);
-EXTERN size_t Mat_SizeOfClass(int class_type);
+EXTERN MATIO_EXPORT                char  *strdup_vprintf(const char *format, va_list ap);
+EXTERN MATIO_EXPORT                char  *strdup_printf(const char *format, ...);
+EXTERN MATIO_EXPORT                int    Mat_SetVerbose( int verb, int s );
+EXTERN MATIO_EXPORT                int    Mat_SetDebug( int d );
+EXTERN MATIO_EXPORT                void   Mat_Critical( const char *format, ... );
+EXTERN MATIO_EXPORT MATIO_NORETURN void   Mat_Error( const char *format, ... ) MATIO_NORETURNATTR;
+EXTERN MATIO_EXPORT                void   Mat_Help( const char *helpstr[] );
+EXTERN MATIO_EXPORT                int    Mat_LogInit( const char *progname );
+EXTERN MATIO_EXPORT                int    Mat_LogClose(void);
+EXTERN MATIO_EXPORT                int    Mat_LogInitFunc(const char *prog_name,
+                                               void (*log_func)(int log_level, char *message) );
+EXTERN MATIO_EXPORT                int    Mat_Message( const char *format, ... );
+EXTERN MATIO_EXPORT                int    Mat_DebugMessage( int level, const char *format, ... );
+EXTERN MATIO_EXPORT                int    Mat_VerbMessage( int level, const char *format, ... );
+EXTERN MATIO_EXPORT                void   Mat_Warning( const char *format, ... );
+EXTERN MATIO_EXPORT                size_t Mat_SizeOf(enum matio_types data_type);
+EXTERN MATIO_EXPORT                size_t Mat_SizeOfClass(int class_type);
 
 /*   MAT File functions   */
 /** Create new Matlab MAT file */
 #define            Mat_Create(a,b) Mat_CreateVer(a,b,MAT_FT_DEFAULT)
-EXTERN mat_t      *Mat_CreateVer(const char *matname,const char *hdr_str,
-                       enum mat_ft mat_file_ver);
-EXTERN int         Mat_Close(mat_t *mat);
-EXTERN mat_t      *Mat_Open(const char *matname,int mode);
-EXTERN const char *Mat_GetFilename(mat_t *matfp);
-EXTERN enum mat_ft Mat_GetVersion(mat_t *matfp);
-EXTERN int         Mat_Rewind(mat_t *mat);
+EXTERN MATIO_EXPORT mat_t      *Mat_CreateVer(const char *matname,const char *hdr_str,
+                                   enum mat_ft mat_file_ver);
+EXTERN MATIO_EXPORT int         Mat_Close(mat_t *mat);
+EXTERN MATIO_EXPORT mat_t      *Mat_Open(const char *matname,int mode);
+EXTERN MATIO_EXPORT const char *Mat_GetFilename(mat_t *matfp);
+EXTERN MATIO_EXPORT enum mat_ft Mat_GetVersion(mat_t *matfp);
+EXTERN MATIO_EXPORT int         Mat_Rewind(mat_t *mat);
 
 /* MAT variable functions */
-EXTERN matvar_t  *Mat_VarCalloc(void);
-EXTERN matvar_t  *Mat_VarCreate(const char *name,enum matio_classes class_type,
-                      enum matio_types data_type,int rank,size_t *dims,
-                      void *data,int opt);
-EXTERN matvar_t  *Mat_VarCreateStruct(const char *name,int rank,size_t *dims,
-                      const char **fields,unsigned nfields);
-EXTERN int        Mat_VarDelete(mat_t *mat, const char *name);
-EXTERN matvar_t  *Mat_VarDuplicate(const matvar_t *in, int opt);
-EXTERN void       Mat_VarFree(matvar_t *matvar);
-EXTERN matvar_t  *Mat_VarGetCell(matvar_t *matvar,int index);
-EXTERN matvar_t **Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,
-                      int *edge);
-EXTERN matvar_t **Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,
-                      int edge);
-EXTERN size_t     Mat_VarGetSize(matvar_t *matvar);
-EXTERN unsigned   Mat_VarGetNumberOfFields(matvar_t *matvar);
-EXTERN int        Mat_VarAddStructField(matvar_t *matvar,const char *fieldname);
-EXTERN char * const *Mat_VarGetStructFieldnames(const matvar_t *matvar);
-EXTERN matvar_t  *Mat_VarGetStructFieldByIndex(matvar_t *matvar,
-                      size_t field_index,size_t index);
-EXTERN matvar_t  *Mat_VarGetStructFieldByName(matvar_t *matvar,
-                      const char *field_name,size_t index);
-EXTERN matvar_t  *Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,
-                      int opt,int index);
-EXTERN matvar_t  *Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,
-                      int *edge,int copy_fields);
-EXTERN matvar_t  *Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,
-                      int edge,int copy_fields);
-EXTERN void       Mat_VarPrint( matvar_t *matvar, int printdata );
-EXTERN matvar_t  *Mat_VarRead(mat_t *mat, const char *name );
-EXTERN int        Mat_VarReadData(mat_t *mat,matvar_t *matvar,void *data,
-                      int *start,int *stride,int *edge);
-EXTERN int        Mat_VarReadDataAll(mat_t *mat,matvar_t *matvar);
-EXTERN int        Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,
-                      int start,int stride,int edge);
-EXTERN matvar_t  *Mat_VarReadInfo( mat_t *mat, const char *name );
-EXTERN matvar_t  *Mat_VarReadNext( mat_t *mat );
-EXTERN matvar_t  *Mat_VarReadNextInfo( mat_t *mat );
-EXTERN matvar_t  *Mat_VarSetCell(matvar_t *matvar,int index,matvar_t *cell);
-EXTERN matvar_t  *Mat_VarSetStructFieldByIndex(matvar_t *matvar,
-                      size_t field_index,size_t index,matvar_t *field);
-EXTERN matvar_t  *Mat_VarSetStructFieldByName(matvar_t *matvar,
-                      const char *field_name,size_t index,matvar_t *field);
-EXTERN int        Mat_VarWrite(mat_t *mat,matvar_t *matvar,
-                      enum matio_compression compress );
-EXTERN int        Mat_VarWriteInfo(mat_t *mat,matvar_t *matvar);
-EXTERN int        Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
-                      int *start,int *stride,int *edge);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarCalloc(void);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarCreate(const char *name,enum matio_classes class_type,
+                                  enum matio_types data_type,int rank,size_t *dims,
+                                  void *data,int opt);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarCreateStruct(const char *name,int rank,size_t *dims,
+                                  const char **fields,unsigned nfields);
+EXTERN MATIO_EXPORT int        Mat_VarDelete(mat_t *mat, const char *name);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarDuplicate(const matvar_t *in, int opt);
+EXTERN MATIO_EXPORT void       Mat_VarFree(matvar_t *matvar);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarGetCell(matvar_t *matvar,int index);
+EXTERN MATIO_EXPORT matvar_t **Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,
+                                  int *edge);
+EXTERN MATIO_EXPORT matvar_t **Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,
+                                  int edge);
+EXTERN MATIO_EXPORT size_t     Mat_VarGetSize(matvar_t *matvar);
+EXTERN MATIO_EXPORT unsigned   Mat_VarGetNumberOfFields(matvar_t *matvar);
+EXTERN MATIO_EXPORT int        Mat_VarAddStructField(matvar_t *matvar,const char *fieldname);
+EXTERN MATIO_EXPORT char * const *Mat_VarGetStructFieldnames(const matvar_t *matvar);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarGetStructFieldByIndex(matvar_t *matvar,
+                                  size_t field_index,size_t index);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarGetStructFieldByName(matvar_t *matvar,
+                                  const char *field_name,size_t index);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,
+                                  int opt,int index);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,
+                                  int *edge,int copy_fields);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,
+                                  int edge,int copy_fields);
+EXTERN MATIO_EXPORT void       Mat_VarPrint( matvar_t *matvar, int printdata );
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarRead(mat_t *mat, const char *name );
+EXTERN MATIO_EXPORT int        Mat_VarReadData(mat_t *mat,matvar_t *matvar,void *data,
+                                  int *start,int *stride,int *edge);
+EXTERN MATIO_EXPORT int        Mat_VarReadDataAll(mat_t *mat,matvar_t *matvar);
+EXTERN MATIO_EXPORT int        Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,
+                                  int start,int stride,int edge);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarReadInfo( mat_t *mat, const char *name );
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarReadNext( mat_t *mat );
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarReadNextInfo( mat_t *mat );
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarSetCell(matvar_t *matvar,int index,matvar_t *cell);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarSetStructFieldByIndex(matvar_t *matvar,
+                                  size_t field_index,size_t index,matvar_t *field);
+EXTERN MATIO_EXPORT matvar_t  *Mat_VarSetStructFieldByName(matvar_t *matvar,
+                                  const char *field_name,size_t index,matvar_t *field);
+EXTERN MATIO_EXPORT int        Mat_VarWrite(mat_t *mat,matvar_t *matvar,
+                                  enum matio_compression compress );
+EXTERN MATIO_EXPORT int        Mat_VarWriteInfo(mat_t *mat,matvar_t *matvar);
+EXTERN MATIO_EXPORT int        Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
+                                  int *start,int *stride,int *edge);
 
 /* Other functions */
-EXTERN int       Mat_CalcSingleSubscript(int rank,int *dims,int *subs);
-EXTERN int       Mat_CalcSingleSubscript2(int rank,size_t *dims,size_t *subs,size_t *index);
-EXTERN int      *Mat_CalcSubscripts(int rank,int *dims,int index);
-EXTERN size_t   *Mat_CalcSubscripts2(int rank,size_t *dims,size_t index);
+EXTERN MATIO_EXPORT int       Mat_CalcSingleSubscript(int rank,int *dims,int *subs);
+EXTERN MATIO_EXPORT int       Mat_CalcSingleSubscript2(int rank,size_t *dims,size_t *subs,size_t *index);
+EXTERN MATIO_EXPORT int      *Mat_CalcSubscripts(int rank,int *dims,int index);
+EXTERN MATIO_EXPORT size_t   *Mat_CalcSubscripts2(int rank,size_t *dims,size_t index);
 
 #endif

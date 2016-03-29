@@ -1,0 +1,28 @@
+      Name: struct_null_fields
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: d_null
+      Rank: 3
+Dimensions: 0 x 1 x 10
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: cd_null
+      Rank: 3
+Dimensions: 0 x 1 x 10
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: char_null
+      Rank: 2
+Dimensions: 0 x 1
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+}
+}
