@@ -254,6 +254,7 @@ EXTERN MATIO_EXPORT                size_t Mat_SizeOfClass(int class_type);
 /* MAT File functions */
 /** Create new Matlab MAT file */
 #define            Mat_Create(a,b) Mat_CreateVer(a,b,MAT_FT_DEFAULT)
+
 EXTERN MATIO_EXPORT mat_t      *Mat_CreateVer(const char *matname,const char *hdr_str,
                                    enum mat_ft mat_file_ver);
 EXTERN MATIO_EXPORT int         Mat_Close(mat_t *mat);
