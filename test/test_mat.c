@@ -3345,64 +3345,46 @@ int main (int argc, char *argv[])
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_create") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "test_struct_api_create.mat";
             redirect_output(output_name);
             err += test_struct_api_create();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_setfield") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "test_struct_api_setfield.mat";
             redirect_output(output_name);
             err += test_struct_api_setfield();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_getfieldnames") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "test_struct_api_getfieldnames.mat";
             redirect_output(output_name);
             err += test_struct_api_getfieldnames();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_addfield") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "test_struct_api_addfield.mat";
             redirect_output(output_name);
             err += test_struct_api_addfield();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_getlinear") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "test_struct_api_getlinear.mat";
             redirect_output(output_name);
             err += test_struct_api_getlinear();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_get") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "test_struct_api_get.mat";
             redirect_output(output_name);
             err += test_struct_api_get();
             ntests++;
         } else if ( !strcasecmp(argv[k],"cell_api_set") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "test_cell_api_set.mat";
             redirect_output(output_name);
             err += test_cell_api_set();
             ntests++;
         } else if ( !strcasecmp(argv[k],"cell_api_getlinear") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "test_cell_api_getlinear.mat";
             redirect_output(output_name);
             err += test_cell_api_getlinear();
             ntests++;
         } else if ( !strcasecmp(argv[k],"cell_api_getcells") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "test_cell_api_getcells.mat";
             redirect_output(output_name);
             err += test_cell_api_getcells();
             ntests++;
@@ -3413,8 +3395,7 @@ int main (int argc, char *argv[])
                              "and field name/index");
                 err++;
             } else {
-                if ( NULL == output_name )
-                    output_name = "test_get_struct_field.mat";
+                redirect_output(output_name);
                 err += test_get_struct_field(argv[k],argv[k+1],argv[k+2]);
                 k += 3;
             }
@@ -3514,9 +3495,6 @@ int main (int argc, char *argv[])
             ntests++;
         } else if ( !strcasecmp(argv[k],"ind2sub") ) {
             size_t *subs, dims[3] = {256,256,124};
-
-            if ( NULL == output_name )
-                output_name = "ind2sub.out";
             redirect_output(output_name);
             subs = Mat_CalcSubscripts2(3,dims,18921-1);
             Mat_Message("(%" SIZE_T_FMTSTR ",%" SIZE_T_FMTSTR ",%" SIZE_T_FMTSTR ")",subs[0],subs[1],subs[2]);
@@ -3526,7 +3504,6 @@ int main (int argc, char *argv[])
         } else if ( !strcasecmp(argv[k],"sub2ind") ) {
             size_t dims[3] = {256,256,124}, index[3] = {233,74,1};
             size_t linear_index = 0;
-
             redirect_output(output_name);
             err += Mat_CalcSingleSubscript2(3,dims,index,&linear_index);
             Mat_Message("%" SIZE_T_FMTSTR,linear_index);
