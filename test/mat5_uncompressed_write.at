@@ -681,3 +681,29 @@ AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_logical.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_cell_2d_logical" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
+
+AT_SETUP([Write cell array with empty structure fields])
+AT_KEYWORDS([empty bug34])
+AT_CHECK([$builddir/test_mat -v 5 write_cell_empty_struct],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_cell_empty_struct-var1.out expout
+          $builddir/test_mat readvar test_write_cell_empty_struct.mat var1],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_DATA([test_write_cell_empty_struct.m],
+[
+try
+    load test_write_cell_empty_struct.mat
+    expdata{1,1} = struct('field1',[51.,52.;53.,54.],'field2',[],'field3',[]);
+    expdata{1,2} = expdata{1,1};
+    expdata{1,3} = expdata{1,1};
+    pass = isequal(var1,expdata1);
+catch me
+    pass = false;
+end
+if pass
+    fprintf('PASSED\n');
+else
+    fprintf('FAILED\n');
+end
+])
+AT_CHECK([$MATLABEXE -nosplash -nojvm -r 'test_write_cell_empty_struct;exit' | $GREP PASSED],[0],[PASSED],[])
+AT_CLEANUP

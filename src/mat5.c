@@ -68,7 +68,7 @@ GetStructFieldBufSize(matvar_t *matvar)
     int    nmemb = 1, i;
 
     if ( matvar == NULL )
-        return nBytes;
+        return GetEmptyMatrixMaxBufSize(NULL, 2);
 
     /* Add the Array Flags tag and space to the number of bytes */
     nBytes += tag_size + array_flags_size;
