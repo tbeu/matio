@@ -140,6 +140,8 @@ static const char *helptestsstr[] = {
 "                                fields to a matlab file.",
 "write_empty_cell              - Write empty structure and structure with",
 "                                empty fields",
+"write_cell_empty_struct       - Write cell array with empty structure",
+"                                fields",
 "",
 "    Character Variable Tests",
 "================================================================",
@@ -542,6 +544,27 @@ static const char *helptest_write_empty_cell[] = {
     NULL
 };
 
+static const char *helptest_write_cell_empty_struct[] = {
+    "TEST: write_cell_empty_struct",
+    "",
+    "Usage: test_mat write_cell_empty_struct",
+    "",
+    "Writes a cell array with empty structure fields",
+    "to the file test_write_cell_empty_struct.mat",
+    "The MAT file is the default file version, or set by the -v option. If",
+    "the MAT file is version 5, compression can be enabled using the -z",
+    "option if built with zlib library.",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    var1{1,1} = struct('field1',[51.,52.;53.,54.],...",
+    "                       'field2',[],'field3',[]);",
+    "    var1{1,2} = var1{1,1};",
+    "    var1{1,3} = var1{1,1};",
+    "",
+    NULL
+};
+
 static const char *helptest_getstructfield[] = {
     "TEST: getstructfield",
     "",
@@ -707,6 +730,8 @@ help_test(const char *test)
         Mat_Help(helptest_write_cell_2d_logical);
     else if ( !strcmp(test,"write_empty_cell") )
         Mat_Help(helptest_write_empty_cell);
+    else if ( !strcmp(test,"write_cell_empty_struct") )
+        Mat_Help(helptest_write_cell_empty_struct);
     else if ( !strcmp(test,"writeinf") )
         Mat_Help(helptest_writeinf);
     else if ( !strcmp(test,"writenan") )
@@ -1712,6 +1737,46 @@ test_write_empty_cell(const char *output_name)
         Mat_VarFree(cell_matvar);
 
         Mat_Close(mat);
+    } else {
+        err = 1;
+    }
+    return err;
+}
+
+static int
+test_write_cell_empty_struct(const char *output_name)
+{
+    size_t  dims[2] = {1,3};
+    int    err = 0;
+    mat_t     *mat;
+    matvar_t *matvar, *cell_matvar, *struct_matvar;
+
+    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( mat ) {
+        int i;
+        double data[4] = {51., 53., 52., 54.};
+        const char *fieldnames[3] = {"field1", "field2", "field3"};
+        cell_matvar = Mat_VarCreate("var1", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
+
+        for (i = 0; i < 3; ++i) {
+            dims[0] = 1;
+            dims[1] = 1;
+            struct_matvar = Mat_VarCreateStruct("s", 2, dims, fieldnames, 3);
+
+            dims[0] = 2;
+            dims[1] = 2;
+            matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, data, 0);
+            Mat_VarSetStructFieldByName(struct_matvar, "field1", 0, matvar);
+            /* Do not set field2 and field3 by purpose */
+
+            Mat_VarSetCell(cell_matvar, i, struct_matvar);
+        }
+        Mat_VarWrite(mat,cell_matvar,compression);
+        Mat_VarFree(cell_matvar);
+
+        Mat_Close(mat);
+    } else {
+        err = 1;
     }
     return err;
 }
@@ -3107,7 +3172,7 @@ test_delete(char *file,char *name)
 int main (int argc, char *argv[])
 {
     const char *prog_name = "test_mat";
-    int   c,i, k, err = 0, ntests = 0;
+    int   c, k, err = 0, ntests = 0;
     mat_t *mat, *mat2;
     matvar_t *matvar;
     enum matio_classes matvar_class = MAT_C_DOUBLE;
@@ -3342,6 +3407,12 @@ int main (int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_write_empty_cell.mat";
             err += test_write_empty_cell(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"write_cell_empty_struct") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_cell_empty_struct.mat";
+            err += test_write_cell_empty_struct(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_create") ) {
             k++;
