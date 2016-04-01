@@ -31,8 +31,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-double.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D single-precision array])
@@ -42,8 +41,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-single.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit integer array])
@@ -54,8 +52,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-int64.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit unsigned integer array])
@@ -66,8 +63,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-uint64.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit integer array])
@@ -77,8 +73,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-int32.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit unsigned integer array])
@@ -88,8 +83,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-uint32.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit integer array])
@@ -99,8 +93,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-int16.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit unsigned integer array])
@@ -110,8 +103,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-uint16.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit integer array])
@@ -121,8 +113,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-int8.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit unsigned integer array])
@@ -132,8 +123,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-uint8.out expout
           $builddir/test_mat readvar test_write_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D double-precision complex array])
@@ -143,8 +133,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-double.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D single-precision complex array])
@@ -154,8 +143,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-single.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit integer complex array])
@@ -166,8 +154,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-int64.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 64-bit unsigned integer complex array])
@@ -178,8 +165,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-uint64.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit integer complex array])
@@ -189,8 +175,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-int32.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 32-bit unsigned integer complex array])
@@ -200,8 +185,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-uint32.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit integer complex array])
@@ -211,8 +195,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-int16.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 16-bit unsigned integer complex array])
@@ -222,8 +205,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-uint16.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit integer complex array])
@@ -233,8 +215,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-int8.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D 8-bit unsigned integer complex array])
@@ -244,8 +225,7 @@ AT_CHECK([cp $srcdir/results/write_complex_2d_numeric-uint8.out expout
           $builddir/test_mat readvar test_write_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D logical array])
@@ -259,8 +239,7 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-l4-logical.out expout
           $builddir/test_mat readvar test_write_2d_logical.mat l4],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_logical.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_2d_logical" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_2d_logical" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse double-precision array])
@@ -270,8 +249,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-double.out expou
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_sparse.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_sparse" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_sparse" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex double-precision array])
@@ -281,8 +259,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-double.o
           $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_sparse_complex.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_sparse_complex" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_sparse_complex" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write 2D empty array])
@@ -293,8 +270,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_empty_2d_numeric-empty.out expout
           $builddir/test_mat readvar test_write_empty_2d_numeric.mat empty],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_empty.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_empty" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_empty" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write character array])
@@ -304,8 +280,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_char-a.out expout
           $builddir/test_mat readvar test_write_char.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_char.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_char" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_char" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write empty structure array])
@@ -322,8 +297,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var4.out expout
           $builddir/test_mat readvar test_write_empty_struct.mat var4],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_empty_struct.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_empty_struct" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_empty_struct" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D double-precision fields])
@@ -333,8 +307,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-double.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D single-precision fields])
@@ -344,8 +317,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-single.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit signed integer fields])
@@ -356,8 +328,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-int64.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit unsigned integer fields])
@@ -368,8 +339,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-uint64.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit signed integer fields])
@@ -379,8 +349,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-int32.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit unsigned integer fields])
@@ -390,8 +359,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-uint32.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit signed integer fields])
@@ -401,8 +369,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-int16.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit unsigned integer fields])
@@ -412,8 +379,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-uint16.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit signed integer fields])
@@ -423,8 +389,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-int8.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit unsigned integer fields])
@@ -434,8 +399,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-uint8.out expout
           $builddir/test_mat readvar test_write_struct_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D double-precision complex fields])
@@ -445,8 +409,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-double.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D single-precision complex fields])
@@ -456,8 +419,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-single.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit signed integer complex fields])
@@ -468,8 +430,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-int64.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 64-bit unsigned integer complex fields])
@@ -480,8 +441,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-uint64.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit signed integer complex fields])
@@ -491,8 +451,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-int32.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 32-bit unsigned integer complex fields])
@@ -502,8 +461,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-uint32.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit signed integer complex fields])
@@ -513,8 +471,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-int16.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 16-bit unsigned integer complex fields])
@@ -524,8 +481,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-uint16.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit signed integer complex fields])
@@ -535,8 +491,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-int8.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D 8-bit unsigned integer complex fields])
@@ -546,8 +501,7 @@ AT_CHECK([cp $srcdir/results/write_struct_complex_2d_numeric-uint8.out expout
           $builddir/test_mat readvar test_write_struct_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with 2D logical fields])
@@ -557,8 +511,7 @@ AT_CHECK([cp $srcdir/results/write_struct_2d_numeric-logical.out expout
           $builddir/test_mat readvar test_write_struct_2d_logical.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_logical.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_struct_2d_logical" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_struct_2d_logical" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write structure array with character fields])
@@ -569,8 +522,7 @@ AT_CHECK([cp $srcdir/results/write_struct_char.out expout
           $builddir/test_mat readvar test_write_struct_char.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_char.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_struct_char" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_struct_char" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write empty cell array])
@@ -583,8 +535,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_empty_cell-var2.out expout
           $builddir/test_mat readvar test_write_empty_cell.mat var2],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_empty_cell.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_empty_cell" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_empty_cell" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D double-precision fields])
@@ -594,8 +545,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-double.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D single-precision fields])
@@ -605,8 +555,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-single.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit signed integer fields])
@@ -617,8 +566,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-int64.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit unsigned integer fields])
@@ -629,8 +577,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-uint64.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit signed integer fields])
@@ -640,8 +587,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-int32.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit unsigned integer fields])
@@ -651,8 +597,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-uint32.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit signed integer fields])
@@ -662,8 +607,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-int16.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit unsigned integer fields])
@@ -673,8 +617,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-uint16.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit signed integer fields])
@@ -684,8 +627,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-int8.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit unsigned integer fields])
@@ -695,8 +637,7 @@ AT_CHECK([cp $srcdir/results/write_cell_2d_numeric-uint8.out expout
           $builddir/test_mat readvar test_write_cell_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D double-precision complex fields])
@@ -706,8 +647,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-double.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D single-precision complex fields])
@@ -717,8 +657,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-single.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit signed integer complex fields])
@@ -729,8 +668,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-int64.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 64-bit unsigned integer complex fields])
@@ -741,8 +679,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-uint64.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit signed integer complex fields])
@@ -752,8 +689,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-int32.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 32-bit unsigned integer complex fields])
@@ -763,8 +699,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-uint32.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit signed integer complex fields])
@@ -774,8 +709,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-int16.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 16-bit unsigned integer complex fields])
@@ -785,8 +719,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-uint16.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit signed integer complex fields])
@@ -796,8 +729,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-int8.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D 8-bit unsigned integer complex fields])
@@ -807,8 +739,7 @@ AT_CHECK([cp $srcdir/results/write_cell_complex_2d_numeric-uint8.out expout
           $builddir/test_mat readvar test_write_cell_complex_2d_numeric.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
-          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D logical fields])
@@ -818,6 +749,5 @@ AT_CHECK([cp $srcdir/results/write_cell_numeric-logical.out expout
           $builddir/test_mat readvar test_write_cell_2d_logical.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_logical.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_cell_2d_logical" | $GREP PASSED],[0],[PASSED
-],[])
+          $MATLABEXE -nosplash -nojvm -r "test_write_cell_2d_logical" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
