@@ -76,6 +76,23 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/datasets/small_v4_be.mat \
                  $(srcdir)/datasets/small_v4_le.mat \
                  $(srcdir)/datasets/large_struct_compressed_le.mat \
+                 $(srcdir)/matlab/test_write_2d_logical.m \
+                 $(srcdir)/matlab/test_write_2d_numeric.m \
+                 $(srcdir)/matlab/test_write_cell_2d_logical.m \
+                 $(srcdir)/matlab/test_write_cell_2d_numeric.m \
+                 $(srcdir)/matlab/test_write_cell_complex_2d_numeric.m \
+                 $(srcdir)/matlab/test_write_cell_empty_struct.m \
+                 $(srcdir)/matlab/test_write_char.m \
+                 $(srcdir)/matlab/test_write_complex_2d_numeric.m \
+                 $(srcdir)/matlab/test_write_empty.m \
+                 $(srcdir)/matlab/test_write_empty_cell.m \
+                 $(srcdir)/matlab/test_write_empty_struct.m \
+                 $(srcdir)/matlab/test_write_sparse.m \
+                 $(srcdir)/matlab/test_write_sparse_complex.m \
+                 $(srcdir)/matlab/test_write_struct_2d_logical.m \
+                 $(srcdir)/matlab/test_write_struct_2d_numeric.m \
+                 $(srcdir)/matlab/test_write_struct_char.m \
+                 $(srcdir)/matlab/test_write_struct_complex_2d_numeric.m \
                  $(srcdir)/results/cell_api_getcells.out \
                  $(srcdir)/results/cell_api_getlinear.out \
                  $(srcdir)/results/cell_api_set.out \
@@ -85,7 +102,72 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/dump-mat_copy-73.out \
                  $(srcdir)/results/dump-mat_copy-partial.out \
                  $(srcdir)/results/dump-var1.out \
+                 $(srcdir)/results/dump-var1-2.out \
+                 $(srcdir)/results/dump-var2x-field2-1.out \
+                 $(srcdir)/results/dump-var2x-field2-2.out \
+                 $(srcdir)/results/dump-var2x-field2-3.out \
+                 $(srcdir)/results/dump-var3x-field2-1.out \
+                 $(srcdir)/results/dump-var3x-field2-2.out \
+                 $(srcdir)/results/dump-var3x-field2-3.out \
+                 $(srcdir)/results/dump-var7x-3.out \
+                 $(srcdir)/results/dump-var7x-4.out \
+                 $(srcdir)/results/dump-var8x-3.out \
+                 $(srcdir)/results/dump-var8x-4.out \
                  $(srcdir)/results/dump-var11.out \
+                 $(srcdir)/results/dump-var11-2.out \
+                 $(srcdir)/results/dump-var70-1.out \
+                 $(srcdir)/results/dump-var70-2.out \
+                 $(srcdir)/results/dump-var71-1.out \
+                 $(srcdir)/results/dump-var71-2.out \
+                 $(srcdir)/results/dump-var72-1.out \
+                 $(srcdir)/results/dump-var72-2.out \
+                 $(srcdir)/results/dump-var73-1.out \
+                 $(srcdir)/results/dump-var73-2.out \
+                 $(srcdir)/results/dump-var74-1.out \
+                 $(srcdir)/results/dump-var74-2.out \
+                 $(srcdir)/results/dump-var75-1.out \
+                 $(srcdir)/results/dump-var75-2.out \
+                 $(srcdir)/results/dump-var76-1.out \
+                 $(srcdir)/results/dump-var76-2.out \
+                 $(srcdir)/results/dump-var77-1.out \
+                 $(srcdir)/results/dump-var77-2.out \
+                 $(srcdir)/results/dump-var78-1.out \
+                 $(srcdir)/results/dump-var78-2.out \
+                 $(srcdir)/results/dump-var78-3.out \
+                 $(srcdir)/results/dump-var78-4.out \
+                 $(srcdir)/results/dump-var79-1.out \
+                 $(srcdir)/results/dump-var79-2.out \
+                 $(srcdir)/results/dump-var79-3.out \
+                 $(srcdir)/results/dump-var79-4.out \
+                 $(srcdir)/results/dump-var80-1.out \
+                 $(srcdir)/results/dump-var80-2.out \
+                 $(srcdir)/results/dump-var81-1.out \
+                 $(srcdir)/results/dump-var81-2.out \
+                 $(srcdir)/results/dump-var82-1.out \
+                 $(srcdir)/results/dump-var82-2.out \
+                 $(srcdir)/results/dump-var83-1.out \
+                 $(srcdir)/results/dump-var83-2.out \
+                 $(srcdir)/results/dump-var84-1.out \
+                 $(srcdir)/results/dump-var84-2.out \
+                 $(srcdir)/results/dump-var85-1.out \
+                 $(srcdir)/results/dump-var85-2.out \
+                 $(srcdir)/results/dump-var86-1.out \
+                 $(srcdir)/results/dump-var86-2.out \
+                 $(srcdir)/results/dump-var86-3.out \
+                 $(srcdir)/results/dump-var86-4.out \
+                 $(srcdir)/results/dump-var87-1.out \
+                 $(srcdir)/results/dump-var87-2.out \
+                 $(srcdir)/results/dump-var87-3.out \
+                 $(srcdir)/results/dump-var87-4.out \
+                 $(srcdir)/results/dump-var88-1.out \
+                 $(srcdir)/results/dump-var88-2.out \
+                 $(srcdir)/results/dump-var88-3.out \
+                 $(srcdir)/results/dump-var88-4.out \
+                 $(srcdir)/results/dump-var89-1.out \
+                 $(srcdir)/results/dump-var89-2.out \
+                 $(srcdir)/results/dump-var89-3.out \
+                 $(srcdir)/results/dump-var89-4.out \
+                 $(srcdir)/results/getstructfield-large_struct_compressed.out \
                  $(srcdir)/results/ind2sub.out \
                  $(srcdir)/results/read-var1.out \
                  $(srcdir)/results/read-var2.out \
@@ -114,6 +196,7 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var25.out \
                  $(srcdir)/results/read-var26.out \
                  $(srcdir)/results/read-var27.out \
+                 $(srcdir)/results/read-var27-73.out \
                  $(srcdir)/results/read-var28.out \
                  $(srcdir)/results/read-var29.out \
                  $(srcdir)/results/read-var30.out \
@@ -153,6 +236,7 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var64.out \
                  $(srcdir)/results/read-var65.out \
                  $(srcdir)/results/read-var66.out \
+                 $(srcdir)/results/read-var66-73.out \
                  $(srcdir)/results/read-var67.out \
                  $(srcdir)/results/read-var68.out \
                  $(srcdir)/results/read-var69.out \
