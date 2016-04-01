@@ -390,6 +390,7 @@ static void *mymemcpy(void *, void *, size_t);
 #define ISINF(x) (x != 0.0 && x + x == x)
 #endif  /* !defined(ISINF) */
 
+
 #ifdef OUTCHAR
 #undef OUTCHAR
 #endif  /* defined(OUTCHAR) */
@@ -399,6 +400,12 @@ do {                                                                         \
         str[len] = ch;                                               \
     (len)++;                                                             \
 } while (/* CONSTCOND */ 0)
+
+#ifdef __cplusplus
+#define NEW_ARRAY(type,size) new type[size]
+#else
+#define NEW_ARRAY(type,size) (type*) malloc(size*sizeof(type))
+#endif
 
 static void fmtstr(char *, size_t *, size_t, const char *, int, int, int);
 static void fmtint(char *, size_t *, size_t, INTMAX_T, int, int, int, int);
@@ -1387,7 +1394,7 @@ rpl_vasprintf(char **ret, const char *format, va_list ap)
     len = vsnprintf(NULL, 0, format, aq);
 #endif
     VA_END_COPY(aq);
-    if (len < 0 || (*ret = (char*)malloc(size = len + 1)) == NULL)
+    if (len < 0 || (*ret = NEW_ARRAY(char,size = len + 1)) == NULL)
         return -1;
 #if !HAVE_VSNPRINTF
     return rpl_vsnprintf(*ret, size, format, ap);

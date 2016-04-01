@@ -70,7 +70,7 @@ strdup_vprintf(const char* format, va_list ap)
     size = mat_vsnprintf(NULL, 0, format, ap2)+1;
     va_end(ap2);
 
-    buffer = (char*)malloc(size+1);
+    buffer = NEW_ARRAY(char,size+1);
     if ( !buffer )
         return NULL;
 
@@ -163,7 +163,7 @@ mat_log(int loglevel, const char *format, va_list ap)
     if ( !logfunc ) return;
     buffer = strdup_vprintf(format, ap);
     (*logfunc)(loglevel,buffer);
-    free(buffer);
+    DELETE_ARRAY(buffer);
     return;
 }
 

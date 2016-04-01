@@ -52,6 +52,38 @@
 #   define ZLIB_BYTE_PTR(a) ((Bytef *)(a))
 #endif
 
+#ifdef __cplusplus
+    #include <string.h>
+    #define TRY try {
+    #define NEW(type) new type
+    #define NEW_ARRAY(type,size) new type[size]
+    #define NEW_BUFFER(size) NEW_ARRAY(char,size)
+    #define CATCH(e) } catch(...) 
+    #define DELETE(v) delete v
+    #define DELETE_ARRAY(v) delete[] v
+    #define DELETE_BUFFER(v) DELETE_ARRAY(static_cast<char*>(v))
+    inline char* STRDUP(const char* s) {
+        const unsigned sz = strlen(s)+1;
+        char* str = NEW_ARRAY(char,sz);
+        memcpy(str,s,sz);
+        return str;
+    }
+    #define END(stmt,retcode) stmt
+    #define V_END(stmt) stmt
+#else
+    #define TRY 
+    #define NEW(type) (type*) malloc(sizeof(type))
+    #define NEW_ARRAY(type,size) (type*) malloc(size*sizeof(type))
+    #define NEW_BUFFER(size) NEW_ARRAY(char,size)
+    #define CATCH(e) if (e) 
+    #define DELETE(v) free(v)
+    #define DELETE_ARRAY(v) free(v)
+    #define DELETE_BUFFER(v) DELETE_ARRAY(v)
+    #define STRDUP strdup
+    #define END(stmt,retcode) do { stmt; return retcode; } while(0)
+    #define V_END(stmt)       do { stmt; return; } while(0)
+#endif
+
 /** @if mat_devman
  * @brief Matlab MAT File information
  *

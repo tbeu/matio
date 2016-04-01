@@ -56,9 +56,15 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
 
     matvar->compression = MAT_COMPRESSION_NONE;
     if ( NULL != name )
-        matvar->name = strdup(name);
+        matvar->name = STRDUP(name);
     matvar->rank = rank;
-    matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
+
+    TRY {
+        matvar->dims = NEW_ARRAY(size_t,matvar->rank);
+    } CATCH(matvar->dims==NULL) {
+        END(Mat_Critical("Memory allocation failure"),NULL);
+    }
+
     for ( i = 0; i < matvar->rank; i++ ) {
         matvar->dims[i] = dims[i];
         nmemb *= dims[i];
@@ -70,26 +76,37 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
 
     if ( nfields ) {
         matvar->internal->num_fields = nfields;
-        matvar->internal->fieldnames =
-            (char**)malloc(nfields*sizeof(*matvar->internal->fieldnames));
-        if ( NULL == matvar->internal->fieldnames ) {
+
+        TRY {
+            matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
+        } CATCH ( NULL == matvar->internal->fieldnames ) {
             Mat_VarFree(matvar);
             matvar = NULL;
-        } else {
-            for ( i = 0; i < nfields; i++ ) {
-                if ( NULL == fields[i] ) {
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
-                    break;
-                } else {
-                    matvar->internal->fieldnames[i] = strdup(fields[i]);
-                }
+            END(Mat_Critical("Memory allocation failure"),NULL);
+        }
+
+        for ( i = 0; i < nfields; i++ ) {
+            if ( NULL == fields[i] ) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+                break;
+            } else {
+                matvar->internal->fieldnames[i] = STRDUP(fields[i]);
             }
         }
+
         if ( NULL != matvar && nmemb > 0 && nfields > 0 ) {
             matvar_t **field_vars;
             matvar->nbytes = nmemb*nfields*matvar->data_size;
-            matvar->data = malloc(matvar->nbytes);
+
+            TRY {
+                matvar->data = NEW_ARRAY(char,matvar->nbytes);
+            } CATCH(matvar->data==NULL) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+                END(Mat_Critical("Memory allocation failure"),NULL);
+            }
+
             field_vars = (matvar_t**)matvar->data;
             for ( i = 0; i < nfields*nmemb; i++ )
                 field_vars[i] = NULL;
@@ -114,6 +131,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 {
     int       i, f, nfields, nmemb, cnt = 0;
     matvar_t **new_data, **old_data;
+    char     **fieldnames;
 
     if ( matvar == NULL || fieldname == NULL )
         return -1;
@@ -123,14 +141,24 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 
     nfields = matvar->internal->num_fields+1;
     matvar->internal->num_fields = nfields;
-    matvar->internal->fieldnames =
-    (char**)realloc(matvar->internal->fieldnames,
-            nfields*sizeof(*matvar->internal->fieldnames));
-    matvar->internal->fieldnames[nfields-1] = strdup(fieldname);
 
-    new_data = (matvar_t**)malloc(nfields*nmemb*sizeof(*new_data));
-    if ( new_data == NULL )
-        return -1;
+    TRY {
+        fieldnames = NEW_ARRAY(char*,nfields);
+    } CATCH(fieldnames==NULL) {
+        END(Mat_Critical("Memory allocation failure"),-1);
+    }
+
+    memcpy(fieldnames,matvar->internal->fieldnames,(nfields-1)*sizeof(char*));
+    DELETE_ARRAY(matvar->internal->fieldnames);
+    matvar->internal->fieldnames = fieldnames;
+    matvar->internal->fieldnames[nfields-1] = STRDUP(fieldname);
+
+    TRY {
+        new_data = NEW_ARRAY(matvar_t*,nfields*nmemb);
+    } CATCH ( new_data == NULL ) {
+        DELETE_ARRAY(fieldnames);
+        END(Mat_Critical("Memory allocation failure"),-1);
+    }
 
     old_data = (matvar_t**)matvar->data;
     for ( i = 0; i < nmemb; i++ ) {
@@ -139,7 +167,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
         new_data[cnt++] = NULL;
     }
 
-    free(matvar->data);
+    DELETE_ARRAY(matvar->data);
     matvar->data = new_data;
     matvar->nbytes = nfields*nmemb*sizeof(*new_data);
 
@@ -365,12 +393,15 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
         struct_slab->dims[i] = edge[i];
     }
     I *= nfields;
-    struct_slab->nbytes    = N*nfields*sizeof(matvar_t *);
-    struct_slab->data = malloc(struct_slab->nbytes);
-    if ( struct_slab->data == NULL ) {
+
+    TRY {
+        struct_slab->nbytes = N*nfields*sizeof(matvar_t *);
+        struct_slab->data   = NEW_ARRAY(char,struct_slab->nbytes);
+    } CATCH ( struct_slab->data == NULL ) {
         Mat_VarFree(struct_slab);
-        return NULL;
+        END(Mat_Critical("Memory allocation failure"),NULL);
     }
+
     fields = (matvar_t**)struct_slab->data;
     for ( i = 0; i < N; i+=edge[0] ) {
         for ( j = 0; j < edge[0]; j++ ) {
@@ -440,7 +471,7 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
         nfields = matvar->internal->num_fields;
 
         struct_slab->nbytes = edge*nfields*sizeof(matvar_t *);
-        struct_slab->data = malloc(struct_slab->nbytes);
+        struct_slab->data = NEW_ARRAY(char,struct_slab->nbytes);
         struct_slab->dims[0] = edge;
         struct_slab->dims[1] = 1;
         fields = (matvar_t**)struct_slab->data;
@@ -499,9 +530,9 @@ Mat_VarSetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index,
         old_field = fields[index*nfields+field_index];
         fields[index*nfields+field_index] = field;
         if ( NULL != field->name ) {
-            free(field->name);
+            DELETE_ARRAY(field->name);
         }
-        field->name = strdup(matvar->internal->fieldnames[field_index]);
+        field->name = STRDUP(matvar->internal->fieldnames[field_index]);
     }
 
     return old_field;
@@ -548,9 +579,9 @@ Mat_VarSetStructFieldByName(matvar_t *matvar,const char *field_name,
         old_field = fields[index*nfields+field_index];
         fields[index*nfields+field_index] = field;
         if ( NULL != field->name ) {
-            free(field->name);
+            DELETE_ARRAY(field->name);
         }
-        field->name = strdup(matvar->internal->fieldnames[field_index]);
+        field->name = STRDUP(matvar->internal->fieldnames[field_index]);
     }
 
     return old_field;

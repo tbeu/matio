@@ -86,11 +86,11 @@ Mat_Create4(const char* matname)
     if ( !fp )
         return NULL;
 
-    mat = (mat_t*)malloc(sizeof(*mat));
-    if ( NULL == mat ) {
+    TRY {
+        mat = NEW(mat_t);
+    } CATCH(mat==NULL) {
         fclose(fp);
-        Mat_Critical("Couldn't allocate memory for the MAT file");
-        return NULL;
+        END(Mat_Critical("Couldn't allocate memory for the MAT file"),NULL);
     }
 
     mat->header        = NULL;
@@ -101,7 +101,7 @@ Mat_Create4(const char* matname)
     mat->bof           = 0;
     mat->next_index    = 0;
     mat->refs_id       = -1;
-    mat->filename      = strdup_printf("%s",matname);
+    mat->filename      = STRDUP(matname);
     mat->mode          = 0;
 
     Mat_Rewind(mat);
@@ -299,20 +299,31 @@ Read4(mat_t *mat,matvar_t *matvar)
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
-                if ( complex_data != NULL ) {
-                    complex_data->Re = malloc(matvar->nbytes);
-                    complex_data->Im = malloc(matvar->nbytes);
-                    matvar->data     = complex_data;
-                    if ( complex_data->Re != NULL && complex_data->Im != NULL ) {
-                        ReadDoubleData(mat, (double*)complex_data->Re, matvar->data_type, N);
-                        ReadDoubleData(mat, (double*)complex_data->Im, matvar->data_type, N);
-                    }
+                TRY {
+                    complex_data = NEW(mat_complex_split_t);
+                } CATCH(complex_data==NULL) {
+                    V_END(Mat_Critical("Memory allocation failure"));
                 }
+
+                TRY {
+                    complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
+                    complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
+                    matvar->data     = complex_data;
+                } CATCH(complex_data->Re == NULL || complex_data->Im == NULL) {
+                    V_END(Mat_Critical("Memory allocation failure"));
+                }
+
+                ReadDoubleData(mat, (double*)complex_data->Re, matvar->data_type, N);
+                ReadDoubleData(mat, (double*)complex_data->Im, matvar->data_type, N);
+
             } else {
-                matvar->data = malloc(matvar->nbytes);
-                if ( matvar->data != NULL )
-                    ReadDoubleData(mat, (double*)matvar->data, matvar->data_type, N);
+                TRY {
+                    matvar->data = NEW_ARRAY(char,matvar->nbytes);
+                } CATCH(matvar->data == NULL ) {
+                    V_END(Mat_Critical("Memory allocation failure"));
+                }
+
+                ReadDoubleData(mat, (double*)matvar->data, matvar->data_type, N);
             }
             /* Update data type to match format of matvar->data */
             matvar->data_type = MAT_T_DOUBLE;
@@ -320,280 +331,305 @@ Read4(mat_t *mat,matvar_t *matvar)
         case MAT_C_CHAR:
             matvar->data_size = 1;
             matvar->nbytes = N;
-            matvar->data = malloc(matvar->nbytes);
-            if ( NULL == matvar->data )
-                Mat_Critical("Memory allocation failure");
-            else
-                ReadUInt8Data(mat,(mat_uint8_t*)matvar->data,matvar->data_type,N);
+
+            TRY {
+                matvar->data = NEW_ARRAY(char,matvar->nbytes);
+            } CATCH (matvar->data==NULL) {
+                V_END(Mat_Critical("Memory allocation failure"));
+            }
+
+            ReadUInt8Data(mat,(mat_uint8_t*)matvar->data,matvar->data_type,N);
             matvar->data_type = MAT_T_UINT8;
             break;
-        case MAT_C_SPARSE:
+        case MAT_C_SPARSE: {
+
+            double tmp;
+            int i,j;
+            mat_sparse_t* sparse;
+            mat_int32_t *jc;
+            long fpos;
+
             matvar->data_size = sizeof(mat_sparse_t);
-            matvar->data      = malloc(matvar->data_size);
-            if ( matvar->data == NULL )
-                Mat_Critical("Memory allocation failure");
-            else {
-                double tmp;
-                int i;
-                mat_sparse_t* sparse;
-                long fpos;
-                enum matio_types data_type = MAT_T_DOUBLE;
 
-                /* matvar->dims[1] either is 3 for real or 4 for complex sparse */
-                matvar->isComplex = matvar->dims[1] == 4 ? 1 : 0;
-                sparse = (mat_sparse_t*)matvar->data;
-                sparse->nir = matvar->dims[0] - 1;
-                sparse->nzmax = sparse->nir;
-                sparse->ir = (mat_int32_t*)malloc(sparse->nir*sizeof(mat_int32_t));
-                if ( sparse->ir != NULL ) {
-                    ReadInt32Data(mat, sparse->ir, data_type, sparse->nir);
-                    for ( i = 0; i < sparse->nir; i++ )
-                        sparse->ir[i] = sparse->ir[i] - 1;
-                } else {
-                    free(matvar->data);
-                    matvar->data = NULL;
-                    Mat_Critical("Memory allocation failure");
-                    return;
-                }
-                ReadDoubleData(mat, &tmp, data_type, 1);
-                matvar->dims[0] = tmp;
+            TRY {
+                matvar->data = NEW_ARRAY(char,matvar->data_size);
+            } CATCH (matvar->data==NULL) {
+                V_END(Mat_Critical("Memory allocation failure"));
+            }
 
+            enum matio_types data_type = MAT_T_DOUBLE;
+
+            /* matvar->dims[1] either is 3 for real or 4 for complex sparse */
+            matvar->isComplex = matvar->dims[1] == 4 ? 1 : 0;
+            sparse = (mat_sparse_t*)matvar->data;
+            sparse->nir = matvar->dims[0] - 1;
+            sparse->nzmax = sparse->nir;
+
+            TRY {
+                sparse->ir = NEW_ARRAY(mat_int32_t,sparse->nir);
+
+            } CATCH(sparse->ir==NULL) {
+                DELETE_BUFFER(matvar->data);
+                matvar->data = NULL;
+                V_END(Mat_Critical("Memory allocation failure"));
+            }
+
+            ReadInt32Data(mat, sparse->ir, data_type, sparse->nir);
+            for ( i = 0; i < sparse->nir; i++ )
+                sparse->ir[i] = sparse->ir[i] - 1;
+
+            ReadDoubleData(mat, &tmp, data_type, 1);
+            matvar->dims[0] = tmp;
+
+            TRY {
                 fpos = ftell((FILE*)mat->fp);
-                if ( fpos == -1L ) {
-                    free(sparse->ir);
-                    free(matvar->data);
-                    matvar->data = NULL;
-                    Mat_Critical("Couldn't determine file position");
-                    return;
-                }
+            } CATCH(fpos==-1L) {
+                DELETE_ARRAY(sparse->ir);
+                DELETE_BUFFER(matvar->data);
+                matvar->data = NULL;
+                V_END(Mat_Critical("Couldn't determine file position"));
+            }
+
+            TRY {
                 (void)fseek((FILE*)mat->fp,sparse->nir*Mat_SizeOf(data_type),
                     SEEK_CUR);
                 ReadDoubleData(mat, &tmp, data_type, 1);
-                if ( tmp > INT_MAX-1 || tmp < 0 ) {
-                    free(sparse->ir);
-                    free(matvar->data);
-                    matvar->data = NULL;
-                    Mat_Critical("Invalid column dimension for sparse matrix");
-                    return;
-                }
-                matvar->dims[1] = tmp < 0 ? 0 : ( tmp > INT_MAX-1 ? INT_MAX-1 : (size_t)tmp );
-                (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
-                if ( matvar->dims[1] > INT_MAX-1 ) {
-                    free(sparse->ir);
-                    free(matvar->data);
-                    matvar->data = NULL;
-                    Mat_Critical("Invalid column dimension for sparse matrix");
-                    return;
-                }
-                sparse->njc = (int)matvar->dims[1] + 1;
-                sparse->jc = (mat_int32_t*)malloc(sparse->njc*sizeof(mat_int32_t));
-                if ( sparse->jc != NULL ) {
-                    mat_int32_t *jc;
-                    jc = (mat_int32_t*)malloc(sparse->nir*sizeof(mat_int32_t));
-                    if ( jc != NULL ) {
-                        int j = 0;
-                        sparse->jc[0] = 0;
-                        ReadInt32Data(mat, jc, data_type, sparse->nir);
-                        for ( i = 1; i < sparse->njc-1; i++ ) {
-                            while ( j < sparse->nir && jc[j] <= i )
-                                j++;
-                            sparse->jc[i] = j;
-                        }
-                        free(jc);
-                        /* terminating nnz */
-                        sparse->jc[sparse->njc-1] = sparse->nir;
-                    } else {
-                        free(sparse->jc);
-                        free(sparse->ir);
-                        free(matvar->data);
-                        matvar->data = NULL;
-                        Mat_Critical("Memory allocation failure");
-                        return;
-                    }
-                } else {
-                    free(sparse->ir);
-                    free(matvar->data);
-                    matvar->data = NULL;
-                    Mat_Critical("Memory allocation failure");
-                    return;
-                }
-                ReadDoubleData(mat, &tmp, data_type, 1);
-                sparse->ndata = sparse->nir;
-                data_type = matvar->data_type;
-                if ( matvar->isComplex ) {
-                    mat_complex_split_t *complex_data;
-
-                    complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
-                    if ( complex_data != NULL ) {
-                        complex_data->Re = malloc(sparse->ndata*Mat_SizeOf(data_type));
-                        complex_data->Im = malloc(sparse->ndata*Mat_SizeOf(data_type));
-                        sparse->data     = complex_data;
-                        if ( complex_data->Re != NULL && complex_data->Im != NULL ) {
-#if defined(EXTENDED_SPARSE)
-                            switch ( data_type ) {
-                                case MAT_T_DOUBLE:
-                                    ReadDoubleData(mat, (double*)complex_data->Re,
-                                        data_type, sparse->ndata);
-                                    ReadDoubleData(mat, &tmp, data_type, 1);
-                                    ReadDoubleData(mat, (double*)complex_data->Im,
-                                        data_type, sparse->ndata);
-                                    ReadDoubleData(mat, &tmp, data_type, 1);
-                                    break;
-                                case MAT_T_SINGLE:
-                                {
-                                    float tmp2;
-                                    ReadSingleData(mat, (float*)complex_data->Re,
-                                        data_type, sparse->ndata);
-                                    ReadSingleData(mat, &tmp2, data_type, 1);
-                                    ReadSingleData(mat, (float*)complex_data->Im,
-                                        data_type, sparse->ndata);
-                                    ReadSingleData(mat, &tmp2, data_type, 1);
-                                    break;
-                                }
-                                case MAT_T_INT32:
-                                {
-                                    mat_int32_t tmp2;
-                                    ReadInt32Data(mat, (mat_int32_t*)complex_data->Re,
-                                        data_type, sparse->ndata);
-                                    ReadInt32Data(mat, &tmp2, data_type, 1);
-                                    ReadInt32Data(mat, (mat_int32_t*)complex_data->Im,
-                                        data_type, sparse->ndata);
-                                    ReadInt32Data(mat, &tmp2, data_type, 1);
-                                    break;
-                                }
-                                case MAT_T_INT16:
-                                {
-                                    mat_int16_t tmp2;
-                                    ReadInt16Data(mat, (mat_int16_t*)complex_data->Re,
-                                        data_type, sparse->ndata);
-                                    ReadInt16Data(mat, &tmp2, data_type, 1);
-                                    ReadInt16Data(mat, (mat_int16_t*)complex_data->Im,
-                                        data_type, sparse->ndata);
-                                    ReadInt16Data(mat, &tmp2, data_type, 1);
-                                    break;
-                                }
-                                case MAT_T_UINT16:
-                                {
-                                    mat_uint16_t tmp2;
-                                    ReadUInt16Data(mat, (mat_uint16_t*)complex_data->Re,
-                                        data_type, sparse->ndata);
-                                    ReadUInt16Data(mat, &tmp2, data_type, 1);
-                                    ReadUInt16Data(mat, (mat_uint16_t*)complex_data->Im,
-                                        data_type, sparse->ndata);
-                                    ReadUInt16Data(mat, &tmp2, data_type, 1);
-                                    break;
-                                }
-                                case MAT_T_UINT8:
-                                {
-                                    mat_uint8_t tmp2;
-                                    ReadUInt8Data(mat, (mat_uint8_t*)complex_data->Re,
-                                        data_type, sparse->ndata);
-                                    ReadUInt8Data(mat, &tmp2, data_type, 1);
-                                    ReadUInt8Data(mat, (mat_uint8_t*)complex_data->Im,
-                                        data_type, sparse->ndata);
-                                    ReadUInt8Data(mat, &tmp2, data_type, 1);
-                                    break;
-                                }
-                                default:
-                                    free(complex_data->Re);
-                                    free(complex_data->Im);
-                                    free(complex_data);
-                                    free(sparse->jc);
-                                    free(sparse->ir);
-                                    free(matvar->data);
-                                    matvar->data = NULL;
-                                    Mat_Critical("Read4: %d is not a supported data type for ",
-                                        "extended sparse", data_type);
-                                    return;
-                            }
-#else
-                            ReadDoubleData(mat, (double*)complex_data->Re,
-                                data_type, sparse->ndata);
-                            ReadDoubleData(mat, &tmp, data_type, 1);
-                            ReadDoubleData(mat, (double*)complex_data->Im,
-                                data_type, sparse->ndata);
-                            ReadDoubleData(mat, &tmp, data_type, 1);
-#endif
-                        }
-                    }
-                } else {
-                    sparse->data = malloc(sparse->ndata*Mat_SizeOf(data_type));
-                    if ( sparse->data != NULL ) {
-#if defined(EXTENDED_SPARSE)
-                        switch ( data_type ) {
-                            case MAT_T_DOUBLE:
-                                ReadDoubleData(mat, (double*)sparse->data,
-                                    data_type, sparse->ndata);
-                                ReadDoubleData(mat, &tmp, data_type, 1);
-                                break;
-                            case MAT_T_SINGLE:
-                            {
-                                float tmp2;
-                                ReadSingleData(mat, (float*)sparse->data,
-                                    data_type, sparse->ndata);
-                                ReadSingleData(mat, &tmp2, data_type, 1);
-                                break;
-                            }
-                            case MAT_T_INT32:
-                            {
-                                mat_int32_t tmp2;
-                                ReadInt32Data(mat, (mat_int32_t*)sparse->data,
-                                    data_type, sparse->ndata);
-                                ReadInt32Data(mat, &tmp2, data_type, 1);
-                                break;
-                            }
-                            case MAT_T_INT16:
-                            {
-                                mat_int16_t tmp2;
-                                ReadInt16Data(mat, (mat_int16_t*)sparse->data,
-                                    data_type, sparse->ndata);
-                                ReadInt16Data(mat, &tmp2, data_type, 1);
-                                break;
-                            }
-                            case MAT_T_UINT16:
-                            {
-                                mat_uint16_t tmp2;
-                                ReadUInt16Data(mat, (mat_uint16_t*)sparse->data,
-                                    data_type, sparse->ndata);
-                                ReadUInt16Data(mat, &tmp2, data_type, 1);
-                                break;
-                            }
-                            case MAT_T_UINT8:
-                            {
-                                mat_uint8_t tmp2;
-                                ReadUInt8Data(mat, (mat_uint8_t*)sparse->data,
-                                    data_type, sparse->ndata);
-                                ReadUInt8Data(mat, &tmp2, data_type, 1);
-                                break;
-                            }
-                            default:
-                                free(sparse->data);
-                                free(sparse->jc);
-                                free(sparse->ir);
-                                free(matvar->data);
-                                matvar->data = NULL;
-                                Mat_Critical("Read4: %d is not a supported data type for ",
-                                    "extended sparse", data_type);
-                                return;
-                        }
-#else
-                        ReadDoubleData(mat, (double*)sparse->data, data_type, sparse->ndata);
-                        ReadDoubleData(mat, &tmp, data_type, 1);
-#endif
-                    } else {
-                        free(sparse->jc);
-                        free(sparse->ir);
-                        free(matvar->data);
-                        matvar->data = NULL;
-                        Mat_Critical("Memory allocation failure");
-                        return;
-                    }
-                }
-                break;
+            } CATCH ( tmp > INT_MAX-1 || tmp < 0 ) {
+                DELETE_ARRAY(sparse->ir);
+                DELETE_BUFFER(matvar->data);
+                matvar->data = NULL;
+                V_END(Mat_Critical("Invalid column dimension for sparse matrix"));
             }
+            matvar->dims[1] = tmp < 0 ? 0 : ( tmp > INT_MAX-1 ? INT_MAX-1 : (size_t)tmp );
+
+            TRY {
+                (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
+            } CATCH ( matvar->dims[1] > INT_MAX-1 ) {
+                DELETE_ARRAY(sparse->ir);
+                DELETE_BUFFER(matvar->data);
+                matvar->data = NULL;
+                V_END(Mat_Critical("Invalid column dimension for sparse matrix"));
+            }
+
+            TRY {
+                sparse->njc = (int)matvar->dims[1] + 1;
+                sparse->jc = NEW_ARRAY(mat_int32_t,sparse->njc);
+            } CATCH(sparse->jc == NULL) {
+                DELETE_ARRAY(sparse->ir);
+                DELETE_BUFFER(matvar->data);
+                matvar->data = NULL;
+                V_END(Mat_Critical("Memory allocation failure"));
+            }
+
+            TRY {
+                jc = NEW_ARRAY(mat_int32_t,sparse->nir);
+            } CATCH( jc == NULL ) {
+                DELETE_ARRAY(sparse->jc);
+                DELETE_ARRAY(sparse->ir);
+                DELETE_BUFFER(matvar->data);
+                matvar->data = NULL;
+                V_END(Mat_Critical("Memory allocation failure"));
+            }
+
+            j = 0;
+            sparse->jc[0] = 0;
+            ReadInt32Data(mat, jc, data_type, sparse->nir);
+            for ( i = 1; i < sparse->njc-1; i++ ) {
+                while ( j < sparse->nir && jc[j] <= i )
+                    j++;
+                sparse->jc[i] = j;
+            }
+            DELETE_ARRAY(jc);
+            /* terminating nnz */
+            sparse->jc[sparse->njc-1] = sparse->nir;
+
+            ReadDoubleData(mat, &tmp, data_type, 1);
+            sparse->ndata = sparse->nir;
+            data_type = matvar->data_type;
+            if ( matvar->isComplex ) {
+                mat_complex_split_t *complex_data;
+
+                TRY {
+                    complex_data = NEW(mat_complex_split_t);
+                } CATCH( complex_data == NULL ) {
+                    DELETE_ARRAY(sparse->jc);
+                    DELETE_ARRAY(sparse->ir);
+                    DELETE_BUFFER(matvar->data);
+                    matvar->data = NULL;
+                    V_END(Mat_Critical("Memory allocation failure"));
+                }
+
+                TRY {
+                    complex_data->Re = NEW_ARRAY(char,sparse->ndata*Mat_SizeOf(data_type));
+                    complex_data->Im = NEW_ARRAY(char,sparse->ndata*Mat_SizeOf(data_type));
+                    sparse->data     = complex_data;
+                } CATCH( complex_data->Re == NULL || complex_data->Im == NULL ) {
+                    DELETE(complex_data);
+                    DELETE_ARRAY(sparse->jc);
+                    DELETE_ARRAY(sparse->ir);
+                    DELETE_BUFFER(matvar->data);
+                    matvar->data = NULL;
+                    V_END(Mat_Critical("Memory allocation failure"));
+                }
+#if defined(EXTENDED_SPARSE)
+                switch ( data_type ) {
+                    case MAT_T_DOUBLE:
+                        ReadDoubleData(mat, (double*)complex_data->Re,
+                            data_type, sparse->ndata);
+                        ReadDoubleData(mat, &tmp, data_type, 1);
+                        ReadDoubleData(mat, (double*)complex_data->Im,
+                            data_type, sparse->ndata);
+                        ReadDoubleData(mat, &tmp, data_type, 1);
+                        break;
+                    case MAT_T_SINGLE:
+                    {
+                        float tmp2;
+                        ReadSingleData(mat, (float*)complex_data->Re,
+                            data_type, sparse->ndata);
+                        ReadSingleData(mat, &tmp2, data_type, 1);
+                        ReadSingleData(mat, (float*)complex_data->Im,
+                            data_type, sparse->ndata);
+                        ReadSingleData(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    case MAT_T_INT32:
+                    {
+                        mat_int32_t tmp2;
+                        ReadInt32Data(mat, (mat_int32_t*)complex_data->Re,
+                            data_type, sparse->ndata);
+                        ReadInt32Data(mat, &tmp2, data_type, 1);
+                        ReadInt32Data(mat, (mat_int32_t*)complex_data->Im,
+                            data_type, sparse->ndata);
+                        ReadInt32Data(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    case MAT_T_INT16:
+                    {
+                        mat_int16_t tmp2;
+                        ReadInt16Data(mat, (mat_int16_t*)complex_data->Re,
+                            data_type, sparse->ndata);
+                        ReadInt16Data(mat, &tmp2, data_type, 1);
+                        ReadInt16Data(mat, (mat_int16_t*)complex_data->Im,
+                            data_type, sparse->ndata);
+                        ReadInt16Data(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    case MAT_T_UINT16:
+                    {
+                        mat_uint16_t tmp2;
+                        ReadUInt16Data(mat, (mat_uint16_t*)complex_data->Re,
+                            data_type, sparse->ndata);
+                        ReadUInt16Data(mat, &tmp2, data_type, 1);
+                        ReadUInt16Data(mat, (mat_uint16_t*)complex_data->Im,
+                            data_type, sparse->ndata);
+                        ReadUInt16Data(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    case MAT_T_UINT8:
+                    {
+                        mat_uint8_t tmp2;
+                        ReadUInt8Data(mat, (mat_uint8_t*)complex_data->Re,
+                            data_type, sparse->ndata);
+                        ReadUInt8Data(mat, &tmp2, data_type, 1);
+                        ReadUInt8Data(mat, (mat_uint8_t*)complex_data->Im,
+                            data_type, sparse->ndata);
+                        ReadUInt8Data(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    default:
+                        DELETE_BUFFER(complex_data->Re);
+                        DELETE_BUFFER(complex_data->Im);
+                        DELETE(complex_data);
+                        DELETE_ARRAY(sparse->jc);
+                        DELETE_ARRAY(sparse->ir);
+                        DELETE_BUFFER(matvar->data);
+                        matvar->data = NULL;
+                        V_END(Mat_Critical("Read4: %d is not a supported data type for ",
+                              "extended sparse", data_type));
+                }
+#else
+                ReadDoubleData(mat, (double*)complex_data->Re,
+                    data_type, sparse->ndata);
+                ReadDoubleData(mat, &tmp, data_type, 1);
+                ReadDoubleData(mat, (double*)complex_data->Im,
+                    data_type, sparse->ndata);
+                ReadDoubleData(mat, &tmp, data_type, 1);
+#endif
+            } else {
+                TRY {
+                    sparse->data = NEW_ARRAY(char,sparse->ndata*Mat_SizeOf(data_type));
+                } CATCH( sparse->data == NULL ) {
+                    DELETE_ARRAY(sparse->jc);
+                    DELETE_ARRAY(sparse->ir);
+                    DELETE_BUFFER(matvar->data);
+                    matvar->data = NULL;
+                    V_END(Mat_Critical("Memory allocation failure"));
+                }
+#if defined(EXTENDED_SPARSE)
+                switch ( data_type ) {
+                    case MAT_T_DOUBLE:
+                        ReadDoubleData(mat, (double*)sparse->data,
+                            data_type, sparse->ndata);
+                        ReadDoubleData(mat, &tmp, data_type, 1);
+                        break;
+                    case MAT_T_SINGLE:
+                    {
+                        float tmp2;
+                        ReadSingleData(mat, (float*)sparse->data,
+                            data_type, sparse->ndata);
+                        ReadSingleData(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    case MAT_T_INT32:
+                    {
+                        mat_int32_t tmp2;
+                        ReadInt32Data(mat, (mat_int32_t*)sparse->data,
+                            data_type, sparse->ndata);
+                        ReadInt32Data(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    case MAT_T_INT16:
+                    {
+                        mat_int16_t tmp2;
+                        ReadInt16Data(mat, (mat_int16_t*)sparse->data,
+                            data_type, sparse->ndata);
+                        ReadInt16Data(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    case MAT_T_UINT16:
+                    {
+                        mat_uint16_t tmp2;
+                        ReadUInt16Data(mat, (mat_uint16_t*)sparse->data,
+                            data_type, sparse->ndata);
+                        ReadUInt16Data(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    case MAT_T_UINT8:
+                    {
+                        mat_uint8_t tmp2;
+                        ReadUInt8Data(mat, (mat_uint8_t*)sparse->data,
+                            data_type, sparse->ndata);
+                        ReadUInt8Data(mat, &tmp2, data_type, 1);
+                        break;
+                    }
+                    default:
+                        DELETE_BUFFER(sparse->data);
+                        DELETE_ARRAY(sparse->jc);
+                        DELETE_ARRAY(sparse->ir);
+                        DELETE_BUFFER(matvar->data);
+                        matvar->data = NULL;
+                        V_END(Mat_Critical("Read4: %d is not a supported data type for ",
+                                 "extended sparse", data_type));
+                }
+#else
+                ReadDoubleData(mat, (double*)sparse->data, data_type, sparse->ndata);
+                ReadDoubleData(mat, &tmp, data_type, 1);
+#endif
+            }
+            break;
+        }
         default:
-            Mat_Critical("MAT V4 data type error");
-            return;
+            V_END(Mat_Critical("MAT V4 data type error"));
     }
 
     return;
@@ -751,16 +787,16 @@ Mat_VarReadNextInfo4(mat_t *mat)
     } endian;
 
     if ( mat == NULL || mat->fp == NULL )
-        return NULL;
+        END(Mat_Critical("Bad mat descriptor"),NULL);
     else if ( NULL == (matvar = Mat_VarCalloc()) )
-        return NULL;
+        END(Mat_Critical("Memory allocation failure"),NULL);
 
-    matvar->internal->fp   = mat;
-    matvar->internal->fpos = ftell((FILE*)mat->fp);
-    if ( matvar->internal->fpos == -1L ) {
+    TRY {
+        matvar->internal->fp   = mat;
+        matvar->internal->fpos = ftell((FILE*)mat->fp);
+    } CATCH ( matvar->internal->fpos == -1L ) {
         Mat_VarFree(matvar);
-        Mat_Critical("Couldn't determine file position");
-        return NULL;
+        END(Mat_Critical("Couldn't determine file position"),NULL);
     }
 
     err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
@@ -775,7 +811,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     if ( tmp < 0 || tmp > 4052 ) {
         if ( Mat_int32Swap(&tmp) > 4052 ) {
             Mat_VarFree(matvar);
-            return NULL;
+            END(Mat_Critical("Bad data descriptor"),NULL);
         }
     }
 
@@ -799,12 +835,12 @@ Mat_VarReadNextInfo4(mat_t *mat)
         default:
             /* VAX, Cray, or bogus */
             Mat_VarFree(matvar);
-            return NULL;
+            END(Mat_Critical("Wrong/Unsupported floating point format"),NULL);
     }
     /* O must be zero */
     if ( 0 != O ) {
         Mat_VarFree(matvar);
-        return NULL;
+        END(Mat_Critical("Bad data descriptor"),NULL);
     }
     /* Convert the V4 data type */
     switch ( data_type ) {
@@ -828,7 +864,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
             break;
         default:
             Mat_VarFree(matvar);
-            return NULL;
+            END(Mat_Critical("Wrong data type"),NULL);
     }
     switch ( class_type ) {
         case 0:
@@ -842,69 +878,82 @@ Mat_VarReadNextInfo4(mat_t *mat)
             break;
         default:
             Mat_VarFree(matvar);
-            return NULL;
+            END(Mat_Critical("Wrong class type"),NULL);
     }
     matvar->rank = 2;
-    matvar->dims = (size_t*)malloc(2*sizeof(*matvar->dims));
-    if ( NULL == matvar->dims ) {
+    TRY {
+        matvar->dims = NEW_ARRAY(size_t,2);
+    } CATCH ( NULL == matvar->dims ) {
         Mat_VarFree(matvar);
-        return NULL;
-    }
-    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
-    if ( mat->byteswap )
-        Mat_int32Swap(&tmp);
-    matvar->dims[0] = tmp;
-    if ( !err ) {
-        Mat_VarFree(matvar);
-        return NULL;
-    }
-    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
-    if ( mat->byteswap )
-        Mat_int32Swap(&tmp);
-    matvar->dims[1] = tmp;
-    if ( !err ) {
-        Mat_VarFree(matvar);
-        return NULL;
+        END(Mat_Critical("Memory allocation failure"),NULL);
     }
 
-    err = fread(&(matvar->isComplex),sizeof(int),1,(FILE*)mat->fp);
-    if ( !err ) {
+    TRY {
+        err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
+        if ( mat->byteswap )
+            Mat_int32Swap(&tmp);
+        matvar->dims[0] = tmp;
+    } CATCH ( !err ) {
         Mat_VarFree(matvar);
-        return NULL;
+        END(Mat_Critical("Couldn't read data from file"),NULL);
     }
-    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
-    if ( !err ) {
+
+    TRY {
+        err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
+        if ( mat->byteswap )
+            Mat_int32Swap(&tmp);
+        matvar->dims[1] = tmp;
+    } CATCH( !err ) {
         Mat_VarFree(matvar);
-        return NULL;
+        END(Mat_Critical("Couldn't read data from file"),NULL);
     }
-    if ( mat->byteswap )
-        Mat_int32Swap(&tmp);
+
+    TRY {
+        err = fread(&(matvar->isComplex),sizeof(int),1,(FILE*)mat->fp);
+        //  No byte swap here. This is stange. TODO: POSSIBLE BUG.
+    } CATCH( !err ) {
+        Mat_VarFree(matvar);
+        END(Mat_Critical("Couldn't read data from file"),NULL);
+    }
+
+    TRY {
+        err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
+        if ( mat->byteswap )
+            Mat_int32Swap(&tmp);
+    } CATCH( !err ) {
+        Mat_VarFree(matvar);
+        END(Mat_Critical("Couldn't read data from file"),NULL);
+    }
     /* Check that the length of the variable name is at least 1 */
     if ( tmp < 1 ) {
         Mat_VarFree(matvar);
-        return NULL;
+        END(Mat_Critical("Length of variable name must be at least 1"),NULL);
     }
-    matvar->name = (char*)malloc(tmp);
-    if ( NULL == matvar->name ) {
+
+    TRY {
+        matvar->name = NEW_ARRAY(char,tmp);
+    } CATCH ( NULL == matvar->name ) {
         Mat_VarFree(matvar);
-        return NULL;
+        END(Mat_Critical("Memory allocation failure"),NULL);
     }
-    err = fread(matvar->name,1,tmp,(FILE*)mat->fp);
-    if ( !err ) {
+
+    TRY {
+        err = fread(matvar->name,1,tmp,(FILE*)mat->fp);
+    } CATCH( !err ) {
         Mat_VarFree(matvar);
-        return NULL;
+        END(Mat_Critical("Couldn't read data from file"),NULL);
     }
 
     matvar->internal->datapos = ftell((FILE*)mat->fp);
     if ( matvar->internal->datapos == -1L ) {
         Mat_VarFree(matvar);
-        Mat_Critical("Couldn't determine file position");
-        return NULL;
+        END(Mat_Critical("Couldn't determine file position"),NULL);
     }
     nBytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex )
         nBytes *= 2;
     (void)fseek((FILE*)mat->fp,nBytes,SEEK_CUR);
+    //  No check here, TODO: POSSIBLE BUG.
 
     return matvar;
 }

@@ -226,7 +226,7 @@ Mat_Open(const char *matname,int mode)
         return NULL;
     }
 
-    mat = (mat_t*)malloc(sizeof(*mat));
+    mat = NEW(mat_t);
     if ( NULL == mat ) {
         fclose(fp);
         Mat_Critical("Couldn't allocate memory for the MAT file");
@@ -234,17 +234,17 @@ Mat_Open(const char *matname,int mode)
     }
 
     mat->fp = fp;
-    mat->header        = (char*)calloc(128,sizeof(char));
+    mat->header = NEW_ARRAY(char,116);
     if ( NULL == mat->header ) {
-        free(mat);
+        DELETE(mat);
         fclose(fp);
         Mat_Critical("Couldn't allocate memory for the MAT file header");
         return NULL;
     }
-    mat->subsys_offset = (char*)calloc(8,sizeof(char));
+    mat->subsys_offset = NEW_ARRAY(char,8);
     if ( NULL == mat->subsys_offset ) {
-        free(mat->header);
-        free(mat);
+        DELETE_ARRAY(mat->header);
+        DELETE(mat);
         fclose(fp);
         Mat_Critical("Couldn't allocate memory for the MAT file subsys offset");
         return NULL;
@@ -275,9 +275,9 @@ Mat_Open(const char *matname,int mode)
              -1 != mat->byteswap ) {
             mat->bof = ftell((FILE*)mat->fp);
             if ( mat->bof == -1L ) {
-                free(mat->header);
-                free(mat->subsys_offset);
-                free(mat);
+                DELETE_ARRAY(mat->header);
+                DELETE_ARRAY(mat->subsys_offset);
+                DELETE(mat);
                 fclose(fp);
                 Mat_Critical("Couldn't determine file position");
                 return NULL;
@@ -292,8 +292,8 @@ Mat_Open(const char *matname,int mode)
         /* Maybe a V4 MAT file */
         matvar_t *var;
 
-        free(mat->header);
-        free(mat->subsys_offset);
+        DELETE_ARRAY(mat->header);
+        DELETE_ARRAY(mat->subsys_offset);
 
         mat->header        = NULL;
         mat->subsys_offset = NULL;
@@ -322,14 +322,14 @@ Mat_Open(const char *matname,int mode)
     if ( NULL == mat )
         return mat;
 
-    mat->filename = strdup_printf("%s",matname);
+    mat->filename = STRDUP(matname);
     mat->mode = mode;
 
     if ( mat->version == 0x0200 ) {
         fclose((FILE*)mat->fp);
 #if defined(MAT73) && MAT73
 
-        mat->fp = malloc(sizeof(hid_t));
+        mat->fp = NEW(hid_t);
 
         if ( (mode & 0x01) == MAT_ACC_RDONLY )
             *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDONLY,H5P_DEFAULT);
@@ -370,19 +370,19 @@ Mat_Close( mat_t *mat )
             if ( mat->refs_id > -1 )
                 H5Gclose(mat->refs_id);
             H5Fclose(*(hid_t*)mat->fp);
-            free(mat->fp);
+            DELETE(mat->fp);
             mat->fp = NULL;
         }
 #endif
         if ( mat->fp )
             fclose((FILE*)mat->fp);
         if ( mat->header )
-            free(mat->header);
+            DELETE_ARRAY(mat->header);
         if ( mat->subsys_offset )
-            free(mat->subsys_offset);
+            DELETE_ARRAY(mat->subsys_offset);
         if ( mat->filename )
-            free(mat->filename);
-        free(mat);
+            DELETE_ARRAY(mat->filename);
+        DELETE(mat);
     }
     return 0;
 }
@@ -506,41 +506,46 @@ Mat_VarCalloc(void)
 {
     matvar_t *matvar;
 
-    matvar = (matvar_t*)malloc(sizeof(*matvar));
-
-    if ( NULL != matvar ) {
-        matvar->nbytes       = 0;
-        matvar->rank         = 0;
-        matvar->data_type    = MAT_T_UNKNOWN;
-        matvar->data_size    = 0;
-        matvar->class_type   = MAT_C_EMPTY;
-        matvar->isComplex    = 0;
-        matvar->isGlobal     = 0;
-        matvar->isLogical    = 0;
-        matvar->dims         = NULL;
-        matvar->name         = NULL;
-        matvar->data         = NULL;
-        matvar->mem_conserve = 0;
-        matvar->compression  = MAT_COMPRESSION_NONE;
-        matvar->internal     = (struct matvar_internal*)malloc(sizeof(*matvar->internal));
-        if ( NULL == matvar->internal ) {
-            free(matvar);
-            matvar = NULL;
-        } else {
-            matvar->internal->hdf5_name = NULL;
-            matvar->internal->hdf5_ref  =  0;
-            matvar->internal->id        = -1;
-            matvar->internal->fp = NULL;
-            matvar->internal->fpos       = 0;
-            matvar->internal->datapos    = 0;
-            matvar->internal->fieldnames = NULL;
-            matvar->internal->num_fields = 0;
-#if defined(HAVE_ZLIB)
-            matvar->internal->z          = NULL;
-            matvar->internal->data       = NULL;
-#endif
-        }
+    TRY {
+        matvar = NEW(matvar_t);
+    } CATCH(matvar==NULL) {
+        END(Mat_Critical("Memory allocation failure"),NULL);
     }
+
+    matvar->nbytes       = 0;
+    matvar->rank         = 0;
+    matvar->data_type    = MAT_T_UNKNOWN;
+    matvar->data_size    = 0;
+    matvar->class_type   = MAT_C_EMPTY;
+    matvar->isComplex    = 0;
+    matvar->isGlobal     = 0;
+    matvar->isLogical    = 0;
+    matvar->dims         = NULL;
+    matvar->name         = NULL;
+    matvar->data         = NULL;
+    matvar->mem_conserve = 0;
+    matvar->compression  = MAT_COMPRESSION_NONE;
+
+    TRY {
+        matvar->internal = NEW(struct matvar_internal);
+    } CATCH(matvar->internal==NULL) {
+        DELETE(matvar);
+        matvar = NULL;
+        END(Mat_Critical("Memory allocation failure"),NULL);
+    }
+
+    matvar->internal->hdf5_name = NULL;
+    matvar->internal->hdf5_ref  =  0;
+    matvar->internal->id        = -1;
+    matvar->internal->fp = NULL;
+    matvar->internal->fpos       = 0;
+    matvar->internal->datapos    = 0;
+    matvar->internal->fieldnames = NULL;
+    matvar->internal->num_fields = 0;
+#if defined(HAVE_ZLIB)
+    matvar->internal->z          = NULL;
+    matvar->internal->data       = NULL;
+#endif
 
     return matvar;
 }
@@ -564,7 +569,7 @@ Mat_VarCalloc(void)
  *     int rank=2, dims[2] = {3,2}, nfields = 3;
  *     matvar_t **vars;
  *
- *     vars = malloc((3*2*nfields+1)*sizeof(matvar_t *));
+ *     vars = NEW_ARRAY(matvar_t,3*2*nfields+1);
  *     vars[0]             = Mat_VarCreate(...);
  *        :
  *     vars[3*2*nfields-1] = Mat_VarCreate(...);
@@ -577,7 +582,7 @@ Mat_VarCalloc(void)
  *     int rank=2, dims[2] = {3,2};
  *     matvar_t **vars;
  *
- *     vars = malloc(3*2*sizeof(matvar_t *));
+ *     vars = NEW_ARRAY(matvar_t,3*2);
  *     vars[0]             = Mat_VarCreate(...);
  *        :
  *     vars[5] = Mat_VarCreate(...);
@@ -619,9 +624,9 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     matvar->isGlobal    = opt & MAT_F_GLOBAL;
     matvar->isLogical   = opt & MAT_F_LOGICAL;
     if ( name )
-        matvar->name = strdup_printf("%s",name);
+        matvar->name = STRDUP(name);
     matvar->rank = rank;
-    matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
+    matvar->dims = NEW_ARRAY(size_t,matvar->rank);
     for ( i = 0; i < matvar->rank; i++ ) {
         matvar->dims[i] = dims[i];
         nmemb *= dims[i];
@@ -685,10 +690,9 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                     nfields = nfields / nmemb;
                 matvar->internal->num_fields = nfields;
                 if ( nfields ) {
-                    matvar->internal->fieldnames =
-                        (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
+                    matvar->internal->fieldnames = NEW_ARRAY(char*,nfields);
                     for ( i = 0; i < nfields; i++ )
-                        matvar->internal->fieldnames[i] = strdup(fields[i]->name);
+                        matvar->internal->fieldnames[i] = STRDUP(fields[i]->name);
                     nmemb *= nfields;
                 }
             }
@@ -708,7 +712,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     }
     if ( data == NULL ) {
         if ( MAT_C_CELL == matvar->class_type && nmemb > 0 )
-            matvar->data = calloc(nmemb,sizeof(matvar_t*));
+            matvar->data = NEW_ARRAY(matvar_t*,nmemb);
         else
             matvar->data = NULL;
     } else if ( opt & MAT_F_DONT_COPY_DATA ) {
@@ -718,28 +722,28 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         mat_sparse_t *sparse_data, *sparse_data_in;
 
         sparse_data_in = (mat_sparse_t*)data;
-        sparse_data    = (mat_sparse_t*)malloc(sizeof(mat_sparse_t));
+        sparse_data    = NEW(mat_sparse_t);
         if ( NULL != sparse_data ) {
             sparse_data->nzmax = sparse_data_in->nzmax;
             sparse_data->nir   = sparse_data_in->nir;
             sparse_data->njc   = sparse_data_in->njc;
             sparse_data->ndata = sparse_data_in->ndata;
-            sparse_data->ir = (int*)malloc(sparse_data->nir*sizeof(*sparse_data->ir));
+            sparse_data->ir = NEW_ARRAY(int,sparse_data->nir);
             if ( NULL != sparse_data->ir )
                 memcpy(sparse_data->ir,sparse_data_in->ir,
                        sparse_data->nir*sizeof(*sparse_data->ir));
-            sparse_data->jc = (int*)malloc(sparse_data->njc*sizeof(*sparse_data->jc));
+            sparse_data->jc = NEW_ARRAY(int,sparse_data->njc);
             if ( NULL != sparse_data->jc )
                 memcpy(sparse_data->jc,sparse_data_in->jc,
                        sparse_data->njc*sizeof(*sparse_data->jc));
             if ( matvar->isComplex ) {
-                sparse_data->data = malloc(sizeof(mat_complex_split_t));
+                sparse_data->data = NEW(mat_complex_split_t);
                 if ( NULL != sparse_data->data ) {
                     mat_complex_split_t *complex_data,*complex_data_in;
                     complex_data     = (mat_complex_split_t*)sparse_data->data;
                     complex_data_in  = (mat_complex_split_t*)sparse_data_in->data;
-                    complex_data->Re = malloc(sparse_data->ndata*data_size);
-                    complex_data->Im = malloc(sparse_data->ndata*data_size);
+                    complex_data->Re = NEW_ARRAY(char,sparse_data->ndata*data_size);
+                    complex_data->Im = NEW_ARRAY(char,sparse_data->ndata*data_size);
                     if ( NULL != complex_data->Re )
                         memcpy(complex_data->Re,complex_data_in->Re,
                                sparse_data->ndata*data_size);
@@ -748,7 +752,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                                sparse_data->ndata*data_size);
                 }
             } else {
-                sparse_data->data = malloc(sparse_data->ndata*data_size);
+                sparse_data->data = NEW_ARRAY(char,sparse_data->ndata*data_size);
                 if ( NULL != sparse_data->data )
                     memcpy(sparse_data->data,sparse_data_in->data,
                            sparse_data->ndata*data_size);
@@ -757,20 +761,20 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         matvar->data = sparse_data;
     } else {
         if ( matvar->isComplex ) {
-            matvar->data   = malloc(sizeof(mat_complex_split_t));
+            matvar->data   = NEW(mat_complex_split_t);
             if ( NULL != matvar->data && matvar->nbytes > 0 ) {
                 mat_complex_split_t *complex_data    = (mat_complex_split_t*)matvar->data;
                 mat_complex_split_t *complex_data_in = (mat_complex_split_t*)data;
 
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
+                complex_data->Re = NEW_ARRAY(char,matvar->nbytes);
+                complex_data->Im = NEW_ARRAY(char,matvar->nbytes);
                 if ( NULL != complex_data->Re )
                     memcpy(complex_data->Re,complex_data_in->Re,matvar->nbytes);
                 if ( NULL != complex_data->Im )
                     memcpy(complex_data->Im,complex_data_in->Im,matvar->nbytes);
             }
         } else if ( matvar->nbytes > 0 ) {
-            matvar->data   = malloc(matvar->nbytes);
+            matvar->data   = NEW_ARRAY(char,matvar->nbytes);
             if ( NULL != matvar->data )
                 memcpy(matvar->data,data,matvar->nbytes);
         }
@@ -866,13 +870,13 @@ Mat_VarDelete(mat_t *mat, const char *name)
             Mat_Close(tmp);
 
             if (err == 0) {
-                char *new_name = strdup_printf("%s",mat->filename);
+                char *new_name = STRDUP(mat->filename);
 #if defined(MAT73) && MAT73
                 if ( mat_file_ver == MAT_FT_MAT73 ) {
                     if ( mat->refs_id > -1 )
                         H5Gclose(mat->refs_id);
                     H5Fclose(*(hid_t*)mat->fp);
-                    free(mat->fp);
+                    DELETE(mat->fp);
                     mat->fp = NULL;
                 }
 #endif
@@ -890,18 +894,18 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     tmp = Mat_Open(new_name,mat->mode);
                     if ( NULL != tmp ) {
                         if ( mat->header )
-                            free(mat->header);
+                            DELETE_ARRAY(mat->header);
                         if ( mat->subsys_offset )
-                            free(mat->subsys_offset);
+                            DELETE_ARRAY(mat->subsys_offset);
                         if ( mat->filename )
-                            free(mat->filename);
+                            DELETE_ARRAY(mat->filename);
                         memcpy(mat,tmp,sizeof(mat_t));
-                        free(tmp);
+                        DELETE(tmp);
                     } else {
                         Mat_Critical("Cannot open file \"%s\".",new_name);
                     }
                 }
-                free(new_name);
+                DELETE_ARRAY(new_name);
             } else if ( (err = remove(tmp_name)) == -1 ) {
                 Mat_Critical("Cannot remove file \"%s\".",tmp_name);
             }
@@ -950,7 +954,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->data = NULL;
 
     if ( NULL != in->internal->hdf5_name )
-        out->internal->hdf5_name = strdup(in->internal->hdf5_name);
+        out->internal->hdf5_name = STRDUP(in->internal->hdf5_name);
 
     out->internal->hdf5_ref = in->internal->hdf5_ref;
     out->internal->id       = in->internal->id;
@@ -962,77 +966,72 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 #endif
     out->internal->num_fields = in->internal->num_fields;
     if ( NULL != in->internal->fieldnames && in->internal->num_fields > 0 ) {
-        out->internal->fieldnames = (char**)calloc(in->internal->num_fields,
-                                           sizeof(*in->internal->fieldnames));
-        for ( i = 0; i < in->internal->num_fields; i++ ) {
-            if ( NULL != in->internal->fieldnames[i] )
-                out->internal->fieldnames[i] =
-                    strdup(in->internal->fieldnames[i]);
-        }
+        out->internal->fieldnames = NEW_ARRAY(char*,in->internal->num_fields);
+        for ( i = 0; i < in->internal->num_fields; i++ )
+            out->internal->fieldnames[i] = ( NULL != in->internal->fieldnames[i] ) ?
+                                                STRDUP(in->internal->fieldnames[i]) : 0;
     }
 
-    if (in->name != NULL && (NULL != (out->name = (char*)malloc(strlen(in->name)+1))))
+    if (in->name != NULL && (NULL != (out->name = NEW_ARRAY(char,strlen(in->name)+1))))
         memcpy(out->name,in->name,strlen(in->name)+1);
 
-    out->dims = (size_t*)malloc(in->rank*sizeof(*out->dims));
+    out->dims = NEW_ARRAY(size_t,in->rank);
     if ( out->dims != NULL )
         memcpy(out->dims,in->dims,in->rank*sizeof(*out->dims));
 
 #if defined(HAVE_ZLIB)
-    if ( (in->internal->z != NULL) && (NULL != (out->internal->z = (z_streamp)malloc(sizeof(z_stream)))) )
+    if ( (in->internal->z != NULL) && (NULL != (out->internal->z = NEW(z_stream))) )
         inflateCopy(out->internal->z,in->internal->z);
     if ( in->internal->data != NULL ) {
         if ( in->class_type == MAT_C_SPARSE ) {
-            out->internal->data = malloc(sizeof(mat_sparse_t));
+            out->internal->data = NEW(mat_sparse_t);
             if ( out->internal->data != NULL ) {
                 mat_sparse_t *out_sparse = (mat_sparse_t*)out->internal->data;
                 mat_sparse_t *in_sparse  = (mat_sparse_t*)in->internal->data;
                 out_sparse->nzmax = in_sparse->nzmax;
                 out_sparse->nir = in_sparse->nir;
-                out_sparse->ir = (int*)malloc(in_sparse->nir*sizeof(int));
+                out_sparse->ir = NEW_ARRAY(int,in_sparse->nir);
                 if ( out_sparse->ir != NULL )
                     memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(int));
                 out_sparse->njc = in_sparse->njc;
-                out_sparse->jc = (int*)malloc(in_sparse->njc*sizeof(int));
+                out_sparse->jc = NEW_ARRAY(int,in_sparse->njc);
                 if ( out_sparse->jc != NULL )
                     memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(int));
                 out_sparse->ndata = in_sparse->ndata;
                 if ( out->isComplex && NULL != in_sparse->data ) {
-                    out_sparse->data = malloc(sizeof(mat_complex_split_t));
+                    out_sparse->data = NEW(mat_complex_split_t);
                     if ( out_sparse->data != NULL ) {
                         mat_complex_split_t *out_data = (mat_complex_split_t*)out_sparse->data;
                         mat_complex_split_t *in_data  = (mat_complex_split_t*)in_sparse->data;
-                        out_data->Re = malloc(
-                            in_sparse->ndata*Mat_SizeOf(in->data_type));
+                        out_data->Re = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                         if ( NULL != out_data->Re )
                             memcpy(out_data->Re,in_data->Re,
                                 in_sparse->ndata*Mat_SizeOf(in->data_type));
-                        out_data->Im = malloc(
-                            in_sparse->ndata*Mat_SizeOf(in->data_type));
+                        out_data->Im = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                         if ( NULL != out_data->Im )
                             memcpy(out_data->Im,in_data->Im,
                                 in_sparse->ndata*Mat_SizeOf(in->data_type));
                     }
                 } else if ( in_sparse->data != NULL ) {
-                    out_sparse->data = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    out_sparse->data = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                     if ( NULL != out_sparse->data )
                         memcpy(out_sparse->data, in_sparse->data,
                             in_sparse->ndata*Mat_SizeOf(in->data_type));
                 }
             }
         } else if ( out->isComplex ) {
-            out->internal->data = malloc(sizeof(mat_complex_split_t));
+            out->internal->data = NEW(mat_complex_split_t);
             if ( out->internal->data != NULL ) {
                 mat_complex_split_t *out_data = (mat_complex_split_t*)out->internal->data;
                 mat_complex_split_t *in_data  = (mat_complex_split_t*)in->internal->data;
-                out_data->Re = malloc(out->nbytes);
+                out_data->Re = NEW_ARRAY(char,out->nbytes);
                 if ( NULL != out_data->Re )
                     memcpy(out_data->Re,in_data->Re,out->nbytes);
-                out_data->Im = malloc(out->nbytes);
+                out_data->Im = NEW_ARRAY(char,out->nbytes);
                 if ( NULL != out_data->Im )
                     memcpy(out_data->Im,in_data->Im,out->nbytes);
             }
-        } else if ( NULL != (out->internal->data = malloc(in->nbytes)) ) {
+        } else if ( NULL != (out->internal->data = NEW_ARRAY(char,in->nbytes)) ) {
             memcpy(out->internal->data, in->internal->data, in->nbytes);
         }
     }
@@ -1044,7 +1043,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         matvar_t **infields, **outfields;
         int nfields = 0;
 
-        out->data = malloc(in->nbytes);
+        out->data = NEW_ARRAY(char,in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
             nfields   = in->nbytes / in->data_size;
             infields  = (matvar_t **)in->data;
@@ -1057,7 +1056,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         matvar_t **incells, **outcells;
         int ncells = 0;
 
-        out->data = malloc(in->nbytes);
+        out->data = NEW_ARRAY(char,in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
             ncells   = in->nbytes / in->data_size;
             incells  = (matvar_t **)in->data;
@@ -1067,53 +1066,53 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
             }
         }
     } else if ( (in->data != NULL) && (in->class_type == MAT_C_SPARSE) ) {
-        out->data = malloc(sizeof(mat_sparse_t));
+        out->data = NEW(mat_sparse_t);
         if ( out->data != NULL ) {
             mat_sparse_t *out_sparse = (mat_sparse_t*)out->data;
             mat_sparse_t *in_sparse  = (mat_sparse_t*)in->data;
             out_sparse->nzmax = in_sparse->nzmax;
             out_sparse->nir = in_sparse->nir;
-            out_sparse->ir = (int*)malloc(in_sparse->nir*sizeof(int));
+            out_sparse->ir = NEW_ARRAY(int,in_sparse->nir);
             if ( out_sparse->ir != NULL )
                 memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(int));
             out_sparse->njc = in_sparse->njc;
-            out_sparse->jc = (int*)malloc(in_sparse->njc*sizeof(int));
+            out_sparse->jc = NEW_ARRAY(int,in_sparse->njc);
             if ( out_sparse->jc != NULL )
                 memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(int));
             out_sparse->ndata = in_sparse->ndata;
             if ( out->isComplex && NULL != in_sparse->data ) {
-                out_sparse->data = malloc(sizeof(mat_complex_split_t));
+                out_sparse->data = NEW(mat_complex_split_t);
                 if ( out_sparse->data != NULL ) {
                     mat_complex_split_t *out_data = (mat_complex_split_t*)out_sparse->data;
                     mat_complex_split_t *in_data  = (mat_complex_split_t*)in_sparse->data;
-                    out_data->Re = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    out_data->Re = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                     if ( NULL != out_data->Re )
                         memcpy(out_data->Re,in_data->Re,in_sparse->ndata*Mat_SizeOf(in->data_type));
-                    out_data->Im = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                    out_data->Im = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                     if ( NULL != out_data->Im )
                         memcpy(out_data->Im,in_data->Im,in_sparse->ndata*Mat_SizeOf(in->data_type));
                 }
             } else if ( in_sparse->data != NULL ) {
-                out_sparse->data = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                out_sparse->data = NEW_ARRAY(char,in_sparse->ndata*Mat_SizeOf(in->data_type));
                 if ( NULL != out_sparse->data )
                     memcpy(out_sparse->data, in_sparse->data, in_sparse->ndata*Mat_SizeOf(in->data_type));
             }
         }
     } else if ( in->data != NULL ) {
         if ( out->isComplex ) {
-            out->data = malloc(sizeof(mat_complex_split_t));
+            out->data = NEW(mat_complex_split_t);
             if ( out->data != NULL ) {
                 mat_complex_split_t *out_data = (mat_complex_split_t*)out->data;
                 mat_complex_split_t *in_data  = (mat_complex_split_t*)in->data;
-                out_data->Re = malloc(out->nbytes);
+                out_data->Re = NEW_ARRAY(char,out->nbytes);
                 if ( NULL != out_data->Re )
                     memcpy(out_data->Re,in_data->Re,out->nbytes);
-                out_data->Im = malloc(out->nbytes);
+                out_data->Im = NEW_ARRAY(char,out->nbytes);
                 if ( NULL != out_data->Im )
                     memcpy(out_data->Im,in_data->Im,out->nbytes);
             }
         } else {
-            out->data = malloc(in->nbytes);
+            out->data = NEW_ARRAY(char,in->nbytes);
             if ( out->data != NULL )
                 memcpy(out->data,in->data,in->nbytes);
         }
@@ -1138,10 +1137,10 @@ Mat_VarFree(matvar_t *matvar)
         nmemb = 1;
         for ( i = 0; i < matvar->rank; i++ )
             nmemb *= matvar->dims[i];
-        free(matvar->dims);
+        DELETE_ARRAY(matvar->dims);
     }
     if ( matvar->name )
-        free(matvar->name);
+        DELETE_ARRAY(matvar->name);
     if ( matvar->data != NULL) {
         switch (matvar->class_type ) {
             case MAT_C_STRUCT:
@@ -1151,7 +1150,7 @@ Mat_VarFree(matvar_t *matvar)
                     for ( i = 0; i < nmemb*nfields; i++ )
                         Mat_VarFree(fields[i]);
 
-                    free(matvar->data);
+                    DELETE_ARRAY(matvar->data);
                     break;
                 }
             case MAT_C_CELL:
@@ -1160,7 +1159,7 @@ Mat_VarFree(matvar_t *matvar)
                     for ( i = 0; i < nmemb; i++ )
                         Mat_VarFree(cells[i]);
 
-                    free(matvar->data);
+                    DELETE_ARRAY(matvar->data);
                 }
                 break;
             case MAT_C_SPARSE:
@@ -1168,18 +1167,18 @@ Mat_VarFree(matvar_t *matvar)
                     mat_sparse_t *sparse;
                     sparse = (mat_sparse_t*)matvar->data;
                     if ( sparse->ir != NULL )
-                        free(sparse->ir);
+                        DELETE_ARRAY(sparse->ir);
                     if ( sparse->jc != NULL )
-                        free(sparse->jc);
+                        DELETE_ARRAY(sparse->jc);
                     if ( matvar->isComplex && NULL != sparse->data ) {
                         mat_complex_split_t *complex_data = (mat_complex_split_t*)sparse->data;
-                        free(complex_data->Re);
-                        free(complex_data->Im);
-                        free(complex_data);
+                        DELETE_ARRAY(complex_data->Re);
+                        DELETE_ARRAY(complex_data->Im);
+                        DELETE_ARRAY(complex_data);
                     } else if ( sparse->data != NULL ) {
-                        free(sparse->data);
+                        DELETE_ARRAY(sparse->data);
                     }
-                    free(sparse);
+                    DELETE_ARRAY(sparse);
                 }
                 break;
             case MAT_C_DOUBLE:
@@ -1196,11 +1195,11 @@ Mat_VarFree(matvar_t *matvar)
                 if ( !matvar->mem_conserve ) {
                     if ( matvar->isComplex ) {
                         mat_complex_split_t *complex_data = (mat_complex_split_t*)matvar->data;
-                        free(complex_data->Re);
-                        free(complex_data->Im);
-                        free(complex_data);
+                        DELETE_ARRAY(complex_data->Re);
+                        DELETE_ARRAY(complex_data->Im);
+                        DELETE_ARRAY(complex_data);
                     } else {
-                        free(matvar->data);
+                        DELETE_ARRAY(matvar->data);
                     }
                 }
                 break;
@@ -1215,32 +1214,32 @@ Mat_VarFree(matvar_t *matvar)
 #if defined(HAVE_ZLIB)
         if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             inflateEnd(matvar->internal->z);
-            free(matvar->internal->z);
+            DELETE(matvar->internal->z);
             if ( (matvar->internal->data != NULL) && (matvar->class_type == MAT_C_SPARSE) ) {
                 mat_sparse_t *sparse;
                 sparse = (mat_sparse_t*)matvar->internal->data;
                 if ( sparse->ir != NULL )
-                    free(sparse->ir);
+                    DELETE_ARRAY(sparse->ir);
                 if ( sparse->jc != NULL )
-                    free(sparse->jc);
+                    DELETE_ARRAY(sparse->jc);
                 if ( matvar->isComplex && NULL != sparse->data ) {
                     mat_complex_split_t *complex_data = (mat_complex_split_t*)sparse->data;
-                    free(complex_data->Re);
-                    free(complex_data->Im);
-                    free(complex_data);
+                    DELETE_ARRAY(complex_data->Re);
+                    DELETE_ARRAY(complex_data->Im);
+                    DELETE_ARRAY(complex_data);
                 } else if ( sparse->data != NULL ) {
-                    free(sparse->data);
+                    DELETE_ARRAY(sparse->data);
                 }
-                free(sparse);
+                DELETE_ARRAY(sparse);
             }
             else if ( (matvar->internal->data != NULL) && matvar->isComplex ) {
                 mat_complex_split_t *complex_data =
                     (mat_complex_split_t*)matvar->internal->data;
-                free(complex_data->Re);
-                free(complex_data->Im);
-                free(complex_data);
+                DELETE_ARRAY(complex_data->Re);
+                DELETE_ARRAY(complex_data->Im);
+                DELETE_ARRAY(complex_data);
             } else if ( NULL != matvar->internal->data ) {
-                free(matvar->internal->data);
+                DELETE_ARRAY(matvar->internal->data);
             }
         }
 #endif
@@ -1274,7 +1273,7 @@ Mat_VarFree(matvar_t *matvar)
             }
         }
         if ( NULL != matvar->internal->hdf5_name ) {
-            free(matvar->internal->hdf5_name);
+            DELETE_ARRAY(matvar->internal->hdf5_name);
             matvar->internal->hdf5_name = NULL;
         }
 #endif
@@ -1283,18 +1282,18 @@ Mat_VarFree(matvar_t *matvar)
             size_t i;
             for ( i = 0; i < matvar->internal->num_fields; i++ ) {
                 if ( NULL != matvar->internal->fieldnames[i] )
-                    free(matvar->internal->fieldnames[i]);
+                    DELETE_ARRAY(matvar->internal->fieldnames[i]);
             }
-            free(matvar->internal->fieldnames);
+            DELETE_ARRAY(matvar->internal->fieldnames);
         }
-        free(matvar->internal);
+        DELETE(matvar->internal);
         matvar->internal = NULL;
     }
     /* FIXME: Why does this cause a SEGV? */
 #if 0
     memset(matvar,0,sizeof(matvar_t));
 #endif
-    free(matvar);
+    DELETE_ARRAY(matvar);
 }
 
 /** @brief Calculate a single subscript from a set of subscript values
@@ -1405,7 +1404,7 @@ Mat_CalcSubscripts(int rank,int *dims,int index)
     int i, j, k, *subs;
     double l;
 
-    subs = (int*)malloc(rank*sizeof(int));
+    subs = NEW_ARRAY(int,rank);
     l = index;
     for ( i = rank; i--; ) {
         k = 1;
@@ -1444,7 +1443,7 @@ Mat_CalcSubscripts2(int rank,size_t *dims,size_t index)
     size_t *subs;
     double l;
 
-    subs = (size_t*)malloc(rank*sizeof(size_t));
+    subs = NEW_ARRAY(size_t,rank);
     l = (double)index;
     for ( i = rank; i--; ) {
         int j;
@@ -2067,7 +2066,7 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
         else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             WriteCompressedData(mat,matvar->internal->z,data,N,matvar->data_type);
             (void)deflateEnd(matvar->internal->z);
-            free(matvar->internal->z);
+            DELETE(matvar->internal->z);
             matvar->internal->z = NULL;
         }
 #endif
