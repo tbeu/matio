@@ -416,6 +416,9 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 field = Mat_VarDuplicate(field,1);
                 Mat_VarFree(matvar);
                 matvar = field;
+                if ( done == 1 ) {
+                    Mat_VarReadDataAll(mat, matvar);
+                }
             } else if ( matvar->class_type == MAT_C_CELL ) {
                 int ncells;
                 matvar_t *cell, **cells;
