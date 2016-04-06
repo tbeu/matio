@@ -3541,16 +3541,13 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
 
     switch ( data_type ) {
         case MAT_T_UTF8:
-            data_size = 1;
-            for ( i = 0; i < len; i++ )
-                InflateData(mat,z,data+i,data_size);
-            break;
         case MAT_T_INT8:
         case MAT_T_UINT8:
             data_size = 1;
             for ( i = 0; i < len; i++ )
                 InflateData(mat,z,data+i,data_size);
             break;
+        case MAT_T_UTF16:
         case MAT_T_INT16:
         case MAT_T_UINT16:
         {
@@ -3589,14 +3586,12 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
 
     switch ( data_type ) {
         case MAT_T_UTF8:
-            for ( i = 0; i < len; i++ )
-                bytesread += fread(data+i,1,1,(FILE*)mat->fp);
-            break;
         case MAT_T_INT8:
         case MAT_T_UINT8:
             for ( i = 0; i < len; i++ )
                 bytesread += fread(data+i,1,1,(FILE*)mat->fp);
             break;
+        case MAT_T_UTF16:
         case MAT_T_INT16:
         case MAT_T_UINT16:
         {
