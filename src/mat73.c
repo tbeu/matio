@@ -2921,14 +2921,18 @@ int
 Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
 {
     hid_t id;
+    int err = -1;
 
     if ( NULL == mat || NULL == matvar )
-        return -1;
+        return err;
 
     matvar->compression = (enum matio_compression)compress;
 
     id = *(hid_t*)mat->fp;
-    return Mat_VarWriteNext73(id,matvar,matvar->name,&(mat->refs_id));
+    err = Mat_VarWriteNext73(id,matvar,matvar->name,&(mat->refs_id));
+    if ( err == 0 )
+        mat->num_datasets++;
+    return err;
 }
 
 #endif
