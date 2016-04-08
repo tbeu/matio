@@ -856,6 +856,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
         tmp = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
         if ( tmp != NULL ) {
             matvar_t *matvar;
+            Mat_Rewind(mat);
             while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
                 if ( strcmp(matvar->name,name) )
                     Mat_VarWrite(tmp,matvar,matvar->compression);
@@ -876,7 +877,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     mat->fp = NULL;
                 }
 #endif
-                if ( mat->fp ) {
+                if ( mat->fp != NULL ) {
                     fclose((FILE*)mat->fp);
                     mat->fp = NULL;
                 }
