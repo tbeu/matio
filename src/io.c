@@ -253,7 +253,6 @@ static int silent = 0;
 int
 Mat_SetVerbose( int verb, int s )
 {
-
     verbose = verb;
     silent  = s;
 
