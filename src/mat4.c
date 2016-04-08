@@ -103,6 +103,7 @@ Mat_Create4(const char* matname)
     mat->refs_id       = -1;
     mat->filename      = strdup_printf("%s",matname);
     mat->mode          = 0;
+    mat->num_datasets  = 0;
 
     Mat_Rewind(mat);
 
