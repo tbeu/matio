@@ -82,7 +82,7 @@ Mat_Create4(const char* matname)
     return NULL;
 #endif
 
-    fp = fopen(matname,"wb");
+    fp = fopen(matname,"w+b");
     if ( !fp )
         return NULL;
 

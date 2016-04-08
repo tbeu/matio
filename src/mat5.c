@@ -489,7 +489,7 @@ Mat_Create5(const char *matname,const char *hdr_str)
     size_t err;
     time_t t;
 
-    fp = fopen(matname,"wb");
+    fp = fopen(matname,"w+b");
     if ( !fp )
         return NULL;
 
