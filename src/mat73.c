@@ -2169,16 +2169,17 @@ Mat_Create73(const char *matname,const char *hdr_str)
         return NULL;
     }
 
-    mat->fp               = NULL;
-    mat->header           = NULL;
-    mat->subsys_offset    = NULL;
-    mat->filename         = NULL;
-    mat->version          = 0;
-    mat->byteswap         = 0;
-    mat->mode             = 0;
-    mat->bof              = 0;
-    mat->next_index       = 0;
-    mat->refs_id          = -1;
+    mat->fp            = NULL;
+    mat->header        = NULL;
+    mat->subsys_offset = NULL;
+    mat->filename      = NULL;
+    mat->version       = 0;
+    mat->byteswap      = 0;
+    mat->mode          = 0;
+    mat->bof           = 0;
+    mat->next_index    = 0;
+    mat->num_datasets  = 0;
+    mat->refs_id       = -1;
 
     t = time(NULL);
     mat->filename = strdup_printf("%s",matname);
