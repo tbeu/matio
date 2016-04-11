@@ -3568,7 +3568,8 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
             break;
         }
         default:
-            printf("Character data not supported type: %d",data_type);
+            Mat_Warning("ReadCompressedCharData:  %d is not a supported data "
+                "type for character data", data_type);
             break;
     }
     nBytes = len*data_size;
@@ -3611,7 +3612,8 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
             break;
         }
         default:
-            printf("Character data not supported type: %d",data_type);
+            Mat_Warning("ReadCharData:  %d is not a supported data type for ",
+                "character data", data_type);
             break;
     }
     bytesread *= data_size;
