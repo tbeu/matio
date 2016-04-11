@@ -24,7 +24,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-AT_SETUP([Write 2D double-precision array])
+AT_SETUP([Write 2D double array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_2d_numeric],[0],[],[])
@@ -35,7 +35,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='double';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D single-precision array])
+AT_SETUP([Write 2D single array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_2d_numeric],[0],[],[])
@@ -46,7 +46,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='single';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 64-bit integer array])
+AT_SETUP([Write 2D int64 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
@@ -58,7 +58,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 64-bit unsigned integer array])
+AT_SETUP([Write 2D uint64 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
@@ -70,7 +70,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 32-bit integer array])
+AT_SETUP([Write 2D int32 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_2d_numeric],[0],[],[])
@@ -81,7 +81,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 32-bit unsigned integer array])
+AT_SETUP([Write 2D uint32 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_2d_numeric],[0],[],[])
@@ -92,7 +92,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 16-bit integer array])
+AT_SETUP([Write 2D int16 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_2d_numeric],[0],[],[])
@@ -103,7 +103,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 16-bit unsigned integer array])
+AT_SETUP([Write 2D uint16 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_2d_numeric],[0],[],[])
@@ -114,7 +114,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 8-bit integer array])
+AT_SETUP([Write 2D int8 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_2d_numeric],[0],[],[])
@@ -125,7 +125,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 8-bit unsigned integer array])
+AT_SETUP([Write 2D uint8 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_2d_numeric],[0],[],[])
@@ -136,7 +136,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D double-precision complex array])
+AT_SETUP([Write 2D complex double array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_complex_2d_numeric],[0],[],[])
@@ -147,7 +147,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='double';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D single-precision complex array])
+AT_SETUP([Write 2D complex single array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_complex_2d_numeric],[0],[],[])
@@ -158,7 +158,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='single';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 64-bit integer complex array])
+AT_SETUP([Write 2D complex int64 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
@@ -170,7 +170,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 64-bit unsigned integer complex array])
+AT_SETUP([Write 2D complex uint64 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
@@ -182,7 +182,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 32-bit integer complex array])
+AT_SETUP([Write 2D complex int32 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_complex_2d_numeric],[0],[],[])
@@ -193,7 +193,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 32-bit unsigned integer complex array])
+AT_SETUP([Write 2D complex uint32 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_complex_2d_numeric],[0],[],[])
@@ -204,7 +204,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 16-bit integer complex array])
+AT_SETUP([Write 2D complex int16 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_complex_2d_numeric],[0],[],[])
@@ -215,7 +215,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 16-bit unsigned integer complex array])
+AT_SETUP([Write 2D complex uint16 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_complex_2d_numeric],[0],[],[])
@@ -226,7 +226,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 8-bit integer complex array])
+AT_SETUP([Write 2D complex int8 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_complex_2d_numeric],[0],[],[])
@@ -237,7 +237,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D 8-bit unsigned integer complex array])
+AT_SETUP([Write 2D complex uint8 array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_complex_2d_numeric],[0],[],[])
@@ -263,7 +263,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_logical.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_2d_logical" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse double-precision array])
+AT_SETUP([Write 2D sparse double array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_sparse],[0],[],[])
@@ -274,7 +274,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_sparse.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_sparse" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex double-precision array])
+AT_SETUP([Write 2D sparse complex double array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_complex_sparse],[0],[],[])
@@ -308,7 +308,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_char.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_char" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write empty structure array])
+AT_SETUP([Write empty struct])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
@@ -326,7 +326,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_empty_struct.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_empty_struct" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D double-precision fields])
+AT_SETUP([Write struct with 2D double fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_2d_numeric],[0],[],[])
@@ -337,7 +337,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='double';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D single-precision fields])
+AT_SETUP([Write struct with 2D single fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_struct_2d_numeric],[0],[],[])
@@ -348,7 +348,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='single';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 64-bit signed integer fields])
+AT_SETUP([Write struct with 2D int64 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
@@ -360,7 +360,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 64-bit unsigned integer fields])
+AT_SETUP([Write struct with 2D uint64 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
@@ -372,7 +372,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 32-bit signed integer fields])
+AT_SETUP([Write struct with 2D int32 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_struct_2d_numeric],[0],[],[])
@@ -383,7 +383,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 32-bit unsigned integer fields])
+AT_SETUP([Write struct with 2D uint32 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_struct_2d_numeric],[0],[],[])
@@ -394,7 +394,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 16-bit signed integer fields])
+AT_SETUP([Write struct with 2D int16 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_struct_2d_numeric],[0],[],[])
@@ -405,7 +405,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 16-bit unsigned integer fields])
+AT_SETUP([Write struct with 2D uint16 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_struct_2d_numeric],[0],[],[])
@@ -416,7 +416,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 8-bit signed integer fields])
+AT_SETUP([Write struct with 2D int8 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_struct_2d_numeric],[0],[],[])
@@ -427,7 +427,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 8-bit unsigned integer fields])
+AT_SETUP([Write struct with 2D uint8 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_struct_2d_numeric],[0],[],[])
@@ -438,7 +438,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_struct_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D double-precision complex fields])
+AT_SETUP([Write struct with 2D complex double fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_complex_2d_numeric],[0],[],[])
@@ -449,7 +449,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='double';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D single-precision complex fields])
+AT_SETUP([Write struct with 2D complex single fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_struct_complex_2d_numeric],[0],[],[])
@@ -460,7 +460,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='single';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 64-bit signed integer complex fields])
+AT_SETUP([Write struct with 2D complex int64 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
@@ -472,7 +472,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 64-bit unsigned integer complex fields])
+AT_SETUP([Write struct with 2D complex uint64 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
@@ -484,7 +484,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 32-bit signed integer complex fields])
+AT_SETUP([Write struct with 2D complex int32 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_struct_complex_2d_numeric],[0],[],[])
@@ -495,7 +495,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 32-bit unsigned integer complex fields])
+AT_SETUP([Write struct with 2D complex uint32 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_struct_complex_2d_numeric],[0],[],[])
@@ -506,7 +506,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 16-bit signed integer complex fields])
+AT_SETUP([Write struct with 2D complex int16 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_struct_complex_2d_numeric],[0],[],[])
@@ -517,7 +517,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 16-bit unsigned integer complex fields])
+AT_SETUP([Write struct with 2D complex uint16 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_struct_complex_2d_numeric],[0],[],[])
@@ -528,7 +528,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 8-bit signed integer complex fields])
+AT_SETUP([Write struct with 2D complex int8 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_struct_complex_2d_numeric],[0],[],[])
@@ -539,7 +539,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D 8-bit unsigned integer complex fields])
+AT_SETUP([Write struct with 2D complex uint8 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_struct_complex_2d_numeric],[0],[],[])
@@ -550,7 +550,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_struct_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write structure array with 2D logical fields])
+AT_SETUP([Write struct with 2D logical fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_2d_logical],[0],[],[])
@@ -575,7 +575,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_empty_cell.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_empty_cell" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D double-precision fields])
+AT_SETUP([Write cell array with 2D double fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_2d_numeric],[0],[],[])
@@ -586,7 +586,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='double';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D single-precision fields])
+AT_SETUP([Write cell array with 2D single fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_cell_2d_numeric],[0],[],[])
@@ -597,7 +597,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='single';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 64-bit signed integer fields])
+AT_SETUP([Write cell array with 2D int64 fields])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
@@ -609,7 +609,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 64-bit unsigned integer fields])
+AT_SETUP([Write cell array with 2D uint64 fields])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
@@ -621,7 +621,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 32-bit signed integer fields])
+AT_SETUP([Write cell array with 2D int32 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_cell_2d_numeric],[0],[],[])
@@ -632,7 +632,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 32-bit unsigned integer fields])
+AT_SETUP([Write cell array with 2D uint32 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_cell_2d_numeric],[0],[],[])
@@ -643,7 +643,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 16-bit signed integer fields])
+AT_SETUP([Write cell array with 2D int16 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_cell_2d_numeric],[0],[],[])
@@ -654,7 +654,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 16-bit unsigned integer fields])
+AT_SETUP([Write cell array with 2D uint16 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_cell_2d_numeric],[0],[],[])
@@ -665,7 +665,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 8-bit signed integer fields])
+AT_SETUP([Write cell array with 2D int8 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_cell_2d_numeric],[0],[],[])
@@ -676,7 +676,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 8-bit unsigned integer fields])
+AT_SETUP([Write cell array with 2D uint8 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_cell_2d_numeric],[0],[],[])
@@ -687,7 +687,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_cell_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D double-precision complex fields])
+AT_SETUP([Write cell array with 2D complex double fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_complex_2d_numeric],[0],[],[])
@@ -698,7 +698,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='double';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D single-precision complex fields])
+AT_SETUP([Write cell array with 2D complex single fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_cell_complex_2d_numeric],[0],[],[])
@@ -709,7 +709,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='single';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 64-bit signed integer complex fields])
+AT_SETUP([Write cell array with 2D complex int64 fields])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
@@ -721,7 +721,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 64-bit unsigned integer complex fields])
+AT_SETUP([Write cell array with 2D complex uint64 fields])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
@@ -733,7 +733,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 32-bit signed integer complex fields])
+AT_SETUP([Write cell array with 2D complex int32 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_cell_complex_2d_numeric],[0],[],[])
@@ -744,7 +744,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 32-bit unsigned integer complex fields])
+AT_SETUP([Write cell array with 2D complex uint32 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_cell_complex_2d_numeric],[0],[],[])
@@ -755,7 +755,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 16-bit signed integer complex fields])
+AT_SETUP([Write cell array with 2D complex int16 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_cell_complex_2d_numeric],[0],[],[])
@@ -766,7 +766,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 16-bit unsigned integer complex fields])
+AT_SETUP([Write cell array with 2D complex uint16 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_cell_complex_2d_numeric],[0],[],[])
@@ -777,7 +777,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 8-bit signed integer complex fields])
+AT_SETUP([Write cell array with 2D complex int8 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_cell_complex_2d_numeric],[0],[],[])
@@ -788,7 +788,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_cell_complex_2d_numeric" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with 2D 8-bit unsigned integer complex fields])
+AT_SETUP([Write cell array with 2D complex uint8 fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_cell_complex_2d_numeric],[0],[],[])
@@ -810,7 +810,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_2d_logical.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_cell_2d_logical" | $GREP PASSED],[0],[PASSED],[])
 AT_CLEANUP
 
-AT_SETUP([Write cell array with empty structure fields])
+AT_SETUP([Write cell array with empty struct fields])
 AT_KEYWORDS([empty bug34])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $MAT73 -ne 1])
