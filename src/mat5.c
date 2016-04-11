@@ -4388,14 +4388,14 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = tag[1];
                 }
             }
+            /* FIXME: */
+            matvar->data_type = MAT_T_UINT8;
             if ( nBytes == 0 ) {
                 matvar->nbytes = 0;
                 matvar->data   = calloc(0,1);
                 break;
             }
             matvar->data_size = sizeof(char);
-            /* FIXME: */
-            matvar->data_type = MAT_T_UINT8;
             matvar->nbytes = len*matvar->data_size;
             matvar->data   = calloc(matvar->nbytes+1,1);
             if ( !matvar->data ) {
@@ -4404,24 +4404,24 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             if ( matvar->compression == MAT_COMPRESSION_NONE) {
                 nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,len);
-                    /*
-                     * If the data was in the tag we started on a 4-byte
-                     * boundary so add 4 to make it an 8-byte
-                     */
-                    if ( data_in_tag )
-                        nBytes+=4;
+                /*
+                 * If the data was in the tag we started on a 4-byte
+                 * boundary so add 4 to make it an 8-byte
+                 */
+                if ( data_in_tag )
+                    nBytes+=4;
                 if ( (nBytes % 8) != 0 )
                     (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
             } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                 nBytes = ReadCompressedCharData(mat,matvar->internal->z,
                              (char*)matvar->data,packed_type,len);
-                    /*
-                     * If the data was in the tag we started on a 4-byte
-                     * boundary so add 4 to make it an 8-byte
-                     */
-                    if ( data_in_tag )
-                        nBytes+=4;
+                /*
+                 * If the data was in the tag we started on a 4-byte
+                 * boundary so add 4 to make it an 8-byte
+                 */
+                if ( data_in_tag )
+                    nBytes+=4;
                 if ( (nBytes % 8) != 0 )
                     InflateSkip(mat,matvar->internal->z,8-(nBytes % 8));
 #endif
@@ -4635,7 +4635,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             if ( matvar->isLogical && packed_type == MAT_T_DOUBLE ) {
                 /* For some reason, MAT says the data type is a double,
-                 * but it appears to be written as 8-bit integer.
+                 * but it appears to be written as 8-bit unsigned integer.
                  */
                 packed_type = MAT_T_UINT8;
             }
