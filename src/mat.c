@@ -173,7 +173,7 @@ Mat_GetLibraryVersion(int *major,int *minor,int *release)
 mat_t *
 Mat_CreateVer(const char *matname,const char *hdr_str,enum mat_ft mat_file_ver)
 {
-    mat_t *mat = NULL;
+    mat_t *mat;
 
     switch ( mat_file_ver ) {
         case MAT_FT_MAT4:
@@ -188,6 +188,7 @@ Mat_CreateVer(const char *matname,const char *hdr_str,enum mat_ft mat_file_ver)
 #endif
             break;
         default:
+            mat = NULL;
             break;
     }
 
@@ -838,7 +839,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
         return err;
 
     if ( (tmp_name = mktemp(temp)) != NULL ) {
-        enum mat_ft mat_file_ver = MAT_FT_DEFAULT;
+        enum mat_ft mat_file_ver;
         mat_t *tmp;
 
         switch ( mat->version ) {
@@ -850,6 +851,9 @@ Mat_VarDelete(mat_t *mat, const char *name)
                 break;
             case 0x0010:
                 mat_file_ver = MAT_FT_MAT4;
+                break;
+            default:
+                mat_file_ver = MAT_FT_DEFAULT;
                 break;
         }
 
