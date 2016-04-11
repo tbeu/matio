@@ -26,25 +26,25 @@
 
 AT_TESTED([test_mat])
 
-AT_SETUP([Read linear slab of double-precision array])
+AT_SETUP([Read linear slab of double array])
 AT_KEYWORDS([mat4_readslab readslab read_data_linear])
 AT_CHECK([cp $srcdir/results/dump-var1-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_be.mat var1\(2:3:end\)],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read linear slab of complex double-precision array])
+AT_SETUP([Read linear slab of complex double array])
 AT_KEYWORDS([mat4_readslab readslab read_data_linear])
 AT_CHECK([cp $srcdir/results/dump-var11-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_be.mat var11\(2:3:end\)],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read slab of double-precision array])
+AT_SETUP([Read slab of double array])
 AT_KEYWORDS([mat4_readslab readslab])
 AT_CHECK([cp $srcdir/results/dump-var1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_be.mat var1\(1:1:end,1:1:end\)],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read slab of complex double-precision array])
+AT_SETUP([Read slab of complex double array])
 AT_KEYWORDS([mat4_readslab readslab])
 AT_CHECK([cp $srcdir/results/dump-var11.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_be.mat var11\(1:1:end,1:1:end\)],[0],[expout],[])

@@ -132,7 +132,7 @@ AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var1],[0],[],[])
 AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var24],[0],[],[])
 AT_CLEANUP
 
-AT_SETUP([Copy large structure])
+AT_SETUP([Copy large struct])
 AT_KEYWORDS([copy large_struct])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/large_struct_compressed_le.mat],[0],[],[])

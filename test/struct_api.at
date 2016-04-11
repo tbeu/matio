@@ -24,37 +24,37 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-AT_SETUP([Create structure array])
+AT_SETUP([Create struct])
 AT_KEYWORDS([struct_api])
 AT_CHECK([cp $srcdir/results/struct_api_create.out expout
           $builddir/test_mat struct_api_create],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Set structure field])
+AT_SETUP([Set struct field])
 AT_KEYWORDS([struct_api])
 AT_CHECK([cp $srcdir/results/struct_api_setfield.out expout
           $builddir/test_mat struct_api_setfield],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Get structure fieldnames])
+AT_SETUP([Get struct fieldnames])
 AT_KEYWORDS([struct_api])
 AT_CHECK([cp $srcdir/results/struct_api_getfieldnames.out expout
           $builddir/test_mat struct_api_getfieldnames],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Add fields to structure array])
+AT_SETUP([Add fields to struct])
 AT_KEYWORDS([struct_api])
 AT_CHECK([cp $srcdir/results/struct_api_addfield.out expout
           $builddir/test_mat struct_api_addfield],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Linearly index a structure])
+AT_SETUP([Linearly index a struct])
 AT_KEYWORDS([struct_api])
 AT_CHECK([cp $srcdir/results/struct_api_getlinear.out expout
           $builddir/test_mat struct_api_getlinear],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Index structure via dimension slices])
+AT_SETUP([Index struct via dimension slices])
 AT_KEYWORDS([struct_api])
 AT_CHECK([cp $srcdir/results/struct_api_get.out expout
           $builddir/test_mat struct_api_get],[0],[expout],[])

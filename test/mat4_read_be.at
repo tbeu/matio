@@ -26,7 +26,7 @@
 
 AT_TESTED([test_mat])
 
-AT_SETUP([Read 2d double-precision array])
+AT_SETUP([Read 2d double array])
 AT_KEYWORDS([mat4_read_be])
 AT_CHECK([cp $srcdir/results/read-var1.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_v4_be.mat var1],[0],[expout],[])
@@ -34,7 +34,7 @@ AT_CHECK([cp $srcdir/results/dump-var1.out expout
          $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_be.mat var1],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read 2d double-precision complex array])
+AT_SETUP([Read 2d complex double array])
 AT_KEYWORDS([mat4_read_be])
 AT_CHECK([cp $srcdir/results/read-var11.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_v4_be.mat var11],[0],[expout],[])
@@ -42,12 +42,12 @@ AT_CHECK([cp $srcdir/results/dump-var11.out expout
          $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_v4_be.mat var11],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read double-precision sparse array])
+AT_SETUP([Read sparse double array])
 AT_CHECK([cp $srcdir/results/read-var21.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_v4_be.mat var21],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read double-precision sparse complex array])
+AT_SETUP([Read sparse complex double array])
 AT_CHECK([cp $srcdir/results/read-var22.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_v4_be.mat var22],[0],[expout],[])
 AT_CLEANUP

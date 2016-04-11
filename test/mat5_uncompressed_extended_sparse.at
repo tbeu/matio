@@ -24,14 +24,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-AT_SETUP([Write 2D sparse single-precision array])
+AT_SETUP([Write 2D sparse single array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c single write_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-single.out expout
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse 64-bit integer array])
+AT_SETUP([Write 2D sparse int64 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c int64 write_sparse],[0],[],[])
@@ -39,7 +39,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-int64.out expout
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse 64-bit unsigned integer array])
+AT_SETUP([Write 2D sparse uint64 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_sparse],[0],[],[])
@@ -47,56 +47,56 @@ AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-uint64.out expou
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse 32-bit integer array])
+AT_SETUP([Write 2D sparse int32 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int32 write_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-int32.out expout
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse 32-bit unsigned integer array])
+AT_SETUP([Write 2D sparse uint32 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-uint32.out expout
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse 16-bit integer array])
+AT_SETUP([Write 2D sparse int16 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int16 write_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-int16.out expout
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse 16-bit unsigned integer array])
+AT_SETUP([Write 2D sparse uint16 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-uint16.out expout
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse 8-bit integer array])
+AT_SETUP([Write 2D sparse int8 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int8 write_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-int8.out expout
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse 8-bit unsigned integer array])
+AT_SETUP([Write 2D sparse uint8 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-uint8.out expout
           $builddir/test_mat readvar test_write_sparse.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex single-precision array])
+AT_SETUP([Write 2D sparse complex single array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c single write_complex_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-single.out expout
           $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex 64-bit integer array])
+AT_SETUP([Write 2D sparse complex int64 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c int64 write_complex_sparse],[0],[],[])
@@ -104,7 +104,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-int64.ou
           $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex 64-bit unsigned integer array])
+AT_SETUP([Write 2D sparse complex uint64 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
 AT_CHECK([$builddir/test_mat -v 5 -c uint64 write_complex_sparse],[0],[],[])
@@ -112,42 +112,42 @@ AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-uint64.o
           $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex 32-bit integer array])
+AT_SETUP([Write 2D sparse complex int32 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int32 write_complex_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-int32.out expout
           $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex 32-bit unsigned integer array])
+AT_SETUP([Write 2D sparse complex uint32 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint32 write_complex_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-uint32.out expout
           $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex 16-bit integer array])
+AT_SETUP([Write 2D sparse complex int16 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int16 write_complex_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-int16.out expout
           $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex 16-bit unsigned integer array])
+AT_SETUP([Write 2D sparse complex uint16 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint16 write_complex_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-uint16.out expout
           $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex 8-bit integer array])
+AT_SETUP([Write 2D sparse complex int8 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c int8 write_complex_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-int8.out expout
           $builddir/test_mat readvar test_write_sparse_complex.mat sparse_matrix],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Write 2D sparse complex 8-bit unsigned integer array])
+AT_SETUP([Write 2D sparse complex uint8 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -c uint8 write_complex_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-uint8.out expout
