@@ -196,7 +196,6 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var25.out \
                  $(srcdir)/results/read-var26.out \
                  $(srcdir)/results/read-var27.out \
-                 $(srcdir)/results/read-var27-73.out \
                  $(srcdir)/results/read-var28.out \
                  $(srcdir)/results/read-var29.out \
                  $(srcdir)/results/read-var30.out \
@@ -236,7 +235,6 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var64.out \
                  $(srcdir)/results/read-var65.out \
                  $(srcdir)/results/read-var66.out \
-                 $(srcdir)/results/read-var66-73.out \
                  $(srcdir)/results/read-var67.out \
                  $(srcdir)/results/read-var68.out \
                  $(srcdir)/results/read-var69.out \
@@ -259,7 +257,6 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/readvar-write_empty_2d_numeric-empty.out \
                  $(srcdir)/results/readvar-write_empty_cell-var1.out \
                  $(srcdir)/results/readvar-write_empty_cell-var2.out \
-                 $(srcdir)/results/readvar-write_empty_struct-73-var4.out \
                  $(srcdir)/results/readvar-write_empty_struct-var1.out \
                  $(srcdir)/results/readvar-write_empty_struct-var2.out \
                  $(srcdir)/results/readvar-write_empty_struct-var3.out \

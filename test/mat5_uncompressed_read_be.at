@@ -374,7 +374,7 @@ AT_CHECK([cp $srcdir/results/read-var65.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var65],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read cell array with empty strucs])
+AT_SETUP([Read cell array with empty structs])
 AT_KEYWORDS([empty])
 AT_CHECK([cp $srcdir/results/read-var66.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var66],[0],[expout],[])

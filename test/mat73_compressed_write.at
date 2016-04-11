@@ -319,7 +319,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var2.out expout
           $builddir/test_mat readvar test_write_empty_struct.mat var2],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var3.out expout
           $builddir/test_mat readvar test_write_empty_struct.mat var3],[0],[expout],[])
-AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-73-var4.out expout
+AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var4.out expout
           $builddir/test_mat readvar test_write_empty_struct.mat var4],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_empty_struct.m .

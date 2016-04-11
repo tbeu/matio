@@ -203,7 +203,7 @@ AT_CLEANUP
 AT_SETUP([Read struct with empty fields])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
-AT_CHECK([cp $srcdir/results/read-var27-73.out expout
+AT_CHECK([cp $srcdir/results/read-var27.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_le.mat var27],[0],[expout],[])
 AT_CLEANUP
 
@@ -466,7 +466,7 @@ AT_CLEANUP
 AT_SETUP([Read cell array with empty structs])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
-AT_CHECK([cp $srcdir/results/read-var66-73.out expout
+AT_CHECK([cp $srcdir/results/read-var66.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_le.mat var66],[0],[expout],[])
 AT_CLEANUP
 
