@@ -186,9 +186,9 @@ struct matvar_internal;
 typedef struct matvar_t {
     size_t nbytes;                    /**< Number of bytes for the MAT variable */
     int    rank;                      /**< Rank (Number of dimensions) of the data */
-    enum matio_types   data_type;     /**< Data type(MAT_T_*) */
+    enum matio_types   data_type;     /**< Data type (MAT_T_*) */
     int   data_size;                  /**< Bytes / element for the data */
-    enum matio_classes class_type;    /**< Class type in Matlab(MAT_C_DOUBLE, etc) */
+    enum matio_classes class_type;    /**< Class type in Matlab (MAT_C_DOUBLE, etc) */
     int   isComplex;                  /**< non-zero if the data is complex, 0 if real */
     int   isGlobal;                   /**< non-zero if the variable is global */
     int   isLogical;                  /**< non-zero if the variable is logical */
@@ -234,7 +234,7 @@ EXTERN void   Mat_Help( const char *helpstr[] );
 EXTERN int    Mat_LogInit( const char *progname );
 EXTERN int    Mat_LogClose(void);
 EXTERN int    Mat_LogInitFunc(const char *prog_name,
-                    void (*log_func)(int log_level, char *message) );
+                  void (*log_func)(int log_level, char *message) );
 EXTERN int    Mat_Message( const char *format, ... );
 EXTERN int    Mat_DebugMessage( int level, const char *format, ... );
 EXTERN int    Mat_VerbMessage( int level, const char *format, ... );
@@ -304,9 +304,9 @@ EXTERN int        Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
                       int *start,int *stride,int *edge);
 
 /* Other functions */
-EXTERN int       Mat_CalcSingleSubscript(int rank,int *dims,int *subs);
-EXTERN int       Mat_CalcSingleSubscript2(int rank,size_t *dims,size_t *subs,size_t *index);
-EXTERN int      *Mat_CalcSubscripts(int rank,int *dims,int index);
-EXTERN size_t   *Mat_CalcSubscripts2(int rank,size_t *dims,size_t index);
+EXTERN int     Mat_CalcSingleSubscript(int rank,int *dims,int *subs);
+EXTERN int     Mat_CalcSingleSubscript2(int rank,size_t *dims,size_t *subs,size_t *index);
+EXTERN int    *Mat_CalcSubscripts(int rank,int *dims,int index);
+EXTERN size_t *Mat_CalcSubscripts2(int rank,size_t *dims,size_t index);
 
 #endif
