@@ -6886,14 +6886,6 @@ Mat_VarReadNextInfo5( mat_t *mat )
             long     bytesread = 0;
 
             matvar               = Mat_VarCalloc();
-            matvar->name         = NULL;
-            matvar->data         = NULL;
-            matvar->dims         = NULL;
-            matvar->nbytes       = 0;
-            matvar->data_type    = MAT_T_UNKNOWN;
-            matvar->class_type   = MAT_C_EMPTY;
-            matvar->data_size    = 0;
-            matvar->mem_conserve = 0;
             matvar->compression  = MAT_COMPRESSION_ZLIB;
 
             matvar->internal->fp = mat;
