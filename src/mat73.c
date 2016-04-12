@@ -913,7 +913,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                     free(ref_ids);
                 } else {
                     fields[k] = Mat_VarCalloc();
-                    fields[k]->internal->fp   = mat;
+                    fields[k]->internal->fp = mat;
                     fields[k]->name =
                         strdup(matvar->internal->fieldnames[k]);
                     Mat_H5ReadDatasetInfo(mat,fields[k],field_id);
@@ -924,7 +924,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                                    H5P_DEFAULT);
                 if ( -1 < field_id ) {
                     fields[k] = Mat_VarCalloc();
-                    fields[k]->internal->fp   = mat;
+                    fields[k]->internal->fp = mat;
                     fields[k]->name = strdup(matvar->internal->fieldnames[k]);
                     Mat_H5ReadGroupInfo(mat,fields[k],field_id);
                     H5Gclose(field_id);
@@ -2720,7 +2720,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
 
     /* FIXME: follow symlinks, datatypes? */
 
-    /* Check that this is not the /#refs# group */
+    /* Check that this is not the /#refs# or /"#subsystem#" group */
     if ( 0 == strcmp(name, "#refs#") || 0 == strcmp(name, "#subsystem#") )
         return 0;
 

@@ -1711,7 +1711,7 @@ WriteCompressedData(mat_t *mat,z_streamp z,void *data,int N,
 {
     int nBytes = 0, data_size, data_tag[2], byteswritten = 0;
     int buf_size = 1024;
-    mat_uint8_t   buf[1024], pad[8] = {0,};
+    mat_uint8_t buf[1024], pad[8] = {0,};
 
     if ((mat == NULL) || (mat->fp == NULL))
         return 0;
@@ -1835,13 +1835,13 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             /* Array Flags */
             if ( uncomp_buf[0] == MAT_T_UINT32 ) {
                array_flags = uncomp_buf[2];
-               cells[i]->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               cells[i]->isComplex   = (array_flags & MAT_F_COMPLEX);
-               cells[i]->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               cells[i]->isLogical   = (array_flags & MAT_F_LOGICAL);
+               cells[i]->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+               cells[i]->isComplex  = (array_flags & MAT_F_COMPLEX);
+               cells[i]->isGlobal   = (array_flags & MAT_F_GLOBAL);
+               cells[i]->isLogical  = (array_flags & MAT_F_LOGICAL);
                if ( cells[i]->class_type == MAT_C_SPARSE ) {
                    /* Need to find a more appropriate place to store nzmax */
-                   cells[i]->nbytes      = uncomp_buf[3];
+                   cells[i]->nbytes = uncomp_buf[3];
                }
             } else {
                 Mat_Critical("Expected MAT_T_UINT32 for Array Tags, got %d",
@@ -1946,7 +1946,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 
     } else {
         mat_uint32_t buf[16];
-        int      nbytes,nBytes;
+        int nbytes,nBytes;
         mat_uint32_t array_flags;
 
         for ( i = 0; i < ncells; i++ ) {
@@ -1990,7 +1990,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             cells[i]->internal->z = NULL;
 #endif
 
-            /* Read Array Flags and The Dimensions Tag */
+            /* Read array flags and the dimensions tag */
             bytesread += fread(buf,4,6,(FILE*)mat->fp);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
@@ -2001,19 +2001,19 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(buf+5);
             }
             nBytes-=24;
-            /* Array Flags */
+            /* Array flags */
             if ( buf[0] == MAT_T_UINT32 ) {
                array_flags = buf[2];
-               cells[i]->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               cells[i]->isComplex   = (array_flags & MAT_F_COMPLEX);
-               cells[i]->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               cells[i]->isLogical   = (array_flags & MAT_F_LOGICAL);
+               cells[i]->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+               cells[i]->isComplex  = (array_flags & MAT_F_COMPLEX);
+               cells[i]->isGlobal   = (array_flags & MAT_F_GLOBAL);
+               cells[i]->isLogical  = (array_flags & MAT_F_LOGICAL);
                if ( cells[i]->class_type == MAT_C_SPARSE ) {
                    /* Need to find a more appropriate place to store nzmax */
-                   cells[i]->nbytes      = buf[3];
+                   cells[i]->nbytes = buf[3];
                }
             }
-            /* Rank and Dimension */
+            /* Rank and dimension */
             if ( buf[4] == MAT_T_INT32 ) {
                 int j;
                 nbytes = buf[5];
@@ -2037,7 +2037,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                         cells[i]->dims[j] = buf[j];
                 }
             }
-            /* Variable Name Tag */
+            /* Variable name tag */
             bytesread+=fread(buf,1,8,(FILE*)mat->fp);
             nBytes-=8;
             if ( mat->byteswap ) {
@@ -2190,16 +2190,16 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(uncomp_buf+2);
                 (void)Mat_uint32Swap(uncomp_buf+3);
             }
-            /* Array Flags */
+            /* Array flags */
             if ( uncomp_buf[0] == MAT_T_UINT32 ) {
                array_flags = uncomp_buf[2];
-               fields[i]->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               fields[i]->isComplex   = (array_flags & MAT_F_COMPLEX);
-               fields[i]->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               fields[i]->isLogical   = (array_flags & MAT_F_LOGICAL);
+               fields[i]->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+               fields[i]->isComplex  = (array_flags & MAT_F_COMPLEX);
+               fields[i]->isGlobal   = (array_flags & MAT_F_GLOBAL);
+               fields[i]->isLogical  = (array_flags & MAT_F_LOGICAL);
                if ( fields[i]->class_type == MAT_C_SPARSE ) {
                    /* Need to find a more appropriate place to store nzmax */
-                   fields[i]->nbytes      = uncomp_buf[3];
+                   fields[i]->nbytes = uncomp_buf[3];
                }
             } else {
                 Mat_Critical("Expected MAT_T_UINT32 for Array Tags, got %d",
@@ -2212,7 +2212,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(uncomp_buf);
                 (void)Mat_uint32Swap(uncomp_buf+1);
             }
-            /* Rank and Dimension */
+            /* Rank and dimension */
             if ( uncomp_buf[0] == MAT_T_INT32 ) {
                 int j = 0;
 
@@ -2277,7 +2277,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 #endif
     } else {
         mat_uint32_t buf[16] = {0,};
-        int      nbytes,nBytes,j;
+        int nbytes,nBytes,j;
         mat_uint32_t array_flags;
 
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
@@ -2365,7 +2365,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             fields[i]->internal->z = NULL;
 #endif
 
-            /* Read Array Flags and The Dimensions Tag */
+            /* Read array flags and the dimensions tag */
             bytesread += fread(buf,4,6,(FILE*)mat->fp);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
@@ -2376,19 +2376,19 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(buf+5);
             }
             nBytes-=24;
-            /* Array Flags */
+            /* Array flags */
             if ( buf[0] == MAT_T_UINT32 ) {
                array_flags = buf[2];
-               fields[i]->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               fields[i]->isComplex   = (array_flags & MAT_F_COMPLEX);
-               fields[i]->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               fields[i]->isLogical   = (array_flags & MAT_F_LOGICAL);
+               fields[i]->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+               fields[i]->isComplex  = (array_flags & MAT_F_COMPLEX);
+               fields[i]->isGlobal   = (array_flags & MAT_F_GLOBAL);
+               fields[i]->isLogical  = (array_flags & MAT_F_LOGICAL);
                if ( fields[i]->class_type == MAT_C_SPARSE ) {
                    /* Need to find a more appropriate place to store nzmax */
-                   fields[i]->nbytes      = buf[3];
+                   fields[i]->nbytes = buf[3];
                }
             }
-            /* Rank and Dimension */
+            /* Rank and dimension */
             if ( buf[4] == MAT_T_INT32 ) {
                 int j;
 
@@ -2414,7 +2414,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                         fields[i]->dims[j] = buf[j];
                 }
             }
-            /* Variable Name Tag */
+            /* Variable name tag */
             bytesread+=fread(buf,1,8,(FILE*)mat->fp);
             nBytes-=8;
             fields[i]->internal->datapos = ftell((FILE*)mat->fp);
