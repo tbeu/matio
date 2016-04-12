@@ -757,7 +757,8 @@ redirect_output(const char* output)
 {
     if (output!=NULL)
         if (freopen(output,"w",stdout)==NULL)
-            fprintf(stderr, "Unable to open %s for writing. Using stdout instead.");
+            fprintf(stderr, "Unable to open %s for writing. Using stdout instead.",
+                output);
 }
 
 static int
