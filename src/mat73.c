@@ -2176,7 +2176,7 @@ Mat_Create73(const char *matname,const char *hdr_str)
     mat->version       = 0;
     mat->byteswap      = 0;
     mat->mode          = 0;
-    mat->bof           = 0;
+    mat->bof           = 128;
     mat->next_index    = 0;
     mat->num_datasets  = 0;
     mat->refs_id       = -1;
