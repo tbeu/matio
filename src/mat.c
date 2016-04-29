@@ -528,10 +528,10 @@ Mat_VarCalloc(void)
             free(matvar);
             matvar = NULL;
         } else {
-            matvar->internal->hdf5_name = NULL;
-            matvar->internal->hdf5_ref  =  0;
-            matvar->internal->id        = -1;
-            matvar->internal->fp = NULL;
+            matvar->internal->hdf5_name  = NULL;
+            matvar->internal->hdf5_ref   =  0;
+            matvar->internal->id         = -1;
+            matvar->internal->fp         = NULL;
             matvar->internal->fpos       = 0;
             matvar->internal->datapos    = 0;
             matvar->internal->fieldnames = NULL;
@@ -2106,15 +2106,26 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
  * @param mat MAT file to write to
  * @param matvar MAT variable information to write
  * @param compress Whether or not to compress the data
- *        (Only valid for version 5 MAT files and variables with numeric data)
+ *        (Only valid for version 5 and 7.3 MAT files and variables with
+           numeric data)
  * @retval 0 on success
  */
 int
 Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
 {
-    if ( mat == NULL || matvar == NULL )
+    matvar_t *matvar2 = NULL;
+
+    if ( NULL == mat || NULL == matvar )
         return -1;
-    else if ( mat->version == MAT_FT_MAT4 )
+
+    matvar2 = Mat_VarReadInfo(mat, matvar->name);
+    if ( NULL != matvar2 ) {
+        Mat_VarFree(matvar2);
+        Mat_Critical("Variable %s already exists.", matvar->name);
+        return 1;
+    }
+
+    if ( mat->version == MAT_FT_MAT4 )
         return Mat_VarWrite4(mat,matvar);
     else if ( mat->version == MAT_FT_MAT5 )
         return Mat_VarWrite5(mat,matvar,compress);
