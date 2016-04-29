@@ -482,7 +482,7 @@ AT_CHECK([cp $srcdir/results/read-var68.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_le.mat var68],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read cell array  structs (character fields)])
+AT_SETUP([Read cell array structs (character fields)])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/read-var69.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_le.mat var69],[0],[expout],[])
