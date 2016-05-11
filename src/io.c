@@ -41,14 +41,6 @@
 #    define va_copy(d,s) memcpy(&(d),&(s),sizeof(va_list))
 #endif
 
-/** @cond 0 */
-#define LOG_LEVEL_ERROR    1
-#define LOG_LEVEL_CRITICAL 1 << 1
-#define LOG_LEVEL_WARNING  1 << 2
-#define LOG_LEVEL_MESSAGE  1 << 3
-#define LOG_LEVEL_DEBUG    1 << 4
-/** @endcond */
-
 static void (*logfunc)(int log_level, char *message ) = NULL;
 static const char *progname = NULL;
 
