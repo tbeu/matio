@@ -221,11 +221,11 @@ typedef struct mat_sparse_t {
 } mat_sparse_t;
 
 /** @cond 0 */
-#define LOG_LEVEL_ERROR    1
-#define LOG_LEVEL_CRITICAL 1 << 1
-#define LOG_LEVEL_WARNING  1 << 2
-#define LOG_LEVEL_MESSAGE  1 << 3
-#define LOG_LEVEL_DEBUG    1 << 4
+#define MATIO_LOG_LEVEL_ERROR    1
+#define MATIO_LOG_LEVEL_CRITICAL 1 << 1
+#define MATIO_LOG_LEVEL_WARNING  1 << 2
+#define MATIO_LOG_LEVEL_MESSAGE  1 << 3
+#define MATIO_LOG_LEVEL_DEBUG    1 << 4
 /** @endcond */
 
 /* Library function */
