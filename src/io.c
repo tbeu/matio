@@ -41,14 +41,6 @@
 #    define va_copy(d,s) memcpy(&(d),&(s),sizeof(va_list))
 #endif
 
-/** @cond 0 */
-#define LOG_LEVEL_ERROR    1
-#define LOG_LEVEL_CRITICAL 1 << 1
-#define LOG_LEVEL_WARNING  1 << 2
-#define LOG_LEVEL_MESSAGE  1 << 3
-#define LOG_LEVEL_DEBUG    1 << 4
-/** @endcond */
-
 static void (*logfunc)(int log_level, char *message ) = NULL;
 static const char *progname = NULL;
 
@@ -98,7 +90,7 @@ strdup_printf(const char* format, ...)
 /** @brief Default logging function
  *
  * Prints the message to stderr/stdout and calls abort() if the
- * log_level equals LOG_LEVEL_ERROR.
+ * log_level equals MATIO_LOG_LEVEL_ERROR.
  * @ingroup mat_util
  * @param log_level logging level
  * @param message logging message
@@ -107,38 +99,38 @@ static void
 mat_logfunc( int log_level, char *message )
 {
     if ( progname ) {
-        if ( log_level & LOG_LEVEL_CRITICAL) {
+        if ( log_level & MATIO_LOG_LEVEL_CRITICAL) {
             fprintf(stderr,"-E- %s: %s\n", progname, message);
             fflush(stderr);
-        } else if ( log_level & LOG_LEVEL_ERROR ) {
+        } else if ( log_level & MATIO_LOG_LEVEL_ERROR ) {
             fprintf(stderr,"-E- %s: %s\n", progname, message);
             fflush(stderr);
             abort();
-        } else if ( log_level & LOG_LEVEL_WARNING ) {
+        } else if ( log_level & MATIO_LOG_LEVEL_WARNING ) {
             fprintf(stderr,"-W- %s: %s\n", progname, message);
             fflush(stderr);
-        } else if ( log_level & LOG_LEVEL_DEBUG ) {
+        } else if ( log_level & MATIO_LOG_LEVEL_DEBUG ) {
             fprintf(stderr,"-D- %s: %s\n", progname, message);
             fflush(stderr);
-        } else if ( log_level & LOG_LEVEL_MESSAGE ) {
+        } else if ( log_level & MATIO_LOG_LEVEL_MESSAGE ) {
             fprintf(stdout,"%s\n", message);
             fflush(stdout);
         }
     } else {
-        if ( log_level & LOG_LEVEL_CRITICAL) {
+        if ( log_level & MATIO_LOG_LEVEL_CRITICAL) {
             fprintf(stderr,"-E- : %s\n", message);
             fflush(stderr);
-        } else if ( log_level & LOG_LEVEL_ERROR ) {
+        } else if ( log_level & MATIO_LOG_LEVEL_ERROR ) {
             fprintf(stderr,"-E- : %s\n", message);
             fflush(stderr);
             abort();
-        } else if ( log_level & LOG_LEVEL_WARNING ) {
+        } else if ( log_level & MATIO_LOG_LEVEL_WARNING ) {
             fprintf(stderr,"-W- : %s\n", message);
             fflush(stderr);
-        } else if ( log_level & LOG_LEVEL_DEBUG ) {
+        } else if ( log_level & MATIO_LOG_LEVEL_DEBUG ) {
             fprintf(stderr,"-D- : %s\n", message);
             fflush(stderr);
-        } else if ( log_level & LOG_LEVEL_MESSAGE ) {
+        } else if ( log_level & MATIO_LOG_LEVEL_MESSAGE ) {
             fprintf(stdout,"%s\n", message);
             fflush(stdout);
         }
@@ -288,7 +280,7 @@ int Mat_Message( const char *format, ... )
     if ( !logfunc ) return 0;
 
     va_start(ap, format );
-    mat_log(LOG_LEVEL_MESSAGE, format, ap );
+    mat_log(MATIO_LOG_LEVEL_MESSAGE, format, ap );
     va_end(ap);
     return 0;
 }
@@ -310,7 +302,7 @@ int Mat_DebugMessage( int level, const char *format, ... )
     if ( level > debug ) return 0;
 
     va_start(ap, format );
-    mat_log(LOG_LEVEL_DEBUG, format, ap );
+    mat_log(MATIO_LOG_LEVEL_DEBUG, format, ap );
     va_end(ap);
     return 0;
 }
@@ -332,7 +324,7 @@ int Mat_VerbMessage( int level, const char *format, ... )
     if ( level > verbose ) return 0;
 
     va_start(ap, format );
-    mat_log(LOG_LEVEL_MESSAGE, format, ap );
+    mat_log(MATIO_LOG_LEVEL_MESSAGE, format, ap );
     va_end(ap);
     return 0;
 }
@@ -350,7 +342,7 @@ void Mat_Critical( const char *format, ... )
     va_list ap;
 
     va_start(ap, format );
-    mat_log(LOG_LEVEL_CRITICAL, format, ap );
+    mat_log(MATIO_LOG_LEVEL_CRITICAL, format, ap );
     va_end(ap);
 }
 
@@ -366,7 +358,7 @@ void Mat_Error( const char *format, ... )
     va_list ap;
 
     va_start(ap, format );
-    mat_log( LOG_LEVEL_ERROR, format, ap ); /* Shall never return to the calling function */
+    mat_log( MATIO_LOG_LEVEL_ERROR, format, ap ); /* Shall never return to the calling function */
     va_end(ap);
     abort(); /* Always abort */
 }
@@ -458,7 +450,7 @@ Mat_Warning( const char *format, ... )
     va_list ap;
 
     va_start(ap, format );
-    mat_log(LOG_LEVEL_WARNING, format, ap );
+    mat_log(MATIO_LOG_LEVEL_WARNING, format, ap );
     va_end(ap);
 }
 
