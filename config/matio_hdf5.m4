@@ -37,7 +37,14 @@ AC_DEFUN([MATIO_CHECK_HDF5_V18],
     AC_TRY_LINK([#include<stdio.h>
                  #include <stdlib.h>
                  #include <hdf5.h>],
-                 [hid_t dset_id = H5Dcreate(0,NULL,0,0,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);],
+                 [#if defined(H5Rdereference)
+                  #define H5RDEREFERENCE H5Rdereference1
+                  #else
+                  #define H5RDEREFERENCE H5Rdereference
+                  #endif
+                  hid_t dset_id = H5Dcreate(0,NULL,0,0,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+                  hobj_ref_t ref_ids[1];
+                  hid_t ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids);],
                  [matio_hdf5_is_v18=yes],
                  [matio_hdf5_is_v18=no])
 

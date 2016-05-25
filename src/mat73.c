@@ -71,6 +71,12 @@ struct h5_read_group_info_iter_data {
     matvar_t *matvar;
 };
 
+#if defined(H5Rdereference)
+#define H5RDEREFERENCE H5Rdereference1
+#else
+#define H5RDEREFERENCE H5Rdereference
+#endif
+
 /*===========================================================================
  *  Private functions
  *===========================================================================
@@ -600,14 +606,13 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 
         if ( ncells ) {
             ref_ids = (hobj_ref_t*)malloc(ncells*sizeof(*ref_ids));
-            H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                    ref_ids);
+            H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,ref_ids);
             for ( i = 0; i < ncells; i++ ) {
                 hid_t ref_id;
                 cells[i] = Mat_VarCalloc();
                 cells[i]->internal->hdf5_ref = ref_ids[i];
                 /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
-                ref_id = H5Rdereference(dset_id,H5R_OBJECT,ref_ids+i);
+                ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids+i);
                 cells[i]->internal->id = ref_id;
                 cells[i]->internal->fp = matvar->internal->fp;
                 Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
@@ -707,7 +712,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 
         matvar->rank = 2;
         matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
-        if (matvar->dims == NULL) {
+        if ( matvar->dims == NULL ) {
             Mat_Critical("Error allocating memory for matvar->dims");
             return;
         }
@@ -809,7 +814,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 H5Aclose(attr_id);
                 matvar->rank    = 2;
                 matvar->dims    = (size_t*)malloc(2*sizeof(*matvar->dims));
-                if (matvar->dims == NULL) {
+                if ( matvar->dims == NULL ) {
                     H5Tclose(field_type_id);
                     H5Dclose(field_id);
                     Mat_Critical("Error allocating memory for matvar->dims");
@@ -822,7 +827,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 space_id     = H5Dget_space(field_id);
                 matvar->rank = H5Sget_simple_extent_ndims(space_id);
                 matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
-                if (matvar->dims == NULL) {
+                if ( matvar->dims == NULL ) {
                     H5Tclose(field_type_id);
                     H5Dclose(field_id);
                     H5Sclose(space_id);
@@ -842,7 +847,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             /* Structure should be a scalar */
             matvar->rank    = 2;
             matvar->dims    = (size_t*)malloc(2*sizeof(*matvar->dims));
-            if (matvar->dims == NULL) {
+            if ( matvar->dims == NULL ) {
                 H5Tclose(field_type_id);
                 H5Dclose(field_id);
                 Mat_Critical("Error allocating memory for matvar->dims");
@@ -859,7 +864,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         numel = 1;
         matvar->rank    = 2;
         matvar->dims    = (size_t*)malloc(2*sizeof(*matvar->dims));
-        if (matvar->dims == NULL) {
+        if ( matvar->dims == NULL ) {
             Mat_Critical("Error allocating memory for matvar->dims");
             return;
         }
@@ -902,12 +907,9 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                                 fields[l*nfields+k]->internal->hdf5_name,
                                 name_len+1);
                         }
-                        /* Closing of ref_id is done in
-                         * Mat_H5ReadNextReferenceInfo
-                         */
-                        ref_id = H5Rdereference(field_id,H5R_OBJECT,
-                                                ref_ids+l);
-                        fields[l*nfields+k]->internal->id=ref_id;
+                        /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
+                        ref_id = H5RDEREFERENCE(field_id,H5R_OBJECT,ref_ids+l);
+                        fields[l*nfields+k]->internal->id = ref_id;
                         Mat_H5ReadNextReferenceInfo(ref_id,fields[l*nfields+k],mat);
                     }
                     free(ref_ids);
@@ -1060,16 +1062,15 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 if ( ncells > 0 ) {
                     hobj_ref_t *ref_ids;
                     ref_ids = (hobj_ref_t*)malloc(ncells*sizeof(*ref_ids));
-                    H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                            ref_ids);
+                    H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,ref_ids);
                     for ( i = 0; i < ncells; i++ ) {
                         hid_t ref_id;
                         cells[i] = Mat_VarCalloc();
                         cells[i]->internal->hdf5_ref = ref_ids[i];
                         /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
-                        ref_id = H5Rdereference(dset_id,H5R_OBJECT,ref_ids+i);
-                        cells[i]->internal->id=ref_id;
-                        cells[i]->internal->fp=matvar->internal->fp;
+                        ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids+i);
+                        cells[i]->internal->id = ref_id;
+                        cells[i]->internal->fp = matvar->internal->fp;
                         Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
                     }
                     free(ref_ids);
@@ -2268,7 +2269,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 H5Iinc_ref(ref_id);
             }
             if ( 0 < matvar->internal->hdf5_ref ) {
-                dset_id = H5Rdereference(ref_id,H5R_OBJECT,&matvar->internal->hdf5_ref);
+                dset_id = H5RDEREFERENCE(ref_id,H5R_OBJECT,&matvar->internal->hdf5_ref);
             } else {
                 dset_id = ref_id;
                 H5Iinc_ref(dset_id);
@@ -2523,7 +2524,7 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
                 H5Iinc_ref(ref_id);
             }
             if ( 0 < matvar->internal->hdf5_ref ) {
-                dset_id = H5Rdereference(ref_id,H5R_OBJECT,&matvar->internal->hdf5_ref);
+                dset_id = H5RDEREFERENCE(ref_id,H5R_OBJECT,&matvar->internal->hdf5_ref);
             } else {
                 dset_id = ref_id;
                 H5Iinc_ref(dset_id);
@@ -2729,7 +2730,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
         return 0;
 
     mat_data = (struct mat_read_next_iter_data *)op_data;
-    if (mat_data == NULL )
+    if ( mat_data == NULL )
         return -1;
     mat = mat_data->mat;
     matvar = mat_data->matvar;
@@ -2748,9 +2749,9 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
     switch ( object_info.type ) {
         case H5O_TYPE_DATASET:
         {
-            ssize_t     name_len;
+            ssize_t name_len;
             /* FIXME */
-            hsize_t  dims[10];
+            hsize_t dims[10];
             hid_t   attr_id,type_id,dset_id,space_id;
 
             dset_id = H5Dopen(fid,matvar->name,H5P_DEFAULT);
@@ -2830,18 +2831,15 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
 
                 if ( ncells ) {
                     ref_ids = (hobj_ref_t*)malloc(ncells*sizeof(*ref_ids));
-                    H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                            ref_ids);
+                    H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,ref_ids);
                     for ( i = 0; i < ncells; i++ ) {
                         hid_t ref_id;
                         cells[i] = Mat_VarCalloc();
                         cells[i]->internal->hdf5_ref = ref_ids[i];
-                        /* Closing of ref_id is done in
-                         * Mat_H5ReadNextReferenceInfo
-                         */
-                        ref_id = H5Rdereference(dset_id,H5R_OBJECT,ref_ids+i);
-                        cells[i]->internal->id=ref_id;
-                        cells[i]->internal->fp=matvar->internal->fp;
+                        /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
+                        ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids+i);
+                        cells[i]->internal->id = ref_id;
+                        cells[i]->internal->fp = matvar->internal->fp;
                         Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
                     }
                     free(ref_ids);
