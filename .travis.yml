@@ -41,8 +41,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
 
 install:
-  - svn co -q https://svn.hdfgroup.org/hdf5/branches/hdf5_1_8_16@28320
-  - cd hdf5_1_8_16
+  - svn co -q https://svn.hdfgroup.org/hdf5/branches/hdf5_1_8_17@29907
+  - cd hdf5_1_8_17
   - ./configure --quiet --enable-shared --enable-production=no --enable-debug=all --with-pic --disable-deprecated-symbols --disable-hl --with-default-api-version=v18 CFLAGS="-w"
   - make install -C src
   - cd $TRAVIS_BUILD_DIR
@@ -57,7 +57,7 @@ install:
 
 before_script:
   - ./autogen.sh
-  - ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/hdf5_1_8_16/hdf5
+  - ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/hdf5_1_8_17/hdf5
 
 script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make; fi
@@ -73,7 +73,7 @@ script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
 
 after_success:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/mat2hdf.c -e share -e patches -e hdf5_1_8_16 -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/mat2hdf.c -e share -e patches -e hdf5_1_8_17 -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make pdf; fi
 
 notifications:
