@@ -56,6 +56,12 @@
 #   include "mat73.h"
 #endif
 
+/*
+ *===================================================================
+ *                 Private Functions
+ *===================================================================
+ */
+
 static void
 ReadData(mat_t *mat, matvar_t *matvar)
 {
@@ -131,10 +137,32 @@ Mat_PrintNumber(enum matio_types type, void *data)
     }
 }
 
+mat_complex_split_t *
+ComplexMalloc(size_t nbytes)
+{
+    mat_complex_split_t *complex_data = malloc(sizeof(*complex_data));
+    if ( NULL != complex_data ) {
+        complex_data->Re = malloc(nbytes);
+        if ( NULL != complex_data->Re ) {
+            complex_data->Im = malloc(nbytes);
+            if ( NULL == complex_data->Im ) {
+                free(complex_data->Re);
+                free(complex_data);
+                complex_data = NULL;
+            }
+        }
+        else {
+            free(complex_data);
+            complex_data = NULL;
+        }
+    }
+    return complex_data;
+}
+
 /*
- *====================================================================
+ *===================================================================
  *                 Public Functions
- *====================================================================
+ *===================================================================
  */
 
 /** @brief Get the version of the library

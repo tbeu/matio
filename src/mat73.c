@@ -812,16 +812,16 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             if ( H5Aexists_by_name(field_id,".","MATLAB_class",H5P_DEFAULT) ) {
                 attr_id = H5Aopen_by_name(field_id,".","MATLAB_class",H5P_DEFAULT,H5P_DEFAULT);
                 H5Aclose(attr_id);
-                matvar->rank    = 2;
-                matvar->dims    = (size_t*)malloc(2*sizeof(*matvar->dims));
+                matvar->rank = 2;
+                matvar->dims = (size_t*)malloc(2*sizeof(*matvar->dims));
                 if ( matvar->dims == NULL ) {
                     H5Tclose(field_type_id);
                     H5Dclose(field_id);
                     Mat_Critical("Error allocating memory for matvar->dims");
                     return;
                 }
-                matvar->dims[0] = 1;
-                matvar->dims[1] = 1;
+                matvar->dims[0]= 1;
+                matvar->dims[1]= 1;
                 numel = 1;
             } else {
                 space_id     = H5Dget_space(field_id);
@@ -845,8 +845,8 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             }
         } else {
             /* Structure should be a scalar */
-            matvar->rank    = 2;
-            matvar->dims    = (size_t*)malloc(2*sizeof(*matvar->dims));
+            matvar->rank = 2;
+            matvar->dims = (size_t*)malloc(2*sizeof(*matvar->dims));
             if ( matvar->dims == NULL ) {
                 H5Tclose(field_type_id);
                 H5Dclose(field_id);
@@ -862,8 +862,8 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     } else {
         /* Structure should be a scalar */
         numel = 1;
-        matvar->rank    = 2;
-        matvar->dims    = (size_t*)malloc(2*sizeof(*matvar->dims));
+        matvar->rank = 2;
+        matvar->dims = (size_t*)malloc(2*sizeof(*matvar->dims));
         if ( matvar->dims == NULL ) {
             Mat_Critical("Error allocating memory for matvar->dims");
             return;
@@ -916,8 +916,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 } else {
                     fields[k] = Mat_VarCalloc();
                     fields[k]->internal->fp = mat;
-                    fields[k]->name =
-                        strdup(matvar->internal->fieldnames[k]);
+                    fields[k]->name = strdup(matvar->internal->fieldnames[k]);
                     Mat_H5ReadDatasetInfo(mat,fields[k],field_id);
                 }
                 H5Dclose(field_id);
@@ -1173,7 +1172,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 matvar->data_size = Mat_SizeOfClass(matvar->class_type);
                 data_type_id      = Mat_class_type_to_hid_t(matvar->class_type);
             }
-            matvar->nbytes    = numel*matvar->data_size;
+            matvar->nbytes = numel*matvar->data_size;
 
             if ( matvar->nbytes < 1 ) {
                 H5Dclose(ref_id);
@@ -1183,34 +1182,33 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
             dset_id = ref_id;
 
             if ( !matvar->isComplex ) {
-                matvar->data      = malloc(matvar->nbytes);
+                matvar->data = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
                     H5Dread(dset_id,data_type_id,H5S_ALL,H5S_ALL,H5P_DEFAULT,
                             matvar->data);
                 }
             } else {
                 mat_complex_split_t *complex_data;
-                hid_t h5_complex_base,h5_complex;
+                hid_t h5_complex_base, h5_complex;
 
-                complex_data     = (mat_complex_split_t*)malloc(sizeof(*complex_data));
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
+                complex_data = ComplexMalloc(matvar->nbytes);
+                if ( NULL != complex_data ) {
+                    h5_complex_base = data_type_id;
+                    h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                                H5Tget_size(h5_complex_base));
+                    H5Tinsert(h5_complex,"real",0,h5_complex_base);
+                    H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                            complex_data->Re);
+                    H5Tclose(h5_complex);
 
-                h5_complex_base = data_type_id;
-                h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                            H5Tget_size(h5_complex_base));
-                H5Tinsert(h5_complex,"real",0,h5_complex_base);
-                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                        complex_data->Re);
-                H5Tclose(h5_complex);
-
-                h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                            H5Tget_size(h5_complex_base));
-                H5Tinsert(h5_complex,"imag",0,h5_complex_base);
-                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                        complex_data->Im);
-                H5Tclose(h5_complex);
-                matvar->data = complex_data;
+                    h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                                H5Tget_size(h5_complex_base));
+                    H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                    H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                            complex_data->Im);
+                    H5Tclose(h5_complex);
+                    matvar->data = complex_data;
+                }
             }
             H5Dclose(dset_id);
             break;
@@ -2276,34 +2274,33 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             }
 
             if ( !matvar->isComplex ) {
-                matvar->data     = malloc(matvar->nbytes);
+                matvar->data = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
                     H5Dread(dset_id,Mat_class_type_to_hid_t(matvar->class_type),
                             H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
                 }
             } else {
                 mat_complex_split_t *complex_data;
-                hid_t h5_complex_base,h5_complex;
+                hid_t h5_complex_base, h5_complex;
 
-                complex_data     = (mat_complex_split_t*)malloc(sizeof(*complex_data));
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
+                complex_data = ComplexMalloc(matvar->nbytes);
+                if ( NULL != complex_data ) {
+                    h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
+                    h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                                H5Tget_size(h5_complex_base));
+                    H5Tinsert(h5_complex,"real",0,h5_complex_base);
+                    H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                            complex_data->Re);
+                    H5Tclose(h5_complex);
 
-                h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
-                h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                            H5Tget_size(h5_complex_base));
-                H5Tinsert(h5_complex,"real",0,h5_complex_base);
-                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                        complex_data->Re);
-                H5Tclose(h5_complex);
-
-                h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                            H5Tget_size(h5_complex_base));
-                H5Tinsert(h5_complex,"imag",0,h5_complex_base);
-                H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                        complex_data->Im);
-                H5Tclose(h5_complex);
-                matvar->data = complex_data;
+                    h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                                H5Tget_size(h5_complex_base));
+                    H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                    H5Dread(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                            complex_data->Im);
+                    H5Tclose(h5_complex);
+                    matvar->data = complex_data;
+                }
             }
             H5Dclose(dset_id);
             H5Dclose(ref_id);
@@ -2424,7 +2421,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
                 ndata_bytes = sparse_data->nzmax*Mat_SizeOf(matvar->data_type);
                 if ( !matvar->isComplex ) {
-                    sparse_data->data  = malloc(ndata_bytes);
+                    sparse_data->data = malloc(ndata_bytes);
                     if ( NULL != sparse_data->data ) {
                         H5Dread(sparse_dset_id,
                                 Mat_data_type_to_hid_t(matvar->data_type),
@@ -2432,27 +2429,26 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                     }
                 } else {
                     mat_complex_split_t *complex_data;
-                    hid_t h5_complex_base,h5_complex;
+                    hid_t h5_complex_base, h5_complex;
 
-                    complex_data     = (mat_complex_split_t*)malloc(sizeof(*complex_data));
-                    complex_data->Re = malloc(ndata_bytes);
-                    complex_data->Im = malloc(ndata_bytes);
+                    complex_data = ComplexMalloc(ndata_bytes);
+                    if ( NULL != complex_data ) {
+                        h5_complex_base = Mat_data_type_to_hid_t(matvar->data_type);
+                        h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                                    H5Tget_size(h5_complex_base));
+                        H5Tinsert(h5_complex,"real",0,h5_complex_base);
+                        H5Dread(sparse_dset_id,h5_complex,H5S_ALL,H5S_ALL,
+                                H5P_DEFAULT,complex_data->Re);
+                        H5Tclose(h5_complex);
 
-                    h5_complex_base = Mat_data_type_to_hid_t(matvar->data_type);
-                    h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                                H5Tget_size(h5_complex_base));
-                    H5Tinsert(h5_complex,"real",0,h5_complex_base);
-                    H5Dread(sparse_dset_id,h5_complex,H5S_ALL,H5S_ALL,
-                            H5P_DEFAULT,complex_data->Re);
-                    H5Tclose(h5_complex);
-
-                    h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                                H5Tget_size(h5_complex_base));
-                    H5Tinsert(h5_complex,"imag",0,h5_complex_base);
-                    H5Dread(sparse_dset_id,h5_complex,H5S_ALL,H5S_ALL,
-                            H5P_DEFAULT,complex_data->Im);
-                    H5Tclose(h5_complex);
-                    sparse_data->data = complex_data;
+                        h5_complex      = H5Tcreate(H5T_COMPOUND,
+                                                    H5Tget_size(h5_complex_base));
+                        H5Tinsert(h5_complex,"imag",0,h5_complex_base);
+                        H5Dread(sparse_dset_id,h5_complex,H5S_ALL,H5S_ALL,
+                                H5P_DEFAULT,complex_data->Im);
+                        H5Tclose(h5_complex);
+                        sparse_data->data = complex_data;
+                    }
                 }
                 H5Sclose(space_id);
                 H5Dclose(sparse_dset_id);
@@ -2539,7 +2535,7 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
                         mem_space,dset_space,H5P_DEFAULT,data);
             } else {
                 mat_complex_split_t *complex_data = (mat_complex_split_t*)data;
-                hid_t h5_complex_base,h5_complex;
+                hid_t h5_complex_base, h5_complex;
 
                 h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
                 h5_complex      = H5Tcreate(H5T_COMPOUND,
@@ -2649,7 +2645,7 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
                         mem_space,dset_space,H5P_DEFAULT,data);
             } else {
                 mat_complex_split_t *complex_data = (mat_complex_split_t*)data;
-                hid_t h5_complex_base,h5_complex;
+                hid_t h5_complex_base, h5_complex;
 
                 h5_complex_base = Mat_class_type_to_hid_t(matvar->class_type);
                 h5_complex      = H5Tcreate(H5T_COMPOUND,

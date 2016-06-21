@@ -231,7 +231,7 @@ typedef struct mat_sparse_t {
 /* Library function */
 EXTERN MATIO_EXPORT void Mat_GetLibraryVersion(int *major,int *minor,int *release);
 
-/*     io.c         */
+/* io.c */
 EXTERN MATIO_EXPORT                char  *strdup_vprintf(const char *format, va_list ap);
 EXTERN MATIO_EXPORT                char  *strdup_printf(const char *format, ...);
 EXTERN MATIO_EXPORT                int    Mat_SetVerbose( int verb, int s );
@@ -250,7 +250,7 @@ EXTERN MATIO_EXPORT                void   Mat_Warning( const char *format, ... )
 EXTERN MATIO_EXPORT                size_t Mat_SizeOf(enum matio_types data_type);
 EXTERN MATIO_EXPORT                size_t Mat_SizeOfClass(int class_type);
 
-/*   MAT File functions   */
+/* MAT File functions */
 /** Create new Matlab MAT file */
 #define            Mat_Create(a,b) Mat_CreateVer(a,b,MAT_FT_DEFAULT)
 EXTERN MATIO_EXPORT mat_t      *Mat_CreateVer(const char *matname,const char *hdr_str,

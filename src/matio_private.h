@@ -93,7 +93,7 @@ struct matvar_internal {
 #endif
 };
 
-/*    snprintf.c    */
+/* snprintf.c */
 #if !HAVE_VSNPRINTF
 int rpl_vsnprintf(char *, size_t, const char *, va_list);
 #define mat_vsnprintf rpl_vsnprintf
@@ -119,7 +119,7 @@ int rpl_asprintf(char **, const char *, ...);
 #define mat_asprintf asprintf
 #endif	/* !HAVE_ASPRINTF */
 
-/*   endian.c     */
+/* endian.c */
 EXTERN double        Mat_doubleSwap(double  *a);
 EXTERN float         Mat_floatSwap(float   *a);
 #ifdef HAVE_MAT_INT64_T
@@ -205,7 +205,7 @@ EXTERN int ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
                enum matio_classes class_type,enum matio_types data_type,
                int rank,size_t *dims,int *start,int *stride,int *edge);
 
-/*   inflate.c    */
+/* inflate.c */
 EXTERN size_t InflateSkip(mat_t *mat, z_streamp z, int nbytes);
 EXTERN size_t InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes);
 EXTERN size_t InflateSkipData(mat_t *mat,z_streamp z,enum matio_types data_type,int len);
@@ -222,5 +222,8 @@ EXTERN size_t InflateFieldNamesTag(mat_t *mat,matvar_t *matvar,void *buf);
 EXTERN size_t InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,
                int fieldname_length,int padding);
 #endif
+
+/* mat.c */
+EXTERN mat_complex_split_t *ComplexMalloc(size_t nbytes);
 
 #endif
