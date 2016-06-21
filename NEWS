@@ -1,3 +1,23 @@
+Changes in 1.5.7 (22 June 2016)
+* Added support for MAT_T_UTF16 when reading character array from v5 MAT file
+* Added support of HDF5 v1.10.x (with deprecated v1.8.x symbols exported)
+* Added warning on unsupported character data types when reading v5 MAT file
+* Added error check if variable already exists when writing to MAT file
+* Fixed support of custom log functions: Moved log levels to the public interface
+* Fixed bug creating v4 and v5 MAT file: Open in write+update mode
+* Fixed bug creating v5 and HDF5 MAT file: Set BOF marker to 128
+* Fixed bug in Mat_VarDelete: Rewind file before looping over variables
+* Fixed bug writing cell array with empty struct fields to compressed v5 MAT file
+* Fixed bug reading empty character array from HDF5 MAT file
+* Fixed bug iterating through links in a group of HDF5 MAT file
+* Fixed bug iterating on #subsystem# group of HDF5 MAT file
+* Fixed compilation out of source directory
+* Fixed C++ compilation on MinGW
+* Restructured testsuite
+* Fixed testsuite if hdf5 dependency is missing
+* Increased testsuite coverage
+* Various fixes for variable scopes that cause compilers to issue diagnostics
+
 Changes in 1.5.6 (23 February 2016)
 * Fixed bug writing array to v4 MAT files on big endian architecture
 * Fixed bug writing header with more than 127 characters to v5 or HDF5 MAT files
