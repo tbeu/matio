@@ -99,25 +99,25 @@ int rpl_vsnprintf(char *, size_t, const char *, va_list);
 #define mat_vsnprintf rpl_vsnprintf
 #else
 #define mat_vsnprintf vsnprintf
-#endif	/* !HAVE_VSNPRINTF */
+#endif /* !HAVE_VSNPRINTF */
 #if !HAVE_SNPRINTF
 int rpl_snprintf(char *, size_t, const char *, ...);
 #define mat_snprintf rpl_snprintf
 #else
 #define mat_snprintf snprintf
-#endif	/* !HAVE_SNPRINTF */
+#endif /* !HAVE_SNPRINTF */
 #if !HAVE_VASPRINTF
 int rpl_vasprintf(char **, const char *, va_list);
 #define mat_vasprintf rpl_vasprintf
 #else
 #define mat_vasprintf vasprintf
-#endif	/* !HAVE_VASPRINTF */
+#endif /* !HAVE_VASPRINTF */
 #if !HAVE_ASPRINTF
 int rpl_asprintf(char **, const char *, ...);
 #define mat_asprintf rpl_asprintf
 #else
 #define mat_asprintf asprintf
-#endif	/* !HAVE_ASPRINTF */
+#endif /* !HAVE_ASPRINTF */
 
 /* endian.c */
 EXTERN double        Mat_doubleSwap(double  *a);

@@ -1799,7 +1799,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 
             cells[i]->internal->fpos = ftell((FILE*)mat->fp);
             if ( cells[i]->internal->fpos == -1L ) {
-               Mat_Critical("Couldn't determine file position");
+                Mat_Critical("Couldn't determine file position");
                 continue;
             } else {
                 cells[i]->internal->fpos -= matvar->internal->z->avail_in;
@@ -4542,7 +4542,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data =
-					ComplexMalloc(data->ndata*Mat_SizeOf(matvar->data_type));
+                    ComplexMalloc(data->ndata*Mat_SizeOf(matvar->data_type));
                 if ( NULL == complex_data ) {
                     Mat_Critical("Memory allocation failure");
                     break;
@@ -5255,7 +5255,6 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                 memcpy(ptr++, ptr_in+i*stride, data_size); \
         } \
     } while (0)
-
 
 static int
 GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,

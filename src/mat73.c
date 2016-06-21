@@ -820,8 +820,8 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                     Mat_Critical("Error allocating memory for matvar->dims");
                     return;
                 }
-                matvar->dims[0]= 1;
-                matvar->dims[1]= 1;
+                matvar->dims[0] = 1;
+                matvar->dims[1] = 1;
                 numel = 1;
             } else {
                 space_id     = H5Dget_space(field_id);
