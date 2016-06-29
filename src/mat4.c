@@ -56,31 +56,6 @@ Mat_Create4(const char* matname)
 {
     FILE *fp = NULL;
     mat_t *mat = NULL;
-    int byteswap;
-
-#if defined(__GLIBC__)
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
-    byteswap = 0;
-#elif (__BYTE_ORDER == __BIG_ENDIAN)
-    byteswap = 1;
-#else
-    return NULL;
-#endif
-#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN)
-    byteswap = 1;
-#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN)
-    byteswap = 0;
-#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || \
-      defined(__ppc__) || defined(__hpux) || defined(_MIPSEB) || defined(_POWER) || defined(__s390__)
-    byteswap = 1;
-#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || \
-      defined(_M_IX86) || defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || \
-      defined(__amd64__) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || \
-      defined(_M_X64) || defined(__bfin__)
-    byteswap = 0;
-#else
-    return NULL;
-#endif
 
     fp = fopen(matname,"w+b");
     if ( !fp )
@@ -97,7 +72,7 @@ Mat_Create4(const char* matname)
     mat->subsys_offset = NULL;
     mat->fp            = fp;
     mat->version       = MAT_FT_MAT4;
-    mat->byteswap      = byteswap;
+    mat->byteswap      = 0;
     mat->bof           = 0;
     mat->next_index    = 0;
     mat->refs_id       = -1;
@@ -132,9 +107,34 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
 
     mat_int32_t nmemb = 1, i;
     Fmatrix x;
+    int byteswap;
 
     if ( NULL == mat || NULL == matvar || NULL == matvar->name || matvar->rank != 2 )
         return -1;
+
+#if defined(__GLIBC__)
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+    byteswap = 0;
+#elif (__BYTE_ORDER == __BIG_ENDIAN)
+    byteswap = 1;
+#else
+    return NULL;
+#endif
+#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN)
+    byteswap = 1;
+#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN)
+    byteswap = 0;
+#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || \
+      defined(__ppc__) || defined(__hpux) || defined(_MIPSEB) || defined(_POWER) || defined(__s390__)
+    byteswap = 1;
+#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || \
+      defined(_M_IX86) || defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || \
+      defined(__amd64__) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || \
+      defined(_M_X64) || defined(__bfin__)
+    byteswap = 0;
+#else
+    return -1;
+#endif
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
     (void)fseek((FILE*)mat->fp,0,SEEK_END);         /* Always write at end of file */
@@ -162,7 +162,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
             return 2;
     }
 
-    if ( mat->byteswap )
+    if ( byteswap )
         x.type += 1000;
 
     x.namelen = (mat_int32_t)strlen(matvar->name) + 1;
