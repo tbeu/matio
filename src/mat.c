@@ -559,11 +559,11 @@ Mat_VarCalloc(void)
             matvar->internal->hdf5_name  = NULL;
             matvar->internal->hdf5_ref   =  0;
             matvar->internal->id         = -1;
-            matvar->internal->fp         = NULL;
             matvar->internal->fpos       = 0;
             matvar->internal->datapos    = 0;
-            matvar->internal->fieldnames = NULL;
+            matvar->internal->fp         = NULL;
             matvar->internal->num_fields = 0;
+            matvar->internal->fieldnames = NULL;
 #if defined(HAVE_ZLIB)
             matvar->internal->z          = NULL;
             matvar->internal->data       = NULL;
