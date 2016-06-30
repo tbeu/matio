@@ -1,3 +1,6 @@
+Changes in 1.5.8 (30 June 2016)
+* Fixed bug writing array to v4 MAT files on big endian architecture (broken by v1.5.7)
+
 Changes in 1.5.7 (22 June 2016)
 * Added support for MAT_T_UTF16 when reading character array from v5 MAT file
 * Added support of HDF5 v1.10.x (with deprecated v1.8.x symbols exported)
