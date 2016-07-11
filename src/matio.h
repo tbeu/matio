@@ -123,7 +123,8 @@ enum matio_classes {
     MAT_C_UINT32   = 13, /**< @brief Matlab unsigned 32-bit integer class  */
     MAT_C_INT64    = 14, /**< @brief Matlab signed 64-bit integer class    */
     MAT_C_UINT64   = 15, /**< @brief Matlab unsigned 64-bit integer class  */
-    MAT_C_FUNCTION = 16  /**< @brief Matlab function class                 */
+    MAT_C_FUNCTION = 16, /**< @brief Matlab function class                 */
+    MAT_C_OPAQUE   = 17  /**< @brief Matlab opaque class                   */
 };
 
 /** @brief Matlab array flags
