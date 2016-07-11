@@ -1505,14 +1505,16 @@ Mat_VarGetSize(matvar_t *matvar)
             matvar_t **fields = (matvar_t**)matvar->data;
             if ( NULL != fields )
                 for ( i = 0; i < nmemb*nfields; i++ )
-                    bytes += Mat_VarGetSize(fields[i]);
+                    if ( NULL != fields[i] )
+                        bytes += Mat_VarGetSize(fields[i]);
         }
     } else if ( matvar->class_type == MAT_C_CELL ) {
         matvar_t **cells = (matvar_t**)matvar->data;
         if ( NULL != cells ) {
             int ncells = matvar->nbytes / matvar->data_size;
             for ( i = 0; i < ncells; i++ )
-                bytes += Mat_VarGetSize(cells[i]);
+                if ( NULL != cells[i] )
+                    bytes += Mat_VarGetSize(cells[i]);
         }
     } else {
         int nmemb = 1;
