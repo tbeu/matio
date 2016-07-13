@@ -1905,7 +1905,7 @@ matvar_t *
 Mat_VarReadNextInfo( mat_t *mat )
 {
     matvar_t *matvar = NULL;
-    if( mat == NULL )
+    if ( mat == NULL )
         return NULL;
 
     switch ( mat->version ) {
