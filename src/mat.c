@@ -1495,6 +1495,15 @@ Mat_VarGetSize(matvar_t *matvar)
 {
     int i;
     size_t bytes = 0;
+    size_t overhead = 0;
+
+    if ( SIZEOF_VOID_P == 8 ) {
+        /* 112 bytes cell/struct overhead for 64-bit system */
+        overhead = 112;
+    } else if ( SIZEOF_VOID_P == 4 ) {
+        /* 60 bytes cell/struct overhead for 32-bit system */
+        overhead = 60;
+    }
 
     if ( matvar->class_type == MAT_C_STRUCT ) {
         int nfields = matvar->internal->num_fields;
@@ -1504,23 +1513,44 @@ Mat_VarGetSize(matvar_t *matvar)
         if ( nmemb*nfields > 0 ) {
             matvar_t **fields = (matvar_t**)matvar->data;
             if ( NULL != fields )
+                bytes = nmemb*nfields*overhead;
                 for ( i = 0; i < nmemb*nfields; i++ )
                     if ( NULL != fields[i] )
                         bytes += Mat_VarGetSize(fields[i]);
         }
+        bytes += 64 /* max field name length */ *nfields;
     } else if ( matvar->class_type == MAT_C_CELL ) {
         matvar_t **cells = (matvar_t**)matvar->data;
         if ( NULL != cells ) {
             int ncells = matvar->nbytes / matvar->data_size;
+            bytes = ncells*overhead;
             for ( i = 0; i < ncells; i++ )
                 if ( NULL != cells[i] )
                     bytes += Mat_VarGetSize(cells[i]);
+        }
+    } else if ( matvar->class_type == MAT_C_SPARSE ) {
+        mat_sparse_t *sparse = (mat_sparse_t*)matvar->data;
+        if ( NULL != sparse ) {
+            bytes = sparse->ndata*Mat_SizeOf(matvar->data_type);
+            if ( matvar->isComplex )
+                bytes *= 2;
+            if ( SIZEOF_VOID_P == 8 ) {
+                /* 8 byte integers for 64-bit system (as displayed in MATLAB (x64) whos) */
+                bytes += (sparse->nir + sparse->njc)*8;
+            } else if ( SIZEOF_VOID_P == 4 ) {
+                /* 4 byte integers for 32-bit system (as defined by mat_sparse_t) */
+                bytes += (sparse->nir + sparse->njc)*4;
+            }
+            if ( sparse->ndata == 0 || sparse->nir == 0 || sparse->njc == 0 )
+                bytes += matvar->isLogical ? 1 : 8;
         }
     } else {
         int nmemb = 1;
         for ( i = 0; i < matvar->rank; i++ )
             nmemb *= matvar->dims[i];
-        bytes += nmemb*Mat_SizeOfClass(matvar->class_type);
+        bytes = nmemb*Mat_SizeOfClass(matvar->class_type);
+        if ( matvar->isComplex )
+            bytes *= 2;
     }
     return bytes;
 }

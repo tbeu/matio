@@ -28,6 +28,17 @@ AT_SETUP([Copy variables])
 AT_KEYWORDS([copy])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([! grep -q "#define SIZEOF_VOID_P 4" $abs_top_builddir/src/matioConfig.h])
+AT_CHECK([$builddir/test_mat -v 7.3 -z copy $srcdir/datasets/matio_test_cases_hdf_le.mat],[0],[],[])
+AT_CHECK([cp $srcdir/results/dump-mat_copy-73_32.out expout
+          $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Copy variables])
+AT_KEYWORDS([copy])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([! grep -q "#define SIZEOF_VOID_P 8" $abs_top_builddir/src/matioConfig.h])
 AT_CHECK([$builddir/test_mat -v 7.3 -z copy $srcdir/datasets/matio_test_cases_hdf_le.mat],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-mat_copy-73.out expout
           $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],[expout],[])
