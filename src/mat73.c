@@ -2691,7 +2691,7 @@ Mat_VarReadNextInfo73( mat_t *mat )
     herr_t  herr;
     struct mat_read_next_iter_data mat_data;
 
-    if( mat == NULL )
+    if ( mat == NULL )
         return NULL;
 
     if ( mat->next_index >= mat->num_datasets )
