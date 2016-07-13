@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (C) 2005-2016   Christopher C. 6
+## Copyright (C) 2005-2016   Christopher C. Hulbert
 ##
 ## All rights reserved.
 ##
@@ -97,9 +97,13 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/cell_api_getlinear.out \
                  $(srcdir)/results/cell_api_set.out \
                  $(srcdir)/results/dump-large_struct_compressed.out \
+                 $(srcdir)/results/dump-large_struct_compressed_32.out \
                  $(srcdir)/results/dump-mat_copy-4.out \
+                 $(srcdir)/results/dump-mat_copy-4_32.out \
                  $(srcdir)/results/dump-mat_copy-5.out \
+                 $(srcdir)/results/dump-mat_copy-5_32.out \
                  $(srcdir)/results/dump-mat_copy-73.out \
+                 $(srcdir)/results/dump-mat_copy-73_32.out \
                  $(srcdir)/results/dump-mat_copy-partial.out \
                  $(srcdir)/results/dump-var1.out \
                  $(srcdir)/results/dump-var1-2.out \
