@@ -72,9 +72,11 @@ struct h5_read_group_info_iter_data {
 };
 
 #if defined(H5Rdereference)
-#define H5RDEREFERENCE H5Rdereference1
+/* HDF5 1.10.0 */
+#define H5RDEREFERENCE(obj_id, ref_type, _ref) H5Rdereference2((obj_id), H5P_DATASET_ACCESS_DEFAULT, (ref_type), (_ref))
 #else
-#define H5RDEREFERENCE H5Rdereference
+/* HDF5 prior to 1.10.0 */
+#define H5RDEREFERENCE(obj_id, ref_type, _ref) H5Rdereference((obj_id), (ref_type), (_ref))
 #endif
 
 /*===========================================================================
