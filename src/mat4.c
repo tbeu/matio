@@ -514,9 +514,6 @@ Read4(mat_t *mat,matvar_t *matvar)
 #endif
                     }
                     else {
-                        free(complex_data->Re);
-                        free(complex_data->Im);
-                        free(complex_data);
                         free(sparse->jc);
                         free(sparse->ir);
                         free(matvar->data);
