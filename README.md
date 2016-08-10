@@ -23,11 +23,11 @@ MATLAB MAT file I/O library
 3. [License](#30-license)
 
 ## 1.0 Introduction
-Matio is an open-source C library for reading and writing MATLAB MAT files.
+Matio is an open-source C library for reading and writing binary MATLAB MAT files.
 This library is designed for use by programs/libraries that do not have access or do not want to rely on MATLAB's shared libraries.
 
 ### 1.1 Contact
-You can contact Christopher Hulbert through email at chulbe2lsu@users.sourceforge.net and Thomas Beutlich through email at t-beu@users.sourceforge.net.
+You can contact Christopher Hulbert through email at chulbe2lsu@users.sourceforge.net or Thomas Beutlich through email at t-beu@users.sourceforge.net.
 
 ### 1.2 Acknowledgements
 The following people/organizations have helped in the development of matio through patches, bug reports, and/or testing:
@@ -57,7 +57,7 @@ This section describes how to build matio. Section [2.1](#21-dependencies) descr
 Matio has two optional dependencies. These are not required for the software to work, but without them some files may be unreadable. Zlib is required to read/write level 5 MAT files that use compression. HDF5 is required to work with newer MAT files that use the HDF5-format files.
 
 #### 2.1.1 zlib
-To support compressed MAT files, zlib 1.2.3 or greater is required. The zlib software can be downloaded from http://zlib.net/.
+To support compressed MAT files, zlib version &ge; 1.2.3 is required. The zlib software can be downloaded from http://zlib.net/.
 
 #### 2.1.2 HDF5
 Support for MAT file version 7.3 requires the HDF5 library. This library can be downloaded from https://www.hdfgroup.org/. Matio requires HDF5 version &ge; 1.8.x. Neither deprecated HDF5 1.6.x API functions nor HDF5 higher-level functions are called.
