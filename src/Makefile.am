@@ -27,13 +27,12 @@
 ##
 VPATH = @srcdir@
 
-LT_CURRENT=3
-LT_REVISION=0
+LT_CURRENT=5
+LT_REVISION=1
 LT_AGE=1
 
 AM_CFLAGS  = -I. $(HDF5_CFLAGS) $(ZLIB_CFLAGS) $(LT_CFLAGS)
 AM_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) $(LT_LDFLAGS)
-AM_LDFLAGS += -no-undefined
 
 if HAVE_ZLIB
     ZLIB_SRC = inflate.c
@@ -47,10 +46,13 @@ lib_LTLIBRARIES        = libmatio.la
 libmatio_la_SOURCES    = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
                          mat5.c mat4.c mat.c matvar_cell.c matvar_struct.c
 libmatio_la_LIBADD     = $(HDF5_LIBS) $(ZLIB_LIBS)
+libmatio_la_LDFLAGS    = -no-undefined -export-symbols @srcdir@/matio.sym $(AM_LDFLAGS)
 
 if MAT73
     libmatio_la_SOURCES+= mat73.c
 endif
+
+EXTRA_DIST = matio.sym
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \

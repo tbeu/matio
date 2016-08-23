@@ -1,3 +1,4 @@
+## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
 ## Copyright (C) 2005-2016   Christopher C. Hulbert
 ##
@@ -35,11 +36,14 @@ VS_FILES = visual_studio/libmatio/libmatio.vcproj \
            visual_studio/matdump/matdump.vcproj \
            visual_studio/matdump/matdump.vcxproj \
            visual_studio/matdump/matdump.vcxproj.filters \
+           visual_studio/test_mat/test_mat.vcxproj \
+           visual_studio/test_mat/test_mat.vcxproj.filters \
            visual_studio/matio.def \
            visual_studio/matio_vs2008.sln \
            visual_studio/matio.sln \
            visual_studio/matioConfig.h \
-           visual_studio/matio_pubconf.h
+           visual_studio/matio_pubconf.h \
+           visual_studio/matio.rc
 
 EXTRA_DIST = README.md matio.pc.in autogen.sh patches/inflate.patch \
              share/test_file.mat share/test_file_v6.mat $(VS_FILES)

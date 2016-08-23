@@ -26,39 +26,77 @@
 
 AT_INIT([matio testsuite])
 
-m4_divert_push([PREPARE_TESTS])
-# Check for libtool configuration data
-# host_os and with_msvc_ld are used in MATIO_AT_HOST_DATA
-eval `$LIBTOOL --config | grep '^EGREP='`
-eval `$LIBTOOL --config | $EGREP '^(host_os|with_msvc_ld)='`
-m4_divert_pop([PREPARE_TESTS])
-
-# MATIO_AT_HOST_DATA(FILE, CONTENTS)
-# -------------------------------
-# Ensure correct line ending for expected output of host executables.
-m4_define([MATIO_AT_HOST_DATA],
-[AT_DATA([$1], [$2])
-windows_eol=no
-case $host_os in
-  mingw*)
-    windows_eol=yes
-    ;;
-  *)
-    if test "x$with_msvc_ld" = "xyes"; then
-      windows_eol=yes
-    fi
-    ;;
-esac
-if test "$windows_eol" = "yes"; then
-  while read -r l; do printf "%s\r\n" "$l"; done < $1 > $1.t
-  mv -f $1.t $1
-fi
-])
+AT_COPYRIGHT(Copyright (C) 2010-2016 Christopher C. Hulbert)
 
 AT_COLOR_TESTS
 
+m4_divert_push([PREPARE_TESTS])
+[
+ovs_wait () {
+    # First try a quick sleep, so that the test completes very quickly
+    # in the normal case.  POSIX doesn't require fractional times to
+    # work, so this might not work.
+    sleep 0.1
+    ovs_wait_cond && exit 0
+    # Then wait up to 10 seconds.
+    for d in 0 1 2 3 4 5 6 7 8 9; do
+        sleep 1
+        ovs_wait_cond && exit 0
+    done
+    exit 1
+}
+
+# Prints the integers from $1 to $2, increasing by $3 (default 1) on stdout.
+seq () {
+    while test $1 -le $2; do
+        echo $1
+        set `expr $1 + ${3-1}` $2 $3
+    done
+}
+
+if test "$IS_WIN32" = "yes"; then
+    pwd () {
+        command pwd -W "$@"
+    }
+
+    diff () {
+        command diff --strip-trailing-cr "$@"
+    }
+
+    kill () {
+        case "$1" in
+            -0)
+                shift
+                for i in $*; do
+                    # tasklist will always have return code 0.
+                    # If pid does exist, there will be a line with the pid.
+                    if tasklist //fi "PID eq $i" | grep $i; then
+                        :
+                    else
+                        return 1
+                    fi
+                done
+                return 0
+                ;;
+            -[1-9]*)
+                shift
+                for i in $*; do
+                    taskkill //F //PID $i
+                done
+                ;;
+            [1-9][1-9]*)
+                for i in $*; do
+                    taskkill //F //PID $i
+                done
+                ;;
+        esac
+    }
+fi
+]
+m4_divert_pop([PREPARE_TESTS])
+
 AT_BANNER(Read [MAT version 4 (Little Endian)])
-m4_include([mat4_read.at])
+m4_include([mat4_read_le.at])
 m4_include([mat4_readslab_le.at])
 
 AT_BANNER(Read [MAT version 4 (Big Endian)])
@@ -92,17 +130,35 @@ m4_include([mat73_readslab_be.at])
 AT_BANNER([Write MAT version 4])
 m4_include([mat4_write.at])
 
+AT_BANNER([Read/Write MAT version 4])
+m4_include([mat4_readwrite.at])
+
 AT_BANNER([Write Uncompressed MAT version 5])
 m4_include([mat5_uncompressed_write.at])
+
+AT_BANNER([Read/Write Uncompressed MAT version 5])
+m4_include([mat5_uncompressed_readwrite.at])
 
 AT_BANNER([Write Compressed MAT version 5])
 m4_include([mat5_compressed_write.at])
 
+AT_BANNER([Read/Write Compressed MAT version 5])
+m4_include([mat5_compressed_readwrite.at])
+
 AT_BANNER([Write MAT version 7.3])
 m4_include([mat73_write.at])
 
+AT_BANNER([Read/Write MAT version 7.3])
+m4_include([mat73_readwrite.at])
+
 AT_BANNER([Write Compressed MAT version 7.3])
 m4_include([mat73_compressed_write.at])
+
+AT_BANNER([Read/Write Compressed MAT version 7.3])
+m4_include([mat73_compressed_readwrite.at])
+
+AT_BANNER([Extended Sparse version 4])
+m4_include([mat4_extended_sparse.at])
 
 AT_BANNER([Extended Sparse Uncompressed MAT version 5])
 m4_include([mat5_uncompressed_extended_sparse.at])
@@ -119,3 +175,4 @@ m4_include([mat73_compressed_extended_sparse.at])
 AT_BANNER([API Tests])
 m4_include([struct_api.at])
 m4_include([cell_api.at])
+m4_include([subscript_api.at])

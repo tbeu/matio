@@ -35,7 +35,7 @@
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
 #else
 #   define SIZE_T_FMTSTR "zu"
@@ -60,6 +60,7 @@ static const char *helpstr[] = {
 "",
 "OPTIONS",
 "-d,--data         Print data with header information",
+"-f,--format whos  Turn on 'whos' display mode",
 "-h,--human        Human readable sizes in 'whos' display mode",
 "-v,--verbose      Turn on verbose messages",
 "-H,--help         This output",
@@ -415,6 +416,9 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 field = Mat_VarDuplicate(field,1);
                 Mat_VarFree(matvar);
                 matvar = field;
+                if ( done == 1 ) {
+                    Mat_VarReadDataAll(mat, matvar);
+                }
             } else if ( matvar->class_type == MAT_C_CELL ) {
                 int ncells;
                 matvar_t *cell, **cells;
@@ -489,12 +493,12 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                     cells = Mat_VarGetCellsLinear(matvar,*start,
                                   *stride,*edge);
                     if (matvar->rank == 2 && matvar->dims[0] == 1) {
-                       matvar->dims[1] = *edge;
+                        matvar->dims[1] = *edge;
                     } else if (matvar->rank == 2 && matvar->dims[1] == 1) {
-                       matvar->dims[0] = *edge;
+                        matvar->dims[0] = *edge;
                     } else {
-                       matvar->rank = 1;
-                       matvar->dims[0] = *edge;
+                        matvar->rank = 1;
+                        matvar->dims[0] = *edge;
                     }
                 } else {
                     cells = Mat_VarGetCells(matvar,start,stride,edge);
@@ -530,7 +534,7 @@ static void
 print_whos(matvar_t *matvar)
 {
     int i;
-    size_t nbytes = 0;
+    size_t nbytes;
     char size[32] = {'\0',};
 
     if ( print_whos_first ) {
@@ -541,17 +545,15 @@ print_whos(matvar_t *matvar)
     if ( matvar->rank > 0 ) {
         int cnt = 0;
         printf("%8" SIZE_T_FMTSTR, matvar->dims[0]);
-        nbytes = matvar->dims[0];
         for ( i = 1; i < matvar->rank; i++ ) {
             if ( ceil(log10((double)matvar->dims[i]))+1 < 32 )
                 cnt += sprintf(size+cnt,"x%" SIZE_T_FMTSTR, matvar->dims[i]);
-            nbytes *= matvar->dims[i];
         }
         printf("%-10s",size);
-        nbytes *= Mat_SizeOfClass(matvar->class_type);
     } else {
         printf("                    ");
     }
+    nbytes = Mat_VarGetSize(matvar);
     if ( human_readable ) {
         if ( nbytes > 1073741824L )
             printf(" %10.1fG",(double)nbytes/1073741824.0);
@@ -560,9 +562,9 @@ print_whos(matvar_t *matvar)
         else if ( nbytes > 1024 )
             printf(" %10.1fK",(double)nbytes/1024.0);
         else
-            printf(" %10luB",nbytes);
+            printf(" %10" SIZE_T_FMTSTR "B",nbytes);
     } else {
-        printf("  %10lu",nbytes);
+        printf("  %10" SIZE_T_FMTSTR,nbytes);
     }
     printf("  %-18s\n",mxclass[matvar->class_type-1]);
 
@@ -842,12 +844,17 @@ main (int argc, char *argv[])
                 Mat_VerbMessage(1,"Printing data\n");
                 break;
             case 'f':
-                if ( NULL != optarg && !strcmp(optarg,"whos") ) {
-                    printfunc = print_whos;
-                    break;
-                }
-                Mat_Warning("%s is not a recognized output format. "
+                if ( NULL != optarg ) {
+                    if ( !strcmp(optarg,"whos") ) {
+                        printfunc = print_whos;
+                    } else {
+                        Mat_Warning("%s is not a recognized output format. "
                               "Using default\n", optarg);
+                    }
+                } else {
+                    Mat_Warning("Missing output format. "
+                            "Using default\n", optarg);
+                }
                 break;
             case 'h':
                 human_readable = 1;
@@ -869,12 +876,14 @@ main (int argc, char *argv[])
         }
     }
 
-    if ( (argc-optind) < 1 )
-        Mat_Error("Must specify at least one argument");
+    if ( (argc-optind) < 1 ) {
+        Mat_Critical("Must specify at least one argument");
+        return EXIT_FAILURE;
+    }
 
     mat = Mat_Open( argv[optind],MAT_ACC_RDONLY );
     if ( NULL == mat ) {
-        Mat_Error("Error opening %s\n", argv[optind]);
+        Mat_Critical("Error opening %s\n", argv[optind]);
         return EXIT_FAILURE;
     }
 

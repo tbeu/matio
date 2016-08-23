@@ -1,8 +1,8 @@
-# MATIO
+﻿# MATIO
 MATLAB MAT file I/O library
 
 ## Build status
-[![Build Status](https://drone.io/github.com/tbeu/matio/status.png)](https://drone.io/github.com/tbeu/matio/latest) [![Build Status](https://travis-ci.org/tbeu/matio.svg?branch=master)](https://travis-ci.org/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master)
+[![Build Status](https://drone.io/github.com/tbeu/matio/status.png)](https://drone.io/github.com/tbeu/matio/latest) [![Build Status](https://travis-ci.org/tbeu/matio.svg?branch=master)](https://travis-ci.org/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Coverage Status](https://coveralls.io/repos/github/tbeu/matio/badge.svg?branch=master)](https://coveralls.io/github/tbeu/matio?branch=master) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master)
 
 ## Table of Contents
 1. [Introduction](#10-introduction)
@@ -23,24 +23,27 @@ MATLAB MAT file I/O library
 3. [License](#30-license)
 
 ## 1.0 Introduction
-Matio is an open-source library for reading/writing MATLAB MAT files.
-This library is designed for use by programs/libraries that do not have access or do not want to rely on MATLAB's shared library.
+Matio is an open-source C library for reading and writing binary MATLAB MAT files.
+This library is designed for use by programs/libraries that do not have access or do not want to rely on MATLAB's shared libraries.
 
 ### 1.1 Contact
-You can contact me (Christopher Hulbert) through email at chulbe2lsu@users.sourceforge.net.
+You can contact Christopher Hulbert through email at chulbe2lsu@users.sourceforge.net or Thomas Beutlich through email at t-beu@users.sourceforge.net.
 
 ### 1.2 Acknowledgements
 The following people/organizations have helped in the development of matio through patches, bug reports, and/or testing:
 
-* Jacco van Beek
-* SGI in support of Interactive Supercomputing, Inc.
-* Scilab ([http://www.scilab.org/](http://www.scilab.org/))
-* Steven Leibman <sleibman@alum.mit.edu>
-* OpenMEEG ([http://openmeeg.github.io/](http://openmeeg.github.io/))
+* Greg Sjaardema ([https://github.com/gsjaardema](https://github.com/gsjaardema))
+* Jacco van Beek ([https://sourceforge.net/u/jabe](https://sourceforge.net/u/jabe))
 * Modelica Association ([https://modelica.org/association](https://modelica.org/association))
+* Nils Jannasch ([https://github.com/NJannasch](https://github.com/NJannasch))
+* OpenMEEG ([http://openmeeg.github.io/](http://openmeeg.github.io/))
+* Scilab ([http://www.scilab.org/](http://www.scilab.org/))
+* Sébastien Villemot ([https://github.com/sebastien-villemot](https://github.com/sebastien-villemot))
+* SGI in support of Interactive Supercomputing, Inc.
+* Steven Leibman <sleibman@alum.mit.edu>
 
 ### 1.3 Contributing
-Part of my reason for releasing this software is I have many other projects to work on and have many features I would still like to implement. If you make changes, I would appreciate your contributions and more than likely will include them in future releases. If you are interested in collaborations, contact me via email (see Section [1.1](#11-contact)).
+If you are interested in collaborations, contact us via email (see Section [1.1](#11-contact)).
 
 ### 1.4 Questions and Reporting Bugs
 Questions can be asked using the forums on the sourceforge site hosting matio ([http://sourceforge.net/projects/matio/forums](http://sourceforge.net/projects/matio/forums)).
@@ -51,13 +54,16 @@ Bugs, enhancements, etc. should be submitted using one of the trackers on the so
 This section describes how to build matio. Section [2.1](#21-dependencies) describes the dependencies, Section [2.2](#22-building-matio) how to build/test matio, and Section [2.3](#23-platforms) documents the platforms matio has been tested on.
 
 ### 2.1 Dependencies
-MATIO has two optional dependencies. These are not required for the software to work, but without them some files may be unreadable. Zlib is required to read/write level 5 MAT files that use compression. HDF5 is required to work with newer MAT files that use the HDF5-format files.
+Matio has two optional dependencies. These are not required for the software to work, but without them some files may be unreadable. Zlib is required to read/write level 5 MAT files that use compression. HDF5 is required to work with newer MAT files that use the HDF5-format files.
 
 #### 2.1.1 zlib
-To support compressed MAT files, zlib 1.2.3 or greater is required. The zlib software can be downloaded from http://zlib.net/.
+To support compressed MAT files, zlib version &ge; 1.2.3 is required. The zlib software can be downloaded from http://zlib.net/.
 
 #### 2.1.2 HDF5
-Support for MAT file version 7.3 requires the HDF5 library. This library can be downloaded from https://www.hdfgroup.org/. Matio requires HDF5 version 1.8.x, and must be built with default API version 1.8 (i.e. `--with-default-api-version=v18`). Neither deprecated HDF5 1.6.x API functions nor HDF5 higher-level functions are called.
+Support for MAT file version 7.3 requires the HDF5 library. This library can be downloaded from https://www.hdfgroup.org/. Matio requires HDF5 version &ge; 1.8.x. Neither deprecated HDF5 1.6.x API functions nor HDF5 higher-level functions are called.
+
+* Building matio with HDF5 1.8.x requires configuration of HDF5 with default API version 1.8 (i.e. `--with-default-api-version=v18`).
+* Building matio with HDF5 1.10.x requires configuration of HDF5 with either default API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
 
 For Windows, the pre-compiled binaries can be used which also include a DLL of zlib to satisfy the zlib dependency.
 
@@ -78,7 +84,7 @@ If any of the tests in the testsuite fail, you should report the failure using t
 The configure script used to build the software takes a number of options. This section describes the key options.
 
 * `--enable-mat73=yes`
-This flag en/disables the support for version 7.3 MAT files. The option only makes sense if built with HDF5 as support for version 7.3 files will be disabled if HDF5 is not available.
+This flag en/disables the support for version 7.3 MAT files. The option only makes sense if built with HDF5 as support for version 7.3 files. It will be disabled if HDF5 is not available.
 * `--enable-extended-sparse=yes`
 Enable extended sparse matrix data types not supported in MATLAB. MATLAB only supports double-precision sparse data. With this flag, matio will read sparse data with other types (i.e. single-precision and integer types).
 * `--with-matlab=DIR`
@@ -109,3 +115,5 @@ The library has been tested/used on Linux, Windows, OS X, and AIX including both
 
 ## 3.0 License
 This software is provided under a Simplified BSD license. See the [COPYING](COPYING) file for details on the license.
+
+<sub>MATLAB is a registered trademark of The MathWorks, Inc.</sub>

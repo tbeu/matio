@@ -1,0 +1,94 @@
+      Name: var1
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: field1
+      Rank: 2
+Dimensions: 2 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+51 52 
+53 54 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: field3
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: field1
+      Rank: 2
+Dimensions: 2 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+51 52 
+53 54 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: field3
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: field1
+      Rank: 2
+Dimensions: 2 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+51 52 
+53 54 
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: field3
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+}

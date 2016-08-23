@@ -82,43 +82,44 @@ struct matvar_internal {
     char *hdf5_name;        /**< Name */
     hobj_ref_t hdf5_ref;    /**< Reference */
     hid_t      id;          /**< Id */
-    long  fpos;             /**< Offset from the beginning of the MAT file to the variable */
-    long  datapos;          /**< Offset from the beginning of the MAT file to the data */
-    mat_t    *fp;           /**< Pointer to the MAT file structure (mat_t) */
-    unsigned num_fields;    /**< Number of fields */
-    char **fieldnames;      /**< Pointer to fieldnames */
+    long       fpos;        /**< Offset from the beginning of the MAT file to the variable */
+    long       datapos;     /**< Offset from the beginning of the MAT file to the data */
+    mat_t     *fp;          /**< Pointer to the MAT file structure (mat_t) */
+    unsigned   num_fields;  /**< Number of fields */
+    char     **fieldnames;  /**< Pointer to fieldnames */
 #if defined(HAVE_ZLIB)
-    z_streamp z;            /**< zlib compression state */
+    z_streamp  z;           /**< zlib compression state */
+    void      *data;        /**< Inflated data array */
 #endif
 };
 
-/*    snprintf.c    */
+/* snprintf.c */
 #if !HAVE_VSNPRINTF
 int rpl_vsnprintf(char *, size_t, const char *, va_list);
 #define mat_vsnprintf rpl_vsnprintf
 #else
 #define mat_vsnprintf vsnprintf
-#endif	/* !HAVE_VSNPRINTF */
+#endif /* !HAVE_VSNPRINTF */
 #if !HAVE_SNPRINTF
 int rpl_snprintf(char *, size_t, const char *, ...);
 #define mat_snprintf rpl_snprintf
 #else
 #define mat_snprintf snprintf
-#endif	/* !HAVE_SNPRINTF */
+#endif /* !HAVE_SNPRINTF */
 #if !HAVE_VASPRINTF
 int rpl_vasprintf(char **, const char *, va_list);
 #define mat_vasprintf rpl_vasprintf
 #else
 #define mat_vasprintf vasprintf
-#endif	/* !HAVE_VASPRINTF */
+#endif /* !HAVE_VASPRINTF */
 #if !HAVE_ASPRINTF
 int rpl_asprintf(char **, const char *, ...);
 #define mat_asprintf rpl_asprintf
 #else
 #define mat_asprintf asprintf
-#endif	/* !HAVE_ASPRINTF */
+#endif /* !HAVE_ASPRINTF */
 
-/*   endian.c     */
+/* endian.c */
 EXTERN double        Mat_doubleSwap(double  *a);
 EXTERN float         Mat_floatSwap(float   *a);
 #ifdef HAVE_MAT_INT64_T
@@ -204,22 +205,25 @@ EXTERN int ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
                enum matio_classes class_type,enum matio_types data_type,
                int rank,size_t *dims,int *start,int *stride,int *edge);
 
-/*   inflate.c    */
-EXTERN int InflateSkip(mat_t *mat, z_streamp z, int nbytes);
-EXTERN int InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes);
-EXTERN int InflateSkipData(mat_t *mat,z_streamp z,enum matio_types data_type,int len);
-EXTERN int InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateVarName(mat_t *mat,matvar_t *matvar,void *buf,int N);
-EXTERN int InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN int InflateDataType(mat_t *mat, z_stream *matvar, void *buf);
-EXTERN int InflateData(mat_t *mat, z_streamp z, void *buf, int nBytes);
-EXTERN int InflateFieldNameLength(mat_t *mat,matvar_t *matvar,void *buf);
-EXTERN int InflateFieldNamesTag(mat_t *mat,matvar_t *matvar,void *buf);
-EXTERN int InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,
+/* inflate.c */
+EXTERN size_t InflateSkip(mat_t *mat, z_streamp z, int nbytes);
+EXTERN size_t InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes);
+EXTERN size_t InflateSkipData(mat_t *mat,z_streamp z,enum matio_types data_type,int len);
+EXTERN size_t InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateVarName(mat_t *mat,matvar_t *matvar,void *buf,int N);
+EXTERN size_t InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateDataType(mat_t *mat, z_stream *matvar, void *buf);
+EXTERN size_t InflateData(mat_t *mat, z_streamp z, void *buf, int nBytes);
+EXTERN size_t InflateFieldNameLength(mat_t *mat,matvar_t *matvar,void *buf);
+EXTERN size_t InflateFieldNamesTag(mat_t *mat,matvar_t *matvar,void *buf);
+EXTERN size_t InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,
                int fieldname_length,int padding);
 #endif
+
+/* mat.c */
+EXTERN mat_complex_split_t *ComplexMalloc(size_t nbytes);
 
 #endif

@@ -1,0 +1,12 @@
+      Name: l2
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: 16-bit, unsigned integer array (logical)
+ Data Type: 16-bit, unsigned integer
+{
+0 1 0 1 0 1 0 1 0 1 
+1 0 1 0 1 0 1 0 1 0 
+0 1 0 1 0 1 0 1 0 1 
+1 0 1 0 1 0 1 0 1 0 
+0 1 0 1 0 1 0 1 0 1 
+}

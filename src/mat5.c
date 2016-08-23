@@ -68,7 +68,7 @@ GetStructFieldBufSize(matvar_t *matvar)
     int    nmemb = 1, i;
 
     if ( matvar == NULL )
-        return nBytes;
+        return GetEmptyMatrixMaxBufSize(NULL, 2);
 
     /* Add the Array Flags tag and space to the number of bytes */
     nBytes += tag_size + array_flags_size;
@@ -113,7 +113,7 @@ GetStructFieldBufSize(matvar_t *matvar)
     case MAT_C_CELL:
     {
         matvar_t **cells = (matvar_t**)matvar->data;
-        int i, ncells;
+        int ncells;
 
         if ( matvar->nbytes == 0 || matvar->data_size == 0 )
             break;
@@ -121,6 +121,7 @@ GetStructFieldBufSize(matvar_t *matvar)
         ncells = matvar->nbytes / matvar->data_size;
 
         if ( NULL != cells && ncells > 0 ) {
+            int i;
             for ( i = 0; i < ncells; i++ )
                 nBytes += tag_size + GetCellArrayFieldBufSize(cells[i]);
         }
@@ -232,7 +233,7 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
     case MAT_C_CELL:
     {
         matvar_t **cells = (matvar_t**)matvar->data;
-        int i, ncells;
+        int ncells;
 
         if ( matvar->nbytes == 0 || matvar->data_size == 0 )
             break;
@@ -240,6 +241,7 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
         ncells = matvar->nbytes / matvar->data_size;
 
         if ( NULL != cells && ncells > 0 ) {
+            int i;
             for ( i = 0; i < ncells; i++ )
                 nBytes += tag_size + GetCellArrayFieldBufSize(cells[i]);
         }
@@ -403,7 +405,7 @@ GetMatrixMaxBufSize(matvar_t *matvar)
     case MAT_C_CELL:
     {
         matvar_t **cells = (matvar_t**)matvar->data;
-        int i, ncells;
+        int ncells;
 
         if ( matvar->nbytes == 0 || matvar->data_size == 0 )
             break;
@@ -411,6 +413,7 @@ GetMatrixMaxBufSize(matvar_t *matvar)
         ncells = matvar->nbytes / matvar->data_size;
 
         if ( NULL != cells && ncells > 0 ) {
+            int i;
             for ( i = 0; i < ncells; i++ )
                 nBytes += tag_size + GetCellArrayFieldBufSize(cells[i]);
         }
@@ -489,7 +492,7 @@ Mat_Create5(const char *matname,const char *hdr_str)
     size_t err;
     time_t t;
 
-    fp = fopen(matname,"wb");
+    fp = fopen(matname,"w+b");
     if ( !fp )
         return NULL;
 
@@ -506,8 +509,10 @@ Mat_Create5(const char *matname,const char *hdr_str)
     mat->version       = 0;
     mat->byteswap      = 0;
     mat->mode          = 0;
-    mat->bof           = 0;
+    mat->bof           = 128;
     mat->next_index    = 0;
+    mat->num_datasets  = 0;
+    mat->refs_id       = -1;
 
     t = time(NULL);
     mat->fp       = fp;
@@ -522,10 +527,11 @@ Mat_Create5(const char *matname,const char *hdr_str)
                 "Created by: libmatio v%d.%d.%d on %s", MATIO_PLATFORM,
                 MATIO_MAJOR_VERSION, MATIO_MINOR_VERSION, MATIO_RELEASE_LEVEL,
                 ctime(&t));
-        mat->header[115] = '\0';    /* Just to make sure it's NULL terminated */    } else {
+    } else {
         err = mat_snprintf(mat->header,116,"%s",hdr_str);
     }
-    mat->header[err] = ' ';
+    if ( err >= 116 )
+        mat->header[115] = '\0'; /* Just to make sure it's NULL terminated */
     memset(mat->subsys_offset,' ',8);
     mat->version = (int)0x0100;
     endian = 0x4d49;
@@ -556,10 +562,11 @@ Mat_Create5(const char *matname,const char *hdr_str)
  * @return number of bytes written
  * @endif
  */
-int
+static size_t
 WriteCharData(mat_t *mat, void *data, int N,enum matio_types data_type)
 {
-    int nBytes = 0, bytesread = 0, i;
+    int nBytes = 0, i;
+    size_t byteswritten = 0;
     mat_int8_t pad1 = 0;
 
     switch ( data_type ) {
@@ -614,11 +621,22 @@ WriteCharData(mat_t *mat, void *data, int N,enum matio_types data_type)
                     fwrite(&pad1,1,1,(FILE*)mat->fp);
             break;
         }
+        case MAT_T_UNKNOWN:
+        {
+            /* Sometimes empty char data will have MAT_T_UNKNOWN, so just write
+             * a data tag
+             */
+            nBytes = N*2;
+            data_type = MAT_T_UINT16;
+            fwrite(&data_type,4,1,(FILE*)mat->fp);
+            fwrite(&nBytes,4,1,(FILE*)mat->fp);
+            break;
+        }
         default:
             break;
     }
-    bytesread+=nBytes;
-    return bytesread;
+    byteswritten+=nBytes;
+    return byteswritten;
 }
 
 #if defined(HAVE_ZLIB)
@@ -642,7 +660,7 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
     enum matio_types data_type)
 {
     int data_size, data_tag[2], byteswritten = 0;
-    int buf_size = 1024, i;
+    int buf_size = 1024;
     mat_uint8_t   buf[1024], pad[8] = {0,};
 
     if ((mat == NULL) || (mat->fp == NULL))
@@ -693,6 +711,7 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
         {
             mat_uint8_t *ptr;
             mat_uint16_t c;
+            int i;
 
             /* Matlab can't read MAT_C_CHAR as uint8, needs uint16 */
             data_size   = 2;
@@ -817,10 +836,11 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
  * @return number of bytes written
  * @endif
  */
-static int
+static size_t
 WriteEmptyCharData(mat_t *mat, int N, enum matio_types data_type)
 {
-    int nBytes = 0, bytesread = 0, i;
+    int nBytes = 0, i;
+    size_t byteswritten = 0;
     mat_int8_t pad1 = 0;
 
     switch ( data_type ) {
@@ -857,8 +877,8 @@ WriteEmptyCharData(mat_t *mat, int N, enum matio_types data_type)
         default:
             break;
     }
-    bytesread+=nBytes;
-    return bytesread;
+    byteswritten+=nBytes;
+    return byteswritten;
 }
 
 /** @if mat_devman
@@ -873,7 +893,7 @@ WriteEmptyCharData(mat_t *mat, int N, enum matio_types data_type)
  * @return Number of bytes written
  * @endif
  */
-static int
+static size_t
 WriteEmptyData(mat_t *mat,int N,enum matio_types data_type)
 {
     int nBytes = 0, data_size, i;
@@ -1013,11 +1033,12 @@ WriteEmptyData(mat_t *mat,int N,enum matio_types data_type)
 }
 
 #if defined(HAVE_ZLIB)
-static int
+static size_t
 WriteCompressedEmptyData(mat_t *mat,z_streamp z,int N,
     enum matio_types data_type)
 {
-    int nBytes = 0, data_size, i, byteswritten = 0;
+    int nBytes = 0, data_size, i;
+    size_t byteswritten = 0;
 
     if ( (mat == NULL) || (mat->fp == NULL) )
         return 0;
@@ -1184,7 +1205,7 @@ WriteCompressedEmptyData(mat_t *mat,z_streamp z,int N,
  * @param start index to start writing the data in each dimension
  * @param stride write data every @c stride elements
  * @param edge number of elements to write in each dimension
- * @return number of byteswritten
+ * @return number of byteswritten, or -1 on error
  * @endif
  */
 int
@@ -1192,7 +1213,7 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
     int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j;
-    long pos, row_stride, col_stride;
+    long pos, row_stride, col_stride, pos2;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
@@ -1209,16 +1230,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1231,16 +1261,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1254,16 +1293,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1278,16 +1326,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1301,16 +1358,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1323,16 +1389,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1345,16 +1420,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1367,16 +1451,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1389,16 +1482,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1411,16 +1513,25 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1446,7 +1557,7 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
  * @param start index to start writing the data in each dimension
  * @param stride write data every @c stride elements
  * @param edge number of elements to write in each dimension
- * @return number of byteswritten
+ * @return number of byteswritten, or -1 on error
  * @endif
  */
 int
@@ -1454,7 +1565,7 @@ WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
     size_t *dims,int *start,int *stride,int *edge)
 {
     int nBytes = 0, data_size, i, j;
-    long pos, row_stride, col_stride;
+    long pos, row_stride, col_stride, pos2;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
@@ -1471,16 +1582,25 @@ WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++ ) {
                     fwrite(ptr++,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1496,17 +1616,26 @@ WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++,ptr++ ) {
                     c = *ptr;
                     fwrite(&c,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1519,16 +1648,25 @@ WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
             row_stride = (stride[0]-1)*data_size;
             col_stride = stride[1]*dims[0]*data_size;
 
-            fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR);
             for ( i = 0; i < edge[1]; i++ ) {
                 pos = ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
+                if ( pos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR);
                 for ( j = 0; j < edge[0]; j++,ptr++ ) {
                     fwrite(ptr,data_size,1,(FILE*)mat->fp);
-                    fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR);
                 }
-                pos +=col_stride-ftell((FILE*)mat->fp);
-                fseek((FILE*)mat->fp,pos,SEEK_CUR);
+                pos2 = ftell((FILE*)mat->fp);
+                if ( pos2 == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                    return -1;
+                }
+                pos +=col_stride-pos2;
+                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR);
             }
             break;
         }
@@ -1573,7 +1711,7 @@ WriteCompressedData(mat_t *mat,z_streamp z,void *data,int N,
 {
     int nBytes = 0, data_size, data_tag[2], byteswritten = 0;
     int buf_size = 1024;
-    mat_uint8_t   buf[1024], pad[8] = {0,};
+    mat_uint8_t buf[1024], pad[8] = {0,};
 
     if ((mat == NULL) || (mat->fp == NULL))
         return 0;
@@ -1626,10 +1764,11 @@ WriteCompressedData(mat_t *mat,z_streamp z,void *data,int N,
  * @param matvar MAT variable pointer
  * @return Number of bytes read
  */
-static int
+static size_t
 ReadNextCell( mat_t *mat, matvar_t *matvar )
 {
-    int ncells, bytesread = 0, i;
+    size_t bytesread = 0;
+    int ncells, i;
     matvar_t **cells = NULL;
 
     ncells = 1;
@@ -1638,7 +1777,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
     matvar->data_size = sizeof(matvar_t *);
     matvar->nbytes    = ncells*matvar->data_size;
     matvar->data      = malloc(matvar->nbytes);
-    if ( !matvar->data ) {
+    if ( NULL == matvar->data ) {
         Mat_Critical("Couldn't allocate memory for %s->data",matvar->name);
         return bytesread;
     }
@@ -1647,7 +1786,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
     if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
         mat_uint32_t uncomp_buf[16] = {0,};
-        int      nbytes;
+        int nbytes;
         mat_uint32_t array_flags;
         int err;
 
@@ -1658,7 +1797,13 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 continue;
             }
 
-            cells[i]->internal->fpos = ftell((FILE*)mat->fp)-matvar->internal->z->avail_in;
+            cells[i]->internal->fpos = ftell((FILE*)mat->fp);
+            if ( cells[i]->internal->fpos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                continue;
+            } else {
+                cells[i]->internal->fpos -= matvar->internal->z->avail_in;
+            }
 
             /* Read variable tag for cell */
             uncomp_buf[0] = 0;
@@ -1690,98 +1835,112 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             /* Array Flags */
             if ( uncomp_buf[0] == MAT_T_UINT32 ) {
                array_flags = uncomp_buf[2];
-               cells[i]->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               cells[i]->isComplex   = (array_flags & MAT_F_COMPLEX);
-               cells[i]->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               cells[i]->isLogical   = (array_flags & MAT_F_LOGICAL);
+               cells[i]->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+               cells[i]->isComplex  = (array_flags & MAT_F_COMPLEX);
+               cells[i]->isGlobal   = (array_flags & MAT_F_GLOBAL);
+               cells[i]->isLogical  = (array_flags & MAT_F_LOGICAL);
                if ( cells[i]->class_type == MAT_C_SPARSE ) {
                    /* Need to find a more appropriate place to store nzmax */
-                   cells[i]->nbytes      = uncomp_buf[3];
+                   cells[i]->nbytes = uncomp_buf[3];
                }
             } else {
                 Mat_Critical("Expected MAT_T_UINT32 for Array Tags, got %d",
                                uncomp_buf[0]);
                 bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
             }
-            bytesread += InflateDimensions(mat,matvar,uncomp_buf);
-            nbytes -= 8;
-            if ( mat->byteswap ) {
-                (void)Mat_uint32Swap(uncomp_buf);
-                (void)Mat_uint32Swap(uncomp_buf+1);
-            }
-            /* Rank and Dimension */
-            if ( uncomp_buf[0] == MAT_T_INT32 ) {
-                int j = 0;
-
-                cells[i]->rank = uncomp_buf[1];
-                nbytes -= cells[i]->rank;
-                cells[i]->rank /= 4;
-                cells[i]->dims = (size_t*)malloc(cells[i]->rank*sizeof(*cells[i]->dims));
+            if ( cells[i]->class_type != MAT_C_OPAQUE ) {
+                bytesread += InflateDimensions(mat,matvar,uncomp_buf);
+                nbytes -= 8;
                 if ( mat->byteswap ) {
-                    for ( j = 0; j < cells[i]->rank; j++ )
-                        cells[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
-                } else {
-                    for ( j = 0; j < cells[i]->rank; j++ )
-                        cells[i]->dims[j] = uncomp_buf[2+j];
+                    (void)Mat_uint32Swap(uncomp_buf);
+                    (void)Mat_uint32Swap(uncomp_buf+1);
                 }
-                if ( cells[i]->rank % 2 != 0 )
-                    nbytes -= 4;
-            }
-            bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
-            nbytes -= 8;
-            if ( mat->byteswap ) {
-                (void)Mat_uint32Swap(uncomp_buf);
-                (void)Mat_uint32Swap(uncomp_buf+1);
-            }
-            /* Handle cell elements written with a variable name */
-            if ( uncomp_buf[1] > 0 ) {
-                /* Name of variable */
-                int len = 0;
-                if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
-                    len = uncomp_buf[1];
+                /* Rank and Dimension */
+                if ( uncomp_buf[0] == MAT_T_INT32 ) {
+                    int j = 0;
 
-                    if ( len % 8 > 0 )
-                        len = len+(8-(len % 8));
-                    cells[i]->name = (char*)malloc(len+1);
-                    /* Inflate variable name */
-                    bytesread += InflateVarName(mat,matvar,cells[i]->name,len);
-                    cells[i]->name[len] = '\0';
-                    nbytes -= len;
-                } else if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
-                           ((uncomp_buf[0] & 0xffff0000) != 0x00) ) {
-                    /* Name packed in tag */
-                    len = (uncomp_buf[0] & 0xffff0000) >> 16;
-                    cells[i]->name = (char*)malloc(len+1);
-                    memcpy(cells[i]->name,uncomp_buf+1,len);
-                    cells[i]->name[len] = '\0';
+                    cells[i]->rank = uncomp_buf[1];
+                    nbytes -= cells[i]->rank;
+                    cells[i]->rank /= 4;
+                    cells[i]->dims = (size_t*)malloc(cells[i]->rank*sizeof(*cells[i]->dims));
+                    if ( mat->byteswap ) {
+                        for ( j = 0; j < cells[i]->rank; j++ )
+                            cells[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
+                    } else {
+                        for ( j = 0; j < cells[i]->rank; j++ )
+                            cells[i]->dims[j] = uncomp_buf[2+j];
+                    }
+                    if ( cells[i]->rank % 2 != 0 )
+                        nbytes -= 4;
+                }
+                bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
+                nbytes -= 8;
+                if ( mat->byteswap ) {
+                    (void)Mat_uint32Swap(uncomp_buf);
+                    (void)Mat_uint32Swap(uncomp_buf+1);
+                }
+                /* Handle cell elements written with a variable name */
+                if ( uncomp_buf[1] > 0 ) {
+                    /* Name of variable */
+                    int len = 0;
+                    if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
+                        len = uncomp_buf[1];
+
+                        if ( len % 8 > 0 )
+                            len = len+(8-(len % 8));
+                        cells[i]->name = (char*)malloc(len+1);
+                        /* Inflate variable name */
+                        bytesread += InflateVarName(mat,matvar,cells[i]->name,len);
+                        cells[i]->name[len] = '\0';
+                        nbytes -= len;
+                    } else if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                               ((uncomp_buf[0] & 0xffff0000) != 0x00) ) {
+                        /* Name packed in tag */
+                        len = (uncomp_buf[0] & 0xffff0000) >> 16;
+                        cells[i]->name = (char*)malloc(len+1);
+                        memcpy(cells[i]->name,uncomp_buf+1,len);
+                        cells[i]->name[len] = '\0';
+                    }
+                }
+                cells[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
+                if ( cells[i]->internal->z != NULL ) {
+                    err = inflateCopy(cells[i]->internal->z,matvar->internal->z);
+                    if ( err == Z_OK ) {
+                        cells[i]->internal->datapos = ftell((FILE*)mat->fp);
+                        if ( cells[i]->internal->datapos != -1L ) {
+                            cells[i]->internal->datapos -= matvar->internal->z->avail_in;
+                            if ( cells[i]->class_type == MAT_C_STRUCT )
+                                bytesread+=ReadNextStructField(mat,cells[i]);
+                            else if ( cells[i]->class_type == MAT_C_CELL )
+                                bytesread+=ReadNextCell(mat,cells[i]);
+                            else if ( nbytes <= (1 << MAX_WBITS) ) {
+                                /* Memory optimization: Read data if less in size
+                                   than the zlib inflate state (approximately) */
+                                cells[i]->internal->fp = mat;
+                                Read5(mat,cells[i]);
+                                cells[i]->internal->data = cells[i]->data;
+                                cells[i]->data = NULL;
+                            }
+                            (void)fseek((FILE*)mat->fp,cells[i]->internal->datapos,SEEK_SET);
+                        } else {
+                            Mat_Critical("Couldn't determine file position");
+                        }
+                        if ( cells[i]->internal->data != NULL ||
+                             cells[i]->class_type == MAT_C_STRUCT ||
+                             cells[i]->class_type == MAT_C_CELL ) {
+                            /* Memory optimization: Free inflate state */
+                            inflateEnd(cells[i]->internal->z);
+                            free(cells[i]->internal->z);
+                            cells[i]->internal->z = NULL;
+                        }
+                    } else {
+                        Mat_Critical("inflateCopy returned error %s",zError(err));
+                    }
+                } else {
+                    Mat_Critical("Couldn't allocate memory");
                 }
             }
-            cells[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
-            err = inflateCopy(cells[i]->internal->z,matvar->internal->z);
-            if ( err != Z_OK ) {
-                Mat_Critical("inflateCopy returned error %s",zError(err));
-            }
-            cells[i]->internal->datapos = ftell((FILE*)mat->fp)-matvar->internal->z->avail_in;
-            if ( cells[i]->class_type == MAT_C_STRUCT )
-                bytesread+=ReadNextStructField(mat,cells[i]);
-            else if ( cells[i]->class_type == MAT_C_CELL )
-                bytesread+=ReadNextCell(mat,cells[i]);
-            else if ( nbytes <= (1 << MAX_WBITS) ) {
-                /* Memory optimization: Read data if less in size
-                   than the zlib inflate state (approximately) */
-                cells[i]->internal->fp = mat;
-                Mat_VarReadDataAll(mat,cells[i]);
-            }
-            fseek((FILE*)mat->fp,cells[i]->internal->datapos,SEEK_SET);
             bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
-            if ( cells[i]->data != NULL && (nbytes <= (1 << MAX_WBITS) ||
-                cells[i]->class_type == MAT_C_STRUCT ||
-                cells[i]->class_type == MAT_C_CELL) ) {
-                /* Memory optimization: Free inflate state */
-                inflateEnd(cells[i]->internal->z);
-                free(cells[i]->internal->z);
-                cells[i]->internal->z = NULL;
-            }
         }
 #else
         Mat_Critical("Not compiled with zlib support");
@@ -1789,7 +1948,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 
     } else {
         mat_uint32_t buf[16];
-        int      nbytes,nBytes;
+        int nbytes,nBytes;
         mat_uint32_t array_flags;
 
         for ( i = 0; i < ncells; i++ ) {
@@ -1801,6 +1960,10 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             cells[i]->internal->fpos = ftell((FILE*)mat->fp);
+            if ( cells[i]->internal->fpos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                continue;
+            }
 
             /* Read variable tag for cell */
             cell_bytes_read = fread(buf,4,2,(FILE*)mat->fp);
@@ -1820,7 +1983,8 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             } else if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
-                Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
+                Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,
+                    ftell((FILE*)mat->fp));
                 break;
             }
             cells[i]->compression = MAT_COMPRESSION_NONE;
@@ -1828,8 +1992,8 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             cells[i]->internal->z = NULL;
 #endif
 
-            /* Read Array Flags and The Dimensions Tag */
-            bytesread  += fread(buf,4,6,(FILE*)mat->fp);
+            /* Read array flags and the dimensions tag */
+            bytesread += fread(buf,4,6,(FILE*)mat->fp);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
                 (void)Mat_uint32Swap(buf+1);
@@ -1839,19 +2003,19 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(buf+5);
             }
             nBytes-=24;
-            /* Array Flags */
+            /* Array flags */
             if ( buf[0] == MAT_T_UINT32 ) {
                array_flags = buf[2];
-               cells[i]->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               cells[i]->isComplex   = (array_flags & MAT_F_COMPLEX);
-               cells[i]->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               cells[i]->isLogical   = (array_flags & MAT_F_LOGICAL);
+               cells[i]->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+               cells[i]->isComplex  = (array_flags & MAT_F_COMPLEX);
+               cells[i]->isGlobal   = (array_flags & MAT_F_GLOBAL);
+               cells[i]->isLogical  = (array_flags & MAT_F_LOGICAL);
                if ( cells[i]->class_type == MAT_C_SPARSE ) {
                    /* Need to find a more appropriate place to store nzmax */
-                   cells[i]->nbytes      = buf[3];
+                   cells[i]->nbytes = buf[3];
                }
             }
-            /* Rank and Dimension */
+            /* Rank and dimension */
             if ( buf[4] == MAT_T_INT32 ) {
                 int j;
                 nbytes = buf[5];
@@ -1875,7 +2039,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                         cells[i]->dims[j] = buf[j];
                 }
             }
-            /* Variable Name Tag */
+            /* Variable name tag */
             bytesread+=fread(buf,1,8,(FILE*)mat->fp);
             nBytes-=8;
             if ( mat->byteswap ) {
@@ -1890,15 +2054,19 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                     if ( name_len % 8 > 0 )
                         name_len = name_len+(8-(name_len % 8));
                     nBytes -= name_len;
-                    fseek((FILE*)mat->fp,name_len,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,name_len,SEEK_CUR);
                 }
             }
             cells[i]->internal->datapos = ftell((FILE*)mat->fp);
-            if ( cells[i]->class_type == MAT_C_STRUCT )
-                bytesread+=ReadNextStructField(mat,cells[i]);
-            if ( cells[i]->class_type == MAT_C_CELL )
-                bytesread+=ReadNextCell(mat,cells[i]);
-            fseek((FILE*)mat->fp,cells[i]->internal->datapos+nBytes,SEEK_SET);
+            if ( cells[i]->internal->datapos != -1L ) {
+                if ( cells[i]->class_type == MAT_C_STRUCT )
+                    bytesread+=ReadNextStructField(mat,cells[i]);
+                if ( cells[i]->class_type == MAT_C_CELL )
+                    bytesread+=ReadNextCell(mat,cells[i]);
+                (void)fseek((FILE*)mat->fp,cells[i]->internal->datapos+nBytes,SEEK_SET);
+            } else {
+                Mat_Critical("Couldn't determine file position");
+            }
         }
     }
 
@@ -1914,10 +2082,11 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
  * @param matvar MAT variable pointer
  * @return Number of bytes read
  */
-static int
+static size_t
 ReadNextStructField( mat_t *mat, matvar_t *matvar )
 {
-    int fieldname_size,nfields, bytesread = 0, nmemb = 1, i;
+    int fieldname_size,nfields, nmemb = 1, i;
+    size_t bytesread = 0;
     matvar_t **fields = NULL;
 
     for ( i = 0; i < matvar->rank; i++ )
@@ -1925,9 +2094,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
     if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
-        char    *ptr;
         mat_uint32_t uncomp_buf[16] = {0,};
-        int      nbytes, j;
+        int nbytes, j;
         mat_uint32_t array_flags;
         int err;
 
@@ -1958,7 +2126,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         else
             i = 0;
         if ( nfields ) {
-            ptr = (char*)malloc(nfields*fieldname_size+i);
+            char *ptr = (char*)malloc(nfields*fieldname_size+i);
             bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
             matvar->internal->num_fields = nfields;
             matvar->internal->fieldnames =
@@ -1980,7 +2148,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             return bytesread;
 
         matvar->data = malloc(matvar->nbytes);
-        if ( !matvar->data )
+        if ( NULL == matvar->data )
             return bytesread;
 
         fields = (matvar_t**)matvar->data;
@@ -1992,7 +2160,13 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         for ( i = 0; i < nmemb*nfields; i++ ) {
-            fields[i]->internal->fpos = ftell((FILE*)mat->fp)-matvar->internal->z->avail_in;
+            fields[i]->internal->fpos = ftell((FILE*)mat->fp);
+            if ( fields[i]->internal->fpos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                continue;
+            } else {
+                fields[i]->internal->fpos -= matvar->internal->z->avail_in;
+            }
             /* Read variable tag for struct field */
             bytesread += InflateVarTag(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
@@ -2018,82 +2192,96 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(uncomp_buf+2);
                 (void)Mat_uint32Swap(uncomp_buf+3);
             }
-            /* Array Flags */
+            /* Array flags */
             if ( uncomp_buf[0] == MAT_T_UINT32 ) {
                array_flags = uncomp_buf[2];
-               fields[i]->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               fields[i]->isComplex   = (array_flags & MAT_F_COMPLEX);
-               fields[i]->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               fields[i]->isLogical   = (array_flags & MAT_F_LOGICAL);
+               fields[i]->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+               fields[i]->isComplex  = (array_flags & MAT_F_COMPLEX);
+               fields[i]->isGlobal   = (array_flags & MAT_F_GLOBAL);
+               fields[i]->isLogical  = (array_flags & MAT_F_LOGICAL);
                if ( fields[i]->class_type == MAT_C_SPARSE ) {
                    /* Need to find a more appropriate place to store nzmax */
-                   fields[i]->nbytes      = uncomp_buf[3];
+                   fields[i]->nbytes = uncomp_buf[3];
                }
             } else {
                 Mat_Critical("Expected MAT_T_UINT32 for Array Tags, got %d",
                     uncomp_buf[0]);
                 bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
             }
-            bytesread += InflateDimensions(mat,matvar,uncomp_buf);
-            nbytes -= 8;
-            if ( mat->byteswap ) {
-                (void)Mat_uint32Swap(uncomp_buf);
-                (void)Mat_uint32Swap(uncomp_buf+1);
-            }
-            /* Rank and Dimension */
-            if ( uncomp_buf[0] == MAT_T_INT32 ) {
-                int j = 0;
-
-                fields[i]->rank = uncomp_buf[1];
-                nbytes -= fields[i]->rank;
-                fields[i]->rank /= 4;
-                fields[i]->dims = (size_t*)malloc(fields[i]->rank*
-                                         sizeof(*fields[i]->dims));
+            if ( fields[i]->class_type != MAT_C_OPAQUE ) {
+                bytesread += InflateDimensions(mat,matvar,uncomp_buf);
+                nbytes -= 8;
                 if ( mat->byteswap ) {
-                    for ( j = 0; j < fields[i]->rank; j++ )
-                        fields[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
-                } else {
-                    for ( j = 0; j < fields[i]->rank; j++ )
-                        fields[i]->dims[j] = uncomp_buf[2+j];
+                    (void)Mat_uint32Swap(uncomp_buf);
+                    (void)Mat_uint32Swap(uncomp_buf+1);
                 }
-                if ( fields[i]->rank % 2 != 0 )
-                    nbytes -= 4;
+                /* Rank and dimension */
+                if ( uncomp_buf[0] == MAT_T_INT32 ) {
+                    int j = 0;
+
+                    fields[i]->rank = uncomp_buf[1];
+                    nbytes -= fields[i]->rank;
+                    fields[i]->rank /= 4;
+                    fields[i]->dims = (size_t*)malloc(fields[i]->rank*
+                                             sizeof(*fields[i]->dims));
+                    if ( mat->byteswap ) {
+                        for ( j = 0; j < fields[i]->rank; j++ )
+                            fields[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
+                    } else {
+                        for ( j = 0; j < fields[i]->rank; j++ )
+                            fields[i]->dims[j] = uncomp_buf[2+j];
+                    }
+                    if ( fields[i]->rank % 2 != 0 )
+                        nbytes -= 4;
+                }
+                bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
+                nbytes -= 8;
+                fields[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
+                if ( fields[i]->internal->z != NULL ) {
+                    err = inflateCopy(fields[i]->internal->z,matvar->internal->z);
+                    if ( err == Z_OK ) {
+                        fields[i]->internal->datapos = ftell((FILE*)mat->fp);
+                        if ( fields[i]->internal->datapos != -1L ) {
+                            fields[i]->internal->datapos -= matvar->internal->z->avail_in;
+                            if ( fields[i]->class_type == MAT_C_STRUCT )
+                                bytesread+=ReadNextStructField(mat,fields[i]);
+                            else if ( fields[i]->class_type == MAT_C_CELL )
+                                bytesread+=ReadNextCell(mat,fields[i]);
+                            else if ( nbytes <= (1 << MAX_WBITS) ) {
+                                /* Memory optimization: Read data if less in size
+                                   than the zlib inflate state (approximately) */
+                                fields[i]->internal->fp = mat;
+                                Read5(mat,fields[i]);
+                                fields[i]->internal->data = fields[i]->data;
+                                fields[i]->data = NULL;
+                            }
+                            (void)fseek((FILE*)mat->fp,fields[i]->internal->datapos,SEEK_SET);
+                        } else {
+                            Mat_Critical("Couldn't determine file position");
+                        }
+                        if ( fields[i]->internal->data != NULL ||
+                             fields[i]->class_type == MAT_C_STRUCT ||
+                             fields[i]->class_type == MAT_C_CELL ) {
+                            /* Memory optimization: Free inflate state */
+                            inflateEnd(fields[i]->internal->z);
+                            free(fields[i]->internal->z);
+                            fields[i]->internal->z = NULL;
+                        }
+                    } else {
+                        Mat_Critical("inflateCopy returned error %s",zError(err));
+                    }
+                } else {
+                    Mat_Critical("Couldn't allocate memory");
+                }
             }
-            bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
-            nbytes -= 8;
-            fields[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
-            err = inflateCopy(fields[i]->internal->z,matvar->internal->z);
-            if ( err != Z_OK ) {
-                Mat_Critical("inflateCopy returned error %s",zError(err));
-            }
-            fields[i]->internal->datapos = ftell((FILE*)mat->fp)-matvar->internal->z->avail_in;
-            if ( fields[i]->class_type == MAT_C_STRUCT )
-                bytesread+=ReadNextStructField(mat,fields[i]);
-            else if ( fields[i]->class_type == MAT_C_CELL )
-                bytesread+=ReadNextCell(mat,fields[i]);
-            else if ( nbytes <= (1 << MAX_WBITS) ) {
-                /* Memory optimization: Read data if less in size
-                   than the zlib inflate state (approximately) */
-                fields[i]->internal->fp = mat;
-                Mat_VarReadDataAll(mat,fields[i]);
-            }
-            fseek((FILE*)mat->fp,fields[i]->internal->datapos,SEEK_SET);
             bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
-            if ( fields[i]->data != NULL && (nbytes <= (1 << MAX_WBITS) ||
-                fields[i]->class_type == MAT_C_STRUCT ||
-                fields[i]->class_type == MAT_C_CELL) ) {
-                /* Memory optimization: Free inflate state */
-                inflateEnd(fields[i]->internal->z);
-                free(fields[i]->internal->z);
-                fields[i]->internal->z = NULL;
-            }
         }
 #else
         Mat_Critical("Not compiled with zlib support");
 #endif
     } else {
         mat_uint32_t buf[16] = {0,};
-        int      nbytes,nBytes,j;
+        int nbytes,nBytes,j;
         mat_uint32_t array_flags;
 
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
@@ -2131,7 +2319,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         if ( (nfields*fieldname_size) % 8 ) {
-            fseek((FILE*)mat->fp,8-((nfields*fieldname_size) % 8),SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,8-((nfields*fieldname_size) % 8),SEEK_CUR);
             bytesread+=8-((nfields*fieldname_size) % 8);
         }
 
@@ -2140,7 +2328,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             return bytesread;
 
         matvar->data = malloc(matvar->nbytes);
-        if ( !matvar->data )
+        if ( NULL == matvar->data )
             return bytesread;
 
         fields = (matvar_t**)matvar->data;
@@ -2154,6 +2342,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         for ( i = 0; i < nmemb*nfields; i++ ) {
 
             fields[i]->internal->fpos = ftell((FILE*)mat->fp);
+            if ( fields[i]->internal->fpos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+                continue;
+            }
 
             /* Read variable tag for struct field */
             bytesread += fread(buf,4,2,(FILE*)mat->fp);
@@ -2165,7 +2357,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
-                Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,ftell(mat->fp));
+                Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,
+                    ftell((FILE*)mat->fp));
                 return bytesread;
             } else if ( nBytes == 0 ) {
                 fields[i]->rank = 0;
@@ -2176,8 +2369,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             fields[i]->internal->z = NULL;
 #endif
 
-            /* Read Array Flags and The Dimensions Tag */
-            bytesread  += fread(buf,4,6,(FILE*)mat->fp);
+            /* Read array flags and the dimensions tag */
+            bytesread += fread(buf,4,6,(FILE*)mat->fp);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
                 (void)Mat_uint32Swap(buf+1);
@@ -2187,19 +2380,19 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(buf+5);
             }
             nBytes-=24;
-            /* Array Flags */
+            /* Array flags */
             if ( buf[0] == MAT_T_UINT32 ) {
                array_flags = buf[2];
-               fields[i]->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               fields[i]->isComplex   = (array_flags & MAT_F_COMPLEX);
-               fields[i]->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               fields[i]->isLogical   = (array_flags & MAT_F_LOGICAL);
+               fields[i]->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+               fields[i]->isComplex  = (array_flags & MAT_F_COMPLEX);
+               fields[i]->isGlobal   = (array_flags & MAT_F_GLOBAL);
+               fields[i]->isLogical  = (array_flags & MAT_F_LOGICAL);
                if ( fields[i]->class_type == MAT_C_SPARSE ) {
                    /* Need to find a more appropriate place to store nzmax */
-                   fields[i]->nbytes      = buf[3];
+                   fields[i]->nbytes = buf[3];
                }
             }
-            /* Rank and Dimension */
+            /* Rank and dimension */
             if ( buf[4] == MAT_T_INT32 ) {
                 int j;
 
@@ -2225,15 +2418,19 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                         fields[i]->dims[j] = buf[j];
                 }
             }
-            /* Variable Name Tag */
+            /* Variable name tag */
             bytesread+=fread(buf,1,8,(FILE*)mat->fp);
             nBytes-=8;
             fields[i]->internal->datapos = ftell((FILE*)mat->fp);
-            if ( fields[i]->class_type == MAT_C_STRUCT )
-                bytesread+=ReadNextStructField(mat,fields[i]);
-            else if ( fields[i]->class_type == MAT_C_CELL )
-                bytesread+=ReadNextCell(mat,fields[i]);
-            fseek((FILE*)mat->fp,fields[i]->internal->datapos+nBytes,SEEK_SET);
+            if ( fields[i]->internal->datapos != -1L ) {
+                if ( fields[i]->class_type == MAT_C_STRUCT )
+                    bytesread+=ReadNextStructField(mat,fields[i]);
+                else if ( fields[i]->class_type == MAT_C_CELL )
+                    bytesread+=ReadNextCell(mat,fields[i]);
+                (void)fseek((FILE*)mat->fp,fields[i]->internal->datapos+nBytes,SEEK_SET);
+            } else {
+                Mat_Critical("Couldn't determine file position");
+            }
         }
     }
 
@@ -2247,20 +2444,20 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
  * @param matvar MAT variable pointer
  * @return Number of bytes read
  */
-static int
+static size_t
 ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
 {
-    int nfunctions = 1, bytesread = 0, i;
-    matvar_t **functions = NULL;
+    int nfunctions = 1, i;
+    size_t bytesread = 0;
 
     for ( i = 0; i < matvar->rank; i++ )
         nfunctions *= matvar->dims[i];
 
     matvar->data = malloc(nfunctions*sizeof(matvar_t *));
     if ( matvar->data != NULL ) {
+        matvar_t **functions = (matvar_t**)matvar->data;;
         matvar->data_size = sizeof(matvar_t *);
         matvar->nbytes    = nfunctions*matvar->data_size;
-        functions = (matvar_t**)matvar->data;
         for ( i = 0; i < nfunctions; i++ )
             functions[i] = Mat_VarReadNextInfo(mat);
     } else {
@@ -2357,6 +2554,9 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
     }
 
     matvar->internal->datapos = ftell((FILE*)mat->fp);
+    if ( matvar->internal->datapos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -2408,10 +2608,14 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
             break;
     }
     end = ftell((FILE*)mat->fp);
-    nBytes = (int)(end-start);
-    fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
-    fwrite(&nBytes,4,1,(FILE*)mat->fp);
-    fseek((FILE*)mat->fp,end,SEEK_SET);
+    if ( start != -1L && end != -1L ) {
+        nBytes = (int)(end-start);
+        (void)fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
+        fwrite(&nBytes,4,1,(FILE*)mat->fp);
+        (void)fseek((FILE*)mat->fp,end,SEEK_SET);
+    } else {
+        Mat_Critical("Couldn't determine file position");
+    }
     return 0;
 }
 
@@ -2426,12 +2630,12 @@ static int
 WriteCellArrayField(mat_t *mat,matvar_t *matvar )
 {
     mat_uint32_t array_flags = 0x0;
-    mat_int16_t  array_name_type = MAT_T_INT8,fieldname_type = MAT_T_INT32,fieldname_data_size=4;
-    int      array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int      array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
-    mat_int8_t   pad1 = 0;
-    int      nBytes, i, nmemb = 1, nzmax = 0;
-    long     start = 0, end = 0;
+    mat_int16_t array_name_type = MAT_T_INT8;
+    int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
+    int array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
+    mat_int8_t pad1 = 0;
+    int nBytes, i, nmemb = 1, nzmax = 0;
+    long start = 0, end = 0;
 
     if ((matvar == NULL) || (mat == NULL))
         return 1;
@@ -2555,8 +2759,10 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
         }
         case MAT_C_STRUCT:
         {
-            char  *padzero;
-            int    fieldname_size, nfields;
+            mat_int16_t fieldname_type = MAT_T_INT32;
+            mat_int16_t fieldname_data_size = 4;
+            char *padzero;
+            int fieldname_size, nfields;
             size_t maxlen = 0;
             matvar_t **fields = (matvar_t **)matvar->data;
             unsigned fieldname;
@@ -2634,10 +2840,14 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
             break;
     }
     end = ftell((FILE*)mat->fp);
-    nBytes = (int)(end-start);
-    fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
-    fwrite(&nBytes,4,1,(FILE*)mat->fp);
-    fseek((FILE*)mat->fp,end,SEEK_SET);
+    if ( start != -1L && end != -1L ) {
+        nBytes = (int)(end-start);
+        (void)fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
+        fwrite(&nBytes,4,1,(FILE*)mat->fp);
+        (void)fseek((FILE*)mat->fp,end,SEEK_SET);
+    } else {
+        Mat_Critical("Couldn't determine file position");
+    }
     return 0;
 }
 
@@ -2653,13 +2863,10 @@ static size_t
 WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
 {
     mat_uint32_t array_flags = 0x0;
-    mat_int16_t  array_name_type     = MAT_T_INT8;
-    mat_int16_t  fieldname_type      = MAT_T_INT32;
-    mat_int16_t  fieldname_data_size = 4;
-    int      array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int      array_flags_size = 8, pad4 = 0;
-    int      nBytes, i, nmemb = 1, nzmax = 0;
-    long     start = 0;
+    mat_int16_t  array_name_type = MAT_T_INT8;
+    int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
+    int array_flags_size = 8;
+    int nBytes, i, nmemb = 1, nzmax = 0;
 
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
@@ -2669,7 +2876,6 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
     if ( NULL == matvar || NULL == mat || NULL == z)
         return 0;
 
-    start = ftell((FILE*)mat->fp);
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -2708,6 +2914,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
         uncomp_buf[6+i] = dim;
     }
     if ( matvar->rank % 2 != 0 ) {
+        int pad4 = 0;
         uncomp_buf[6+i] = pad4;
         i++;
     }
@@ -2735,6 +2942,9 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
     } while ( z->avail_out == 0 );
 
     matvar->internal->datapos = ftell((FILE*)mat->fp);
+    if ( matvar->internal->datapos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -2787,19 +2997,20 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
         }
         case MAT_C_STRUCT:
         {
+            mat_int16_t fieldname_type = MAT_T_INT32;
+            mat_int16_t fieldname_data_size = 4;
             unsigned char *padzero;
-            int        fieldname_size, nfields;
-            size_t     maxlen = 0;
+            int fieldname_size, nfields;
+            size_t maxlen = 0;
             mat_int32_t array_name_type = MAT_T_INT8;
             matvar_t **fields = (matvar_t **)matvar->data;
 
+            nfields = matvar->internal->num_fields;
             /* Check for a structure with no fields */
-            if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
-                 matvar->data   == NULL ) {
+            if ( nfields < 1 ) {
                 fieldname_size = 1;
-                uncomp_buf[0] = (fieldname_data_size << 16) |
-                                 fieldname_type;
-                uncomp_buf[1] = 1;
+                uncomp_buf[0] = (fieldname_data_size << 16) | fieldname_type;
+                uncomp_buf[1] = fieldname_size;
                 uncomp_buf[2] = array_name_type;
                 uncomp_buf[3] = 0;
                 z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
@@ -2813,8 +3024,6 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
                 } while ( z->avail_out == 0 );
                 break;
             }
-
-            nfields = matvar->internal->num_fields;
 
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
@@ -2900,7 +3109,6 @@ static int
 WriteStructField(mat_t *mat,matvar_t *matvar)
 {
     mat_uint32_t array_flags = 0x0;
-    mat_int16_t  fieldname_type = MAT_T_INT32,fieldname_data_size=4;
     mat_int32_t  array_name_type = MAT_T_INT8;
     int      array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
     int      array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
@@ -3009,8 +3217,10 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
         }
         case MAT_C_STRUCT:
         {
-            char  *padzero;
-            int    fieldname_size, nfields = 0;
+            mat_int16_t fieldname_type = MAT_T_INT32;
+            mat_int16_t fieldname_data_size = 4;
+            char *padzero;
+            int fieldname_size, nfields = 0;
             size_t maxlen = 0;
             matvar_t **fields = (matvar_t **)matvar->data;
             unsigned fieldname;
@@ -3091,10 +3301,14 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
             break;
     }
     end = ftell((FILE*)mat->fp);
-    nBytes = (int)(end-start);
-    fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
-    fwrite(&nBytes,4,1,(FILE*)mat->fp);
-    fseek((FILE*)mat->fp,end,SEEK_SET);
+    if ( start != -1L && end != -1L ) {
+        nBytes = (int)(end-start);
+        (void)fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
+        fwrite(&nBytes,4,1,(FILE*)mat->fp);
+        (void)fseek((FILE*)mat->fp,end,SEEK_SET);
+    } else {
+        Mat_Critical("Couldn't determine file position");
+    }
     return 0;
 }
 
@@ -3111,13 +3325,10 @@ static size_t
 WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
 {
     mat_uint32_t array_flags = 0x0;
-    mat_int16_t  array_name_type     = MAT_T_INT8;
-    mat_int16_t  fieldname_type      = MAT_T_INT32;
-    mat_int16_t  fieldname_data_size = 4;
-    int      array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int      array_flags_size = 8, pad4 = 0;
-    int      nBytes, i, nmemb = 1, nzmax = 0;
-    long     start = 0;
+    mat_int16_t  array_name_type = MAT_T_INT8;
+    int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
+    int array_flags_size = 8;
+    int nBytes, i, nmemb = 1, nzmax = 0;
 
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
@@ -3132,7 +3343,6 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
         byteswritten = Mat_WriteCompressedEmptyVariable5(mat, NULL, 2, dims, z);
         return byteswritten;
     }
-    start = ftell((FILE*)mat->fp);
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -3171,6 +3381,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
         uncomp_buf[6+i] = dim;
     }
     if ( matvar->rank % 2 != 0 ) {
+        int pad4 = 0;
         uncomp_buf[6+i] = pad4;
         i++;
     }
@@ -3198,6 +3409,9 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
     } while ( z->avail_out == 0 );
 
     matvar->internal->datapos = ftell((FILE*)mat->fp);
+    if ( matvar->internal->datapos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+    }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -3250,9 +3464,11 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
         }
         case MAT_C_STRUCT:
         {
+            mat_int16_t fieldname_type = MAT_T_INT32;
+            mat_int16_t fieldname_data_size = 4;
             unsigned char *padzero;
-            int        fieldname_size, nfields;
-            size_t     maxlen = 0;
+            int fieldname_size, nfields;
+            size_t maxlen = 0;
             mat_int32_t array_name_type = MAT_T_INT8;
             matvar_t **fields = (matvar_t **)matvar->data;
 
@@ -3260,9 +3476,8 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
             /* Check for a structure with no fields */
             if ( nfields < 1 ) {
                 fieldname_size = 1;
-                uncomp_buf[0] = (fieldname_data_size << 16) |
-                                 fieldname_type;
-                uncomp_buf[1] = 1;
+                uncomp_buf[0] = (fieldname_data_size << 16) | fieldname_type;
+                uncomp_buf[1] = fieldname_size;
                 uncomp_buf[2] = array_name_type;
                 uncomp_buf[3] = 0;
                 z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
@@ -3276,6 +3491,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
                 } while ( z->avail_out == 0 );
                 break;
             }
+
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
                 if ( len > maxlen )
@@ -3363,8 +3579,8 @@ Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,size_t *dims)
 
     fwrite(&matrix_type,4,1,(FILE*)mat->fp);
     fwrite(&pad4,4,1,(FILE*)mat->fp);
-
     start = ftell((FILE*)mat->fp);
+
     /* Array Flags */
     array_flags = MAT_C_DOUBLE;
 
@@ -3419,10 +3635,14 @@ Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,size_t *dims)
             byteswritten += fwrite(&pad1,1,1,(FILE*)mat->fp);
 
     end = ftell((FILE*)mat->fp);
-    nBytes = (int)(end-start);
-    fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
-    fwrite(&nBytes,4,1,(FILE*)mat->fp);
-    fseek((FILE*)mat->fp,end,SEEK_SET);
+    if ( start != -1L && end != -1L ) {
+        nBytes = (int)(end-start);
+        (void)fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
+        fwrite(&nBytes,4,1,(FILE*)mat->fp);
+        (void)fseek((FILE*)mat->fp,end,SEEK_SET);
+    } else {
+        Mat_Critical("Couldn't determine file position");
+    }
 
     return byteswritten;
 }
@@ -3433,10 +3653,9 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
                                   size_t *dims,z_streamp z)
 {
     mat_uint32_t array_flags = 0x0;
-    mat_int16_t  array_name_type     = MAT_T_INT8;
-    int      array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int      array_flags_size = 8, pad4 = 0;
-    int      nBytes, i, nmemb = 1;
+    int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
+    int array_flags_size = 8;
+    int nBytes, i, nmemb = 1;
 
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
@@ -3476,6 +3695,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
         uncomp_buf[6+i] = dim;
     }
     if ( rank % 2 != 0 ) {
+        int pad4 = 0;
         uncomp_buf[6+i] = pad4;
         i++;
     }
@@ -3490,6 +3710,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
     } while ( z->avail_out == 0 );
     /* Name of variable */
     if ( NULL == name ) {
+        mat_int16_t array_name_type = MAT_T_INT8;
         uncomp_buf[0] = array_name_type;
         uncomp_buf[1] = 0;
         z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
@@ -3500,46 +3721,44 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
             deflate(z,Z_NO_FLUSH);
             byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,(FILE*)mat->fp);
         } while ( z->avail_out == 0 );
+    } else if ( strlen(name) <= 4 ) {
+        mat_int16_t array_name_len = (mat_int16_t)strlen(name);
+        mat_int16_t array_name_type = MAT_T_INT8;
+
+        memset(uncomp_buf,0,8);
+        uncomp_buf[0] = (array_name_len << 16) | array_name_type;
+        memcpy(uncomp_buf+1,name,array_name_len);
+        if ( array_name_len % 4 )
+            array_name_len += 4-(array_name_len % 4);
+
+        z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
+        z->avail_in = 8;
+        do {
+            z->next_out  = ZLIB_BYTE_PTR(comp_buf);
+            z->avail_out = buf_size_bytes;
+            deflate(z,Z_NO_FLUSH);
+            byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,
+                (FILE*)mat->fp);
+        } while ( z->avail_out == 0 );
     } else {
-        if ( strlen(name) <= 4 ) {
-            mat_int16_t array_name_len = (mat_int16_t)strlen(name);
-            mat_int16_t array_name_type = MAT_T_INT8;
+        mat_int32_t array_name_len = (mat_int32_t)strlen(name);
+        mat_int32_t array_name_type = MAT_T_INT8;
 
-            memset(uncomp_buf,0,8);
-            uncomp_buf[0] = (array_name_len << 16) | array_name_type;
-            memcpy(uncomp_buf+1,name,array_name_len);
-            if ( array_name_len % 4 )
-                array_name_len += 4-(array_name_len % 4);
-
-            z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
-            z->avail_in = 8;
-            do {
-                z->next_out  = ZLIB_BYTE_PTR(comp_buf);
-                z->avail_out = buf_size_bytes;
-                deflate(z,Z_NO_FLUSH);
-                byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,
-                    (FILE*)mat->fp);
-            } while ( z->avail_out == 0 );
-        } else {
-            mat_int32_t array_name_len = (mat_int32_t)strlen(name);
-            mat_int32_t array_name_type = MAT_T_INT8;
-
-            memset(uncomp_buf,0,buf_size*sizeof(*uncomp_buf));
-            uncomp_buf[0] = array_name_type;
-            uncomp_buf[1] = array_name_len;
-            memcpy(uncomp_buf+2,name,array_name_len);
-            if ( array_name_len % 8 )
-                array_name_len += 8-(array_name_len % 8);
-            z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
-            z->avail_in = 8+array_name_len;
-            do {
-                z->next_out  = ZLIB_BYTE_PTR(comp_buf);
-                z->avail_out = buf_size_bytes;
-                deflate(z,Z_NO_FLUSH);
-                byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,
-                    (FILE*)mat->fp);
-            } while ( z->avail_out == 0 );
-        }
+        memset(uncomp_buf,0,buf_size*sizeof(*uncomp_buf));
+        uncomp_buf[0] = array_name_type;
+        uncomp_buf[1] = array_name_len;
+        memcpy(uncomp_buf+2,name,array_name_len);
+        if ( array_name_len % 8 )
+            array_name_len += 8-(array_name_len % 8);
+        z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
+        z->avail_in = 8+array_name_len;
+        do {
+            z->next_out  = ZLIB_BYTE_PTR(comp_buf);
+            z->avail_out = buf_size_bytes;
+            deflate(z,Z_NO_FLUSH);
+            byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,
+                (FILE*)mat->fp);
+        } while ( z->avail_out == 0 );
     }
 
     byteswritten += WriteCompressedData(mat,z,NULL,0,MAT_T_DOUBLE);
@@ -3650,7 +3869,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
         if ( data_in_tag )
             nBytes+=4;
         if ( (nBytes % 8) != 0 )
-            fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         switch ( matvar->class_type ) {
@@ -3733,13 +3952,19 @@ Read5(mat_t *mat, matvar_t *matvar)
         return;
     else if ( matvar->rank == 0 )        /* An empty data set */
         return;
-    else if ( matvar->class_type != MAT_C_STRUCT &&
-        matvar->class_type != MAT_C_CELL && matvar->data != NULL ) {
+#if defined(HAVE_ZLIB)
+    else if ( NULL != matvar->internal->data ) {
         /* Data already read in ReadNextStructField or ReadNextCell */
+        matvar->data = matvar->internal->data;
+        matvar->internal->data = NULL;
         return;
     }
-
+#endif
     fpos = ftell((FILE*)mat->fp);
+    if ( fpos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+        return;
+    }
     len = 1;
     byteswap = mat->byteswap;
     for ( i = 0; i < matvar->rank; i++ )
@@ -3756,27 +3981,16 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->dims[1] = 0;
             break;
         case MAT_C_DOUBLE:
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(double);
             matvar->data_type = MAT_T_DOUBLE;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -3785,7 +3999,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -3793,27 +4007,16 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             break;
         case MAT_C_SINGLE:
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(float);
             matvar->data_type = MAT_T_SINGLE;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -3822,7 +4025,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -3831,27 +4034,16 @@ Read5(mat_t *mat, matvar_t *matvar)
             break;
         case MAT_C_INT64:
 #ifdef HAVE_MAT_INT64_T
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(mat_int64_t);
             matvar->data_type = MAT_T_INT64;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -3860,7 +4052,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -3870,27 +4062,16 @@ Read5(mat_t *mat, matvar_t *matvar)
             break;
         case MAT_C_UINT64:
 #ifdef HAVE_MAT_UINT64_T
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(mat_uint64_t);
             matvar->data_type = MAT_T_UINT64;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -3899,7 +4080,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -3908,27 +4089,16 @@ Read5(mat_t *mat, matvar_t *matvar)
 #endif
             break;
         case MAT_C_INT32:
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(mat_int32_t);
             matvar->data_type = MAT_T_INT32;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -3937,7 +4107,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -3945,27 +4115,16 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             break;
         case MAT_C_UINT32:
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(mat_uint32_t);
             matvar->data_type = MAT_T_UINT32;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -3974,7 +4133,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -3982,27 +4141,16 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             break;
         case MAT_C_INT16:
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(mat_int16_t);
             matvar->data_type = MAT_T_INT16;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -4011,7 +4159,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -4019,27 +4167,16 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             break;
         case MAT_C_UINT16:
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(mat_uint16_t);
             matvar->data_type = MAT_T_UINT16;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -4048,7 +4185,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -4056,27 +4193,16 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             break;
         case MAT_C_INT8:
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(mat_int8_t);
             matvar->data_type = MAT_T_INT8;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -4085,7 +4211,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -4093,27 +4219,16 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             break;
         case MAT_C_UINT8:
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             matvar->data_size = sizeof(mat_uint8_t);
             matvar->data_type = MAT_T_UINT8;
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 matvar->nbytes = len*matvar->data_size;
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(matvar->nbytes);
-                complex_data->Im = malloc(matvar->nbytes);
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",2*matvar->nbytes);
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -4122,7 +4237,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else {
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
-                if ( !matvar->data ) {
+                if ( NULL == matvar->data ) {
                     Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                     break;
                 }
@@ -4132,7 +4247,7 @@ Read5(mat_t *mat, matvar_t *matvar)
         case MAT_C_CHAR:
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
-                fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+                (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
                 matvar->internal->z->avail_in = 0;
                 InflateDataType(mat,matvar->internal->z,tag);
@@ -4151,7 +4266,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 }
 #endif
             } else {
-                fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+                (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
                 fread(tag,4,1,(FILE*)mat->fp);
                 if ( byteswap )
                     (void)Mat_uint32Swap(tag);
@@ -4167,40 +4282,40 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = tag[1];
                 }
             }
+            /* FIXME: */
+            matvar->data_type = MAT_T_UINT8;
             if ( nBytes == 0 ) {
                 matvar->nbytes = 0;
                 matvar->data   = calloc(0,1);
                 break;
             }
             matvar->data_size = sizeof(char);
-            /* FIXME: */
-            matvar->data_type = MAT_T_UINT8;
             matvar->nbytes = len*matvar->data_size;
             matvar->data   = calloc(matvar->nbytes+1,1);
-            if ( !matvar->data ) {
+            if ( NULL == matvar->data ) {
                 Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                 break;
             }
             if ( matvar->compression == MAT_COMPRESSION_NONE) {
                 nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,len);
-                    /*
-                     * If the data was in the tag we started on a 4-byte
-                     * boundary so add 4 to make it an 8-byte
-                     */
-                    if ( data_in_tag )
-                        nBytes+=4;
+                /*
+                 * If the data was in the tag we started on a 4-byte
+                 * boundary so add 4 to make it an 8-byte
+                 */
+                if ( data_in_tag )
+                    nBytes+=4;
                 if ( (nBytes % 8) != 0 )
-                    fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
             } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                 nBytes = ReadCompressedCharData(mat,matvar->internal->z,
                              (char*)matvar->data,packed_type,len);
-                    /*
-                     * If the data was in the tag we started on a 4-byte
-                     * boundary so add 4 to make it an 8-byte
-                     */
-                    if ( data_in_tag )
-                        nBytes+=4;
+                /*
+                 * If the data was in the tag we started on a 4-byte
+                 * boundary so add 4 to make it an 8-byte
+                 */
+                if ( data_in_tag )
+                    nBytes+=4;
                 if ( (nBytes % 8) != 0 )
                     InflateSkip(mat,matvar->internal->z,8-(nBytes % 8));
 #endif
@@ -4217,8 +4332,10 @@ Read5(mat_t *mat, matvar_t *matvar)
             nfields = matvar->internal->num_fields;
             fields = (matvar_t **)matvar->data;
             for ( i = 0; i < len*nfields; i++ ) {
-                fields[i]->internal->fp = mat;
-                Read5(mat,fields[i]);
+                if ( NULL != fields[i] ) {
+                    fields[i]->internal->fp = mat;
+                    Read5(mat,fields[i]);
+                }
             }
             break;
         }
@@ -4226,14 +4343,16 @@ Read5(mat_t *mat, matvar_t *matvar)
         {
             matvar_t **cells;
 
-            if ( !matvar->data ) {
+            if ( NULL == matvar->data ) {
                 Mat_Critical("Data is NULL for Cell Array %s",matvar->name);
                 break;
             }
             cells = (matvar_t **)matvar->data;
             for ( i = 0; i < len; i++ ) {
-                cells[i]->internal->fp = mat;
-                Read5(mat,cells[i]);
+                if ( NULL != cells[i] ) {
+                    cells[i]->internal->fp = mat;
+                    Read5(mat,cells[i]);
+                }
             }
             /* FIXME: */
             matvar->data_type = MAT_T_CELL;
@@ -4252,7 +4371,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             data = (mat_sparse_t*)matvar->data;
             data->nzmax  = matvar->nbytes;
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             /*  Read ir    */
             if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
@@ -4298,7 +4417,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( data_in_tag )
                         nBytes+=4;
                     if ( (nBytes % 8) != 0 )
-                        fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
+                        (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
                 } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
@@ -4361,7 +4480,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( data_in_tag )
                         nBytes+=4;
                     if ( (nBytes % 8) != 0 )
-                        fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
+                        (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
                 } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
@@ -4414,7 +4533,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             if ( matvar->isLogical && packed_type == MAT_T_DOUBLE ) {
                 /* For some reason, MAT says the data type is a double,
-                 * but it appears to be written as 8-bit integer.
+                 * but it appears to be written as 8-bit unsigned integer.
                  */
                 packed_type = MAT_T_UINT8;
             }
@@ -4430,25 +4549,10 @@ Read5(mat_t *mat, matvar_t *matvar)
                 data->ndata = N / s_type;
             }
             if ( matvar->isComplex ) {
-                mat_complex_split_t *complex_data;
-
-                complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
+                mat_complex_split_t *complex_data =
+                    ComplexMalloc(data->ndata*Mat_SizeOf(matvar->data_type));
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Failed to allocate %d bytes",sizeof(*complex_data));
-                    break;
-                }
-                complex_data->Re = malloc(data->ndata*
-                                          Mat_SizeOf(matvar->data_type));
-                complex_data->Im = malloc(data->ndata*
-                                          Mat_SizeOf(matvar->data_type));
-                if ( NULL == complex_data->Re || NULL == complex_data->Im ) {
-                    if ( NULL != complex_data->Re )
-                        free(complex_data->Re);
-                    if ( NULL != complex_data->Im )
-                        free(complex_data->Im);
-                    free(complex_data);
-                    Mat_Critical("Failed to allocate %d bytes",
-                                 data->ndata* Mat_SizeOf(matvar->data_type));
+                    Mat_Critical("Memory allocation failure");
                     break;
                 }
                 if ( matvar->compression == MAT_COMPRESSION_NONE) {
@@ -4508,7 +4612,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( data_in_tag )
                         nBytes+=4;
                     if ( (nBytes % 8) != 0 )
-                        fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
+                        (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 
                     /* Complex Data Tag */
                     fread(tag,4,1,(FILE*)mat->fp);
@@ -4581,7 +4685,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( data_in_tag )
                         nBytes+=4;
                     if ( (nBytes % 8) != 0 )
-                        fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
+                        (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
                 } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(EXTENDED_SPARSE)
@@ -4786,7 +4890,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( data_in_tag )
                         nBytes+=4;
                     if ( (nBytes % 8) != 0 )
-                        fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
+                        (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
                 } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
 #if defined(EXTENDED_SPARSE)
@@ -4873,12 +4977,384 @@ Read5(mat_t *mat, matvar_t *matvar)
             break;
         }
         default:
-            Mat_Critical("Read5: %d is not a supported Class", matvar->class_type);
+            Mat_Critical("Read5: %d is not a supported class", matvar->class_type);
     }
-    fseek((FILE*)mat->fp,fpos,SEEK_SET);
+    (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
 
     return;
 }
+
+#if defined(HAVE_ZLIB)
+#define GET_DATA_SLABN_RANK_LOOP \
+    do { \
+        for ( j = 1; j < rank; j++ ) { \
+            cnt[j]++; \
+            if ( (cnt[j] % edge[j]) == 0 ) { \
+                cnt[j] = 0; \
+                if ( (I % dimp[j]) != 0 ) { \
+                    ptr_in += dimp[j]-(I % dimp[j])+dimp[j-1]*start[j]; \
+                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]; \
+                } else if ( start[j] ) { \
+                    ptr_in += dimp[j-1]*start[j]; \
+                    I += dimp[j-1]*start[j]; \
+                } \
+            } else { \
+                I += inc[j]; \
+                ptr_in += inc[j]; \
+                break; \
+            } \
+        } \
+    } while (0)
+
+#define GET_DATA_SLAB2 \
+    do { \
+        ptr_in += start[1]*dims[0] + start[0]; \
+        for ( i = 0; i < edge[1]; i++ ) { \
+            for ( j = 0; j < edge[0]; j++ ) \
+                memcpy(ptr++, ptr_in+j*stride[0], data_size); \
+            ptr_in += stride[1]*dims[0]; \
+        } \
+    } while (0)
+
+#define GET_DATA_SLABN \
+    do { \
+        inc[0]  = stride[0]-1; \
+        dimp[0] = dims[0]; \
+        N       = edge[0]; \
+        I       = 0; /* start[0]; */ \
+        for ( i = 1; i < rank; i++ ) { \
+            inc[i]  = stride[i]-1; \
+            dimp[i] = dims[i-1]; \
+            for ( j = i; j--; ) { \
+                inc[i]  *= dims[j]; \
+                dimp[i] *= dims[j+1]; \
+            } \
+            N *= edge[i]; \
+            I += dimp[i-1]*start[i]; \
+        } \
+        ptr_in += I; \
+        if ( stride[0] == 1 ) { \
+            for ( i = 0; i < N; i+=edge[0] ) { \
+                if ( start[0] ) { \
+                    ptr_in += start[0]; \
+                    I += start[0]; \
+                } \
+                memcpy(ptr+i, ptr_in, edge[0]*data_size); \
+                I += dims[0]-start[0]; \
+                ptr_in += dims[0]-start[0]; \
+                GET_DATA_SLABN_RANK_LOOP; \
+            } \
+        } else { \
+            for ( i = 0; i < N; i+=edge[0] ) { \
+                if ( start[0] ) { \
+                    ptr_in += start[0]; \
+                    I += start[0]; \
+                } \
+                for ( j = 0; j < edge[0]; j++ ) { \
+                    memcpy(ptr+i+j, ptr_in, data_size); \
+                    ptr_in += stride[0]; \
+                    I += stride[0]; \
+                } \
+                I += dims[0]-edge[0]*stride[0]-start[0]; \
+                ptr_in += dims[0]-edge[0]*stride[0]-start[0]; \
+                GET_DATA_SLABN_RANK_LOOP; \
+            } \
+        } \
+    } while (0)
+
+static int
+GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
+    enum matio_types data_type, size_t *dims, int *start, int *stride, int *edge,
+    int rank, size_t nbytes)
+{
+    int err = 0;
+    int data_size = Mat_SizeOf(data_type);
+
+    if ( rank == 2 ) {
+        if ( stride[0]*(edge[0]-1)+start[0]+1 > dims[0] )
+            err = 1;
+        else if ( stride[1]*(edge[1]-1)+start[1]+1 > dims[1] )
+            err = 1;
+        else if ( (stride[0] == 1 && edge[0] == dims[0]) &&
+                  (stride[1] == 1) )
+            memcpy(data_out, data_in, nbytes);
+        else {
+            int i, j;
+
+            switch ( class_type ) {
+                case MAT_C_DOUBLE:
+                {
+                    double *ptr = (double *)data_out;
+                    double *ptr_in = (double *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+                case MAT_C_SINGLE:
+                {
+                    float *ptr = (float *)data_out;
+                    float *ptr_in = (float *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+#ifdef HAVE_MAT_INT64_T
+                case MAT_C_INT64:
+                {
+                    mat_int64_t *ptr = (mat_int64_t *)data_out;
+                    mat_int64_t *ptr_in = (mat_int64_t *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
+                case MAT_C_UINT64:
+                {
+                    mat_uint64_t *ptr = (mat_uint64_t *)data_out;
+                    mat_uint64_t *ptr_in = (mat_uint64_t *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+#endif /* HAVE_MAT_UINT64_T */
+                case MAT_C_INT32:
+                {
+                    mat_int32_t *ptr = (mat_int32_t *)data_out;
+                    mat_int32_t *ptr_in = (mat_int32_t *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+                case MAT_C_UINT32:
+                {
+                    mat_uint32_t *ptr = (mat_uint32_t *)data_out;
+                    mat_uint32_t *ptr_in = (mat_uint32_t *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+                case MAT_C_INT16:
+                {
+                    mat_int16_t *ptr = (mat_int16_t *)data_out;
+                    mat_int16_t *ptr_in = (mat_int16_t *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+                case MAT_C_UINT16:
+                {
+                    mat_uint16_t *ptr = (mat_uint16_t *)data_out;
+                    mat_uint16_t *ptr_in = (mat_uint16_t *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+                case MAT_C_INT8:
+                {
+                    mat_int8_t *ptr = (mat_int8_t *)data_out;
+                    mat_int8_t *ptr_in = (mat_int8_t *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+                case MAT_C_UINT8:
+                {
+                    mat_uint8_t *ptr = (mat_uint8_t *)data_out;
+                    mat_uint8_t *ptr_in = (mat_uint8_t *)data_in;
+                    GET_DATA_SLAB2;
+                    break;
+                }
+                default:
+                    err = 1;
+                    break;
+            }
+        }
+    } else {
+        int nBytes = 0, i, j, N, I = 0;
+        int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
+
+        switch ( class_type ) {
+            case MAT_C_DOUBLE:
+            {
+                double *ptr = (double *)data_out;
+                double *ptr_in = (double *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+            case MAT_C_SINGLE:
+            {
+                float *ptr = (float *)data_out;
+                float *ptr_in = (float *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+#ifdef HAVE_MAT_INT64_T
+            case MAT_C_INT64:
+            {
+                mat_int64_t *ptr = (mat_int64_t *)data_out;
+                mat_int64_t *ptr_in = (mat_int64_t *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
+            case MAT_C_UINT64:
+            {
+                mat_uint64_t *ptr = (mat_uint64_t *)data_out;
+                mat_uint64_t *ptr_in = (mat_uint64_t *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+#endif /* HAVE_MAT_UINT64_T */
+            case MAT_C_INT32:
+            {
+                mat_int32_t *ptr = (mat_int32_t *)data_out;
+                mat_int32_t *ptr_in = (mat_int32_t *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+            case MAT_C_UINT32:
+            {
+                mat_uint32_t *ptr = (mat_uint32_t *)data_out;
+                mat_uint32_t *ptr_in = (mat_uint32_t *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+            case MAT_C_INT16:
+            {
+                mat_int16_t *ptr = (mat_int16_t *)data_out;
+                mat_int16_t *ptr_in = (mat_int16_t *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+            case MAT_C_UINT16:
+            {
+                mat_uint16_t *ptr = (mat_uint16_t *)data_out;
+                mat_uint16_t *ptr_in = (mat_uint16_t *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+            case MAT_C_INT8:
+            {
+                mat_int8_t *ptr = (mat_int8_t *)data_out;
+                mat_int8_t *ptr_in = (mat_int8_t *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+            case MAT_C_UINT8:
+            {
+                mat_uint8_t *ptr = (mat_uint8_t *)data_out;
+                mat_uint8_t *ptr_in = (mat_uint8_t *)data_in;
+                GET_DATA_SLABN;
+                break;
+            }
+            default:
+                err = 1;
+                break;
+        }
+    }
+    return err;
+}
+
+#undef GET_DATA_SLABN
+#undef GET_DATA_SLAB2
+#undef GET_DATA_SLABN_RANK_LOOP
+
+#define GET_DATA_LINEAR \
+    do { \
+        ptr_in += start; \
+        if ( !stride ) { \
+            memcpy(ptr, ptr_in, edge*data_size); \
+        } else { \
+            int i; \
+            for ( i = 0; i < edge; i++ ) \
+                memcpy(ptr++, ptr_in+i*stride, data_size); \
+        } \
+    } while (0)
+
+static int
+GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
+    enum matio_types data_type, int start, int stride, int edge)
+{
+    int err = 0;
+    int data_size = Mat_SizeOf(data_type);
+
+    switch ( class_type ) {
+        case MAT_C_DOUBLE:
+        {
+            double *ptr = (double *)data_out;
+            double *ptr_in = (double*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+        case MAT_C_SINGLE:
+        {
+            float *ptr = (float *)data_out;
+            float *ptr_in = (float*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+#ifdef HAVE_MAT_INT64_T
+        case MAT_C_INT64:
+        {
+            mat_int64_t *ptr = (mat_int64_t *)data_out;
+            mat_int64_t *ptr_in = (mat_int64_t*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+#endif /* HAVE_MAT_INT64_T */
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_C_UINT64:
+        {
+            mat_uint64_t *ptr = (mat_uint64_t *)data_out;
+            mat_uint64_t *ptr_in = (mat_uint64_t*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+#endif /* HAVE_MAT_UINT64_T */
+        case MAT_C_INT32:
+        {
+            mat_int32_t *ptr = (mat_int32_t *)data_out;
+            mat_int32_t *ptr_in = (mat_int32_t*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+        case MAT_C_UINT32:
+        {
+            mat_uint32_t *ptr = (mat_uint32_t *)data_out;
+            mat_uint32_t *ptr_in = (mat_uint32_t*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+        case MAT_C_INT16:
+        {
+            mat_int16_t *ptr = (mat_int16_t *)data_out;
+            mat_int16_t *ptr_in = (mat_int16_t*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+        case MAT_C_UINT16:
+        {
+            mat_uint16_t *ptr = (mat_uint16_t *)data_out;
+            mat_uint16_t *ptr_in = (mat_uint16_t*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+        case MAT_C_INT8:
+        {
+            mat_int8_t *ptr = (mat_int8_t *)data_out;
+            mat_int8_t *ptr_in = (mat_int8_t*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+        case MAT_C_UINT8:
+        {
+            mat_uint8_t *ptr = (mat_uint8_t *)data_out;
+            mat_uint8_t *ptr_in = (mat_uint8_t*)data_in;
+            GET_DATA_LINEAR;
+            break;
+        }
+        default:
+            err = 1;
+            break;
+    }
+    return err;
+}
+
+#undef GET_DATA_LINEAR
+#endif
 
 /** @if mat_devman
  * @brief Reads a slab of data from the mat variable @c matvar
@@ -4904,7 +5380,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
     z_stream z;
 #endif
 
-    fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+    (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         fread(tag,4,2,(FILE*)mat->fp);
         if ( mat->byteswap ) {
@@ -4913,16 +5389,39 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
         }
         matvar->data_type = TYPE_FROM_TAG(tag[0]);
         if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-            fseek((FILE*)mat->fp,-4,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,-4,SEEK_CUR);
             real_bytes = 4+(tag[0] >> 16);
         } else {
             real_bytes = 8+tag[1];
         }
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
+        if ( NULL != matvar->internal->data ) {
+            /* Data already read in ReadNextStructField or ReadNextCell */
+            if ( matvar->isComplex ) {
+                mat_complex_split_t *ci, *co;
+
+                co = (mat_complex_split_t*)data;
+                ci = (mat_complex_split_t*)matvar->internal->data;
+                err = GetDataSlab(ci->Re, co->Re, matvar->class_type,
+                    matvar->data_type, matvar->dims, start, stride, edge,
+                    matvar->rank, matvar->nbytes);
+                if ( err == 0 )
+                    err = GetDataSlab(ci->Im, co->Im, matvar->class_type,
+                        matvar->data_type, matvar->dims, start, stride, edge,
+                        matvar->rank, matvar->nbytes);
+                return err;
+            } else {
+                return GetDataSlab(matvar->internal->data, data, matvar->class_type,
+                    matvar->data_type, matvar->dims, start, stride, edge,
+                    matvar->rank, matvar->nbytes);
+            }
+        }
+
         err = inflateCopy(&z,matvar->internal->z);
         if ( err != Z_OK ) {
             Mat_Critical("inflateCopy returned error %s",zError(err));
+            return -1;
         }
         z.avail_in = 0;
         InflateDataType(mat,&z,tag);
@@ -4956,7 +5455,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
 
                 ReadDataSlab2(mat,complex_data->Re,matvar->class_type,
                     matvar->data_type,matvar->dims,start,stride,edge);
-                fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
+                (void)fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
                 fread(tag,4,2,(FILE*)mat->fp);
                 if ( mat->byteswap ) {
                     Mat_int32Swap(tag);
@@ -4964,7 +5463,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
                 }
                 matvar->data_type = TYPE_FROM_TAG(tag[0]);
                 if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-                    fseek((FILE*)mat->fp,-4,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,-4,SEEK_CUR);
                 }
                 ReadDataSlab2(mat,complex_data->Im,matvar->class_type,
                               matvar->data_type,matvar->dims,start,stride,edge);
@@ -4982,7 +5481,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
                     matvar->class_type,matvar->data_type,matvar->dims,
                     start,stride,edge);
 
-                fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+                (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
                 /* Reset zlib knowledge to before reading real tag */
                 inflateEnd(&z);
@@ -5019,7 +5518,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
                     matvar->data_type,matvar->rank,matvar->dims,
                     start,stride,edge);
 
-                fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
+                (void)fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
                 fread(tag,4,2,(FILE*)mat->fp);
                 if ( mat->byteswap ) {
                     Mat_int32Swap(tag);
@@ -5027,7 +5526,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
                 }
                 matvar->data_type = TYPE_FROM_TAG(tag[0]);
                 if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-                    fseek((FILE*)mat->fp,-4,SEEK_CUR);
+                    (void)fseek((FILE*)mat->fp,-4,SEEK_CUR);
                 }
                 ReadDataSlabN(mat,complex_data->Im,matvar->class_type,
                     matvar->data_type,matvar->rank,matvar->dims,
@@ -5046,7 +5545,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
                     matvar->class_type,matvar->data_type,matvar->rank,
                     matvar->dims,start,stride,edge);
 
-                fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+                (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
                 /* Reset zlib knowledge to before reading real tag */
                 inflateEnd(&z);
                 err = inflateCopy(&z,matvar->internal->z);
@@ -5078,7 +5577,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
     if ( err )
         return err;
 
-    switch(matvar->class_type) {
+    switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
             matvar->data_type = MAT_T_DOUBLE;
             matvar->data_size = sizeof(double);
@@ -5155,7 +5654,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
 
     if ( mat->version == MAT_FT_MAT4 )
         return -1;
-    fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+    (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         fread(tag,4,2,(FILE*)mat->fp);
         if ( mat->byteswap ) {
@@ -5164,17 +5663,37 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
         }
         matvar->data_type = (enum matio_types)(tag[0] & 0x000000ff);
         if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-            fseek((FILE*)mat->fp,-4,SEEK_CUR);
+            (void)fseek((FILE*)mat->fp,-4,SEEK_CUR);
             real_bytes = 4+(tag[0] >> 16);
         } else {
             real_bytes = 8+tag[1];
         }
 #if defined(HAVE_ZLIB)
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
+        if ( NULL != matvar->internal->data ) {
+            /* Data already read in ReadNextStructField or ReadNextCell */
+            if ( matvar->isComplex ) {
+                mat_complex_split_t *ci, *co;
+
+                co = (mat_complex_split_t*)data;
+                ci = (mat_complex_split_t*)matvar->internal->data;
+                err = GetDataLinear(ci->Re, co->Re, matvar->class_type,
+                    matvar->data_type, start, stride, edge);
+                if ( err == 0 )
+                    err = GetDataLinear(ci->Im, co->Im, matvar->class_type,
+                        matvar->data_type, start, stride, edge);
+                return err;
+            } else {
+                return GetDataLinear(matvar->internal->data, data, matvar->class_type,
+                    matvar->data_type, start, stride, edge);
+            }
+        }
+
         matvar->internal->z->avail_in = 0;
         err = inflateCopy(&z,matvar->internal->z);
         if ( err != Z_OK ) {
             Mat_Critical("inflateCopy returned error %s",zError(err));
+            return -1;
         }
         InflateDataType(mat,&z,tag);
         if ( mat->byteswap ) {
@@ -5208,7 +5727,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
 
             ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
                           matvar->data_type,start,stride,edge);
-            fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
             fread(tag,4,2,(FILE*)mat->fp);
             if ( mat->byteswap ) {
                 Mat_int32Swap(tag);
@@ -5216,7 +5735,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
             }
             matvar->data_type = (enum matio_types)(tag[0] & 0x000000ff);
             if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-                fseek((FILE*)mat->fp,-4,SEEK_CUR);
+                (void)fseek((FILE*)mat->fp,-4,SEEK_CUR);
             }
             ReadDataSlab1(mat,complex_data->Im,matvar->class_type,
                           matvar->data_type,start,stride,edge);
@@ -5232,7 +5751,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
             ReadCompressedDataSlab1(mat,&z,complex_data->Re,
                 matvar->class_type,matvar->data_type,start,stride,edge);
 
-            fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
             /* Reset zlib knowledge to before reading real tag */
             inflateEnd(&z);
@@ -5327,18 +5846,19 @@ int
 Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
 {
     mat_uint32_t array_flags = 0x0;
-    mat_int16_t  fieldname_type = MAT_T_INT32,fieldname_data_size=4;
-    mat_int8_t  pad1 = 0;
-    int      array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int      array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
-    int      nBytes, i, nmemb = 1,nzmax = 0;
-    long     start = 0, end = 0;
+    mat_int16_t fieldname_type = MAT_T_INT32;
+    mat_int16_t fieldname_data_size = 4;
+    mat_int8_t pad1 = 0;
+    int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
+    int array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
+    int nBytes, i, nmemb = 1,nzmax = 0;
+    long start = 0, end = 0;
 
     if ( NULL == mat )
         return -1;
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
-    fseek((FILE*)mat->fp,0,SEEK_END);         /* Always write at end of file */
+    (void)fseek((FILE*)mat->fp,0,SEEK_END);         /* Always write at end of file */
 
     if ( NULL == matvar || NULL == matvar->name )
         return -1;
@@ -5353,7 +5873,6 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         start = ftell((FILE*)mat->fp);
 
         /* Array Flags */
-
         array_flags = matvar->class_type & CLASS_TYPE_MASK;
         if ( matvar->isComplex )
             array_flags |= MAT_F_COMPLEX;
@@ -5409,6 +5928,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         }
 
         matvar->internal->datapos = ftell((FILE*)mat->fp);
+        if ( matvar->internal->datapos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
@@ -5466,15 +5988,16 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             }
             case MAT_C_STRUCT:
             {
-                char      *padzero;
-                int        fieldname_size, nfields;
-                size_t     maxlen = 0;
+                char *padzero;
+                int fieldname_size, nfields;
+                size_t maxlen = 0;
                 matvar_t **fields = (matvar_t **)matvar->data;
                 mat_int32_t array_name_type = MAT_T_INT8;
-                unsigned   fieldname;
+                unsigned fieldname;
 
+                nfields = matvar->internal->num_fields;
                 /* Check for a structure with no fields */
-                if ( matvar->internal->num_fields < 1 ) {
+                if ( nfields < 1 ) {
 #if 0
                     fwrite(&fieldname_type,2,1,(FILE*)mat->fp);
                     fwrite(&fieldname_data_size,2,1,(FILE*)mat->fp);
@@ -5489,7 +6012,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     fwrite(&nBytes,4,1,(FILE*)mat->fp);
                     break;
                 }
-                nfields = matvar->internal->num_fields;
+
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);
                     if ( len > maxlen )
@@ -5673,6 +6196,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             } while ( matvar->internal->z->avail_out == 0 );
         }
         matvar->internal->datapos = ftell((FILE*)mat->fp);
+        if ( matvar->internal->datapos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
@@ -5726,17 +6252,17 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             case MAT_C_STRUCT:
             {
                 unsigned char *padzero;
-                int        fieldname_size, nfields;
-                size_t     maxlen = 0;
+                int fieldname_size, nfields;
+                size_t maxlen = 0;
                 mat_int32_t array_name_type = MAT_T_INT8;
                 matvar_t **fields = (matvar_t **)matvar->data;
 
+                nfields = matvar->internal->num_fields;
                 /* Check for a structure with no fields */
-                if ( matvar->internal->num_fields < 1 ) {
+                if ( nfields < 1 ) {
                     fieldname_size = 1;
-                    uncomp_buf[0] = (fieldname_data_size << 16) |
-                                     fieldname_type;
-                    uncomp_buf[1] = 1;
+                    uncomp_buf[0] = (fieldname_data_size << 16) | fieldname_type;
+                    uncomp_buf[1] = fieldname_size;
                     uncomp_buf[2] = array_name_type;
                     uncomp_buf[3] = 0;
                     matvar->internal->z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
@@ -5750,7 +6276,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     } while ( matvar->internal->z->avail_out == 0 );
                     break;
                 }
-                nfields = matvar->internal->num_fields;
+
                 for ( i = 0; i < nfields; i++ ) {
                     size_t len = strlen(matvar->internal->fieldnames[i]);
                     if ( len > maxlen )
@@ -5844,10 +6370,14 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
 #endif
     }
     end = ftell((FILE*)mat->fp);
-    nBytes = (int)(end-start);
-    fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
-    fwrite(&nBytes,4,1,(FILE*)mat->fp);
-    fseek((FILE*)mat->fp,end,SEEK_SET);
+    if ( start != -1L && end != -1L ) {
+        nBytes = (int)(end-start);
+        (void)fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
+        fwrite(&nBytes,4,1,(FILE*)mat->fp);
+        (void)fseek((FILE*)mat->fp,end,SEEK_SET);
+    } else {
+        Mat_Critical("Couldn't determine file position");
+    }
 
     return 0;
 }
@@ -5864,23 +6394,22 @@ void
 WriteInfo5(mat_t *mat, matvar_t *matvar)
 {
     mat_uint32_t array_flags = 0x0;
-    mat_int16_t  fieldname_type = MAT_T_INT32,fieldname_data_size=4;
-    mat_int8_t  pad1 = 0;
-    int      array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int      array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
-    int      nBytes, i, nmemb = 1,nzmax = 0;
-    long     start = 0, end = 0;
+    mat_int8_t pad1 = 0;
+    int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
+    int array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
+    int nBytes, nmemb = 1,nzmax = 0;
+    long start = 0, end = 0;
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
-    fseek((FILE*)mat->fp,0,SEEK_END);         /* Always write at end of file */
+    (void)fseek((FILE*)mat->fp,0,SEEK_END);         /* Always write at end of file */
 
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
+        int i;
         fwrite(&matrix_type,4,1,(FILE*)mat->fp);
         fwrite(&pad4,4,1,(FILE*)mat->fp);
         start = ftell((FILE*)mat->fp);
 
         /* Array Flags */
-
         array_flags = matvar->class_type & CLASS_TYPE_MASK;
         if ( matvar->isComplex )
             array_flags |= MAT_F_COMPLEX;
@@ -5931,6 +6460,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         }
 
         matvar->internal->datapos = ftell((FILE*)mat->fp);
+        if ( matvar->internal->datapos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
@@ -5967,7 +6499,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
                 if ( matvar->nbytes == 0 || matvar->data_size == 0 ||
                      matvar->data   == NULL )
                     break;
-                ncells  = matvar->nbytes / matvar->data_size;
+                ncells = matvar->nbytes / matvar->data_size;
 
                 for ( i = 0; i < ncells; i++ )
                     WriteCellArrayFieldInfo(mat,cells[i]);
@@ -5976,10 +6508,12 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             case MAT_C_STRUCT:
             {
                 char *padzero;
+                mat_int16_t fieldname_type = MAT_T_INT32;
+                mat_int16_t fieldname_data_size = 4;
                 int maxlen = 0, fieldname_size;
                 int nfields = matvar->internal->num_fields;
                 matvar_t **fields = (matvar_t **)matvar->data;
-                mat_int32_t  array_name_type = MAT_T_INT8;
+                mat_int32_t array_name_type = MAT_T_INT8;
                 unsigned fieldname;
 
                 for ( i = 0; i < nfields; i++ ) {
@@ -6132,6 +6666,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             } while ( matvar->internal->z->avail_out == 0 );
         }
         matvar->internal->datapos = ftell((FILE*)mat->fp);
+        if ( matvar->internal->datapos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        }
         deflateCopy(&z_save,matvar->internal->z);
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
@@ -6180,10 +6717,14 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
 #endif
     }
     end = ftell((FILE*)mat->fp);
-    nBytes = (int)(end-start);
-    fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
-    fwrite(&nBytes,4,1,(FILE*)mat->fp);
-    fseek((FILE*)mat->fp,end,SEEK_SET);
+    if ( start != -1L && end != -1L ) {
+        nBytes = (int)(end-start);
+        (void)fseek((FILE*)mat->fp,(long)-(nBytes+4),SEEK_CUR);
+        fwrite(&nBytes,4,1,(FILE*)mat->fp);
+        (void)fseek((FILE*)mat->fp,end,SEEK_SET);
+    } else {
+        Mat_Critical("Couldn't determine file position");
+    }
 }
 
 /** @if mat_devman
@@ -6202,12 +6743,16 @@ Mat_VarReadNextInfo5( mat_t *mat )
     matvar_t *matvar = NULL;
     mat_uint32_t array_flags;
 
-    if( mat == NULL )
+    if ( mat == NULL )
         return NULL;
 
     fpos = ftell((FILE*)mat->fp);
+    if ( fpos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+        return NULL;
+    }
     err = fread(&data_type,4,1,(FILE*)mat->fp);
-    if ( !err )
+    if ( err == 0 )
         return NULL;
     err = fread(&nBytes,4,1,(FILE*)mat->fp);
     if ( mat->byteswap ) {
@@ -6223,14 +6768,6 @@ Mat_VarReadNextInfo5( mat_t *mat )
             long     bytesread = 0;
 
             matvar               = Mat_VarCalloc();
-            matvar->name         = NULL;
-            matvar->data         = NULL;
-            matvar->dims         = NULL;
-            matvar->nbytes       = 0;
-            matvar->data_type    = MAT_T_UNKNOWN;
-            matvar->class_type   = MAT_C_EMPTY;
-            matvar->data_size    = 0;
-            matvar->mem_conserve = 0;
             matvar->compression  = MAT_COMPRESSION_ZLIB;
 
             matvar->internal->fp = mat;
@@ -6244,7 +6781,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 break;
             }
 
-            /* Read Variable tag */
+            /* Read variable tag */
             bytesread += InflateVarTag(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(uncomp_buf);
@@ -6252,106 +6789,110 @@ Mat_VarReadNextInfo5( mat_t *mat )
             }
             nbytes = uncomp_buf[1];
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
-                fseek((FILE*)mat->fp,nBytes-bytesread,SEEK_CUR);
+                (void)fseek((FILE*)mat->fp,nBytes-bytesread,SEEK_CUR);
                 Mat_VarFree(matvar);
                 matvar = NULL;
                 Mat_Critical("Uncompressed type not MAT_T_MATRIX");
                 break;
             }
-            /* Inflate Array Flags */
+            /* Inflate array flags */
             bytesread += InflateArrayFlags(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(uncomp_buf);
                 (void)Mat_uint32Swap(uncomp_buf+2);
                 (void)Mat_uint32Swap(uncomp_buf+3);
             }
-            /* Array Flags */
+            /* Array flags */
             if ( uncomp_buf[0] == MAT_T_UINT32 ) {
-               array_flags = uncomp_buf[2];
-               matvar->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               matvar->isComplex   = (array_flags & MAT_F_COMPLEX);
-               matvar->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               matvar->isLogical   = (array_flags & MAT_F_LOGICAL);
-               if ( matvar->class_type == MAT_C_SPARSE ) {
-                   /* Need to find a more appropriate place to store nzmax */
-                   matvar->nbytes      = uncomp_buf[3];
-               }
-            }
-            /* Inflate Dimensions */
-            bytesread += InflateDimensions(mat,matvar,uncomp_buf);
-            if ( mat->byteswap ) {
-                (void)Mat_uint32Swap(uncomp_buf);
-                (void)Mat_uint32Swap(uncomp_buf+1);
-            }
-            /* Rank and Dimension */
-            if ( uncomp_buf[0] == MAT_T_INT32 ) {
-                nbytes = uncomp_buf[1];
-                matvar->rank = nbytes / 4;
-                matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
-                if ( mat->byteswap ) {
-                    for ( i = 0; i < matvar->rank; i++ )
-                        matvar->dims[i] = Mat_uint32Swap(&(uncomp_buf[2+i]));
-                } else {
-                    for ( i = 0; i < matvar->rank; i++ )
-                        matvar->dims[i] = uncomp_buf[2+i];
+                array_flags = uncomp_buf[2];
+                matvar->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+                matvar->isComplex  = (array_flags & MAT_F_COMPLEX);
+                matvar->isGlobal   = (array_flags & MAT_F_GLOBAL);
+                matvar->isLogical  = (array_flags & MAT_F_LOGICAL);
+                if ( matvar->class_type == MAT_C_SPARSE ) {
+                    /* Need to find a more appropriate place to store nzmax */
+                    matvar->nbytes = uncomp_buf[3];
                 }
             }
-            /* Inflate variable name tag */
-            bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
-            if ( mat->byteswap )
-                (void)Mat_uint32Swap(uncomp_buf);
-            /* Name of variable */
-            if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
-                int len;
+            if ( matvar->class_type != MAT_C_OPAQUE ) {
+                /* Inflate dimensions */
+                bytesread += InflateDimensions(mat,matvar,uncomp_buf);
+                if ( mat->byteswap ) {
+                    (void)Mat_uint32Swap(uncomp_buf);
+                    (void)Mat_uint32Swap(uncomp_buf+1);
+                }
+                /* Rank and dimension */
+                if ( uncomp_buf[0] == MAT_T_INT32 ) {
+                    nbytes = uncomp_buf[1];
+                    matvar->rank = nbytes / 4;
+                    matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
+                    if ( mat->byteswap ) {
+                        for ( i = 0; i < matvar->rank; i++ )
+                            matvar->dims[i] = Mat_uint32Swap(&(uncomp_buf[2+i]));
+                    } else {
+                        for ( i = 0; i < matvar->rank; i++ )
+                            matvar->dims[i] = uncomp_buf[2+i];
+                    }
+                }
+                /* Inflate variable name tag */
+                bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
                 if ( mat->byteswap )
-                    len = Mat_uint32Swap(uncomp_buf+1);
-                else
-                    len = uncomp_buf[1];
+                    (void)Mat_uint32Swap(uncomp_buf);
+                /* Name of variable */
+                if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
+                    int len;
+                    if ( mat->byteswap )
+                        len = Mat_uint32Swap(uncomp_buf+1);
+                    else
+                        len = uncomp_buf[1];
 
-                if ( len % 8 == 0 )
-                    i = len;
-                else
-                    i = len+(8-(len % 8));
-                matvar->name = (char*)malloc(i+1);
-                /* Inflate variable name */
-                bytesread += InflateVarName(mat,matvar,matvar->name,i);
-                matvar->name[len] = '\0';
-            } else if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
-                        ((uncomp_buf[0] & 0xffff0000) != 0x00) ) {
-                /* Name packed in tag */
-                int len;
-                len = (uncomp_buf[0] & 0xffff0000) >> 16;
-                matvar->name = (char*)malloc(len+1);
-                memcpy(matvar->name,uncomp_buf+1,len);
-                matvar->name[len] = '\0';
+                    if ( len % 8 == 0 )
+                        i = len;
+                    else
+                        i = len+(8-(len % 8));
+                    matvar->name = (char*)malloc(i+1);
+                    /* Inflate variable name */
+                    bytesread += InflateVarName(mat,matvar,matvar->name,i);
+                    matvar->name[len] = '\0';
+                } else if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                            ((uncomp_buf[0] & 0xffff0000) != 0x00) ) {
+                    /* Name packed in tag */
+                    int len;
+                    len = (uncomp_buf[0] & 0xffff0000) >> 16;
+                    matvar->name = (char*)malloc(len+1);
+                    memcpy(matvar->name,uncomp_buf+1,len);
+                    matvar->name[len] = '\0';
+                }
+                if ( matvar->class_type == MAT_C_STRUCT )
+                    (void)ReadNextStructField(mat,matvar);
+                else if ( matvar->class_type == MAT_C_CELL )
+                    (void)ReadNextCell(mat,matvar);
+                (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
+                matvar->internal->datapos = ftell((FILE*)mat->fp);
+                if ( matvar->internal->datapos == -1L ) {
+                    Mat_Critical("Couldn't determine file position");
+                }
             }
-            if ( matvar->class_type == MAT_C_STRUCT )
-                ReadNextStructField(mat,matvar);
-            else if ( matvar->class_type == MAT_C_CELL )
-                ReadNextCell(mat,matvar);
-            fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-            matvar->internal->datapos = ftell((FILE*)mat->fp);
-            fseek((FILE*)mat->fp,nBytes+8+fpos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,nBytes+8+fpos,SEEK_SET);
             break;
 #else
             Mat_Critical("Compressed variable found in \"%s\", but matio was "
                          "built without zlib support",mat->filename);
-            fseek((FILE*)mat->fp,nBytes+8+fpos,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,nBytes+8+fpos,SEEK_SET);
             return NULL;
 #endif
         }
         case MAT_T_MATRIX:
         {
-            int      nbytes;
             mat_uint32_t buf[32];
-            size_t   bytesread = 0;
+            size_t bytesread = 0;
 
             matvar = Mat_VarCalloc();
             matvar->internal->fpos = fpos;
             matvar->internal->fp   = mat;
 
-            /* Read Array Flags and The Dimensions Tag */
-            bytesread  += fread(buf,4,6,(FILE*)mat->fp);
+            /* Read array flags and the dimensions tag */
+            bytesread += fread(buf,4,6,(FILE*)mat->fp);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
                 (void)Mat_uint32Swap(buf+1);
@@ -6360,21 +6901,21 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 (void)Mat_uint32Swap(buf+4);
                 (void)Mat_uint32Swap(buf+5);
             }
-            /* Array Flags */
+            /* Array flags */
             if ( buf[0] == MAT_T_UINT32 ) {
                array_flags = buf[2];
-               matvar->class_type  = CLASS_FROM_ARRAY_FLAGS(array_flags);
-               matvar->isComplex   = (array_flags & MAT_F_COMPLEX);
-               matvar->isGlobal    = (array_flags & MAT_F_GLOBAL);
-               matvar->isLogical   = (array_flags & MAT_F_LOGICAL);
+               matvar->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
+               matvar->isComplex  = (array_flags & MAT_F_COMPLEX);
+               matvar->isGlobal   = (array_flags & MAT_F_GLOBAL);
+               matvar->isLogical  = (array_flags & MAT_F_LOGICAL);
                if ( matvar->class_type == MAT_C_SPARSE ) {
                    /* Need to find a more appropriate place to store nzmax */
-                   matvar->nbytes      = buf[3];
+                   matvar->nbytes = buf[3];
                }
             }
-            /* Rank and Dimension */
+            /* Rank and dimension */
             if ( buf[4] == MAT_T_INT32 ) {
-                nbytes = buf[5];
+                int nbytes = buf[5];
 
                 matvar->rank = nbytes / 4;
                 matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
@@ -6393,7 +6934,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                         matvar->dims[i] = buf[i];
                 }
             }
-            /* Variable Name Tag */
+            /* Variable name tag */
             bytesread+=fread(buf,4,2,(FILE*)mat->fp);
             if ( mat->byteswap )
                 (void)Mat_uint32Swap(buf);
@@ -6431,7 +6972,10 @@ Mat_VarReadNextInfo5( mat_t *mat )
             else if ( matvar->class_type == MAT_C_FUNCTION )
                 (void)ReadNextFunctionHandle(mat,matvar);
             matvar->internal->datapos = ftell((FILE*)mat->fp);
-            fseek((FILE*)mat->fp,nBytes+8+fpos,SEEK_SET);
+            if ( matvar->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
+            (void)fseek((FILE*)mat->fp,nBytes+8+fpos,SEEK_SET);
             break;
         }
         default:

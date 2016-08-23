@@ -1,0 +1,7 @@
+Name                       Size           Bytes          Class             
+
+var1                       4x5                160B  mxDOUBLE_CLASS    
+var11                      4x5                320B  mxDOUBLE_CLASS    
+var21                      5x5                128B  mxSPARSE_CLASS    
+var22                      5x5                168B  mxSPARSE_CLASS    
+var24                      4x26               208B  mxCHAR_CLASS      

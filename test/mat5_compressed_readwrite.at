@@ -1,0 +1,161 @@
+# Copyright (C) 2010-2016   Christopher C. Hulbert
+#
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    1. Redistributions of source code must retain the above copyright notice,
+#       this list of conditions and the following disclaimer.
+#
+#    2. Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+AT_SETUP([Copy variables])
+AT_KEYWORDS([copy])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([! grep -q "#define SIZEOF_VOID_P 4" $abs_top_builddir/src/matioConfig.h])
+AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/matio_test_cases_compressed_le.mat],[0],[],[])
+AT_CHECK([cp $srcdir/results/dump-mat_copy-5_32.out expout
+          $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Copy variables])
+AT_KEYWORDS([copy])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([! grep -q "#define SIZEOF_VOID_P 8" $abs_top_builddir/src/matioConfig.h])
+AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/matio_test_cases_compressed_le.mat],[0],[],[])
+AT_CHECK([cp $srcdir/results/dump-mat_copy-5.out expout
+          $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Delete variables])
+AT_KEYWORDS([delete])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/matio_test_cases_compressed_be.mat],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var2],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var3],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var4],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var5],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var6],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var7],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var8],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var9],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var10],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var11],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var12],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var13],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var14],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var15],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var16],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var17],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var18],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var19],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var20],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var21],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var22],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var23],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var25],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var26],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var27],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var28],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var29],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var30],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var31],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var32],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var33],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var34],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var35],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var36],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var37],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var38],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var39],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var40],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var41],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var42],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var43],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var44],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var45],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var46],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var47],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var48],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var49],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var50],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var51],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var52],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var53],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var54],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var55],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var56],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var57],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var58],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var59],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var60],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var61],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var62],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var63],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var64],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var65],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var66],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var67],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var68],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var69],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var70],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var71],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var72],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var73],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var74],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var75],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var76],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var77],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var78],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var79],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var80],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var81],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var82],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var83],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var84],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var85],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var86],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var87],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var88],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var89],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var90],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var91],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var92],[0],[],[])
+AT_CHECK([cp $srcdir/results/dump-mat_copy-partial.out expout
+          $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],[expout],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var1],[0],[],[])
+AT_CHECK([$builddir/test_mat delete test_mat_copy.mat var24],[0],[],[])
+AT_CLEANUP
+
+AT_SETUP([Copy large struct])
+AT_KEYWORDS([copy large_struct])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([! grep -q "#define SIZEOF_VOID_P 4" $abs_top_builddir/src/matioConfig.h])
+AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/large_struct_compressed_le.mat],[0],[],[])
+AT_CHECK([cp $srcdir/results/dump-large_struct_compressed_32.out expout
+          $builddir/../tools/matdump -f whos -d test_mat_copy.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Copy large struct])
+AT_KEYWORDS([copy large_struct])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([! grep -q "#define SIZEOF_VOID_P 8" $abs_top_builddir/src/matioConfig.h])
+AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/large_struct_compressed_le.mat],[0],[],[])
+AT_CHECK([cp $srcdir/results/dump-large_struct_compressed.out expout
+          $builddir/../tools/matdump -f whos -d test_mat_copy.mat],[0],[expout],[])
+AT_CLEANUP

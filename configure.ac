@@ -28,7 +28,7 @@ dnl CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 dnl ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 dnl POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([MATIO],[1.5.3],[chulbe2lsu@users.sourceforge.net],[],
+AC_INIT([MATIO],[1.5.8],[chulbe2lsu@users.sourceforge.net],[],
         [http://sourceforge.net/projects/matio])
 AC_CONFIG_SRCDIR([src/matio.h])
 AC_CONFIG_AUX_DIR([config])
@@ -41,10 +41,10 @@ AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([MATIO_PLATFORM],"${host}",[Platform])
 AC_DEFINE_UNQUOTED([MATIO_MAJOR_VERSION],1,[Matio major version number])
 AC_DEFINE_UNQUOTED([MATIO_MINOR_VERSION],5,[Matio minor version number])
-AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],3,[Matio release level number])
-AC_DEFINE_UNQUOTED([MATIO_VERSION],153,[Matio version number])
-PACKAGE_RELEASE_DATE="11 January 2016"
-AC_DEFINE_UNQUOTED([MATIO_VERSION_STR],"1.5.3",[Matio version number])
+AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],8,[Matio release level number])
+AC_DEFINE_UNQUOTED([MATIO_VERSION],158,[Matio version number])
+PACKAGE_RELEASE_DATE="30 June 2016"
+AC_DEFINE_UNQUOTED([MATIO_VERSION_STR],"1.5.8",[Matio version number])
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
 AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])
@@ -55,6 +55,10 @@ dnl
 dnl  Build programs, C compiler, F77 compiler, make, install, etc.
 dnl
 AC_PROG_CC([pgcc icc gcc cc])
+
+AC_ARG_ENABLE(coverage,
+[  --enable-coverage       Enable coverage testing],
+[CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage"])
 
 dnl
 dnl Check whether to build in debug mode
@@ -204,51 +208,7 @@ AC_TYPE_SIZE_T
 AC_TYPE_INTMAX_T
 AC_TYPE_UINTMAX_T
 AC_TYPE_UINTPTR_T
-
-AC_CACHE_CHECK([for va_copy()],matio_cv_have_va_copy,[
-	AC_LINK_IFELSE([AC_LANG_SOURCE([[
-    #include <stdarg.h>
-	void f (int i, ...) {
-	va_list args1, args2;
-	va_start (args1, i);
-	va_copy (args2, args1);
-	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
-	  exit (1);
-	va_end (args1); va_end (args2);
-	}
-	int main() {
-	  f (0, 42);
-	  return 0;
-	}]])],
-	[matio_cv_have_va_copy=yes],
-	[matio_cv_have_va_copy=no])
-])
-if test "$matio_cv_have_va_copy" = "no"
-then
-    AC_CACHE_CHECK([for __va_copy()],matio_cv_have___va_copy,[
-        AC_LINK_IFELSE([AC_LANG_SOURCE([[#include <stdarg.h>
-            void f (int i, ...) {
-                va_list args1, args2;
-                va_start (args1, i);
-                __va_copy (args2, args1);
-                if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
-                    exit (1);
-                va_end (args1); va_end (args2);
-            }
-            int main() {
-                f (0, 42);
-                return 0;
-            }]])],
-	[matio_cv_have___va_copy=yes],
-	[matio_cv_have___va_copy=no])
-    ])
-    if test "matio_cv_have___va_copy" = "yes"
-    then
-        AC_DEFINE_UNQUOTED([HAVE___VA_COPY],[1],[Define to 1 if you have the `__va_copy' function or macro.])
-    fi
-else
-    AC_DEFINE_UNQUOTED([HAVE_VA_COPY],[1],[Define to 1 if you have the `va_copy' function or macro.])
-fi
+AC_CHECK_VA_COPY
 
 AC_CACHE_CHECK([for vsnprintf()],matio_cv_have_vsnprintf,[
         AC_LINK_IFELSE([AC_LANG_SOURCE([[

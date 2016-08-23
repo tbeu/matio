@@ -35,7 +35,7 @@
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif
-#ifdef _MSC_VER
+#if defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
 #else
 #   define SIZE_T_FMTSTR "zu"
@@ -64,14 +64,14 @@ static const char *helpstr[] = {
     "Runs various test on the Matlab I/O library libmatio",
     "",
     "OPTIONS",
-    "-c, --class c         Set variable class to 'c'",
-    "-H, --help            This output",
-    "-L, --list-tests      List of tests",
-    "-o, --output filename Set the name of the output MAT file",
-    "-T, --help-test TEST  help information on test TEST",
-    "-v, --mat-version x   Set MAT file version to x (4, 5, 7.3)",
-    "-V, --version         version information",
-    "-z, --compress        Enable compression for MAT 5 files",
+    "-c,--class c         Set variable class to 'c'",
+    "-H,--help            This output",
+    "-L,--list-tests      List of tests",
+    "-o,--output filename Set the name of the output MAT file",
+    "-T,--help-test TEST  help information on test TEST",
+    "-v,--mat-version x   Set MAT file version to x (4, 5, 7.3)",
+    "-V,--version         version information",
+    "-z,--compress        Enable compression for MAT 5 files",
     "",
     "test        - name of the test to run",
     "TEST_OPTS   - If required, specify arguments to a test(See --help TEST)",
@@ -121,6 +121,8 @@ static const char *helptestsstr[] = {
 "                                  double if not set.",
 "write_struct_2d_logical         - Write a structure with 2D logical arrays",
 "                                  to a matlab file.",
+"write_struct_char               - Write a structure with character arrays",
+"                                  to a matlab file.",
 "write_empty_struct              - Write empty structure and structure with",
 "                                  empty fields",
 "",
@@ -138,6 +140,8 @@ static const char *helptestsstr[] = {
 "                                fields to a matlab file.",
 "write_empty_cell              - Write empty structure and structure with",
 "                                empty fields",
+"write_cell_empty_struct       - Write cell array with empty structure",
+"                                fields",
 "",
 "    Character Variable Tests",
 "================================================================",
@@ -146,6 +150,7 @@ static const char *helptestsstr[] = {
 "   Version 5 MAT File tests",
 "================================================================",
 "copy                    - Copies one matlab file to another",
+"delete                  - Deletes a specific variable from a file",
 "readvar                 - Reads a specific variable from a file",
 "getstructfield          - Tests Mat_VarGetStructField getting fields from a",
 "                          structure",
@@ -175,7 +180,17 @@ static const char *helptest_copy[] = {
     "",
     "Usage: test_mat copy FILE",
     "",
-    "  Copies FILE to test_mat_copy.mat",
+    "Copies FILE to test_mat_copy.mat",
+    "",
+    NULL
+};
+
+static const char *helptest_delete[] = {
+    "TEST: delete",
+    "",
+    "Usage: test_mat delete FILE variable_name",
+    "",
+    "Deletes variable_name from FILE",
     "",
     NULL
 };
@@ -229,7 +244,7 @@ static const char *helptest_write_2d_logical[] = {
     "",
     "Writes a several variables to a MAT file. The variables are 2d logical",
     "arrays. Variables l1, l2, l4, and l8 if 64-bit integers are available are",
-    " the same except the logical source data are different integer sizes. The",
+    "the same except the logical source data are different integer sizes. The",
     "MAT file is the default file version, or set by the -v option. If the MAT",
     "file is version 5, compression can be enabled using the -z option if",
     "built with zlib library.",
@@ -403,6 +418,29 @@ static const char *helptest_write_struct_2d_logical[] = {
     NULL
 };
 
+static const char *helptest_write_struct_char[] = {
+    "TEST: write_struct_char",
+    "",
+    "Usage: test_mat write_struct_char",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a structure",
+    "array with one character array. The MAT file is the default file",
+    "version, or set by the -v option. If the MAT file is version 5,",
+    "compression can be enabled using the -z option if built with zlib library",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    a(1).field1 = [];",
+    "    a(1).field2 = [];",
+    "    a(2).field1 = [];",
+    "    a(2).field2 = ['abcdefghijklmnopqrstuvwxyz';",
+    "                   'ABCDEFGHIJKLMNOPQRSTUVWXYZ';",
+    "                   '1234567890!@#$%^&*()-_=+`~';",
+    "                   '[{]}\\|;:''\",<.>/?          '];",
+    "",
+    NULL
+};
+
 static const char *helptest_write_empty_struct[] = {
     "TEST: write_empty_struct",
     "",
@@ -506,19 +544,40 @@ static const char *helptest_write_empty_cell[] = {
     NULL
 };
 
+static const char *helptest_write_cell_empty_struct[] = {
+    "TEST: write_cell_empty_struct",
+    "",
+    "Usage: test_mat write_cell_empty_struct",
+    "",
+    "Writes a cell array with empty structure fields",
+    "to the file test_write_cell_empty_struct.mat",
+    "The MAT file is the default file version, or set by the -v option. If",
+    "the MAT file is version 5, compression can be enabled using the -z",
+    "option if built with zlib library.",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    var1{1,1} = struct('field1',[51.,52.;53.,54.],...",
+    "                       'field2',[],'field3',[]);",
+    "    var1{1,2} = var1{1,1};",
+    "    var1{1,3} = var1{1,1};",
+    "",
+    NULL
+};
+
 static const char *helptest_getstructfield[] = {
     "TEST: getstructfield",
     "",
     "Usage: test_mat getstructfield FILE structure field",
     "",
-    "  Tests the Mat_GetStructField function by reading fields from",
-    "  a structure. FILE is the name of the input file containing a Matlab",
-    "  structure named structure_name and either the field name or",
-    "  1-relative field index. i.e. to read the data field of the structure",
-    "  created by the write_struct test, use:",
-    "    test_mat getstructfield test_mat_write_struct.mat structure data",
-    "  OR",
-    "    test_mat getstructfield test_mat_write_struct.mat structure 1",
+    "Tests the Mat_GetStructField function by reading fields from",
+    "a structure. FILE is the name of the input file containing a Matlab",
+    "structure named structure_name and either the field name or",
+    "1-relative field index. i.e. to read the data field of the structure",
+    "created by the write_struct test, use:",
+    "  test_mat getstructfield test_mat_write_struct.mat structure data",
+    "OR",
+    "  test_mat getstructfield test_mat_write_struct.mat structure 1",
     "",
     NULL
 };
@@ -605,10 +664,10 @@ static const char *helptest_sub2ind[] = {
     "",
     "Usage: test_mat sub2ind",
     "",
-    "  Calculates a linear (single) index from a set of subscript indeces.",
-    "  The size of the array used is [256,256,124].  The 1-relative indeces",
-    "  are (233,74,1).  Therefore, the calculated linear index should be",
-    "  18921.",
+    "Calculates a linear (single) index from a set of subscript indeces.",
+    "The size of the array used is [256,256,124].  The 1-relative indeces",
+    "are (233,74,1).  Therefore, the calculated 0-relative linear index",
+    "should be 18920.",
     "",
     NULL
 };
@@ -618,10 +677,10 @@ static const char *helptest_ind2sub[] = {
     "",
     "Usage: test_mat ind2sub",
     "",
-    "  Calculates a set of subscript indeces from a linear (single) index.",
-    "  The size of the array used is [256,256,124].  The 1-relative linear",
-    "  index used is 18921.  Therefore, the calculated subscripts should be",
-    "  (233,74,1).",
+    "Calculates a set of subscript indeces from a linear (single) index.",
+    "The size of the array used is [256,256,124].  The 1-relative linear",
+    "index used is 18921.  Therefore, the calculated subscripts should be",
+    "(233,74,1).",
     "",
     NULL
 };
@@ -631,6 +690,8 @@ help_test(const char *test)
 {
     if ( !strcmp(test,"copy") )
         Mat_Help(helptest_copy);
+    if ( !strcmp(test,"delete") )
+        Mat_Help(helptest_delete);
     else if ( !strcmp(test,"readvar") )
         Mat_Help(helptest_readvar);
     else if ( !strcmp(test,"readvarinfo") )
@@ -657,6 +718,8 @@ help_test(const char *test)
         Mat_Help(helptest_write_struct_complex_2d_numeric);
     else if ( !strcmp(test,"write_struct_2d_logical") )
         Mat_Help(helptest_write_struct_2d_logical);
+    else if ( !strcmp(test,"write_struct_char") )
+        Mat_Help(helptest_write_struct_char);
     else if ( !strcmp(test,"write_empty_struct") )
         Mat_Help(helptest_write_empty_struct);
     else if ( !strcmp(test,"write_cell_2d_numeric") )
@@ -667,6 +730,8 @@ help_test(const char *test)
         Mat_Help(helptest_write_cell_2d_logical);
     else if ( !strcmp(test,"write_empty_cell") )
         Mat_Help(helptest_write_empty_cell);
+    else if ( !strcmp(test,"write_cell_empty_struct") )
+        Mat_Help(helptest_write_cell_empty_struct);
     else if ( !strcmp(test,"writeinf") )
         Mat_Help(helptest_writeinf);
     else if ( !strcmp(test,"writenan") )
@@ -685,6 +750,15 @@ help_test(const char *test)
         Mat_Help(helptest_sub2ind);
     else
         exit(EXIT_FAILURE);
+}
+
+static void
+redirect_output(const char* output)
+{
+    if (output!=NULL)
+        if (freopen(output,"w",stdout)==NULL)
+            fprintf(stderr, "Unable to open %s for writing. Using stdout instead.",
+                output);
 }
 
 static int
@@ -1046,7 +1120,7 @@ test_write_empty_2d_numeric(enum matio_classes matvar_class,const char *output_n
             return 1;
     }
 
-    mat = Mat_CreateVer("test_write_empty_2d_numeric.mat",NULL,mat_file_ver);
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("empty",matvar_class,matvar_datatype,2,dims,
                      NULL,0);
@@ -1075,20 +1149,24 @@ test_write_char(const char *output_name)
         dims[0]   = 4;
         dims[1]   = 26;
         matvar = Mat_VarCreate("a",MAT_C_CHAR,MAT_T_UINT8,2,
-                    dims,str,MAT_F_DONT_COPY_DATA);
+                    dims,(void*)str,MAT_F_DONT_COPY_DATA);
         Mat_VarWrite(mat,matvar,compression);
         Mat_VarFree(matvar);
         Mat_Close(mat);
+    } else {
+        err = 1;
     }
     return err;
 }
 
 static int
-test_readvar(const char *inputfile, const char *var)
+test_readvar(const char *inputfile, const char *var, const char* output)
 {
     int err = 0;
     mat_t *mat;
     matvar_t *matvar;
+
+    redirect_output(output);
 
     mat = Mat_Open(inputfile,MAT_ACC_RDONLY);
     if ( mat ) {
@@ -1103,6 +1181,7 @@ test_readvar(const char *inputfile, const char *var)
     } else {
         err = 1;
     }
+
     return err;
 }
 
@@ -1194,10 +1273,11 @@ test_write_empty_struct(const char *output_name)
         Mat_VarFree(struct_matvar);
 
         Mat_Close(mat);
+    } else {
+        err = 1;
     }
     return err;
 }
-
 
 static int
 test_write_struct_2d_logical(const char *output_name)
@@ -1244,6 +1324,37 @@ test_write_struct_2d_logical(const char *output_name)
 
     Mat_Close(mat);
 
+    return err;
+}
+
+static int
+test_write_struct_char(const char *output_name)
+{
+    int    err = 0;
+    mat_t *mat;
+
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
+    if ( mat ) {
+        const char *str = "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
+                        "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
+        size_t num_fields = 2;
+        const char *fieldnames[2] = {"field1", "field2"};
+        size_t    dims[2];
+        matvar_t *matvar, *struct_matvar;
+
+        dims[0] = 2;
+        dims[1] = 1;
+        struct_matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, num_fields);
+        dims[0] = 4;
+        dims[1] = 26;
+        matvar = Mat_VarCreate(fieldnames[1], MAT_C_CHAR, MAT_T_UTF8, 2, dims, (void*)str, 0);
+        Mat_VarSetStructFieldByName(struct_matvar,fieldnames[1],1,matvar);
+        Mat_VarWrite(mat,struct_matvar,compression);
+        Mat_VarFree(struct_matvar);
+        Mat_Close(mat);
+    } else {
+        err = 1;
+    }
     return err;
 }
 
@@ -1627,6 +1738,46 @@ test_write_empty_cell(const char *output_name)
         Mat_VarFree(cell_matvar);
 
         Mat_Close(mat);
+    } else {
+        err = 1;
+    }
+    return err;
+}
+
+static int
+test_write_cell_empty_struct(const char *output_name)
+{
+    size_t  dims[2] = {1,3};
+    int    err = 0;
+    mat_t     *mat;
+    matvar_t *matvar, *cell_matvar, *struct_matvar;
+
+    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( mat ) {
+        int i;
+        double data[4] = {51., 53., 52., 54.};
+        const char *fieldnames[3] = {"field1", "field2", "field3"};
+        cell_matvar = Mat_VarCreate("var1", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
+
+        for (i = 0; i < 3; ++i) {
+            dims[0] = 1;
+            dims[1] = 1;
+            struct_matvar = Mat_VarCreateStruct("s", 2, dims, fieldnames, 3);
+
+            dims[0] = 2;
+            dims[1] = 2;
+            matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, data, 0);
+            Mat_VarSetStructFieldByName(struct_matvar, "field1", 0, matvar);
+            /* Do not set field2 and field3 by purpose */
+
+            Mat_VarSetCell(cell_matvar, i, struct_matvar);
+        }
+        Mat_VarWrite(mat,cell_matvar,compression);
+        Mat_VarFree(cell_matvar);
+
+        Mat_Close(mat);
+    } else {
+        err = 1;
     }
     return err;
 }
@@ -2023,7 +2174,7 @@ test_write_cell_complex_2d_numeric(enum matio_classes matvar_class,
 }
 
 static int
-test_write_null(void)
+test_write_null(const char* output_name)
 {
     int       err = 0;
     mat_t    *mat;
@@ -2031,7 +2182,7 @@ test_write_null(void)
     matvar_t *struct_fields[5] = {NULL,NULL,NULL,NULL,NULL};
     size_t    dims[3] = {0,1,10};
 
-    mat = Mat_CreateVer("test_write_null.mat",NULL,mat_file_ver);
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
     if ( mat != NULL ) {
         struct_fields[0] = Mat_VarCreate("d_null",MAT_C_DOUBLE,MAT_T_DOUBLE,3,
                             dims,NULL,0);
@@ -2337,7 +2488,7 @@ test_struct_api_get(void)
 }
 
 static int
-test_cell_api_set(void)
+test_cell_api_set()
 {
     size_t dims[2];
     double    data[10] = {0,1,2,3,4,5,6,7,8,9};
@@ -2552,12 +2703,12 @@ test_readslab(const char *file, const char *var)
     int   start[2]={0,0},stride[2]={1,1},edge[2]={2,2}, err = 0;
     double ptr[4];
     mat_t  *mat;
-   matvar_t *matvar;
+    matvar_t *matvar;
 
     mat = Mat_Open(file,MAT_ACC_RDONLY);
     if ( mat ) {
         matvar = Mat_VarReadInfo(mat,(char *)var);
-        if ( matvar != NULL ) {
+        if ( matvar != NULL && !matvar->isComplex ) {
             stride[0] = matvar->dims[0]-1;
             stride[1] = matvar->dims[1]-1;
             Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
@@ -2579,12 +2730,12 @@ test_readslab4(const char *file, const char *var)
     int   start[2]={0,0},stride[2]={1,1},edge[2]={2,2}, err = 0;
     double ptr[4];
     mat_t  *mat;
-   matvar_t *matvar;
+    matvar_t *matvar;
 
     mat = Mat_Open((const char *)file,MAT_ACC_RDONLY | MAT_FT_MAT4);
     if ( mat ) {
         matvar = Mat_VarReadInfo(mat,(char*)var);
-        if ( matvar != NULL ) {
+        if ( matvar != NULL && !matvar->isComplex ) {
             stride[0] = matvar->dims[0]-1;
             stride[1] = matvar->dims[1]-1;
             Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
@@ -2601,7 +2752,7 @@ test_readslab4(const char *file, const char *var)
 }
 
 static int
-test_writeslab(void)
+test_writeslab(const char* output_name)
 {
     int        err = 0, i;
     size_t     dims[2] = {6,10};
@@ -2618,7 +2769,7 @@ test_writeslab(void)
         idata[i] = i+1;
     }
 
-    mat = Mat_CreateVer("test_mat_writeslab.mat",NULL,mat_file_ver);
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,NULL,0);
@@ -2626,12 +2777,17 @@ test_writeslab(void)
                        dims,NULL,0);
         matvar3 = Mat_VarCreate("i",MAT_C_INT32,MAT_T_INT32,2,
                        dims,NULL,0);
-        Mat_VarWriteInfo(mat,matvar);
-        Mat_VarWriteInfo(mat,matvar2);
-        Mat_VarWriteInfo(mat,matvar3);
-        Mat_VarWriteData(mat,matvar3,idata,start,stride,edge);
-        Mat_VarWriteData(mat,matvar,data,start,stride,edge);
-        Mat_VarWriteData(mat,matvar2,fdata,start,stride,edge);
+        err = Mat_VarWriteInfo(mat,matvar);
+        if ( err != 0 )
+            err = Mat_VarWriteInfo(mat,matvar2);
+        if ( err != 0 )
+            err = Mat_VarWriteInfo(mat,matvar3);
+        if ( err != 0 )
+            err = Mat_VarWriteData(mat,matvar3,idata,start,stride,edge);
+        if ( err != 0 )
+            err = Mat_VarWriteData(mat,matvar,data,start,stride,edge);
+        if ( err != 0 )
+            err = Mat_VarWriteData(mat,matvar2,fdata,start,stride,edge);
         Mat_VarFree(matvar);
         Mat_VarFree(matvar2);
         Mat_VarFree(matvar3);
@@ -2672,7 +2828,7 @@ test_writenan(void)
 }
 
 static int
-test_writeinf(void)
+test_writeinf(const char* output_name)
 {
     int        err = 0, i;
     size_t     dims[2] = {5,5};
@@ -2687,7 +2843,7 @@ test_writeinf(void)
     for ( i = 0; i < 25; i+= 6 )
         data[i] = 1.0/zero;
 
-    mat = Mat_CreateVer("test_writeinf.mat",NULL,mat_file_ver);
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
                        dims,data,MAT_F_DONT_COPY_DATA);
@@ -2802,8 +2958,18 @@ test_write_sparse(enum matio_classes matvar_class,const char *output_name)
         matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,
                        data_type,2,dims,&sparse,MAT_F_DONT_COPY_DATA);
         if ( matvar != NULL ) {
-            Mat_VarWrite(mat,matvar,compression);
+            matvar_t *matvar2;
+
+            matvar2 = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,
+                       data_type,2,dims,matvar->data,0);
             Mat_VarFree(matvar);
+            if ( matvar2 != NULL ) {
+                Mat_VarWrite(mat,matvar2,compression);
+                Mat_VarFree(matvar2);
+            } else {
+                Mat_Critical("test_writesparse: Couldn't create matlab variable");
+                err = 1;
+            }
         } else {
             Mat_Critical("test_writesparse: Couldn't create matlab variable");
             err = 1;
@@ -2951,7 +3117,7 @@ test_write_complex_sparse(enum matio_classes matvar_class,const char *output_nam
             sparse.data  = &z;
             data_type = MAT_T_UINT8;
             break;
-       default:
+        default:
             err = 1;
             break;
     }
@@ -2960,10 +3126,21 @@ test_write_complex_sparse(enum matio_classes matvar_class,const char *output_nam
         matvar = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,data_type,2,
                                dims,&sparse,MAT_F_COMPLEX|MAT_F_DONT_COPY_DATA);
         if ( matvar != NULL ) {
-            Mat_VarWrite(mat,matvar,compression);
+            matvar_t *matvar2;
+
+            matvar2 = Mat_VarCreate("sparse_matrix",MAT_C_SPARSE,
+                       data_type,2,dims,matvar->data,MAT_F_COMPLEX);
             Mat_VarFree(matvar);
+            if ( matvar2 != NULL ) {
+                Mat_VarWrite(mat,matvar2,compression);
+                Mat_VarFree(matvar2);
+            } else {
+                Mat_Critical("test_write_complex_sparse: Couldn't create "
+                         "matlab variable");
+                err = 1;
+            }
         } else {
-            Mat_Critical("test_write_compressed_sparse: Couldn't create "
+            Mat_Critical("test_write_complex_sparse: Couldn't create "
                          "matlab variable");
             err = 1;
         }
@@ -2996,7 +3173,7 @@ test_delete(char *file,char *name)
 int main (int argc, char *argv[])
 {
     const char *prog_name = "test_mat";
-    int   c,i, k, err = 0, ntests = 0;
+    int   c, k, err = 0, ntests = 0;
     mat_t *mat, *mat2;
     matvar_t *matvar;
     enum matio_classes matvar_class = MAT_C_DOUBLE;
@@ -3086,11 +3263,21 @@ int main (int argc, char *argv[])
     for ( k = optind; k < argc; ) {
         if ( !strcasecmp(argv[k],"copy") ) {
             k++;
-            mat = Mat_CreateVer("test_mat_copy.mat",NULL,mat_file_ver);
+            if ( NULL == output_name )
+                output_name = "test_mat_copy.mat";
+            mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
             mat2 = Mat_Open(argv[k++],MAT_ACC_RDONLY);
             if ( mat && mat2 ) {
-                while ( NULL != (matvar = Mat_VarReadNext(mat2)) )
-                    Mat_VarWrite(mat,matvar,compression);
+                while ( NULL != (matvar = Mat_VarReadNext(mat2)) ) {
+                    matvar_t* copy = Mat_VarDuplicate(matvar, 1);
+                    Mat_VarFree(matvar);
+                    if ( NULL != copy ) {
+                        Mat_VarWrite(mat,copy,compression);
+                        Mat_VarFree(copy);
+                    } else {
+                        err++;
+                    }
+                }
                 Mat_Close(mat);
                 Mat_Close(mat2);
             }
@@ -3132,7 +3319,9 @@ int main (int argc, char *argv[])
             ntests++;
         } else if ( !strcasecmp(argv[k],"writenull") ) {
             k++;
-            err += test_write_null();
+            if ( NULL == output_name)
+                output_name = "test_write_null.mat";
+            err += test_write_null(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"writenan") ) {
             k++;
@@ -3140,7 +3329,9 @@ int main (int argc, char *argv[])
             ntests++;
         } else if ( !strcasecmp(argv[k],"writeinf") ) {
             k++;
-            err += test_writeinf();
+            if ( NULL == output_name)
+                output_name = "test_writeinf.mat";
+            err += test_writeinf(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"readvar") ) {
             k++;
@@ -3148,7 +3339,7 @@ int main (int argc, char *argv[])
                 Mat_Critical("Must specify the input file and variable respectively");
                 err++;
             } else {
-                err += test_readvar(argv[k],argv[k+1]);
+                err += test_readvar(argv[k],argv[k+1],output_name);
                 k+=2;
             }
             ntests++;
@@ -3167,6 +3358,12 @@ int main (int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_write_struct_2d_logical.mat";
             err += test_write_struct_2d_logical(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"write_struct_char") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_struct_char.mat";
+            err += test_write_struct_char(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"write_struct_2d_numeric") ) {
             k++;
@@ -3212,40 +3409,55 @@ int main (int argc, char *argv[])
                 output_name = "test_write_empty_cell.mat";
             err += test_write_empty_cell(output_name);
             ntests++;
+        } else if ( !strcasecmp(argv[k],"write_cell_empty_struct") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_cell_empty_struct.mat";
+            err += test_write_cell_empty_struct(output_name);
+            ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_create") ) {
             k++;
+            redirect_output(output_name);
             err += test_struct_api_create();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_setfield") ) {
             k++;
+            redirect_output(output_name);
             err += test_struct_api_setfield();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_getfieldnames") ) {
             k++;
+            redirect_output(output_name);
             err += test_struct_api_getfieldnames();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_addfield") ) {
             k++;
+            redirect_output(output_name);
             err += test_struct_api_addfield();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_getlinear") ) {
             k++;
+            redirect_output(output_name);
             err += test_struct_api_getlinear();
             ntests++;
         } else if ( !strcasecmp(argv[k],"struct_api_get") ) {
             k++;
+            redirect_output(output_name);
             err += test_struct_api_get();
             ntests++;
         } else if ( !strcasecmp(argv[k],"cell_api_set") ) {
             k++;
+            redirect_output(output_name);
             err += test_cell_api_set();
             ntests++;
         } else if ( !strcasecmp(argv[k],"cell_api_getlinear") ) {
             k++;
+            redirect_output(output_name);
             err += test_cell_api_getlinear();
             ntests++;
         } else if ( !strcasecmp(argv[k],"cell_api_getcells") ) {
             k++;
+            redirect_output(output_name);
             err += test_cell_api_getcells();
             ntests++;
         } else if ( !strcasecmp(argv[k],"getstructfield") ) {
@@ -3255,6 +3467,7 @@ int main (int argc, char *argv[])
                              "and field name/index");
                 err++;
             } else {
+                redirect_output(output_name);
                 err += test_get_struct_field(argv[k],argv[k+1],argv[k+2]);
                 k += 3;
             }
@@ -3276,7 +3489,9 @@ int main (int argc, char *argv[])
             ntests++;
         } else if ( !strcasecmp(argv[k],"writeslab") ) {
            k++;
-           err += test_writeslab();
+            if ( NULL == output_name )
+                output_name = "test_mat_writeslab.mat";
+            err += test_writeslab(output_name);
             ntests++;
     #if 0
         } else if ( !strcasecmp(argv[1],"cellslab") ) {
@@ -3300,14 +3515,19 @@ int main (int argc, char *argv[])
     #endif
         } else if ( !strcasecmp(argv[k],"readslab") ) {
             k++;
+            if ( NULL == output_name )
+                output_name = "XXX.mat";
             test_readslab(argv[k],argv[k+1]);
             k+=2;
             ntests++;
         } else if ( !strcasecmp(argv[k],"readslab4") ) {
             k++;
+            if ( NULL == output_name )
+                output_name = "XXX.mat";
             test_readslab4(argv[k],argv[k+1]);
             k+=2;
             ntests++;
+    #if 0
         } else if ( !strcasecmp(argv[k],"slab3") ) {
             int   start[3]={1,1,1},stride[3]={1,1,1},edge[3]={1,1,1};
             int j, l;
@@ -3332,6 +3552,7 @@ int main (int argc, char *argv[])
                 Mat_Close(mat);
             }
             ntests++;
+    #endif
         } else if ( !strcasecmp(argv[k],"write_sparse") ) {
             k++;
             if ( NULL == output_name )
@@ -3346,20 +3567,45 @@ int main (int argc, char *argv[])
             ntests++;
         } else if ( !strcasecmp(argv[k],"ind2sub") ) {
             size_t *subs, dims[3] = {256,256,124};
-
+            redirect_output(output_name);
             subs = Mat_CalcSubscripts2(3,dims,18921-1);
-            Mat_Message("%" SIZE_T_FMTSTR,"%" SIZE_T_FMTSTR,"%" SIZE_T_FMTSTR,subs[0],subs[1],subs[2]);
+            Mat_Message("(%" SIZE_T_FMTSTR ",%" SIZE_T_FMTSTR ",%" SIZE_T_FMTSTR ")",subs[0],subs[1],subs[2]);
             free(subs);
             k++;
             ntests++;
         } else if ( !strcasecmp(argv[k],"sub2ind") ) {
             size_t dims[3] = {256,256,124}, index[3] = {233,74,1};
             size_t linear_index = 0;
-            int err;
-
-            err = Mat_CalcSingleSubscript2(3,dims,index,&linear_index);
+            redirect_output(output_name);
+            err += Mat_CalcSingleSubscript2(3,dims,index,&linear_index);
             Mat_Message("%" SIZE_T_FMTSTR,linear_index);
             k++;
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"reshape32x32x32") ) {
+            k++;
+            mat = Mat_Open(argv[k++],MAT_ACC_RDONLY);
+            if ( NULL != mat ) {
+                matvar = Mat_VarRead(mat,argv[k++]);
+                if ( matvar ) {
+                    if ( matvar->rank == 3 && matvar->dims[0] == 32 &&
+                        matvar->dims[1] == 32 && matvar->dims[2] == 32 ) {
+                        mat_t* mat2;
+                        matvar->rank = 2;
+                        matvar->dims[0] = 128;
+                        matvar->dims[1] = 256;
+                        matvar->dims[2] = 1;
+                        if ( NULL == output_name )
+                            output_name = "test_write_reshape32x32x32.mat";
+                        mat2 = Mat_CreateVer(output_name,NULL,mat_file_ver);
+                        if ( NULL != mat2 ) {
+                            Mat_VarWrite(mat2, matvar, compression);
+                            Mat_Close(mat2);
+                        }
+                    }
+                    Mat_VarFree(matvar);
+                }
+                Mat_Close(mat);
+            }
             ntests++;
         } else {
             Mat_Critical("Unrecognized test %s", argv[k]);
