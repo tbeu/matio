@@ -66,13 +66,16 @@
 static char *
 TempFilename()
 {
+#if !defined(_WIN64) && !defined(_WIN32)
+  int fd;
+#endif
   static char template[7] = "XXXXXX";
   static char temp[7];
   strcpy(temp, template);
 #if defined(_WIN64) || defined(_WIN32)
   return _mktemp(temp);
 #else
-  int fd = mkstemp(temp);
+  fd = mkstemp(temp);
   if (fd > 0) {
     close(fd);
     return temp;
