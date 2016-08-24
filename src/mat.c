@@ -42,7 +42,7 @@
 #endif
 #if defined(_WIN64) || defined(_WIN32)
 #   include <io.h>
-#   define mktemp _mktemp
+#   define mkstemp _mkstemp
 #endif
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
