@@ -40,10 +40,6 @@
 #   define __STDC_FORMAT_MACROS
 #   include <inttypes.h>
 #endif
-#if defined(_WIN64) || defined(_WIN32)
-#   include <io.h>
-#   define mkstemp _mkstemp
-#endif
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
 #else
@@ -61,6 +57,26 @@
  *                 Private Functions
  *===================================================================
  */
+
+#if defined(_WIN64) || defined(_WIN32)
+#include <fcntl.h>
+#include <share.h>
+
+static int
+mkstemp( char *templ )
+{
+  int maxtry = 26, rtn = -1;
+
+  while( maxtry-- && (rtn < 0) )
+  {
+    char *r = _mktemp( templ );
+    if( r == NULL )
+      return -1;
+    rtn = sopen( r, O_RDWR | O_CREAT | O_EXCL | O_BINARY, SH_DENYRW, 0600 );
+  }
+  return rtn;
+}
+#endif
 
 static void
 ReadData(mat_t *mat, matvar_t *matvar)
