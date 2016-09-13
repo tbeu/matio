@@ -2328,6 +2328,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                             H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
                 }
             }
+            H5Dclose(dset_id);
             break;
         case MAT_C_STRUCT:
         {
@@ -2356,13 +2357,6 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         {
             matvar_t **cells;
             int i,ncells = 0;
-
-            if ( NULL != matvar->internal->hdf5_name ) {
-                dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
-            } else {
-                dset_id = matvar->internal->id;
-                H5Iinc_ref(dset_id);
-            }
 
             ncells = matvar->nbytes / matvar->data_size;
             cells  = (matvar_t**)matvar->data;
