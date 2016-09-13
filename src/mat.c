@@ -1512,11 +1512,12 @@ Mat_VarGetSize(matvar_t *matvar)
             nmemb *= matvar->dims[i];
         if ( nmemb*nfields > 0 ) {
             matvar_t **fields = (matvar_t**)matvar->data;
-            if ( NULL != fields )
+            if ( NULL != fields ) {
                 bytes = nmemb*nfields*overhead;
                 for ( i = 0; i < nmemb*nfields; i++ )
                     if ( NULL != fields[i] )
                         bytes += Mat_VarGetSize(fields[i]);
+            }
         }
         bytes += 64 /* max field name length */ *nfields;
     } else if ( matvar->class_type == MAT_C_CELL ) {
