@@ -1,5 +1,5 @@
 Changes in 1.5.8 (30 June 2016)
-* Fixed bug writing array to v4 MAT files on big endian architecture (broken by v1.5.7)
+* Fixed bug writing array to v4 MAT file on big endian architecture (broken by v1.5.7)
 
 Changes in 1.5.7 (22 June 2016)
 * Added support for MAT_T_UTF16 when reading character array from v5 MAT file
@@ -22,24 +22,24 @@ Changes in 1.5.7 (22 June 2016)
 * Various fixes for variable scopes that cause compilers to issue diagnostics
 
 Changes in 1.5.6 (23 February 2016)
-* Fixed bug writing array to v4 MAT files on big endian architecture
-* Fixed bug writing header with more than 127 characters to v5 or HDF5 MAT files
+* Fixed bug writing array to v4 MAT file on big endian architecture
+* Fixed bug writing header with more than 127 characters to v5 or HDF5 MAT file
 
 Changes in 1.5.5 (19 February 2016)
-* Added support of reading sparse array from v4 MAT files
-* Added support of writing sparse array to v4 MAT files
-* Added support of writing character array to v4 MAT files
+* Added support of reading sparse array from v4 MAT file
+* Added support of writing sparse array to v4 MAT file
+* Added support of writing character array to v4 MAT file
 * Added support of autogen.sh on Darwin
 * Added missing Visual Studio project files for test_mat
 * Added missing Visual Studio resource file
 * Enabled C++ compilation
 * Updated snprintf.c to C99 snprintf v1.1
 * Increased testsuite coverage
-* Fixed bug writing complex array to v4 MAT files
-* Fixed bug writing cell containing a struct with fields but empty array to compressed v5 MAT files
-* Fixed bug reading hyperslabs of cells and struct fields from compressed v5 MAT files (broken by v1.5.3)
-* Fixed bug writing empty character array to uncompressed v5 MAT files
-* Fixed bug reading cells and struct fields from HDF5 MAT files
+* Fixed bug writing complex array to v4 MAT file
+* Fixed bug writing cell containing a struct with fields but empty array to compressed v5 MAT file
+* Fixed bug reading hyperslabs of cells and struct fields from compressed v5 MAT file (broken by v1.5.3)
+* Fixed bug writing empty character array to uncompressed v5 MAT file
+* Fixed bug reading cells and struct fields from HDF5 MAT file
 * Fixed bug printing array dimensions in Mat_VarPrint on MinGW
 * Fixed bug calculating array sizes of structs in Mat_VarGetSize
 * Fixed bug duplicating sparse array in Mat_VarDuplicate
@@ -47,17 +47,17 @@ Changes in 1.5.5 (19 February 2016)
 * Several other fixes, especially for memory leaks
 
 Changes in 1.5.3 (11 January 2016)
-* Added support for writing numeric arrays to v4 MAT files
+* Added support for writing numeric arrays to v4 MAT file
 * Added Visual Studio project for test_mat
 * Added new API functions Mat_CalcSingleSubscript2 and Mat_CalcSubscripts2 that
   work on size_t type
-* Fixed memory consumption reading compressed v5 MAT files
-* Fixed bug writing compressed v5 MAT files
+* Fixed memory consumption reading compressed v5 MAT file
+* Fixed bug writing compressed v5 MAT file
 * Fixed bug in Mat_VarReadNextInfo5 where freed variable was not set to NULL
 * Fixed several bugs in Mat_VarDelete
-* Fixed bug writing empty struct to HDF5 MAT files
-* Fixed bug writing character array to HDF5 MAT files
-* Fixed bug writing character array to compressed v5 MAT files
+* Fixed bug writing empty struct to HDF5 MAT file
+* Fixed bug writing character array to HDF5 MAT file
+* Fixed bug writing character array to compressed v5 MAT file
 * Updated Visual Studio solution and project files to work with newer HDF5 and
   Visual Studio versions
 * Various fixes for unused variables, unnecessary initializations, etc. that
@@ -65,39 +65,36 @@ Changes in 1.5.3 (11 January 2016)
 * Several other fixes, especially for memory leaks
 
 Changes in 1.5.2 (31 July 2013)
-* Added support for linear data read for v4 and HDF5 MAT files
+* Added support for linear data read for v4 and HDF5 MAT file
 * Fixed bug reading slices of variables in matdump
-* Fixed feof calls so they compile on platforms that dereference the argument in
-  a macro
-* More robust checking that file is MAT file and eliminates some segmentation
-  faults
+* Fixed feof calls so they compile on platforms that dereference the argument in a macro
+* More robust checking that file is MAT file and eliminates some segmentation faults
 * Various fixes for unused variables, unnecessary initializations, etc. that
   cause compilers to issue diagnostics
 * Several other fixes
 
 Changes in 1.5.1 (10 March 2013)
-* Fixed bug writing compressed HDF5 files
+* Fixed bug writing compressed HDF5 file
 * Fixed bug reading cell array elements written with a non-empty variable name
 * Fixed bug writing complex sparse matrices as struct fields or cell elements to
-  uncompressed v5 MAT files
+  uncompressed v5 MAT file
 * Fixed a number of potential issues identified via static analysis
 * Fixed uninitialized pointers when creating structures through
   Mat_VarCreateStruct, and fix a bug in the struct API testsuite
-* Fixed extended sparse support in v7.3 MAT files and add 64-bit integer support
-  for v5 MAT files
-* Added missing support for reading hyperslabs from HDF5 MAT files
+* Fixed extended sparse support in v7.3 MAT file
+* Added 64-bit integer support for v5 MAT file
+* Added missing support for reading hyperslabs from HDF5 MAT file
 * Added variable indexing notation support to matdump to display subsets of
   variables
 * Added tests for extended sparse support in testsuite
 * Added missing enumerations or default case in switch statements
 
 Changes in 1.5.0 (15 April 2012)
-* Added support for reading/writing HDF5 format MAT files
-* Bug fixes for compressed variables that caused issues with matio reading
-  them.
-* Upgrade of dimensions in matvar_t structure to size_t enabling support for
-  large arrays.
-* A testsuite
+* Changed licensing from the GNU Lesser General Public License to the BSD-2-Clause License
+* Added support for reading/writing HDF5 MAT file
+* Bug fixes for compressed variables that caused issues with matio reading them
+* Upgraded dimensions in matvar_t structure to size_t enabling support for large arrays
+* Added a testsuite
 
 Changes in 1.3.2 (28 October 2006)
 * Added support for writing compressed character classes, structures, cell arrays, and sparse arrays
@@ -108,22 +105,20 @@ Changes in 1.3.2 (28 October 2006)
 Changes in 1.3.1 (7 September 2006)
 * Added some internal documentation to the library
 * Defined two documentation groups public and internal
-* Disabled the building of test programs by default and added a configure
-  option to build them
+* Disabled the building of test programs by default and added a configure option to build them
 * Fixed installation path of data and documentation
 * Fixed bugs where file pointers were left open if allocating memory failed in Mat_Open and Mat_Create
 
 Changes in 1.3.0 (30 June 2006)
-* Cleaned out matio.h and made most preprocessor define's into enum's.
+* Cleaned out matio.h and made most preprocessor define's into enum's
 * Moved complex arrays from single pointer with real part followed by imaginary
   part to a struct with a pointer to the real part and a pointer to the
-  imaginary part (Previous implementation was just plain ignorant).
-* Changed version 4 mat file code from MAT_V4 to MAT_FT_MAT4 to match the
-  version 5 identifier.
+  imaginary part (Previous implementation was just plain ignorant)
+* Changed v4 MAT file code from MAT_V4 to MAT_FT_MAT4 to match the v5 identifier
 * Added function Mat_VarCalloc to allocate and initialize all fields of the
-  matvar_t structure.
+  matvar_t structure
 Bug Fixes in 1.3.0 (30 June 2006)
-* WriteCompressedData did not initialize the data tag (data_tag variable).
+* WriteCompressedData did not initialize the data tag (data_tag variable)
 * WriteStructField wrote the array name tag as a 2 byte integer followed by 2
   padding bytes. Correct implementation writes the array name tag as a 4 byte
   integer.
@@ -141,23 +136,23 @@ Bug Fixes in 1.3.0 (30 June 2006)
   allow for multi-byte characters.
 
 Changes in 1.1.6 (20 March 2006)
-* Added sparse class to compressed variable.
+* Added sparse class to compressed variable
 Bug Fixes in 1.1.6 (20 March 2006)
-* Fixed release bug in reading double class data.
-* Fixed various compressed variable writing bugs.
-* Fixed a bug in Mat_VarCreate for sparse variables.
+* Fixed release bug in reading double class data
+* Fixed various compressed variable writing bugs
+* Fixed a bug in Mat_VarCreate for sparse variables
 
 Changes in 1.1.4 (9 February 2006)
-* Changed Licensing from the GNU General Public License to the GNU Lesser
-  General Public License.
-* Added support for reading numeric version 4 MAT files
-* Added support for sparse datatypes other than double. Although Matlab does
+* Changed licensing from the GNU General Public License to the GNU Lesser
+  General Public License
+* Added support for reading numeric v4 MAT file
+* Added support for sparse datatypes other than double. Although MATLAB does
   not support these types, other free software does.
-* Writing compressed variables is supported for Numeric arrays. Future versions
+* Writing compressed variables is supported for numeric arrays. Future versions
   will implement character, sparse, cell, and structure arrays.
 * A Fortran 90/95 interface has been incorporated. Not all functions are
   implemented yet, but more will come and it is at least functional now.
   Hopefully feedback will help guide the Fortran interface development.
-* Replaced preprocessor defines for types,classes,etc. with enum's.
+* Replaced preprocessor defines for types, classes, etc. with enum's.
 Bug Fixes in 1.1.4 (9 January 2006)
-* Mat_VarReadData did not handle complex data
+* Mat_VarReadData did not handle complex data.
