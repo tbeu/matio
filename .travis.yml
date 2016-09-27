@@ -99,6 +99,7 @@ matrix:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall libtool && brew install libtool; fi
 
 install:
   - svn co -q https://svn.hdfgroup.org/hdf5/branches/hdf5_1_8_17@29907
