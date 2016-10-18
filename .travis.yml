@@ -85,7 +85,7 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
     - os: osx
-      compiler: gcc-4.8
+      compiler: gcc-4.9
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
