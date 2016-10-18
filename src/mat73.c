@@ -1299,7 +1299,6 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                  H5P_DEFAULT,matvar->dims);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
-
         err = 0;
     } else {
         (void)H5Iget_name(id,id_name,127);
@@ -1350,7 +1349,6 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
             H5Dclose(dset_id);
             free(refs);
             H5Sclose(mspace_id);
-
             err = 0;
         }
     }
@@ -1498,10 +1496,11 @@ Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
         /* Write the dimensions as the data */
         H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
                  H5P_DEFAULT,dims);
-        err = 0;
         H5Dclose(dset_id);
+        err = 0;
     }
     H5Sclose(mspace_id);
+
     return err;
 }
 
@@ -1711,8 +1710,8 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name)
         H5Tclose(h5_complex);
 
         /* Write imaginary part of dataset */
-        h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                    H5Tget_size(h5_complex_base));
+        h5_complex = H5Tcreate(H5T_COMPOUND,
+                               H5Tget_size(h5_complex_base));
         H5Tinsert(h5_complex,"imag",0,h5_complex_base);
         H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
                  ((mat_complex_split_t*)matvar->data)->Im);
@@ -1763,9 +1762,9 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
 {
     int err = -1;
     unsigned k;
-    hid_t      sparse_id,mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
-    hsize_t    nmemb;
-    hsize_t    perm_dims[10];
+    hid_t   sparse_id,mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
+    hsize_t nmemb;
+    hsize_t perm_dims[10];
 
     nmemb = matvar->dims[0];
     for ( k = 1; k < matvar->rank; k++ )
@@ -1978,6 +1977,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                  H5P_DEFAULT,matvar->dims);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
+        err = 0;
     } else {
         (void)H5Iget_name(id,id_name,127);
         is_ref = !strcmp(id_name,"/#refs#");
@@ -2080,9 +2080,11 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                     H5Sclose(mspace_id);
                 }
             }
+            H5Gclose(struct_id);
+            err = 0;
         }
-        H5Gclose(struct_id);
     }
+
     return err;
 }
 
