@@ -2127,6 +2127,7 @@ Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
         case MAT_C_EMPTY:
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
+        case MAT_C_OPAQUE:
             break;
     }
     return err;
@@ -2462,6 +2463,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_EMPTY:
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
+        case MAT_C_OPAQUE:
             break;
     }
 }

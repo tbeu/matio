@@ -2578,7 +2578,7 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
                     for ( i = nBytes % 8; i < 8; i++ )
                         fwrite(&pad1,1,1,(FILE*)mat->fp);
             }
-            break;
+           break;
         case MAT_C_CHAR:
         {
             WriteEmptyCharData(mat,nmemb,matvar->data_type);
@@ -2605,6 +2605,7 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
         case MAT_C_EMPTY:
+        case MAT_C_OPAQUE:
             break;
     }
     end = ftell((FILE*)mat->fp);
@@ -2837,6 +2838,7 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
         case MAT_C_EMPTY:
+        case MAT_C_OPAQUE:
             break;
     }
     end = ftell((FILE*)mat->fp);
@@ -3092,6 +3094,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
         case MAT_C_EMPTY:
+        case MAT_C_OPAQUE:
             break;
     }
     return byteswritten;
@@ -3298,6 +3301,7 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
         case MAT_C_EMPTY:
+        case MAT_C_OPAQUE:
             break;
     }
     end = ftell((FILE*)mat->fp);
@@ -3559,6 +3563,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
         case MAT_C_EMPTY:
+        case MAT_C_OPAQUE:
             break;
     }
 
@@ -6078,6 +6083,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             case MAT_C_EMPTY:
             case MAT_C_FUNCTION:
             case MAT_C_OBJECT:
+            case MAT_C_OPAQUE:
                 break;
         }
 #if defined(HAVE_ZLIB)
@@ -6345,6 +6351,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             case MAT_C_EMPTY:
             case MAT_C_FUNCTION:
             case MAT_C_OBJECT:
+            case MAT_C_OPAQUE:
                 break;
         }
         matvar->internal->z->next_in  = NULL;
@@ -6551,6 +6558,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             case MAT_C_EMPTY:
             case MAT_C_FUNCTION:
             case MAT_C_OBJECT:
+            case MAT_C_OPAQUE:
                 break;
         }
     /* Does not work.
