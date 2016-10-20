@@ -3787,6 +3787,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
     int nBytes = 0, data_in_tag = 0;
     enum matio_types packed_type = MAT_T_UNKNOWN;
     mat_uint32_t tag[2];
+    size_t bytesread = 0;
 
     if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
@@ -3952,7 +3953,7 @@ Read5(mat_t *mat, matvar_t *matvar)
     enum matio_types packed_type = MAT_T_UNKNOWN;
     long fpos;
     mat_uint32_t tag[2];
-
+    size_t bytesread = 0;
     if ( matvar == NULL )
         return;
     else if ( matvar->rank == 0 )        /* An empty data set */
@@ -5384,6 +5385,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
 #if defined(HAVE_ZLIB)
     z_stream z;
 #endif
+    size_t bytesread = 0;
 
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
@@ -5656,7 +5658,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
 #if defined(HAVE_ZLIB)
     z_stream z;
 #endif
-
+    size_t bytesread = 0;
     if ( mat->version == MAT_FT_MAT4 )
         return -1;
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
