@@ -25,7 +25,7 @@ dnl ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 dnl POSSIBILITY OF SUCH DAMAGE.
 AC_DEFUN([MATIO_CHECK_HDF5_V18],
 [
-    AC_MSG_CHECKING([if HDF5 interface is v1.8])
+    AC_MSG_CHECKING([if HDF5 interface is >= v1.8])
     saved_CFLAGS="$CFLAGS"
     saved_LDFLAGS="$LDFLAGS"
     saved_LIBS="$LIBS"
@@ -38,9 +38,11 @@ AC_DEFUN([MATIO_CHECK_HDF5_V18],
                  #include <stdlib.h>
                  #include <hdf5.h>],
                  [#if defined(H5Rdereference)
-                  #define H5RDEREFERENCE H5Rdereference1
+                  /* HDF5 1.10.0 */
+                  #define H5RDEREFERENCE(obj_id, ref_type, _ref) H5Rdereference2((obj_id), H5P_DATASET_ACCESS_DEFAULT, (ref_type), (_ref))
                   #else
-                  #define H5RDEREFERENCE H5Rdereference
+                  /* HDF5 prior to 1.10.0 */
+                  #define H5RDEREFERENCE(obj_id, ref_type, _ref) H5Rdereference((obj_id), (ref_type), (_ref))
                   #endif
                   hid_t dset_id = H5Dcreate(0,NULL,0,0,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
                   hobj_ref_t ref_ids[1];
