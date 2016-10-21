@@ -36,76 +36,92 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_10_0
+    - os: linux
+      compiler: gcc-4.8
+      env:
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=yes
+        - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: linux
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: osx
       compiler: gcc-4.9
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_8_17
     - os: osx
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_8_17
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall libtool && brew install libtool; fi
 
 install:
-  - svn co -q https://svn.hdfgroup.org/hdf5/branches/hdf5_1_8_17@29907
-  - cd hdf5_1_8_17
-  - ./configure --quiet --enable-shared --enable-production=no --enable-debug=all --with-pic --disable-deprecated-symbols --disable-hl --with-default-api-version=v18 CFLAGS="-w"
-  - make install -C src
+  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_17" ]]; then ./install_hdf5_1_8.sh; fi
+  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_0" ]]; then ./install_hdf5_1_10.sh; fi
   - cd $TRAVIS_BUILD_DIR
   - mkdir MSL
   - cd MSL
@@ -118,11 +134,11 @@ install:
 
 before_script:
   - ./autogen.sh
-  - ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/hdf5_1_8_17/hdf5
+  - ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5
 
 script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make check; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then travis_wait 45 make check; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_snprintf; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -H; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -L; fi
@@ -134,7 +150,7 @@ script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
 
 after_success:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/mat2hdf.c -e share -e patches -e hdf5_1_8_17 -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/mat2hdf.c -e share -e patches -e $HDF5_VERSION_DIR -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make pdf; fi
 
 notifications:
