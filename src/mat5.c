@@ -3787,7 +3787,6 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
     int nBytes = 0, data_in_tag = 0;
     enum matio_types packed_type = MAT_T_UNKNOWN;
     mat_uint32_t tag[2];
-    size_t bytesread = 0;
 
     if ( matvar->compression ) {
 #if defined(HAVE_ZLIB)
@@ -3809,7 +3808,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
         }
 #endif
     } else {
-        bytesread += fread(tag,4,1,(FILE*)mat->fp);
+        size_t bytesread = fread(tag,4,1,(FILE*)mat->fp);
         if ( mat->byteswap )
             (void)Mat_uint32Swap(tag);
         packed_type = TYPE_FROM_TAG(tag[0]);
