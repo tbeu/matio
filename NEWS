@@ -1,3 +1,12 @@
+Changes in 1.5.9 (22 October 2016)
+* Fixed resource leak when reading character data from HDF5 MAT file
+* Fixed bug writing struct to HDF5 MAT file: Mat_VarWrite never returned 0 on success
+* Fixed bug writing sparse logical array to HDF5 MAT file
+* Fixed bug calculating array sizes of structs, cells, complex and sparse arrays in Mat_VarGetSize
+* Fixed bug duplicating sparse array with empty data in Mat_VarDuplicate
+* Fixed segmentation fault when reading compressed v5 MAT file with opaque class
+* Updated support of HDF5 v1.10.x: No longer depend on deprecated v1.8.x symbols
+
 Changes in 1.5.8 (30 June 2016)
 * Fixed bug writing array to v4 MAT file on big endian architecture (broken by v1.5.7)
 
