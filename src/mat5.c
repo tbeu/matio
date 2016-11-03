@@ -2578,7 +2578,7 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
                     for ( i = nBytes % 8; i < 8; i++ )
                         fwrite(&pad1,1,1,(FILE*)mat->fp);
             }
-           break;
+            break;
         case MAT_C_CHAR:
         {
             WriteEmptyCharData(mat,nmemb,matvar->data_type);
