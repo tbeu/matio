@@ -681,8 +681,8 @@ AT_CHECK([cp $srcdir/results/readslab-var1.out expout
 AT_CLEANUP
 
 AT_SETUP([Read slab of double array as int8])
-AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([cp $srcdir/results/readslab-var1.out expout
          $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var1 -c int8],[0],[expout],[])
 AT_CLEANUP
@@ -692,6 +692,636 @@ AT_KEYWORDS([mat5_compressed_readslab readslab])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([cp $srcdir/results/readslab-var1.out expout
          $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var1 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var2 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var3 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var4 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var5 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var6 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var7 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var8 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var9 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var10 -c uint8],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Read slab of complex double array as double])
@@ -762,4 +1392,634 @@ AT_KEYWORDS([mat5_compressed_readslab readslab])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([cp $srcdir/results/readslab-var11.out expout
          $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var11 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var12 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var13 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var14 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var15 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var16 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var17 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var18 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var19 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as double])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as single])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as int64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as uint64])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as int32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as uint32])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as int16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as uint16])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as int8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array as uint8])
+AT_KEYWORDS([mat5_compressed_readslab readslab])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_compressed_le.mat var20 -c uint8],[0],[expout],[])
 AT_CLEANUP
