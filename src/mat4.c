@@ -619,28 +619,16 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
       int *start,int *stride,int *edge)
 {
     int err = 0;
-    enum matio_classes class_type = MAT_C_EMPTY;
 
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
     switch( matvar->data_type ) {
         case MAT_T_DOUBLE:
-            class_type = MAT_C_DOUBLE;
-            break;
         case MAT_T_SINGLE:
-            class_type = MAT_C_SINGLE;
-            break;
         case MAT_T_INT32:
-            class_type = MAT_C_INT32;
-            break;
         case MAT_T_INT16:
-            class_type = MAT_C_INT16;
-            break;
         case MAT_T_UINT16:
-            class_type = MAT_C_UINT16;
-            break;
         case MAT_T_UINT8:
-            class_type = MAT_C_UINT8;
             break;
         default:
             return 1;
@@ -653,16 +641,16 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
             err = 1;
         if ( matvar->isComplex ) {
             mat_complex_split_t *cdata = (mat_complex_split_t*)data;
-            long nbytes = edge[0]*edge[1]*Mat_SizeOf(matvar->data_type);
+            long nbytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
 
-            ReadDataSlab2(mat,cdata->Re,class_type,matvar->data_type,
-                    matvar->dims,start,stride,edge);
+            ReadDataSlab2(mat,cdata->Re,matvar->class_type,matvar->data_type,
+                matvar->dims,start,stride,edge);
             (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
-            ReadDataSlab2(mat,cdata->Im,class_type,
+            ReadDataSlab2(mat,cdata->Im,matvar->class_type,
                 matvar->data_type,matvar->dims,start,stride,edge);
         } else {
-            ReadDataSlab2(mat,data,class_type,matvar->data_type,
-                    matvar->dims,start,stride,edge);
+            ReadDataSlab2(mat,data,matvar->class_type,matvar->data_type,
+                matvar->dims,start,stride,edge);
         }
     } else if ( matvar->isComplex ) {
         int i;
@@ -670,15 +658,15 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
         long nbytes = Mat_SizeOf(matvar->data_type);
 
         for ( i = 0; i < matvar->rank; i++ )
-            nbytes *= edge[i];
+            nbytes *= matvar->dims[i];
 
-        ReadDataSlabN(mat,cdata->Re,class_type,matvar->data_type,
+        ReadDataSlabN(mat,cdata->Re,matvar->class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
         (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
-        ReadDataSlabN(mat,cdata->Im,class_type,matvar->data_type,
+        ReadDataSlabN(mat,cdata->Im,matvar->class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
     } else {
-        ReadDataSlabN(mat,data,class_type,matvar->data_type,
+        ReadDataSlabN(mat,data,matvar->class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
     }
     return err;

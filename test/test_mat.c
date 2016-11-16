@@ -2643,21 +2643,187 @@ test_get_struct_field(const char *file,const char *structname,
 }
 
 static int
-test_readslab(const char *file, const char *var)
+test_readslab(const char *file, const char *var, enum matio_classes matvar_class)
 {
     int   start[2]={0,0},stride[2]={1,1},edge[2]={2,2}, err = 0;
-    double ptr[4];
     mat_t  *mat;
     matvar_t *matvar;
 
     mat = Mat_Open(file,MAT_ACC_RDONLY);
     if ( mat ) {
         matvar = Mat_VarReadInfo(mat,(char *)var);
-        if ( matvar != NULL && !matvar->isComplex ) {
+        if ( matvar != NULL ) {
+            matvar->class_type = matvar_class;
             stride[0] = matvar->dims[0]-1;
             stride[1] = matvar->dims[1]-1;
-            Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-            printf("%f    %f\n%f    %f\n",ptr[0],ptr[1],ptr[2],ptr[3]);
+            stride[0] = matvar->dims[0]-1;
+            stride[1] = matvar->dims[1]-1;
+            switch ( matvar_class ) {
+                case MAT_C_DOUBLE: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        double ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%g + %gi    %g + %gi\n%g + %gi    %g + %gi\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        double ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%g    %g\n%g    %g\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+                case MAT_C_SINGLE: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        float ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%g + %gi    %g + %gi\n%g + %gi    %g + %gi\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        float ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%g    %g\n%g    %g\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+#ifdef HAVE_MAT_INT64_T
+                case MAT_C_INT64: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        mat_int64_t ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%d + %di    %d + %di\n%d + %di    %d + %di\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        mat_int64_t ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%d    %d\n%d    %d\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+#endif
+#ifdef HAVE_MAT_UINT64_T
+                case MAT_C_UINT64: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        mat_uint64_t ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%u + %ui    %u + %ui\n%u + %ui    %u + %ui\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        mat_uint64_t ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%u    %u\n%u    %u\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+#endif
+                case MAT_C_INT32: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        mat_int32_t ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%d + %di    %d + %di\n%d + %di    %d + %di\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        mat_int32_t ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%d    %d\n%d    %d\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+                case MAT_C_UINT32: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        mat_uint32_t ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%u + %ui    %u + %ui\n%u + %ui    %u + %ui\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        mat_uint32_t ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%u    %u\n%u    %u\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+                case MAT_C_INT16: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        mat_int16_t ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%d + %di    %d + %di\n%d + %di    %d + %di\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        mat_int16_t ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%d    %d\n%d    %d\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+                case MAT_C_UINT16: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        mat_uint16_t ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%u + %ui    %u + %ui\n%u + %ui    %u + %ui\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        mat_uint16_t ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%u    %u\n%u    %u\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+                case MAT_C_INT8: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        mat_int8_t ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%d + %di    %d + %di\n%d + %di    %d + %di\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        mat_int8_t ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%d    %d\n%d    %d\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+                case MAT_C_UINT8: {
+                    if ( matvar->isComplex ) {
+                        mat_complex_split_t c;
+                        mat_uint8_t ptr[4], pti[4];
+                        c.Re = ptr;
+                        c.Im = pti;
+                        Mat_VarReadData(mat,matvar,&c,start,stride,edge);
+                        printf("%u + %ui    %u + %ui\n%u + %ui    %u + %ui\n",
+                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                    } else {
+                        mat_uint8_t ptr[4];
+                        Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
+                        printf("%u    %u\n%u    %u\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                    }
+                    break;
+                }
+            }
             Mat_VarFree(matvar);
         } else {
             err = 1;
@@ -3425,7 +3591,7 @@ int main (int argc, char *argv[])
             k++;
             if ( NULL == output_name )
                 output_name = "XXX.mat";
-            test_readslab(argv[k],argv[k+1]);
+            test_readslab(argv[k],argv[k+1],matvar_class);
             k+=2;
             ntests++;
     #if 0
