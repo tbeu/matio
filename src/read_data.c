@@ -64,15 +64,16 @@
 int
 ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
 
+    data_size = Mat_SizeOf(data_type);
+
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 bytesread += fread(data,data_size,len,(FILE*)mat->fp);
                 for ( i = 0; i < len; i++ ) {
@@ -87,7 +88,6 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -105,7 +105,6 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -123,7 +122,6 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -141,7 +139,6 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -159,7 +156,6 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -177,7 +173,6 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -188,7 +183,6 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -220,7 +214,7 @@ int
 ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
     union _buf {
 #if SIZEOF_DOUBLE == 8
         double          d[128];
@@ -236,10 +230,11 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
         mat_uint8_t   ui8[1024];
     } buf;
 
+    data_size = Mat_SizeOf(data_type);
+
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 InflateData(mat,z,data,len*data_size);
                 for ( i = 0; i < len; i++ )
@@ -251,7 +246,6 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
         }
         case MAT_T_INT32:
         {
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 if ( len <= 256 ){
                     InflateData(mat,z,buf.i32,len*data_size);
@@ -293,7 +287,6 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
         }
         case MAT_T_UINT32:
         {
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 if ( len <= 256 ){
                     InflateData(mat,z,buf.ui32,len*data_size);
@@ -335,7 +328,6 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
         }
         case MAT_T_INT16:
         {
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 if ( len <= 512 ){
                     InflateData(mat,z,buf.i16,len*data_size);
@@ -377,7 +369,6 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
         }
         case MAT_T_UINT16:
         {
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 if ( len <= 512 ){
                     InflateData(mat,z,buf.ui16,len*data_size);
@@ -419,7 +410,6 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
         }
         case MAT_T_UINT8:
         {
-            data_size = sizeof(mat_uint8_t);
             if ( len <= 1024 ) {
                 InflateData(mat,z,buf.ui8,len*data_size);
                 for ( i = 0; i < len; i++ )
@@ -441,7 +431,6 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
         }
         case MAT_T_INT8:
         {
-            data_size = sizeof(mat_int8_t);
             if ( len <= 1024 ) {
                 InflateData(mat,z,buf.i8,len*data_size);
                 for ( i = 0; i < len; i++ )
@@ -484,17 +473,18 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
 int
 ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,(FILE*)mat->fp);
@@ -512,7 +502,6 @@ ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -530,7 +519,6 @@ ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -548,7 +536,6 @@ ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -566,7 +553,6 @@ ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -584,7 +570,6 @@ ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -602,7 +587,6 @@ ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -613,7 +597,6 @@ ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -645,17 +628,18 @@ int
 ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
@@ -673,7 +657,6 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
@@ -690,7 +673,6 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
@@ -708,7 +690,6 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
@@ -726,7 +707,6 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -744,7 +724,6 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
@@ -762,7 +741,6 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&ui8,data_size);
                 data[i] = ui8;
@@ -773,7 +751,6 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&i8,data_size);
                 data[i] = i8;
@@ -805,17 +782,18 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
 int
 ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,(FILE*)mat->fp);
@@ -833,7 +811,6 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -851,7 +828,6 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
         {
             mat_int64_t i64;
 
-            data_size = sizeof(mat_int64_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i64,data_size,1,(FILE*)mat->fp);
@@ -870,7 +846,6 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
         {
             mat_uint64_t ui64;
 
-            data_size = sizeof(mat_uint64_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui64,data_size,1,(FILE*)mat->fp);
@@ -889,7 +864,6 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -907,7 +881,6 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -925,7 +898,6 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -943,7 +915,6 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -961,7 +932,6 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -972,7 +942,6 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -1005,17 +974,18 @@ int
 ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
@@ -1033,7 +1003,6 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
@@ -1051,7 +1020,6 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         {
             mat_int64_t i64;
 
-            data_size = sizeof(mat_int64_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i64,data_size);
@@ -1069,7 +1037,6 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         {
             mat_uint64_t ui64;
 
-            data_size = sizeof(mat_uint64_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui64,data_size);
@@ -1087,7 +1054,6 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
@@ -1105,7 +1071,6 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
@@ -1123,7 +1088,6 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -1141,7 +1105,6 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
@@ -1159,7 +1122,6 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&ui8,data_size);
                 data[i] = ui8;
@@ -1170,7 +1132,6 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&i8,data_size);
                 data[i] = i8;
@@ -1203,17 +1164,18 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
 int
 ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,(FILE*)mat->fp);
@@ -1231,7 +1193,6 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -1250,7 +1211,6 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
         {
             mat_int64_t i64;
 
-            data_size = sizeof(mat_int64_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i64,data_size,1,(FILE*)mat->fp);
@@ -1269,7 +1229,6 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
         {
             mat_uint64_t ui64;
 
-            data_size = sizeof(mat_uint64_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui64,data_size,1,(FILE*)mat->fp);
@@ -1287,7 +1246,6 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -1305,7 +1263,6 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -1323,7 +1280,6 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -1341,7 +1297,6 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -1359,7 +1314,6 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -1370,7 +1324,6 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -1403,17 +1356,18 @@ int
 ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
@@ -1431,7 +1385,6 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
@@ -1449,7 +1402,6 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         {
             mat_int64_t i64;
 
-            data_size = sizeof(mat_int64_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i64,data_size);
@@ -1467,7 +1419,6 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         {
             mat_uint64_t ui64;
 
-            data_size = sizeof(mat_uint64_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui64,data_size);
@@ -1485,7 +1436,6 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
@@ -1503,7 +1453,6 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
@@ -1521,7 +1470,6 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -1539,7 +1487,6 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
@@ -1557,7 +1504,6 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&ui8,data_size);
                 data[i] = ui8;
@@ -1568,7 +1514,6 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&i8,data_size);
                 data[i] = i8;
@@ -1600,17 +1545,18 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
 int
 ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,(FILE*)mat->fp);
@@ -1628,7 +1574,6 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -1646,7 +1591,6 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -1664,7 +1608,6 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -1682,7 +1625,6 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -1700,7 +1642,6 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -1718,7 +1659,6 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -1729,7 +1669,6 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -1762,17 +1701,18 @@ int
 ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
@@ -1790,7 +1730,6 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
@@ -1808,7 +1747,6 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
@@ -1826,7 +1764,6 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
@@ -1844,7 +1781,6 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -1862,7 +1798,6 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
@@ -1880,7 +1815,6 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&ui8,data_size);
                 data[i] = ui8;
@@ -1891,7 +1825,6 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&i8,data_size);
                 data[i] = i8;
@@ -1922,17 +1855,18 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
 int
 ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,(FILE*)mat->fp);
@@ -1950,7 +1884,6 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -1968,7 +1901,6 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -1986,7 +1918,6 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -2004,7 +1935,6 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -2022,7 +1952,6 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -2040,7 +1969,6 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -2051,7 +1979,6 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -2084,17 +2011,18 @@ int
 ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
@@ -2112,7 +2040,6 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
@@ -2130,7 +2057,6 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
@@ -2148,7 +2074,6 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
@@ -2166,7 +2091,6 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -2184,7 +2108,6 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
@@ -2202,7 +2125,6 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&ui8,data_size);
                 data[i] = ui8;
@@ -2213,7 +2135,6 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&i8,data_size);
                 data[i] = i8;
@@ -2244,17 +2165,18 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
 int
 ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,(FILE*)mat->fp);
@@ -2272,7 +2194,6 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -2290,7 +2211,6 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -2308,7 +2228,6 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -2326,7 +2245,6 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -2344,7 +2262,6 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -2362,7 +2279,6 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -2373,7 +2289,6 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -2406,17 +2321,18 @@ int
 ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
@@ -2434,7 +2350,6 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
@@ -2452,7 +2367,6 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
@@ -2470,7 +2384,6 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
@@ -2488,7 +2401,6 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -2506,7 +2418,6 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
@@ -2524,7 +2435,6 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&ui8,data_size);
                 data[i] = ui8;
@@ -2535,7 +2445,6 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&i8,data_size);
                 data[i] = i8;
@@ -2566,17 +2475,18 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
 int
 ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,(FILE*)mat->fp);
@@ -2594,7 +2504,6 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -2612,7 +2521,6 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -2630,7 +2538,6 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -2648,7 +2555,6 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -2666,7 +2572,6 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -2684,7 +2589,6 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -2695,7 +2599,6 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -2728,17 +2631,18 @@ int
 ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
@@ -2756,7 +2660,6 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
@@ -2774,7 +2677,6 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
@@ -2792,7 +2694,6 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
@@ -2810,7 +2711,6 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -2828,7 +2728,6 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
@@ -2846,7 +2745,6 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&ui8,data_size);
                 data[i] = ui8;
@@ -2857,7 +2755,6 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&i8,data_size);
                 data[i] = i8;
@@ -2888,17 +2785,18 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
 int
 ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,(FILE*)mat->fp);
@@ -2916,7 +2814,6 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -2934,7 +2831,6 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -2952,7 +2848,6 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -2970,7 +2865,6 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -2988,7 +2882,6 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -3006,7 +2899,6 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -3017,7 +2909,6 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -3050,17 +2941,18 @@ int
 ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
@@ -3078,7 +2970,6 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
@@ -3096,7 +2987,6 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
@@ -3114,7 +3004,6 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
@@ -3132,7 +3021,6 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -3150,7 +3038,6 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
@@ -3168,7 +3055,6 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&ui8,data_size);
                 data[i] = ui8;
@@ -3179,7 +3065,6 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&i8,data_size);
                 data[i] = i8;
@@ -3210,17 +3095,18 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
 int
 ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, data_size, i;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&d,data_size,1,(FILE*)mat->fp);
@@ -3238,7 +3124,6 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&f,data_size,1,(FILE*)mat->fp);
@@ -3256,7 +3141,6 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i32,data_size,1,(FILE*)mat->fp);
@@ -3274,7 +3158,6 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui32,data_size,1,(FILE*)mat->fp);
@@ -3292,7 +3175,6 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
@@ -3310,7 +3192,6 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
@@ -3328,7 +3209,6 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&i8,data_size,1,(FILE*)mat->fp);
                 data[i] = i8;
@@ -3339,7 +3219,6 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 bytesread += fread(&ui8,data_size,1,(FILE*)mat->fp);
                 data[i] = ui8;
@@ -3372,17 +3251,18 @@ int
 ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, data_size, i;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
+
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
             double d;
 
-            data_size = sizeof(double);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&d,data_size);
@@ -3400,7 +3280,6 @@ ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
         {
             float f;
 
-            data_size = sizeof(float);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&f,data_size);
@@ -3418,7 +3297,6 @@ ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
         {
             mat_int32_t i32;
 
-            data_size = sizeof(mat_int32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i32,data_size);
@@ -3436,7 +3314,6 @@ ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
         {
             mat_uint32_t ui32;
 
-            data_size = sizeof(mat_uint32_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui32,data_size);
@@ -3454,7 +3331,6 @@ ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
         {
             mat_int16_t i16;
 
-            data_size = sizeof(mat_int16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -3472,7 +3348,6 @@ ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
         {
             mat_uint16_t ui16;
 
-            data_size = sizeof(mat_uint16_t);
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&ui16,data_size);
@@ -3490,7 +3365,6 @@ ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
         {
             mat_uint8_t ui8;
 
-            data_size = sizeof(mat_uint8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&ui8,data_size);
                 data[i] = ui8;
@@ -3501,7 +3375,6 @@ ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
         {
             mat_int8_t i8;
 
-            data_size = sizeof(mat_int8_t);
             for ( i = 0; i < len; i++ ) {
                 InflateData(mat,z,&i8,data_size);
                 data[i] = i8;
@@ -3726,6 +3599,7 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
     }
 
     data_size = Mat_SizeOf(data_type);
+
     switch ( class_type ) {
         case MAT_C_DOUBLE:
         {
@@ -4015,8 +3889,8 @@ ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
 
     data_size = Mat_SizeOf(data_type);
     (void)fseek((FILE*)mat->fp,start*data_size,SEEK_CUR);
-
     stride = data_size*(stride-1);
+
     switch ( class_type ) {
         case MAT_C_DOUBLE:
         {
