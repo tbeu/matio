@@ -503,3 +503,123 @@ AT_CHECK([cp $srcdir/results/dump-var3x-field2-2.out expout
 AT_CHECK([cp $srcdir/results/dump-var3x-field2-3.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47.field2\(2:3:10\)],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read slab of double array as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var1 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var11 -c uint8],[0],[expout],[])
+AT_CLEANUP
