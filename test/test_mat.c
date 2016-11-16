@@ -147,7 +147,7 @@ static const char *helptestsstr[] = {
 "================================================================",
 "write_char               - Write a 2D character array.",
 "",
-"   Version 5 MAT File tests",
+"    MAT File tests",
 "================================================================",
 "copy                    - Copies one matlab file to another",
 "delete                  - Deletes a specific variable from a file",
@@ -159,12 +159,6 @@ static const char *helptestsstr[] = {
 "writeinf                - Tests writing inf (Infinity) values",
 "writenan                - Tests writing NaN (Not A Number) values",
 "writeslab               - Tests writing a part of a dataset",
-"",
-"",
-"   Version 4 MAT File tests",
-"================================================================",
-"readvar4       - Reads a specific variable from a file",
-"readslab4      - Tests reading a part of a dataset",
 "",
 "",
 "   Other Tests",
@@ -637,28 +631,6 @@ static const char *helptest_writeinf[] = {
     NULL
 };
 
-static const char *helptest_readvar4[] = {
-    "TEST: readvar4",
-    "",
-    "Usage: test_mat readvar4 FILE variable_name",
-    "",
-    "Reads variable_name from the Matlab v4 MAT file FILE and prints out its",
-    "information and data if possible to the screen.",
-    "",
-    NULL
-};
-
-static const char *helptest_readvarinfo4[] = {
-    "TEST: readvarinfo4",
-    "",
-    "Usage: test_mat readvarinfo4 FILE variable_name",
-    "",
-    "Reads header information for variable_name from the Matlab v4 MAT file",
-    "FILE and prints it out to the screen.",
-    "",
-    NULL
-};
-
 static const char *helptest_sub2ind[] = {
     "TEST: sub2ind",
     "",
@@ -740,10 +712,6 @@ help_test(const char *test)
         Mat_Help(helptest_writeslab);
     else if ( !strcmp(test,"getstructfield") )
         Mat_Help(helptest_getstructfield);
-    else if ( !strcmp(test,"readvar4") )
-        Mat_Help(helptest_readvar4);
-    else if ( !strcmp(test,"readvarinfo4") )
-        Mat_Help(helptest_readvarinfo4);
     else if ( !strcmp(test,"ind2sub") )
         Mat_Help(helptest_ind2sub);
     else if ( !strcmp(test,"sub2ind") )
@@ -1182,29 +1150,6 @@ test_readvar(const char *inputfile, const char *var, const char* output)
         err = 1;
     }
 
-    return err;
-}
-
-static int
-test_readvar4(const char *inputfile, const char *var)
-{
-    int err = 0;
-    mat_t *mat;
-    matvar_t *matvar;
-
-    mat = Mat_Open(inputfile,MAT_ACC_RDONLY | MAT_FT_MAT4);
-    if ( mat ) {
-        matvar = Mat_VarRead(mat,(char*)var);
-        if ( matvar == NULL ) {
-            err = 1;
-        } else {
-            Mat_VarPrint(matvar, 1);
-            Mat_VarFree(matvar);
-        }
-        Mat_Close(mat);
-    } else {
-        err = 1;
-    }
     return err;
 }
 
@@ -2725,33 +2670,6 @@ test_readslab(const char *file, const char *var)
 }
 
 static int
-test_readslab4(const char *file, const char *var)
-{
-    int   start[2]={0,0},stride[2]={1,1},edge[2]={2,2}, err = 0;
-    double ptr[4];
-    mat_t  *mat;
-    matvar_t *matvar;
-
-    mat = Mat_Open((const char *)file,MAT_ACC_RDONLY | MAT_FT_MAT4);
-    if ( mat ) {
-        matvar = Mat_VarReadInfo(mat,(char*)var);
-        if ( matvar != NULL && !matvar->isComplex ) {
-            stride[0] = matvar->dims[0]-1;
-            stride[1] = matvar->dims[1]-1;
-            Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-            printf("%f    %f\n%f    %f\n",ptr[0],ptr[1],ptr[2],ptr[3]);
-            Mat_VarFree(matvar);
-        } else {
-            err = 1;
-        }
-        Mat_Close(mat);
-    } else {
-        err = 1;
-    }
-    return err;
-}
-
-static int
 test_writeslab(const char* output_name)
 {
     int        err = 0, i;
@@ -3343,16 +3261,6 @@ int main (int argc, char *argv[])
                 k+=2;
             }
             ntests++;
-        } else if ( !strcasecmp(argv[k],"readvar4") ) {
-            k++;
-            if ( argc < 4 ) {
-                Mat_Critical("Must specify the input file and variable respectively");
-                err++;
-            } else {
-                err += test_readvar4(argv[k],argv[k+1]);
-                k+=2;
-            }
-            ntests++;
         } else if ( !strcasecmp(argv[k],"write_struct_2d_logical") ) {
             k++;
             if ( NULL == output_name )
@@ -3518,13 +3426,6 @@ int main (int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "XXX.mat";
             test_readslab(argv[k],argv[k+1]);
-            k+=2;
-            ntests++;
-        } else if ( !strcasecmp(argv[k],"readslab4") ) {
-            k++;
-            if ( NULL == output_name )
-                output_name = "XXX.mat";
-            test_readslab4(argv[k],argv[k+1]);
             k+=2;
             ntests++;
     #if 0
