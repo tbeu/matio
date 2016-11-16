@@ -216,12 +216,13 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
 {
     int nBytes = 0, data_size, i;
     union _buf {
-#if SIZEOF_DOUBLE == 8
-        double          d[128];
-#elif SIZEOF_DOUBLE == 16
-        double          d[64];
-#endif
         float           f[256];
+#ifdef HAVE_MAT_INT64_T
+        mat_int64_t   i64[128];
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        mat_uint64_t ui64[128];
+#endif
         mat_int32_t   i32[256];
         mat_uint32_t ui32[256];
         mat_int16_t   i16[512];
@@ -244,6 +245,133 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
             }
             break;
         }
+        case MAT_T_SINGLE:
+        {
+            if ( mat->byteswap ) {
+                if ( len <= 256 ){
+                    InflateData(mat,z,buf.f,len*data_size);
+                    for ( i = 0; i < len; i++ )
+                        data[i] = Mat_floatSwap(buf.f+i);
+                } else {
+                    int j;
+                    len -= 256;
+                    for ( i = 0; i < len; i+=256 ) {
+                        InflateData(mat,z,buf.f,256*data_size);
+                        for ( j = 0; j < 256; j++ )
+                            data[i+j] = Mat_floatSwap(buf.f+j);
+                    }
+                    len = len-(i-256);
+                    InflateData(mat,z,buf.f,len*data_size);
+                    for ( j = 0; j < len; j++ )
+                        data[i+j] = Mat_floatSwap(buf.f+j);
+                }
+            } else {
+                if ( len <= 256 ){
+                    InflateData(mat,z,buf.f,len*data_size);
+                    for ( i = 0; i < len; i++ )
+                        data[i] = buf.f[i];
+                } else {
+                    int j;
+                    len -= 256;
+                    for ( i = 0; i < len; i+=256 ) {
+                        InflateData(mat,z,buf.f,256*data_size);
+                        for ( j = 0; j < 256; j++ )
+                            data[i+j] = buf.f[j];
+                    }
+                    len = len-(i-256);
+                    InflateData(mat,z,buf.f,len*data_size);
+                    for ( j = 0; j < len; j++ )
+                        data[i+j] = buf.f[j];
+                }
+            }
+            break;
+        }
+#ifdef HAVE_MAT_INT64_T
+        case MAT_T_INT64:
+        {
+            if ( mat->byteswap ) {
+                if ( len <= 128 ){
+                    InflateData(mat,z,buf.i64,len*data_size);
+                    for ( i = 0; i < len; i++ )
+                        data[i] = Mat_int64Swap(buf.i64+i);
+                } else {
+                    int j;
+                    len -= 128;
+                    for ( i = 0; i < len; i+=128 ) {
+                        InflateData(mat,z,buf.i64,128*data_size);
+                        for ( j = 0; j < 128; j++ )
+                            data[i+j] = Mat_int64Swap(buf.i64+j);
+                    }
+                    len = len-(i-128);
+                    InflateData(mat,z,buf.i64,len*data_size);
+                    for ( j = 0; j < len; j++ )
+                        data[i+j] = Mat_int64Swap(buf.i64+j);
+                }
+            } else {
+                if ( len <= 128 ){
+                    InflateData(mat,z,buf.i64,len*data_size);
+                    for ( i = 0; i < len; i++ )
+                        data[i] = buf.i64[i];
+                } else {
+                    int j;
+                    len -= 128;
+                    for ( i = 0; i < len; i+=128 ) {
+                        InflateData(mat,z,buf.i64,128*data_size);
+                        for ( j = 0; j < 128; j++ )
+                            data[i+j] = buf.i64[j];
+                    }
+                    len = len-(i-128);
+                    InflateData(mat,z,buf.i64,len*data_size);
+                    for ( j = 0; j < len; j++ )
+                        data[i+j] = buf.i64[j];
+                }
+            }
+            break;
+        }
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_T_UINT64:
+        {
+            if ( mat->byteswap ) {
+                if ( len <= 128 ){
+                    InflateData(mat,z,buf.ui64,len*data_size);
+                    for ( i = 0; i < len; i++ )
+                        data[i] = Mat_uint64Swap(buf.ui64+i);
+                } else {
+                    int j;
+                    len -= 128;
+                    for ( i = 0; i < len; i+=128 ) {
+                        InflateData(mat,z,buf.ui64,128*data_size);
+                        for ( j = 0; j < 128; j++ )
+                            data[i+j] = Mat_uint64Swap(buf.ui64+j);
+                    }
+                    len = len-(i-128);
+                    InflateData(mat,z,buf.ui64,len*data_size);
+                    for ( j = 0; j < len; j++ )
+                        data[i+j] = Mat_uint64Swap(buf.ui64+j);
+                }
+            } else {
+                if ( len <= 128 ){
+                    InflateData(mat,z,buf.ui64,len*data_size);
+                    for ( i = 0; i < len; i++ )
+                        data[i] = buf.ui64[i];
+                } else {
+                    int j;
+                    len -= 128;
+                    for ( i = 0; i < len; i+=128 ) {
+                        InflateData(mat,z,buf.ui64,128*data_size);
+                        for ( j = 0; j < 128; j++ )
+                            data[i+j] = buf.ui64[j];
+                    }
+                    len = len-(i-128);
+                    InflateData(mat,z,buf.ui64,len*data_size);
+                    for ( j = 0; j < len; j++ )
+                        data[i+j] = buf.ui64[j];
+                }
+            }
+            break;
+        }
+#endif
         case MAT_T_INT32:
         {
             if ( mat->byteswap ) {
