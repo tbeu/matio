@@ -143,7 +143,7 @@ script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
 
 after_success:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/mat2hdf.c -e share -e patches -e $HDF5_VERSION_DIR -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e test/mat2hdf.c -e share -e patches -e $HDF5_VERSION_DIR -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make pdf; fi
 
 notifications:
