@@ -483,3 +483,143 @@ AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/dump-var3x-field2-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_hdf_le.mat var47.field2\(1:1:end,1:1:end\)],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read slab of double array as double])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as single])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as int64])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as uint64])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as int32])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as uint32])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as int16])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as uint16])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as int8])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array as uint8])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var1.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var1 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as double])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as single])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as int64])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as uint64])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as int32])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as uint32])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as int16])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as uint16])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as int8])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array as uint8])
+AT_KEYWORDS([mat73_readslab readslab])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/readslab-var11.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_hdf_le.mat var11 -c uint8],[0],[expout],[])
+AT_CLEANUP
