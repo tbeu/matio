@@ -2667,7 +2667,7 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
                         printf("%g + %gi    %g + %gi\n%g + %gi    %g + %gi\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
                     } else {
                         double ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
@@ -2683,7 +2683,7 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
                         printf("%g + %gi    %g + %gi\n%g + %gi    %g + %gi\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
                     } else {
                         float ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
@@ -2699,12 +2699,25 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Re = ptr;
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
-                        printf("%d + %di    %d + %di\n%d + %di    %d + %di\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+#if HAVE_INTTYPES_H
+                        printf("%" PRIi64 " + %" PRIi64 "i    %" PRIi64 " + %" PRIi64 "i\n"
+                            "%" PRIi64 " + %" PRIi64 "i    %" PRIi64 " + %" PRIi64 "i\n",
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+#else
+                        printf("%ld + %ldi    %ld + %ldi\n%ld + %ldi    %ld + %ldi\n",
+                            (long)ptr[0],(long)pti[0],(long)ptr[2],(long)pti[2],
+                            (long)ptr[1],(long)pti[1],(long)ptr[3],(long)pti[3]);
+#endif
                     } else {
                         mat_int64_t ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-                        printf("%d    %d\n%d    %d\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+#if HAVE_INTTYPES_H
+                        printf("%" PRIi64 "    %" PRIi64 "\n%" PRIi64 "    %" PRIi64 "\n",
+                            ptr[0],ptr[2],ptr[1],ptr[3]);
+#else
+                        printf("%ld    %ld\n%ld    %ld\n",
+                            (long)ptr[0],(long)ptr[2],(long)ptr[1],(long)ptr[3]);
+#endif
                     }
                     break;
                 }
@@ -2717,12 +2730,28 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Re = ptr;
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
-                        printf("%u + %ui    %u + %ui\n%u + %ui    %u + %ui\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+#if HAVE_INTTYPES_H
+                        printf("%" PRIu64 " + %" PRIu64 "i    %" PRIu64 " + %" PRIu64 "i\n"
+                            "%" PRIu64 " + %" PRIu64 "i    %" PRIu64 " + %" PRIu64 "i\n",
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+#else
+                        printf("%lu + %lui    %lu + %lui\n%lu + %lui    %lu + %lui\n",
+                            (unsigned long)ptr[0],(unsigned long)pti[0],
+                            (unsigned long)ptr[2],(unsigned long)pti[2],
+                            (unsigned long)ptr[1],(unsigned long)pti[1],
+                            (unsigned long)ptr[3],(unsigned long)pti[3]);
+#endif
                     } else {
                         mat_uint64_t ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-                        printf("%u    %u\n%u    %u\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+#if HAVE_INTTYPES_H
+                        printf("%" PRIu64 "    %" PRIu64 "\n%" PRIu64 "    %" PRIu64 "\n",
+                            ptr[0],ptr[2],ptr[1],ptr[3]);
+#else
+                        printf("%lu    %lu\n%lu    %lu\n",
+                            (unsigned long)ptr[0],(unsigned long)ptr[2],
+                            (unsigned long)ptr[1],(unsigned long)ptr[3]);
+#endif
                     }
                     break;
                 }
@@ -2735,7 +2764,7 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
                         printf("%d + %di    %d + %di\n%d + %di    %d + %di\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
                     } else {
                         mat_int32_t ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
@@ -2751,7 +2780,7 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
                         printf("%u + %ui    %u + %ui\n%u + %ui    %u + %ui\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
                     } else {
                         mat_uint32_t ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
@@ -2766,12 +2795,12 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Re = ptr;
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
-                        printf("%d + %di    %d + %di\n%d + %di    %d + %di\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                        printf("%hd + %hdi    %hd + %hdi\n%hd + %hdi    %hd + %hdi\n",
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
                     } else {
                         mat_int16_t ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-                        printf("%d    %d\n%d    %d\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                        printf("%hd    %hd\n%hd    %hd\n",ptr[0],ptr[2],ptr[1],ptr[3]);
                     }
                     break;
                 }
@@ -2782,12 +2811,12 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Re = ptr;
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
-                        printf("%u + %ui    %u + %ui\n%u + %ui    %u + %ui\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                        printf("%hu + %hui    %hu + %hui\n%hu + %hui    %hu + %hui\n",
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
                     } else {
                         mat_uint16_t ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-                        printf("%u    %u\n%u    %u\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                        printf("%hu    %hu\n%hu    %hu\n",ptr[0],ptr[2],ptr[1],ptr[3]);
                     }
                     break;
                 }
@@ -2798,12 +2827,12 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Re = ptr;
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
-                        printf("%d + %di    %d + %di\n%d + %di    %d + %di\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                        printf("%hhd + %hhdi    %hhd + %hhdi\n%hhd + %hhdi    %hhd + %hhdi\n",
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
                     } else {
                         mat_int8_t ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-                        printf("%d    %d\n%d    %d\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                        printf("%hhd    %hhd\n%hhd    %hhd\n",ptr[0],ptr[2],ptr[1],ptr[3]);
                     }
                     break;
                 }
@@ -2814,15 +2843,17 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
                         c.Re = ptr;
                         c.Im = pti;
                         Mat_VarReadData(mat,matvar,&c,start,stride,edge);
-                        printf("%u + %ui    %u + %ui\n%u + %ui    %u + %ui\n",
-                        ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
+                        printf("%hhu + %hhui    %hhu + %hhui\n%hhu + %hhui    %hhu + %hhui\n",
+                            ptr[0],pti[0],ptr[2],pti[2],ptr[1],pti[1],ptr[3],pti[3]);
                     } else {
                         mat_uint8_t ptr[4];
                         Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-                        printf("%u    %u\n%u    %u\n",ptr[0],ptr[2],ptr[1],ptr[3]);
+                        printf("%hhu    %hhu\n%hhu    %hhu\n",ptr[0],ptr[2],ptr[1],ptr[3]);
                     }
                     break;
                 }
+                default:
+                    err = 1;
             }
             Mat_VarFree(matvar);
         } else {
