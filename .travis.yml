@@ -43,78 +43,78 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
     - os: linux
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
     - os: osx
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_17
+        - HDF5_VERSION_DIR=hdf5_1_8_18
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall libtool && brew install libtool; fi
 
 install:
-  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_17" ]]; then ./.install_hdf5_1_8.sh; fi
-  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_0" ]]; then ./.install_hdf5_1_10.sh; fi
+  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_18" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./.install_hdf5_1_8.sh; fi
+  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_0" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./.install_hdf5_1_10.sh; fi
   - cd $TRAVIS_BUILD_DIR
   - mkdir MSL
   - cd MSL
