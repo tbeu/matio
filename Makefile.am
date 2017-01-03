@@ -45,7 +45,7 @@ VS_FILES = visual_studio/libmatio/libmatio.vcproj \
            visual_studio/matio_pubconf.h \
            visual_studio/matio.rc
 
-EXTRA_DIST = README.md matio.pc.in autogen.sh patches/inflate.patch \
+EXTRA_DIST = matio.pc.in autogen.sh patches/inflate.patch \
              share/test_file.mat share/test_file_v6.mat $(VS_FILES)
 
 pkgconfigdir = $(libdir)/pkgconfig
