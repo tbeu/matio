@@ -42,7 +42,7 @@
 #endif
 #if defined(_WIN64) || defined(_WIN32)
 #   include <io.h>
-#   define mktemp _mktemp
+#   define mkstemp _mkstemp
 #endif
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
@@ -862,11 +862,13 @@ Mat_VarDelete(mat_t *mat, const char *name)
     int   err = 1;
     char *tmp_name;
     char temp[7] = "XXXXXX";
+    int  fd;
 
     if ( NULL == mat || NULL == name )
         return err;
 
-    if ( (tmp_name = mktemp(temp)) != NULL ) {
+    fd = mkstemp(temp); /* NOTE: This changes temp */
+    if (fd > 0) {
         enum mat_ft mat_file_ver;
         mat_t *tmp;
 
@@ -885,7 +887,8 @@ Mat_VarDelete(mat_t *mat, const char *name)
                 break;
         }
 
-        tmp = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
+        close(fd);
+        tmp = Mat_CreateVer(temp,mat->header,mat_file_ver);
         if ( tmp != NULL ) {
             matvar_t *matvar;
             Mat_Rewind(mat);
@@ -914,11 +917,11 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     mat->fp = NULL;
                 }
 
-                if ( (err = mat_copy(tmp_name,new_name)) == -1 ) {
+                if ( (err = mat_copy(temp,new_name)) == -1 ) {
                     Mat_Critical("Cannot copy file from \"%s\" to \"%s\".",
-                        tmp_name, new_name);
-                } else if ( (err = remove(tmp_name)) == -1 ) {
-                    Mat_Critical("Cannot remove file \"%s\".",tmp_name);
+                        temp, new_name);
+                } else if ( (err = remove(temp)) == -1 ) {
+                    Mat_Critical("Cannot remove file \"%s\".",temp);
                 } else {
                     tmp = Mat_Open(new_name,mat->mode);
                     if ( NULL != tmp ) {
@@ -935,8 +938,8 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     }
                 }
                 free(new_name);
-            } else if ( (err = remove(tmp_name)) == -1 ) {
-                Mat_Critical("Cannot remove file \"%s\".",tmp_name);
+            } else if ( (err = remove(temp)) == -1 ) {
+                Mat_Critical("Cannot remove file \"%s\".",temp);
             }
         }
     } else {
