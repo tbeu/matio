@@ -17,6 +17,7 @@ EXPORTS
     Mat_CreateVer
     Mat_Close
     Mat_Open
+    Mat_GetDir
     Mat_GetFilename
     Mat_GetVersion
     Mat_Rewind

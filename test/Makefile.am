@@ -96,6 +96,9 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/cell_api_getcells.out \
                  $(srcdir)/results/cell_api_getlinear.out \
                  $(srcdir)/results/cell_api_set.out \
+                 $(srcdir)/results/dir-4.out \
+                 $(srcdir)/results/dir-5.out \
+                 $(srcdir)/results/dir-73.out \
                  $(srcdir)/results/dump-large_struct_compressed.out \
                  $(srcdir)/results/dump-large_struct_compressed_32.out \
                  $(srcdir)/results/dump-mat_copy-4.out \

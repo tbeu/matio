@@ -34,7 +34,7 @@
 .Fd #include <matio.h>
 .Ft int
 .Fo Mat_VarWrite
-.Fa "mat_t *mat"
+.Fa "mat_t *matfp"
 .Fa "matvar_t *matvar"
 .Fa "enum matio_compression compress"
 .Fc
@@ -44,7 +44,7 @@ The
 function writes the MATLAB variable
 .Fa matvar
 to the MAT file
-.Fa mat
+.Fa matfp
 which must be opened for writing. If the MAT file is a level 5 MAT file, the
 compress option allows the variable to be written using zlib compression if
 available. If compression is not available, the variable is written

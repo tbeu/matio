@@ -136,7 +136,7 @@ before_script:
 
 script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then travis_wait 40 make check; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make check; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_snprintf; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -H; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -L; fi

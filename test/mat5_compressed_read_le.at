@@ -473,3 +473,10 @@ AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([cp $srcdir/results/getstructfield-large_struct_compressed.out expout
           $builddir/test_mat getstructfield $srcdir/datasets/large_struct_compressed_le.mat MA C],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read directory])
+AT_KEYWORDS([directory])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dir-5.out expout
+         $builddir/test_mat directory $srcdir/datasets/matio_test_cases_compressed_le.mat],[0],[expout],[])
+AT_CLEANUP

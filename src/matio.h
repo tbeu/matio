@@ -258,8 +258,9 @@ EXTERN MATIO_EXPORT mat_t      *Mat_CreateVer(const char *matname,const char *hd
                                    enum mat_ft mat_file_ver);
 EXTERN MATIO_EXPORT int         Mat_Close(mat_t *mat);
 EXTERN MATIO_EXPORT mat_t      *Mat_Open(const char *matname,int mode);
-EXTERN MATIO_EXPORT const char *Mat_GetFilename(mat_t *matfp);
-EXTERN MATIO_EXPORT enum mat_ft Mat_GetVersion(mat_t *matfp);
+EXTERN MATIO_EXPORT const char *Mat_GetFilename(mat_t *mat);
+EXTERN MATIO_EXPORT enum mat_ft Mat_GetVersion(mat_t *mat);
+EXTERN MATIO_EXPORT char      **Mat_GetDir(mat_t *mat, size_t *n);
 EXTERN MATIO_EXPORT int         Mat_Rewind(mat_t *mat);
 
 /* MAT variable functions */
