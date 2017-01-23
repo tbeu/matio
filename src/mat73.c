@@ -783,7 +783,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         H5Aclose(attr_id);
         free(fieldnames_vl);
     } else {
-        H5G_info_t group_info;
+        H5G_info_t group_info = {0};
         matvar->internal->num_fields = 0;
         H5Gget_info(dset_id, &group_info);
         if ( group_info.nlinks > 0 ) {
@@ -1354,7 +1354,7 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
                                 H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
 
             for ( k = 0; k < nmemb; k++ ) {
-                H5G_info_t group_info;
+                H5G_info_t group_info = {0};
                 H5Gget_info(*refs_id, &group_info);
                 sprintf(obj_name,"%lld",group_info.nlinks);
                 if ( NULL != cells[k] )
@@ -2080,7 +2080,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
 
                     for ( k = 0; k < nmemb; k++ ) {
                         for ( l = 0; l < nfields; l++ ) {
-                            H5G_info_t group_info;
+                            H5G_info_t group_info = {0};
                             H5Gget_info(*refs_id, &group_info);
                             sprintf(name,"%lld",group_info.nlinks);
                             if ( NULL != fields[k*nfields+l] )
@@ -2218,6 +2218,7 @@ Mat_Create73(const char *matname,const char *hdr_str)
     mat->next_index    = 0;
     mat->num_datasets  = 0;
     mat->refs_id       = -1;
+    mat->dir           = NULL;
 
     t = time(NULL);
     mat->filename = strdup_printf("%s",matname);
@@ -2737,7 +2738,7 @@ Mat_VarReadNextInfo73( mat_t *mat )
     mat_data.matvar = NULL;
     herr = H5Literate(fid, H5_INDEX_NAME, H5_ITER_NATIVE, &idx, Mat_VarReadNextInfoIterate, (void*)&mat_data);
     if ( herr > 0 )
-        mat->next_index = (long)idx;
+        mat->next_index = (size_t)idx;
     return mat_data.matvar;
 }
 
@@ -2955,18 +2956,14 @@ int
 Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
 {
     hid_t id;
-    int err = -1;
 
     if ( NULL == mat || NULL == matvar )
-        return err;
+        return -1;
 
     matvar->compression = (enum matio_compression)compress;
 
     id = *(hid_t*)mat->fp;
-    err = Mat_VarWriteNext73(id,matvar,matvar->name,&(mat->refs_id));
-    if ( err == 0 )
-        mat->num_datasets++;
-    return err;
+    return Mat_VarWriteNext73(id,matvar,matvar->name,&(mat->refs_id));
 }
 
 #endif

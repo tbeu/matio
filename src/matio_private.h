@@ -60,17 +60,18 @@
  * @endif
  */
 struct _mat_t {
-    void *fp;               /**< File pointer for the MAT file */
-    char *header;           /**< MAT File header string */
-    char *subsys_offset;    /**< Offset */
-    char *filename;         /**< Filename of the MAT file */
-    int   version;          /**< MAT File version */
-    int   byteswap;         /**< 1 if byte swapping is required, 0 otherwise */
-    int   mode;             /**< Access mode */
-    long  bof;              /**< Beginning of file not including any header */
-    long  next_index;       /**< Index/File position of next variable to read */
-    long  num_datasets;     /**< Number of datasets in the file */
-    hid_t refs_id;          /**< Id of the /#refs# group in HDF5 */
+    void  *fp;              /**< File pointer for the MAT file */
+    char  *header;          /**< MAT File header string */
+    char  *subsys_offset;   /**< Offset */
+    char  *filename;        /**< Filename of the MAT file */
+    int    version;         /**< MAT File version */
+    int    byteswap;        /**< 1 if byte swapping is required, 0 otherwise */
+    int    mode;            /**< Access mode */
+    long   bof;             /**< Beginning of file not including any header */
+    size_t next_index;      /**< Index/File position of next variable to read */
+    size_t num_datasets;    /**< Number of datasets in the file */
+    hid_t  refs_id;         /**< Id of the /#refs# group in HDF5 */
+    char **dir;             /**< Names of the datasets in the file */
 };
 
 /** @if mat_devman

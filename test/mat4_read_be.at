@@ -63,3 +63,9 @@ AT_KEYWORDS([mat4_read_be])
 AT_CHECK([cp $srcdir/results/read-x.out expout
          $builddir/test_mat readvar $srcdir/datasets/small_v4_be.mat x],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read directory])
+AT_KEYWORDS([directory])
+AT_CHECK([cp $srcdir/results/dir-4.out expout
+         $builddir/test_mat directory $srcdir/datasets/matio_test_cases_v4_be.mat],[0],[expout],[])
+AT_CLEANUP

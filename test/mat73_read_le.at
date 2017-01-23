@@ -487,3 +487,10 @@ AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/read-var69.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_hdf_le.mat var69],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read directory])
+AT_KEYWORDS([directory])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/dir-73.out expout
+         $builddir/test_mat directory $srcdir/datasets/matio_test_cases_hdf_le.mat],[0],[expout],[])
+AT_CLEANUP

@@ -151,6 +151,7 @@ static const char *helptestsstr[] = {
 "================================================================",
 "copy                    - Copies one matlab file to another",
 "delete                  - Deletes a specific variable from a file",
+"directory               - Retrieves the list of variable names from a file",
 "readvar                 - Reads a specific variable from a file",
 "getstructfield          - Tests Mat_VarGetStructField getting fields from a",
 "                          structure",
@@ -185,6 +186,16 @@ static const char *helptest_delete[] = {
     "Usage: test_mat delete FILE variable_name",
     "",
     "Deletes variable_name from FILE",
+    "",
+    NULL
+};
+
+static const char *helptest_directory[] = {
+    "TEST: directory",
+    "",
+    "Usage: test_mat directory FILE",
+    "",
+    "Prints all variable names from FILE",
     "",
     NULL
 };
@@ -664,6 +675,8 @@ help_test(const char *test)
         Mat_Help(helptest_copy);
     if ( !strcmp(test,"delete") )
         Mat_Help(helptest_delete);
+    if ( !strcmp(test,"directory") )
+        Mat_Help(helptest_directory);
     else if ( !strcmp(test,"readvar") )
         Mat_Help(helptest_readvar);
     else if ( !strcmp(test,"readvarinfo") )
@@ -3285,6 +3298,35 @@ test_delete(char *file,char *name)
     return err;
 }
 
+static int
+test_directory(char *file)
+{
+    int err = 0;
+    mat_t *mat;
+
+    mat = Mat_Open(file,MAT_ACC_RDWR);
+    if ( NULL != mat ) {
+        size_t n, i;
+        char** dir = Mat_GetDir(mat, &n);
+        if ( NULL != dir ) {
+            for ( i = 0; i < n; ++i ) {
+                if ( NULL != dir[i] ) {
+                    printf("%s\n", dir[i]);
+                } else {
+                    printf("\n");
+                }
+            }
+        } else {
+            err = 1;
+        }
+        Mat_Close(mat);
+    } else {
+        Mat_Critical("MAT file %s doesn't exist", file);
+        err = 1;
+    }
+    return err;
+}
+
 int main (int argc, char *argv[])
 {
     const char *prog_name = "test_mat";
@@ -3401,6 +3443,10 @@ int main (int argc, char *argv[])
             k++;
             err += test_delete(argv[k],argv[k+1]);
             k+= 2;
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"directory") ) {
+            k++;
+            err += test_directory(argv[k++]);
             ntests++;
         } else if ( !strcasecmp(argv[k],"write_2d_logical") ) {
             k++;

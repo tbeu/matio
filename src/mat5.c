@@ -513,6 +513,7 @@ Mat_Create5(const char *matname,const char *hdr_str)
     mat->next_index    = 0;
     mat->num_datasets  = 0;
     mat->refs_id       = -1;
+    mat->dir           = NULL;
 
     t = time(NULL);
     mat->fp       = fp;

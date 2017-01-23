@@ -394,3 +394,9 @@ AT_SETUP([Read cell array with structs (character fields)])
 AT_CHECK([cp $srcdir/results/read-var69.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var69],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read directory])
+AT_KEYWORDS([directory])
+AT_CHECK([cp $srcdir/results/dir-5.out expout
+         $builddir/test_mat directory $srcdir/datasets/matio_test_cases_uncompressed_be.mat],[0],[expout],[])
+AT_CLEANUP

@@ -68,17 +68,18 @@ Mat_Create4(const char* matname)
         return NULL;
     }
 
+    mat->fp            = fp;
     mat->header        = NULL;
     mat->subsys_offset = NULL;
-    mat->fp            = fp;
+    mat->filename      = strdup_printf("%s",matname);
     mat->version       = MAT_FT_MAT4;
     mat->byteswap      = 0;
+    mat->mode          = 0;
     mat->bof           = 0;
     mat->next_index    = 0;
-    mat->refs_id       = -1;
-    mat->filename      = strdup_printf("%s",matname);
-    mat->mode          = 0;
     mat->num_datasets  = 0;
+    mat->refs_id       = -1;
+    mat->dir           = NULL;
 
     Mat_Rewind(mat);
 
