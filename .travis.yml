@@ -39,7 +39,7 @@ matrix:
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
-        - WITH_ZLIB=yes
+        - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
         - HDF5_VERSION_DIR=hdf5_1_10_0
     - os: linux
       compiler: gcc-4.8
@@ -118,6 +118,11 @@ before_install:
   - curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh
 
 install:
+  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_0" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then git clone --depth 5 https://github.com/madler/zlib; fi
+  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_0" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then cd zlib; fi
+  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_0" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./configure --prefix=$TRAVIS_BUILD_DIR/zlib --eprefix=$TRAVIS_BUILD_DIR/zlib; fi
+  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_0" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then make install; fi
+  - cd $TRAVIS_BUILD_DIR
   - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_18" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./.install_hdf5_1_8.sh; fi
   - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_0" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./.install_hdf5_1_10.sh; fi
   - cd $TRAVIS_BUILD_DIR
