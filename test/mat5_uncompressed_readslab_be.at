@@ -1703,3 +1703,1203 @@ AT_KEYWORDS([mat5_uncompressed_readslab readslab])
 AT_CHECK([cp $srcdir/results/readslab-var11.out expout
          $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var20 -c uint8],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of double array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var28 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of single array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var29 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int64 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var30 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint64 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var31 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int32 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var32 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint32 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var33 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int16 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var34 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint16 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var35 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of int8 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var36 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of uint8 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var28.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var37 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex double array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var38 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex single array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var39 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int64 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var40 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint64 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var41 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int32 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var42 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint32 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var43 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int16 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var44 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint16 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var45 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex int8 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var46 -c uint8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as double])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c double],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as single])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c single],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as int64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c int64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as uint64])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c uint64],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as int32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c int32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as uint32])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as int16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c int16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as uint16])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c uint16],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as int8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c int8],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read slab of complex uint8 array from struct as uint8])
+AT_KEYWORDS([mat5_uncompressed_readslab readslab])
+AT_CHECK([cp $srcdir/results/readslab-var38.out expout
+         $builddir/test_mat readslab $srcdir/datasets/matio_test_cases_uncompressed_be.mat var47 -c uint8],[0],[expout],[])
+AT_CLEANUP
