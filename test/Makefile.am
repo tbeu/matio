@@ -176,6 +176,10 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/dump-var89-4.out \
                  $(srcdir)/results/getstructfield-large_struct_compressed.out \
                  $(srcdir)/results/ind2sub.out \
+                 $(srcdir)/results/readslab-var1.out \
+                 $(srcdir)/results/readslab-var11.out \
+                 $(srcdir)/results/readslab-var28.out \
+                 $(srcdir)/results/readslab-var38.out \
                  $(srcdir)/results/read-var1.out \
                  $(srcdir)/results/read-var2.out \
                  $(srcdir)/results/read-var3.out \
