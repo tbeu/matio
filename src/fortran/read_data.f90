@@ -4,7 +4,7 @@
 !   This files should be included on the MATIO module
 !----------------------------------------------------------
 !
-! Copyright (C) 2005-2016   Christopher C. Hulbert
+! Copyright (C) 2005-2017   Christopher C. Hulbert
 !
 ! All rights reserved.
 !
