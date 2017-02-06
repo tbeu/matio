@@ -502,7 +502,8 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                     }
                 } else {
                     cells = Mat_VarGetCells(matvar,start,stride,edge);
-                    memcpy(matvar->dims,edge,matvar->rank*sizeof(int));
+                    for ( i = 0; i < rank; i++ )
+                        matvar->dims[i] = (size_t)edge[i];
                 }
                 if ( cells == NULL ) {
                     fprintf(stderr,"Error getting the indexed cells");
