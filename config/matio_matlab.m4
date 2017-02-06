@@ -1,4 +1,4 @@
-dnl Copyright (C) 2010-2016   Christopher C. Hulbert
+dnl Copyright (C) 2010-2017   Christopher C. Hulbert
 dnl
 dnl All rights reserved.
 dnl

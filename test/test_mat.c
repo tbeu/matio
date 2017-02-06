@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2016   Christopher C. Hulbert
+ * Copyright (C) 2005-2017   Christopher C. Hulbert
  *
  * All rights reserved.
  *
@@ -3644,7 +3644,7 @@ int main (int argc, char *argv[])
                 exit(EXIT_SUCCESS);
             case 'V':
                 printf("%s %s\nWritten by Christopher Hulbert\n\n"
-                       "Copyright(C) 2006-2016 Christopher C. Hulbert\n",
+                       "Copyright(C) 2006-2017 Christopher C. Hulbert\n",
                        prog_name,PACKAGE_VERSION);
                 exit(EXIT_SUCCESS);
             case 'z':

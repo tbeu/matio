@@ -1,4 +1,4 @@
-@c Copyright (C) 2011-2016   Christopher C. Hulbert
+@c Copyright (C) 2011-2017   Christopher C. Hulbert
 @c
 @c All rights reserved.
 @c
