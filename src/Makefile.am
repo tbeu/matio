@@ -57,6 +57,15 @@ endif
 
 EXTRA_DIST = matio.sym
 
+if ENABLE_FORTRAN
+AM_FCFLAGS              = -I. -I$(top_builddir)/src/fortran
+AM_LDFLAGS             +=  $(FCLDFLAGS)
+libmatio_la_SOURCES    +=  fortran/matio_internal.c fortran/matio.f90
+nodist_include_HEADERS +=  $(top_builddir)/src/matio.mod
+noinst_HEADERS         += fortran/create.f90 fortran/read_data.f90 \
+                          fortran/write_data.f90 fortran/write.f90
+endif
+
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \
               -e 's,\/,\\,g'
