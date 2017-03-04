@@ -675,6 +675,8 @@ Mat_VarCalloc(void)
             matvar->internal->z          = NULL;
             matvar->internal->data       = NULL;
 #endif
+            matvar->internal->num_empty  = 0;
+            matvar->internal->empty      = NULL;
         }
     }
 
@@ -1313,18 +1315,30 @@ Mat_VarFree(matvar_t *matvar)
                 if ( !matvar->mem_conserve ) {
                     matvar_t **fields = (matvar_t**)matvar->data;
                     int nfields = matvar->internal->num_fields;
-                    for ( i = 0; i < nmemb*nfields; i++ )
-                        Mat_VarFree(fields[i]);
-
+                    for ( i = 0; i < nmemb*nfields; i++ ) {
+                        if ( NULL != fields[i] ) {
+                            if ( MAT_C_EMPTY == fields[i]->class_type ) {
+                                if ( --matvar->internal->num_empty > 0 )
+                                    continue;
+                            }
+                            Mat_VarFree(fields[i]);
+                        }
+                    }
                     free(matvar->data);
                     break;
                 }
             case MAT_C_CELL:
                 if ( !matvar->mem_conserve ) {
                     matvar_t **cells = (matvar_t**)matvar->data;
-                    for ( i = 0; i < nmemb; i++ )
-                        Mat_VarFree(cells[i]);
-
+                    for ( i = 0; i < nmemb; i++ ) {
+                        if ( NULL != cells[i] ) {
+                            if ( MAT_C_EMPTY == cells[i]->class_type ) {
+                                if ( --matvar->internal->num_empty > 0 )
+                                    continue;
+                            }
+                            Mat_VarFree(cells[i]);
+                        }
+                    }
                     free(matvar->data);
                 }
                 break;

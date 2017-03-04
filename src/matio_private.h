@@ -80,7 +80,7 @@ struct _mat_t {
  * @endif
  */
 struct matvar_internal {
-    char *hdf5_name;        /**< Name */
+    char      *hdf5_name;   /**< Name */
     hobj_ref_t hdf5_ref;    /**< Reference */
     hid_t      id;          /**< Id */
     long       fpos;        /**< Offset from the beginning of the MAT file to the variable */
@@ -92,6 +92,8 @@ struct matvar_internal {
     z_streamp  z;           /**< zlib compression state */
     void      *data;        /**< Inflated data array */
 #endif
+    size_t     num_empty;   /**< Number of empty fields or cells of a struct or cell array */
+    matvar_t  *empty;       /**< Empty field or cell of of a struct or cell array */
 };
 
 /* snprintf.c */

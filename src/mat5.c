@@ -1790,8 +1790,17 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(uncomp_buf+1);
             }
             nbytes = uncomp_buf[1];
-            if ( !nbytes ) {
-                /* empty cell */
+            if ( 0 == nbytes ) {
+                /* Empty cell */
+                if ( 0 == matvar->internal->num_empty ) {
+                    cells[i]->internal->fpos = 0;
+                    matvar->internal->empty = cells[i];
+                } else {
+                    /* Memory optimization: Reuse empty cell */
+                    Mat_VarFree(cells[i]);
+                    cells[i] = matvar->internal->empty;
+                }
+                matvar->internal->num_empty++;
                 continue;
             } else if ( uncomp_buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
@@ -1953,8 +1962,17 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(buf+1);
             }
             nBytes = buf[1];
-            if ( !nBytes ) {
-                /* empty cell */
+            if ( 0 == nBytes ) {
+                /* Empty cell */
+                if ( 0 == matvar->internal->num_empty ) {
+                    cells[i]->internal->fpos = 0;
+                    matvar->internal->empty = cells[i];
+                } else {
+                    /* Memory optimization: Reuse empty cell */
+                    Mat_VarFree(cells[i]);
+                    cells[i] = matvar->internal->empty;
+                }
+                matvar->internal->num_empty++;
                 continue;
             } else if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
@@ -2155,8 +2173,17 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 fields[i] = NULL;
                 Mat_Critical("fields[%d], Uncompressed type not MAT_T_MATRIX",i);
                 continue;
-            } else if ( nbytes == 0 ) {
-                fields[i]->rank = 0;
+            } else if ( 0 == nbytes ) {
+                /* Empty field */
+                if ( 0 == matvar->internal->num_empty ) {
+                    fields[i]->internal->fpos = 0;
+                    matvar->internal->empty = fields[i];
+                } else {
+                    /* Memory optimization: Reuse empty field */
+                    Mat_VarFree(fields[i]);
+                    fields[i] = matvar->internal->empty;
+                }
+                matvar->internal->num_empty++;
                 continue;
             }
             fields[i]->compression = MAT_COMPRESSION_ZLIB;
@@ -2336,8 +2363,17 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,
                     ftell((FILE*)mat->fp));
                 return bytesread;
-            } else if ( nBytes == 0 ) {
-                fields[i]->rank = 0;
+            } else if ( 0 == nBytes ) {
+                /* Empty field */
+                if ( 0 == matvar->internal->num_empty ) {
+                    fields[i]->internal->fpos = 0;
+                    matvar->internal->empty = fields[i];
+                } else {
+                    /* Memory optimization: Reuse empty field */
+                    Mat_VarFree(fields[i]);
+                    fields[i] = matvar->internal->empty;
+                }
+                matvar->internal->num_empty++;
                 continue;
             }
             fields[i]->compression = MAT_COMPRESSION_NONE;
