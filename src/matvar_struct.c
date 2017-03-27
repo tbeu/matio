@@ -425,13 +425,14 @@ matvar_t *
 Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
     int copy_fields)
 {
-    int i, I, field, nfields;
-    matvar_t *struct_slab, **fields;
+    matvar_t *struct_slab;
 
     /* FIXME: Check allocations */
     if ( matvar == NULL || matvar->rank > 10 ) {
        struct_slab = NULL;
     } else {
+        int i, I, field, nfields;
+        matvar_t **fields;
 
         struct_slab = Mat_VarDuplicate(matvar,0);
         if ( !copy_fields )
