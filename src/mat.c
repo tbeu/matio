@@ -1718,16 +1718,6 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
        "16-bit, unsigned integer array","32-bit, signed integer array",
        "32-bit, unsigned integer array","64-bit, signed integer array",
        "64-bit, unsigned integer array"};
-    const char *data_type_desc[23] = {"Unknown","8-bit, signed integer",
-       "8-bit, unsigned integer","16-bit, signed integer",
-       "16-bit, unsigned integer","32-bit, signed integer",
-       "32-bit, unsigned integer","IEEE 754 single-precision","RESERVED",
-       "IEEE 754 double-precision","RESERVED","RESERVED",
-       "64-bit, signed integer","64-bit, unsigned integer", "Matlab Array",
-       "Compressed Data","Unicode UTF-8 Encoded Character Data",
-       "Unicode UTF-16 Encoded Character Data",
-       "Unicode UTF-32 Encoded Character Data","","String","Cell Array",
-       "Structure"};
 
     if ( matvar == NULL )
         return;
@@ -1749,8 +1739,19 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     else if ( matvar->isLogical )
         printf(" (logical)");
     printf("\n");
-    if ( matvar->data_type )
+    if ( matvar->data_type ) {
+        const char *data_type_desc[23] = {"Unknown","8-bit, signed integer",
+           "8-bit, unsigned integer","16-bit, signed integer",
+           "16-bit, unsigned integer","32-bit, signed integer",
+           "32-bit, unsigned integer","IEEE 754 single-precision","RESERVED",
+           "IEEE 754 double-precision","RESERVED","RESERVED",
+           "64-bit, signed integer","64-bit, unsigned integer", "Matlab Array",
+           "Compressed Data","Unicode UTF-8 Encoded Character Data",
+           "Unicode UTF-16 Encoded Character Data",
+           "Unicode UTF-32 Encoded Character Data","","String","Cell Array",
+           "Structure"};
         printf(" Data Type: %s\n", data_type_desc[matvar->data_type]);
+    }
 
     if ( MAT_C_STRUCT == matvar->class_type ) {
         matvar_t **fields = (matvar_t **)matvar->data;

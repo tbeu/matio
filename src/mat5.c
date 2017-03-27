@@ -539,10 +539,10 @@ Mat_Create5(const char *matname,const char *hdr_str)
 
     version = 0x0100;
 
-    err = fwrite(mat->header,1,116,(FILE*)mat->fp);
-    err = fwrite(mat->subsys_offset,1,8,(FILE*)mat->fp);
-    err = fwrite(&version,2,1,(FILE*)mat->fp);
-    err = fwrite(&endian,2,1,(FILE*)mat->fp);
+    fwrite(mat->header,1,116,(FILE*)mat->fp);
+    fwrite(mat->subsys_offset,1,8,(FILE*)mat->fp);
+    fwrite(&version,2,1,(FILE*)mat->fp);
+    fwrite(&endian,2,1,(FILE*)mat->fp);
 
     return mat;
 }
@@ -8082,7 +8082,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
 matvar_t *
 Mat_VarReadNextInfo5( mat_t *mat )
 {
-    int err, data_type, nBytes, i;
+    int err, data_type, nBytes;
     long fpos;
     matvar_t *matvar = NULL;
     mat_uint32_t array_flags;
@@ -8167,6 +8167,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 }
                 /* Rank and dimension */
                 if ( uncomp_buf[0] == MAT_T_INT32 ) {
+                    int i;
                     nbytes = uncomp_buf[1];
                     matvar->rank = nbytes / 4;
                     matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
@@ -8184,7 +8185,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                     (void)Mat_uint32Swap(uncomp_buf);
                 /* Name of variable */
                 if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
-                    int len;
+                    int len, i;
                     if ( mat->byteswap )
                         len = Mat_uint32Swap(uncomp_buf+1);
                     else
@@ -8259,7 +8260,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
             }
             /* Rank and dimension */
             if ( buf[4] == MAT_T_INT32 ) {
-                int nbytes = buf[5];
+                int nbytes = buf[5], i;
 
                 matvar->rank = nbytes / 4;
                 matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
@@ -8284,7 +8285,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 (void)Mat_uint32Swap(buf);
             /* Name of variable */
             if ( buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
-                int len;
+                int len, i;
 
                 if ( mat->byteswap )
                     len = Mat_uint32Swap(buf+1);
