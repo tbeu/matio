@@ -94,7 +94,6 @@ enum matio_types {
     MAT_T_UTF16      = 17,    /**< @brief 16-bit Unicode text data type       */
     MAT_T_UTF32      = 18,    /**< @brief 32-bit Unicode text data type       */
 
-    MAT_T_STRING     = 20,    /**< @brief String data type                    */
     MAT_T_CELL       = 21,    /**< @brief Cell array data type                */
     MAT_T_STRUCT     = 22,    /**< @brief Structure data type                 */
     MAT_T_ARRAY      = 23,    /**< @brief Array data type                     */
