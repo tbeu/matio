@@ -119,9 +119,13 @@ AT_BANNER([Read Compressed MAT version 5 (Big Endian)])
 m4_include([mat5_compressed_read_be.at])
 m4_include([mat5_compressed_readslab_be.at])
 
-AT_BANNER([Read MAT version 7.3 (HDF5 Schema 1) (Little Endian)])
-m4_include([mat73_read_le.at])
-m4_include([mat73_readslab_le.at])
+AT_BANNER([Read Compressed MAT version 7.3 (HDF5 Schema 1) (Little Endian)])
+m4_include([mat73_compressed_read_le.at])
+m4_include([mat73_compressed_readslab_le.at])
+
+AT_BANNER([Read Uncompressed MAT version 7.3 (HDF5 Schema 1) (Little Endian)])
+m4_include([mat73_uncompressed_read_le.at])
+m4_include([mat73_uncompressed_readslab_le.at])
 
 AT_BANNER([Read MAT version 7.3 (HDF5 Schema 1) (Big Endian)])
 m4_include([mat73_read_be.at])
@@ -148,8 +152,11 @@ m4_include([mat5_compressed_readwrite.at])
 AT_BANNER([Write MAT version 7.3])
 m4_include([mat73_write.at])
 
-AT_BANNER([Read/Write MAT version 7.3])
-m4_include([mat73_readwrite.at])
+AT_BANNER([Read/Write Compressed MAT version 7.3])
+m4_include([mat73_compressed_readwrite.at])
+
+AT_BANNER([Read/Write Uncompressed MAT version 7.3])
+m4_include([mat73_uncompressed_readwrite.at])
 
 AT_BANNER([Write Compressed MAT version 7.3])
 m4_include([mat73_compressed_write.at])

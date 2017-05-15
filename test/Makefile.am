@@ -41,9 +41,11 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat5_compressed_write.at \
                $(srcdir)/mat5_compressed_readwrite.at \
                $(srcdir)/mat73_read_be.at \
-               $(srcdir)/mat73_read_le.at \
+               $(srcdir)/mat73_compressed_read_le.at \
+               $(srcdir)/mat73_uncompressed_read_le.at \
                $(srcdir)/mat73_write.at \
-               $(srcdir)/mat73_readwrite.at \
+               $(srcdir)/mat73_compressed_readwrite.at \
+               $(srcdir)/mat73_uncompressed_readwrite.at \
                $(srcdir)/mat73_compressed_write.at \
                $(srcdir)/mat73_compressed_readwrite.at \
                $(srcdir)/struct_api.at \
@@ -56,7 +58,8 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat5_uncompressed_readslab_be.at \
                $(srcdir)/mat5_uncompressed_readslab_le.at \
                $(srcdir)/mat73_readslab_be.at \
-               $(srcdir)/mat73_readslab_le.at \
+               $(srcdir)/mat73_compressed_readslab_le.at \
+               $(srcdir)/mat73_uncompressed_readslab_le.at \
                $(srcdir)/mat4_extended_sparse.at \
                $(srcdir)/mat5_compressed_extended_sparse.at \
                $(srcdir)/mat5_uncompressed_extended_sparse.at \
@@ -68,7 +71,8 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/datasets/matio_test_cases_compressed_be.mat \
                  $(srcdir)/datasets/matio_test_cases_compressed_le.mat \
                  $(srcdir)/datasets/matio_test_cases_hdf_be.mat \
-                 $(srcdir)/datasets/matio_test_cases_hdf_le.mat \
+                 $(srcdir)/datasets/matio_test_cases_compressed_hdf_le.mat \
+                 $(srcdir)/datasets/matio_test_cases_uncompressed_hdf_le.mat \
                  $(srcdir)/datasets/matio_test_cases_uncompressed_be.mat \
                  $(srcdir)/datasets/matio_test_cases_uncompressed_le.mat \
                  $(srcdir)/datasets/matio_test_cases_v4_be.mat \
@@ -97,8 +101,9 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/cell_api_getlinear.out \
                  $(srcdir)/results/cell_api_set.out \
                  $(srcdir)/results/dir-4.out \
-                 $(srcdir)/results/dir-5.out \
-                 $(srcdir)/results/dir-73.out \
+                 $(srcdir)/results/dir_le.out \
+                 $(srcdir)/results/dir-5_be.out \
+                 $(srcdir)/results/dir-73_be.out \
                  $(srcdir)/results/dump-large_struct_compressed.out \
                  $(srcdir)/results/dump-large_struct_compressed_32.out \
                  $(srcdir)/results/dump-mat_copy-4.out \
