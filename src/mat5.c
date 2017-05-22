@@ -486,7 +486,7 @@ GetMatrixMaxBufSize(matvar_t *matvar)
 mat_t *
 Mat_Create5(const char *matname,const char *hdr_str)
 {
-    FILE *fp = NULL;
+    FILE *fp;
     mat_int16_t endian = 0, version;
     mat_t *mat = NULL;
     size_t err;
@@ -682,7 +682,7 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
                 byteswritten += fwrite(buf,1,buf_size-z->avail_out,(FILE*)mat->fp);
             } while ( z->avail_out == 0 );
 
-            /* exit early if this is a empty data */
+            /* exit early if this is an empty data */
             if ( NULL == data || N < 1 )
                 break;
 
@@ -727,7 +727,7 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
                 byteswritten += fwrite(buf,1,buf_size-z->avail_out,(FILE*)mat->fp);
             } while ( z->avail_out == 0 );
 
-            /* exit early if this is a empty data */
+            /* exit early if this is an empty data */
             if ( NULL == data || N < 1 )
                 break;
 
@@ -773,7 +773,7 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
                 byteswritten += fwrite(buf,1,buf_size-z->avail_out,(FILE*)mat->fp);
             } while ( z->avail_out == 0 );
 
-            /* exit early if this is a empty data */
+            /* exit early if this is an empty data */
             if ( NULL == data || N < 1 )
                 break;
 
@@ -1705,7 +1705,7 @@ WriteCompressedData(mat_t *mat,z_streamp z,void *data,int N,
         byteswritten += fwrite(buf,1,buf_size-z->avail_out,(FILE*)mat->fp);
     } while ( z->avail_out == 0 );
 
-    /* exit early if this is a empty data */
+    /* exit early if this is an empty data */
     if ( NULL == data || N < 1 )
         return byteswritten;
 
@@ -2623,6 +2623,10 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
 
     fwrite(&matrix_type,4,1,(FILE*)mat->fp);
     fwrite(&pad4,4,1,(FILE*)mat->fp);
+    if ( MAT_C_EMPTY == matvar->class_type ) {
+        /* exit early if this is an empty data */
+        return 0;
+    }
     start = ftell((FILE*)mat->fp);
 
     /* Array Flags */
@@ -2854,6 +2858,26 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
     if ( NULL == matvar || NULL == mat || NULL == z)
         return 0;
 
+    uncomp_buf[0] = MAT_T_MATRIX;
+    if ( MAT_C_EMPTY != matvar->class_type || 0 != matvar->nbytes ) {
+        uncomp_buf[1] = (int)GetCellArrayFieldBufSize(matvar);
+    } else {
+        uncomp_buf[1] = 0;
+    }
+    z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
+    z->avail_in = 8;
+    do {
+        z->next_out  = ZLIB_BYTE_PTR(comp_buf);
+        z->avail_out = buf_size*sizeof(*comp_buf);
+        deflate(z,Z_NO_FLUSH);
+        byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
+            (FILE*)mat->fp);
+    } while ( z->avail_out == 0 );
+
+    if ( MAT_C_EMPTY == matvar->class_type ) {
+        /* exit early if this is an empty data */
+        return byteswritten;
+    }
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -2865,18 +2889,6 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
         array_flags |= MAT_F_LOGICAL;
     if ( matvar->class_type == MAT_C_SPARSE )
         nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
-
-    uncomp_buf[0] = MAT_T_MATRIX;
-    uncomp_buf[1] = (int)GetCellArrayFieldBufSize(matvar);
-    z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
-    z->avail_in = 8;
-    do {
-        z->next_out  = ZLIB_BYTE_PTR(comp_buf);
-        z->avail_out = buf_size*sizeof(*comp_buf);
-        deflate(z,Z_NO_FLUSH);
-        byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
-            (FILE*)mat->fp);
-    } while ( z->avail_out == 0 );
     uncomp_buf[0] = array_flags_type;
     uncomp_buf[1] = array_flags_size;
     uncomp_buf[2] = array_flags;
@@ -3106,6 +3118,10 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
 
     fwrite(&matrix_type,4,1,(FILE*)mat->fp);
     fwrite(&pad4,4,1,(FILE*)mat->fp);
+    if ( MAT_C_EMPTY == matvar->class_type ) {
+        /* exit early if this is an empty data */
+        return 0;
+    }
     start = ftell((FILE*)mat->fp);
 
     /* Array Flags */
@@ -3324,6 +3340,27 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
         return byteswritten;
     }
 
+    uncomp_buf[0] = MAT_T_MATRIX;
+    if ( MAT_C_EMPTY != matvar->class_type ) {
+        uncomp_buf[1] = (int)GetStructFieldBufSize(matvar);
+    } else {
+        uncomp_buf[1] = 0;
+    }
+    z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
+    z->avail_in = 8;
+    do {
+        z->next_out  = ZLIB_BYTE_PTR(comp_buf);
+        z->avail_out = buf_size*sizeof(*comp_buf);
+        deflate(z,Z_NO_FLUSH);
+        byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
+            (FILE*)mat->fp);
+    } while ( z->avail_out == 0 );
+
+    if ( MAT_C_EMPTY == matvar->class_type ) {
+        /* exit early if this is an empty data */
+        return byteswritten;
+    }
+
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
     if ( matvar->isComplex )
@@ -3334,18 +3371,6 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
         array_flags |= MAT_F_LOGICAL;
     if ( matvar->class_type == MAT_C_SPARSE )
         nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
-
-    uncomp_buf[0] = MAT_T_MATRIX;
-    uncomp_buf[1] = (int)GetStructFieldBufSize(matvar);
-    z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
-    z->avail_in = 8;
-    do {
-        z->next_out  = ZLIB_BYTE_PTR(comp_buf);
-        z->avail_out = buf_size*sizeof(*comp_buf);
-        deflate(z,Z_NO_FLUSH);
-        byteswritten += fwrite(comp_buf,1,buf_size*sizeof(*comp_buf)-z->avail_out,
-            (FILE*)mat->fp);
-    } while ( z->avail_out == 0 );
     uncomp_buf[0] = array_flags_type;
     uncomp_buf[1] = array_flags_size;
     uncomp_buf[2] = array_flags;

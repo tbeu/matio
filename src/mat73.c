@@ -2157,6 +2157,8 @@ Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
             err = Mat_VarWriteSparse73(id,matvar,name);
             break;
         case MAT_C_EMPTY:
+            err = Mat_WriteEmptyVariable73(id,name,matvar->rank,matvar->dims);
+            break;
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
         case MAT_C_OPAQUE:
@@ -2184,7 +2186,7 @@ Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
 mat_t *
 Mat_Create73(const char *matname,const char *hdr_str)
 {
-    FILE *fp = NULL;
+    FILE *fp;
     mat_int16_t endian = 0, version;
     mat_t *mat = NULL;
     size_t err;

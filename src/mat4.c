@@ -54,7 +54,7 @@
 mat_t *
 Mat_Create4(const char* matname)
 {
-    FILE *fp = NULL;
+    FILE *fp;
     mat_t *mat = NULL;
 
     fp = fopen(matname,"w+b");
