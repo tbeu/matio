@@ -92,3 +92,5 @@ var9                       4x5                 20B  mxINT8_CLASS
 var90                      5x5                 25B  mxUINT8_CLASS     
 var91                      2x1                458B  mxSTRUCT_CLASS    
 var92                      4x1                330B  mxCELL_CLASS      
+var93                      2x3                360B  mxCELL_CLASS      
+var94                      3x1                488B  mxSTRUCT_CLASS    
