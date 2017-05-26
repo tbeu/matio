@@ -645,7 +645,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 
             matvar->internal->num_fields = nfields;
             matvar->internal->fieldnames =
-                (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
+                (char**)malloc(nfields*sizeof(*matvar->internal->fieldnames));
             for ( i = 0; i < nfields; i++ ) {
                 matvar->internal->fieldnames[i] =
                     (char*)calloc(fieldnames_vl[i].len+1,1);
@@ -1009,153 +1009,19 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
 
     switch ( H5Iget_type(ref_id) ) {
         case H5I_DATASET:
-        {
-            hid_t attr_id,type_id,dset_id,space_id;
-
-            /* matvar->fp = mat; */
-            dset_id = ref_id;
-
-#if 0
-            /* Get the HDF5 name of the variable */
-            name_len = H5Iget_name(dset_id,NULL,0);
-            matvar->hdf5_name = malloc(name_len+1);
-            (void)H5Iget_name(dset_id,matvar->hdf5_name,name_len);
-            printf("%s\n",matvar->hdf5_name);
-#endif
-
-            /* Get the rank and dimensions of the data */
-            space_id = H5Dget_space(dset_id);
-            matvar->rank = H5Sget_simple_extent_ndims(space_id);
-            matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
-            if ( NULL == matvar->dims ) {
-                H5Sclose(space_id);
-                break;
-            } else {
-                hsize_t* dims = (hsize_t*)malloc(matvar->rank*sizeof(hsize_t));
-                if ( NULL != dims ) {
-                    int k;
-                    (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
-                    for ( k = 0; k < matvar->rank; k++ )
-                        matvar->dims[k] = dims[matvar->rank - k - 1];
-                    free(dims);
-                    H5Sclose(space_id);
-                } else {
-                    H5Sclose(space_id);
-                    Mat_Critical("Error allocating memory for dims");
-                    return;
-                }
-            }
-
-            Mat_H5ReadClassType(matvar,dset_id);
-
-            if ( H5Aexists_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT) ) {
-                attr_id = H5Aopen_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT,H5P_DEFAULT);
-                /* FIXME: Check that dataspace is scalar */
-                H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
-                H5Aclose(attr_id);
-            }
-
-            /* Check for attribute that indicates an empty array */
-            if ( H5Aexists_by_name(dset_id,".","MATLAB_empty",H5P_DEFAULT) ) {
-                int empty = 0;
-                attr_id = H5Aopen_by_name(dset_id,".","MATLAB_empty",H5P_DEFAULT,H5P_DEFAULT);
-                /* FIXME: Check that dataspace is scalar */
-                H5Aread(attr_id,H5T_NATIVE_INT,&empty);
-                H5Aclose(attr_id);
-                if ( empty ) {
-                    matvar->rank = matvar->dims[0];
-                    free(matvar->dims);
-                    matvar->dims = (size_t*)calloc(matvar->rank,sizeof(*matvar->dims));
-                    H5Dread(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
-                            H5P_DEFAULT,matvar->dims);
-                }
-            }
-
-            /* Test if dataset type is compound and if so if it's complex */
-            type_id = H5Dget_type(dset_id);
-            if ( H5T_COMPOUND == H5Tget_class(type_id) ) {
-                /* FIXME: Any more checks? */
-                matvar->isComplex = MAT_F_COMPLEX;
-            }
-            H5Tclose(type_id);
-
-            /* If the dataset is a cell array read the info of the cells */
-            if ( MAT_C_CELL == matvar->class_type ) {
-                matvar_t **cells;
-                int i,ncells = 1;
-
-                for ( i = 0; i < matvar->rank; i++ )
-                    ncells *= matvar->dims[i];
-                matvar->data_size = sizeof(matvar_t**);
-                matvar->nbytes    = ncells*matvar->data_size;
-                matvar->data      = malloc(matvar->nbytes);
-                cells = (matvar_t**)matvar->data;
-
-                if ( ncells > 0 ) {
-                    hobj_ref_t *ref_ids;
-                    ref_ids = (hobj_ref_t*)malloc(ncells*sizeof(*ref_ids));
-                    H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,ref_ids);
-                    for ( i = 0; i < ncells; i++ ) {
-                        hid_t ref_id;
-                        cells[i] = Mat_VarCalloc();
-                        cells[i]->internal->hdf5_ref = ref_ids[i];
-                        /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
-                        ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids+i);
-                        cells[i]->internal->id = ref_id;
-                        cells[i]->internal->fp = matvar->internal->fp;
-                        Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
-                    }
-                    free(ref_ids);
-                }
-            } else if ( MAT_C_STRUCT == matvar->class_type ) {
-                /* Empty structures can be a dataset */
-
-                /* Check if the structure defines its fields in MATLAB_fields */
-                if ( H5Aexists_by_name(dset_id,".","MATLAB_fields",H5P_DEFAULT) ) {
-                    int      i;
-                    hid_t    field_id;
-                    hsize_t  nfields;
-                    hvl_t   *fieldnames_vl;
-
-                    attr_id = H5Aopen_by_name(dset_id,".","MATLAB_fields",H5P_DEFAULT,H5P_DEFAULT);
-                    space_id = H5Aget_space(attr_id);
-                    (void)H5Sget_simple_extent_dims(space_id,&nfields,NULL);
-                    field_id = H5Aget_type(attr_id);
-                    fieldnames_vl = (hvl_t*)malloc(nfields*sizeof(*fieldnames_vl));
-                    H5Aread(attr_id,field_id,fieldnames_vl);
-
-                    matvar->internal->num_fields = nfields;
-                    matvar->internal->fieldnames =
-                        (char**)malloc(nfields*sizeof(*matvar->internal->fieldnames));
-                    for ( i = 0; i < nfields; i++ ) {
-                        matvar->internal->fieldnames[i] =
-                            (char*)calloc(fieldnames_vl[i].len+1,1);
-                        memcpy(matvar->internal->fieldnames[i],
-                               fieldnames_vl[i].p,fieldnames_vl[i].len);
-                    }
-
-                    H5Dvlen_reclaim(field_id,space_id,H5P_DEFAULT,
-                        fieldnames_vl);
-                    H5Sclose(space_id);
-                    H5Tclose(field_id);
-                    H5Aclose(attr_id);
-                    free(fieldnames_vl);
-                }
-            }
-
-            if ( matvar->internal->id != dset_id ) {
+            Mat_H5ReadDatasetInfo(mat,matvar,ref_id);
+            if ( matvar->internal->id != ref_id ) {
                 /* Close dataset and increment count */
-                H5Dclose(dset_id);
+                H5Dclose(ref_id);
             }
 
-            /*H5Dclose(dset_id);*/
+            /*H5Dclose(ref_id);*/
             break;
-        }
+
         case H5I_GROUP:
-        {
             Mat_H5ReadGroupInfo(mat,matvar,ref_id);
             break;
-        }
+
         default:
             break;
     }
@@ -2778,142 +2644,9 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
     switch ( object_info.type ) {
         case H5O_TYPE_DATASET:
         {
-            ssize_t name_len;
-            hid_t   attr_id,type_id,dset_id,space_id;
+            hid_t dset_id = H5Dopen(fid,matvar->name,H5P_DEFAULT);
 
-            dset_id = H5Dopen(fid,matvar->name,H5P_DEFAULT);
-
-            /* Get the HDF5 name of the variable */
-            name_len = H5Iget_name(dset_id,NULL,0);
-            if ( name_len > 0 ) {
-                matvar->internal->hdf5_name = (char*)malloc(name_len+1);
-                (void)H5Iget_name(dset_id,matvar->internal->hdf5_name,
-                                  name_len+1);
-            } else {
-                /* Can not get an internal name, so leave the identifier open */
-                matvar->internal->id = dset_id;
-            }
-
-            space_id = H5Dget_space(dset_id);
-            matvar->rank = H5Sget_simple_extent_ndims(space_id);
-            matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
-            if ( NULL != matvar->dims ) {
-                hsize_t* dims = (hsize_t*)malloc(matvar->rank*sizeof(hsize_t));
-                if ( NULL != dims ) {
-                    int k;
-                    (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
-                    for ( k = 0; k < matvar->rank; k++ )
-                        matvar->dims[k] = dims[matvar->rank - k - 1];
-                    free(dims);
-                    H5Sclose(space_id);
-                } else {
-                    H5Sclose(space_id);
-                    Mat_Critical("Error allocating memory for dims");
-                    return -1;
-                }
-            } else {
-                H5Sclose(space_id);
-                Mat_VarFree(matvar);
-                Mat_Critical("Error allocating memory for matvar->dims");
-                return -1;
-            }
-
-            Mat_H5ReadClassType(matvar,dset_id);
-
-            if ( H5Aexists_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT) ) {
-                attr_id = H5Aopen_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT,H5P_DEFAULT);
-                /* FIXME: Check that dataspace is scalar */
-                H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
-                H5Aclose(attr_id);
-            }
-
-            /* Check for attribute that indicates an empty array */
-            if ( H5Aexists_by_name(dset_id,".","MATLAB_empty",H5P_DEFAULT) ) {
-                int empty = 0;
-                attr_id = H5Aopen_by_name(dset_id,".","MATLAB_empty",H5P_DEFAULT,H5P_DEFAULT);
-                /* FIXME: Check that dataspace is scalar */
-                H5Aread(attr_id,H5T_NATIVE_INT,&empty);
-                H5Aclose(attr_id);
-                if ( empty ) {
-                    matvar->rank = matvar->dims[0];
-                    free(matvar->dims);
-                    matvar->dims = (size_t*)calloc(matvar->rank,sizeof(*matvar->dims));
-                    H5Dread(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
-                            H5P_DEFAULT,matvar->dims);
-                }
-            }
-
-            /* Test if dataset type is compound and if so if it's complex */
-            type_id = H5Dget_type(dset_id);
-            if ( H5T_COMPOUND == H5Tget_class(type_id) ) {
-                /* FIXME: Any more checks? */
-                matvar->isComplex = MAT_F_COMPLEX;
-            }
-            H5Tclose(type_id);
-
-            /* If the dataset is a cell array read the info of the cells */
-            if ( MAT_C_CELL == matvar->class_type ) {
-                matvar_t **cells;
-                int i,ncells = 1;
-                hobj_ref_t *ref_ids;
-
-                for ( i = 0; i < matvar->rank; i++ )
-                    ncells *= matvar->dims[i];
-                matvar->data_size = sizeof(matvar_t**);
-                matvar->nbytes    = ncells*matvar->data_size;
-                matvar->data      = malloc(matvar->nbytes);
-                cells = (matvar_t**)matvar->data;
-
-                if ( ncells ) {
-                    ref_ids = (hobj_ref_t*)malloc(ncells*sizeof(*ref_ids));
-                    H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,ref_ids);
-                    for ( i = 0; i < ncells; i++ ) {
-                        hid_t ref_id;
-                        cells[i] = Mat_VarCalloc();
-                        cells[i]->internal->hdf5_ref = ref_ids[i];
-                        /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
-                        ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids+i);
-                        cells[i]->internal->id = ref_id;
-                        cells[i]->internal->fp = matvar->internal->fp;
-                        Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
-                    }
-                    free(ref_ids);
-                }
-            } else if ( MAT_C_STRUCT == matvar->class_type ) {
-                /* Empty structures can be a dataset */
-
-                /* Check if the structure defines its fields in MATLAB_fields */
-                if ( H5Aexists_by_name(dset_id,".","MATLAB_fields",H5P_DEFAULT) ) {
-                    int      i;
-                    hid_t    field_id;
-                    hsize_t  nfields;
-                    hvl_t   *fieldnames_vl;
-
-                    attr_id = H5Aopen_by_name(dset_id,".","MATLAB_fields",H5P_DEFAULT,H5P_DEFAULT);
-                    space_id = H5Aget_space(attr_id);
-                    (void)H5Sget_simple_extent_dims(space_id,&nfields,NULL);
-                    field_id = H5Aget_type(attr_id);
-                    fieldnames_vl = (hvl_t*)malloc(nfields*sizeof(*fieldnames_vl));
-                    H5Aread(attr_id,field_id,fieldnames_vl);
-
-                    matvar->internal->num_fields = nfields;
-                    matvar->internal->fieldnames =
-                        (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
-                    for ( i = 0; i < nfields; i++ ) {
-                        matvar->internal->fieldnames[i] =
-                            (char*)calloc(fieldnames_vl[i].len+1,1);
-                        memcpy(matvar->internal->fieldnames[i],fieldnames_vl[i].p,
-                               fieldnames_vl[i].len);
-                    }
-
-                    H5Dvlen_reclaim(field_id,space_id,H5P_DEFAULT,fieldnames_vl);
-                    H5Sclose(space_id);
-                    H5Tclose(field_id);
-                    H5Aclose(attr_id);
-                    free(fieldnames_vl);
-                }
-            }
-
+            Mat_H5ReadDatasetInfo(mat,matvar,dset_id);
             if ( matvar->internal->id != dset_id ) {
                 /* Close dataset and increment count */
                 H5Dclose(dset_id);
@@ -2923,9 +2656,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
         }
         case H5O_TYPE_GROUP:
         {
-            hid_t dset_id;
-
-            dset_id = H5Gopen(fid,matvar->name,H5P_DEFAULT);
+            hid_t dset_id = H5Gopen(fid,matvar->name,H5P_DEFAULT);
 
             Mat_H5ReadGroupInfo(mat,matvar,dset_id);
             H5Gclose(dset_id);
