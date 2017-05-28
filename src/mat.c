@@ -1658,12 +1658,14 @@ Mat_VarGetSize(matvar_t *matvar)
             matvar_t **fields = (matvar_t**)matvar->data;
             if ( NULL != fields ) {
                 bytes = nmemb*nfields*overhead;
-                for ( i = 0; i < nmemb*nfields; i++ )
-                    if ( NULL != fields[i] )
+                for ( i = 0; i < nmemb*nfields; i++ ) {
+                    if ( NULL != fields[i] ) {
                         if ( MAT_C_EMPTY != fields[i]->class_type )
                             bytes += Mat_VarGetSize(fields[i]);
                         else
                             bytes += ptr - overhead;
+                    }
+                }
             }
         }
         bytes += 64 /* max field name length */ *nfields;
