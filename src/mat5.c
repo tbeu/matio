@@ -341,7 +341,9 @@ Mat_Create5(const char *matname,const char *hdr_str)
     mat->bof           = 128;
     mat->next_index    = 0;
     mat->num_datasets  = 0;
+#if defined(MAT73) && MAT73
     mat->refs_id       = -1;
+#endif
     mat->dir           = NULL;
 
     t = time(NULL);

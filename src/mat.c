@@ -284,7 +284,9 @@ Mat_Open(const char *matname,int mode)
     mat->version       = 0;
     mat->byteswap      = 0;
     mat->num_datasets  = 0;
+#if defined(MAT73) && MAT73
     mat->refs_id       = -1;
+#endif
     mat->dir           = NULL;
 
     bytesread += fread(mat->header,1,116,fp);
@@ -336,7 +338,9 @@ Mat_Open(const char *matname,int mode)
         mat->mode          = mode;
         mat->bof           = 0;
         mat->next_index    = 0;
+#if defined(MAT73) && MAT73
         mat->refs_id       = -1;
+#endif
 
         Mat_Rewind(mat);
         var = Mat_VarReadNextInfo4(mat);
@@ -663,9 +667,11 @@ Mat_VarCalloc(void)
             free(matvar);
             matvar = NULL;
         } else {
+#if defined(MAT73) && MAT73
             matvar->internal->hdf5_name  = NULL;
             matvar->internal->hdf5_ref   =  0;
             matvar->internal->id         = -1;
+#endif
             matvar->internal->fpos       = 0;
             matvar->internal->datapos    = 0;
             matvar->internal->fp         = NULL;
@@ -1120,11 +1126,13 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->dims = NULL;
     out->data = NULL;
 
+#if defined(MAT73) && MAT73
     if ( NULL != in->internal->hdf5_name )
         out->internal->hdf5_name = strdup(in->internal->hdf5_name);
 
     out->internal->hdf5_ref = in->internal->hdf5_ref;
     out->internal->id       = in->internal->id;
+#endif
     out->internal->fpos     = in->internal->fpos;
     out->internal->datapos  = in->internal->datapos;
 #if defined(HAVE_ZLIB)
