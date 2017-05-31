@@ -35,9 +35,6 @@
 #endif
 #if defined(MAT73) && MAT73
 #   include <hdf5.h>
-#else
-#   define hobj_ref_t int
-#   define hid_t int
 #endif
 
 #ifndef EXTERN
@@ -70,7 +67,9 @@ struct _mat_t {
     long   bof;             /**< Beginning of file not including any header */
     size_t next_index;      /**< Index/File position of next variable to read */
     size_t num_datasets;    /**< Number of datasets in the file */
+#if defined(MAT73) && MAT73
     hid_t  refs_id;         /**< Id of the /#refs# group in HDF5 */
+#endif
     char **dir;             /**< Names of the datasets in the file */
 };
 
@@ -80,9 +79,11 @@ struct _mat_t {
  * @endif
  */
 struct matvar_internal {
+#if defined(MAT73) && MAT73
     char *hdf5_name;        /**< Name */
     hobj_ref_t hdf5_ref;    /**< Reference */
     hid_t      id;          /**< Id */
+#endif
     long       fpos;        /**< Offset from the beginning of the MAT file to the variable */
     long       datapos;     /**< Offset from the beginning of the MAT file to the data */
     mat_t     *fp;          /**< Pointer to the MAT file structure (mat_t) */

@@ -37,6 +37,7 @@
 #include <time.h>
 #include "matio_private.h"
 
+#if defined(MAT73) && MAT73
 #if HAVE_HDF5
 
 #include "mat73.h"
@@ -2695,4 +2696,5 @@ Mat_VarWrite73(mat_t *mat,matvar_t *matvar,int compress)
     return Mat_VarWriteNext73(id,matvar,matvar->name,&(mat->refs_id));
 }
 
+#endif
 #endif
