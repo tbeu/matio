@@ -40,10 +40,6 @@
 #   define __STDC_FORMAT_MACROS
 #   include <inttypes.h>
 #endif
-#if defined(_WIN64) || defined(_WIN32)
-#   include <io.h>
-#   define mktemp _mktemp
-#endif
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
 #else
@@ -56,11 +52,39 @@
 #   include "mat73.h"
 #endif
 
+#if defined(_WIN64) || defined(_WIN32)
+#include <fcntl.h>
+#include <share.h>
+#endif
+
 /*
  *===================================================================
  *                 Private Functions
  *===================================================================
  */
+
+static char *
+TempFilename()
+{
+#if !defined(_WIN64) && !defined(_WIN32)
+  int fd;
+#endif
+  static char template[7] = "XXXXXX";
+  static char temp[7];
+  strcpy(temp, template);
+#if defined(_WIN64) || defined(_WIN32)
+  return _mktemp(temp);
+#else
+  fd = mkstemp(temp);
+  if (fd > 0) {
+    close(fd);
+    return temp;
+  }
+  else {
+    return NULL;
+  }
+#endif
+}
 
 static void
 ReadData(mat_t *mat, matvar_t *matvar)
@@ -972,12 +996,11 @@ Mat_VarDelete(mat_t *mat, const char *name)
 {
     int   err = 1;
     char *tmp_name;
-    char temp[7] = "XXXXXX";
 
     if ( NULL == mat || NULL == name )
         return err;
 
-    if ( (tmp_name = mktemp(temp)) != NULL ) {
+    if ((tmp_name = TempFilename()) != NULL) {
         enum mat_ft mat_file_ver;
         mat_t *tmp;
 
