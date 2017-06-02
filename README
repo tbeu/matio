@@ -90,12 +90,14 @@ Table of Contents
 
     2.2 Building matio
         2.2.1 Quick Build Guide
-            The primary method for building the software is using 'configure'
-            followed by 'make'. After building, the testsuite can be executed to
+            The primary method for building the software is running 'autoconf' to
+            produce the configure skript then using 'configure' followed by 'make'.
+            After building, the testsuite can be executed to
             test the software using 'make check'. The software can be installed
             using 'make install'. For example,
                 $ tar zxf matio-X.Y.Z.tar.gz
                 $ cd matio-X.Y.Z
+                $ autoconf
                 $ ./configure
                 $ make
                 $ make check
