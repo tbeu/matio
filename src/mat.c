@@ -443,6 +443,17 @@ Mat_GetFilename(mat_t *mat)
     return filename;
 }
 
+const char * 
+Mat_GetHeader(mat_t *matfp) {
+	
+	const char * header = NULL;
+
+	if ( matfp != NULL ) {
+		header = matfp->header;
+	}
+	return header;
+}
+
 /** @brief Gets the version of the given MAT file
  *
  * Gets the version of the given MAT file
@@ -655,6 +666,7 @@ Mat_VarCalloc(void)
         matvar->isLogical    = 0;
         matvar->dims         = NULL;
         matvar->name         = NULL;
+		matvar->classname    = NULL;
         matvar->data         = NULL;
         matvar->mem_conserve = 0;
         matvar->compression  = MAT_COMPRESSION_NONE;
@@ -1119,6 +1131,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->name = NULL;
     out->dims = NULL;
     out->data = NULL;
+	out->classname = NULL;
 
     if ( NULL != in->internal->hdf5_name )
         out->internal->hdf5_name = strdup(in->internal->hdf5_name);
@@ -1144,6 +1157,8 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 
     if (in->name != NULL && (NULL != (out->name = (char*)malloc(strlen(in->name)+1))))
         memcpy(out->name,in->name,strlen(in->name)+1);
+	if (in->classname != NULL && (NULL != (out->classname = malloc(strlen(in->classname) + 1))))
+		memcpy(out->classname, in->classname, strlen(in->classname) + 1);
 
     out->dims = (size_t*)malloc(in->rank*sizeof(*out->dims));
     if ( out->dims != NULL )
@@ -1211,7 +1226,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 
     if ( !opt ) {
         out->data = in->data;
-    } else if ( (in->data != NULL) && (in->class_type == MAT_C_STRUCT) ) {
+    } else if ( (in->data != NULL) && ( ( in->class_type == MAT_C_STRUCT)  || ( in->class_type == MAT_C_OBJECT ) ) ) {
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
             int nfields = in->nbytes / in->data_size;

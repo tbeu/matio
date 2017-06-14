@@ -473,6 +473,55 @@ InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf)
     return bytesread;
 }
 
+/** @brief Inflates the variable name tag
+*
+* @ingroup mat_internal
+* @param mat Pointer to the MAT file
+* @param matvar Pointer to the MAT variable
+* @param buf Pointer to store the variables name tag
+* @return Number of bytes read from the file
+*/
+size_t
+InflateClassNameTag(mat_t *mat, matvar_t *matvar, void *buf)
+{
+	mat_uint8_t comp_buf[32];
+	size_t     bytesread = 0, err;
+
+	if (buf == NULL)
+		return 0;
+
+	if (!matvar->internal->z->avail_in) {
+		matvar->internal->z->avail_in = 1;
+		matvar->internal->z->next_in = comp_buf;
+		bytesread += fread(comp_buf, 1, 1, mat->fp);
+	}
+	matvar->internal->z->avail_out = 8;
+	matvar->internal->z->next_out = buf;
+	err = inflate(matvar->internal->z, Z_NO_FLUSH);
+	if (err != Z_OK) {
+		Mat_Critical("InflateClassNameTag: inflate returned %d", err);
+		return bytesread;
+	}
+	while (matvar->internal->z->avail_out && !matvar->internal->z->avail_in) {
+		matvar->internal->z->avail_in = 1;
+		matvar->internal->z->next_in = comp_buf;
+		bytesread += fread(comp_buf, 1, 1, mat->fp);
+		err = inflate(matvar->internal->z, Z_NO_FLUSH);
+		if (err != Z_OK) {
+			Mat_Critical("InflateVarNameTag: inflate returned %d", err);
+			return bytesread;
+		}
+	}
+
+	if (matvar->internal->z->avail_in) {
+		fseek(mat->fp, -(int)matvar->internal->z->avail_in, SEEK_CUR);
+		bytesread -= matvar->internal->z->avail_in;
+		matvar->internal->z->avail_in = 0;
+	}
+
+	return bytesread;
+}
+
 /** @brief Inflates the variable name
  *
  * @ingroup mat_internal
@@ -522,6 +571,55 @@ InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
     }
 
     return bytesread;
+}
+/** @brief Inflates the class name
+*
+* @ingroup mat_internal
+* @param mat Pointer to the MAT file
+* @param matvar Pointer to the MAT variable
+* @param buf Pointer to store the variables name
+* @param N Number of characters in the name
+* @return Number of bytes read from the file
+*/
+size_t
+InflateClassName(mat_t *mat, matvar_t *matvar, void *buf, int N)
+{
+	mat_uint8_t comp_buf[32];
+	size_t     bytesread = 0, err;
+
+	if (buf == NULL)
+		return 0;
+
+	if (!matvar->internal->z->avail_in) {
+		matvar->internal->z->avail_in = 1;
+		matvar->internal->z->next_in = comp_buf;
+		bytesread += fread(comp_buf, 1, 1, mat->fp);
+	}
+	matvar->internal->z->avail_out = N;
+	matvar->internal->z->next_out = buf;
+	err = inflate(matvar->internal->z, Z_NO_FLUSH);
+	if (err != Z_OK) {
+		Mat_Critical("InflateClassName: inflate returned %d", err);
+		return bytesread;
+	}
+	while (matvar->internal->z->avail_out && !matvar->internal->z->avail_in) {
+		matvar->internal->z->avail_in = 1;
+		matvar->internal->z->next_in = comp_buf;
+		bytesread += fread(comp_buf, 1, 1, mat->fp);
+		err = inflate(matvar->internal->z, Z_NO_FLUSH);
+		if (err != Z_OK) {
+			Mat_Critical("InflateClassName: inflate returned %d", err);
+			return bytesread;
+		}
+	}
+
+	if (matvar->internal->z->avail_in) {
+		fseek(mat->fp, -(int)matvar->internal->z->avail_in, SEEK_CUR);
+		bytesread -= matvar->internal->z->avail_in;
+		matvar->internal->z->avail_in = 0;
+	}
+
+	return bytesread;
 }
 
 /** @brief Inflates the data's tag

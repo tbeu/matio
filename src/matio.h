@@ -98,7 +98,8 @@ enum matio_types {
     MAT_T_CELL       = 21,    /**< @brief Cell array data type                */
     MAT_T_STRUCT     = 22,    /**< @brief Structure data type                 */
     MAT_T_ARRAY      = 23,    /**< @brief Array data type                     */
-    MAT_T_FUNCTION   = 24     /**< @brief Function data type                  */
+    MAT_T_FUNCTION   = 24,    /**< @brief Function data type                  */
+	MAT_T_OBJECT     = 25,    /**< @brief Object data type                    */
 };
 
 /** @brief Matlab variable classes
@@ -195,6 +196,7 @@ typedef struct matvar_t {
     int   isLogical;                  /**< non-zero if the variable is logical */
     size_t *dims;                     /**< Array of lengths for each dimension */
     char *name;                       /**< Name of the variable */
+	char * classname;                 /**< The name of the class type of the object */
     void *data;                       /**< Pointer to the data */
     int   mem_conserve;               /**< 1 if Memory was conserved with data */
     enum matio_compression  compression; /**< Variable compression type */
@@ -261,6 +263,7 @@ EXTERN mat_t      *Mat_Open(const char *matname,int mode);
 EXTERN const char *Mat_GetFilename(mat_t *mat);
 EXTERN enum mat_ft Mat_GetVersion(mat_t *mat);
 EXTERN char      **Mat_GetDir(mat_t *mat, size_t *n);
+EXTERN const char * Mat_GetHeader(mat_t *matfp);
 EXTERN int         Mat_Rewind(mat_t *mat);
 
 /* MAT variable functions */

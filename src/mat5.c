@@ -85,6 +85,26 @@ GetStructFieldBufSize(matvar_t *matvar)
         nBytes += tag_size + matvar->rank*4;
 
     switch ( matvar->class_type ) {
+	case MAT_C_OBJECT: {
+		// if cell element is a classobject space is needed for the class name
+
+		size_t len = 0;
+
+		if (NULL != matvar->classname)
+			len = strlen(matvar->classname);
+		else
+			len = 4;
+
+		if (len <= 4) {
+			nBytes += tag_size;
+		}
+		else {
+			if (len % 8)
+				len = len + (8 - len % 8);
+			nBytes += tag_size + len;
+		}
+		// the rest is equal to struct field fall through
+	}
     case MAT_C_STRUCT:
     {
         matvar_t **fields = (matvar_t**)matvar->data;
@@ -206,6 +226,26 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
         nBytes += tag_size + matvar->rank*4;
 
     switch ( matvar->class_type ) {
+	case MAT_C_OBJECT:{
+		// if cell element is a classobject space is needed for the class name
+
+		size_t len = 0;
+
+		if (NULL != matvar->classname)
+			len = strlen(matvar->classname);
+		else
+			len = 4;
+
+		if (len <= 4) {
+			nBytes += tag_size;
+		}
+		else {
+			if (len % 8)
+				len = len + (8 - len % 8);
+			nBytes += tag_size + len;
+		}
+		// the rest is equal to struct field fall through
+	}
     case MAT_C_STRUCT:
     {
         matvar_t **fields = (matvar_t**)matvar->data;
@@ -377,6 +417,26 @@ GetMatrixMaxBufSize(matvar_t *matvar)
         nBytes += tag_size + matvar->rank*4;
 
     switch ( matvar->class_type ) {
+	case MAT_C_OBJECT: {
+		// if cell element is a classobject space is needed for the class name
+
+		size_t len = 0;
+
+		if (NULL != matvar->classname)
+			len = strlen(matvar->classname);
+		else
+			len = 4;
+
+		if (len <= 4) {
+			nBytes += tag_size;
+		}
+		else {
+			if (len % 8)
+				len = len + (8 - len % 8);
+			nBytes += tag_size + len;
+		}
+		// the rest is equal to struct field fall through
+	}
     case MAT_C_STRUCT:
     {
         matvar_t **fields = (matvar_t**)matvar->data;
@@ -1878,6 +1938,46 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                         cells[i]->name[len] = '\0';
                     }
                 }
+				if (cells[i]->class_type == MAT_C_OBJECT) {
+                    bytesread += InflateClassNameTag(mat, matvar, uncomp_buf);
+                    if (mat->byteswap)
+                        (void)Mat_uint32Swap(uncomp_buf);
+                    /* Name of class */
+                    if (uncomp_buf[0] == MAT_T_INT8) {    /* Name not in tag */
+                        int len;
+                        if (mat->byteswap)
+                            len = Mat_uint32Swap(uncomp_buf + 1);
+                        else
+                            len = uncomp_buf[1];
+     
+                        if (len % 8 == 0)
+                            i = len;
+                        else
+                            i = len + (8 - (len % 8));
+                        cells[i]->classname = malloc(i + 1);
+                        /* Inflate variable name */
+                        bytesread += InflateClassName(mat, cells[i], cells[i]->classname, i);
+                        cells[i]->classname[len] = '\0';
+                    }
+                    else if (((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                        ((uncomp_buf[0] & 0xffff0000) != 0x00)) {
+                        /* Name packed in tag */
+                        int len;
+                        len = (uncomp_buf[0] & 0xffff0000) >> 16;
+                        cells[i]->classname = malloc(len + 1);
+                        memcpy(cells[i]->classname, uncomp_buf + 1, len);
+                        cells[i]->classname[len] = '\0';
+                    }
+                    nbytes -= 8;
+                    cells[i]->internal->z = calloc(1, sizeof(z_stream));
+                    err = inflateCopy(cells[i]->internal->z, matvar->internal->z);
+                    if (err != Z_OK) {
+                        Mat_Critical("inflateCopy returned error %d", err);
+                    }
+                    // TODO copy class name fields[i]->classname
+                    cells[i]->internal->datapos = ftell(mat->fp) - matvar->internal->z->avail_in;
+                    goto READ_NEXT_OBJECT_CELL;
+                }
                 cells[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
                 if ( cells[i]->internal->z != NULL ) {
                     err = inflateCopy(cells[i]->internal->z,matvar->internal->z);
@@ -1885,8 +1985,12 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                         cells[i]->internal->datapos = ftell((FILE*)mat->fp);
                         if ( cells[i]->internal->datapos != -1L ) {
                             cells[i]->internal->datapos -= matvar->internal->z->avail_in;
-                            if ( cells[i]->class_type == MAT_C_STRUCT )
+                            if ( cells[i]->class_type == MAT_C_STRUCT ) {
+
+READ_NEXT_OBJECT_CELL:
+
                                 bytesread+=ReadNextStructField(mat,cells[i]);
+                            }
                             else if ( cells[i]->class_type == MAT_C_CELL )
                                 bytesread+=ReadNextCell(mat,cells[i]);
                             else if ( nbytes <= (1 << MAX_WBITS) ) {
@@ -1903,6 +2007,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                         }
                         if ( cells[i]->internal->data != NULL ||
                              cells[i]->class_type == MAT_C_STRUCT ||
+                             cells[i]->class_type == MAT_C_OBJECT ||
                              cells[i]->class_type == MAT_C_CELL ) {
                             /* Memory optimization: Free inflate state */
                             inflateEnd(cells[i]->internal->z);
@@ -2033,10 +2138,51 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                     (void)fseek((FILE*)mat->fp,name_len,SEEK_CUR);
                 }
             }
+            if (cells[i]->class_type == MAT_C_OBJECT) {
+                /* Class Name Tag */
+                bytesread += fread(buf, 4, 2, mat->fp);
+                if (mat->byteswap)
+                    (void)Mat_uint32Swap(buf);
+                if (buf[0] == MAT_T_INT8) {    /* Name not in tag */
+                    int len;
+ 
+                    if (mat->byteswap)
+                        len = Mat_uint32Swap(buf + 1);
+                    else
+                        len = buf[1];
+                    if (len % 8 == 0)
+                        i = len;
+                    else
+                        i = len + (8 - (len % 8));
+                    bytesread += fread(buf, 1, i, mat->fp);
+ 
+                    cells[i]->classname = malloc(len + 1);
+                    memcpy(cells[i]->classname, buf, len);
+                    cells[i]->classname[len] = '\0';
+                }
+                else if (((buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                    ((buf[0] & 0xffff0000) != 0x00)) {
+                    /* Name packed in the tag */
+                    int len;
+ 
+                    len = (buf[0] & 0xffff0000) >> 16;
+                    cells[i]->classname = malloc(len + 1);
+                    memcpy(cells[i]->classname, buf + 1, len);
+                    cells[i]->classname[len] = '\0';
+                }
+                // read fields of class, their format is equal to the one of 
+                // struct fields
+                cells[i]->internal->datapos = ftell(mat->fp);
+                goto READ_OBJECT_NEXT_CELL;
+            }
             cells[i]->internal->datapos = ftell((FILE*)mat->fp);
             if ( cells[i]->internal->datapos != -1L ) {
-                if ( cells[i]->class_type == MAT_C_STRUCT )
+                if ( cells[i]->class_type == MAT_C_STRUCT ) {
+
+READ_OBJECT_NEXT_CELL:
+
                     bytesread+=ReadNextStructField(mat,cells[i]);
+				}
                 if ( cells[i]->class_type == MAT_C_CELL )
                     bytesread+=ReadNextCell(mat,cells[i]);
                 (void)fseek((FILE*)mat->fp,cells[i]->internal->datapos+nBytes,SEEK_SET);
@@ -2212,6 +2358,46 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 }
                 bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
                 nbytes -= 8;
+                if (fields[i]->class_type == MAT_C_OBJECT) {
+                    bytesread += InflateClassNameTag(mat, matvar, uncomp_buf);
+                    if (mat->byteswap)
+                        (void)Mat_uint32Swap(uncomp_buf);
+                    /* Name of class */
+                    if (uncomp_buf[0] == MAT_T_INT8) {    /* Name not in tag */
+                        int len;
+                        if (mat->byteswap)
+                            len = Mat_uint32Swap(uncomp_buf + 1);
+                        else
+                            len = uncomp_buf[1];
+     
+                        if (len % 8 == 0)
+                            i = len;
+                        else
+                            i = len + (8 - (len % 8));
+                        fields[i]->classname = malloc(i + 1);
+                        /* Inflate variable name */
+                        bytesread += InflateClassName(mat, fields[i], fields[i]->classname, i);
+                        fields[i]->classname[len] = '\0';
+                    }
+                    else if (((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                        ((uncomp_buf[0] & 0xffff0000) != 0x00)) {
+                        /* Name packed in tag */
+                        int len;
+                        len = (uncomp_buf[0] & 0xffff0000) >> 16;
+                        fields[i]->classname = malloc(len + 1);
+                        memcpy(fields[i]->classname, uncomp_buf + 1, len);
+                        fields[i]->classname[len] = '\0';
+                    }
+                    nbytes -= 8; 
+                    fields[i]->internal->z = calloc(1,sizeof(z_stream));
+                    err = inflateCopy(fields[i]->internal->z,matvar->internal->z);
+                    if ( err != Z_OK ) {
+                        Mat_Critical("inflateCopy returned error %d",err);
+                    }
+                    // TODO copy class name fields[i]->classname
+                    fields[i]->internal->datapos = ftell(mat->fp)-matvar->internal->z->avail_in;
+                    goto READ_NEXT_OBJECT_FIELD;
+                }
                 fields[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
                 if ( fields[i]->internal->z != NULL ) {
                     err = inflateCopy(fields[i]->internal->z,matvar->internal->z);
@@ -2219,8 +2405,12 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                         fields[i]->internal->datapos = ftell((FILE*)mat->fp);
                         if ( fields[i]->internal->datapos != -1L ) {
                             fields[i]->internal->datapos -= matvar->internal->z->avail_in;
-                            if ( fields[i]->class_type == MAT_C_STRUCT )
+                            if ( fields[i]->class_type == MAT_C_STRUCT ) {
+
+READ_NEXT_OBJECT_FIELD:
+
                                 bytesread+=ReadNextStructField(mat,fields[i]);
+                            }
                             else if ( fields[i]->class_type == MAT_C_CELL )
                                 bytesread+=ReadNextCell(mat,fields[i]);
                             else if ( nbytes <= (1 << MAX_WBITS) ) {
@@ -2237,6 +2427,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                         }
                         if ( fields[i]->internal->data != NULL ||
                              fields[i]->class_type == MAT_C_STRUCT ||
+                             fields[i]->class_type == MAT_C_OBJECT ||
                              fields[i]->class_type == MAT_C_CELL ) {
                             /* Memory optimization: Free inflate state */
                             inflateEnd(fields[i]->internal->z);
@@ -2397,10 +2588,50 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             /* Variable name tag */
             bytesread+=fread(buf,1,8,(FILE*)mat->fp);
             nBytes-=8;
+            if (fields[i]->class_type == MAT_C_OBJECT) {
+                /* Class Name Tag */
+                bytesread += fread(buf, 4, 2, mat->fp);
+                if (mat->byteswap)
+                    (void)Mat_uint32Swap(buf);
+                if (buf[0] == MAT_T_INT8) {    /* Name not in tag */
+                    int len;
+ 
+                    if (mat->byteswap)
+                        len = Mat_uint32Swap(buf + 1);
+                    else
+                        len = buf[1];
+                    if (len % 8 == 0)
+                        i = len;
+                    else
+                        i = len + (8 - (len % 8));
+                    bytesread += fread(buf, 1, i, mat->fp);
+ 
+                    fields[i]->classname = malloc(len + 1);
+                    memcpy(fields[i]->classname, buf, len);
+                    fields[i]->classname[len] = '\0';
+                }
+                else if (((buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                    ((buf[0] & 0xffff0000) != 0x00)) {
+                    /* Name packed in the tag */
+                    int len;
+ 
+                    len = (buf[0] & 0xffff0000) >> 16;
+                    fields[i]->classname = malloc(len + 1);
+                    memcpy(fields[i]->classname, buf + 1, len);
+                    fields[i]->classname[len] = '\0';
+                }
+                // read fields of class, their format is equal to the one of 
+                // struct fields
+                fields[i]->internal->datapos = ftell(mat->fp);
+                goto READ_OBJECT_NEXT_FIELD;
+            }
             fields[i]->internal->datapos = ftell((FILE*)mat->fp);
             if ( fields[i]->internal->datapos != -1L ) {
-                if ( fields[i]->class_type == MAT_C_STRUCT )
+                if ( fields[i]->class_type == MAT_C_STRUCT ) {
+
+READ_OBJECT_NEXT_FIELD:
                     bytesread+=ReadNextStructField(mat,fields[i]);
+                }
                 else if ( fields[i]->class_type == MAT_C_CELL )
                     bytesread+=ReadNextCell(mat,fields[i]);
                 (void)fseek((FILE*)mat->fp,fields[i]->internal->datapos+nBytes,SEEK_SET);
@@ -2623,10 +2854,6 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar )
 
     fwrite(&matrix_type,4,1,(FILE*)mat->fp);
     fwrite(&pad4,4,1,(FILE*)mat->fp);
-    if ( MAT_C_EMPTY == matvar->class_type ) {
-        /* exit early if this is an empty data */
-        return 0;
-    }
     start = ftell((FILE*)mat->fp);
 
     /* Array Flags */
@@ -4328,12 +4555,19 @@ Read5(mat_t *mat, matvar_t *matvar)
 #endif
             }
             break;
-        case MAT_C_STRUCT:
-        {
+		case MAT_C_OBJECT: {
+			matvar->data_type = MAT_T_OBJECT;
+
+			goto READ_OBJECT_FIELDS;
+        }
+        case MAT_C_STRUCT: {
+			matvar->data_type = MAT_T_STRUCT;
+
+READ_OBJECT_FIELDS:;
+
             matvar_t **fields;
             int nfields = 0;
 
-            matvar->data_type = MAT_T_STRUCT;
             if ( !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
                 break;
             nfields = matvar->internal->num_fields;
@@ -8216,10 +8450,15 @@ Mat_VarReadNextInfo5( mat_t *mat )
                     else
                         len = uncomp_buf[1];
 
+#if 0
                     if ( len % 8 == 0 )
                         i = len;
                     else
                         i = len+(8-(len % 8));
+#else
+                    // same as above but less operations ;-)
+                    i = ( ( len + 7 ) / 8 ) * 8;
+#endif
                     matvar->name = (char*)malloc(i+1);
                     /* Inflate variable name */
                     bytesread += InflateVarName(mat,matvar,matvar->name,i);
@@ -8233,7 +8472,47 @@ Mat_VarReadNextInfo5( mat_t *mat )
                     memcpy(matvar->name,uncomp_buf+1,len);
                     matvar->name[len] = '\0';
                 }
-                if ( matvar->class_type == MAT_C_STRUCT )
+    			if (matvar->class_type == MAT_C_OBJECT) {
+                    /* Inflate class name tag */
+                    bytesread += InflateClassNameTag(mat, matvar, uncomp_buf);
+                    if (mat->byteswap)
+                        (void)Mat_uint32Swap(uncomp_buf);
+                    /* Name of class */
+                    if (uncomp_buf[0] == MAT_T_INT8) {    /* Name not in tag */
+                        int len,i;
+                        if (mat->byteswap)
+                            len = Mat_uint32Swap(uncomp_buf + 1);
+                        else
+                            len = uncomp_buf[1];
+     
+#if 0
+                        if (len % 8 == 0)
+                            i = len;
+                        else
+                            i = len + (8 - (len % 8));
+#else
+                        i = ( ( len + 7 ) / 8 ) * 8;
+#endif
+                        matvar->classname = malloc(i + 1);
+                        /* Inflate variable name */
+                        bytesread += InflateVarName(mat, matvar, matvar->classname, i);
+                        matvar->classname[len] = '\0';
+                    }
+                    else if (((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                        ((uncomp_buf[0] & 0xffff0000) != 0x00)) {
+                        /* Name packed in tag */
+                        int len;
+                        len = (uncomp_buf[0] & 0xffff0000) >> 16;
+                        matvar->classname = malloc(len + 1);
+                        memcpy(matvar->classname, uncomp_buf + 1, len);
+                        matvar->classname[len] = '\0'; 
+                    }
+     
+                    // read fields of class, their format is equal to the one of 
+                    // struct fields
+                    (void)ReadNextStructField(mat,matvar);
+                }
+                else if ( matvar->class_type == MAT_C_STRUCT )
                     (void)ReadNextStructField(mat,matvar);
                 else if ( matvar->class_type == MAT_C_CELL )
                     (void)ReadNextCell(mat,matvar);
@@ -8335,7 +8614,47 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 memcpy(matvar->name,buf+1,len);
                 matvar->name[len] = '\0';
             }
-            if ( matvar->class_type == MAT_C_STRUCT )
+            if (matvar->class_type == MAT_C_OBJECT) {
+                /* Class Name Tag */
+                bytesread += fread(buf, 4, 2, mat->fp);
+                if (mat->byteswap)
+                    (void)Mat_uint32Swap(buf);
+                if (buf[0] == MAT_T_INT8) {    /* Name not in tag */
+                    int len,i;
+ 
+                    if (mat->byteswap)
+                        len = Mat_uint32Swap(buf + 1);
+                    else
+                        len = buf[1];
+#if 0
+                    if (len % 8 == 0)
+                        i = len;
+                    else
+                        i = len + (8 - (len % 8));
+#else
+                    i =  ( ( len + 7 ) / 8 ) * 8;
+#endif
+                    bytesread += fread(buf, 1, i, mat->fp);
+ 
+                    matvar->classname = malloc(len + 1);
+                    memcpy(matvar->classname, buf, len);
+                    matvar->classname[len] = '\0';
+                }
+                else if (((buf[0] & 0x0000ffff) == MAT_T_INT8) &&
+                    ((buf[0] & 0xffff0000) != 0x00)) {
+                    /* Name packed in the tag */
+                    int len;
+ 
+                    len = (buf[0] & 0xffff0000) >> 16;
+                    matvar->classname = malloc(len + 1);
+                    memcpy(matvar->classname, buf + 1, len);
+                    matvar->classname[len] = '\0';
+                }
+                // read fields of class, their format is equal to the one of 
+                // struct fields
+                (void)ReadNextStructField(mat,matvar);
+            }
+            else if ( matvar->class_type == MAT_C_STRUCT ) 
                 (void)ReadNextStructField(mat,matvar);
             else if ( matvar->class_type == MAT_C_CELL )
                 (void)ReadNextCell(mat,matvar);

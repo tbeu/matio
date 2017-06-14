@@ -419,6 +419,27 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 if ( done == 1 ) {
                     Mat_VarReadDataAll(mat, matvar);
                 }
+            } else if ( matvar->class_type == MAT_C_OBJECT ) {
+                next_tok_pos = get_next_token(next_tok_pos+1);
+                if ( next_tok_pos != varname ) {
+                    next_tok = *next_tok_pos;
+                    *next_tok_pos = '\0';
+                } else {
+                    done = 1;
+                }
+                /* FIXME: Handle structures > 1x1 */
+                field = Mat_VarGetStructFieldByName(matvar, varname, 0);
+                if ( field == NULL ) {
+                    fprintf(stderr,"field %s was not found in class structure %s",
+                        varname,matvar->name);
+                    break;
+                }
+                field = Mat_VarDuplicate(field,1);
+                Mat_VarFree(matvar);
+                matvar = field;
+                if ( done == 1 ) {
+                    Mat_VarReadDataAll(mat, matvar);
+                }
             } else if ( matvar->class_type == MAT_C_CELL ) {
                 int ncells;
                 matvar_t *cell, **cells;
@@ -434,15 +455,15 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 }
                 for ( j = 0 ; j < ncells; j++ ) {
                     cell = Mat_VarGetCell(matvar,j);
-                    if ( cell == NULL || cell->class_type != MAT_C_STRUCT ) {
-                        fprintf(stderr,"cell index %d is not a structure",j);
+                    if ( cell == NULL || ( ( cell->class_type != MAT_C_STRUCT ) && ( cell->class_type != MAT_C_OBJECT ) ) ) {
+                        fprintf(stderr,"cell index %d is neither a structure nor a valid matlab class object",j);
                         break;
                     } else {
                         /* FIXME: Handle structures > 1x1 */
                         field = Mat_VarGetStructFieldByName(cell,varname,0);
                         if ( field == NULL ) {
                             fprintf(stderr,"field %s was not found in "
-                                "structure %s",varname,matvar->name);
+                                "structure/class object %s",varname,matvar->name);
                             break;
                         }
                         field = Mat_VarDuplicate(field,1);
@@ -785,6 +806,48 @@ print_default(matvar_t *matvar)
                     print_default(fields[i]);
                 indent--;
                 Mat_Message("}");
+            }
+            break;
+        }
+        case MAT_C_OBJECT:
+        {
+            matvar_t **fields = (matvar_t **)matvar->data;
+            int        nfields;
+            int        i;
+            size_t     nmemb;
+
+            if ( matvar->name )
+                Mat_Message("      Name: %s", matvar->name);
+            Mat_Message("      Rank: %d", matvar->rank);
+            if ( matvar->rank == 0 )
+                return;
+            Mat_Message("Class Type: Object");
+			if ( matvar->classname ) 
+				Mat_Message("Class Name: %s",matvar->classname);
+
+            nfields = Mat_VarGetNumberOfFields(matvar);
+            nmemb = matvar->dims[0];
+            for ( i = 1; i < matvar->rank; i++ )
+                nmemb *= matvar->dims[i];
+            if ( nfields > 0 && nmemb < 1 ) {
+                char * const *fieldnames = Mat_VarGetStructFieldnames(matvar);
+                Mat_Message("Fields[%d] {", nfields);
+                indent++;
+                for ( i = 0; i < nfields; i++ )
+                    Mat_Message("    Name: %s", fieldnames[i]);
+                indent--;
+                Mat_Message("}");
+            } else if ( nfields > 0 && nmemb > 0 ) {
+                Mat_Message("Fields[%d] {", nfields);
+                indent++;
+                for ( i = 0; i < nfields*nmemb; i++ )
+                    print_default(fields[i]);
+                indent--;
+                Mat_Message("}");
+            }
+            else {
+                Mat_Message("  # Fields: %d",nfields);
+                Mat_Message(" # Members: %d",nmemb);
             }
             break;
         }
