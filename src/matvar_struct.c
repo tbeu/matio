@@ -157,7 +157,7 @@ unsigned
 Mat_VarGetNumberOfFields(matvar_t *matvar)
 {
     int nfields;
-    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
+    if ( matvar == NULL || ( matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT ) ||
         NULL == matvar->internal ) {
         nfields = 0;
     } else {
@@ -177,7 +177,7 @@ Mat_VarGetNumberOfFields(matvar_t *matvar)
 char * const *
 Mat_VarGetStructFieldnames(const matvar_t *matvar)
 {
-    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
+    if ( matvar == NULL || ( matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT ) ||
         NULL == matvar->internal ) {
         return NULL;
     } else {
@@ -201,7 +201,7 @@ Mat_VarGetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index)
     matvar_t *field = NULL;
     size_t nmemb;
 
-    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
+    if ( matvar == NULL || ( matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT ) ||
         matvar->data_size == 0 )
         return field;
 
@@ -241,7 +241,7 @@ Mat_VarGetStructFieldByName(matvar_t *matvar,const char *field_name,
     matvar_t *field = NULL;
     size_t nmemb;
 
-    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
+    if ( matvar == NULL || ( matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT )  ||
         matvar->data_size == 0 )
         return field;
 
@@ -342,7 +342,9 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
         return NULL;
     } else if ( matvar->rank > 9 ) {
         return NULL;
-    } else if ( matvar->class_type != MAT_C_STRUCT ) {
+// TODO not sure whether it is sufficient to check if classtype is alternativel MAT_C_OBJECT
+//      of if the latter would need additional handling below
+    } else if ( matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT ) {
         return NULL;
     }
 

@@ -2665,7 +2665,7 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
     mat = Mat_Open(file,MAT_ACC_RDONLY);
     if ( mat ) {
         matvar = Mat_VarReadInfo(mat,(char *)var);
-        if ( matvar != NULL && matvar->class_type == MAT_C_STRUCT ) {
+        if ( matvar != NULL && ( matvar->class_type == MAT_C_STRUCT || matvar->class_type == MAT_C_OBJECT ) ) {
             int index = 2;
             matvar = Mat_VarGetStructField(matvar, (void*)&index, MAT_BY_INDEX, 0);
         }
