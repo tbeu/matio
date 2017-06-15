@@ -89,6 +89,7 @@ struct matvar_internal {
     mat_t     *fp;          /**< Pointer to the MAT file structure (mat_t) */
     unsigned   num_fields;  /**< Number of fields */
     char     **fieldnames;  /**< Pointer to fieldnames */
+    char      *classname;   /**< The name of the class type of the object */
 #if defined(HAVE_ZLIB)
     z_streamp  z;           /**< zlib compression state */
     void      *data;        /**< Inflated data array */

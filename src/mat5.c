@@ -82,8 +82,8 @@ GetTypeBufSize(matvar_t *matvar)
 
             size_t len = 0;
 
-            if (NULL != matvar->classname)
-                len = strlen(matvar->classname);
+            if (NULL != matvar->internal->classname)
+                len = strlen(matvar->internal->classname);
             else
                 len = 4;
 
@@ -1410,19 +1410,19 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                             i = len;
                         else
                             i = len + (8 - (len % 8));
-                        cells[i]->classname = malloc(i + 1);
+                        cells[i]->internal->classname = malloc(i + 1);
                         /* Inflate variable name */
-                        bytesread += InflateClassName(mat, cells[i], cells[i]->classname, i);
-                        cells[i]->classname[len] = '\0';
+                        bytesread += InflateClassName(mat, cells[i], cells[i]->internal->classname, i);
+                        cells[i]->internal->classname[len] = '\0';
                     }
                     else if (((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
                         ((uncomp_buf[0] & 0xffff0000) != 0x00)) {
                         /* Name packed in tag */
                         int len;
                         len = (uncomp_buf[0] & 0xffff0000) >> 16;
-                        cells[i]->classname = malloc(len + 1);
-                        memcpy(cells[i]->classname, uncomp_buf + 1, len);
-                        cells[i]->classname[len] = '\0';
+                        cells[i]->internal->classname = malloc(len + 1);
+                        memcpy(cells[i]->internal->classname, uncomp_buf + 1, len);
+                        cells[i]->internal->classname[len] = '\0';
                     }
                     nbytes -= 8;
                     cells[i]->internal->z = calloc(1, sizeof(z_stream));
@@ -1612,9 +1612,9 @@ READ_NEXT_OBJECT_CELL:
                         i = len + (8 - (len % 8));
                     bytesread += fread(buf, 1, i, mat->fp);
 
-                    cells[i]->classname = malloc(len + 1);
-                    memcpy(cells[i]->classname, buf, len);
-                    cells[i]->classname[len] = '\0';
+                    cells[i]->internal->classname = malloc(len + 1);
+                    memcpy(cells[i]->internal->classname, buf, len);
+                    cells[i]->internal->classname[len] = '\0';
                 }
                 else if (((buf[0] & 0x0000ffff) == MAT_T_INT8) &&
                     ((buf[0] & 0xffff0000) != 0x00)) {
@@ -1622,9 +1622,9 @@ READ_NEXT_OBJECT_CELL:
                     int len;
 
                     len = (buf[0] & 0xffff0000) >> 16;
-                    cells[i]->classname = malloc(len + 1);
-                    memcpy(cells[i]->classname, buf + 1, len);
-                    cells[i]->classname[len] = '\0';
+                    cells[i]->internal->classname = malloc(len + 1);
+                    memcpy(cells[i]->internal->classname, buf + 1, len);
+                    cells[i]->internal->classname[len] = '\0';
                 }
                 // read fields of class, their format is equal to the one of
                 // struct fields
@@ -1830,19 +1830,19 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                             i = len;
                         else
                             i = len + (8 - (len % 8));
-                        fields[i]->classname = malloc(i + 1);
+                        fields[i]->internal->classname = malloc(i + 1);
                         /* Inflate variable name */
-                        bytesread += InflateClassName(mat, fields[i], fields[i]->classname, i);
-                        fields[i]->classname[len] = '\0';
+                        bytesread += InflateClassName(mat, fields[i], fields[i]->internal->classname, i);
+                        fields[i]->internal->classname[len] = '\0';
                     }
                     else if (((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
                         ((uncomp_buf[0] & 0xffff0000) != 0x00)) {
                         /* Name packed in tag */
                         int len;
                         len = (uncomp_buf[0] & 0xffff0000) >> 16;
-                        fields[i]->classname = malloc(len + 1);
-                        memcpy(fields[i]->classname, uncomp_buf + 1, len);
-                        fields[i]->classname[len] = '\0';
+                        fields[i]->internal->classname = malloc(len + 1);
+                        memcpy(fields[i]->internal->classname, uncomp_buf + 1, len);
+                        fields[i]->internal->classname[len] = '\0';
                     }
                     nbytes -= 8;
                     fields[i]->internal->z = calloc(1,sizeof(z_stream));
@@ -2062,9 +2062,9 @@ READ_NEXT_OBJECT_FIELD:
                         i = len + (8 - (len % 8));
                     bytesread += fread(buf, 1, i, mat->fp);
 
-                    fields[i]->classname = malloc(len + 1);
-                    memcpy(fields[i]->classname, buf, len);
-                    fields[i]->classname[len] = '\0';
+                    fields[i]->internal->classname = malloc(len + 1);
+                    memcpy(fields[i]->internal->classname, buf, len);
+                    fields[i]->internal->classname[len] = '\0';
                 }
                 else if (((buf[0] & 0x0000ffff) == MAT_T_INT8) &&
                     ((buf[0] & 0xffff0000) != 0x00)) {
@@ -2072,9 +2072,9 @@ READ_NEXT_OBJECT_FIELD:
                     int len;
 
                     len = (buf[0] & 0xffff0000) >> 16;
-                    fields[i]->classname = malloc(len + 1);
-                    memcpy(fields[i]->classname, buf + 1, len);
-                    fields[i]->classname[len] = '\0';
+                    fields[i]->internal->classname = malloc(len + 1);
+                    memcpy(fields[i]->internal->classname, buf + 1, len);
+                    fields[i]->internal->classname[len] = '\0';
                 }
                 // read fields of class, their format is equal to the one of
                 // struct fields
@@ -6029,19 +6029,19 @@ Mat_VarReadNextInfo5( mat_t *mat )
 #else
                         i = ( ( len + 7 ) / 8 ) * 8;
 #endif
-                        matvar->classname = malloc(i + 1);
+                        matvar->internal->classname = malloc(i + 1);
                         /* Inflate variable name */
-                        bytesread += InflateVarName(mat, matvar, matvar->classname, i);
-                        matvar->classname[len] = '\0';
+                        bytesread += InflateVarName(mat, matvar, matvar->internal->classname, i);
+                        matvar->internal->classname[len] = '\0';
                     }
                     else if (((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
                         ((uncomp_buf[0] & 0xffff0000) != 0x00)) {
                         /* Name packed in tag */
                         int len;
                         len = (uncomp_buf[0] & 0xffff0000) >> 16;
-                        matvar->classname = malloc(len + 1);
-                        memcpy(matvar->classname, uncomp_buf + 1, len);
-                        matvar->classname[len] = '\0';
+                        matvar->internal->classname = malloc(len + 1);
+                        memcpy(matvar->internal->classname, uncomp_buf + 1, len);
+                        matvar->internal->classname[len] = '\0';
                     }
 
                     // read fields of class, their format is equal to the one of
@@ -6172,9 +6172,9 @@ Mat_VarReadNextInfo5( mat_t *mat )
 #endif
                     bytesread += fread(buf, 1, i, mat->fp);
 
-                    matvar->classname = malloc(len + 1);
-                    memcpy(matvar->classname, buf, len);
-                    matvar->classname[len] = '\0';
+                    matvar->internal->classname = malloc(len + 1);
+                    memcpy(matvar->internal->classname, buf, len);
+                    matvar->internal->classname[len] = '\0';
                 }
                 else if (((buf[0] & 0x0000ffff) == MAT_T_INT8) &&
                     ((buf[0] & 0xffff0000) != 0x00)) {
@@ -6182,9 +6182,9 @@ Mat_VarReadNextInfo5( mat_t *mat )
                     int len;
 
                     len = (buf[0] & 0xffff0000) >> 16;
-                    matvar->classname = malloc(len + 1);
-                    memcpy(matvar->classname, buf + 1, len);
-                    matvar->classname[len] = '\0';
+                    matvar->internal->classname = malloc(len + 1);
+                    memcpy(matvar->internal->classname, buf + 1, len);
+                    matvar->internal->classname[len] = '\0';
                 }
                 // read fields of class, their format is equal to the one of
                 // struct fields

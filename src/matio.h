@@ -196,7 +196,6 @@ typedef struct matvar_t {
     int   isLogical;                  /**< non-zero if the variable is logical */
     size_t *dims;                     /**< Array of lengths for each dimension */
     char *name;                       /**< Name of the variable */
-    char * classname;                 /**< The name of the class type of the object */
     void *data;                       /**< Pointer to the data */
     int   mem_conserve;               /**< 1 if Memory was conserved with data */
     enum matio_compression  compression; /**< Variable compression type */
@@ -315,6 +314,7 @@ EXTERN int        Mat_VarWrite(mat_t *mat,matvar_t *matvar,
 EXTERN int        Mat_VarWriteInfo(mat_t *mat,matvar_t *matvar);
 EXTERN int        Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
                       int *start,int *stride,int *edge);
+EXTERN char      *Mat_VarGetObjectClassName(const matvar_t *matvar);
 
 /* Other functions */
 EXTERN int     Mat_CalcSingleSubscript(int rank,int *dims,int *subs);

@@ -137,6 +137,46 @@ Mat_PrintNumber(enum matio_types type, void *data)
     }
 }
 
+/** @brief Copies a file
+ *
+ * @param src source file path
+ * @param dst destination file path
+ * @retval 0 on success
+ */
+static int
+mat_copy(const char* src, const char* dst)
+{
+    size_t len;
+    char buf[BUFSIZ] = {'\0'};
+    FILE* in;
+    FILE* out;
+
+    in = fopen(src, "rb");
+    if (in == NULL) {
+        Mat_Critical("Cannot open file \"%s\" for reading.", src);
+        return -1;
+    }
+
+    out = fopen(dst, "wb");
+    if (out == NULL) {
+        fclose(in);
+        Mat_Critical("Cannot open file \"%s\" for writing.", dst);
+        return -1;
+    }
+
+    while ((len = fread(buf, sizeof(char), BUFSIZ, in)) > 0) {
+        if (len != fwrite(buf, sizeof(char), len, out)) {
+            fclose(in);
+            fclose(out);
+            Mat_Critical("Error writing to file \"%s\".", dst);
+            return -1;
+        }
+    }
+    fclose(in);
+    fclose(out);
+    return 0;
+}
+
 mat_complex_split_t *
 ComplexMalloc(size_t nbytes)
 {
@@ -670,7 +710,6 @@ Mat_VarCalloc(void)
         matvar->isLogical    = 0;
         matvar->dims         = NULL;
         matvar->name         = NULL;
-        matvar->classname    = NULL;
         matvar->data         = NULL;
         matvar->mem_conserve = 0;
         matvar->compression  = MAT_COMPRESSION_NONE;
@@ -689,6 +728,7 @@ Mat_VarCalloc(void)
             matvar->internal->fp         = NULL;
             matvar->internal->num_fields = 0;
             matvar->internal->fieldnames = NULL;
+            matvar->internal->classname  = NULL;
 #if defined(HAVE_ZLIB)
             matvar->internal->z          = NULL;
             matvar->internal->data       = NULL;
@@ -932,45 +972,25 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     return matvar;
 }
 
-/** @brief Copies a file
+/** @brief Returns the class name of a object variable
  *
- * @param src source file path
- * @param dst destination file path
- * @retval 0 on success
+ * Returns the class name for the given object. The returned pointer is
+ * internal to the structure and should not be free'd.
+ * @ingroup MAT
+ * @param matvar Object matlab variable
+ * @returns classname
  */
-static int
-mat_copy(const char* src, const char* dst)
+char *
+Mat_VarGetObjectClassName(const matvar_t *matvar)
 {
-    size_t len;
-    char buf[BUFSIZ] = {'\0'};
-    FILE* in;
-    FILE* out;
-
-    in = fopen(src, "rb");
-    if (in == NULL) {
-        Mat_Critical("Cannot open file \"%s\" for reading.", src);
-        return -1;
+    if ( matvar == NULL || matvar->class_type != MAT_C_OBJECT ||
+        NULL == matvar->internal ) {
+        return NULL;
+    } else {
+        return matvar->internal->classname;
     }
-
-    out = fopen(dst, "wb");
-    if (out == NULL) {
-        fclose(in);
-        Mat_Critical("Cannot open file \"%s\" for writing.", dst);
-        return -1;
-    }
-
-    while ((len = fread(buf, sizeof(char), BUFSIZ, in)) > 0) {
-        if (len != fwrite(buf, sizeof(char), len, out)) {
-            fclose(in);
-            fclose(out);
-            Mat_Critical("Error writing to file \"%s\".", dst);
-            return -1;
-        }
-    }
-    fclose(in);
-    fclose(out);
-    return 0;
 }
+
 
 /** @brief Deletes a variable from a file
  *
@@ -1137,7 +1157,6 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->name = NULL;
     out->dims = NULL;
     out->data = NULL;
-    out->classname = NULL;
 
 #if defined(MAT73) && MAT73
     if ( NULL != in->internal->hdf5_name )
@@ -1162,11 +1181,12 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                     strdup(in->internal->fieldnames[i]);
         }
     }
+    out->internal->classname = NULL;
 
     if (in->name != NULL && (NULL != (out->name = (char*)malloc(strlen(in->name)+1))))
         memcpy(out->name,in->name,strlen(in->name)+1);
-    if (in->classname != NULL && (NULL != (out->classname = malloc(strlen(in->classname) + 1))))
-        memcpy(out->classname, in->classname, strlen(in->classname) + 1);
+    if (in->internal->classname != NULL && (NULL != (out->internal->classname = malloc(strlen(in->internal->classname) + 1))))
+        memcpy(out->internal->classname, in->internal->classname, strlen(in->internal->classname) + 1);
 
     out->dims = (size_t*)malloc(in->rank*sizeof(*out->dims));
     if ( out->dims != NULL )

@@ -32,6 +32,7 @@ Mat_VarGetCellsLinear
 Mat_VarGetSize
 Mat_VarGetNumberOfFields
 Mat_VarAddStructField
+Mat_VarGetObjectClassName
 Mat_VarGetStructFieldByIndex
 Mat_VarGetStructFieldByName
 Mat_VarGetStructField

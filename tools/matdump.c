@@ -815,6 +815,7 @@ print_default(matvar_t *matvar)
             int        nfields;
             int        i;
             size_t     nmemb;
+            char      *classname;
 
             if ( matvar->name )
                 Mat_Message("      Name: %s", matvar->name);
@@ -822,8 +823,9 @@ print_default(matvar_t *matvar)
             if ( matvar->rank == 0 )
                 return;
             Mat_Message("Class Type: Object");
-			if ( matvar->classname ) 
-				Mat_Message("Class Name: %s",matvar->classname);
+            classname = Mat_VarGetObjectClassName(matvar);
+            if ( classname ) 
+                Mat_Message("Class Name: %s", classname);
 
             nfields = Mat_VarGetNumberOfFields(matvar);
             nmemb = matvar->dims[0];
