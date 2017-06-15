@@ -487,17 +487,6 @@ Mat_GetFilename(mat_t *mat)
     return filename;
 }
 
-const char *
-Mat_GetHeader(mat_t *matfp) {
-
-    const char * header = NULL;
-
-    if ( matfp != NULL ) {
-        header = matfp->header;
-    }
-    return header;
-}
-
 /** @brief Gets the version of the given MAT file
  *
  * Gets the version of the given MAT file
