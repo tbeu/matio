@@ -313,8 +313,7 @@ AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -z write_empty_struct],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var1.out expout
-          $builddir/test_mat readvar test_write_
-          empty_struct.mat var1],[0],[expout],[])
+          $builddir/test_mat readvar test_write_empty_struct.mat var1],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var2.out expout
           $builddir/test_mat readvar test_write_empty_struct.mat var2],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var3.out expout
