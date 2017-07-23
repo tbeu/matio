@@ -62,13 +62,13 @@ class by using
 .Dv MAT_T_INT32
 for
 .Fa data_type.
-
+.Pp
 The
 .Fa rank
 argument specifies how many dimensions the data has. The minimum rank is 2. The
 number of elements in each dimension is specified in the array
 .Fa dims.
-
+.Pp
 The
 .Fa data
 argument is a pointer to the variable data. The pointer is typically a pointer
@@ -78,7 +78,6 @@ complex variables, the pointer is a pointer to a
 which contains pointers to the real and imaginary data as fields of the
 structure. For sparse variables, the pointer should be a
 .Vt mat_sparse_t *.
-
 .Sh RETURN VALUES
 If the variable was successfully created, a pointer to the variable is returned.
 Otherwise NULL is returned. The variable should be free'd when no longer needed
