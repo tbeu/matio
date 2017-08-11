@@ -3315,7 +3315,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_UINT8;
             if ( nBytes == 0 ) {
                 matvar->nbytes = 0;
-                matvar->data   = calloc(0,1);
+                matvar->data   = calloc(1,1);
                 break;
             }
             matvar->data_size = sizeof(char);
@@ -5182,12 +5182,15 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         if (matvar->internal->z != NULL) {
             inflateEnd(matvar->internal->z);
             free(matvar->internal->z);
+            matvar->internal->z = NULL;
         }
         matvar->internal->z = (z_streamp)calloc(1,sizeof(*matvar->internal->z));
         err = deflateInit(matvar->internal->z,Z_DEFAULT_COMPRESSION);
         if ( err != Z_OK ) {
-            free(matvar->internal->z);
-            matvar->internal->z = NULL;
+            if (matvar->internal->z != NULL) {
+                free(matvar->internal->z);
+                matvar->internal->z = NULL;
+            }
             Mat_Critical("deflateInit returned %s",zError(err));
             return -1;
         }
