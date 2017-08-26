@@ -54,7 +54,7 @@
                 data[i] = v; \
             } \
         } \
-    } while (0)
+    } while ( 0 ) 
 
 #ifdef HAVE_MAT_INT64_T
 #define READ_DATA_INT64 \
@@ -63,7 +63,7 @@
             mat_int64_t v; \
             READ_DATA(Mat_int64Swap); \
         } \
-    } while (0)
+    } while ( 0 )
 #else
 #define READ_DATA_INT64
 #endif /* HAVE_MAT_INT64_T */
@@ -75,7 +75,7 @@
             mat_uint64_t v; \
             READ_DATA(Mat_uint64Swap); \
         } \
-    } while (0)
+    } while ( 0 )
 #else
 #define READ_DATA_UINT64
 #endif /* HAVE_MAT_UINT64_T */
@@ -142,7 +142,7 @@
                 READ_DATA_UINT64; \
                 break; \
         } \
-    } while (0)
+    } while ( 0 )
 
 #if defined(HAVE_ZLIB)
 #define READ_COMPRESSED_DATA(SwapFunc) \
@@ -158,7 +158,7 @@
                 data[i] = v; \
             } \
         } \
-    } while (0)
+    } while ( 0 )
 
 #ifdef HAVE_MAT_INT64_T
 #define READ_COMPRESSED_DATA_INT64 \
@@ -167,7 +167,7 @@
             mat_int64_t v; \
             READ_COMPRESSED_DATA(Mat_int64Swap); \
         } \
-    } while (0)
+    } while ( 0 )
 #else
 #define READ_COMPRESSED_DATA_INT64
 #endif /* HAVE_MAT_INT64_T */
@@ -179,7 +179,7 @@
             mat_uint64_t v; \
             READ_COMPRESSED_DATA(Mat_uint64Swap); \
         } \
-    } while (0)
+    } while ( 0 )
 #else
 #define READ_COMPRESSED_DATA_UINT64
 #endif /* HAVE_MAT_UINT64_T */
@@ -246,7 +246,7 @@
                 READ_COMPRESSED_DATA_UINT64; \
                 break; \
         } \
-    } while (0)
+    } while ( 0 )
 #endif
 
 /*
@@ -1418,7 +1418,7 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
                 break; \
             } \
         } \
-    } while (0)
+    } while ( 0 )
 
 #define READ_DATA_SLABN(ReadDataFunc) \
     do { \
@@ -1466,7 +1466,7 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
                 READ_DATA_SLABN_RANK_LOOP; \
             } \
         } \
-    } while (0)
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions
  *
@@ -1596,7 +1596,7 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
                 break; \
             } \
         } \
-    } while (0)
+    } while ( 0 )
 
 #define READ_COMPRESSED_DATA_SLABN(ReadDataFunc) \
     do { \
@@ -1644,7 +1644,7 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
                 READ_COMPRESSED_DATA_SLABN_RANK_LOOP; \
             } \
         } \
-    } while (0)
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions
  *
@@ -1764,7 +1764,7 @@ ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
                 (void)fseek((FILE*)mat->fp,stride,SEEK_CUR); \
             } \
         } \
-    } while (0)
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 1-D
  *         data
@@ -1901,7 +1901,7 @@ ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
                 (void)fseek((FILE*)mat->fp,pos,SEEK_CUR); \
             } \
         } \
-    } while (0)
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
  *         data
@@ -2015,7 +2015,7 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
                 InflateSkipData(mat,&z_copy,data_type,stride); \
             } \
         } \
-    } while (0)
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 1-D
  *         data
@@ -2152,7 +2152,7 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
                 InflateSkipData(mat,&z_copy,data_type,pos); \
             } \
         } \
-    } while (0)
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
  *         data

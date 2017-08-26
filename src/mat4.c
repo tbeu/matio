@@ -184,7 +184,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
             x.imagf = matvar->isComplex ? 1 : 0;
             fwrite(&x, sizeof(Fmatrix), 1, (FILE*)mat->fp);
             fwrite(matvar->name, sizeof(char), x.namelen, (FILE*)mat->fp);
-            if (matvar->isComplex) {
+            if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
                 complex_data = (mat_complex_split_t*)matvar->data;
