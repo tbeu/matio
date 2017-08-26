@@ -5179,7 +5179,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         int buf_size = 512, err;
         size_t byteswritten = 0;
 
-        if (matvar->internal->z != NULL) {
+        if ( matvar->internal->z != NULL ) {
             inflateEnd(matvar->internal->z);
             free(matvar->internal->z);
             matvar->internal->z = NULL;
@@ -5187,7 +5187,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         matvar->internal->z = (z_streamp)calloc(1,sizeof(*matvar->internal->z));
         err = deflateInit(matvar->internal->z,Z_DEFAULT_COMPRESSION);
         if ( err != Z_OK ) {
-            if (matvar->internal->z != NULL) {
+            if ( matvar->internal->z != NULL ) {
                 free(matvar->internal->z);
                 matvar->internal->z = NULL;
             }
