@@ -2170,7 +2170,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
     if ( NULL == mat || NULL == matvar )
         return;
-    else if (NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id)
+    else if ( NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id )
         return;
 
     fid = *(hid_t*)mat->fp;
@@ -2428,7 +2428,7 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
     if ( NULL == mat || NULL == matvar || NULL == data || NULL == start ||
          NULL == stride || NULL == edge )
         return err;
-    else if (NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id)
+    else if ( NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id )
         return err;
 
     fid = *(hid_t*)mat->fp;
@@ -2530,7 +2530,7 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
 
     if ( NULL == mat || NULL == matvar || NULL == data )
         return err;
-    else if (NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id)
+    else if ( NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id )
         return err;
 
     fid = *(hid_t*)mat->fp;

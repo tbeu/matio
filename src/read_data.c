@@ -53,19 +53,19 @@
         if ( mat->byteswap ) { \
             if ( len <= READ_BLOCK_SIZE ) { \
                 bytesread += fread(v,data_size,len,(FILE*)mat->fp); \
-                for (j = 0; j < len; j++) { \
+                for ( j = 0; j < len; j++ ) { \
                     data[j] = SwapFunc(&v[j]); \
                 } \
             } else { \
                 for ( i = 0; i < len-READ_BLOCK_SIZE; i+=READ_BLOCK_SIZE ) { \
                     bytesread += fread(v,data_size,READ_BLOCK_SIZE,(FILE*)mat->fp); \
-                    for (j = 0; j < READ_BLOCK_SIZE; j++) { \
+                    for ( j = 0; j < READ_BLOCK_SIZE; j++ ) { \
                         data[i+j] = SwapFunc(&v[j]); \
                     } \
                 } \
                 if ( len > i ) { \
                     bytesread += fread(v,data_size,len-i,(FILE*)mat->fp); \
-                    for (j = 0; j < len-i; j++) { \
+                    for ( j = 0; j < len-i; j++ ) { \
                         data[i+j] = SwapFunc(&v[j]); \
                     } \
                 }\
@@ -73,19 +73,19 @@
         } else { \
             if ( len <= READ_BLOCK_SIZE ) { \
                 bytesread += fread(v,data_size,len,(FILE*)mat->fp); \
-                for (j = 0; j < len; j++) { \
+                for ( j = 0; j < len; j++ ) { \
                     data[j] = v[j]; \
                 } \
             } else { \
                 for ( i = 0; i < len-READ_BLOCK_SIZE; i+=READ_BLOCK_SIZE ) { \
                     bytesread += fread(v,data_size,READ_BLOCK_SIZE,(FILE*)mat->fp); \
-                    for (j = 0; j < READ_BLOCK_SIZE; j++) { \
+                    for ( j = 0; j < READ_BLOCK_SIZE; j++ ) { \
                         data[i+j] = v[j]; \
                     } \
                 } \
                 if ( len > i ) { \
                     bytesread += fread(v,data_size,len-i,(FILE*)mat->fp); \
-                    for (j = 0; j < len-i; j++) { \
+                    for ( j = 0; j < len-i; j++ ) { \
                         data[i+j] = v[j]; \
                     } \
                 }\

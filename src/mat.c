@@ -298,9 +298,9 @@ Mat_Open(const char *matname,int mode)
     if ( 128 == bytesread ) {
         /* v5 and v7.3 files have at least 128 byte header */
         mat->byteswap = -1;
-        if (tmp == 0x4d49)
+        if ( tmp == 0x4d49 )
             mat->byteswap = 0;
-        else if (tmp == 0x494d) {
+        else if ( tmp == 0x494d ) {
             mat->byteswap = 1;
             Mat_int16Swap(&tmp2);
         }
@@ -545,7 +545,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
                         }
                     }
                     Mat_VarFree(matvar);
-                } else if (!feof((FILE *)mat->fp)) {
+                } else if ( !feof((FILE *)mat->fp) ) {
                     Mat_Critical("An error occurred in reading the MAT file");
                     break;
                 }
@@ -750,7 +750,8 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     size_t i, nmemb = 1, data_size;
     matvar_t *matvar = NULL;
 
-    if (dims == NULL) return NULL;
+    if ( dims == NULL )
+        return NULL;
 
     matvar = Mat_VarCalloc();
     if ( NULL == matvar )
@@ -935,20 +936,20 @@ mat_copy(const char* src, const char* dst)
     FILE* out;
 
     in = fopen(src, "rb");
-    if (in == NULL) {
+    if ( in == NULL ) {
         Mat_Critical("Cannot open file \"%s\" for reading.", src);
         return -1;
     }
 
     out = fopen(dst, "wb");
-    if (out == NULL) {
+    if ( out == NULL ) {
         fclose(in);
         Mat_Critical("Cannot open file \"%s\" for writing.", dst);
         return -1;
     }
 
-    while ((len = fread(buf, sizeof(char), BUFSIZ, in)) > 0) {
-        if (len != fwrite(buf, sizeof(char), len, out)) {
+    while ( (len = fread(buf, sizeof(char), BUFSIZ, in)) > 0 ) {
+        if ( len != fwrite(buf, sizeof(char), len, out) ) {
             fclose(in);
             fclose(out);
             Mat_Critical("Error writing to file \"%s\".", dst);
@@ -1150,7 +1151,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         }
     }
 
-    if (in->name != NULL && (NULL != (out->name = (char*)malloc(strlen(in->name)+1))))
+    if ( in->name != NULL && (NULL != (out->name = (char*)malloc(strlen(in->name)+1))) )
         memcpy(out->name,in->name,strlen(in->name)+1);
 
     out->dims = (size_t*)malloc(in->rank*sizeof(*out->dims));
@@ -2146,7 +2147,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
                         Mat_VarFree(matvar);
                         matvar = NULL;
                     }
-                } else if (!feof((FILE *)mat->fp)) {
+                } else if ( !feof((FILE *)mat->fp) ) {
                     Mat_Critical("An error occurred in reading the MAT file");
                     break;
                 }
@@ -2224,7 +2225,7 @@ Mat_VarReadNext( mat_t *mat )
     matvar = Mat_VarReadNextInfo(mat);
     if ( matvar ) {
         ReadData(mat,matvar);
-    } else if (mat->version != MAT_FT_MAT73 ) {
+    } else if ( mat->version != MAT_FT_MAT73 ) {
         (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
     }
 
