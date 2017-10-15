@@ -2187,7 +2187,9 @@ WriteType(mat_t *mat,matvar_t *matvar)
 #endif
                 fieldname_size = 1;
                 fwrite(&fieldname_size,4,1,(FILE*)mat->fp);
-                fwrite(&array_name_type,4,1,(FILE*)mat->fp);
+                fwrite(&array_name_type,2,1,(FILE*)mat->fp);
+                fwrite(&pad1,1,1,(FILE*)mat->fp);
+                fwrite(&pad1,1,1,(FILE*)mat->fp);
                 nBytes = 0;
                 fwrite(&nBytes,4,1,(FILE*)mat->fp);
                 break;
@@ -5397,7 +5399,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
         } else {
             mat_int32_t array_name_len = (mat_int32_t)strlen(matvar->name);
             mat_int8_t  pad1 = 0;
-            mat_int32_t  array_name_type = MAT_T_INT8;
+            mat_int32_t array_name_type = MAT_T_INT8;
 
             fwrite(&array_name_type,4,1,(FILE*)mat->fp);
             fwrite(&array_name_len,4,1,(FILE*)mat->fp);
