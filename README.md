@@ -34,6 +34,7 @@ The following people/organizations have helped in the development of matio throu
 
 * Greg Sjaardema ([https://github.com/gsjaardema](https://github.com/gsjaardema))
 * Jacco van Beek ([https://sourceforge.net/u/jabe](https://sourceforge.net/u/jabe))
+* John Filo ([https://github.com/jfilo](https://github.com/jfilo))
 * Modelica Association ([https://modelica.org/association](https://modelica.org/association))
 * Nils Jannasch ([https://github.com/NJannasch](https://github.com/NJannasch))
 * OpenMEEG ([http://openmeeg.github.io/](http://openmeeg.github.io/))
