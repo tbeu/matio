@@ -813,7 +813,6 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name)
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t ui64[50];
 #endif
-    mat_complex_split_t z = {NULL,NULL},s = {NULL,NULL};
     mat_t *mat;
     matvar_t *matvar;
 
@@ -833,11 +832,6 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name)
         ui64[i] = i+1;
 #endif
     }
-
-    z.Re = d;
-    z.Im = d+25;
-    s.Re = f;
-    s.Im = f+25;
 
     mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
     if ( !mat ) {
