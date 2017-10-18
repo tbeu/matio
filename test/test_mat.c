@@ -841,62 +841,44 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name)
     switch (matvar_class) {
         case MAT_C_DOUBLE:
             matvar = Mat_VarCreate("a",matvar_class,MAT_T_DOUBLE,2,dims,d,0);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
             break;
         case MAT_C_SINGLE:
-             matvar = Mat_VarCreate("a",matvar_class,MAT_T_SINGLE,2,dims,f,0);
-             Mat_VarWrite(mat,matvar,compression);
-             Mat_VarFree(matvar);
+            matvar = Mat_VarCreate("a",matvar_class,MAT_T_SINGLE,2,dims,f,0);
             break;
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
             matvar = Mat_VarCreate("a",matvar_class,MAT_T_INT64,2,dims,i64,0);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
             break;
 #endif
 #ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
             matvar = Mat_VarCreate("a",matvar_class,MAT_T_UINT64,2,dims,ui64,0);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
             break;
 #endif
         case MAT_C_INT32:
             matvar = Mat_VarCreate("a",matvar_class,MAT_T_INT32,2,dims,i32,0);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
             break;
         case MAT_C_UINT32:
             matvar = Mat_VarCreate("a",matvar_class,MAT_T_UINT32,2,dims,ui32,0);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
             break;
         case MAT_C_INT16:
             matvar = Mat_VarCreate("a",matvar_class,MAT_T_INT16,2,dims,i16,0);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
             break;
         case MAT_C_UINT16:
             matvar = Mat_VarCreate("a",matvar_class,MAT_T_UINT16,2,dims,ui16,0);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
             break;
         case MAT_C_INT8:
             matvar = Mat_VarCreate("a",matvar_class,MAT_T_INT8,2,dims,i8,0);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
             break;
         case MAT_C_UINT8:
             matvar = Mat_VarCreate("a",matvar_class,MAT_T_UINT8,2,dims,ui8,0);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
             break;
         default:
-            break;
+            return 1;
     }
 
+    err = Mat_VarWrite(mat,matvar,compression);
+    Mat_VarFree(matvar);
     Mat_Close(mat);
 
     return err;
@@ -924,6 +906,7 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class,const char *output
     mat_complex_split_t z = {NULL,NULL};
     mat_t *mat;
     matvar_t *matvar;
+    enum matio_types matvar_datatype = MAT_T_UNKNOWN;
 
     for ( i = 0; i < 50; i++ ) {
           d_real[i] = i+1;
@@ -961,91 +944,65 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class,const char *output
         case MAT_C_DOUBLE:
             z.Re = d_real;
             z.Im = d_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_DOUBLE,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_DOUBLE;
             break;
         case MAT_C_SINGLE:
             z.Re = f_real;
             z.Im = f_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_SINGLE,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_SINGLE;
             break;
 #ifdef HAVE_MAT_INT64_T
         case MAT_C_INT64:
             z.Re = i64_real;
             z.Im = i64_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_INT64,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_INT64;
             break;
 #endif
 #ifdef HAVE_MAT_UINT64_T
         case MAT_C_UINT64:
             z.Re = ui64_real;
             z.Im = ui64_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_UINT64,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_UINT64;
             break;
 #endif
         case MAT_C_INT32:
             z.Re = i32_real;
             z.Im = i32_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_INT32,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_INT32;
             break;
         case MAT_C_UINT32:
             z.Re = ui32_real;
             z.Im = ui32_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_UINT32,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_UINT32;
             break;
         case MAT_C_INT16:
             z.Re = i16_real;
             z.Im = i16_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_INT16,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_INT16;
             break;
         case MAT_C_UINT16:
             z.Re = ui16_real;
             z.Im = ui16_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_UINT16,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_UINT16;
             break;
         case MAT_C_INT8:
             z.Re = i8_real;
             z.Im = i8_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_INT8,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_INT8;
             break;
         case MAT_C_UINT8:
             z.Re = ui8_real;
             z.Im = ui8_imag;
-            matvar = Mat_VarCreate("a",matvar_class,MAT_T_UINT8,2,dims,&z,
-                                   MAT_F_COMPLEX);
-            Mat_VarWrite(mat,matvar,compression);
-            Mat_VarFree(matvar);
+            matvar_datatype = MAT_T_UINT8;
             break;
         default:
-            break;
+            return 1;
     }
 
+    matvar = Mat_VarCreate("a",matvar_class,matvar_datatype,2,dims,&z,
+                           MAT_F_COMPLEX);
+    err = Mat_VarWrite(mat,matvar,compression);
+    Mat_VarFree(matvar);
     Mat_Close(mat);
 
     return err;
@@ -1099,7 +1056,7 @@ test_write_empty_2d_numeric(enum matio_classes matvar_class,const char *output_n
     if ( mat != NULL ) {
         matvar = Mat_VarCreate("empty",matvar_class,matvar_datatype,2,dims,
                      NULL,0);
-        Mat_VarWrite(mat,matvar,compression);
+        err = Mat_VarWrite(mat,matvar,compression);
         Mat_VarFree(matvar);
         Mat_Close(mat);
     } else {
@@ -1125,7 +1082,7 @@ test_write_char(const char *output_name)
         dims[1]   = 26;
         matvar = Mat_VarCreate("a",MAT_C_CHAR,MAT_T_UINT8,2,
                     dims,(void*)str,MAT_F_DONT_COPY_DATA);
-        Mat_VarWrite(mat,matvar,compression);
+        err = Mat_VarWrite(mat,matvar,compression);
         Mat_VarFree(matvar);
         Mat_Close(mat);
     } else {
