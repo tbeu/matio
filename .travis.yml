@@ -41,6 +41,7 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
         - HDF5_VERSION_DIR=hdf5_1_10_1
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
@@ -48,6 +49,15 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
+    - os: linux
+      compiler: gcc-4.8
+      env:
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=yes
+        - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=1
     - os: linux
       compiler: gcc-4.8
       env:
@@ -55,6 +65,7 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
@@ -62,6 +73,7 @@ matrix:
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
@@ -69,6 +81,7 @@ matrix:
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
@@ -76,6 +89,7 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
@@ -83,6 +97,7 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
@@ -90,6 +105,7 @@ matrix:
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
@@ -97,6 +113,7 @@ matrix:
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: clang
       env:
@@ -104,6 +121,7 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: osx
       compiler: clang
       env:
@@ -111,6 +129,7 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
         - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
@@ -140,7 +159,7 @@ before_script:
   - ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5
 
 script:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make "CPPFLAGS=-DMAX_RANK=$MAX_RANK"; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make check; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_snprintf; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -H; fi
