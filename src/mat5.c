@@ -649,6 +649,7 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
         default:
             break;
     }
+
     return byteswritten;
 }
 #endif
@@ -853,6 +854,7 @@ WriteEmptyData(mat_t *mat,int N,enum matio_types data_type)
         default:
             nBytes = 0;
     }
+
     return nBytes;
 }
 
@@ -902,6 +904,7 @@ WriteCompressedEmptyData(mat_t *mat,z_streamp z,int N,
         default:
             nBytes = WriteEmptyData(mat,N,data_type);
     }
+
     return byteswritten;
 }
 #endif
@@ -1031,6 +1034,7 @@ WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
         default:
             nBytes = 0;
     }
+
     return nBytes;
 }
 
@@ -1143,6 +1147,7 @@ WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
         default:
             nBytes = 0;
     }
+
     return nBytes;
 }
 
@@ -2088,6 +2093,7 @@ WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar)
     } else {
         Mat_Critical("Couldn't determine file position");
     }
+
     return 0;
 }
 
@@ -2370,6 +2376,7 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar)
     } else {
         Mat_Critical("Couldn't determine file position");
     }
+
     return 0;
 }
 
@@ -2636,6 +2643,7 @@ WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
         case MAT_C_OPAQUE:
             break;
     }
+
     return byteswritten;
 }
 
@@ -2756,6 +2764,7 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
     } else {
         Mat_Critical("Couldn't determine file position");
     }
+
     return 0;
 }
 
@@ -3063,7 +3072,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
         return;
     }
 
-    if ( matvar->compression == MAT_COMPRESSION_NONE) {
+    if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
                 nBytes = ReadDoubleData(mat,(double*)data,packed_type,N);
@@ -3327,7 +3336,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
                 break;
             }
-            if ( matvar->compression == MAT_COMPRESSION_NONE) {
+            if ( matvar->compression == MAT_COMPRESSION_NONE ) {
                 nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,len);
                 /*
                  * If the data was in the tag we started on a 4-byte
@@ -3338,7 +3347,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 if ( (nBytes % 8) != 0 )
                     (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-            } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
+            } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                 nBytes = ReadCompressedCharData(mat,matvar->internal->z,
                              (char*)matvar->data,packed_type,len);
                 /*
@@ -3439,7 +3448,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             data->nir = N / 4;
             data->ir = (mat_int32_t*)malloc(data->nir*sizeof(mat_int32_t));
             if ( data->ir != NULL ) {
-                if ( matvar->compression == MAT_COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE ) {
                     nBytes = ReadInt32Data(mat,data->ir,packed_type,data->nir);
                     /*
                      * If the data was in the tag we started on a 4-byte
@@ -3450,7 +3459,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
                                  data->ir,packed_type,data->nir);
                     /*
@@ -3502,7 +3511,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             data->njc = N / 4;
             data->jc = (mat_int32_t*)malloc(data->njc*sizeof(mat_int32_t));
             if ( data->jc != NULL ) {
-                if ( matvar->compression == MAT_COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE ) {
                     nBytes = ReadInt32Data(mat,data->jc,packed_type,data->njc);
                     /*
                      * If the data was in the tag we started on a 4-byte
@@ -3513,7 +3522,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                     nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
                                  data->jc,packed_type,data->njc);
                     /*
@@ -3586,7 +3595,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Memory allocation failure");
                     break;
                 }
-                if ( matvar->compression == MAT_COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE ) {
 #if defined(EXTENDED_SPARSE)
                     switch ( matvar->data_type ) {
                         case MAT_T_DOUBLE:
@@ -3864,7 +3873,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                                  data->ndata*Mat_SizeOf(MAT_T_DOUBLE));
                     break;
                 }
-                if ( matvar->compression == MAT_COMPRESSION_NONE) {
+                if ( matvar->compression == MAT_COMPRESSION_NONE ) {
 #if defined(EXTENDED_SPARSE)
                     switch ( matvar->data_type ) {
                         case MAT_T_DOUBLE:
@@ -3923,7 +3932,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     if ( (nBytes % 8) != 0 )
                         (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
-                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB) {
+                } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(EXTENDED_SPARSE)
                     switch ( matvar->data_type ) {
                         case MAT_T_DOUBLE:
@@ -4482,6 +4491,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                 break;
         }
     }
+
     return err;
 }
 
@@ -4593,6 +4603,7 @@ GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
             err = 1;
             break;
     }
+
     return err;
 }
 
@@ -5024,7 +5035,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
 #endif
     }
 
-    switch(matvar->class_type) {
+    switch( matvar->class_type ) {
         case MAT_C_DOUBLE:
             matvar->data_type = MAT_T_DOUBLE;
             matvar->data_size = sizeof(double);

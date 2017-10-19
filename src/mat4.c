@@ -672,6 +672,7 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
         ReadDataSlabN(mat,data,matvar->class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
     }
+
     return err;
 }
 
