@@ -48,8 +48,9 @@ function creates a structure variable named
 that can be written to a MAT file.
 .Sh RETURN VALUES
 If the structure variable was successfully created, a pointer to the variable
-is returned. Otherwise NULL is returned. The structure variable pointer should
-be free'd when no longer needed using
+is returned.
+Otherwise NULL is returned.
+The structure variable pointer should be free'd when no longer needed using
 .Xr Mat_VarFree 3 .
 The names of the fields are copied in the function, and thus should be released
 after calling the function if necessary.

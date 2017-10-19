@@ -47,17 +47,20 @@
 .Sh DESCRIPTION
 The
 .Fn Mat_CreateVer
-function creates a MATLAB .mat file opened for write access. The
+function creates a MATLAB MAT file opened for write access.
+The
 .Em hdr_str
 is a string written in the file header of MAT version 5 and 7.3 (HDF) files.
-Only the first 128 bytes of the string is written. If
+Only the first 128 bytes of the string is written.
+If
 .Em hdr_str
 is NULL, then a default string is written that contains the platform, date,
 matio library version.
 .Pp
 The
 .Em mat_file_ver
-argument specifies the MAT file version to create. The matio library can write
+argument specifies the MAT file version to create.
+The matio library can write
 version 5 files (MAT_FT_MAT5), and an HDF5 file format introduced in MATLAB
 version 7.3 (MAT_FT_MAT73).
 .Pp
