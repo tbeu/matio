@@ -192,6 +192,15 @@ routines such as @code{Mat_VarCreate}. Note that MATLAB, and thus @emph{matio},
 has no concept of a rank 1 array (i.e. vector). The minimum rank of an array is
 2 (i.e. matrix). A vector is simply a matrix with one dimension length of 1.
 
+Optionally, a variable can be appended to an existing variable of an HDF5
+format MAT file by the @code{Mat_VarWriteAppend} function, which takes the
+same arguments as @code{Mat_VarWrite} as the first three arguments and the
+dimension as fourth argument. The dimension argument is index 1 based, i.e.,
+if it is set to @code{d}, the variable is appended along the d-th dimension.
+If a variable is to be created for later appending, it always must be written
+by the @code{Mat_VarWriteAppend} function and @code{Mat_VarWrite} must not
+be called.
+
 @subsection Writing Numeric Arrays
 Numeric arrays can be either real or complex. Complex arrays are encapsulated
 in the @code{struct mat_complex_split_t} data structure that contains a pointer
