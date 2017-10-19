@@ -102,30 +102,30 @@ static void    Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void    Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat);
 static void    Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat);
 static int     Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,
-                                  hid_t *refs_id,hsize_t *dims);
+                   hid_t *refs_id,hsize_t *dims);
 static int     Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims);
 static int     Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,
-                                        size_t *dims);
+                   size_t *dims);
 static int     Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims);
 static int     Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,
-                                     hsize_t* max_dims);
+                   hsize_t* max_dims);
 static int     Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,
-                                           hsize_t *dims);
+                   hsize_t *dims);
 static int     Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name);
 static int     Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,
-                                    hid_t *refs_id,hsize_t *dims);
+                   hid_t *refs_id,hsize_t *dims);
 static int     Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,
-                                  hid_t *refs_id);
+                   hid_t *refs_id);
 static int     Mat_VarWriteAppendNext73(hid_t id,matvar_t *matvar,const char *name,
-                                        int dim);
+                   int dim);
 static int     Mat_VarWriteNextType73(hid_t id,matvar_t *matvar,const char *name,
-                                      hid_t *refs_id,hsize_t *dims);
+                   hid_t *refs_id,hsize_t *dims);
 static int     Mat_VarWriteAppendNextType73(hid_t id,matvar_t *matvar,const char *name,
-                                            int dim,hsize_t *dims);
+                   int dim,hsize_t *dims);
 static herr_t  Mat_VarReadNextInfoIterate(hid_t id, const char *name,
-                                          const H5L_info_t *info, void *op_data);
+                   const H5L_info_t *info, void *op_data);
 static herr_t  Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name,
-                                          const H5L_info_t *info, void *op_data);
+                   const H5L_info_t *info, void *op_data);
 
 static enum matio_classes
 Mat_class_str_to_id(const char *name)
@@ -140,6 +140,7 @@ Mat_class_str_to_id(const char *name)
             }
         }
     }
+
     return id;
 }
 
@@ -509,7 +510,7 @@ Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id)
                         H5Aread(attr_id2,H5T_NATIVE_INT,&int_decode);
                         H5Aclose(attr_id2);
                     }
-                    switch (int_decode) {
+                    switch ( int_decode ) {
                         case 1:
                             matvar->class_type = MAT_C_UINT8;
                             break;
@@ -579,6 +580,7 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank)
         H5Sclose(space_id);
         Mat_Critical("Error allocating memory for matvar->dims");
     }
+
     return perm_dims;
 }
 
@@ -1000,6 +1002,7 @@ Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *in
             /* Not possible to get here */
             break;
     }
+
     return 1;
 }
 
@@ -1027,6 +1030,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
         default:
             break;
     }
+
     return;
 }
 
@@ -1138,6 +1142,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
         default:
             break;
     }
+
     return;
 }
 
@@ -2137,6 +2142,7 @@ Mat_VarWriteNext73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id)
             free(perm_dims);
         }
     }
+
     return err;
 }
 
@@ -2160,6 +2166,7 @@ Mat_VarWriteAppendNext73(hid_t id,matvar_t *matvar,const char *name,int dim)
             free(perm_dims);
         }
     }
+
     return err;
 }
 
@@ -2210,6 +2217,7 @@ Mat_VarWriteNextType73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id
                 break;
         }
     }
+
     return err;
 }
 
@@ -2250,6 +2258,7 @@ Mat_VarWriteAppendNextType73(hid_t id,matvar_t *matvar,const char *name,int dim,
                 break;
         }
     }
+
     return err;
 }
 
@@ -2370,7 +2379,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
     fid = *(hid_t*)mat->fp;
 
-    switch (matvar->class_type) {
+    switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
         case MAT_C_INT64:
@@ -2635,7 +2644,7 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
     }
     mem_space = H5Screate_simple(matvar->rank, dset_edge, NULL);
 
-    switch (matvar->class_type) {
+    switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
         case MAT_C_INT64:
@@ -2735,7 +2744,7 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
     dset_edge   = edge;
     mem_space = H5Screate_simple(1, &dset_edge, NULL);
 
-    switch (matvar->class_type) {
+    switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
         case MAT_C_INT64:

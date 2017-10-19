@@ -156,6 +156,7 @@ ComplexMalloc(size_t nbytes)
             complex_data = NULL;
         }
     }
+
     return complex_data;
 }
 
@@ -428,6 +429,7 @@ Mat_Close( mat_t *mat )
         }
         free(mat);
     }
+
     return 0;
 }
 
@@ -490,12 +492,12 @@ Mat_GetDir(mat_t *mat, size_t *n)
         if ( mat->version == MAT_FT_MAT73 ) {
             size_t i = 0;
             size_t fpos = mat->next_index;
-            if ( mat->num_datasets == 0) {
+            if ( mat->num_datasets == 0 ) {
                 *n = 0;
                 return dir;
             }
             mat->dir = calloc(mat->num_datasets, sizeof(char*));
-            if ( NULL == mat->dir) {
+            if ( NULL == mat->dir ) {
                 *n = 0;
                 Mat_Critical("Couldn't allocate memory for the directory");
                 return dir;
@@ -598,7 +600,7 @@ Mat_Rewind( mat_t *mat )
 size_t
 Mat_SizeOfClass(int class_type)
 {
-    switch (class_type) {
+    switch ( class_type ) {
         case MAT_C_DOUBLE:
             return sizeof(double);
         case MAT_C_SINGLE:
@@ -1294,6 +1296,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                 memcpy(out->data,in->data,in->nbytes);
         }
     }
+
     return out;
 }
 
@@ -1316,7 +1319,7 @@ Mat_VarFree(matvar_t *matvar)
             nmemb *= matvar->dims[i];
         free(matvar->dims);
     }
-    if ( NULL != matvar->data) {
+    if ( NULL != matvar->data ) {
         switch (matvar->class_type ) {
             case MAT_C_STRUCT:
                 if ( !matvar->mem_conserve ) {
@@ -1716,6 +1719,7 @@ Mat_VarGetSize(matvar_t *matvar)
         if ( matvar->isComplex )
             bytes *= 2;
     }
+
     return bytes;
 }
 
@@ -2157,6 +2161,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
             Mat_Critical("Couldn't determine file position");
         }
     }
+
     return matvar;
 }
 
@@ -2195,6 +2200,7 @@ Mat_VarRead( mat_t *mat, const char *name )
             ReadData(mat,matvar);
         mat->next_index = fpos;
     }
+
     return matvar;
 }
 
@@ -2350,7 +2356,7 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
     if ( NULL == mat || NULL == matvar )
         return -1;
 
-    if ( NULL == mat->dir) {
+    if ( NULL == mat->dir ) {
         size_t n = 0;
         (void)Mat_GetDir(mat, &n);
     }
@@ -2428,7 +2434,7 @@ Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,i
     if ( NULL == mat || NULL == matvar )
         return -1;
 
-    if ( NULL == mat->dir) {
+    if ( NULL == mat->dir ) {
         size_t n = 0;
         (void)Mat_GetDir(mat, &n);
     }
