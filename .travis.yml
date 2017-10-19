@@ -133,7 +133,6 @@ matrix:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall libtool && brew install libtool; fi
   - curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh
 
 install:
