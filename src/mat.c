@@ -2356,7 +2356,7 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
     }
 
     {
-        /* Error if MAT variable already exists in MAT file*/
+        /* Error if MAT variable already exists in MAT file */
         size_t i;
         for ( i = 0; i < mat->num_datasets; i++ ) {
             if ( NULL != mat->dir[i] &&
@@ -2381,6 +2381,81 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
         err = 2;
 
     if ( err == 0 ) {
+        /* Update directory */
+        char **dir;
+        if ( NULL == mat->dir ) {
+            dir = malloc(sizeof(char*));
+        } else {
+            dir = realloc(mat->dir,
+            (mat->num_datasets + 1)*(sizeof(char*)));
+        }
+        if ( NULL != dir ) {
+            mat->dir = dir;
+            if ( NULL != matvar->name ) {
+                mat->dir[mat->num_datasets++] =
+                    strdup_printf("%s", matvar->name);
+            } else {
+                mat->dir[mat->num_datasets++] = NULL;
+            }
+        } else {
+            err = 3;
+            Mat_Critical("Couldn't allocate memory for the directory");
+        }
+    }
+
+    return err;
+}
+
+/** @brief Writes/appends the given MAT variable to a version 7.3 MAT file
+ *
+ * Writes the numeric data of the MAT variable stored in matvar to the given
+ * MAT file. The variable will be written to the end of the file if it does
+ * not yet exist or appended to the exsiting variable.
+ * @ingroup MAT
+ * @param mat MAT file to write to
+ * @param matvar MAT variable information to write
+ * @param compress Whether or not to compress the data
+ *        (Only valid for version 7.3 MAT files and variables with numeric data)
+ * @param dim dimension to append data
+ *        (Only valid for version 7.3 MAT files and variables with numeric data)
+ * @retval 0 on success
+ */
+int
+Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,int dim)
+{
+    int err, append = 0;
+
+    if ( NULL == mat || NULL == matvar )
+        return -1;
+
+    if ( NULL == mat->dir) {
+        size_t n = 0;
+        (void)Mat_GetDir(mat, &n);
+    }
+
+    {
+        /* Check if MAT variable already exists in MAT file */
+        size_t i;
+        for ( i = 0; i < mat->num_datasets; i++ ) {
+            if ( NULL != mat->dir[i] &&
+                0 == strcmp(mat->dir[i], matvar->name) ) {
+                append = 1;
+                break;
+            }
+        }
+    }
+
+    if ( mat->version == MAT_FT_MAT73 )
+#if defined(MAT73) && MAT73
+        err = Mat_VarWriteAppend73(mat,matvar,compress,dim);
+#else
+        err = 1;
+#endif
+    else
+        err = 2;
+
+    if ( err == 0 && 0 == append ) {
+        /* Update directory */
         char **dir;
         if ( NULL == mat->dir ) {
             dir = malloc(sizeof(char*));

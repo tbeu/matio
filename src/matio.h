@@ -235,19 +235,19 @@ EXTERN MATIO_EXPORT void Mat_GetLibraryVersion(int *major,int *minor,int *releas
 /* io.c */
 EXTERN MATIO_EXPORT                char  *strdup_vprintf(const char *format, va_list ap);
 EXTERN MATIO_EXPORT                char  *strdup_printf(const char *format, ...);
-EXTERN MATIO_EXPORT                int    Mat_SetVerbose( int verb, int s );
-EXTERN MATIO_EXPORT                int    Mat_SetDebug( int d );
-EXTERN MATIO_EXPORT                void   Mat_Critical( const char *format, ... );
-EXTERN MATIO_EXPORT MATIO_NORETURN void   Mat_Error( const char *format, ... ) MATIO_NORETURNATTR;
-EXTERN MATIO_EXPORT                void   Mat_Help( const char *helpstr[] );
-EXTERN MATIO_EXPORT                int    Mat_LogInit( const char *progname );
+EXTERN MATIO_EXPORT                int    Mat_SetVerbose(int verb, int s);
+EXTERN MATIO_EXPORT                int    Mat_SetDebug(int d);
+EXTERN MATIO_EXPORT                void   Mat_Critical(const char *format, ...);
+EXTERN MATIO_EXPORT MATIO_NORETURN void   Mat_Error(const char *format, ...) MATIO_NORETURNATTR;
+EXTERN MATIO_EXPORT                void   Mat_Help(const char *helpstr[]);
+EXTERN MATIO_EXPORT                int    Mat_LogInit(const char *progname);
 EXTERN MATIO_EXPORT                int    Mat_LogClose(void);
 EXTERN MATIO_EXPORT                int    Mat_LogInitFunc(const char *prog_name,
-                                               void (*log_func)(int log_level, char *message) );
+                                               void (*log_func)(int log_level, char *message));
 EXTERN MATIO_EXPORT                int    Mat_Message( const char *format, ... );
-EXTERN MATIO_EXPORT                int    Mat_DebugMessage( int level, const char *format, ... );
-EXTERN MATIO_EXPORT                int    Mat_VerbMessage( int level, const char *format, ... );
-EXTERN MATIO_EXPORT                void   Mat_Warning( const char *format, ... );
+EXTERN MATIO_EXPORT                int    Mat_DebugMessage(int level, const char *format, ...);
+EXTERN MATIO_EXPORT                int    Mat_VerbMessage(int level, const char *format, ...);
+EXTERN MATIO_EXPORT                void   Mat_Warning(const char *format, ...);
 EXTERN MATIO_EXPORT                size_t Mat_SizeOf(enum matio_types data_type);
 EXTERN MATIO_EXPORT                size_t Mat_SizeOfClass(int class_type);
 
@@ -309,6 +309,8 @@ EXTERN MATIO_EXPORT matvar_t  *Mat_VarSetStructFieldByName(matvar_t *matvar,
                                   const char *field_name,size_t index,matvar_t *field);
 EXTERN MATIO_EXPORT int        Mat_VarWrite(mat_t *mat,matvar_t *matvar,
                                   enum matio_compression compress );
+EXTERN MATIO_EXPORT int        Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,
+                                  enum matio_compression compress,int dim);
 EXTERN MATIO_EXPORT int        Mat_VarWriteInfo(mat_t *mat,matvar_t *matvar);
 EXTERN MATIO_EXPORT int        Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
                                   int *start,int *stride,int *edge);

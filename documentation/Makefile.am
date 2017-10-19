@@ -51,4 +51,5 @@ dist_man3_MANS  = \
     Mat_VarReadInfo.3 \
     Mat_VarReadNext.3 \
     Mat_VarReadNextInfo.3 \
-    Mat_VarWrite.3
+    Mat_VarWrite.3 \
+    Mat_VarWriteAppend.3 
