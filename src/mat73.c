@@ -1142,6 +1142,8 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
  * @param id HDF id of the parent object
  * @param matvar pointer to the cell array variable
  * @param name Name of the HDF dataset
+ * @param refs_id pointer to the id of the /#refs# group in HDF5
+ * @param dims array of permutated dimensions
  * @retval 0 on success
  * @endif
  */
@@ -1251,6 +1253,7 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
  * @param id HDF id of the parent object
  * @param matvar pointer to the character variable
  * @param name Name of the HDF dataset
+ * @param dims array of permutated dimensions
  * @retval 0 on success
  * @endif
  */
@@ -1398,6 +1401,7 @@ Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
  * @param id HDF id of the parent object
  * @param matvar pointer to the logical variable
  * @param name Name of the HDF dataset
+ * @param dims array of permutated dimensions
  * @retval 0 on success
  * @endif
  */
@@ -1514,6 +1518,7 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
  * @param id HDF id of the parent object
  * @param matvar pointer to the numeric variable
  * @param name Name of the HDF dataset
+ * @param dims array of permutated dimensions
  * @retval 0 on success
  * @endif
  */
@@ -1804,6 +1809,8 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
  * @param id HDF id of the parent object
  * @param matvar pointer to the structure variable
  * @param name Name of the HDF dataset
+ * @param refs_id pointer to the id of the /#refs# group in HDF5
+ * @param dims array of permutated dimensions
  * @retval 0 on success
  * @endif
  */
