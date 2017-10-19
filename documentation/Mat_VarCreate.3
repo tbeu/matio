@@ -47,17 +47,19 @@ The
 .Fn Mat_VarCreate
 function creates a MAT structure variable named
 .Fa name
-that can be written to a MAT file. The
+that can be written to a MAT file.
+The
 .Fa class_type
 argument specifies the class of the variable, and the
 .Fa data_type
-argument specifies the type of the data. For example, a double-precision class
-would use
+argument specifies the type of the data.
+For example, a double-precision class would use
 .Dv MAT_C_DOUBLE
 for the class type and
 .Dv MAT_T_DOUBLE
-for the data type. In some instances, the data type may not match the class
-type. For example, an array of integers can be written in the double-precision
+for the data type.
+In some instances, the data type may not match the class type.
+For example, an array of integers can be written in the double-precision
 class by using
 .Dv MAT_T_INT32
 for
@@ -65,22 +67,26 @@ for
 .Pp
 The
 .Fa rank
-argument specifies how many dimensions the data has. The minimum rank is 2. The
-number of elements in each dimension is specified in the array
+argument specifies how many dimensions the data has.
+The minimum rank is 2.
+The number of elements in each dimension is specified in the array
 .Fa dims.
 .Pp
 The
 .Fa data
-argument is a pointer to the variable data. The pointer is typically a pointer
-to a numeric array (e.g. double, float, int, etc.) for real variables. For
-complex variables, the pointer is a pointer to a
+argument is a pointer to the variable data.
+The pointer is typically a pointer to a numeric array (e.g. double, float, int,
+etc.) for real variables.
+For complex variables, the pointer is a pointer to a
 .Vt mat_complex_split_t
 which contains pointers to the real and imaginary data as fields of the
-structure. For sparse variables, the pointer should be a
+structure.
+For sparse variables, the pointer should be a
 .Vt mat_sparse_t *.
 .Sh RETURN VALUES
 If the variable was successfully created, a pointer to the variable is returned.
-Otherwise NULL is returned. The variable should be free'd when no longer needed
+Otherwise NULL is returned.
+The variable should be free'd when no longer needed
 using
 .Xr Mat_VarFree.
 .Sh EXAMPLES

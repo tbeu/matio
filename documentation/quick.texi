@@ -186,7 +186,7 @@ main(int argc,char **argv)
 @section Writing Variables
 A variable can be saved in a MAT file using the @code{Mat_VarWrite} function
 which has three arguments: the MAT file to write the variable to, a MATLAB
-variable structure, and a third option used to control write options.
+variable structure, and a third option used to control compression options.
 The variable structure can be filled in manually, or created from helper
 routines such as @code{Mat_VarCreate}. Note that MATLAB, and thus @emph{matio},
 has no concept of a rank 1 array (i.e. vector). The minimum rank of an array is
