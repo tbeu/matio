@@ -24,37 +24,23 @@
 .\" ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 .\" POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd March 12, 2012
-.Dt MAT_GETVERSION 3
+.Dd October 20, 2017
+.Dt MAT_VARGETSIZE 3
 .Os
 .Sh NAME
-.Nm Mat_GetVersion
-.Nd Returns the version of a MATLAB MAT file given a MAT file structure.
+.Nm Mat_VarGetSize
+.Nd Calculates the size of a MAT variable in bytes.
 .Sh SYNOPSIS
 .Fd #include <matio.h>
-.Ft enum mat_ft
-.Fo Mat_GetVersion
-.Fa "mat_t *matfp"
+.Ft size_t
+.Fo Mat_VarGetSize
+.Fa "matvar_t *matvar"
 .Fc
 .Sh DESCRIPTION
 The
-.Fn Mat_GetVersion
-function returns the version of the MATLAB MAT file given by the MAT file
-structure.
-The return value is one of the following:
-.Bl -bullet
-.It
-.Cm MAT_FT_MAT73
-if the file is an HDF5 MAT file.
-.It
-.Cm MAT_FT_MAT5
-if the file is a version 5 MAT file.
-.It
-.Cm MAT_FT_MAT4
-if the file is a version 4 MAT file.
-.El
-.Sh SEE ALSO
-.Xr Mat_Create 3 ,
-.Xr Mat_CreateVer 3 ,
-.Xr Mat_Open 3 ,
-.Xr Mat_GetFilename 3
+.Fn Mat_VarGetSize
+function calculates the size of a MAT variable
+.Fa matvar
+in bytes similar to the MATLAB whos command.
+.Sh RETURN VALUES
+The function returns the number of bytes.
