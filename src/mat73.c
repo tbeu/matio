@@ -1053,7 +1053,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
         numel = 1;
         for ( k = 0; k < matvar->rank; k++ )
             numel *= matvar->dims[k];
-        for ( i = 0; i < numel; k++ )
+        for ( i = 0; i < numel; i++ )
             Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
         return;
     }
