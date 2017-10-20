@@ -1442,6 +1442,7 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
                 H5Pset_chunk(plist, matvar->rank, chunk_dims);
                 free(chunk_dims);
             } else {
+                H5Pclose(plist);
                 return err;
             }
         }
@@ -1560,6 +1561,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
                 H5Pset_chunk(plist, matvar->rank, chunk_dims);
                 free(chunk_dims);
             } else {
+                H5Pclose(plist);
                 return err;
             }
         }
