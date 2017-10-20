@@ -1751,6 +1751,7 @@ Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,h
                                  mspace_id, space_id, H5P_DEFAULT, matvar->data);
                     }
                     H5Sclose(mspace_id);
+                    err = 0;
                 } else {
                     err = -3;
                 }
@@ -1759,7 +1760,6 @@ Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,h
             }
             H5Sclose(space_id);
             H5Dclose(dset_id);
-            err = 0;
         } else {
             /* Create with unlimited number of dimensions */
             if ( MAX_RANK >= matvar->rank ) {
