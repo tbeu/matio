@@ -45,8 +45,28 @@
 #define READ_BLOCK_SIZE (256)
 #endif
 
-#define Mat_uint8Swap(x) (*x)
-#define Mat_int8Swap(x) (*x)
+#define READ_DATA_NOSWAP \
+    do { \
+        if ( len <= READ_BLOCK_SIZE ) { \
+            bytesread += fread(v,data_size,len,(FILE*)mat->fp); \
+            for ( j = 0; j < len; j++ ) { \
+                data[j] = v[j]; \
+            } \
+        } else { \
+            for ( i = 0; i < len-READ_BLOCK_SIZE; i+=READ_BLOCK_SIZE ) { \
+                bytesread += fread(v,data_size,READ_BLOCK_SIZE,(FILE*)mat->fp); \
+                for ( j = 0; j < READ_BLOCK_SIZE; j++ ) { \
+                    data[i+j] = v[j]; \
+                } \
+            } \
+            if ( len > i ) { \
+                bytesread += fread(v,data_size,len-i,(FILE*)mat->fp); \
+                for ( j = 0; j < len-i; j++ ) { \
+                    data[i+j] = v[j]; \
+                } \
+            }\
+        } \
+    } while (0)
 
 #define READ_DATA(SwapFunc) \
     do { \
@@ -71,25 +91,7 @@
                 }\
             } \
         } else { \
-            if ( len <= READ_BLOCK_SIZE ) { \
-                bytesread += fread(v,data_size,len,(FILE*)mat->fp); \
-                for ( j = 0; j < len; j++ ) { \
-                    data[j] = v[j]; \
-                } \
-            } else { \
-                for ( i = 0; i < len-READ_BLOCK_SIZE; i+=READ_BLOCK_SIZE ) { \
-                    bytesread += fread(v,data_size,READ_BLOCK_SIZE,(FILE*)mat->fp); \
-                    for ( j = 0; j < READ_BLOCK_SIZE; j++ ) { \
-                        data[i+j] = v[j]; \
-                    } \
-                } \
-                if ( len > i ) { \
-                    bytesread += fread(v,data_size,len-i,(FILE*)mat->fp); \
-                    for ( j = 0; j < len-i; j++ ) { \
-                        data[i+j] = v[j]; \
-                    } \
-                }\
-            } \
+            READ_DATA_NOSWAP; \
         } \
     } while (0)
 
@@ -159,13 +161,13 @@
             case MAT_T_INT8: \
             { \
                 mat_int8_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(Mat_int8Swap); \
+                READ_DATA_NOSWAP; \
                 break; \
             } \
             case MAT_T_UINT8: \
             { \
                 mat_uint8_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(Mat_uint8Swap); \
+                READ_DATA_NOSWAP; \
                 break; \
             } \
             default: \
@@ -372,13 +374,13 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
         case MAT_T_INT8:
         {
             mat_int8_t v[READ_BLOCK_SIZE];
-            READ_DATA(Mat_int8Swap);
+            READ_DATA_NOSWAP;
             break;
         }
         case MAT_T_UINT8:
         {
             mat_uint8_t v[READ_BLOCK_SIZE];
-            READ_DATA(Mat_uint8Swap);
+            READ_DATA_NOSWAP;
             break;
         }
         default:
