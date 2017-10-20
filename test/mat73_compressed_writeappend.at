@@ -25,6 +25,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 AT_SETUP([Append (1st dim) 2D double array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c double -a 1 write_2d_numeric],[0],[],[])
@@ -37,6 +38,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D single array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single -a 1 write_2d_numeric],[0],[],[])
@@ -49,6 +51,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D int64 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
@@ -62,6 +65,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D uint64 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
@@ -75,6 +79,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D int32 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 -a 1 write_2d_numeric],[0],[],[])
@@ -87,6 +92,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D uint32 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 -a 1 write_2d_numeric],[0],[],[])
@@ -99,6 +105,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D int16 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 -a 1 write_2d_numeric],[0],[],[])
@@ -111,6 +118,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D uint16 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 -a 1 write_2d_numeric],[0],[],[])
@@ -123,6 +131,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D int8 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 -a 1 write_2d_numeric],[0],[],[])
@@ -135,6 +144,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D uint8 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 -a 1 write_2d_numeric],[0],[],[])
@@ -147,6 +157,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D double array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c double -a 2 write_2d_numeric],[0],[],[])
@@ -159,6 +170,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D single array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single -a 2 write_2d_numeric],[0],[],[])
@@ -171,6 +183,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D int64 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
@@ -184,6 +197,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D uint64 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
@@ -197,6 +211,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D int32 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 -a 2 write_2d_numeric],[0],[],[])
@@ -209,6 +224,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D uint32 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 -a 2 write_2d_numeric],[0],[],[])
@@ -221,6 +237,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D int16 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 -a 2 write_2d_numeric],[0],[],[])
@@ -233,6 +250,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D uint16 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 -a 2 write_2d_numeric],[0],[],[])
@@ -245,6 +263,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D int8 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 -a 2 write_2d_numeric],[0],[],[])
@@ -257,6 +276,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D uint8 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 -a 2 write_2d_numeric],[0],[],[])
@@ -269,6 +289,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex double array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c double -a 1 write_complex_2d_numeric],[0],[],[])
@@ -281,6 +302,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex single array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single -a 1 write_complex_2d_numeric],[0],[],[])
@@ -293,6 +315,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex int64 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
@@ -306,6 +329,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex uint64 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
@@ -319,6 +343,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex int32 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 -a 1 write_complex_2d_numeric],[0],[],[])
@@ -331,6 +356,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex uint32 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 -a 1 write_complex_2d_numeric],[0],[],[])
@@ -343,6 +369,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex int16 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 -a 1 write_complex_2d_numeric],[0],[],[])
@@ -355,6 +382,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex uint16 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 -a 1 write_complex_2d_numeric],[0],[],[])
@@ -367,6 +395,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex int8 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 -a 1 write_complex_2d_numeric],[0],[],[])
@@ -379,6 +408,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (1st dim) 2D complex uint8 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 -a 1 write_complex_2d_numeric],[0],[],[])
@@ -391,6 +421,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex double array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c double -a 2 write_complex_2d_numeric],[0],[],[])
@@ -403,6 +434,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex single array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c single -a 2 write_complex_2d_numeric],[0],[],[])
@@ -415,6 +447,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex int64 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_INT64 -eq 0])
@@ -428,6 +461,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex uint64 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
@@ -441,6 +475,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex int32 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 -a 2 write_complex_2d_numeric],[0],[],[])
@@ -453,6 +488,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex uint32 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 -a 2 write_complex_2d_numeric],[0],[],[])
@@ -465,6 +501,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex int16 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 -a 2 write_complex_2d_numeric],[0],[],[])
@@ -477,6 +514,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex uint16 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 -a 2 write_complex_2d_numeric],[0],[],[])
@@ -489,6 +527,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex int8 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 -a 2 write_complex_2d_numeric],[0],[],[])
@@ -501,6 +540,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Append (2nd dim) 2D complex uint8 array])
+AT_KEYWORDS([append])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 -a 2 write_complex_2d_numeric],[0],[],[])
