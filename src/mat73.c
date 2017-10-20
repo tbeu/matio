@@ -2545,10 +2545,10 @@ int
 Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
           int *start,int *stride,int *edge)
 {
-    int err = -1;
-    int k;
+    int err = -1, k;
     hid_t fid,dset_id,ref_id,dset_space,mem_space;
-    hsize_t dset_start[10],dset_stride[10],dset_edge[10];
+    hsize_t *dset_start_stride_edge;
+    hsize_t *dset_start, *dset_stride, *dset_edge;
 
     if ( NULL == mat || NULL == matvar || NULL == data || NULL == start ||
          NULL == stride || NULL == edge )
@@ -2557,6 +2557,14 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
         return err;
 
     fid = *(hid_t*)mat->fp;
+
+    dset_start_stride_edge = (hsize_t*)malloc(matvar->rank*3*sizeof(hsize_t));
+    if ( NULL == dset_start_stride_edge ) {
+        return err;
+    }
+    dset_start  = &dset_start_stride_edge[0];
+    dset_stride = &dset_start_stride_edge[matvar->rank];
+    dset_edge   = &dset_start_stride_edge[2*matvar->rank];
 
     for ( k = 0; k < matvar->rank; k++ ) {
         dset_start[k]  = start[matvar->rank-k-1];
@@ -2624,6 +2632,7 @@ Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
             break;
     }
     H5Sclose(mem_space);
+    free(dset_start_stride_edge);
 
     return err;
 }
@@ -2648,10 +2657,9 @@ int
 Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
     int start,int stride,int edge)
 {
-    int err = -1;
+    int err = -1, k;
     hid_t fid,dset_id,dset_space,mem_space;
-    hsize_t dset_start,dset_stride,dset_edge;
-    hsize_t *points, k, dimp[10];
+    hsize_t *points, dset_edge, *dimp;
 
     if ( NULL == mat || NULL == matvar || NULL == data )
         return err;
@@ -2660,9 +2668,7 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
 
     fid = *(hid_t*)mat->fp;
 
-    dset_start  = start;
-    dset_stride = stride;
-    dset_edge   = edge;
+    dset_edge = edge;
     mem_space = H5Screate_simple(1, &dset_edge, NULL);
 
     switch ( matvar->class_type ) {
@@ -2676,22 +2682,21 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
         case MAT_C_UINT16:
         case MAT_C_INT8:
         case MAT_C_UINT8:
-            if ( NULL != matvar->internal->hdf5_name ) {
-                dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
-            } else {
-                dset_id = matvar->internal->id;
-                H5Iinc_ref(dset_id);
-            }
-
             points = (hsize_t*)malloc(matvar->rank*dset_edge*sizeof(*points));
             if ( NULL == points ) {
                 err = -2;
                 break;
             }
+            dimp = (hsize_t*)malloc(matvar->rank*sizeof(hsize_t));
+            if ( NULL == dimp ) {
+                err = -2;
+                free(points);
+                break;
+            }
             dimp[0] = 1;
             for ( k = 1; k < matvar->rank; k++ )
                 dimp[k] = dimp[k-1]*matvar->dims[k-1];
-            for ( k = 0; k < dset_edge; k++ ) {
+            for ( k = 0; k < edge; k++ ) {
                 size_t l, coord;
                 coord = (size_t)(start + k*stride);
                 for ( l = matvar->rank; l--; ) {
@@ -2700,8 +2705,17 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
                     coord -= idx*dimp[l];
                 }
             }
+            free(dimp);
+
+            if ( NULL != matvar->internal->hdf5_name ) {
+                dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
+            } else {
+                dset_id = matvar->internal->id;
+                H5Iinc_ref(dset_id);
+            }
             dset_space = H5Dget_space(dset_id);
             H5Sselect_elements(dset_space,H5S_SELECT_SET,dset_edge,points);
+            free(points);
 
             if ( !matvar->isComplex ) {
                 H5Dread(dset_id,Mat_class_type_to_hid_t(matvar->class_type),
@@ -2727,7 +2741,6 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
             }
             H5Sclose(dset_space);
             H5Dclose(dset_id);
-            free(points);
             err = 0;
             break;
         default:
