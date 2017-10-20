@@ -29,18 +29,18 @@
 .Os
 .Sh NAME
 .Nm Mat_VarFree
-.Nd Free a MAT variable structure
+.Nd Frees a MAT variable structure.
 .Sh SYNOPSIS
 .Fd #include <matio.h>
 .Ft void
-.Fo Mat_VarRead
+.Fo Mat_VarFree
 .Fa "matvar_t *matvar"
 .Fc
 .Sh DESCRIPTION
 The
 .Fn Mat_VarFree
 function free's the memory used by a MAT variable structure.
-If the variable was no created with the
+If the variable was not created with the
 .Dv MAT_F_DONT_COPY_DATA
 flag, the variable data is also free'd.
 .Sh SEE ALSO
