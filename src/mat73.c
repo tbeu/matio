@@ -101,6 +101,8 @@ static void    Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void    Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void    Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat);
 static void    Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat);
+static int     Mat_VarWriteEmpty(hid_t id,matvar_t *matvar,const char *name,
+                   const char* class_name);
 static int     Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,
                    hid_t *refs_id,hsize_t *dims);
 static int     Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims);
@@ -1146,6 +1148,87 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
     return;
 }
 
+static int
+Mat_VarWriteEmpty(hid_t id,matvar_t *matvar,const char *name,const char* class_name)
+{
+    int      err = 0;
+    hsize_t  rank = matvar->rank;
+    unsigned empty = 1;
+    hid_t    mspace_id, dset_id, attr_type_id, aspace_id, attr_id;
+
+    mspace_id = H5Screate_simple(1,&rank,NULL);
+    dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
+                        H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+    attr_type_id = H5Tcopy(H5T_C_S1);
+    H5Tset_size(attr_type_id, strlen(class_name));
+    aspace_id = H5Screate(H5S_SCALAR);
+    attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
+                        aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+    H5Awrite(attr_id, attr_type_id, class_name);
+    H5Sclose(aspace_id);
+    H5Aclose(attr_id);
+    H5Tclose(attr_type_id);
+
+    if ( 0 == strcmp(class_name, "struct") ) {
+        /* Write the fields attribute */
+        hsize_t nfields = matvar->internal->num_fields;
+        if ( nfields ) {
+            hvl_t *fieldnames = (hvl_t*)malloc(nfields*sizeof(*fieldnames));
+            if ( NULL != fieldnames ) {
+                hid_t      str_type_id,fieldnames_id;
+                matvar_t **fields;
+                hsize_t    k;
+
+                str_type_id = H5Tcopy(H5T_C_S1);
+                fields     = (matvar_t**)matvar->data;
+                for ( k = 0; k < nfields; k++ ) {
+                    fieldnames[k].len =
+                    strlen(matvar->internal->fieldnames[k]);
+                    fieldnames[k].p   = matvar->internal->fieldnames[k];
+                }
+                H5Tset_size(str_type_id,1);
+                fieldnames_id = H5Tvlen_create(str_type_id);
+                aspace_id     = H5Screate_simple(1,&nfields,NULL);
+                attr_id = H5Acreate(dset_id,"MATLAB_fields",fieldnames_id,
+                                    aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+                H5Awrite(attr_id,fieldnames_id,fieldnames);
+                H5Aclose(attr_id);
+                H5Sclose(aspace_id);
+                H5Tclose(fieldnames_id);
+                H5Tclose(str_type_id);
+                free(fieldnames);
+            } else {
+                err = 1;
+            }
+        }
+    } else if ( 0 == strcmp(class_name, "logical") ) {
+        /* Write the MATLAB_int_decode attribute */
+        int int_decode = 1;
+        aspace_id = H5Screate(H5S_SCALAR);
+        attr_id = H5Acreate(dset_id,"MATLAB_int_decode",H5T_NATIVE_INT,
+                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+        H5Awrite(attr_id,H5T_NATIVE_INT,&int_decode);
+        H5Sclose(aspace_id);
+        H5Aclose(attr_id);
+    }
+
+    /* Write the empty attribute */
+    aspace_id = H5Screate(H5S_SCALAR);
+    attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
+                        aspace_id,H5P_DEFAULT,H5P_DEFAULT);
+    H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
+    H5Sclose(aspace_id);
+    H5Aclose(attr_id);
+
+    /* Write the dimensions as the data */
+    H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+             H5P_DEFAULT,matvar->dims);
+    H5Dclose(dset_id);
+    H5Sclose(mspace_id);
+
+    return err;
+}
+
 /** @if mat_devman
  * @brief Writes a cell array matlab variable to the specified HDF id with the
  *        given name
@@ -1163,7 +1246,6 @@ static int
 Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims)
 {
     int        k;
-    hid_t      mspace_id,dset_id,attr_id,aspace_id;
     hsize_t    nmemb = 1;
     matvar_t **cells;
     int        err = -1;
@@ -1173,37 +1255,10 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
         nmemb *= dims[k];
 
     if ( 0 == nmemb || NULL == matvar->data ) {
-        hsize_t rank = matvar->rank;
-        unsigned empty = 1;
-        hid_t attr_type_id;
-
-        mspace_id = H5Screate_simple(1,&rank,NULL);
-        dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
-                            H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        attr_type_id = H5Tcopy(H5T_C_S1);
-        H5Tset_size(attr_type_id, strlen(Mat_class_names[matvar->class_type]));
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id, attr_type_id, Mat_class_names[matvar->class_type]);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        H5Tclose(attr_type_id);
-        /* Write the empty attribute */
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        /* Write the dimensions as the data */
-        H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
-                 H5P_DEFAULT,matvar->dims);
-        H5Dclose(dset_id);
-        H5Sclose(mspace_id);
-        err = 0;
+        err = Mat_VarWriteEmpty(id, matvar, name, Mat_class_names[matvar->class_type]);
     } else {
-        char id_name[128] = {'\0',};
+        char  id_name[128] = {'\0',};
+        hid_t mspace_id,dset_id,attr_id,aspace_id;
 
         (void)H5Iget_name(id,id_name,127);
         if ( *refs_id < 0 ) {
@@ -1272,44 +1327,18 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
 static int
 Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
 {
-    int err = -1, k;
+    int     err = -1, k;
     hsize_t numel = 1;
-    hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
 
     for ( k = 0; k < matvar->rank; k++ ) {
         numel *= dims[k];
     }
 
     if ( 0 == numel || NULL == matvar->data ) {
-        hsize_t rank = matvar->rank;
-        unsigned empty = 1;
-        mspace_id = H5Screate_simple(1,&rank,NULL);
-        dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
-                            H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        attr_type_id = H5Tcopy(H5T_C_S1);
-        H5Tset_size(attr_type_id, strlen(Mat_class_names[matvar->class_type]));
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id, attr_type_id, Mat_class_names[matvar->class_type]);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        H5Tclose(attr_type_id);
-        /* Write the empty attribute */
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        /* Write the dimensions as the data */
-        H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
-                 H5P_DEFAULT,matvar->dims);
-        H5Dclose(dset_id);
-        H5Sclose(mspace_id);
-        err = 0;
+        err = Mat_VarWriteEmpty(id, matvar, name, Mat_class_names[matvar->class_type]);
     } else {
-        int matlab_int_decode = 2;
+        int   matlab_int_decode = 2;
+        hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
 
         mspace_id = H5Screate_simple(matvar->rank,dims,NULL);
         switch ( matvar->data_type ) {
@@ -1420,10 +1449,9 @@ Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
 static int
 Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
 {
-    int err = -1, k;
+    int     err = -1, k;
     hsize_t numel = 1;
-    hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id,plist;
-    int int_decode = 1;
+    hid_t   plist;
 
     for ( k = 0; k < matvar->rank; k++ ) {
         numel *= dims[k];
@@ -1452,42 +1480,11 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
     }
 
     if ( 0 == numel || NULL == matvar->data ) {
-        hsize_t rank = matvar->rank;
-        unsigned empty = 1;
-        mspace_id = H5Screate_simple(1,&rank,NULL);
-
-        dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
-                            H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        attr_type_id = H5Tcopy(H5T_C_S1);
-        H5Tset_size(attr_type_id, 7);
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id, attr_type_id, "logical");
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        H5Tclose(attr_type_id);
-        /* Write the MATLAB_int_decode attribute */
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_int_decode",H5T_NATIVE_INT,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,H5T_NATIVE_INT,&int_decode);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        /* Write the empty attribute */
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        /* Write the dimensions as the data */
-        H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
-                 H5P_DEFAULT,matvar->dims);
-        H5Dclose(dset_id);
-        H5Sclose(mspace_id);
-        err = 0;
+        err = Mat_VarWriteEmpty(id, matvar, name, "logical");
     } else {
+        int   int_decode = 1;
+        hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
+
         mspace_id = H5Screate_simple(matvar->rank,dims,NULL);
         /* Note that MATLAB only recognizes uint8 as logical */
         dset_id = H5Dcreate(id,name,
@@ -1572,34 +1569,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
     }
 
     if ( 0 == numel || NULL == matvar->data ) {
-        hsize_t rank = matvar->rank;
-        unsigned empty = 1;
-        mspace_id = H5Screate_simple(1,&rank,NULL);
-
-        dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
-                            H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        attr_type_id = H5Tcopy(H5T_C_S1);
-        H5Tset_size(attr_type_id, strlen(Mat_class_names[matvar->class_type]));
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id, attr_type_id, Mat_class_names[matvar->class_type]);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        H5Tclose(attr_type_id);
-        /* Write the empty attribute */
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        /* Write the dimensions as the data */
-        H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
-                 H5P_DEFAULT,matvar->dims);
-        H5Dclose(dset_id);
-        H5Sclose(mspace_id);
-        err = 0;
+        err = Mat_VarWriteEmpty(id, matvar, name, Mat_class_names[matvar->class_type]);
     } else if ( matvar->isComplex ) {
         hid_t h5_complex,h5_complex_base;
 
@@ -1949,71 +1919,14 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
 static int
 Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims)
 {
-    int err = -1, k;
-    hid_t      mspace_id,dset_id,attr_id,aspace_id;
-    hid_t      str_type_id,fieldnames_id;
-    hsize_t    nfields,nmemb;
-    matvar_t **fields;
-    hvl_t     *fieldnames;
+    int     err = -1, k;
+    hsize_t nmemb = 1;
 
-    nmemb = 1;
     for ( k = 0; k < matvar->rank; k++ )
         nmemb *= matvar->dims[k];
 
     if ( 0 == nmemb || NULL == matvar->data ) {
-        hsize_t rank = matvar->rank;
-        unsigned empty = 1;
-        hid_t attr_type_id;
-
-        mspace_id = H5Screate_simple(1,&rank,NULL);
-        dset_id = H5Dcreate(id,name,H5T_NATIVE_HSIZE,mspace_id,
-                            H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        attr_type_id = H5Tcopy(H5T_C_S1);
-        H5Tset_size(attr_type_id, strlen(Mat_class_names[matvar->class_type]));
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id, attr_type_id, Mat_class_names[matvar->class_type]);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        H5Tclose(attr_type_id);
-        /* Write the empty attribute */
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-
-        nfields = matvar->internal->num_fields;
-        if ( nfields ) {
-            str_type_id = H5Tcopy(H5T_C_S1);
-            fieldnames = (hvl_t*)malloc(nfields*sizeof(*fieldnames));
-            fields     = (matvar_t**)matvar->data;
-            for ( k = 0; k < nfields; k++ ) {
-                fieldnames[k].len =
-                strlen(matvar->internal->fieldnames[k]);
-                fieldnames[k].p   = matvar->internal->fieldnames[k];
-            }
-            H5Tset_size(str_type_id,1);
-            fieldnames_id = H5Tvlen_create(str_type_id);
-            aspace_id     = H5Screate_simple(1,&nfields,NULL);
-            attr_id = H5Acreate(dset_id,"MATLAB_fields",fieldnames_id,
-                                aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-            H5Awrite(attr_id,fieldnames_id,fieldnames);
-            H5Aclose(attr_id);
-            H5Sclose(aspace_id);
-            H5Tclose(fieldnames_id);
-            H5Tclose(str_type_id);
-            free(fieldnames);
-        }
-
-        /* Write the dimensions as the data */
-        H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
-                 H5P_DEFAULT,matvar->dims);
-        H5Dclose(dset_id);
-        H5Sclose(mspace_id);
-        err = 0;
+        err = Mat_VarWriteEmpty(id, matvar, name, Mat_class_names[matvar->class_type]);
     } else {
         hid_t struct_id;
         char id_name[128] = {'\0',};
@@ -2024,6 +1937,12 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
         if ( struct_id < 0 ) {
             Mat_Critical("Error creating group for struct %s",name);
         } else {
+            hid_t mspace_id,dset_id,attr_id,aspace_id;
+            hid_t str_type_id,fieldnames_id;
+            matvar_t **fields;
+            hvl_t     *fieldnames;
+            hsize_t    nfields;
+
             str_type_id = H5Tcopy(H5T_C_S1);
             H5Tset_size(str_type_id,6);
             aspace_id = H5Screate(H5S_SCALAR);
