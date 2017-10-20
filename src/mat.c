@@ -1,5 +1,5 @@
 /** @file mat.c
- * Matlab MAT version 5 file functions
+ * Matlab MAT file functions
  * @ingroup MAT
  */
 /*
@@ -396,17 +396,20 @@ Mat_Open(const char *matname,int mode)
  * Closes the given Matlab MAT file and frees any memory with it.
  * @ingroup MAT
  * @param mat Pointer to the MAT file
- * @retval 0
+ * @retval 0 on success
  */
 int
 Mat_Close( mat_t *mat )
 {
+    int err = 0;
+
     if ( NULL != mat ) {
 #if defined(MAT73) && MAT73
         if ( mat->version == 0x0200 ) {
             if ( mat->refs_id > -1 )
                 H5Gclose(mat->refs_id);
-            H5Fclose(*(hid_t*)mat->fp);
+            if ( 0 > H5Fclose(*(hid_t*)mat->fp) )
+                err = 1;
             free(mat->fp);
             mat->fp = NULL;
         }
@@ -430,7 +433,7 @@ Mat_Close( mat_t *mat )
         free(mat);
     }
 
-    return 0;
+    return err;
 }
 
 /** @brief Gets the filename for the given MAT file
