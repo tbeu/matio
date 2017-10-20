@@ -2072,11 +2072,6 @@ Mat_VarWriteAppendNext73(hid_t id,matvar_t *matvar,const char *name,int dim)
 {
     int err = -1;
 
-    if ( NULL == matvar ) {
-        size_t dims[2] = {0,0};
-        return Mat_WriteEmptyVariable73(id,name,2,dims);
-    }
-
     if ( MAX_RANK >= matvar->rank ) {
         hsize_t perm_dims[MAX_RANK];
         err = Mat_VarWriteAppendNextType73(id, matvar, name, dim, perm_dims);
