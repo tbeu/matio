@@ -707,7 +707,6 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
                 ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids+i);
                 cells[i]->internal->id = ref_id;
-                cells[i]->internal->fp = matvar->internal->fp;
                 Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
             }
             free(ref_ids);
@@ -950,7 +949,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                     free(ref_ids);
                 } else {
                     fields[k] = Mat_VarCalloc();
-                    fields[k]->internal->fp = mat;
                     fields[k]->name = strdup(matvar->internal->fieldnames[k]);
                     Mat_H5ReadDatasetInfo(mat,fields[k],field_id);
                 }
@@ -960,7 +958,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                                    H5P_DEFAULT);
                 if ( -1 < field_id ) {
                     fields[k] = Mat_VarCalloc();
-                    fields[k]->internal->fp = mat;
                     fields[k]->name = strdup(matvar->internal->fieldnames[k]);
                     Mat_H5ReadGroupInfo(mat,fields[k],field_id);
                     H5Gclose(field_id);
@@ -2810,7 +2807,6 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
         Mat_VarFree(matvar);
         return -1;
     }
-    matvar->internal->fp = mat;
 
     switch ( object_info.type ) {
         case H5O_TYPE_DATASET:
