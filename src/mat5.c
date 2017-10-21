@@ -1449,10 +1449,6 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                     ftell((FILE*)mat->fp));
                 break;
             }
-            cells[i]->compression = MAT_COMPRESSION_NONE;
-#if defined(HAVE_ZLIB)
-            cells[i]->internal->z = NULL;
-#endif
 
             /* Read array flags and the dimensions tag */
             bytesread += fread(buf,4,6,(FILE*)mat->fp);
@@ -1635,7 +1631,6 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 Mat_Critical("fields[%d], Uncompressed type not MAT_T_MATRIX",i);
                 continue;
             } else if ( nbytes == 0 ) {
-                fields[i]->rank = 0;
                 continue;
             }
             fields[i]->compression = MAT_COMPRESSION_ZLIB;
@@ -1809,13 +1804,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                     ftell((FILE*)mat->fp));
                 return bytesread;
             } else if ( nBytes == 0 ) {
-                fields[i]->rank = 0;
                 continue;
             }
-            fields[i]->compression = MAT_COMPRESSION_NONE;
-#if defined(HAVE_ZLIB)
-            fields[i]->internal->z = NULL;
-#endif
 
             /* Read array flags and the dimensions tag */
             bytesread += fread(buf,4,6,(FILE*)mat->fp);
