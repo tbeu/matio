@@ -1161,7 +1161,8 @@ Mat_VarWriteEmpty(hid_t id,matvar_t *matvar,const char *name,const char* class_n
     aspace_id = H5Screate(H5S_SCALAR);
     attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
                         aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-    H5Awrite(attr_id, attr_type_id, class_name);
+    if ( 0 > H5Awrite(attr_id, attr_type_id, class_name) )
+        err = 5;
     H5Sclose(aspace_id);
     H5Aclose(attr_id);
     H5Tclose(attr_type_id);
@@ -1188,7 +1189,8 @@ Mat_VarWriteEmpty(hid_t id,matvar_t *matvar,const char *name,const char* class_n
                 aspace_id     = H5Screate_simple(1,&nfields,NULL);
                 attr_id = H5Acreate(dset_id,"MATLAB_fields",fieldnames_id,
                                     aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-                H5Awrite(attr_id,fieldnames_id,fieldnames);
+                if ( 0 > H5Awrite(attr_id,fieldnames_id,fieldnames) )
+                    err += 5;
                 H5Aclose(attr_id);
                 H5Sclose(aspace_id);
                 H5Tclose(fieldnames_id);
@@ -1204,7 +1206,8 @@ Mat_VarWriteEmpty(hid_t id,matvar_t *matvar,const char *name,const char* class_n
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(dset_id,"MATLAB_int_decode",H5T_NATIVE_INT,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,H5T_NATIVE_INT,&int_decode);
+        if ( 0 > H5Awrite(attr_id,H5T_NATIVE_INT,&int_decode) )
+            err += 5;
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
     }
@@ -1213,13 +1216,15 @@ Mat_VarWriteEmpty(hid_t id,matvar_t *matvar,const char *name,const char* class_n
     aspace_id = H5Screate(H5S_SCALAR);
     attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
                         aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-    H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
+    if ( 0 > H5Awrite(attr_id,H5T_NATIVE_UINT,&empty) )
+        err += 5;
     H5Sclose(aspace_id);
     H5Aclose(attr_id);
 
     /* Write the dimensions as the data */
-    H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
-             H5P_DEFAULT,matvar->dims);
+    if ( 0 > H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                      H5P_DEFAULT,matvar->dims) )
+        err += 5;
     H5Dclose(dset_id);
     H5Sclose(mspace_id);
 
@@ -1245,7 +1250,7 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
     int        k;
     hsize_t    nmemb = 1;
     matvar_t **cells;
-    int        err = -1;
+    int        err = 0;
 
     cells = (matvar_t**)matvar->data;
     for ( k = 0; k < matvar->rank; k++ )
@@ -1282,27 +1287,31 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
                 sprintf(obj_name,"%llu",group_info.nlinks);
                 if ( NULL != cells[k] )
                     cells[k]->compression = matvar->compression;
-                Mat_VarWriteNext73(*refs_id,cells[k],obj_name,refs_id);
+                if ( 0 != Mat_VarWriteNext73(*refs_id,cells[k],obj_name,refs_id) )
+                	err += 5;
                 sprintf(obj_name,"/#refs#/%llu",group_info.nlinks);
                 H5Rcreate(refs+k,id,obj_name,H5R_OBJECT,-1);
             }
 
-            H5Dwrite(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,
-                     H5P_DEFAULT,refs);
+            if ( 0 > H5Dwrite(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,
+                              H5P_DEFAULT,refs) )
+                err += 5;
 
             str_type_id = H5Tcopy(H5T_C_S1);
             H5Tset_size(str_type_id,4);
             aspace_id = H5Screate(H5S_SCALAR);
             attr_id = H5Acreate(dset_id,"MATLAB_class",str_type_id,
                                 aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-            H5Awrite(attr_id,str_type_id,"cell");
+            if ( 0 > H5Awrite(attr_id,str_type_id,"cell") )
+                err += 5;
             H5Aclose(attr_id);
             H5Sclose(aspace_id);
             H5Tclose(str_type_id);
             H5Dclose(dset_id);
             free(refs);
             H5Sclose(mspace_id);
-            err = 0;
+        } else {
+            err = -1;
         }
     }
 
@@ -1324,7 +1333,7 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
 static int
 Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
 {
-    int     err = -1, k;
+    int     err = 0, k;
     hsize_t numel = 1;
 
     for ( k = 0; k < matvar->rank; k++ ) {
@@ -1361,30 +1370,32 @@ Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
                 break;
             default:
                 H5Sclose(mspace_id);
-                return err;
+                return -1;
         }
         attr_type_id = H5Tcopy(H5T_C_S1);
         H5Tset_size(attr_type_id, strlen(Mat_class_names[matvar->class_type]));
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,attr_type_id,Mat_class_names[matvar->class_type]);
+        if ( 0 > H5Awrite(attr_id,attr_type_id,Mat_class_names[matvar->class_type]) )
+            err = 5;
         H5Aclose(attr_id);
         H5Tclose(attr_type_id);
 
         attr_type_id = H5Tcopy(H5T_NATIVE_INT);
         attr_id = H5Acreate(dset_id,"MATLAB_int_decode",attr_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,attr_type_id,&matlab_int_decode);
+        if ( 0 > H5Awrite(attr_id,attr_type_id,&matlab_int_decode) )
+            err += 5;
         H5Aclose(attr_id);
         H5Tclose(attr_type_id);
         H5Sclose(aspace_id);
 
-        H5Dwrite(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
-                 H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
+        if ( 0 > H5Dwrite(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
+                          H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data) )
+            err += 5;
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
-        err = 0;
     }
 
     return err;
@@ -1393,7 +1404,7 @@ Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
 static int
 Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
 {
-    int err = -1;
+    int err = 0;
     unsigned empty = 1;
     hid_t mspace_id,dset_id;
 
@@ -1408,7 +1419,8 @@ Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,attr_type_id,"double");
+        if ( 0 > H5Awrite(attr_id,attr_type_id,"double") )
+            err = 5;
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
         H5Tclose(attr_type_id);
@@ -1416,15 +1428,18 @@ Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(dset_id,"MATLAB_empty",H5T_NATIVE_UINT,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,H5T_NATIVE_UINT,&empty);
+        if ( 0 > H5Awrite(attr_id,H5T_NATIVE_UINT,&empty) )
+            err += 5;
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
 
         /* Write the dimensions as the data */
-        H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
-                 H5P_DEFAULT,dims);
+        if ( 0 > H5Dwrite(dset_id,Mat_dims_type_to_hid_t(),H5S_ALL,H5S_ALL,
+                          H5P_DEFAULT,dims) )
+            err += 5;
         H5Dclose(dset_id);
-        err = 0;
+    } else {
+        err = -1;
     }
     H5Sclose(mspace_id);
 
@@ -1446,7 +1461,7 @@ Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
 static int
 Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
 {
-    int     err = -1, k;
+    int     err = 0, k;
     hsize_t numel = 1;
     hid_t   plist;
 
@@ -1468,7 +1483,7 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
                 free(chunk_dims);
             } else {
                 H5Pclose(plist);
-                return err;
+                return -1;
             }
         }
         H5Pset_deflate(plist, 9);
@@ -1492,7 +1507,8 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,attr_type_id,"logical");
+        if ( 0 > H5Awrite(attr_id,attr_type_id,"logical") )
+            err = 5;
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
         H5Tclose(attr_type_id);
@@ -1500,15 +1516,16 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(dset_id,"MATLAB_int_decode",H5T_NATIVE_INT,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,H5T_NATIVE_INT,&int_decode);
+        if ( 0 > H5Awrite(attr_id,H5T_NATIVE_INT,&int_decode) )
+            err += 5;
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
 
-        H5Dwrite(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
-                 H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
+        if ( 0 > H5Dwrite(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
+                          H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data) )
+            err += 5;
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
-        err = 0;
     }
 
     if ( H5P_DEFAULT != plist )
@@ -1533,8 +1550,7 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
 static int
 Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,hsize_t* max_dims)
 {
-    int err = -1;
-    int k;
+    int err = 0, k;
     hsize_t numel = 1;
     hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id,plist;
 
@@ -1556,7 +1572,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
                 free(chunk_dims);
             } else {
                 H5Pclose(plist);
-                return err;
+                return -1;
             }
         }
         if ( matvar->compression )
@@ -1584,7 +1600,8 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id, attr_type_id, Mat_class_names[matvar->class_type]);
+        if ( 0 > H5Awrite(attr_id, attr_type_id, Mat_class_names[matvar->class_type]) )
+            err = 5;
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
         H5Tclose(attr_type_id);
@@ -1594,20 +1611,21 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
         h5_complex = H5Tcreate(H5T_COMPOUND,
                                H5Tget_size(h5_complex_base));
         H5Tinsert(h5_complex,"real",0,h5_complex_base);
-        H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                 ((mat_complex_split_t*)matvar->data)->Re);
+        if ( 0 > H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                          ((mat_complex_split_t*)matvar->data)->Re) )
+            err += 5;
         H5Tclose(h5_complex);
 
         /* Write imaginary part of dataset */
         h5_complex = H5Tcreate(H5T_COMPOUND,
                                H5Tget_size(h5_complex_base));
         H5Tinsert(h5_complex,"imag",0,h5_complex_base);
-        H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                 ((mat_complex_split_t*)matvar->data)->Im);
+        if ( 0 > H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                          ((mat_complex_split_t*)matvar->data)->Im) )
+            err += 5;
         H5Tclose(h5_complex);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
-        err = 0;
     } else { /* matvar->isComplex */
         mspace_id = H5Screate_simple(matvar->rank,dims,max_dims);
         dset_id = H5Dcreate(id,name,
@@ -1618,15 +1636,16 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id, attr_type_id, Mat_class_names[matvar->class_type]);
+        if ( 0 > H5Awrite(attr_id, attr_type_id, Mat_class_names[matvar->class_type]) )
+            err = 5;
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
         H5Tclose(attr_type_id);
-        H5Dwrite(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
-                 H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data);
+        if ( 0 > H5Dwrite(dset_id,Mat_data_type_to_hid_t(matvar->data_type),
+                          H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data) )
+            err += 5;
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
-        err = 0;
     }
 
     if ( H5P_DEFAULT != plist )
@@ -1651,7 +1670,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
 static int
 Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,hsize_t *dims)
 {
-    int err = -1;
+    int err = 0;
     unsigned long k;
     hsize_t numel = 1;
 
@@ -1702,23 +1721,25 @@ Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,h
                         h5_complex = H5Tcreate(H5T_COMPOUND,
                                                H5Tget_size(h5_complex_base));
                         H5Tinsert(h5_complex,"real",0,h5_complex_base);
-                        H5Dwrite(dset_id, h5_complex, mspace_id, space_id, H5P_DEFAULT,
-                                 ((mat_complex_split_t*)matvar->data)->Re);
+                        if ( 0 > H5Dwrite(dset_id, h5_complex, mspace_id, space_id, H5P_DEFAULT,
+                                          ((mat_complex_split_t*)matvar->data)->Re) )
+                            err = 5;
                         H5Tclose(h5_complex);
 
                         /* Write imaginary part of dataset */
                         h5_complex = H5Tcreate(H5T_COMPOUND,
                                                H5Tget_size(h5_complex_base));
                         H5Tinsert(h5_complex,"imag",0,h5_complex_base);
-                        H5Dwrite(dset_id, h5_complex, mspace_id, space_id ,H5P_DEFAULT,
-                                 ((mat_complex_split_t*)matvar->data)->Im);
+                        if ( 0 > H5Dwrite(dset_id, h5_complex, mspace_id, space_id ,H5P_DEFAULT,
+                                          ((mat_complex_split_t*)matvar->data)->Im) )
+                            err += 5;
                         H5Tclose(h5_complex);
                     } else {
-                        H5Dwrite(dset_id, Mat_data_type_to_hid_t(matvar->data_type),
-                                 mspace_id, space_id, H5P_DEFAULT, matvar->data);
+                        if ( 0 > H5Dwrite(dset_id, Mat_data_type_to_hid_t(matvar->data_type),
+                                          mspace_id, space_id, H5P_DEFAULT, matvar->data) )
+                            err = 5;
                     }
                     H5Sclose(mspace_id);
-                    err = 0;
                 } else {
                     err = -3;
                 }
@@ -1743,9 +1764,13 @@ Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,h
                     }
                     err = Mat_VarWriteNumeric73(id,matvar,name,dims,max_dims);
                     free(max_dims);
+                } else {
+                    err = -1;
                 }
             }
         }
+    } else {
+        err = -1;
     }
 
     return err;
@@ -1765,7 +1790,7 @@ Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,h
 static int
 Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
 {
-    int err = -1, k;
+    int err = 0, k;
     hid_t   sparse_id;
     hsize_t nmemb = 1;
 
@@ -1776,6 +1801,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
     if ( sparse_id < 0 ) {
         Mat_Critical("Error creating group for sparse array %s",
                      matvar->name);
+        err = -1;
     } else {
         hid_t size_type_id,data_type_id;
         hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
@@ -1785,22 +1811,16 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         enum matio_classes class_type;
 
         sparse = (mat_sparse_t*)matvar->data;
-
         class_type = Mat_TypeToClass73(matvar->data_type);
         attr_type_id = H5Tcopy(H5T_C_S1);
-        if ( matvar->isLogical ) {
-            H5Tset_size(attr_type_id, 7);
-        } else {
-            H5Tset_size(attr_type_id, strlen(Mat_class_names[class_type]));
-        }
+        H5Tset_size(attr_type_id,
+                    matvar->isLogical ? 7 : strlen(Mat_class_names[class_type]));
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(sparse_id,"MATLAB_class",attr_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        if ( matvar->isLogical ) {
-            H5Awrite(attr_id, attr_type_id, "logical");
-        } else {
-            H5Awrite(attr_id, attr_type_id, Mat_class_names[class_type]);
-        }
+        if ( 0 > H5Awrite(attr_id, attr_type_id,
+                          matvar->isLogical ? "logical" : Mat_class_names[class_type]) )
+            err = 5;
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
         H5Tclose(attr_type_id);
@@ -1811,7 +1831,8 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
             aspace_id = H5Screate(H5S_SCALAR);
             attr_id = H5Acreate(sparse_id, "MATLAB_int_decode", H5T_NATIVE_INT,
                                 aspace_id, H5P_DEFAULT, H5P_DEFAULT);
-            H5Awrite(attr_id, H5T_NATIVE_INT, &int_decode);
+            if ( 0 > H5Awrite(attr_id, H5T_NATIVE_INT, &int_decode) )
+                err += 5;
             H5Sclose(aspace_id);
             H5Aclose(attr_id);
         }
@@ -1821,7 +1842,8 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         aspace_id = H5Screate(H5S_SCALAR);
         attr_id = H5Acreate(sparse_id,"MATLAB_sparse",size_type_id,
                             aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        H5Awrite(attr_id,size_type_id,&sparse_attr_value);
+        if ( 0 > H5Awrite(attr_id,size_type_id,&sparse_attr_value) )
+            err += 5;
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
 
@@ -1837,8 +1859,8 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
             /* Create dataset datatype as compound with real and
              * imaginary fields
              */
-            h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                        2*H5Tget_size(data_type_id));
+            h5_complex = H5Tcreate(H5T_COMPOUND,
+                                   2*H5Tget_size(data_type_id));
             H5Tinsert(h5_complex,"real",0,data_type_id);
             H5Tinsert(h5_complex,"imag",H5Tget_size(data_type_id),
                       data_type_id);
@@ -1854,15 +1876,17 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
             h5_complex = H5Tcreate(H5T_COMPOUND,
                                    H5Tget_size(data_type_id));
             H5Tinsert(h5_complex,"real",0,data_type_id);
-            H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                     complex_data->Re);
+            if ( 0 > H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                              complex_data->Re) )
+                err += 5;
             H5Tclose(h5_complex);
 
             /* Write imaginary part of dataset */
-            h5_complex      = H5Tcreate(H5T_COMPOUND,H5Tget_size(data_type_id));
+            h5_complex = H5Tcreate(H5T_COMPOUND,H5Tget_size(data_type_id));
             H5Tinsert(h5_complex,"imag",0,data_type_id);
-            H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                     complex_data->Im);
+            if ( 0 > H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                              complex_data->Im) )
+                err += 5;
             H5Tclose(h5_complex);
             H5Dclose(dset_id);
             H5Sclose(mspace_id);
@@ -1870,8 +1894,9 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
             mspace_id = H5Screate_simple(1,&ndata,NULL);
             dset_id = H5Dcreate(sparse_id,"data",data_type_id,mspace_id,
                                 H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-            H5Dwrite(dset_id,data_type_id,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                     sparse->data);
+            if ( 0 > H5Dwrite(dset_id,data_type_id,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                              sparse->data) )
+                err += 5;
             H5Dclose(dset_id);
             H5Sclose(mspace_id);
         }
@@ -1880,8 +1905,9 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         mspace_id = H5Screate_simple(1,&nir,NULL);
         dset_id = H5Dcreate(sparse_id,"ir",size_type_id,mspace_id,
                             H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                 sparse->ir);
+        if ( 0 > H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                          sparse->ir) )
+            err += 5;
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
 
@@ -1889,12 +1915,12 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         mspace_id = H5Screate_simple(1,&njc,NULL);
         dset_id = H5Dcreate(sparse_id,"jc",size_type_id,mspace_id,
                             H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                 sparse->jc);
+        if ( 0 > H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
+                          sparse->jc) )
+            err += 5;
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
         H5Gclose(sparse_id);
-        err = 0;
     }
 
     return err;
@@ -1916,7 +1942,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
 static int
 Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims)
 {
-    int     err = -1, k;
+    int     err = 0, k;
     hsize_t nmemb = 1;
 
     for ( k = 0; k < matvar->rank; k++ )
@@ -1933,6 +1959,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
                               H5P_DEFAULT);
         if ( struct_id < 0 ) {
             Mat_Critical("Error creating group for struct %s",name);
+            err = -1;
         } else {
             hid_t mspace_id,dset_id,attr_id,aspace_id;
             hid_t str_type_id,fieldnames_id;
@@ -1945,7 +1972,8 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
             aspace_id = H5Screate(H5S_SCALAR);
             attr_id = H5Acreate(struct_id,"MATLAB_class",str_type_id,
                                 aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-            H5Awrite(attr_id,str_type_id,"struct");
+            if ( 0 > H5Awrite(attr_id,str_type_id,"struct") )
+                err = 5;
             H5Aclose(attr_id);
             H5Sclose(aspace_id);
 
@@ -1955,7 +1983,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
             if ( nfields == 0 ) {
                 H5Gclose(struct_id);
                 H5Tclose(str_type_id);
-                return 0;
+                return err;
             }
 
             fieldnames = (hvl_t*)malloc(nfields*sizeof(*fieldnames));
@@ -1970,7 +1998,8 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
             aspace_id     = H5Screate_simple(1,&nfields,NULL);
             attr_id = H5Acreate(struct_id,"MATLAB_fields",fieldnames_id,
                                 aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-            H5Awrite(attr_id,fieldnames_id,fieldnames);
+            if ( 0 > H5Awrite(attr_id,fieldnames_id,fieldnames) )
+                err += 5;
             H5Aclose(attr_id);
             H5Sclose(aspace_id);
             H5Tclose(fieldnames_id);
@@ -1981,8 +2010,9 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
                 for ( k = 0; k < nfields; k++ ) {
                     if ( NULL != fields[k] )
                         fields[k]->compression = matvar->compression;
-                    Mat_VarWriteNext73(struct_id,fields[k],
-                        matvar->internal->fieldnames[k],refs_id);
+                    if ( 0 != Mat_VarWriteNext73(struct_id,fields[k],
+                        matvar->internal->fieldnames[k],refs_id) )
+                        err += 5;
                 }
             } else {
                 if ( *refs_id < 0 ) {
@@ -2010,8 +2040,9 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
                             if ( NULL != fields[k*nfields+l] )
                                 fields[k*nfields+l]->compression =
                                     matvar->compression;
-                            Mat_VarWriteNext73(*refs_id,fields[k*nfields+l],
-                                name,refs_id);
+                            if ( 0 != Mat_VarWriteNext73(*refs_id,fields[k*nfields+l],
+                                name,refs_id) )
+                                err += 5;
                             sprintf(name,"/#refs#/%llu",group_info.nlinks);
                             H5Rcreate(refs[l]+k,id,name,H5R_OBJECT,-1);
                         }
@@ -2023,17 +2054,19 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
                                             matvar->internal->fieldnames[l],
                                             H5T_STD_REF_OBJ,mspace_id,
                                             H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-                        H5Dwrite(dset_id,H5T_STD_REF_OBJ,H5S_ALL,
-                                 H5S_ALL,H5P_DEFAULT,refs[l]);
+                        if ( 0 > H5Dwrite(dset_id,H5T_STD_REF_OBJ,H5S_ALL,
+                                          H5S_ALL,H5P_DEFAULT,refs[l]) )
+                            err += 5;
                         H5Dclose(dset_id);
                         free(refs[l]);
                     }
                     free(refs);
                     H5Sclose(mspace_id);
+                } else {
+                    err = -1;
                 }
             }
             H5Gclose(struct_id);
-            err = 0;
         }
     }
 
