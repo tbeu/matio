@@ -58,10 +58,10 @@
  */
 struct _mat_t {
     void  *fp;              /**< File pointer for the MAT file */
-    char  *header;          /**< MAT File header string */
+    char  *header;          /**< MAT file header string */
     char  *subsys_offset;   /**< Offset */
     char  *filename;        /**< Filename of the MAT file */
-    int    version;         /**< MAT File version */
+    int    version;         /**< MAT file version */
     int    byteswap;        /**< 1 if byte swapping is required, 0 otherwise */
     int    mode;            /**< Access mode */
     long   bof;             /**< Beginning of file not including any header */
