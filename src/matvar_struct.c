@@ -412,7 +412,7 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
  * freed, but if copy_fields is zero, the indexed structures are pointers to
  * the original, but should still be freed since the mem_conserve flag is set
  * so that the structures are not freed.
- * MAT File version must be 5.
+ * MAT file version must be 5.
  * @ingroup MAT
  * @param matvar Structure matlab variable
  * @param start starting index (0-relative)

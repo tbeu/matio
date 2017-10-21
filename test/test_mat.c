@@ -149,7 +149,7 @@ static const char *helptestsstr[] = {
 "================================================================",
 "write_char               - Write a 2D character array.",
 "",
-"    MAT File tests",
+"    MAT File Tests",
 "================================================================",
 "copy                    - Copies one matlab file to another",
 "delete                  - Deletes a specific variable from a file",
