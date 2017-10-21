@@ -677,7 +677,6 @@ Mat_VarCalloc(void)
             matvar->internal->hdf5_ref   =  0;
             matvar->internal->id         = -1;
 #endif
-            matvar->internal->fpos       = 0;
             matvar->internal->datapos    = 0;
             matvar->internal->fp         = NULL;
             matvar->internal->num_fields = 0;
@@ -1139,7 +1138,6 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->internal->hdf5_ref = in->internal->hdf5_ref;
     out->internal->id       = in->internal->id;
 #endif
-    out->internal->fpos     = in->internal->fpos;
     out->internal->datapos  = in->internal->datapos;
 #if defined(HAVE_ZLIB)
     out->internal->z        = NULL;

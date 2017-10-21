@@ -1273,14 +1273,6 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 continue;
             }
 
-            cells[i]->internal->fpos = ftell((FILE*)mat->fp);
-            if ( cells[i]->internal->fpos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                continue;
-            } else {
-                cells[i]->internal->fpos -= matvar->internal->z->avail_in;
-            }
-
             /* Read variable tag for cell */
             uncomp_buf[0] = 0;
             uncomp_buf[1] = 0;
@@ -1432,12 +1424,6 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             cells[i] = Mat_VarCalloc();
             if ( !cells[i] ) {
                 Mat_Critical("Couldn't allocate memory for cell %d", i);
-                continue;
-            }
-
-            cells[i]->internal->fpos = ftell((FILE*)mat->fp);
-            if ( cells[i]->internal->fpos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
                 continue;
             }
 
@@ -1636,13 +1622,6 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         for ( i = 0; i < nmemb*nfields; i++ ) {
-            fields[i]->internal->fpos = ftell((FILE*)mat->fp);
-            if ( fields[i]->internal->fpos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                continue;
-            } else {
-                fields[i]->internal->fpos -= matvar->internal->z->avail_in;
-            }
             /* Read variable tag for struct field */
             bytesread += InflateVarTag(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
@@ -1816,13 +1795,6 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         for ( i = 0; i < nmemb*nfields; i++ ) {
-
-            fields[i]->internal->fpos = ftell((FILE*)mat->fp);
-            if ( fields[i]->internal->fpos == -1L ) {
-                Mat_Critical("Couldn't determine file position");
-                continue;
-            }
-
             /* Read variable tag for struct field */
             bytesread += fread(buf,4,2,(FILE*)mat->fp);
             if ( mat->byteswap ) {
@@ -5733,7 +5705,6 @@ Mat_VarReadNextInfo5( mat_t *mat )
             matvar->compression  = MAT_COMPRESSION_ZLIB;
 
             matvar->internal->fp = mat;
-            matvar->internal->fpos = fpos;
             matvar->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
             err = inflateInit(matvar->internal->z);
             if ( err != Z_OK ) {
@@ -5851,7 +5822,6 @@ Mat_VarReadNextInfo5( mat_t *mat )
             size_t bytesread = 0;
 
             matvar = Mat_VarCalloc();
-            matvar->internal->fpos = fpos;
             matvar->internal->fp   = mat;
 
             /* Read array flags and the dimensions tag */
