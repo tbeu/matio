@@ -749,12 +749,6 @@ Mat_VarReadNextInfo4(mat_t *mat)
         return NULL;
 
     matvar->internal->fp   = mat;
-    matvar->internal->fpos = ftell((FILE*)mat->fp);
-    if ( matvar->internal->fpos == -1L ) {
-        Mat_VarFree(matvar);
-        Mat_Critical("Couldn't determine file position");
-        return NULL;
-    }
 
     err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( !err ) {
