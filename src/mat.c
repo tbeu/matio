@@ -678,7 +678,6 @@ Mat_VarCalloc(void)
             matvar->internal->id         = -1;
 #endif
             matvar->internal->datapos    = 0;
-            matvar->internal->fp         = NULL;
             matvar->internal->num_fields = 0;
             matvar->internal->fieldnames = NULL;
 #if defined(HAVE_ZLIB)

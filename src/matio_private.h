@@ -85,7 +85,6 @@ struct matvar_internal {
     hid_t      id;          /**< Id */
 #endif
     long       datapos;     /**< Offset from the beginning of the MAT file to the data */
-    mat_t     *fp;          /**< Pointer to the MAT file structure (mat_t) */
     unsigned   num_fields;  /**< Number of fields */
     char     **fieldnames;  /**< Pointer to fieldnames */
 #if defined(HAVE_ZLIB)

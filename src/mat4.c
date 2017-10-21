@@ -748,8 +748,6 @@ Mat_VarReadNextInfo4(mat_t *mat)
     else if ( NULL == (matvar = Mat_VarCalloc()) )
         return NULL;
 
-    matvar->internal->fp   = mat;
-
     err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( !err ) {
         Mat_VarFree(matvar);

@@ -1417,7 +1417,6 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                             else if ( nbytes <= (1 << MAX_WBITS) ) {
                                 /* Memory optimization: Read data if less in size
                                    than the zlib inflate state (approximately) */
-                                cells[i]->internal->fp = mat;
                                 Read5(mat,cells[i]);
                                 cells[i]->internal->data = cells[i]->data;
                                 cells[i]->data = NULL;
@@ -1733,7 +1732,6 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                             else if ( nbytes <= (1 << MAX_WBITS) ) {
                                 /* Memory optimization: Read data if less in size
                                    than the zlib inflate state (approximately) */
-                                fields[i]->internal->fp = mat;
                                 Read5(mat,fields[i]);
                                 fields[i]->internal->data = fields[i]->data;
                                 fields[i]->data = NULL;
@@ -3368,7 +3366,6 @@ Read5(mat_t *mat, matvar_t *matvar)
             fields = (matvar_t **)matvar->data;
             for ( i = 0; i < len*nfields; i++ ) {
                 if ( NULL != fields[i] ) {
-                    fields[i]->internal->fp = mat;
                     Read5(mat,fields[i]);
                 }
             }
@@ -3385,8 +3382,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             cells = (matvar_t **)matvar->data;
             for ( i = 0; i < len; i++ ) {
                 if ( NULL != cells[i] ) {
-                    cells[i]->internal->fp = mat;
-                    Read5(mat,cells[i]);
+                    Read5(mat, cells[i]);
                 }
             }
             /* FIXME: */
@@ -4003,7 +3999,6 @@ Read5(mat_t *mat, matvar_t *matvar)
             functions = (matvar_t **)matvar->data;
             if ( NULL != functions ) {
                 for ( i = 0; i < nfunctions; i++ ) {
-                    functions[i]->internal->fp = mat;
                     Read5(mat,functions[i]);
                 }
             }
@@ -5721,7 +5716,6 @@ Mat_VarReadNextInfo5( mat_t *mat )
             matvar               = Mat_VarCalloc();
             matvar->compression  = MAT_COMPRESSION_ZLIB;
 
-            matvar->internal->fp = mat;
             matvar->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
             err = inflateInit(matvar->internal->z);
             if ( err != Z_OK ) {
@@ -5839,7 +5833,6 @@ Mat_VarReadNextInfo5( mat_t *mat )
             size_t bytesread = 0;
 
             matvar = Mat_VarCalloc();
-            matvar->internal->fp   = mat;
 
             /* Read array flags and the dimensions tag */
             bytesread += fread(buf,4,6,(FILE*)mat->fp);
