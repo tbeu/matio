@@ -48,11 +48,44 @@
 
 static mat_complex_split_t null_complex_data = {NULL,NULL};
 
-/*
- * -------------------------------------------------------------
- *   Private Functions
- * -------------------------------------------------------------
+/*===========================================================================
+ *  Private functions
+ *===========================================================================
  */
+static size_t GetTypeBufSize(matvar_t *matvar);
+static size_t GetStructFieldBufSize(matvar_t *matvar);
+static size_t GetCellArrayFieldBufSize(matvar_t *matvar);
+static size_t GetMatrixMaxBufSize(matvar_t *matvar);
+static size_t GetEmptyMatrixMaxBufSize(const char *name,int rank);
+static size_t WriteCharData(mat_t *mat, void *data, int N,enum matio_types data_type);
+static size_t WriteEmptyCharData(mat_t *mat, int N, enum matio_types data_type);
+static size_t WriteEmptyData(mat_t *mat,int N,enum matio_types data_type);
+static size_t ReadNextCell( mat_t *mat, matvar_t *matvar );
+static size_t ReadNextStructField( mat_t *mat, matvar_t *matvar );
+static size_t ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar);
+static int    WriteType(mat_t *mat,matvar_t *matvar);
+static int    WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar);
+static int    WriteCellArrayField(mat_t *mat,matvar_t *matvar );
+static int    WriteStructField(mat_t *mat,matvar_t *matvar);
+static size_t Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,
+                  size_t *dims);
+#if defined(HAVE_ZLIB)
+static size_t WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
+                  enum matio_types data_type);
+static size_t WriteCompressedEmptyData(mat_t *mat,z_streamp z,int N,
+                  enum matio_types data_type);
+static size_t WriteCompressedData(mat_t *mat,z_streamp z,void *data,int N,
+                  enum matio_types data_type);
+static size_t WriteCompressedTypeArrayFlags(mat_t *mat,matvar_t *matvar,
+                  z_streamp z);
+static size_t WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z);
+static size_t WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,
+                  z_streamp z);
+static size_t WriteCompressedStructField(mat_t *mat,matvar_t *matvar,
+                  z_streamp z);
+static size_t Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,
+                  int rank,size_t *dims,z_streamp z);
+#endif
 
 /** @brief determines the number of bytes for a given class type
  *
