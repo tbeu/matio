@@ -1315,8 +1315,10 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(uncomp_buf+1);
             }
             nbytes = uncomp_buf[1];
-            if ( !nbytes ) {
-                /* empty cell */
+            if ( 0 == nbytes ) {
+                /* Empty cell: Memory optimization */
+                free(cells[i]->internal);
+                cells[i]->internal = NULL;
                 continue;
             } else if ( uncomp_buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
@@ -1471,8 +1473,10 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 (void)Mat_uint32Swap(buf+1);
             }
             nBytes = buf[1];
-            if ( !nBytes ) {
-                /* empty cell */
+            if ( 0 == nBytes ) {
+                /* Empty cell: Memory optimization */
+                free(cells[i]->internal);
+                cells[i]->internal = NULL;
                 continue;
             } else if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
@@ -1662,7 +1666,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 fields[i] = NULL;
                 Mat_Critical("fields[%d], Uncompressed type not MAT_T_MATRIX",i);
                 continue;
-            } else if ( nbytes == 0 ) {
+            } else if ( 0 == nbytes ) {
+                /* Empty field: Memory optimization */
+                free(fields[i]->internal);
+                fields[i]->internal = NULL;
                 continue;
             }
             fields[i]->compression = MAT_COMPRESSION_ZLIB;
@@ -1834,7 +1841,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,
                     ftell((FILE*)mat->fp));
                 return bytesread;
-            } else if ( nBytes == 0 ) {
+            } else if ( 0 == nBytes ) {
+                /* Empty field: Memory optimization */
+                free(fields[i]->internal);
+                fields[i]->internal = NULL;
                 continue;
             }
 
@@ -5170,9 +5180,11 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     fwrite(&pad1,1,1,(FILE*)mat->fp);
         }
 
-        matvar->internal->datapos = ftell((FILE*)mat->fp);
-        if ( matvar->internal->datapos == -1L ) {
-            Mat_Critical("Couldn't determine file position");
+        if ( NULL != matvar->internal ) {
+            matvar->internal->datapos = ftell((FILE*)mat->fp);
+            if ( matvar->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
         }
         WriteType(mat,matvar);
 #if defined(HAVE_ZLIB)
@@ -5288,9 +5300,11 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     buf_size*sizeof(*comp_buf)-z->avail_out,(FILE*)mat->fp);
             } while ( z->avail_out == 0 );
         }
-        matvar->internal->datapos = ftell((FILE*)mat->fp);
-        if ( matvar->internal->datapos == -1L ) {
-            Mat_Critical("Couldn't determine file position");
+        if ( NULL != matvar->internal ) {
+            matvar->internal->datapos = ftell((FILE*)mat->fp);
+            if ( matvar->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
         }
         WriteCompressedType(mat,matvar,z);
         z->next_in  = NULL;
@@ -5404,9 +5418,11 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
                     fwrite(&pad1,1,1,(FILE*)mat->fp);
         }
 
-        matvar->internal->datapos = ftell((FILE*)mat->fp);
-        if ( matvar->internal->datapos == -1L ) {
-            Mat_Critical("Couldn't determine file position");
+        if ( NULL != matvar->internal ) {
+            matvar->internal->datapos = ftell((FILE*)mat->fp);
+            if ( matvar->internal->datapos == -1L ) {
+                Mat_Critical("Couldn't determine file position");
+            }
         }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
