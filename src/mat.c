@@ -1471,10 +1471,6 @@ Mat_VarFree(matvar_t *matvar)
     }
     if ( NULL != matvar->name )
         free(matvar->name);
-    /* FIXME: Why does this cause a SEGV? */
-#if 0
-    memset(matvar,0,sizeof(matvar_t));
-#endif
     free(matvar);
 }
 
