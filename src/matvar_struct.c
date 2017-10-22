@@ -114,6 +114,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 {
     int       i, f, nfields, nmemb, cnt = 0;
     matvar_t **new_data, **old_data;
+    char     **fieldnames;
 
     if ( matvar == NULL || fieldname == NULL )
         return -1;
@@ -123,9 +124,11 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 
     nfields = matvar->internal->num_fields+1;
     matvar->internal->num_fields = nfields;
-    matvar->internal->fieldnames =
-    (char**)realloc(matvar->internal->fieldnames,
-            nfields*sizeof(*matvar->internal->fieldnames));
+    fieldnames = (char**)realloc(matvar->internal->fieldnames,
+        nfields*sizeof(*matvar->internal->fieldnames));
+    if ( NULL == fieldnames )
+        return -1;
+    matvar->internal->fieldnames = fieldnames;
     matvar->internal->fieldnames[nfields-1] = strdup(fieldname);
 
     new_data = (matvar_t**)malloc(nfields*nmemb*sizeof(*new_data));
