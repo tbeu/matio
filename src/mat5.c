@@ -5198,11 +5198,11 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         z_streamp z;
 
         z = (z_streamp)calloc(1,sizeof(*z));
+        if ( z == NULL )
+            return -1;
         err = deflateInit(z,Z_DEFAULT_COMPRESSION);
         if ( err != Z_OK ) {
-            if ( z != NULL ) {
-                free(z);
-            }
+            free(z);
             Mat_Critical("deflateInit returned %s",zError(err));
             return -1;
         }
