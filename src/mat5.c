@@ -5185,6 +5185,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             if ( matvar->internal->datapos == -1L ) {
                 Mat_Critical("Couldn't determine file position");
             }
+        } else {
+            /* Must be empty */
+            matvar->class_type = MAT_C_EMPTY;
         }
         WriteType(mat,matvar);
 #if defined(HAVE_ZLIB)
@@ -5305,6 +5308,9 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             if ( matvar->internal->datapos == -1L ) {
                 Mat_Critical("Couldn't determine file position");
             }
+        } else {
+            /* Must be empty */
+            matvar->class_type = MAT_C_EMPTY;
         }
         WriteCompressedType(mat,matvar,z);
         z->next_in  = NULL;
@@ -5420,6 +5426,9 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             if ( matvar->internal->datapos == -1L ) {
                 Mat_Critical("Couldn't determine file position");
             }
+        } else {
+            /* Must be empty */
+            matvar->class_type = MAT_C_EMPTY;
         }
         switch ( matvar->class_type ) {
             case MAT_C_DOUBLE:
