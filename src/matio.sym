@@ -51,6 +51,7 @@ Mat_VarSetCell
 Mat_VarSetStructFieldByIndex
 Mat_VarSetStructFieldByName
 Mat_VarWrite
+Mat_VarWriteAppend
 Mat_VarWriteInfo
 Mat_VarWriteData
 Mat_CalcSingleSubscript

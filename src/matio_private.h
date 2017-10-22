@@ -58,10 +58,10 @@
  */
 struct _mat_t {
     void  *fp;              /**< File pointer for the MAT file */
-    char  *header;          /**< MAT File header string */
+    char  *header;          /**< MAT file header string */
     char  *subsys_offset;   /**< Offset */
     char  *filename;        /**< Filename of the MAT file */
-    int    version;         /**< MAT File version */
+    int    version;         /**< MAT file version */
     int    byteswap;        /**< 1 if byte swapping is required, 0 otherwise */
     int    mode;            /**< Access mode */
     long   bof;             /**< Beginning of file not including any header */
@@ -80,13 +80,11 @@ struct _mat_t {
  */
 struct matvar_internal {
 #if defined(MAT73) && MAT73
-    char *hdf5_name;        /**< Name */
+    char      *hdf5_name;   /**< Name */
     hobj_ref_t hdf5_ref;    /**< Reference */
     hid_t      id;          /**< Id */
 #endif
-    long       fpos;        /**< Offset from the beginning of the MAT file to the variable */
     long       datapos;     /**< Offset from the beginning of the MAT file to the data */
-    mat_t     *fp;          /**< Pointer to the MAT file structure (mat_t) */
     unsigned   num_fields;  /**< Number of fields */
     char     **fieldnames;  /**< Pointer to fieldnames */
     char      *classname;   /**< The name of the class type of the object */

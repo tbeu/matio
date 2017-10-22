@@ -186,11 +186,20 @@ main(int argc,char **argv)
 @section Writing Variables
 A variable can be saved in a MAT file using the @code{Mat_VarWrite} function
 which has three arguments: the MAT file to write the variable to, a MATLAB
-variable structure, and a third option used to control write options.
+variable structure, and a third option used to control compression options.
 The variable structure can be filled in manually, or created from helper
 routines such as @code{Mat_VarCreate}. Note that MATLAB, and thus @emph{matio},
 has no concept of a rank 1 array (i.e. vector). The minimum rank of an array is
 2 (i.e. matrix). A vector is simply a matrix with one dimension length of 1.
+
+Optionally, a variable can be appended to an existing variable of an HDF5
+format MAT file by the @code{Mat_VarWriteAppend} function, which takes the
+same arguments as @code{Mat_VarWrite} as the first three arguments and the
+dimension as fourth argument. The dimension argument is index 1 based, i.e.,
+if it is set to @code{d}, the variable is appended along the d-th dimension.
+If a variable is to be created for later appending, it always must be written
+by the @code{Mat_VarWriteAppend} function and @code{Mat_VarWrite} must not
+be called.
 
 @subsection Writing Numeric Arrays
 Numeric arrays can be either real or complex. Complex arrays are encapsulated

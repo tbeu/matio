@@ -44,9 +44,11 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(srcdir)/mat73_compressed_read_le.at \
                $(srcdir)/mat73_uncompressed_read_le.at \
                $(srcdir)/mat73_write.at \
+               $(srcdir)/mat73_writeappend.at \
                $(srcdir)/mat73_compressed_readwrite.at \
                $(srcdir)/mat73_uncompressed_readwrite.at \
                $(srcdir)/mat73_compressed_write.at \
+               $(srcdir)/mat73_compressed_writeappend.at \
                $(srcdir)/mat73_compressed_readwrite.at \
                $(srcdir)/struct_api.at \
                $(srcdir)/cell_api.at \

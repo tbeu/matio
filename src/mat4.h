@@ -34,14 +34,14 @@
 #   define EXTERN extern
 #endif
 
-EXTERN mat_t *Mat_Create4(const char* matname);
-int  Mat_VarWrite4(mat_t *mat,matvar_t *matvar);
-void Read4(mat_t *mat, matvar_t *matvar);
-int  ReadData4(mat_t *mat,matvar_t *matvar,void *data,
-         int *start,int *stride,int *edge);
-int  Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
-         int stride,int edge);
+EXTERN mat_t    *Mat_Create4(const char* matname);
 
-matvar_t *Mat_VarReadNextInfo4(mat_t *mat);
+EXTERN int       Mat_VarWrite4(mat_t *mat,matvar_t *matvar);
+EXTERN void      Read4(mat_t *mat, matvar_t *matvar);
+EXTERN int       ReadData4(mat_t *mat,matvar_t *matvar,void *data,
+                     int *start,int *stride,int *edge);
+EXTERN int       Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
+                     int stride,int edge);
+EXTERN matvar_t *Mat_VarReadNextInfo4(mat_t *mat);
 
 #endif

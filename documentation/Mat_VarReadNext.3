@@ -42,15 +42,17 @@ The
 function reads the information and data for the next variable stored in the
 open MAT file.
 .Sh RETURN VALUES
-If there is another variable in the MAT file and is read successfully, a pointer
-to the MATLAB variable structure is returned. If there are no more variables, or
-there was an error reading the variable, NULL is returned.
+If there is another variable in the MAT file and is read successfully, a
+pointer to the MATLAB variable structure is returned.
+If there are no more variables, or there was an error reading the variable,
+NULL is returned.
 .Sh EXAMPLES
 This example program opens a MAT file named by the first argument to the
 program, and uses
 .Fn Mat_VarReadNext
-to read each variable in the file. For each variable read, the
-.Xr Mat_VarPrint 3
+to read each variable in the file.
+For each variable read, the
+.Fn Mat_VarPrint 3
 function is used to display the information and data of the variable.
 .Bd -literal
 #include <stdlib.h>
@@ -81,3 +83,4 @@ main(int argc,char **argv)
 .Sh SEE ALSO
 .Xr Mat_VarRead 3 ,
 .Xr Mat_VarReadNextInfo 3 ,
+.Xr Mat_VarPrint 3

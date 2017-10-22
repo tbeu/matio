@@ -51,6 +51,7 @@ EXPORTS
     Mat_VarSetCell
     Mat_VarSetStructFieldByIndex
     Mat_VarSetStructFieldByName
+    Mat_VarWriteAppend
     Mat_VarWrite
     Mat_VarWriteInfo
     Mat_VarWriteData

@@ -29,7 +29,7 @@
 .Os
 .Sh NAME
 .Nm Mat_VarReadInfo
-.Nd Read the information for a specific variable in a MATLAB MAT file.
+.Nd Reads the information for a specific variable in a MATLAB MAT file.
 .Sh SYNOPSIS
 .Fd #include <matio.h>
 .Ft matvar_t *
@@ -45,8 +45,8 @@ function reads the information for the variable
 in the open MAT file.
 .Sh RETURN VALUES
 If the variable was found in the MAT file and the information about the variable
-successfully read, a pointer to the MATLAB variable structure is returned. If
-the variable was not found, or there was an error reading the variable
+successfully read, a pointer to the MATLAB variable structure is returned.
+If the variable was not found, or there was an error reading the variable
 information, NULL is returned.
 .Sh EXAMPLES
 .Bd -literal
@@ -77,4 +77,5 @@ main(int argc,char **argv)
 .Ed
 .Sh SEE ALSO
 .Xr Mat_VarRead 3 ,
-.Xr Mat_VarReadNextInfo 3
+.Xr Mat_VarReadNextInfo 3 ,
+.Xr Mat_VarPrint 3

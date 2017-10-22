@@ -29,7 +29,7 @@
 .Os
 .Sh NAME
 .Nm Mat_Rewind
-.Nd Rewind an open .mat file to the beginning
+.Nd Rewinds an open MAT file to the beginning.
 .Sh SYNOPSIS
 .Fd #include <matio.h>
 .Ft int
@@ -37,16 +37,17 @@
 .Fa "mat_t *matfp"
 .Fc
 .Sh DESCRIPTION
-Rewinds an open .mat file so that
-.Xr Mat_VarReadNext 3
+Rewinds an open MAT file so that
+.Fn Mat_VarReadNext
 or
-.Xr Mat_VarReadNextInfo 3
+.Fn Mat_VarReadNextInfo
 reads the first variable in the file.
 .Sh RETURN VALUES
 The function returns 0 on success, or -1 on failure.
 .Sh EXAMPLES
 The following example shows a list of variables in the MAT file, and prompts the
-user for the index of the variable to read. If the index is valid, the file is
+user for the index of the variable to read.
+If the index is valid, the file is
 reset to the beginning, and variables read until the selected index is reached.
 .Bd -literal
 #include <stdlib.h>
@@ -100,4 +101,5 @@ main(int argc,char **argv)
 .Xr Mat_Open 3 ,
 .Xr Mat_Close 3 ,
 .Xr Mat_VarReadNext 3 ,
-.Xr Mat_VarReadNextInfo 3
+.Xr Mat_VarReadNextInfo 3 ,
+.Xr Mat_VarPrint 3

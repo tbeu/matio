@@ -41,81 +41,99 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
         - HDF5_VERSION_DIR=hdf5_1_10_1
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
+    - os: linux
+      compiler: gcc-4.8
+      env:
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=yes
+        - WITH_ZLIB=yes
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=1
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: linux
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
     - os: osx
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_18
+        - HDF5_VERSION_DIR=hdf5_1_8_19
+        - MAX_RANK=3
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall libtool && brew install libtool; fi
-  - curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_19" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh; fi
 
 install:
   - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_1" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then git clone --depth 5 https://github.com/madler/zlib; fi
@@ -123,7 +141,7 @@ install:
   - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_1" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./configure --prefix=$TRAVIS_BUILD_DIR/zlib --eprefix=$TRAVIS_BUILD_DIR/zlib; fi
   - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_1" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then make install; fi
   - cd $TRAVIS_BUILD_DIR
-  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_18" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./.install_hdf5_1_8.sh; fi
+  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_19" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./.install_hdf5_1_8.sh; fi
   - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_1" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./.install_hdf5_1_10.sh; fi
   - cd $TRAVIS_BUILD_DIR
   - mkdir MSL
@@ -137,10 +155,11 @@ install:
 
 before_script:
   - ./autogen.sh
-  - ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5
+  - if [[ "$CC" == "gcc-4.8" ]]; then ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5; fi
+  - if [[ "$CC" == "clang" ]]; then ./configure --quiet --enable-shared --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5; fi
 
 script:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make "CPPFLAGS=-DMAX_RANK=$MAX_RANK"; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make check; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_snprintf; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -H; fi
@@ -153,11 +172,11 @@ script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
 
 after_success:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e test/mat2hdf.c -e share -e patches -e $HDF5_VERSION_DIR -e visual_studio --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_18" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]]; then make pdf; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_18" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]]; then make dist-gzip; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_18" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.pdf; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_18" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./matio-1.5.10.tar.gz; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e MSL -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e test/mat2hdf.c -e share -e patches -e $HDF5_VERSION_DIR -e visual_studio -e zlib --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_19" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then make pdf; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_19" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then make dist-gzip; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_19" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.pdf; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_19" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./matio-1.5.10.tar.gz; fi
 
 notifications:
   email: false

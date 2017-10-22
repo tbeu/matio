@@ -1,5 +1,5 @@
 /** @file mat.c
- * Matlab MAT version 5 file functions
+ * Matlab MAT file functions
  * @ingroup MAT
  */
 /*
@@ -196,6 +196,7 @@ ComplexMalloc(size_t nbytes)
             complex_data = NULL;
         }
     }
+
     return complex_data;
 }
 
@@ -435,17 +436,20 @@ Mat_Open(const char *matname,int mode)
  * Closes the given Matlab MAT file and frees any memory with it.
  * @ingroup MAT
  * @param mat Pointer to the MAT file
- * @retval 0
+ * @retval 0 on success
  */
 int
 Mat_Close( mat_t *mat )
 {
+    int err = 0;
+
     if ( NULL != mat ) {
 #if defined(MAT73) && MAT73
         if ( mat->version == 0x0200 ) {
             if ( mat->refs_id > -1 )
                 H5Gclose(mat->refs_id);
-            H5Fclose(*(hid_t*)mat->fp);
+            if ( 0 > H5Fclose(*(hid_t*)mat->fp) )
+                err = 1;
             free(mat->fp);
             mat->fp = NULL;
         }
@@ -468,7 +472,8 @@ Mat_Close( mat_t *mat )
         }
         free(mat);
     }
-    return 0;
+
+    return err;
 }
 
 /** @brief Gets the filename for the given MAT file
@@ -530,12 +535,12 @@ Mat_GetDir(mat_t *mat, size_t *n)
         if ( mat->version == MAT_FT_MAT73 ) {
             size_t i = 0;
             size_t fpos = mat->next_index;
-            if ( mat->num_datasets == 0) {
+            if ( mat->num_datasets == 0 ) {
                 *n = 0;
                 return dir;
             }
             mat->dir = calloc(mat->num_datasets, sizeof(char*));
-            if ( NULL == mat->dir) {
+            if ( NULL == mat->dir ) {
                 *n = 0;
                 Mat_Critical("Couldn't allocate memory for the directory");
                 return dir;
@@ -638,7 +643,7 @@ Mat_Rewind( mat_t *mat )
 size_t
 Mat_SizeOfClass(int class_type)
 {
-    switch (class_type) {
+    switch ( class_type ) {
         case MAT_C_DOUBLE:
             return sizeof(double);
         case MAT_C_SINGLE:
@@ -712,9 +717,7 @@ Mat_VarCalloc(void)
             matvar->internal->hdf5_ref   =  0;
             matvar->internal->id         = -1;
 #endif
-            matvar->internal->fpos       = 0;
             matvar->internal->datapos    = 0;
-            matvar->internal->fp         = NULL;
             matvar->internal->num_fields = 0;
             matvar->internal->fieldnames = NULL;
             matvar->internal->classname  = NULL;
@@ -1144,103 +1147,100 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->mem_conserve = in->mem_conserve;
     out->compression  = in->compression;
 
-    out->name = NULL;
-    out->dims = NULL;
-    out->data = NULL;
-
-#if defined(MAT73) && MAT73
-    if ( NULL != in->internal->hdf5_name )
-        out->internal->hdf5_name = strdup(in->internal->hdf5_name);
-
-    out->internal->hdf5_ref = in->internal->hdf5_ref;
-    out->internal->id       = in->internal->id;
-#endif
-    out->internal->fpos     = in->internal->fpos;
-    out->internal->datapos  = in->internal->datapos;
-#if defined(HAVE_ZLIB)
-    out->internal->z        = NULL;
-    out->internal->data     = NULL;
-#endif
-    out->internal->num_fields = in->internal->num_fields;
-    if ( NULL != in->internal->fieldnames && in->internal->num_fields > 0 ) {
-        out->internal->fieldnames = (char**)calloc(in->internal->num_fields,
-                                           sizeof(*in->internal->fieldnames));
-        for ( i = 0; i < in->internal->num_fields; i++ ) {
-            if ( NULL != in->internal->fieldnames[i] )
-                out->internal->fieldnames[i] =
-                    strdup(in->internal->fieldnames[i]);
-        }
-    }
-    out->internal->classname = NULL;
-
     if ( in->name != NULL && (NULL != (out->name = (char*)malloc(strlen(in->name)+1))) )
         memcpy(out->name,in->name,strlen(in->name)+1);
-    if ( in->internal->classname != NULL && (NULL != (out->internal->classname = malloc(strlen(in->internal->classname) + 1))) )
-        memcpy(out->internal->classname, in->internal->classname, strlen(in->internal->classname) + 1);
 
     out->dims = (size_t*)malloc(in->rank*sizeof(*out->dims));
     if ( out->dims != NULL )
         memcpy(out->dims,in->dims,in->rank*sizeof(*out->dims));
 
+    if ( NULL != in->internal ) {
+#if defined(MAT73) && MAT73
+        if ( NULL != in->internal->hdf5_name )
+            out->internal->hdf5_name = strdup(in->internal->hdf5_name);
+
+        out->internal->hdf5_ref = in->internal->hdf5_ref;
+        out->internal->id       = in->internal->id;
+#endif
+        out->internal->datapos  = in->internal->datapos;
 #if defined(HAVE_ZLIB)
-    if ( (in->internal->z != NULL) && (NULL != (out->internal->z = (z_streamp)malloc(sizeof(z_stream)))) )
-        inflateCopy(out->internal->z,in->internal->z);
-    if ( in->internal->data != NULL ) {
-        if ( in->class_type == MAT_C_SPARSE ) {
-            out->internal->data = malloc(sizeof(mat_sparse_t));
-            if ( out->internal->data != NULL ) {
-                mat_sparse_t *out_sparse = (mat_sparse_t*)out->internal->data;
-                mat_sparse_t *in_sparse  = (mat_sparse_t*)in->internal->data;
-                out_sparse->nzmax = in_sparse->nzmax;
-                out_sparse->nir = in_sparse->nir;
-                out_sparse->ir = (int*)malloc(in_sparse->nir*sizeof(int));
-                if ( out_sparse->ir != NULL )
-                    memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(int));
-                out_sparse->njc = in_sparse->njc;
-                out_sparse->jc = (int*)malloc(in_sparse->njc*sizeof(int));
-                if ( out_sparse->jc != NULL )
-                    memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(int));
-                out_sparse->ndata = in_sparse->ndata;
-                if ( out->isComplex && NULL != in_sparse->data ) {
-                    out_sparse->data = malloc(sizeof(mat_complex_split_t));
-                    if ( out_sparse->data != NULL ) {
-                        mat_complex_split_t *out_data = (mat_complex_split_t*)out_sparse->data;
-                        mat_complex_split_t *in_data  = (mat_complex_split_t*)in_sparse->data;
-                        out_data->Re = malloc(
-                            in_sparse->ndata*Mat_SizeOf(in->data_type));
-                        if ( NULL != out_data->Re )
-                            memcpy(out_data->Re,in_data->Re,
+        out->internal->z        = NULL;
+        out->internal->data     = NULL;
+#endif
+        out->internal->num_fields = in->internal->num_fields;
+        if ( NULL != in->internal->fieldnames && in->internal->num_fields > 0 ) {
+            out->internal->fieldnames = (char**)calloc(in->internal->num_fields,
+                                               sizeof(*in->internal->fieldnames));
+            for ( i = 0; i < in->internal->num_fields; i++ ) {
+                if ( NULL != in->internal->fieldnames[i] )
+                    out->internal->fieldnames[i] =
+                        strdup(in->internal->fieldnames[i]);
+            }
+        }
+
+#if defined(HAVE_ZLIB)
+        if ( (in->internal->z != NULL) && (NULL != (out->internal->z = (z_streamp)malloc(sizeof(z_stream)))) )
+            inflateCopy(out->internal->z,in->internal->z);
+        if ( in->internal->data != NULL ) {
+            if ( in->class_type == MAT_C_SPARSE ) {
+                out->internal->data = malloc(sizeof(mat_sparse_t));
+                if ( out->internal->data != NULL ) {
+                    mat_sparse_t *out_sparse = (mat_sparse_t*)out->internal->data;
+                    mat_sparse_t *in_sparse  = (mat_sparse_t*)in->internal->data;
+                    out_sparse->nzmax = in_sparse->nzmax;
+                    out_sparse->nir = in_sparse->nir;
+                    out_sparse->ir = (int*)malloc(in_sparse->nir*sizeof(int));
+                    if ( out_sparse->ir != NULL )
+                        memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(int));
+                    out_sparse->njc = in_sparse->njc;
+                    out_sparse->jc = (int*)malloc(in_sparse->njc*sizeof(int));
+                    if ( out_sparse->jc != NULL )
+                        memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(int));
+                    out_sparse->ndata = in_sparse->ndata;
+                    if ( out->isComplex && NULL != in_sparse->data ) {
+                        out_sparse->data = malloc(sizeof(mat_complex_split_t));
+                        if ( out_sparse->data != NULL ) {
+                            mat_complex_split_t *out_data = (mat_complex_split_t*)out_sparse->data;
+                            mat_complex_split_t *in_data  = (mat_complex_split_t*)in_sparse->data;
+                            out_data->Re = malloc(
                                 in_sparse->ndata*Mat_SizeOf(in->data_type));
-                        out_data->Im = malloc(
-                            in_sparse->ndata*Mat_SizeOf(in->data_type));
-                        if ( NULL != out_data->Im )
-                            memcpy(out_data->Im,in_data->Im,
+                            if ( NULL != out_data->Re )
+                                memcpy(out_data->Re,in_data->Re,
+                                    in_sparse->ndata*Mat_SizeOf(in->data_type));
+                            out_data->Im = malloc(
+                                in_sparse->ndata*Mat_SizeOf(in->data_type));
+                            if ( NULL != out_data->Im )
+                                memcpy(out_data->Im,in_data->Im,
+                                    in_sparse->ndata*Mat_SizeOf(in->data_type));
+                        }
+                    } else if ( in_sparse->data != NULL ) {
+                        out_sparse->data = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
+                        if ( NULL != out_sparse->data )
+                            memcpy(out_sparse->data, in_sparse->data,
                                 in_sparse->ndata*Mat_SizeOf(in->data_type));
                     }
-                } else if ( in_sparse->data != NULL ) {
-                    out_sparse->data = malloc(in_sparse->ndata*Mat_SizeOf(in->data_type));
-                    if ( NULL != out_sparse->data )
-                        memcpy(out_sparse->data, in_sparse->data,
-                            in_sparse->ndata*Mat_SizeOf(in->data_type));
                 }
+            } else if ( out->isComplex ) {
+                out->internal->data = malloc(sizeof(mat_complex_split_t));
+                if ( out->internal->data != NULL ) {
+                    mat_complex_split_t *out_data = (mat_complex_split_t*)out->internal->data;
+                    mat_complex_split_t *in_data  = (mat_complex_split_t*)in->internal->data;
+                    out_data->Re = malloc(out->nbytes);
+                    if ( NULL != out_data->Re )
+                        memcpy(out_data->Re,in_data->Re,out->nbytes);
+                    out_data->Im = malloc(out->nbytes);
+                    if ( NULL != out_data->Im )
+                        memcpy(out_data->Im,in_data->Im,out->nbytes);
+                }
+            } else if ( NULL != (out->internal->data = malloc(in->nbytes)) ) {
+                memcpy(out->internal->data, in->internal->data, in->nbytes);
             }
-        } else if ( out->isComplex ) {
-            out->internal->data = malloc(sizeof(mat_complex_split_t));
-            if ( out->internal->data != NULL ) {
-                mat_complex_split_t *out_data = (mat_complex_split_t*)out->internal->data;
-                mat_complex_split_t *in_data  = (mat_complex_split_t*)in->internal->data;
-                out_data->Re = malloc(out->nbytes);
-                if ( NULL != out_data->Re )
-                    memcpy(out_data->Re,in_data->Re,out->nbytes);
-                out_data->Im = malloc(out->nbytes);
-                if ( NULL != out_data->Im )
-                    memcpy(out_data->Im,in_data->Im,out->nbytes);
-            }
-        } else if ( NULL != (out->internal->data = malloc(in->nbytes)) ) {
-            memcpy(out->internal->data, in->internal->data, in->nbytes);
         }
-    }
 #endif
+    } else {
+        free(out->internal);
+        out->internal = NULL;
+    }
 
     if ( !opt ) {
         out->data = in->data;
@@ -1318,6 +1318,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                 memcpy(out->data,in->data,in->nbytes);
         }
     }
+
     return out;
 }
 
@@ -1340,7 +1341,7 @@ Mat_VarFree(matvar_t *matvar)
             nmemb *= matvar->dims[i];
         free(matvar->dims);
     }
-    if ( NULL != matvar->data) {
+    if ( NULL != matvar->data ) {
         switch (matvar->class_type ) {
             case MAT_C_STRUCT:
                 if ( !matvar->mem_conserve ) {
@@ -1491,10 +1492,6 @@ Mat_VarFree(matvar_t *matvar)
     }
     if ( NULL != matvar->name )
         free(matvar->name);
-    /* FIXME: Why does this cause a SEGV? */
-#if 0
-    memset(matvar,0,sizeof(matvar_t));
-#endif
     free(matvar);
 }
 
@@ -1740,6 +1737,7 @@ Mat_VarGetSize(matvar_t *matvar)
         if ( matvar->isComplex )
             bytes *= 2;
     }
+
     return bytes;
 }
 
@@ -2181,6 +2179,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
             Mat_Critical("Couldn't determine file position");
         }
     }
+
     return matvar;
 }
 
@@ -2219,6 +2218,7 @@ Mat_VarRead( mat_t *mat, const char *name )
             ReadData(mat,matvar);
         mat->next_index = fpos;
     }
+
     return matvar;
 }
 
@@ -2302,7 +2302,8 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
     if ( mat == NULL || matvar == NULL )
         return -1;
 
-    (void)fseek((FILE*)mat->fp,matvar->internal->datapos+8,SEEK_SET);
+    if ( NULL != matvar->internal )
+        (void)fseek((FILE*)mat->fp,matvar->internal->datapos+8,SEEK_SET);
 
     if ( data == NULL ) {
         err = -1;
@@ -2374,13 +2375,13 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
     if ( NULL == mat || NULL == matvar )
         return -1;
 
-    if ( NULL == mat->dir) {
+    if ( NULL == mat->dir ) {
         size_t n = 0;
         (void)Mat_GetDir(mat, &n);
     }
 
     {
-        /* Error if MAT variable already exists in MAT file*/
+        /* Error if MAT variable already exists in MAT file */
         size_t i;
         for ( i = 0; i < mat->num_datasets; i++ ) {
             if ( NULL != mat->dir[i] &&
@@ -2405,6 +2406,81 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
         err = 2;
 
     if ( err == 0 ) {
+        /* Update directory */
+        char **dir;
+        if ( NULL == mat->dir ) {
+            dir = malloc(sizeof(char*));
+        } else {
+            dir = realloc(mat->dir,
+            (mat->num_datasets + 1)*(sizeof(char*)));
+        }
+        if ( NULL != dir ) {
+            mat->dir = dir;
+            if ( NULL != matvar->name ) {
+                mat->dir[mat->num_datasets++] =
+                    strdup_printf("%s", matvar->name);
+            } else {
+                mat->dir[mat->num_datasets++] = NULL;
+            }
+        } else {
+            err = 3;
+            Mat_Critical("Couldn't allocate memory for the directory");
+        }
+    }
+
+    return err;
+}
+
+/** @brief Writes/appends the given MAT variable to a version 7.3 MAT file
+ *
+ * Writes the numeric data of the MAT variable stored in matvar to the given
+ * MAT file. The variable will be written to the end of the file if it does
+ * not yet exist or appended to the exsiting variable.
+ * @ingroup MAT
+ * @param mat MAT file to write to
+ * @param matvar MAT variable information to write
+ * @param compress Whether or not to compress the data
+ *        (Only valid for version 7.3 MAT files and variables with numeric data)
+ * @param dim dimension to append data
+ *        (Only valid for version 7.3 MAT files and variables with numeric data)
+ * @retval 0 on success
+ */
+int
+Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,int dim)
+{
+    int err, append = 0;
+
+    if ( NULL == mat || NULL == matvar )
+        return -1;
+
+    if ( NULL == mat->dir ) {
+        size_t n = 0;
+        (void)Mat_GetDir(mat, &n);
+    }
+
+    {
+        /* Check if MAT variable already exists in MAT file */
+        size_t i;
+        for ( i = 0; i < mat->num_datasets; i++ ) {
+            if ( NULL != mat->dir[i] &&
+                0 == strcmp(mat->dir[i], matvar->name) ) {
+                append = 1;
+                break;
+            }
+        }
+    }
+
+    if ( mat->version == MAT_FT_MAT73 )
+#if defined(MAT73) && MAT73
+        err = Mat_VarWriteAppend73(mat,matvar,compress,dim);
+#else
+        err = 1;
+#endif
+    else
+        err = 2;
+
+    if ( err == 0 && 0 == append ) {
+        /* Update directory */
         char **dir;
         if ( NULL == mat->dir ) {
             dir = malloc(sizeof(char*));

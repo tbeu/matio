@@ -46,7 +46,8 @@ The
 function selects a subarray from a structure array
 .Fa matvar.
 Each of the elements in the subarray contains all of the fields of the
-structure. The indexing starts at the
+structure.
+The indexing starts at the
 .Fa start
 element in the array (0 being the first element), and reads every
 .Fa stride
@@ -55,16 +56,19 @@ of elements in the subarray is specified as
 .Fa edge.
 The original array must have at least
 .Fa start+(stride-1)*edge+1
-elements. The
+elements.
+The
 .Fa copy_fields
 option specifies whether the fields of the original structure are copied for
-the new subarray. If set to 0, the returned structure array's fields have the
-same pointer as the original array, and the
+the new subarray.
+If set to 0, the returned structure array's fields have the same pointer as the
+original array, and the
 .Dv data
-field of the subarray structure. The subarray is marked with the conserve
-memory flag indicating that the fields should not be free'd. They are free'd
-when the original structure is free'd.
+field of the subarray structure.
+The subarray is marked with the conserve memory flag indicating that the fields
+should not be free'd.
+They are free'd when the original structure is free'd.
 .Sh RETURN VALUES
 A subarray of the original structure array, or NULL if there is an error.
 .Sh SEE ALSO
-.Xr Mat_VarGetStructs 3 ,
+.Xr Mat_VarGetStructs 3

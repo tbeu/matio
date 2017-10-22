@@ -242,8 +242,5 @@
 /* Version number of package */
 #undef VERSION
 
-/* OS is CygWin */
-#undef WINNT
-
 /* Z prefix */
 #undef Z_PREFIX

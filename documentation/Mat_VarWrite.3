@@ -45,13 +45,14 @@ function writes the MATLAB variable
 .Fa matvar
 to the MAT file
 .Fa matfp
-which must be opened for writing. If the MAT file is a level 5 MAT file, the
-compress option allows the variable to be written using zlib compression if
-available. If compression is not available, the variable is written
-uncompressed.
+which must be opened for writing. If the MAT file is a version 5 or HDF5 MAT
+file, the
+.Fa compress
+option allows the variable to be written using zlib compression if available.
+If compression is not available, the variable is written uncompressed.
 .Sh RETURN VALUES
 The function returns 0 if the variable was successfully written to the MAT file.
-otherwise, an error value is returned.
+Otherwise, an error value is returned.
 .Sh EXAMPLES
 This example program creates a MAT file named by the first argument to the
 program, and writes the variable named
@@ -89,4 +90,5 @@ main(int argc,char **argv)
 .Sh SEE ALSO
 .Xr Mat_CreateVer 3 ,
 .Xr Mat_Open 3 ,
-.Xr Mat_VarRead 3
+.Xr Mat_VarRead 3 ,
+.Xr Mat_VarWriteAppend 3

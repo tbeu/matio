@@ -236,19 +236,19 @@ EXTERN void Mat_GetLibraryVersion(int *major,int *minor,int *release);
 /* io.c */
 EXTERN char  *strdup_vprintf(const char *format, va_list ap);
 EXTERN char  *strdup_printf(const char *format, ...);
-EXTERN int    Mat_SetVerbose( int verb, int s );
-EXTERN int    Mat_SetDebug( int d );
-EXTERN void   Mat_Critical( const char *format, ... );
-EXTERN MATIO_NORETURN void Mat_Error( const char *format, ... ) MATIO_NORETURNATTR;
-EXTERN void   Mat_Help( const char *helpstr[] );
-EXTERN int    Mat_LogInit( const char *progname );
+EXTERN int    Mat_SetVerbose(int verb, int s);
+EXTERN int    Mat_SetDebug(int d);
+EXTERN void   Mat_Critical(const char *format, ...);
+EXTERN MATIO_NORETURN void Mat_Error(const char *format, ...) MATIO_NORETURNATTR;
+EXTERN void   Mat_Help(const char *helpstr[]);
+EXTERN int    Mat_LogInit(const char *progname);
 EXTERN int    Mat_LogClose(void);
 EXTERN int    Mat_LogInitFunc(const char *prog_name,
-                  void (*log_func)(int log_level, char *message) );
-EXTERN int    Mat_Message( const char *format, ... );
-EXTERN int    Mat_DebugMessage( int level, const char *format, ... );
-EXTERN int    Mat_VerbMessage( int level, const char *format, ... );
-EXTERN void   Mat_Warning( const char *format, ... );
+                  void (*log_func)(int log_level, char *message));
+EXTERN int    Mat_Message(const char *format, ...);
+EXTERN int    Mat_DebugMessage(int level, const char *format, ...);
+EXTERN int    Mat_VerbMessage(int level, const char *format, ...);
+EXTERN void   Mat_Warning(const char *format, ...);
 EXTERN size_t Mat_SizeOf(enum matio_types data_type);
 EXTERN size_t Mat_SizeOfClass(int class_type);
 
@@ -293,23 +293,25 @@ EXTERN matvar_t  *Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,
                       int *edge,int copy_fields);
 EXTERN matvar_t  *Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,
                       int edge,int copy_fields);
-EXTERN void       Mat_VarPrint( matvar_t *matvar, int printdata );
-EXTERN matvar_t  *Mat_VarRead(mat_t *mat, const char *name );
+EXTERN void       Mat_VarPrint(matvar_t *matvar, int printdata);
+EXTERN matvar_t  *Mat_VarRead(mat_t *mat, const char *name);
 EXTERN int        Mat_VarReadData(mat_t *mat,matvar_t *matvar,void *data,
                       int *start,int *stride,int *edge);
 EXTERN int        Mat_VarReadDataAll(mat_t *mat,matvar_t *matvar);
 EXTERN int        Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,
                       int start,int stride,int edge);
-EXTERN matvar_t  *Mat_VarReadInfo( mat_t *mat, const char *name );
-EXTERN matvar_t  *Mat_VarReadNext( mat_t *mat );
-EXTERN matvar_t  *Mat_VarReadNextInfo( mat_t *mat );
+EXTERN matvar_t  *Mat_VarReadInfo(mat_t *mat, const char *name);
+EXTERN matvar_t  *Mat_VarReadNext(mat_t *mat);
+EXTERN matvar_t  *Mat_VarReadNextInfo(mat_t *mat);
 EXTERN matvar_t  *Mat_VarSetCell(matvar_t *matvar,int index,matvar_t *cell);
 EXTERN matvar_t  *Mat_VarSetStructFieldByIndex(matvar_t *matvar,
                       size_t field_index,size_t index,matvar_t *field);
 EXTERN matvar_t  *Mat_VarSetStructFieldByName(matvar_t *matvar,
                       const char *field_name,size_t index,matvar_t *field);
 EXTERN int        Mat_VarWrite(mat_t *mat,matvar_t *matvar,
-                      enum matio_compression compress );
+                      enum matio_compression compress);
+EXTERN int        Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,
+                      enum matio_compression compress,int dim);
 EXTERN int        Mat_VarWriteInfo(mat_t *mat,matvar_t *matvar);
 EXTERN int        Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
                       int *start,int *stride,int *edge);
