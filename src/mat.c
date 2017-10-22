@@ -2449,37 +2449,37 @@ Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,i
         }
     }
 
-    if ( mat->version == MAT_FT_MAT73 )
+    if ( mat->version == MAT_FT_MAT73 ) {
 #if defined(MAT73) && MAT73
         err = Mat_VarWriteAppend73(mat,matvar,compress,dim);
+        if ( err == 0 && 0 == append ) {
+            /* Update directory */
+            char **dir;
+            if ( NULL == mat->dir ) {
+                dir = malloc(sizeof(char*));
+            } else {
+                dir = realloc(mat->dir,
+                (mat->num_datasets + 1)*(sizeof(char*)));
+            }
+            if ( NULL != dir ) {
+                mat->dir = dir;
+                if ( NULL != matvar->name ) {
+                    mat->dir[mat->num_datasets++] =
+                        strdup_printf("%s", matvar->name);
+                } else {
+                    mat->dir[mat->num_datasets++] = NULL;
+                }
+            } else {
+                err = 3;
+                Mat_Critical("Couldn't allocate memory for the directory");
+            }
+        }
 #else
         err = 1;
 #endif
+    }
     else
         err = 2;
-
-    if ( err == 0 && 0 == append ) {
-        /* Update directory */
-        char **dir;
-        if ( NULL == mat->dir ) {
-            dir = malloc(sizeof(char*));
-        } else {
-            dir = realloc(mat->dir,
-            (mat->num_datasets + 1)*(sizeof(char*)));
-        }
-        if ( NULL != dir ) {
-            mat->dir = dir;
-            if ( NULL != matvar->name ) {
-                mat->dir[mat->num_datasets++] =
-                    strdup_printf("%s", matvar->name);
-            } else {
-                mat->dir[mat->num_datasets++] = NULL;
-            }
-        } else {
-            err = 3;
-            Mat_Critical("Couldn't allocate memory for the directory");
-        }
-    }
 
     return err;
 }
