@@ -5316,9 +5316,6 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             byteswritten += fwrite(comp_buf,1,
                 buf_size*sizeof(*comp_buf)-z->avail_out,(FILE*)mat->fp);
         } while ( err != Z_STREAM_END && z->avail_out == 0 );
-        /* End the compression and set to NULL so Mat_VarFree doesn't try
-         * to free z with inflateEnd
-         */
 #if 0
         if ( byteswritten % 8 )
             for ( i = 0; i < 8-(byteswritten % 8); i++ )
