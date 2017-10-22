@@ -4322,7 +4322,6 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
     int rank, size_t nbytes)
 {
     int err = 0;
-    int data_size = Mat_SizeOf(data_type);
     int same_type = 0;
     if (( class_type == MAT_C_DOUBLE && data_type == MAT_T_DOUBLE ) ||
         ( class_type == MAT_C_SINGLE && data_type == MAT_T_SINGLE ) ||
