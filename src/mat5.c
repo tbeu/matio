@@ -4418,7 +4418,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
             }
         }
     } else {
-        int nBytes = 0, i, j, N, I = 0;
+        int i, j, N, I = 0;
         int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
 
         switch ( class_type ) {
