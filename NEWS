@@ -1,7 +1,7 @@
 Changes in 1.5.11 (22 October 2017)
-* Added new API function Mat_VarWriteAppend to append previously written
-  variable in HDF5 MAT file
-* Fixed bug in Mat_VarGetSize for cell/struct array with empty cells/fields
+* Added new API function Mat_VarWriteAppend to append a numeric array to a
+  previously written variable in HDF5 MAT file
+* Fixed bug calculating sizes of cell/struct array with empty cells/fields in Mat_VarGetSize
 * Fixed bug writing cell/struct array with empty cells/fields to v5 MAT file
 * Fixed bug writing cell/struct array with empty cells/fields to HDF5 MAT file
 * Fixed read performance of cell/struct array with empty cells/fields from v5 MAT file
