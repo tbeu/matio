@@ -386,8 +386,7 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
                         *((matvar_t **)matvar->data + I);
                 I++;
             }
-            if ( stride != 0 )
-                I += (stride[0]-1)*nfields;
+            I += (stride[0]-1)*nfields;
         }
         idx[0] = start[0];
         I = idx[0];
