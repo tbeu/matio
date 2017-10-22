@@ -1,15 +1,26 @@
+Changes in 1.5.11 (22 October 2017)
+* Added new API function Mat_VarWriteAppend to append previously written
+  variable in HDF5 MAT file
+* Fixed bug in Mat_VarGetSize for cell/struct array with empty cells/fields
+* Fixed bug writing cell/struct array with empty cells/fields to v5 MAT file
+* Fixed bug writing cell/struct array with empty cells/fields to HDF5 MAT file
+* Fixed read performance of cell/struct array with empty cells/fields from v5 MAT file
+* Fixed read performance of numeric array from uncompressed v5 MAT file
+* Fixed testsuite (if configured with the MATLAB application)
+* Updated man pages
+
 Changes in 1.5.10 (14 February 2017)
 * Added new API function Mat_GetDir to retrieve all variable names of a MAT file
 * Fixed performance of repeated calls to Mat_VarWrite (broken by v1.5.7)
-* Fixed bugs reading (hyperslabs of) numeric arrays where the variable data type
+* Fixed bugs reading (hyperslabs of) numeric array where the variable data type
   differs from the desired output data type
 * Increased testsuite coverage
 
 Changes in 1.5.9 (22 October 2016)
-* Fixed resource leak when reading character data from HDF5 MAT file
+* Fixed resource leak when reading character array from HDF5 MAT file
 * Fixed bug writing struct to HDF5 MAT file: Mat_VarWrite never returned 0 on success
 * Fixed bug writing sparse logical array to HDF5 MAT file
-* Fixed bug calculating array sizes of structs, cells, complex and sparse arrays in Mat_VarGetSize
+* Fixed bug calculating array sizes of struct, cell, complex and sparse array in Mat_VarGetSize
 * Fixed bug duplicating sparse array with empty data in Mat_VarDuplicate
 * Fixed segmentation fault when reading compressed v5 MAT file with opaque class
 * Updated support of HDF5 v1.10.x: No longer depend on deprecated v1.8.x symbols
@@ -63,7 +74,7 @@ Changes in 1.5.5 (19 February 2016)
 * Several other fixes, especially for memory leaks
 
 Changes in 1.5.3 (11 January 2016)
-* Added support for writing numeric arrays to v4 MAT file
+* Added support for writing numeric array to v4 MAT file
 * Added Visual Studio project for test_mat
 * Added new API functions Mat_CalcSingleSubscript2 and Mat_CalcSubscripts2 that
   work on size_t type
