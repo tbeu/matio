@@ -73,12 +73,13 @@ static const char *helpstr[] = {
 NULL
 };
 
-static const char *mxclass[15] = { "mxCELL_CLASS", "mxSTRUCT_CLASS", "mxOBJECT_CLASS",
-                             "mxCHAR_CLASS", "mxSPARSE_CLASS", "mxDOUBLE_CLASS",
-                             "mxSINGLE_CLASS", "mxINT8_CLASS", "mxUINT8_CLASS",
-                             "mxINT16_CLASS", "mxUINT16_CLASS", "mxINT32_CLASS",
-                             "mxUINT32_CLASS","mxINT64_CLASS","mxUINT64_CLASS"
-                            };
+static const char *mxclass[18] = { "mxUNKNOWN_CLASS",
+    "mxCELL_CLASS", "mxSTRUCT_CLASS", "mxOBJECT_CLASS",
+    "mxCHAR_CLASS", "mxSPARSE_CLASS", "mxDOUBLE_CLASS",
+    "mxSINGLE_CLASS", "mxINT8_CLASS", "mxUINT8_CLASS",
+    "mxINT16_CLASS", "mxUINT16_CLASS", "mxINT32_CLASS",
+    "mxUINT32_CLASS", "mxINT64_CLASS", "mxUINT64_CLASS",
+    "mxFUNCTION_CLASS", "mxOPAQUE_CLASS" };
 static int printdata = 0;
 static int human_readable = 0;
 static int print_whos_first = 1;
@@ -567,7 +568,7 @@ print_whos(matvar_t *matvar)
     } else {
         printf("  %10" SIZE_T_FMTSTR,nbytes);
     }
-    printf("  %-18s\n",mxclass[matvar->class_type-1]);
+    printf("  %-18s\n",mxclass[matvar->class_type]);
 
     return;
 }
