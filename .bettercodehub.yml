@@ -1,0 +1,11 @@
+exclude:
+- /.install_hdf5_1_10.sh
+- /.install_hdf5_1_8.sh
+- /coverity_model.c
+- /getopt/.*
+- /src/fortran/matio_internal.c
+- /src/snprintf.c
+component_depth: 1
+languages:
+- cpp
+- script
