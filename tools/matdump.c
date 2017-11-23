@@ -681,6 +681,10 @@ static void
 print_default_numeric_3d(matvar_t *matvar)
 {
     size_t i, j, k, l, stride;
+
+    if ( NULL == matvar->data )
+        return;
+
     stride = Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex ) {
         mat_complex_split_t *complex_data = (mat_complex_split_t*)matvar->data;
