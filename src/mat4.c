@@ -857,6 +857,10 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
+    if ( matvar->isComplex && MAT_C_CHAR == matvar->class_type ) {
+        Mat_VarFree(matvar);
+        return NULL;
+    }
     err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( !err ) {
         Mat_VarFree(matvar);
