@@ -1242,9 +1242,10 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
         ncells *= matvar->dims[i];
     matvar->data_size = sizeof(matvar_t *);
     matvar->nbytes    = ncells*matvar->data_size;
-    matvar->data      = malloc(matvar->nbytes);
+    matvar->data      = calloc(ncells, matvar->data_size);
     if ( NULL == matvar->data ) {
-        Mat_Critical("Couldn't allocate memory for %s->data",matvar->name);
+        if ( NULL != matvar->name )
+            Mat_Critical("Couldn't allocate memory for %s->data", matvar->name);
         return bytesread;
     }
     cells = (matvar_t **)matvar->data;
@@ -1598,9 +1599,12 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         if ( !matvar->nbytes )
             return bytesread;
 
-        matvar->data = malloc(matvar->nbytes);
-        if ( NULL == matvar->data )
+        matvar->data = calloc(nmemb*nfields, matvar->data_size);
+        if ( NULL == matvar->data ) {
+            if ( NULL != matvar->name )
+                Mat_Critical("Couldn't allocate memory for %s->data", matvar->name);
             return bytesread;
+        }
 
         fields = (matvar_t**)matvar->data;
         for ( i = 0; i < nmemb; i++ ) {
