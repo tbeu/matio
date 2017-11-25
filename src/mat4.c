@@ -354,7 +354,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                     return;
                 }
                 ReadDoubleData(mat, &tmp, data_type, 1);
-                matvar->dims[0] = tmp;
+                matvar->dims[0] = (size_t)tmp;
 
                 fpos = ftell((FILE*)mat->fp);
                 if ( fpos == -1L ) {
@@ -764,13 +764,13 @@ Mat_VarReadNextInfo4(mat_t *mat)
         }
     }
 
-    M = floor(tmp / 1000.0);
+    M = (int)floor(tmp / 1000.0);
     tmp -= M*1000;
-    O = floor(tmp / 100.0);
+    O = (int)floor(tmp / 100.0);
     tmp -= O*100;
-    data_type = floor(tmp / 10.0);
+    data_type = (int)floor(tmp / 10.0);
     tmp -= data_type*10;
-    class_type = floor(tmp / 1.0);
+    class_type = (int)floor(tmp / 1.0);
 
     switch ( M ) {
         case 0:
