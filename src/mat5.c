@@ -4060,19 +4060,19 @@ Read5(mat_t *mat, matvar_t *matvar)
         } \
     } while (0)
 
-#define GET_DATA_SLAB2 \
+#define GET_DATA_SLAB2(T) \
     do { \
         ptr_in += start[1]*dims[0] + start[0]; \
         for ( i = 0; i < edge[1]; i++ ) { \
             for ( j = 0; j < edge[0]; j++ ) { \
-                *ptr = *(ptr_in+j*stride[0]); \
+                *ptr = (T)(*(ptr_in+j*stride[0])); \
                 ptr++; \
             } \
             ptr_in += stride[1]*dims[0]; \
         } \
     } while (0)
 
-#define GET_DATA_SLABN \
+#define GET_DATA_SLABN(T) \
     do { \
         inc[0]  = stride[0]-1; \
         dimp[0] = dims[0]; \
@@ -4097,7 +4097,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     I += start[0]; \
                 } \
                 for ( k = 0; k < edge[0]; k++ ) { \
-                    *(ptr+i+k) = *(ptr_in+k); \
+                    *(ptr+i+k) = (T)(*(ptr_in+k)); \
                 } \
                 I += dims[0]-start[0]; \
                 ptr_in += dims[0]-start[0]; \
@@ -4110,7 +4110,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     I += start[0]; \
                 } \
                 for ( j = 0; j < edge[0]; j++ ) { \
-                    *(ptr+i+j) = *ptr_in; \
+                    *(ptr+i+j) = (T)(*ptr_in); \
                     ptr_in += stride[0]; \
                     I += stride[0]; \
                 } \
@@ -4122,11 +4122,11 @@ Read5(mat_t *mat, matvar_t *matvar)
     } while (0)
 
 #ifdef HAVE_MAT_INT64_T
-#define GET_DATA_SLAB2_INT64 \
+#define GET_DATA_SLAB2_INT64(T) \
     do { \
         if ( MAT_T_INT64 == data_type ) { \
             mat_int64_t *ptr_in = (mat_int64_t *)data_in; \
-            GET_DATA_SLAB2; \
+            GET_DATA_SLAB2(T); \
             err = 0; \
         } \
     } while (0)
@@ -4135,11 +4135,11 @@ Read5(mat_t *mat, matvar_t *matvar)
 #endif /* HAVE_MAT_INT64_T */
 
 #ifdef HAVE_MAT_UINT64_T
-#define GET_DATA_SLAB2_UINT64 \
+#define GET_DATA_SLAB2_UINT64(T) \
     do { \
         if ( MAT_T_UINT64 == data_type ) { \
             mat_uint64_t *ptr_in = (mat_uint64_t *)data_in; \
-            GET_DATA_SLAB2; \
+            GET_DATA_SLAB2(T); \
             err = 0; \
         } \
     } while (0)
@@ -4147,71 +4147,71 @@ Read5(mat_t *mat, matvar_t *matvar)
 #define GET_DATA_SLAB2_UINT64
 #endif /* HAVE_MAT_UINT64_T */
 
-#define GET_DATA_SLAB2_TYPE \
+#define GET_DATA_SLAB2_TYPE(T) \
     do { \
         switch ( data_type ) { \
             case MAT_T_DOUBLE: \
             { \
                 double *ptr_in = (double *)data_in; \
-                GET_DATA_SLAB2; \
+                GET_DATA_SLAB2(T); \
                 break; \
             } \
             case MAT_T_SINGLE: \
             { \
                 float *ptr_in = (float *)data_in; \
-                GET_DATA_SLAB2; \
+                GET_DATA_SLAB2(T); \
                 break; \
             } \
             case MAT_T_INT32: \
             { \
                 mat_int32_t *ptr_in = (mat_int32_t *)data_in; \
-                GET_DATA_SLAB2; \
+                GET_DATA_SLAB2(T); \
                 break; \
             } \
             case MAT_T_UINT32: \
             { \
                 mat_uint32_t *ptr_in = (mat_uint32_t *)data_in; \
-                GET_DATA_SLAB2; \
+                GET_DATA_SLAB2(T); \
                 break; \
             } \
             case MAT_T_INT16: \
             { \
                 mat_int16_t *ptr_in = (mat_int16_t *)data_in; \
-                GET_DATA_SLAB2; \
+                GET_DATA_SLAB2(T); \
                 break; \
             } \
             case MAT_T_UINT16: \
             { \
                 mat_uint16_t *ptr_in = (mat_uint16_t *)data_in; \
-                GET_DATA_SLAB2; \
+                GET_DATA_SLAB2(T); \
                 break; \
             } \
             case MAT_T_INT8: \
             { \
                 mat_int8_t *ptr_in = (mat_int8_t *)data_in; \
-                GET_DATA_SLAB2; \
+                GET_DATA_SLAB2(T); \
                 break; \
             } \
             case MAT_T_UINT8: \
             { \
                 mat_uint8_t *ptr_in = (mat_uint8_t *)data_in; \
-                GET_DATA_SLAB2; \
+                GET_DATA_SLAB2(T); \
                 break; \
             } \
             default: \
                 err = 1; \
-                GET_DATA_SLAB2_INT64; \
-                GET_DATA_SLAB2_UINT64; \
+                GET_DATA_SLAB2_INT64(T); \
+                GET_DATA_SLAB2_UINT64(T); \
                 break; \
         } \
     } while (0)
 
 #ifdef HAVE_MAT_INT64_T
-#define GET_DATA_SLABN_INT64 \
+#define GET_DATA_SLABN_INT64(T) \
     do { \
         if ( MAT_T_INT64 == data_type ) { \
             mat_int64_t *ptr_in = (mat_int64_t *)data_in; \
-            GET_DATA_SLABN; \
+            GET_DATA_SLABN(T); \
             err = 0; \
         } \
     } while (0)
@@ -4220,11 +4220,11 @@ Read5(mat_t *mat, matvar_t *matvar)
 #endif /* HAVE_MAT_INT64_T */
 
 #ifdef HAVE_MAT_UINT64_T
-#define GET_DATA_SLABN_UINT64 \
+#define GET_DATA_SLABN_UINT64(T) \
     do { \
         if ( MAT_T_UINT64 == data_type ) { \
             mat_uint64_t *ptr_in = (mat_uint64_t *)data_in; \
-            GET_DATA_SLABN; \
+            GET_DATA_SLABN(T); \
             err = 0; \
         } \
     } while (0)
@@ -4232,61 +4232,61 @@ Read5(mat_t *mat, matvar_t *matvar)
 #define GET_DATA_SLABN_UINT64
 #endif /* HAVE_MAT_UINT64_T */
 
-#define GET_DATA_SLABN_TYPE \
+#define GET_DATA_SLABN_TYPE(T) \
     do { \
         switch ( data_type ) { \
             case MAT_T_DOUBLE: \
             { \
                 double *ptr_in = (double *)data_in; \
-                GET_DATA_SLABN; \
+                GET_DATA_SLABN(T); \
                 break; \
             } \
             case MAT_T_SINGLE: \
             { \
                 float *ptr_in = (float *)data_in; \
-                GET_DATA_SLABN; \
+                GET_DATA_SLABN(T); \
                 break; \
             } \
             case MAT_T_INT32: \
             { \
                 mat_int32_t *ptr_in = (mat_int32_t *)data_in; \
-                GET_DATA_SLABN; \
+                GET_DATA_SLABN(T); \
                 break; \
             } \
             case MAT_T_UINT32: \
             { \
                 mat_uint32_t *ptr_in = (mat_uint32_t *)data_in; \
-                GET_DATA_SLABN; \
+                GET_DATA_SLABN(T); \
                 break; \
             } \
             case MAT_T_INT16: \
             { \
                 mat_int16_t *ptr_in = (mat_int16_t *)data_in; \
-                GET_DATA_SLABN; \
+                GET_DATA_SLABN(T); \
                 break; \
             } \
             case MAT_T_UINT16: \
             { \
                 mat_uint16_t *ptr_in = (mat_uint16_t *)data_in; \
-                GET_DATA_SLABN; \
+                GET_DATA_SLABN(T); \
                 break; \
             } \
             case MAT_T_INT8: \
             { \
                 mat_int8_t *ptr_in = (mat_int8_t *)data_in; \
-                GET_DATA_SLABN; \
+                GET_DATA_SLABN(T); \
                 break; \
             } \
             case MAT_T_UINT8: \
             { \
                 mat_uint8_t *ptr_in = (mat_uint8_t *)data_in; \
-                GET_DATA_SLABN; \
+                GET_DATA_SLABN(T); \
                 break; \
             } \
             default: \
                 err = 1; \
-                GET_DATA_SLABN_INT64; \
-                GET_DATA_SLABN_UINT64; \
+                GET_DATA_SLABN_INT64(T); \
+                GET_DATA_SLABN_UINT64(T); \
                 break; \
         } \
     } while (0)
@@ -4325,20 +4325,20 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                 case MAT_C_DOUBLE:
                 {
                     double *ptr = (double *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(double);
                     break;
                 }
                 case MAT_C_SINGLE:
                 {
                     float *ptr = (float *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(float);
                     break;
                 }
 #ifdef HAVE_MAT_INT64_T
                 case MAT_C_INT64:
                 {
                     mat_int64_t *ptr = (mat_int64_t *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(mat_int64_t);
                     break;
                 }
 #endif /* HAVE_MAT_INT64_T */
@@ -4346,44 +4346,44 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                 case MAT_C_UINT64:
                 {
                     mat_uint64_t *ptr = (mat_uint64_t *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(mat_uint64_t);
                     break;
                 }
 #endif /* HAVE_MAT_UINT64_T */
                 case MAT_C_INT32:
                 {
                     mat_int32_t *ptr = (mat_int32_t *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(mat_int32_t);
                     break;
                 }
                 case MAT_C_UINT32:
                 {
                     mat_uint32_t *ptr = (mat_uint32_t *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(mat_uint32_t);
                     break;
                 }
                 case MAT_C_INT16:
                 {
                     mat_int16_t *ptr = (mat_int16_t *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(mat_int16_t);
                     break;
                 }
                 case MAT_C_UINT16:
                 {
                     mat_uint16_t *ptr = (mat_uint16_t *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(mat_uint16_t);
                     break;
                 }
                 case MAT_C_INT8:
                 {
                     mat_int8_t *ptr = (mat_int8_t *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(mat_int8_t);
                     break;
                 }
                 case MAT_C_UINT8:
                 {
                     mat_uint8_t *ptr = (mat_uint8_t *)data_out;
-                    GET_DATA_SLAB2_TYPE;
+                    GET_DATA_SLAB2_TYPE(mat_uint8_t);
                     break;
                 }
                 default:
@@ -4399,20 +4399,20 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
             case MAT_C_DOUBLE:
             {
                 double *ptr = (double *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(double);
                 break;
             }
             case MAT_C_SINGLE:
             {
                 float *ptr = (float *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(float);
                 break;
             }
 #ifdef HAVE_MAT_INT64_T
             case MAT_C_INT64:
             {
                 mat_int64_t *ptr = (mat_int64_t *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(mat_int64_t);
                 break;
             }
 #endif /* HAVE_MAT_INT64_T */
@@ -4420,44 +4420,44 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
             case MAT_C_UINT64:
             {
                 mat_uint64_t *ptr = (mat_uint64_t *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(mat_uint64_t);
                 break;
             }
 #endif /* HAVE_MAT_UINT64_T */
             case MAT_C_INT32:
             {
                 mat_int32_t *ptr = (mat_int32_t *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(mat_int32_t);
                 break;
             }
             case MAT_C_UINT32:
             {
                 mat_uint32_t *ptr = (mat_uint32_t *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(mat_uint32_t);
                 break;
             }
             case MAT_C_INT16:
             {
                 mat_int16_t *ptr = (mat_int16_t *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(mat_int16_t);
                 break;
             }
             case MAT_C_UINT16:
             {
                 mat_uint16_t *ptr = (mat_uint16_t *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(mat_uint16_t);
                 break;
             }
             case MAT_C_INT8:
             {
                 mat_int8_t *ptr = (mat_int8_t *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(mat_int8_t);
                 break;
             }
             case MAT_C_UINT8:
             {
                 mat_uint8_t *ptr = (mat_uint8_t *)data_out;
-                GET_DATA_SLABN_TYPE;
+                GET_DATA_SLABN_TYPE(mat_uint8_t);
                 break;
             }
             default:
