@@ -642,15 +642,15 @@ InflateDataType(mat_t *mat, z_streamp z, void *buf)
  * @return Number of bytes read from the file
  */
 size_t
-InflateData(mat_t *mat, z_streamp z, void *buf, int nBytes)
+InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
 {
     mat_uint8_t comp_buf[1024];
     int    err;
-    size_t bytesread = 0;
+    unsigned int bytesread = 0;
 
     if ( buf == NULL )
         return 0;
-    if ( nBytes < 1 ) {
+    if ( nBytes == 0 ) {
         return bytesread;
     }
 
