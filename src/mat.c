@@ -1730,7 +1730,7 @@ Mat_VarGetSize(matvar_t *matvar)
 void
 Mat_VarPrint( matvar_t *matvar, int printdata )
 {
-    size_t nmemb;
+    size_t nmemb = 0;
     int i, j;
     const char *class_type_desc[18] = {"Undefined","Cell Array","Structure",
        "Object","Character Array","Sparse Array","Double Precision Array",
@@ -1742,18 +1742,20 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
 
     if ( matvar == NULL )
         return;
-    if ( matvar->name )
+    if ( NULL != matvar->name )
         printf("      Name: %s\n", matvar->name);
     printf("      Rank: %d\n", matvar->rank);
-    if ( matvar->rank == 0 )
+    if ( matvar->rank <= 0 )
         return;
-    printf("Dimensions: %" SIZE_T_FMTSTR,matvar->dims[0]);
-    nmemb = matvar->dims[0];
-    for ( i = 1; i < matvar->rank; i++ ) {
-        printf(" x %" SIZE_T_FMTSTR,matvar->dims[i]);
-        nmemb *= matvar->dims[i];
+    if ( NULL != matvar->dims ) {
+        printf("Dimensions: %" SIZE_T_FMTSTR,matvar->dims[0]);
+        nmemb = matvar->dims[0];
+        for ( i = 1; i < matvar->rank; i++ ) {
+            printf(" x %" SIZE_T_FMTSTR,matvar->dims[i]);
+            nmemb *= matvar->dims[i];
+        }
+        printf("\n");
     }
-    printf("\n");
     printf("Class Type: %s",class_type_desc[matvar->class_type]);
     if ( matvar->isComplex )
         printf(" (complex)");
@@ -1816,9 +1818,9 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
 
     if ( matvar->rank > 2 ) {
         printf("I can't print more than 2 dimensions\n");
-    } else if ( matvar->rank == 1 && matvar->dims[0] > 15 ) {
+    } else if ( matvar->rank == 1 && NULL != matvar->dims && matvar->dims[0] > 15 ) {
         printf("I won't print more than 15 elements in a vector\n");
-    } else if ( matvar->rank==2 ) {
+    } else if ( matvar->rank == 2 && NULL != matvar->dims ) {
         switch( matvar->class_type ) {
             case MAT_C_DOUBLE:
             case MAT_C_SINGLE:
