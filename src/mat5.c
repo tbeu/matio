@@ -1559,8 +1559,12 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
         if ( (uncomp_buf[0] & 0x0000ffff) == MAT_T_INT32 ) {
             fieldname_size = uncomp_buf[1];
+            if ( 0 >= fieldname_size ) {
+                Mat_Critical("Size of fieldname must be positive");
+                return bytesread;
+            }
         } else {
-            Mat_Warning("Error getting fieldname size");
+            Mat_Critical("Error getting fieldname size");
             return bytesread;
         }
 
@@ -1741,8 +1745,12 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
         if ( (buf[0] & 0x0000ffff) == MAT_T_INT32 ) {
             fieldname_size = buf[1];
+            if ( 0 >= fieldname_size ) {
+                Mat_Critical("Size of fieldname must be positive");
+                return bytesread;
+            }
         } else {
-            Mat_Warning("Error getting fieldname size");
+            Mat_Critical("Error getting fieldname size");
             return bytesread;
         }
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
