@@ -305,7 +305,8 @@
 int
 ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -406,7 +407,8 @@ int
 ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
     union _buf {
         float           f[256];
 #ifdef HAVE_MAT_INT64_T
@@ -423,7 +425,7 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
         mat_uint8_t   ui8[1024];
     } buf;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_DOUBLE:
@@ -793,7 +795,8 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
 int
 ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -822,12 +825,13 @@ int
 ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
     READ_COMPRESSED_DATA_TYPE(float);
     nBytes = len*data_size;
     return nBytes;
@@ -851,7 +855,8 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
 int
 ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -881,12 +886,13 @@ int
 ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
     READ_COMPRESSED_DATA_TYPE(mat_int64_t);
     nBytes = len*data_size;
     return nBytes;
@@ -911,7 +917,8 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
 int
 ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -941,12 +948,13 @@ int
 ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
     READ_COMPRESSED_DATA_TYPE(mat_uint64_t);
     nBytes = len*data_size;
     return nBytes;
@@ -970,7 +978,8 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
 int
 ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -1000,12 +1009,13 @@ int
 ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
     READ_COMPRESSED_DATA_TYPE(mat_int32_t);
     nBytes = len*data_size;
     return nBytes;
@@ -1028,7 +1038,8 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
 int
 ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -1058,12 +1069,13 @@ int
 ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
     READ_COMPRESSED_DATA_TYPE(mat_uint32_t);
     nBytes = len*data_size;
     return nBytes;
@@ -1086,7 +1098,8 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
 int
 ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -1116,12 +1129,13 @@ int
 ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
     READ_COMPRESSED_DATA_TYPE(mat_int16_t);
     nBytes = len*data_size;
     return nBytes;
@@ -1144,7 +1158,8 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
 int
 ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -1174,12 +1189,13 @@ int
 ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
     READ_COMPRESSED_DATA_TYPE(mat_uint16_t);
     nBytes = len*data_size;
     return nBytes;
@@ -1202,7 +1218,8 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
 int
 ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -1232,12 +1249,13 @@ int
 ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
     READ_COMPRESSED_DATA_TYPE(mat_int8_t);
     nBytes = len*data_size;
     return nBytes;
@@ -1260,7 +1278,8 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
 int
 ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size, i, j;
+    int bytesread = 0, i, j;
+    size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
@@ -1290,12 +1309,13 @@ int
 ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size, i;
+    int nBytes = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (z == NULL) )
         return 0;
 
-    data_size = Mat_SizeOf(data_type);
+    data_size = (unsigned int)Mat_SizeOf(data_type);
     READ_COMPRESSED_DATA_TYPE(mat_uint8_t);
     nBytes = len*data_size;
     return nBytes;
@@ -1330,7 +1350,8 @@ int
 ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
     enum matio_types data_type,int len)
 {
-    int nBytes = 0, data_size = 0, i;
+    int nBytes = 0, i;
+    unsigned int data_size = 0;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;

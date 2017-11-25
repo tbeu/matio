@@ -216,7 +216,7 @@ EXTERN size_t InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN size_t InflateVarName(mat_t *mat,matvar_t *matvar,void *buf,int N);
 EXTERN size_t InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN size_t InflateDataType(mat_t *mat, z_stream *matvar, void *buf);
-EXTERN size_t InflateData(mat_t *mat, z_streamp z, void *buf, int nBytes);
+EXTERN size_t InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes);
 EXTERN size_t InflateFieldNameLength(mat_t *mat,matvar_t *matvar,void *buf);
 EXTERN size_t InflateFieldNamesTag(mat_t *mat,matvar_t *matvar,void *buf);
 EXTERN size_t InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfields,
