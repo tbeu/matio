@@ -46,6 +46,7 @@
 #endif
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
+#   define strdup _strdup
 #else
 #   define SIZE_T_FMTSTR "zu"
 #endif

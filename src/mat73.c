@@ -35,6 +35,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#   define strdup _strdup
+#endif
 #include "matio_private.h"
 
 #if defined(MAT73) && MAT73
