@@ -1585,9 +1585,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
             for ( i = 0; i < nfields; i++ ) {
                 matvar->internal->fieldnames[i] = (char*)malloc(fieldname_size);
-                memcpy(matvar->internal->fieldnames[i],ptr+i*fieldname_size,
-                       fieldname_size);
-                matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+                if ( NULL != matvar->internal->fieldnames[i] ) {
+                    memcpy(matvar->internal->fieldnames[i], ptr+i*fieldname_size, fieldname_size);
+                    matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+                }
             }
             free(ptr);
         } else {
@@ -1759,8 +1760,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
             for ( i = 0; i < nfields; i++ ) {
                 matvar->internal->fieldnames[i] = (char*)malloc(fieldname_size);
-                bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,(FILE*)mat->fp);
-                matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+                if ( NULL != matvar->internal->fieldnames[i] ) {
+                    bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,(FILE*)mat->fp);
+                    matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+                }
             }
         } else {
             matvar->internal->num_fields = 0;
