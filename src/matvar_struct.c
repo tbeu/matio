@@ -28,6 +28,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#   define strdup _strdup
+#endif
 #include "matio_private.h"
 
 /** @brief Creates a structure MATLAB variable with the given name and fields
