@@ -45,62 +45,62 @@
 #define READ_BLOCK_SIZE (256)
 #endif
 
-#define READ_DATA_NOSWAP \
+#define READ_DATA_NOSWAP(T) \
     do { \
         if ( len <= READ_BLOCK_SIZE ) { \
             bytesread += fread(v,data_size,len,(FILE*)mat->fp); \
             for ( j = 0; j < len; j++ ) { \
-                data[j] = v[j]; \
+                data[j] = (T)v[j]; \
             } \
         } else { \
             for ( i = 0; i < len-READ_BLOCK_SIZE; i+=READ_BLOCK_SIZE ) { \
                 bytesread += fread(v,data_size,READ_BLOCK_SIZE,(FILE*)mat->fp); \
                 for ( j = 0; j < READ_BLOCK_SIZE; j++ ) { \
-                    data[i+j] = v[j]; \
+                    data[i+j] = (T)v[j]; \
                 } \
             } \
             if ( len > i ) { \
                 bytesread += fread(v,data_size,len-i,(FILE*)mat->fp); \
                 for ( j = 0; j < len-i; j++ ) { \
-                    data[i+j] = v[j]; \
+                    data[i+j] = (T)v[j]; \
                 } \
             }\
         } \
     } while (0)
 
-#define READ_DATA(SwapFunc) \
+#define READ_DATA(T, SwapFunc) \
     do { \
         if ( mat->byteswap ) { \
             if ( len <= READ_BLOCK_SIZE ) { \
                 bytesread += fread(v,data_size,len,(FILE*)mat->fp); \
                 for ( j = 0; j < len; j++ ) { \
-                    data[j] = SwapFunc(&v[j]); \
+                    data[j] = (T)SwapFunc(&v[j]); \
                 } \
             } else { \
                 for ( i = 0; i < len-READ_BLOCK_SIZE; i+=READ_BLOCK_SIZE ) { \
                     bytesread += fread(v,data_size,READ_BLOCK_SIZE,(FILE*)mat->fp); \
                     for ( j = 0; j < READ_BLOCK_SIZE; j++ ) { \
-                        data[i+j] = SwapFunc(&v[j]); \
+                        data[i+j] = (T)SwapFunc(&v[j]); \
                     } \
                 } \
                 if ( len > i ) { \
                     bytesread += fread(v,data_size,len-i,(FILE*)mat->fp); \
                     for ( j = 0; j < len-i; j++ ) { \
-                        data[i+j] = SwapFunc(&v[j]); \
+                        data[i+j] = (T)SwapFunc(&v[j]); \
                     } \
                 }\
             } \
         } else { \
-            READ_DATA_NOSWAP; \
+            READ_DATA_NOSWAP(T); \
         } \
     } while (0)
 
 #ifdef HAVE_MAT_INT64_T
-#define READ_DATA_INT64 \
+#define READ_DATA_INT64(T) \
     do { \
         if ( MAT_T_INT64 == data_type ) { \
             mat_int64_t v[READ_BLOCK_SIZE]; \
-            READ_DATA(Mat_int64Swap); \
+            READ_DATA(T, Mat_int64Swap); \
         } \
     } while (0)
 #else
@@ -108,97 +108,97 @@
 #endif /* HAVE_MAT_INT64_T */
 
 #ifdef HAVE_MAT_UINT64_T
-#define READ_DATA_UINT64 \
+#define READ_DATA_UINT64(T) \
     do { \
         if ( MAT_T_UINT64 == data_type ) { \
             mat_uint64_t v[READ_BLOCK_SIZE]; \
-            READ_DATA(Mat_uint64Swap); \
+            READ_DATA(T, Mat_uint64Swap); \
         } \
     } while (0)
 #else
 #define READ_DATA_UINT64
 #endif /* HAVE_MAT_UINT64_T */
 
-#define READ_DATA_TYPE \
+#define READ_DATA_TYPE(T) \
     do { \
         switch ( data_type ) { \
             case MAT_T_DOUBLE: \
             { \
                 double v[READ_BLOCK_SIZE]; \
-                READ_DATA(Mat_doubleSwap); \
+                READ_DATA(T, Mat_doubleSwap); \
                 break; \
             } \
             case MAT_T_SINGLE: \
             { \
                 float v[READ_BLOCK_SIZE]; \
-                READ_DATA(Mat_floatSwap); \
+                READ_DATA(T, Mat_floatSwap); \
                 break; \
             } \
             case MAT_T_INT32: \
             { \
                 mat_int32_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(Mat_int32Swap); \
+                READ_DATA(T, Mat_int32Swap); \
                 break; \
             } \
             case MAT_T_UINT32: \
             { \
                 mat_uint32_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(Mat_uint32Swap); \
+                READ_DATA(T, Mat_uint32Swap); \
                 break; \
             } \
             case MAT_T_INT16: \
             { \
                 mat_int16_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(Mat_int16Swap); \
+                READ_DATA(T, Mat_int16Swap); \
                 break; \
             } \
             case MAT_T_UINT16: \
             { \
                 mat_uint16_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(Mat_uint16Swap); \
+                READ_DATA(T, Mat_uint16Swap); \
                 break; \
             } \
             case MAT_T_INT8: \
             { \
                 mat_int8_t v[READ_BLOCK_SIZE]; \
-                READ_DATA_NOSWAP; \
+                READ_DATA_NOSWAP(T); \
                 break; \
             } \
             case MAT_T_UINT8: \
             { \
                 mat_uint8_t v[READ_BLOCK_SIZE]; \
-                READ_DATA_NOSWAP; \
+                READ_DATA_NOSWAP(T); \
                 break; \
             } \
             default: \
-                READ_DATA_INT64; \
-                READ_DATA_UINT64; \
+                READ_DATA_INT64(T); \
+                READ_DATA_UINT64(T); \
                 break; \
         } \
     } while (0)
 
 #if defined(HAVE_ZLIB)
-#define READ_COMPRESSED_DATA(SwapFunc) \
+#define READ_COMPRESSED_DATA(T, SwapFunc) \
     do { \
         if ( mat->byteswap ) { \
             for ( i = 0; i < len; i++ ) { \
                 InflateData(mat,z,&v,data_size); \
-                data[i] = SwapFunc(&v); \
+                data[i] = (T)SwapFunc(&v); \
             } \
         } else { \
             for ( i = 0; i < len; i++ ) { \
                 InflateData(mat,z,&v,data_size); \
-                data[i] = v; \
+                data[i] = (T)v; \
             } \
         } \
     } while (0)
 
 #ifdef HAVE_MAT_INT64_T
-#define READ_COMPRESSED_DATA_INT64 \
+#define READ_COMPRESSED_DATA_INT64(T) \
     do { \
         if ( MAT_T_INT64 == data_type ) { \
             mat_int64_t v; \
-            READ_COMPRESSED_DATA(Mat_int64Swap); \
+            READ_COMPRESSED_DATA(T, Mat_int64Swap); \
         } \
     } while (0)
 #else
@@ -206,54 +206,54 @@
 #endif /* HAVE_MAT_INT64_T */
 
 #ifdef HAVE_MAT_UINT64_T
-#define READ_COMPRESSED_DATA_UINT64 \
+#define READ_COMPRESSED_DATA_UINT64(T) \
     do { \
         if ( MAT_T_UINT64 == data_type ) { \
             mat_uint64_t v; \
-            READ_COMPRESSED_DATA(Mat_uint64Swap); \
+            READ_COMPRESSED_DATA(T, Mat_uint64Swap); \
         } \
     } while (0)
 #else
 #define READ_COMPRESSED_DATA_UINT64
 #endif /* HAVE_MAT_UINT64_T */
 
-#define READ_COMPRESSED_DATA_TYPE \
+#define READ_COMPRESSED_DATA_TYPE(T) \
     do { \
         switch ( data_type ) { \
             case MAT_T_DOUBLE: \
             { \
                 double v; \
-                READ_COMPRESSED_DATA(Mat_doubleSwap); \
+                READ_COMPRESSED_DATA(T, Mat_doubleSwap); \
                 break; \
             } \
             case MAT_T_SINGLE: \
             { \
                 float v; \
-                READ_COMPRESSED_DATA(Mat_floatSwap); \
+                READ_COMPRESSED_DATA(T, Mat_floatSwap); \
                 break; \
             } \
             case MAT_T_INT32: \
             { \
                 mat_int32_t v; \
-                READ_COMPRESSED_DATA(Mat_int32Swap); \
+                READ_COMPRESSED_DATA(T, Mat_int32Swap); \
                 break; \
             } \
             case MAT_T_UINT32: \
             { \
                 mat_uint32_t v; \
-                READ_COMPRESSED_DATA(Mat_uint32Swap); \
+                READ_COMPRESSED_DATA(T, Mat_uint32Swap); \
                 break; \
             } \
             case MAT_T_INT16: \
             { \
                 mat_int16_t v; \
-                READ_COMPRESSED_DATA(Mat_int16Swap); \
+                READ_COMPRESSED_DATA(T, Mat_int16Swap); \
                 break; \
             } \
             case MAT_T_UINT16: \
             { \
                 mat_uint16_t v; \
-                READ_COMPRESSED_DATA(Mat_uint16Swap); \
+                READ_COMPRESSED_DATA(T, Mat_uint16Swap); \
                 break; \
             } \
             case MAT_T_UINT8: \
@@ -261,7 +261,7 @@
                 mat_uint8_t v; \
                 for ( i = 0; i < len; i++ ) { \
                     InflateData(mat,z,&v,data_size); \
-                    data[i] = v; \
+                    data[i] = (T)v; \
                 } \
                 break; \
             } \
@@ -270,13 +270,13 @@
                 mat_int8_t v; \
                 for ( i = 0; i < len; i++ ) { \
                     InflateData(mat,z,&v,data_size); \
-                    data[i] = v; \
+                    data[i] = (T)v; \
                 } \
                 break; \
             } \
             default: \
-                READ_COMPRESSED_DATA_INT64; \
-                READ_COMPRESSED_DATA_UINT64; \
+                READ_COMPRESSED_DATA_INT64(T); \
+                READ_COMPRESSED_DATA_UINT64(T); \
                 break; \
         } \
     } while (0)
@@ -307,7 +307,7 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
@@ -315,27 +315,25 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
     switch ( data_type ) {
         case MAT_T_DOUBLE:
         {
+            bytesread += fread(data,data_size,len,(FILE*)mat->fp);
             if ( mat->byteswap ) {
-                bytesread += fread(data,data_size,len,(FILE*)mat->fp);
                 for ( i = 0; i < len; i++ ) {
                     (void)Mat_doubleSwap(data+i);
                 }
-            } else {
-                bytesread += fread(data,data_size,len,(FILE*)mat->fp);
             }
             break;
         }
         case MAT_T_SINGLE:
         {
             float v[READ_BLOCK_SIZE];
-            READ_DATA(Mat_floatSwap);
+            READ_DATA(double, Mat_floatSwap);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
         case MAT_T_INT64:
         {
             mat_int64_t v[READ_BLOCK_SIZE];
-            READ_DATA(Mat_int64Swap);
+            READ_DATA(double, Mat_int64Swap);
             break;
         }
 #endif
@@ -343,44 +341,44 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
         case MAT_T_UINT64:
         {
             mat_uint64_t v[READ_BLOCK_SIZE];
-            READ_DATA(Mat_uint64Swap);
+            READ_DATA(double, Mat_uint64Swap);
             break;
         }
 #endif
         case MAT_T_INT32:
         {
             mat_int32_t v[READ_BLOCK_SIZE];
-            READ_DATA(Mat_int32Swap);
+            READ_DATA(double, Mat_int32Swap);
             break;
         }
         case MAT_T_UINT32:
         {
             mat_uint32_t v[READ_BLOCK_SIZE];
-            READ_DATA(Mat_uint32Swap);
+            READ_DATA(double, Mat_uint32Swap);
             break;
         }
         case MAT_T_INT16:
         {
             mat_int16_t v[READ_BLOCK_SIZE];
-            READ_DATA(Mat_int16Swap);
+            READ_DATA(double, Mat_int16Swap);
             break;
         }
         case MAT_T_UINT16:
         {
             mat_uint16_t v[READ_BLOCK_SIZE];
-            READ_DATA(Mat_uint16Swap);
+            READ_DATA(double, Mat_uint16Swap);
             break;
         }
         case MAT_T_INT8:
         {
             mat_int8_t v[READ_BLOCK_SIZE];
-            READ_DATA_NOSWAP;
+            READ_DATA_NOSWAP(double);
             break;
         }
         case MAT_T_UINT8:
         {
             mat_uint8_t v[READ_BLOCK_SIZE];
-            READ_DATA_NOSWAP;
+            READ_DATA_NOSWAP(double);
             break;
         }
         default:
@@ -487,37 +485,37 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
                 if ( len <= 128 ){
                     InflateData(mat,z,buf.i64,len*data_size);
                     for ( i = 0; i < len; i++ )
-                        data[i] = Mat_int64Swap(buf.i64+i);
+                        data[i] = (double)Mat_int64Swap(buf.i64+i);
                 } else {
                     int j;
                     len -= 128;
                     for ( i = 0; i < len; i+=128 ) {
                         InflateData(mat,z,buf.i64,128*data_size);
                         for ( j = 0; j < 128; j++ )
-                            data[i+j] = Mat_int64Swap(buf.i64+j);
+                            data[i+j] = (double)Mat_int64Swap(buf.i64+j);
                     }
                     len = len-(i-128);
                     InflateData(mat,z,buf.i64,len*data_size);
                     for ( j = 0; j < len; j++ )
-                        data[i+j] = Mat_int64Swap(buf.i64+j);
+                        data[i+j] = (double)Mat_int64Swap(buf.i64+j);
                 }
             } else {
                 if ( len <= 128 ){
                     InflateData(mat,z,buf.i64,len*data_size);
                     for ( i = 0; i < len; i++ )
-                        data[i] = buf.i64[i];
+                        data[i] = (double)buf.i64[i];
                 } else {
                     int j;
                     len -= 128;
                     for ( i = 0; i < len; i+=128 ) {
                         InflateData(mat,z,buf.i64,128*data_size);
                         for ( j = 0; j < 128; j++ )
-                            data[i+j] = buf.i64[j];
+                            data[i+j] = (double)buf.i64[j];
                     }
                     len = len-(i-128);
                     InflateData(mat,z,buf.i64,len*data_size);
                     for ( j = 0; j < len; j++ )
-                        data[i+j] = buf.i64[j];
+                        data[i+j] = (double)buf.i64[j];
                 }
             }
             break;
@@ -530,37 +528,37 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
                 if ( len <= 128 ){
                     InflateData(mat,z,buf.ui64,len*data_size);
                     for ( i = 0; i < len; i++ )
-                        data[i] = Mat_uint64Swap(buf.ui64+i);
+                        data[i] = (double)Mat_uint64Swap(buf.ui64+i);
                 } else {
                     int j;
                     len -= 128;
                     for ( i = 0; i < len; i+=128 ) {
                         InflateData(mat,z,buf.ui64,128*data_size);
                         for ( j = 0; j < 128; j++ )
-                            data[i+j] = Mat_uint64Swap(buf.ui64+j);
+                            data[i+j] = (double)Mat_uint64Swap(buf.ui64+j);
                     }
                     len = len-(i-128);
                     InflateData(mat,z,buf.ui64,len*data_size);
                     for ( j = 0; j < len; j++ )
-                        data[i+j] = Mat_uint64Swap(buf.ui64+j);
+                        data[i+j] = (double)Mat_uint64Swap(buf.ui64+j);
                 }
             } else {
                 if ( len <= 128 ){
                     InflateData(mat,z,buf.ui64,len*data_size);
                     for ( i = 0; i < len; i++ )
-                        data[i] = buf.ui64[i];
+                        data[i] = (double)buf.ui64[i];
                 } else {
                     int j;
                     len -= 128;
                     for ( i = 0; i < len; i+=128 ) {
                         InflateData(mat,z,buf.ui64,128*data_size);
                         for ( j = 0; j < 128; j++ )
-                            data[i+j] = buf.ui64[j];
+                            data[i+j] = (double)buf.ui64[j];
                     }
                     len = len-(i-128);
                     InflateData(mat,z,buf.ui64,len*data_size);
                     for ( j = 0; j < len; j++ )
-                        data[i+j] = buf.ui64[j];
+                        data[i+j] = (double)buf.ui64[j];
                 }
             }
             break;
@@ -797,11 +795,11 @@ ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE;
+    READ_DATA_TYPE(float);
     bytesread *= data_size;
     return bytesread;
 }
@@ -830,7 +828,7 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE;
+    READ_COMPRESSED_DATA_TYPE(float);
     nBytes = len*data_size;
     return nBytes;
 }
@@ -855,11 +853,11 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE;
+    READ_DATA_TYPE(mat_int64_t);
     bytesread *= data_size;
     return bytesread;
 }
@@ -889,7 +887,7 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE;
+    READ_COMPRESSED_DATA_TYPE(mat_int64_t);
     nBytes = len*data_size;
     return nBytes;
 }
@@ -915,11 +913,11 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE;
+    READ_DATA_TYPE(mat_uint64_t);
     bytesread *= data_size;
     return bytesread;
 }
@@ -949,8 +947,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-
-    READ_COMPRESSED_DATA_TYPE;
+    READ_COMPRESSED_DATA_TYPE(mat_uint64_t);
     nBytes = len*data_size;
     return nBytes;
 }
@@ -975,11 +972,11 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE;
+    READ_DATA_TYPE(mat_int32_t);
     bytesread *= data_size;
     return bytesread;
 }
@@ -1009,7 +1006,7 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE;
+    READ_COMPRESSED_DATA_TYPE(mat_int32_t);
     nBytes = len*data_size;
     return nBytes;
 }
@@ -1033,11 +1030,11 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE;
+    READ_DATA_TYPE(mat_uint32_t);
     bytesread *= data_size;
     return bytesread;
 }
@@ -1067,7 +1064,7 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE;
+    READ_COMPRESSED_DATA_TYPE(mat_uint32_t);
     nBytes = len*data_size;
     return nBytes;
 }
@@ -1091,11 +1088,11 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE;
+    READ_DATA_TYPE(mat_int16_t);
     bytesread *= data_size;
     return bytesread;
 }
@@ -1125,7 +1122,7 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE;
+    READ_COMPRESSED_DATA_TYPE(mat_int16_t);
     nBytes = len*data_size;
     return nBytes;
 }
@@ -1149,11 +1146,11 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE;
+    READ_DATA_TYPE(mat_uint16_t);
     bytesread *= data_size;
     return bytesread;
 }
@@ -1183,7 +1180,7 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE;
+    READ_COMPRESSED_DATA_TYPE(mat_uint16_t);
     nBytes = len*data_size;
     return nBytes;
 }
@@ -1207,11 +1204,11 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE;
+    READ_DATA_TYPE(mat_int8_t);
     bytesread *= data_size;
     return bytesread;
 }
@@ -1241,7 +1238,7 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE;
+    READ_COMPRESSED_DATA_TYPE(mat_int8_t);
     nBytes = len*data_size;
     return nBytes;
 }
@@ -1265,11 +1262,11 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size, i, j;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE;
+    READ_DATA_TYPE(mat_uint8_t);
     bytesread *= data_size;
     return bytesread;
 }
@@ -1299,7 +1296,7 @@ ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
         return 0;
 
     data_size = Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE;
+    READ_COMPRESSED_DATA_TYPE(mat_uint8_t);
     nBytes = len*data_size;
     return nBytes;
 }
@@ -1335,7 +1332,7 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
 {
     int nBytes = 0, data_size = 0, i;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     switch ( data_type ) {
@@ -1356,12 +1353,12 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = Mat_uint16Swap(&i16);
+                    data[i] = (char)Mat_uint16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
-                    data[i] = i16;
+                    data[i] = (char)i16;
                 }
             }
             break;
@@ -1381,7 +1378,7 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
 {
     int bytesread = 0, data_size = 0, i;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     switch ( data_type ) {
@@ -1400,12 +1397,12 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,2,1,(FILE*)mat->fp);
-                    data[i] = Mat_uint16Swap(&i16);
+                    data[i] = (char)Mat_uint16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
                     bytesread += fread(&i16,2,1,(FILE*)mat->fp);
-                    data[i] = i16;
+                    data[i] = (char)i16;
                 }
             }
             break;
@@ -2066,7 +2063,7 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
     int nBytes = 0, i, err;
     z_stream z_copy = {0,};
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) )
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     stride--;
