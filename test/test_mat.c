@@ -826,7 +826,7 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, 
 
     for ( i = 0; i < 50; i++ ) {
           d[i] = i+1;
-          f[i] = i+1;
+          f[i] = (float)(i+1);
         i32[i] = i+1;
        ui32[i] = i+1;
         i16[i] = i+1;
@@ -896,7 +896,7 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, 
                 int k = i+1;
                 for ( j = 0; j < 10; j++ ) {
                       d[i*10+j] = k;
-                      f[i*10+j] = k;
+                      f[i*10+j] = (float)k;
                     i32[i*10+j] = k;
                    ui32[i*10+j] = k;
                     i16[i*10+j] = k;
@@ -1003,8 +1003,8 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class,const char *output
     for ( i = 0; i < 50; i++ ) {
           d_real[i] = i+1;
           d_imag[i] = i+51;
-          f_real[i] = i+1;
-          f_imag[i] = i+51;
+          f_real[i] = (float)(i+1);
+          f_imag[i] = (float)(i+51);
         i32_real[i] = i+1;
         i32_imag[i] = i+51;
        ui32_real[i] = i+1;
@@ -1106,8 +1106,8 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class,const char *output
                 for ( j = 0; j < 10; j++ ) {
                       d_real[i*10+j] = k;
                       d_imag[i*10+j] = k + 50;
-                      f_real[i*10+j] = k;
-                      f_imag[i*10+j] = k + 50;
+                      f_real[i*10+j] = (float)k;
+                      f_imag[i*10+j] = (float)(k + 50);
                     i32_real[i*10+j] = k;
                     i32_imag[i*10+j] = k + 50;
                    ui32_real[i*10+j] = k;
@@ -1491,7 +1491,7 @@ test_write_struct_2d_numeric(enum matio_classes matvar_class,
 
     for ( i = 0; i < 50; i++ ) {
           d[i] = i+1;
-          f[i] = i+1;
+          f[i] = (float)(i+1);
         i32[i] = i+1;
        ui32[i] = i+1;
         i16[i] = i+1;
@@ -1641,8 +1641,8 @@ test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
     for ( i = 0; i < 50; i++ ) {
           d_real[i] = i+1;
           d_imag[i] = i+51;
-          f_real[i] = i+1;
-          f_imag[i] = i+51;
+          f_real[i] = (float)(i+1);
+          f_imag[i] = (float)(i+51);
         i32_real[i] = i+1;
         i32_imag[i] = i+51;
        ui32_real[i] = i+1;
@@ -1959,7 +1959,7 @@ test_write_cell_2d_numeric(enum matio_classes matvar_class,
 
     for ( i = 0; i < 50; i++ ) {
           d[i] = i+1;
-          f[i] = i+1;
+          f[i] = (float)(i+1);
         i32[i] = i+1;
        ui32[i] = i+1;
         i16[i] = i+1;
@@ -2109,8 +2109,8 @@ test_write_cell_complex_2d_numeric(enum matio_classes matvar_class,
     for ( i = 0; i < 50; i++ ) {
           d_real[i] = i+1;
           d_imag[i] = i+51;
-          f_real[i] = i+1;
-          f_imag[i] = i+51;
+          f_real[i] = (float)(i+1);
+          f_imag[i] = (float)(i+51);
         i32_real[i] = i+1;
         i32_imag[i] = i+51;
        ui32_real[i] = i+1;
@@ -3282,7 +3282,7 @@ test_writeslab(const char* output_name)
 
     for ( i = 0; i < 60; i++ ) {
          data[i] = i+1;
-        fdata[i] = i+1;
+        fdata[i] = (float)(i+1);
         idata[i] = i+1;
     }
 
