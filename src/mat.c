@@ -1589,7 +1589,7 @@ Mat_CalcSubscripts(int rank,int *dims,int index)
         int k = 1;
         for ( j = i; j--; )
             k *= dims[j];
-        subs[i] = floor(l / (double)k);
+        subs[i] = (int)floor(l / (double)k);
         l -= subs[i]*k;
         subs[i]++;
     }
