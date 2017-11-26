@@ -259,9 +259,9 @@ slab_select_valid(int rank,int *start,int *stride,int *edge,matvar_t *matvar)
         } else if ( *edge == -1 ) {
             /* index of the form 1:stride:end */
             *edge = nmemb;
-            *edge = floor((double)(*edge-*start-1) / (double)*stride)+1;
+            *edge = (int)floor((double)(*edge-*start-1) / (double)*stride)+1;
         } else if ( *edge > 0 ) {
-            *edge = floor((double)(*edge-*start-1) / (double)*stride)+1;
+            *edge = (int)floor((double)(*edge-*start-1) / (double)*stride)+1;
         }
         nmemb = *edge;
     } else {
@@ -283,7 +283,7 @@ slab_select_valid(int rank,int *start,int *stride,int *edge,matvar_t *matvar)
                     start[i] = 0;
             } else if ( edge[i] < 0 ) {
                 /* index of the form 1:stride:end */
-                edge[i] = floor((double)(matvar->dims[i]-start[i]-1) / (double)stride[i])+1;
+                edge[i] = (int)floor((double)(matvar->dims[i]-start[i]-1) / (double)stride[i])+1;
             } else if ( edge[i] > matvar->dims[i] ) {
                 /* edge can't be bigger than the size of the dimension */
                 fprintf(stderr,"edge out of bound on dimension %d",i+1);
@@ -301,7 +301,7 @@ slab_select_valid(int rank,int *start,int *stride,int *edge,matvar_t *matvar)
                 /* index of the form 3:3 */
                 edge[i] = 1;
             } else if ( edge[i] > 0 ) {
-                edge[i] = floor((double)(edge[i]-start[i]-1) / (double)stride[i])+1;
+                edge[i] = (int)floor((double)(edge[i]-start[i]-1) / (double)stride[i])+1;
             }
             nmemb *= edge[i];
         }
