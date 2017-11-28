@@ -25,8 +25,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MAT4_H
-#define MAT4_H
+#pragma once
 
 #ifdef __cplusplus
 #   define EXTERN extern "C"
@@ -43,5 +42,3 @@ EXTERN int       ReadData4(mat_t *mat,matvar_t *matvar,void *data,
 EXTERN int       Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
                      int stride,int edge);
 EXTERN matvar_t *Mat_VarReadNextInfo4(mat_t *mat);
-
-#endif

@@ -25,8 +25,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MAT5_H
-#define MAT5_H
+#pragma once
 
 #ifdef __cplusplus
 #   define EXTERN extern "C"
@@ -49,5 +48,3 @@ EXTERN int       WriteData(mat_t *mat,void *data,int N,enum matio_types data_typ
 EXTERN int       WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
                      size_t *dims,int *start,int *stride,int *edge);
 EXTERN void      WriteInfo5(mat_t *mat, matvar_t *matvar);
-
-#endif

@@ -25,8 +25,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MATIO_PUBCONF_H
-#define MATIO_PUBCONF_H 1
+#pragma once
 
 /* Matio major version number */
 #define MATIO_MAJOR_VERSION 1
@@ -166,5 +165,3 @@
 #else
 #define MATIO_NORETURN
 #endif
-
-#endif /* MATIO_PUBCONF_H */
