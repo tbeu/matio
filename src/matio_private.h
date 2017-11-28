@@ -25,8 +25,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MATIO_PRIVATE_H
-#define MATIO_PRIVATE_H
+#pragma once
 
 #include "matioConfig.h"
 #include "matio.h"
@@ -225,5 +224,3 @@ EXTERN size_t InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfield
 
 /* mat.c */
 EXTERN mat_complex_split_t *ComplexMalloc(size_t nbytes);
-
-#endif

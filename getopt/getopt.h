@@ -37,8 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _GETOPT_H_
-#define _GETOPT_H_
+#pragma once
 
 #if !defined(_WIN32) && !defined(_WIN64)
 #   include <sys/cdefs.h>
@@ -81,5 +80,3 @@ extern int optind, opterr, optopt;
 #define _OPTRESET_DECLARED
 extern int optreset;            /* getopt(3) external variable */
 #endif
-
-#endif /* !_GETOPT_H_ */

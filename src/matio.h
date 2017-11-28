@@ -30,8 +30,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MATIO_H
-#define MATIO_H
+#pragma once
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -320,5 +319,3 @@ EXTERN int     Mat_CalcSingleSubscript(int rank,int *dims,int *subs);
 EXTERN int     Mat_CalcSingleSubscript2(int rank,size_t *dims,size_t *subs,size_t *index);
 EXTERN int    *Mat_CalcSubscripts(int rank,int *dims,int index);
 EXTERN size_t *Mat_CalcSubscripts2(int rank,size_t *dims,size_t index);
-
-#endif
