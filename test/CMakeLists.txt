@@ -108,37 +108,102 @@ endmacro()
 
 #   TODO: add dump tests
 
-set(v4_vars var1 var11 var24)
+#   Create list of vars indices.
+
 set(vars)
 foreach(i RANGE 1 69)
-    set(vars ${vars} "var${i}")
+    set(vars ${vars} ${i})
 endforeach()
-set(vars ${vars} "var90" "var91" "var92")
+list(INSERT vars 20 90)
+list(INSERT vars 48 91)
+list(INSERT vars 64 92)
+
+set(v4_vars 1 11 21 22 24)
 set(compressed_vars ${vars})
 set(uncompressed_vars ${vars})
 
+#   Create list of test names components
+
+set(types "double" "single" "int64" "uint64" "int32" "uint32" "int16" "uint16" "int8" "uint8")
+
+set(all_types)
+foreach(construct "2D" "struct-with" "cell-array-with")
+    set(suffix "array")
+    if (${construct} STREQUAL "struct-with")
+        set(suffix "fields")
+    endif()
+    foreach(i "" "-complex")
+        foreach(type ${types})
+            set(all_types ${all_types} "${construct}${i}-${type}-${suffix}")
+        endforeach()
+    endforeach()
+endforeach()
+list(INSERT all_types 20 "2D-logical-array"
+    "sparse-double-array" "sparse-complex-double-array" "empty-array" "2D-character-array"
+    "empty-struct" "empty-struct-with-fields" "struct-with-empty-fields")
+list(INSERT all_types 48 "struct-with-logical-fields"
+    "struct-with-sparse-double-fields" "struct-with-sparse-complex-double-fields"
+    "struct-with-character-fields" "empty-cell-array" "cell-array-with-empty-arrays")
+list(INSERT all_types 64 "cell-array-with-logical-arrays"
+    "cell-array-with-sparse-double-arrays" "cell-array-with-sparse-complex-double-arrays"
+    "cell-array-with-character-arrays" "cell-array-with-empty-structs"
+    "cell-array-with-structs-numeric-fields" "cell-array-with-structs-sparse-fields"
+    "cell-array-with-structs-character-fields")
+
 set(HDFTESTS)
 if (MAT73)
-    set(HDFTESTS hdf)
+    set(HDFTESTS 73)
     set(hdf_vars ${vars})
     set(special_vars var27 var66)
+    #set(special_vars var23 var27 var52 var66)
 endif()
 
-foreach(vers v4 compressed uncompressed ${HDFTESTS})
+foreach(vers v4 uncompressed compressed ${HDFTESTS})
     foreach(endian le be)
-        foreach(var ${${vers}_vars})
+
+        #   Read tests.
+
+        set(input ${CMAKE_CURRENT_SOURCE_DIR}/datasets/matio_test_cases_${vers}_${endian}.mat)
+    
+        set(vars ${${vers}_vars})
+        list(LENGTH vars max_ind)
+        math(EXPR max_ind ${max_ind}-1)
+
+        foreach(ind RANGE 0 ${max_ind})
+            list(GET vars ${ind} var_index)
+            set(var "var${var_index}")
+            list(FIND compressed_vars ${ind} all_vars_index)
+            list(GET all_types ${all_vars_index} suffix)
+
             set(MODIFIER)
-            if (${vers} STREQUAL hdf)
+            if (${vers} STREQUAL "73")
                 list(FIND special_vars ${var} special)
                 if (NOT ${special} EQUAL -1)
                     set(MODIFIER -73)
                 endif()
             endif()
-            set(testname read-${vers}-${endian}-${var})
-            set(input ${CMAKE_CURRENT_SOURCE_DIR}/datasets/matio_test_cases_${vers}_${endian}.mat)
+            set(testname read-${vers}-${endian}-${suffix})
             set(reference read-${var}${MODIFIER}.out)
             MATIO_TEST_READ(MATIO-${testname} ${reference} test_mat readvar ${input} ${var})
         endforeach()
+        if (${vers} STREQUAL "v4")
+            set(input ${CMAKE_CURRENT_SOURCE_DIR}/datasets/small_${vers}_${endian}.mat)
+            MATIO_TEST_READ(MATIO-read-small-${vers}-${endian}-file read-x.out test_mat readvar ${input} x)
+            set(input ${CMAKE_CURRENT_SOURCE_DIR}/datasets/matio_test_cases_${vers}_${endian}.mat)
+            MATIO_TEST_READ(MATIO-read-directory-${vers}-${endian} dir-4.out test_mat directory ${input})
+        else()
+            if ((${endian} STREQUAL "le") AND (${vers} MATCHES ".*compressed"))
+                set(reference "dir_le.out")
+            else()
+                set(reference "dir-5_be.out")
+            endif()
+            set(input ${CMAKE_CURRENT_SOURCE_DIR}/datasets/matio_test_cases_${vers}_${endian}.mat)
+            MATIO_TEST_READ(MATIO-read-directory-${vers}-${endian} ${reference} test_mat directory ${input})
+        endif()
+
+        #   Readslab tests
+
+        #MATIO_TEST_READ(MATIO-Read0linear-slab-of-double-array--${vers}-${endian} dump-var1-2.out matdump -d)
     endforeach()
 endforeach()
 
