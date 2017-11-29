@@ -1,0 +1,41 @@
+#   Config file for the @ConfigName@ package
+#   It defines the following variables
+#       @ConfigName@_INCLUDE_DIRS - include directories for FooBar
+#       @ConfigName@_LIBRARIES    - libraries to link against
+#       @ConfigName@_EXECUTABLE   - the executable
+ 
+#   Tell the user project where to find our headers and libraries
+
+#   Our library dependencies (contains definitions for IMPORTED targets)
+
+string(TOUPPER @ConfigName@ UpperConfigName)
+set(@ConfigName@_VERSION @VERSION@)
+set(${UpperConfigName}_VERSION @VERSION@)
+@PACKAGE_INIT@
+
+set(@ConfigName@_LIBRARY_DEPENDS_FILE "@PACKAGE_INSTALL_DATA_DIR@/@ConfigName@/cmake/@ConfigName@Dependencies.cmake")
+if (NOT @ConfigName@_NO_LIBRARY_DEPENDS AND EXISTS "${@ConfigName@_LIBRARY_DEPENDS_FILE}")
+    include(${@ConfigName@_LIBRARY_DEPENDS_FILE})
+endif()
+ 
+#   These are IMPORTED targets created by @ConfigName@LibraryDepends.cmake
+
+set_and_check(@ConfigName@_ROOT_DIR    "${PACKAGE_PREFIX_DIR}")
+set_and_check(@ConfigName@_CONFIG_DIR  "@PACKAGE_INSTALL_DATA_DIR@")
+set_and_check(@ConfigName@_LIBRARY_DIR "@PACKAGE_INSTALL_LIB_DIR@")
+set_and_check(@ConfigName@_INCLUDE_DIR "@PACKAGE_INSTALL_INCLUDE_DIR@")
+
+set(@ConfigName@_INCLUDE_DIRS ${@ConfigName@_INCLUDE_DIR} @DEPINCS@)
+
+set(_libs)
+foreach (i @LIBRARIES@)
+    set(CMAKE_FIND_DEBUG_MODE 1)
+    find_library(var_${i} ${i} HINTS ${@ConfigName@_LIBRARY_DIR})
+    if (NOT var_${i})
+        message(SEND_ERROR "Library ${i} not found.")
+    endif()
+    set(_libs ${_libs} ${var_${i}})
+endforeach()
+set(@ConfigName@_LIBRARIES ${_libs} @DEPLIBS@)
+
+#   check_required_components(Foo)
