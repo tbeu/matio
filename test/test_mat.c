@@ -3688,10 +3688,12 @@ test_delete(char *file,char *name)
 }
 
 static int
-test_directory(char *file)
+test_directory(char *file,const char* output)
 {
     int err = 0;
     mat_t *mat;
+
+    redirect_output(output);
 
     mat = Mat_Open(file,MAT_ACC_RDWR);
     if ( NULL != mat ) {
@@ -3839,7 +3841,7 @@ int main (int argc, char *argv[])
             ntests++;
         } else if ( !strcasecmp(argv[k],"directory") ) {
             k++;
-            err += test_directory(argv[k++]);
+            err += test_directory(argv[k++],output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"write_2d_logical") ) {
             k++;
