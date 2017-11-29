@@ -1,0 +1,21 @@
+set(TEST_REFERENCE ${TEST_REFERENCE_DIR}/${TEST_RESULT})
+set(FILES_TO_CLEANUP ${TEST_OUTPUT})
+if (WIN32)
+    set(TEST_OUTPUT_CORRECTED ${TEST_OUTPUT}-win)
+    configure_file(${TEST_OUTPUT} ${TEST_OUTPUT_CORRECTED} NEWLINE_STYLE LF)
+    set(TEST_OUTPUT ${TEST_OUTPUT_CORRECTED})
+    set(FILES_TO_CLEANUP ${FILES_TO_CLEANUP} ${TEST_OUTPUT})
+endif()
+
+message("${CMAKE_COMMAND} -E compare_files ${TEST_OUTPUT} ${TEST_REFERENCE}")
+
+execute_process(COMMAND ${CMAKE_COMMAND} -E compare_files ${TEST_OUTPUT} ${TEST_REFERENCE}
+                RESULT_VARIABLE OUTPUT_COMPARE)
+
+if (${OUTPUT_COMPARE} STREQUAL "0")
+    message("Success")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E remove ${FILES_TO_CLEANUP})
+    return()
+endif()
+
+message("FAILURE")
