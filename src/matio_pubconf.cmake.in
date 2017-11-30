@@ -26,7 +26,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef MATIO_PUBCONF_H
+#define MATIO_PUBCONF_H 1
 
 #include "matio_export.h"
 #include "matio_noreturn.h"
@@ -90,3 +91,5 @@ typedef int8_t   mat_int8_t;
 #ifdef HAVE_MAT_UINT8_T
 typedef uint8_t  mat_uint8_t;
 #endif
+
+#endif /* MATIO_PUBCONF_H */
