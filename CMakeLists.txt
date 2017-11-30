@@ -36,28 +36,28 @@ if (NOT MAT73)
 endif()
 
 #set(FIND_PACKAGE_DEBUG 1)
-Dependencies(matio ZLIB ${OPT} HDF5)
+Dependencies(matio ZLIB ${OPT})
 #message("[[Found: ZLIB: ${ZLIB_INCLUDE_DIRS} HDF5: ${HDF5_INCLUDE_DIRS}]]")
 
-include_directories(${ZLIB_INCLUDE_DIR})
 set(HAVE_ZLIB 1)
 set(Z_PREFIX)
 
-#   Tell Hdf5 to disable its own zlib detection (and to use this version).
+# Tell Hdf5 to disable its own zlib detection (and to use this version).
 
 set(H5_ZLIB_HEADER zlib.h)
 
 if (MAT73)
+    find_package(HDF5 REQUIRED)
+    message("Found HDF5 headers ${HDF5_INCLUDE_DIRS}, libraries ${HDF5_LIBRARIES}")
     include(HDF5Version)
     if (HDF5_VERSION_STRING VERSION_LESS "1.8.9")
-        MESSAGE(SEND_ERROR "hdf5 library must be 1.8.9 or higher. Using internal copy.")
+        message(SEND_ERROR "hdf5 library must be 1.8.9 or higher. Using internal copy.")
     endif()
-    include_directories(${HDF5_INCLUDE_DIRS})
     if (NOT BUILD_SHARED_LIBS)
         set(TARGET_SUFFIX -static)
     endif()
     set(HAVE_HDF5 1)
-    set(HDF5_LIB ${HDF5_LIBRARIES})
+    set(HDF5_LIBS ${HDF5_LIBRARIES})
 endif()
 
 # It may seem that ${CMAKE_ARCH_TRIPLET} might appear in a future cmake release.
@@ -76,7 +76,7 @@ if (EXTENDED_SP)
     set(EXTENDED_SPARSE 1)
 endif()
 
-include (Documentation optionAL)
+include (Documentation optional)
 if (BUILD_DOCUMENTATION)
     add_subdirectory(documentation)
 endif()

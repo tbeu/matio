@@ -8,7 +8,7 @@ if (ZLIB_LIBRARIES)
 endif()
 
 if (WIN32)
-    set(SRC_FILES ${SRC_FILES} matio.rc)
+    set(SRC_FILES ${SRC_FILES} ../visual_studio/matio.rc)
 endif()
 
 set(FORTRAN_INTERFACE_FILE)
@@ -26,11 +26,13 @@ endif()
 add_library(matio ${LIB_TYPE} ${SRC_FILES} ${HEADERS})
 
 if (ZLIB_LIBRARIES)
+    target_include_directories(matio PUBLIC ${ZLIB_INCLUDE_DIR})
     target_link_libraries(matio ${ZLIB_LIBRARIES})
 endif()
 
 if (MAT73)
-    target_link_libraries(matio ${HDF5_LIB})
+    target_include_directories(matio PUBLIC ${HDF5_INCLUDE_DIRS})
+    target_link_libraries(matio ${HDF5_LIBRARIES})
     if (NOT WIN32)
         target_link_libraries(matio m)
     endif()
@@ -53,8 +55,9 @@ configure_file(
 # = INSTALLATION =
 # ================
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/matio_pubconf.h ${CMAKE_CURRENT_SOURCE_DIR}/matio.h 
-              ${CMAKE_CURRENT_BINARY_DIR}/matio_export.h ${FORTRAN_INTERFACE_FILE}
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/matio_pubconf.h ${CMAKE_CURRENT_SOURCE_DIR}/matio.h
+              ${CMAKE_CURRENT_BINARY_DIR}/matio_export.h ${CMAKE_CURRENT_SOURCE_DIR}/matio_noreturn.h
+              ${FORTRAN_INTERFACE_FILE}
         DESTINATION ${INSTALL_INCLUDE_DIR})
 
 install(TARGETS matio
