@@ -14,6 +14,8 @@ if (ENABLE_FORTRAN)
     set(MATIO_FORTRAN TRUE)
 endif()
 
+option(ENABLE_TOOLS "Enable tools" ON)
+
 #   CXX is added just for GenerateExportHeader that uses the
 #   CXX compiler to check or visibilityy. It can disappear
 #   as soon as this cmake bug is corrected.
@@ -170,7 +172,9 @@ endif()
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_subdirectory(src)
-add_subdirectory(tools)
+if(ENABLE_TOOLS)
+    add_subdirectory(tools)
+endif()
 
 # pkg-config
 
