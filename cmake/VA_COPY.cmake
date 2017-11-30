@@ -34,7 +34,7 @@ MACRO(VA_COPY)
             return 0;
         }
         ")
-        try_compile(HAVE_VA_COPY ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/cmake_try_compile.c)
+        try_compile(HAVE___VA_COPY ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/cmake_try_compile.c)
         if(HAVE___VA_COPY)
             SET(_VA_COPY __va_copy CACHE STRING "va_copy function")
         endif()
