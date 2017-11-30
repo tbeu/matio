@@ -4,10 +4,9 @@ include(CMakePackageConfigHelpers)
 
 get_property(LIB64 GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS)
 
+set(LIBSUFFIX "")
 if ("X${LIB64}" STREQUAL "XTRUE" AND NOT APPLE)
     set(LIBSUFFIX 64)
-else()
-    set(LIBSUFFIX "")
 endif()
 
 set(INSTALL_LIB_DIR     lib${LIBSUFFIX} CACHE PATH "Installation directory for libraries")
@@ -19,18 +18,8 @@ if (WIN32)
     set(INSTALL_DATA_DIR ${CMAKE_PROJECT_NAME} CACHE PATH "Installation directory for data files")
 endif()
 
-
 mark_as_advanced(INSTALL_LIB_DIR INSTALL_BIN_DIR INSTALL_INCLUDE_DIR INSTALL_DATA_DIR)
  
-#   Make relative paths absolute (needed later on)
-
-foreach(p LIB BIN INCLUDE DATA)
-    set(var INSTALL_${p}_DIR)
-    if(NOT IS_ABSOLUTE "${${var}}")
-        set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
-    endif()
-endforeach()
-
 macro(sub_directories)
     foreach (dir ${ARGN})
         add_subdirectory(${dir})
@@ -106,7 +95,7 @@ function(GenerateConfigFile ConfigName)
                                   PATH_VARS INSTALL_INCLUDE_DIR INSTALL_DATA_DIR INSTALL_LIB_DIR)
     write_basic_package_version_file("${ConfigName}ConfigVersion.cmake"
                                      VERSION ${version}
-                                     COMPATIBILITY SameMajorVersion )
+                                     COMPATIBILITY SameMajorVersion)
     install(FILES
             "${CMAKE_CURRENT_BINARY_DIR}/${ConfigName}Config.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/${ConfigName}ConfigVersion.cmake"

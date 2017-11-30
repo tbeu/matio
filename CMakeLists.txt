@@ -160,6 +160,13 @@ if (NOT HAVE_GETOPT)
     set(GETOPT_LIB gnu)
 endif()
 
+#   Probably a little kludgy...
+
+set(LIBM)
+if (UNIX)
+    set(LIBM m)
+endif()
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_subdirectory(src)
