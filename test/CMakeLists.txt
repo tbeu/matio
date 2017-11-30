@@ -153,7 +153,7 @@ list(INSERT all_types 64 "cell-array-with-logical-arrays"
 set(HDFTESTS)
 if (MAT73)
     set(HDFTESTS 73)
-    set(hdf_vars ${vars})
+    set(73_vars ${vars})
     set(special_vars var27 var66)
     #set(special_vars var23 var27 var52 var66)
 endif()

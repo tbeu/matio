@@ -14,12 +14,16 @@ MATLAB MAT file I/O library
   * 2.1 [Dependencies](#21-dependencies)
     * 2.1.1 [zlib](#211-zlib)
     * 2.1.2 [HDF5](#212-hdf5)
-  * 2.2 [Building matio](#22-building-matio)
+  * 2.2 [Building matio with autotools](#22-building-matio-autotools)
     * 2.2.1 [Quick Build Guide](#221-quick-build-guide)
     * 2.2.2 [Configure Options](#222-configure-options)
     * 2.2.3  [Visual Studio](#223-visual-studio)
     * 2.2.4 [Testsuite](#224-testsuite)
-  * 2.3 [Platforms](#23-platforms)
+  * 2.3 [Building matio with cmake](#23-building-matio-cmake)
+    * 2.2.1 [Quick Build Guide](#231-quick-build-guide)
+    * 2.2.2 [Configure Options](#232-configure-options)
+    * 2.2.3 [Testsuite](#233-testsuite)
+  * 2.4 [Platforms](#24-platforms)
 3. [License](#30-license)
 
 ## 1.0 Introduction
@@ -52,7 +56,13 @@ Questions can be asked using the forums on the sourceforge site hosting matio ([
 Bugs, enhancements, etc. should be submitted using one of the trackers on the sourceforge page ([http://sourceforge.net/p/matio/_list/tickets](http://sourceforge.net/p/matio/_list/tickets)).
 
 ## 2.0 Building
-This section describes how to build matio. Section [2.1](#21-dependencies) describes the dependencies, Section [2.2](#22-building-matio) how to build/test matio, and Section [2.3](#23-platforms) documents the platforms matio has been tested on.
+Builds can be made using either
+    autotools (recommended) or cmake (experimental).  Section 2.1 describes the
+    dependencies, Section 2.2 how to build/test matio with autotools, section
+    2.3 hoe to build/test with cmake and Section 2.4 documents the platforms
+    matio has been tested on.
+
+This section describes how to build matio. Builds can be made using either autotools (recommended) or cmake (experimental). Section [2.1](#21-dependencies) describes the dependencies, Section [2.2](#22-building-matio-autotools) how to build/test matio with autotools, Section [2.3](#23-building-matio-cmake) and Section [2.4](#24-platforms) documents the platforms matio has been tested on.
 
 ### 2.1 Dependencies
 Matio has two optional dependencies. These are not required for the software to work, but without them some files may be unreadable. Zlib is required to read/write level 5 MAT files that use compression. HDF5 is required to work with newer MAT files that use the HDF5-format files.
@@ -68,7 +78,7 @@ Support for MAT file version 7.3 requires the HDF5 library. This library can be 
 
 For Windows, the pre-compiled binaries can be used which also include a DLL of zlib to satisfy the zlib dependency.
 
-### 2.2 Building matio
+### 2.2 Building matio with autotools (recommended)
 #### 2.2.1 Quick Build Guide
 The primary method for building the software is using `configure` followed by `make`. After building, the testsuite can be executed to test the software using `make check`. The software can be installed using `make install`. For example,
 ```sh
@@ -113,7 +123,28 @@ A testsuite is available when building with the GNU autotools. To run the testsu
 
 To report matio testsuite failures, compress the testsuite.log file in the test sub-directory of the build directory. Upload the compressed log file along with a bug report (see Section [1.4](#14-questions-and-reporting-bugs) for information on reporting bugs).
 
-### 2.3 Platforms
+### 2.3 Building matio with cmake (experimental)
+#### 2.3.1 Quick Build Guide
+A secondary method for building the software uses 'cmake' followed by 'make'. After building, the testsuite can be executed to test the software using 'make check'. The software can be installed using 'make install'. For example,
+```sh
+git clone git://git.code.sf.net/p/matio/matio
+cd matio
+mkdir build # Building in a separate directory is adviced
+cmake ..
+ccmake . # Optional and allows to tweak options.
+make
+make check
+make install
+```
+If any of the tests in the testsuite fail, you should report the failure using the tracker (see Section [1.4](#14-questions-and-reporting-bugs)). You should attach the generated testsuite.log file to the bug report.
+
+#### 2.3.2 Configure Options
+TODO
+
+#### 2.3.3 Testsuite
+The testsuite is also available when building with cmake even though it may lag a little behind the autotools one. To run the testsuite, first configure and build matio with cmake. After building run 'make check' to run the testsuite. See Section [2.2.4](#224-testsuite) for more details.
+
+### 2.4 Platforms
 The library has been tested/used on Linux, Windows, OS X, and AIX including both little-endian and big-endian architecture.
 
 ## 3.0 License

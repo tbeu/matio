@@ -11,12 +11,16 @@ Table of Contents
   2.1 Dependencies
     2.1.1 zlib
     2.1.2 HDF5
-  2.2 Building matio
+  2.2 Building matio with autotools
     2.2.1 Quick Build Guide
     2.2.2 Configure Options
     2.2.3 Visual Studio
     2.2.4 Testsuite
-  2.3 Platforms
+  2.3 Building matio with cmake
+    2.3.1 Quick Build Guide
+    2.3.2 Configure Options
+    2.3.3 Testsuite
+  2.4 Platforms
 3.0 License
 
 1.0 Introduction
@@ -56,9 +60,11 @@ Table of Contents
         on the sourceforge page (http://sourceforge.net/p/matio/_list/tickets).
 
 2.0 Building
-    This section describes how to build matio. Section 2.1 describes the
-    dependencies, Section 2.2 how to build/test matio, and Section 2.3
-    documents the platforms matio has been tested on.
+    This section describes how to build matio. Builds can be made using either
+    autotools (recommended) or cmake (experimental).  Section 2.1 describes the
+    dependencies, Section 2.2 how to build/test matio with autotools, section
+    2.3 hoe to build/test with cmake and Section 2.4 documents the platforms
+    matio has been tested on.
 
     2.1 Dependencies
         Matio has two optional dependencies. These are not required for the
@@ -172,7 +178,32 @@ Table of Contents
             compressed log file along with a bug report (see Section 1.4 for
             information on reporting bugs).
 
-    2.3 Platforms
+    2.3 Building matio with cmake
+        2.3.1 Quick Build Guide
+            A secondary method for building the software uses 'cmake' followed
+            by 'make'. After building, the testsuite can be executed to test
+            the software using 'make check'. The software can be installed
+            using 'make install'. For example,
+                $ tar zxf matio-X.Y.Z.tar.gz
+                $ cd matio-X.Y.Z
+                $ mkdir build # Building in a separate directory is adviced
+                $ cmake ..
+                $ ccmake . # Optional and allows to tweak options.
+                $ make
+                $ make check
+                $ make install
+
+            If any of the tests in the testsuite fail, you should report the failure
+            using the tracker (see Section 1.4). You should attach the generated
+            testsuite.log file to the bug report.
+        2.3.2 Configure Options
+            TODO
+        2.3.3 Testsuite
+            The testsuite is also available when building with cmake even though
+            it may lag a little behind the autotools one. To run the testsuite,
+            first configure and build matio with cmake. After building
+            run 'make check' to run the testsuite. See 2.2.4 for more details.
+    2.4 Platforms
         The library has been tested/used on Linux, Windows, OS X, and AIX
         including both little-endian and big-endian architecture.
 
