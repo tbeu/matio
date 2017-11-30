@@ -29,7 +29,7 @@
 #ifndef MATIOCONFIGURE_H
 #define MATIOCONFIGURE_H
 
-#cmakedefine MATIO_FORTRAN
+#cmakedefine MATIO_FORTRAN 1
 #ifdef MATIO_FORTRAN
 #include <fortran.h>
 #define FC_FUNC_(name,NAME) FC_GLOBAL(name,NAME)
@@ -38,8 +38,8 @@
 #define MATIO_PLATFORM "@MATIO_PLATFORM@"
 #define PACKAGE_VERSION "@PACKAGE_VERSION_MAJOR@.@PACKAGE_VERSION_MINOR@.@PACKAGE_VERSION_PATCH@"
 
-#cmakedefine HAVE_LONG_LONG
-#cmakedefine HAVE_LONG_DOUBLE
+#cmakedefine HAVE_LONG_LONG 1
+#cmakedefine HAVE_LONG_DOUBLE 1
 
 #define SIZEOF_CHAR @SIZEOF_CHAR@
 #define SIZEOF_DOUBLE @SIZEOF_DOUBLE@
@@ -51,29 +51,29 @@
 #define SIZEOF_SIZE_T @SIZEOF_SIZE_T@
 #define SIZEOF_VOID_P @CMAKE_SIZEOF_VOID_P@
 
-#cmakedefine EXTENDED_SPARSE
+#cmakedefine EXTENDED_SPARSE 1
 #cmakedefine HAVE_HDF5 1
 #cmakedefine HAVE_ZLIB 1
 #cmakedefine MAT73 1
 
 #cmakedefine HAVE_ASPRINTF 1
 #cmakedefine HAVE_SNPRINTF 1
-#cmakedefine HAVE_STRCASECMP
-#cmakedefine HAVE_VA_COPY
-#cmakedefine HAVE___VA_COPY
+#cmakedefine HAVE_STRCASECMP 1
+#cmakedefine HAVE_VA_COPY 1
+#cmakedefine HAVE___VA_COPY 1
 #cmakedefine HAVE_VASPRINTF 1
 #cmakedefine HAVE_VSNPRINTF 1
 
-#cmakedefine HAVE_CTYPE_H
-#cmakedefine HAVE_STDLIB_H
-#cmakedefine HAVE_STRING_H
-#cmakedefine HAVE_STRINGS_H
-#cmakedefine STDC_HEADERS
+#cmakedefine HAVE_CTYPE_H 1
+#cmakedefine HAVE_STDLIB_H 1
+#cmakedefine HAVE_STRING_H 1
+#cmakedefine HAVE_STRINGS_H 1
+#cmakedefine STDC_HEADERS 1
 
-#cmakedefine VERSION
+#cmakedefine VERSION 1.5.11
 
 #if 0
-#cmakedefine Z_PREFIX
+#cmakedefine Z_PREFIX 1
 #endif
 
 #endif  //  ! MATIOCONFIGURE_H
