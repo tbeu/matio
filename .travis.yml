@@ -191,13 +191,13 @@ script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -V; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -v -H; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -V; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v6.mat s; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.mat s; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/*.mat; do ./tools/matdump -v $f; done; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/*.mat; do ./tools/matdump -v -d -f whos -h $f; done; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/mcos/*.mat; do ./tools/matdump -v $f; done; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/mcos/*.mat; do ./tools/matdump -v -f whos $f; done; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -d ../MSL/Modelica/Resources/Data/Tables/test_v6.mat s; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then ./tools/matdump -d ../MSL/Modelica/Resources/Data/Tables/test_v7.mat s; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ../matfilerw/src/test/resources/*.mat; do ./tools/matdump -v $f; done; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ../matfilerw/src/test/resources/*.mat; do ./tools/matdump -v -d -f whos -h $f; done; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ../matfilerw/src/test/resources/mcos/*.mat; do ./tools/matdump -v $f; done; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ../matfilerw/src/test/resources/mcos/*.mat; do ./tools/matdump -v -f whos $f; done; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./tools/matdump -d ../MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
 
 after_success:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e matfilerw -e MSL -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e test/mat2hdf.c -e share -e patches -e $HDF5_VERSION_DIR -e visual_studio -e zlib --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
