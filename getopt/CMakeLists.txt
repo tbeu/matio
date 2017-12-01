@@ -1,9 +1,9 @@
-PROJECT(GETOPT C)
+project(GETOPT C)
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_definitions(-DREPLACE_GETOPT)
-ADD_LIBRARY(gnu STATIC getopt_long.c)
+add_library(gnu STATIC getopt_long.c)
 
-INSTALL(TARGETS gnu
+install(TARGETS gnu
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
