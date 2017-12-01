@@ -95,11 +95,11 @@ fi
 ]
 m4_divert_pop([PREPARE_TESTS])
 
-AT_BANNER(Read [MAT version 4 (Little Endian)])
+AT_BANNER([Read MAT version 4 (Little Endian)])
 m4_include([mat4_read_le.at])
 m4_include([mat4_readslab_le.at])
 
-AT_BANNER(Read [MAT version 4 (Big Endian)])
+AT_BANNER([Read MAT version 4 (Big Endian)])
 m4_include([mat4_read_be.at])
 m4_include([mat4_readslab_be.at])
 
