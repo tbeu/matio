@@ -62,7 +62,7 @@ endmacro()
 
 function(ProcessTestsuiteFile TestHeader TestFile)
 
-    file(READ ${CMAKE_CURRENT_SOURCE_DIR}/autotest/${TestFile} testsuite)
+    file(READ ${CMAKE_CURRENT_SOURCE_DIR}/autotools/${TestFile} testsuite)
     string(REPLACE "[" "@" testsuite ${testsuite})
     string(REPLACE "]" "@" testsuite ${testsuite})
     string(REPLACE "\n" "" testsuite ${testsuite})

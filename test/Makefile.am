@@ -27,7 +27,7 @@
 ##
 VPATH = @srcdir@
 
-testsuite_dir=$(srcdir)/autotest
+testsuite_dir=$(srcdir)/autotools
 datasets_dir=$(srcdir)/datasets
 matlab_dir=$(srcdir)/matlab
 results_dir=$(srcdir)/results
