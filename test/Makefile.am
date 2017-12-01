@@ -27,7 +27,7 @@
 ##
 VPATH = @srcdir@
 
-testsuite_dir=$(srcdir)/autotools
+testsuite_dir=$(srcdir)/testsuite
 datasets_dir=$(srcdir)/datasets
 matlab_dir=$(srcdir)/matlab
 results_dir=$(srcdir)/results
@@ -72,7 +72,7 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(testsuite_dir)/mat5_uncompressed_extended_sparse.at \
                $(testsuite_dir)/mat73_compressed_extended_sparse.at \
                $(testsuite_dir)/mat73_uncompressed_extended_sparse.at
-TESTSUITE = $(srcdir)/testsuite
+TESTSUITE = $(builddir)/testsuite
 
 TEST_DATAFILES = $(datasets_dir)/matio_test_cases.m \
                  $(datasets_dir)/matio_test_cases_compressed_be.mat \
@@ -401,7 +401,7 @@ CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
                     COMPRESSION_ZLIB=$(COMPRESSION_ZLIB) \
                     LIBTOOL="$(top_builddir)/libtool"
 
-EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4 \
+EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(builddir)/package.m4 \
              $(TEST_DATAFILES)
 
 if NEED_GETOPT
@@ -429,16 +429,16 @@ check-local: atconfig $(TESTSUITE)
 	$(SHELL) $(TESTSUITE) $(CHECK_ENVIRONMENT) $(TESTSUITEFLAGS)
 
 installcheck-local: atconfig $(TESTSUITE)
-	$(SHELL) '$(TESTSUITE)' AUTOTEST_PATH='$(bindir)' $(TESTSUITEFLAGS)
+	$(SHELL) '$(TESTSUITE)' AUTOTEST_PATH='$(builddir)' $(TESTSUITEFLAGS)
 
 clean-local:
 	test ! -f '$(TESTSUITE)' || $(SHELL) '$(TESTSUITE)' --clean
 
-$(TESTSUITE): $(srcdir)/package.m4 $(TESTSUITE_AT)
-	$(AUTOTEST) -I '$(srcdir)/autotools' $@.at -o $@.tmp
+$(TESTSUITE): $(builddir)/package.m4 $(TESTSUITE_AT)
+	$(AUTOTEST) -I '$(srcdir)/testsuite' $(builddir)/package.m4 $(srcdir)/$@.at -o $@.tmp
 	mv $@.tmp $@
 
-$(srcdir)/package.m4: $(top_srcdir)/configure.ac
+$(builddir)/package.m4: $(top_srcdir)/configure.ac
 	{ \
 	  echo '# Signature of the current package.'; \
 	  echo 'm4_define([AT_PACKAGE_NAME],      [$(PACKAGE_NAME)])'; \
@@ -446,4 +446,4 @@ $(srcdir)/package.m4: $(top_srcdir)/configure.ac
 	  echo 'm4_define([AT_PACKAGE_VERSION],   [$(PACKAGE_VERSION)])'; \
 	  echo 'm4_define([AT_PACKAGE_STRING],    [$(PACKAGE_STRING)])'; \
 	  echo 'm4_define([AT_PACKAGE_BUGREPORT], [$(PACKAGE_BUGREPORT)])'; \
-	} >$(srcdir)/package.m4
+	} >$(builddir)/package.m4
