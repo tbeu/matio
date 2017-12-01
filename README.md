@@ -125,7 +125,7 @@ To report matio testsuite failures, compress the testsuite.log file in the test 
 
 ### 2.3 Building matio with cmake (experimental)
 #### 2.3.1 Quick Build Guide
-A secondary method for building the software uses 'cmake' followed by 'make'. After building, the testsuite can be executed to test the software using 'make check'. The software can be installed using 'make install'. For example,
+A secondary method for building the software uses 'cmake' followed by 'make'. After building, the testsuite can be executed to test the software using 'make test'. The software can be installed using 'make install'. For example,
 ```sh
 git clone git://git.code.sf.net/p/matio/matio
 cd matio
@@ -133,7 +133,7 @@ mkdir build # Building in a separate directory is adviced
 cmake ..
 ccmake . # Optional and allows to tweak options.
 make
-make check
+make test
 make install
 ```
 If any of the tests in the testsuite fail, you should report the failure using the tracker (see Section [1.4](#14-questions-and-reporting-bugs)). You should attach the generated testsuite.log file to the bug report.
@@ -142,7 +142,7 @@ If any of the tests in the testsuite fail, you should report the failure using t
 TODO
 
 #### 2.3.3 Testsuite
-The testsuite is also available when building with cmake even though it may lag a little behind the autotools one. To run the testsuite, first configure and build matio with cmake. After building run 'make check' to run the testsuite. See Section [2.2.4](#224-testsuite) for more details.
+The testsuite is also available when building with cmake.  To run the testsuite, first configure and build matio with cmake. After building run 'make test' to run the testsuite.  See Section [2.2.4](#224-testsuite) for more details.
 
 ### 2.4 Platforms
 The library has been tested/used on Linux, Windows, OS X, and AIX including both little-endian and big-endian architecture.
