@@ -72,7 +72,7 @@ For Windows, the pre-compiled binaries can be used which also include a DLL of z
 #### 2.2.1 Quick Build Guide
 The primary method for building the software is using `configure` followed by `make`. After building, the testsuite can be executed to test the software using `make check`. The software can be installed using `make install`. For example,
 ```sh
-git clone git://git.code.sf.net/p/matio/matio
+git clone https://github.com/tbeu/matio.git
 cd matio
 git submodule update --init  # for datasets used in unit tests
 ./autogen.sh
