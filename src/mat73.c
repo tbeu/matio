@@ -149,101 +149,6 @@ ClassStr2ClassType(const char *name)
     return id;
 }
 
-static enum matio_types
-Mat_ClassToType73(enum matio_classes class_type)
-{
-    enum matio_types type;
-    switch ( class_type ) {
-        case MAT_C_DOUBLE:
-            type = MAT_T_DOUBLE;
-            break;
-        case MAT_C_SINGLE:
-            type = MAT_T_SINGLE;
-            break;
-        case MAT_C_INT64:
-            type = MAT_T_INT64;
-            break;
-        case MAT_C_UINT64:
-            type = MAT_T_UINT64;
-            break;
-        case MAT_C_INT32:
-            type = MAT_T_INT32;
-            break;
-        case MAT_C_UINT32:
-            type = MAT_T_UINT32;
-            break;
-        case MAT_C_INT16:
-            type = MAT_T_INT16;
-            break;
-        case MAT_C_UINT16:
-            type = MAT_T_UINT16;
-            break;
-        case MAT_C_INT8:
-            type = MAT_T_INT8;
-            break;
-        case MAT_C_CHAR:
-            type = MAT_T_UINT8;
-            break;
-        case MAT_C_UINT8:
-            type = MAT_T_UINT8;
-            break;
-        case MAT_C_CELL:
-            type = MAT_T_CELL;
-            break;
-        case MAT_C_STRUCT:
-            type = MAT_T_STRUCT;
-            break;
-        default:
-            type = MAT_T_UNKNOWN;
-            break;
-    }
-
-    return type;
-}
-
-static enum matio_classes
-Mat_TypeToClass73(enum matio_types type)
-{
-    enum matio_classes class_type = MAT_C_EMPTY;
-    switch ( type ) {
-        case MAT_T_DOUBLE:
-            class_type = MAT_C_DOUBLE;
-            break;
-        case MAT_T_SINGLE:
-            class_type = MAT_C_SINGLE;
-            break;
-        case MAT_T_INT64:
-            class_type = MAT_C_INT64;
-            break;
-        case MAT_T_UINT64:
-            class_type = MAT_C_UINT64;
-            break;
-        case MAT_T_INT32:
-            class_type = MAT_C_INT32;
-            break;
-        case MAT_T_UINT32:
-            class_type = MAT_C_UINT32;
-            break;
-        case MAT_T_INT16:
-            class_type = MAT_C_INT16;
-            break;
-        case MAT_T_UINT16:
-            class_type = MAT_C_UINT16;
-            break;
-        case MAT_T_INT8:
-            class_type = MAT_C_INT8;
-            break;
-        case MAT_T_UINT8:
-            class_type = MAT_C_UINT8;
-            break;
-        default:
-            class_type = MAT_C_EMPTY;
-            break;
-    }
-
-    return class_type;
-}
-
 static hid_t
 ClassType2H5T(enum matio_classes class_type)
 {
@@ -531,7 +436,7 @@ Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id)
                 }
             }
 
-            matvar->data_type  = Mat_ClassToType73(matvar->class_type);
+            matvar->data_type = ClassType2DataType(matvar->class_type);
             free(class_str);
         }
     }
@@ -1814,7 +1719,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         enum matio_classes class_type;
 
         sparse = (mat_sparse_t*)matvar->data;
-        class_type = Mat_TypeToClass73(matvar->data_type);
+        class_type = DataType2ClassType(matvar->data_type);
         attr_type_id = H5Tcopy(H5T_C_S1);
         H5Tset_size(attr_type_id,
                     matvar->isLogical ? 7 : strlen(ClassNames[class_type]));

@@ -225,5 +225,7 @@ EXTERN size_t InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfield
 
 /* mat.c */
 EXTERN mat_complex_split_t *ComplexMalloc(size_t nbytes);
+EXTERN enum matio_types ClassType2DataType(enum matio_classes class_type);
+EXTERN enum matio_classes DataType2ClassType(enum matio_types type);
 
 #endif

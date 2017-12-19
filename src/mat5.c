@@ -4806,54 +4806,8 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
     if ( err )
         return err;
 
-    switch ( matvar->class_type ) {
-        case MAT_C_DOUBLE:
-            matvar->data_type = MAT_T_DOUBLE;
-            matvar->data_size = sizeof(double);
-            break;
-        case MAT_C_SINGLE:
-            matvar->data_type = MAT_T_SINGLE;
-            matvar->data_size = sizeof(float);
-            break;
-#ifdef HAVE_MAT_INT64_T
-        case MAT_C_INT64:
-            matvar->data_type = MAT_T_INT64;
-            matvar->data_size = sizeof(mat_int64_t);
-            break;
-#endif /* HAVE_MAT_INT64_T */
-#ifdef HAVE_MAT_UINT64_T
-        case MAT_C_UINT64:
-            matvar->data_type = MAT_T_UINT64;
-            matvar->data_size = sizeof(mat_uint64_t);
-            break;
-#endif /* HAVE_MAT_UINT64_T */
-        case MAT_C_INT32:
-            matvar->data_type = MAT_T_INT32;
-            matvar->data_size = sizeof(mat_int32_t);
-            break;
-        case MAT_C_UINT32:
-            matvar->data_type = MAT_T_UINT32;
-            matvar->data_size = sizeof(mat_uint32_t);
-            break;
-        case MAT_C_INT16:
-            matvar->data_type = MAT_T_INT16;
-            matvar->data_size = sizeof(mat_int16_t);
-            break;
-        case MAT_C_UINT16:
-            matvar->data_type = MAT_T_UINT16;
-            matvar->data_size = sizeof(mat_uint16_t);
-            break;
-        case MAT_C_INT8:
-            matvar->data_type = MAT_T_INT8;
-            matvar->data_size = sizeof(mat_int8_t);
-            break;
-        case MAT_C_UINT8:
-            matvar->data_type = MAT_T_UINT8;
-            matvar->data_size = sizeof(mat_uint8_t);
-            break;
-        default:
-            break;
-    }
+    matvar->data_type = ClassType2DataType(matvar->class_type);
+    matvar->data_size = Mat_SizeOfClass(matvar->class_type);
 
     return err;
 }
@@ -5009,54 +4963,8 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
 #endif
     }
 
-    switch( matvar->class_type ) {
-        case MAT_C_DOUBLE:
-            matvar->data_type = MAT_T_DOUBLE;
-            matvar->data_size = sizeof(double);
-            break;
-        case MAT_C_SINGLE:
-            matvar->data_type = MAT_T_SINGLE;
-            matvar->data_size = sizeof(float);
-            break;
-#ifdef HAVE_MAT_INT64_T
-        case MAT_C_INT64:
-            matvar->data_type = MAT_T_INT64;
-            matvar->data_size = sizeof(mat_int64_t);
-            break;
-#endif /* HAVE_MAT_INT64_T */
-#ifdef HAVE_MAT_UINT64_T
-        case MAT_C_UINT64:
-            matvar->data_type = MAT_T_UINT64;
-            matvar->data_size = sizeof(mat_uint64_t);
-            break;
-#endif /* HAVE_MAT_UINT64_T */
-        case MAT_C_INT32:
-            matvar->data_type = MAT_T_INT32;
-            matvar->data_size = sizeof(mat_int32_t);
-            break;
-        case MAT_C_UINT32:
-            matvar->data_type = MAT_T_UINT32;
-            matvar->data_size = sizeof(mat_uint32_t);
-            break;
-        case MAT_C_INT16:
-            matvar->data_type = MAT_T_INT16;
-            matvar->data_size = sizeof(mat_int16_t);
-            break;
-        case MAT_C_UINT16:
-            matvar->data_type = MAT_T_UINT16;
-            matvar->data_size = sizeof(mat_uint16_t);
-            break;
-        case MAT_C_INT8:
-            matvar->data_type = MAT_T_INT8;
-            matvar->data_size = sizeof(mat_int8_t);
-            break;
-        case MAT_C_UINT8:
-            matvar->data_type = MAT_T_UINT8;
-            matvar->data_size = sizeof(mat_uint8_t);
-            break;
-        default:
-            break;
-    }
+    matvar->data_type = ClassType2DataType(matvar->class_type);
+    matvar->data_size = Mat_SizeOfClass(matvar->class_type);
 
     return err;
 }
