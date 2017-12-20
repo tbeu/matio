@@ -2,31 +2,29 @@ dnl  configure.ac
 dnl
 dnl  NOTE:  Process this file with GNU autoconf to produce a configure script.
 dnl
-dnl Copyright (C) 2005-2017   Christopher C. Hulbert
-dnl
+dnl Copyright (c) 2005-2017, Christopher C. Hulbert
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
 dnl modification, are permitted provided that the following conditions are met:
 dnl
-dnl    1. Redistributions of source code must retain the above copyright notice,
-dnl       this list of conditions and the following disclaimer.
+dnl 1. Redistributions of source code must retain the above copyright notice, this
+dnl    list of conditions and the following disclaimer.
 dnl
-dnl    2. Redistributions in binary form must reproduce the above copyright
-dnl       notice, this list of conditions and the following disclaimer in the
-dnl       documentation and/or other materials provided with the distribution.
+dnl 2. Redistributions in binary form must reproduce the above copyright notice,
+dnl    this list of conditions and the following disclaimer in the documentation
+dnl    and/or other materials provided with the distribution.
 dnl
-dnl THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND ANY
-dnl EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-dnl WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-dnl DISCLAIMED. IN NO EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS BE
-dnl LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-dnl CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-dnl SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-dnl INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-dnl CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-dnl ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-dnl POSSIBILITY OF SUCH DAMAGE.
+dnl THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+dnl AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+dnl IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+dnl DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+dnl FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+dnl DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+dnl SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+dnl CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+dnl OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 AC_INIT([MATIO],[1.5.11],[chulbe2lsu@users.sourceforge.net],[],
         [http://sourceforge.net/projects/matio])
@@ -51,7 +49,7 @@ AC_ARG_VAR([FCLDFLAGS],[Fortran compiler-specific flags at link time])
 AC_ARG_VAR([LT_CFLAGS],[C compiler flags passed to libtool in compile mode])
 AC_ARG_VAR([LT_LDFLAGS],[Flags passed to libtool in link mode])
 
-dnl 
+dnl
 dnl  Build programs, C compiler, F77 compiler, make, install, etc.
 dnl
 AC_PROG_CC([pgcc icc gcc cc])
@@ -134,7 +132,7 @@ AC_PROG_INSTALL
 
 AC_PROG_GREP
 
-dnl 
+dnl
 dnl  Libraries
 dnl
 
