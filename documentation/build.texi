@@ -1,4 +1,4 @@
-@c Copyright (c) 2012-2017, Christopher C. Hulbert
+@c Copyright (c) 2012-2018, Christopher C. Hulbert
 @c All rights reserved.
 @c
 @c Redistribution and use in source and binary forms, with or without
