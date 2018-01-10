@@ -60,7 +60,6 @@ Mat_int64Swap( mat_int64_t *a )
     *a = tmp.i8;
 
     return *a;
-
 }
 #endif /* HAVE_MAT_INT64_T */
 
@@ -89,7 +88,6 @@ Mat_uint64Swap( mat_uint64_t *a )
     *a = tmp.i8;
 
     return *a;
-
 }
 #endif /* HAVE_MAT_UINT64_T */
 
@@ -115,7 +113,6 @@ Mat_int32Swap( mat_int32_t *a )
     *a = tmp.i4;
 
     return *a;
-
 }
 
 /** @brief swap the bytes of a 32-bit unsigned integer
@@ -140,7 +137,6 @@ Mat_uint32Swap( mat_uint32_t *a )
     *a = tmp.i4;
 
     return *a;
-
 }
 
 /** @brief swap the bytes of a 16-bit signed integer
@@ -163,7 +159,6 @@ Mat_int16Swap( mat_int16_t *a )
 
     *a = tmp.i2;
     return *a;
-
 }
 
 /** @brief swap the bytes of a 16-bit unsigned integer
@@ -186,7 +181,6 @@ Mat_uint16Swap( mat_uint16_t *a )
 
     *a = tmp.i2;
     return *a;
-
 }
 
 /** @brief swap the bytes of a 4 byte single-precision float
@@ -210,7 +204,6 @@ Mat_floatSwap( float *a )
 
     *a = tmp.r4;
     return *a;
-
 }
 
 /** @brief swap the bytes of a 4 or 8 byte double-precision float
@@ -252,5 +245,4 @@ Mat_doubleSwap( double *a )
 #endif
     *a = tmp.b;
     return *a;
-
 }
