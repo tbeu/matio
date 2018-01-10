@@ -1079,7 +1079,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
 
             Mat_Rewind(mat);
             while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
-                if ( strcmp(matvar->name,name) )
+                if ( 0 != strcmp(matvar->name,name) )
                     Mat_VarWrite(tmp,matvar,matvar->compression);
                 else
                     err = 0;
@@ -2200,7 +2200,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
         while ( NULL == matvar && mat->next_index < mat->num_datasets ) {
             matvar = Mat_VarReadNextInfo(mat);
             if ( matvar != NULL ) {
-                if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
+                if ( matvar->name == NULL || 0 != strcmp(matvar->name,name) ) {
                     Mat_VarFree(matvar);
                     matvar = NULL;
                 }
@@ -2217,7 +2217,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
             do {
                 matvar = Mat_VarReadNextInfo(mat);
                 if ( matvar != NULL ) {
-                    if ( matvar->name == NULL || strcmp(matvar->name,name) ) {
+                    if ( matvar->name == NULL || 0 != strcmp(matvar->name,name) ) {
                         Mat_VarFree(matvar);
                         matvar = NULL;
                     }
