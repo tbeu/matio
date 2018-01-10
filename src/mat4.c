@@ -592,6 +592,7 @@ Read4(mat_t *mat,matvar_t *matvar)
             }
             else {
                 Mat_Critical("Memory allocation failure");
+                return;
             }
         default:
             Mat_Critical("MAT V4 data type error");
