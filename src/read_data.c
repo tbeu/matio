@@ -1349,18 +1349,18 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
     enum matio_types data_type,int len)
 {
     int nBytes = 0, i;
-    unsigned int data_size = 0;
+    unsigned int data_size;
 
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
+    if ( mat == NULL || data == NULL || mat->fp == NULL )
         return 0;
+
+    data_size = (unsigned int)Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_UTF8:
         case MAT_T_INT8:
         case MAT_T_UINT8:
-            data_size = 1;
-            for ( i = 0; i < len; i++ )
-                InflateData(mat,z,data+i,data_size);
+            InflateData(mat,z,data,len*data_size);
             break;
         case MAT_T_UTF16:
         case MAT_T_INT16:
@@ -1368,7 +1368,6 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
         {
             mat_uint16_t i16;
 
-            data_size = 2;
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
                     InflateData(mat,z,&i16,data_size);
@@ -1395,17 +1394,19 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
 int
 ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
 {
-    int bytesread = 0, data_size = 0, i;
+    int bytesread = 0, i;
+    unsigned int data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
+
+    data_size = (unsigned int)Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_UTF8:
         case MAT_T_INT8:
         case MAT_T_UINT8:
-            for ( i = 0; i < len; i++ )
-                bytesread += fread(data+i,1,1,(FILE*)mat->fp);
+            bytesread += fread(data,data_size,len,(FILE*)mat->fp);
             break;
         case MAT_T_UTF16:
         case MAT_T_INT16:
@@ -1415,12 +1416,12 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
 
             if ( mat->byteswap ) {
                 for ( i = 0; i < len; i++ ) {
-                    bytesread += fread(&i16,2,1,(FILE*)mat->fp);
+                    bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
                     data[i] = (char)Mat_uint16Swap(&i16);
                 }
             } else {
                 for ( i = 0; i < len; i++ ) {
-                    bytesread += fread(&i16,2,1,(FILE*)mat->fp);
+                    bytesread += fread(&i16,data_size,1,(FILE*)mat->fp);
                     data[i] = (char)i16;
                 }
             }
@@ -1431,7 +1432,6 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
                 "character data", data_type);
             break;
     }
-    bytesread *= data_size;
     return bytesread;
 }
 
