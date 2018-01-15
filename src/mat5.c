@@ -4996,11 +4996,11 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
     if ( NULL == matvar || NULL == matvar->name )
         return -1;
 
-#if !defined(HAVE_ZLIB)
-    compress = MAT_COMPRESSION_NONE;
-#endif
-
+#if defined(HAVE_ZLIB)
     if ( compress == MAT_COMPRESSION_NONE ) {
+#else
+    {
+#endif
         fwrite(&matrix_type,4,1,(FILE*)mat->fp);
         fwrite(&pad4,4,1,(FILE*)mat->fp);
         start = ftell((FILE*)mat->fp);
