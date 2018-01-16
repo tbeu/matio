@@ -222,7 +222,7 @@
 #define PACKAGE "matio"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "chulbe2lsu@users.sourceforge.net"
+#define PACKAGE_BUGREPORT "t-beu@users.sourceforge.net"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "MATIO"
