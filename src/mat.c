@@ -139,7 +139,7 @@ Mat_PrintNumber(enum matio_types type, void *data)
 mat_complex_split_t *
 ComplexMalloc(size_t nbytes)
 {
-    mat_complex_split_t *complex_data = malloc(sizeof(*complex_data));
+    mat_complex_split_t *complex_data = (mat_complex_split_t*)malloc(sizeof(*complex_data));
     if ( NULL != complex_data ) {
         complex_data->Re = malloc(nbytes);
         if ( NULL != complex_data->Re ) {
@@ -445,7 +445,8 @@ Mat_Open(const char *matname,int mode)
             *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDWR,H5P_DEFAULT);
 
         if ( -1 < *(hid_t*)mat->fp ) {
-            H5G_info_t group_info = {0};
+            H5G_info_t group_info;
+            memset(&group_info, 0, sizeof(group_info));
             H5Gget_info(*(hid_t*)mat->fp, &group_info);
             mat->num_datasets = (size_t)group_info.nlinks;
             mat->refs_id      = -1;
@@ -570,7 +571,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
                 *n = 0;
                 return dir;
             }
-            mat->dir = calloc(mat->num_datasets, sizeof(char*));
+            mat->dir = (char**)calloc(mat->num_datasets, sizeof(char*));
             if ( NULL == mat->dir ) {
                 *n = 0;
                 Mat_Critical("Couldn't allocate memory for the directory");
@@ -606,9 +607,9 @@ Mat_GetDir(mat_t *mat, size_t *n)
                 if ( NULL != matvar ) {
                     if ( NULL != matvar->name ) {
                         if ( NULL == mat->dir ) {
-                            dir = malloc(sizeof(char*));
+                            dir = (char**)malloc(sizeof(char*));
                         } else {
-                            dir = realloc(mat->dir,
+                            dir = (char**)realloc(mat->dir,
                                 (mat->num_datasets + 1)*(sizeof(char*)));
                         }
                         if ( NULL != dir ) {
@@ -2461,9 +2462,9 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
         /* Update directory */
         char **dir;
         if ( NULL == mat->dir ) {
-            dir = malloc(sizeof(char*));
+            dir = (char**)malloc(sizeof(char*));
         } else {
-            dir = realloc(mat->dir,
+            dir = (char**)realloc(mat->dir,
             (mat->num_datasets + 1)*(sizeof(char*)));
         }
         if ( NULL != dir ) {
@@ -2529,9 +2530,9 @@ Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,i
             /* Update directory */
             char **dir;
             if ( NULL == mat->dir ) {
-                dir = malloc(sizeof(char*));
+                dir = (char**)malloc(sizeof(char*));
             } else {
-                dir = realloc(mat->dir,
+                dir = (char**)realloc(mat->dir,
                 (mat->num_datasets + 1)*(sizeof(char*)));
             }
             if ( NULL != dir ) {
