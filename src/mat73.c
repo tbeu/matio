@@ -453,6 +453,11 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank)
     *numel = 0;
     space_id = H5Dget_space(dset_id);
     *rank = H5Sget_simple_extent_ndims(space_id);
+    if ( 0 > *rank ) {
+        *rank = 0;
+        H5Sclose(space_id);
+        return NULL;
+    }
     perm_dims = (size_t*)malloc(*rank*sizeof(*perm_dims));
     if ( NULL != perm_dims ) {
         if ( MAX_RANK >= *rank ) {
@@ -482,11 +487,13 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank)
             } else {
                 free(perm_dims);
                 perm_dims = NULL;
+                *rank = 0;
                 H5Sclose(space_id);
                 Mat_Critical("Error allocating memory for dims");
             }
         }
     } else {
+        *rank = 0;
         H5Sclose(space_id);
         Mat_Critical("Error allocating memory for matvar->dims");
     }
@@ -676,7 +683,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     if ( H5Aexists_by_name(dset_id,".","MATLAB_sparse",H5P_DEFAULT) ) {
         hid_t sparse_dset_id;
         unsigned nrows = 0;
-        int rank;
         hsize_t numel;
 
         attr_id = H5Aopen_by_name(dset_id,".","MATLAB_sparse",H5P_DEFAULT,H5P_DEFAULT);
@@ -685,13 +691,21 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 
         matvar->class_type = MAT_C_SPARSE;
 
-        matvar->rank = 2;
         sparse_dset_id = H5Dopen(dset_id,"jc",H5P_DEFAULT);
-        matvar->dims = Mat_H5ReadDims(sparse_dset_id, &numel, &rank);
+        matvar->dims = Mat_H5ReadDims(sparse_dset_id, &numel, &matvar->rank);
         H5Dclose(sparse_dset_id);
         if ( NULL != matvar->dims ) {
-            matvar->dims[1] = matvar->dims[0] - 1;
-            matvar->dims[0] = nrows;
+            if ( 1 == matvar->rank ) {
+                size_t* dims = (size_t*)realloc(matvar->dims, 2*sizeof(*matvar->dims));
+                if ( NULL != dims ) {
+                    matvar->rank = 2;
+                    matvar->dims = dims;
+                }
+            }
+            if ( 2 == matvar->rank ) {
+                matvar->dims[1] = matvar->dims[0] - 1;
+                matvar->dims[0] = nrows;
+            }
         } else {
             return;
         }
