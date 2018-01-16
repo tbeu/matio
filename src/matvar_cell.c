@@ -112,8 +112,10 @@ Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,int *edge)
             if ( cnt[j] == edge[j] ) {
                 cnt[j] = 0;
                 idx[j] = start[j];
-                cnt[j+1]++;
-                idx[j+1] += stride[j+1];
+                if ( j < matvar->rank - 1 ) {
+                    cnt[j+1]++;
+                    idx[j+1] += stride[j+1];
+                }
             }
             I += idx[j]*dimp[j-1];
         }

@@ -369,7 +369,7 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
         struct_slab->dims[i] = edge[i];
     }
     I *= nfields;
-    struct_slab->nbytes    = N*nfields*sizeof(matvar_t *);
+    struct_slab->nbytes = N*nfields*sizeof(matvar_t *);
     struct_slab->data = malloc(struct_slab->nbytes);
     if ( struct_slab->data == NULL ) {
         Mat_VarFree(struct_slab);
@@ -397,8 +397,10 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
             if ( cnt[j] == edge[j] ) {
                 cnt[j] = 0;
                 idx[j] = start[j];
-                cnt[j+1]++;
-                idx[j+1] += stride[j+1];
+                if ( j < matvar->rank - 1 ) {
+                    cnt[j+1]++;
+                    idx[j+1] += stride[j+1];
+                }
             }
             I += idx[j]*dimp[j-1];
         }
