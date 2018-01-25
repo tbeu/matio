@@ -3707,6 +3707,12 @@ test_directory(char *file)
         } else {
             err = 1;
         }
+        if ( 0 != strcmp(file, Mat_GetFilename(mat)) ) {
+            err++;
+        }
+        if ( MAT_FT_UNDEFINED == Mat_GetVersion(mat) ) {
+            err++;
+        }
         Mat_Close(mat);
     } else {
         Mat_Critical("MAT file %s doesn't exist", file);
