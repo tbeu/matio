@@ -298,7 +298,7 @@ AT_CLEANUP
 AT_SETUP([Write character array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 write_char],[0],[],[])
-AT_CHECK([cp $srcdir/results/readvar-write_char-a.out expout
+AT_CHECK([cp $srcdir/results/readvar-write_char-a-73.out expout
           $builddir/test_mat readvar test_write_char.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_char.m .

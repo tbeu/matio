@@ -210,6 +210,7 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var22.out \
                  $(srcdir)/results/read-var23.out \
                  $(srcdir)/results/read-var24.out \
+                 $(srcdir)/results/read-var24-73.out \
                  $(srcdir)/results/read-var25.out \
                  $(srcdir)/results/read-var26.out \
                  $(srcdir)/results/read-var27.out \
@@ -255,12 +256,14 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var67.out \
                  $(srcdir)/results/read-var68.out \
                  $(srcdir)/results/read-var69.out \
+                 $(srcdir)/results/read-var69-73.out \
                  $(srcdir)/results/read-var90.out \
                  $(srcdir)/results/read-var91.out \
                  $(srcdir)/results/read-var92.out \
                  $(srcdir)/results/read-x.out \
                  $(srcdir)/results/readvar-write_cell_empty_struct-var1.out \
                  $(srcdir)/results/readvar-write_char-a.out \
+                 $(srcdir)/results/readvar-write_char-a-73.out \
                  $(srcdir)/results/readvar-write_complex_sparse-sparse_matrix-double.out \
                  $(srcdir)/results/readvar-write_complex_sparse-sparse_matrix-int8.out \
                  $(srcdir)/results/readvar-write_complex_sparse-sparse_matrix-int16.out \

@@ -1948,11 +1948,45 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
             }
             case MAT_C_CHAR:
             {
-                char *data = (char*)matvar->data;
-                for ( i = 0; i < matvar->dims[0]; i++ ) {
-                    for ( j = 0; j < matvar->dims[1]; j++ )
-                        printf("%c",data[j*matvar->dims[0]+i]);
-                    printf("\n");
+                switch ( matvar->data_type ) {
+                    case MAT_T_UINT16:
+                    {
+                        const mat_uint16_t *data = (const mat_uint16_t*)matvar->data;
+                        for ( i = 0; i < matvar->dims[0]; i++ ) {
+                            for ( j = 0; j < matvar->dims[1]; j++ ) {
+                                const mat_uint16_t c = data[j*matvar->dims[0]+i];
+#if defined VARPRINT_UTF16
+                                printf("%c%c", c & 0xFF, (c>>8) & 0xFF);
+#elif defined VARPRINT_UTF16_DECIMAL
+                                Mat_PrintNumber(MAT_T_UINT16, &c);
+                                printf(" ");
+#else
+                                /* Convert to UTF-8 */
+                                if (c <= 0x7F) {
+                                    printf("%c", c);
+                                }
+                                else if (c <= 0x7FF) {
+                                    printf("%c%c", 0xC0 | (c>>6), 0x80 | (c & 0x3F));
+                                }
+                                else /* if (c <= 0xFFFF) */ {
+                                    printf("%c%c%c", 0xE0 | (c>>12), 0x80 | ((c>>6) & 0x3F), 0x80 | (c & 0x3F));
+                                }
+#endif
+                            }
+                            printf("\n");
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        const char *data = (const char*)matvar->data;
+                        for ( i = 0; i < matvar->dims[0]; i++ ) {
+                            for ( j = 0; j < matvar->dims[1]; j++ )
+                                printf("%c",data[j*matvar->dims[0]+i]);
+                            printf("\n");
+                        }
+                        break;
+                    }
                 }
                 break;
             }

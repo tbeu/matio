@@ -1,0 +1,11 @@
+      Name: var24
+      Rank: 2
+Dimensions: 4 x 26
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+abcdefghijklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+1234567890!@#$%^&*()-_=+`~
+[{]}\|;:'",<.>/?          
+}

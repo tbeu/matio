@@ -409,34 +409,40 @@ Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id)
             H5Aread(attr_id,class_id,class_str);
             H5Tclose(class_id);
             matvar->class_type = ClassStr2ClassType(class_str);
-            if ( MAT_C_EMPTY == matvar->class_type ) {
-                /* Check if this is a logical variable */
-                if ( !strcmp(class_str, "logical") ) {
-                    int int_decode = 0;
-                    matvar->isLogical = MAT_F_LOGICAL;
-                    if ( H5Aexists_by_name(dset_id,".","MATLAB_int_decode",H5P_DEFAULT) ) {
-                        hid_t attr_id2 = H5Aopen_by_name(dset_id,".","MATLAB_int_decode",H5P_DEFAULT,H5P_DEFAULT);
-                        /* FIXME: Check that dataspace is scalar */
-                        H5Aread(attr_id2,H5T_NATIVE_INT,&int_decode);
-                        H5Aclose(attr_id2);
-                    }
-                    switch ( int_decode ) {
-                        case 1:
-                            matvar->class_type = MAT_C_UINT8;
-                            break;
-                        case 2:
-                            matvar->class_type = MAT_C_UINT16;
-                            break;
-                        case 4:
-                            matvar->class_type = MAT_C_UINT32;
-                            break;
-                        default:
-                            break;
-                    }
+            if ( MAT_C_EMPTY == matvar->class_type || MAT_C_CHAR == matvar->class_type ) {
+                int int_decode = 0;
+                if ( H5Aexists_by_name(dset_id,".","MATLAB_int_decode",H5P_DEFAULT) ) {
+                    hid_t attr_id2 = H5Aopen_by_name(dset_id,".","MATLAB_int_decode",H5P_DEFAULT,H5P_DEFAULT);
+                    /* FIXME: Check that dataspace is scalar */
+                    H5Aread(attr_id2,H5T_NATIVE_INT,&int_decode);
+                    H5Aclose(attr_id2);
                 }
+                switch ( int_decode ) {
+                    case 2:
+                        matvar->data_type = MAT_T_UINT16;
+                        break;
+                    case 1:
+                        matvar->data_type = MAT_T_UINT8;
+                        break;
+                    case 4:
+                        matvar->data_type = MAT_T_UINT32;
+                        break;
+                    default:
+                        matvar->data_type = MAT_T_UNKNOWN;
+                        break;
+                }
+                if ( MAT_C_EMPTY == matvar->class_type ) {
+                    /* Check if this is a logical variable */
+                    if ( 0 == strcmp(class_str, "logical") ) {
+                        matvar->isLogical = MAT_F_LOGICAL;
+                    }
+                    matvar->class_type = DataType2ClassType(matvar->data_type);
+                } else if ( MAT_T_UNKNOWN == matvar->data_type ) {
+                    matvar->data_type = MAT_T_UINT16;
+                }
+            } else {
+                matvar->data_type = ClassType2DataType(matvar->class_type);
             }
-
-            matvar->data_type = ClassType2DataType(matvar->class_type);
             free(class_str);
         }
     }
@@ -586,8 +592,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             matvar->rank = matvar->dims[0];
             free(matvar->dims);
             matvar->dims = (size_t*)calloc(matvar->rank,sizeof(*matvar->dims));
-            H5Dread(dset_id,SizeType2H5T(),H5S_ALL,H5S_ALL,
-                    H5P_DEFAULT,matvar->dims);
+            H5Dread(dset_id,SizeType2H5T(),H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->dims);
         }
     }
 
@@ -2302,8 +2307,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             numel = 1;
             for ( k = 0; k < matvar->rank; k++ )
                 numel *= matvar->dims[k];
-            matvar->data_type = MAT_T_UINT8;
-            matvar->data_size = 1;
+            matvar->data_size = Mat_SizeOf(matvar->data_type);
             matvar->nbytes    = numel*matvar->data_size;
 
             if ( NULL != matvar->internal->hdf5_name ) {
