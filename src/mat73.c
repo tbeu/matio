@@ -139,7 +139,7 @@ ClassStr2ClassType(const char *name)
     if ( NULL != name ) {
         int k;
         for ( k = 1; k < 17; k++ ) {
-            if ( !strcmp(name,ClassNames[k]) ) {
+            if ( 0 == strcmp(name,ClassNames[k]) ) {
                 id = (enum matio_classes)k;
                 break;
             }
