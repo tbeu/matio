@@ -102,6 +102,7 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/cell_api_getlinear.out \
                  $(srcdir)/results/cell_api_set.out \
                  $(srcdir)/results/dir-4.out \
+                 $(srcdir)/results/dir-4_be.out \
                  $(srcdir)/results/dir_le.out \
                  $(srcdir)/results/dir-5_be.out \
                  $(srcdir)/results/dir-73_be.out \
