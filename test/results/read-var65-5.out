@@ -1,0 +1,35 @@
+      Name: var65
+      Rank: 2
+Dimensions: 2 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+abcdefghijklmnopqrstuvwxyz
+}
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+}
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+1234567890!@#$%^&*()-_=+`~
+}
+      Rank: 2
+Dimensions: 1 x 26
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+[{]}\|;:'",<.>/?          
+}
+}

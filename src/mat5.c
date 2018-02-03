@@ -533,10 +533,12 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
         return 0;
 
     switch ( data_type ) {
+        case MAT_T_UINT8:
         case MAT_T_UINT16:
         case MAT_T_UTF8:
+        case MAT_T_UTF16:
             data_size = Mat_SizeOf(data_type);
-            data_tag[0] = data_type;
+            data_tag[0] = MAT_T_UINT8 == data_type ? MAT_T_UTF8 : data_type;
             data_tag[1] = N*data_size;
             z->next_in  = ZLIB_BYTE_PTR(data_tag);
             z->avail_in = 8;
@@ -571,58 +573,6 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
                 } while ( z->avail_out == 0 );
             }
             break;
-        case MAT_T_INT8:
-        case MAT_T_UINT8:
-        {
-            mat_uint8_t *ptr;
-            mat_uint16_t c;
-            int i;
-
-            /* Matlab can't read MAT_C_CHAR as uint8, needs uint16 */
-            data_size   = 2;
-            data_tag[0] = MAT_T_UINT16;
-            data_tag[1] = N*data_size;
-            z->next_in  = ZLIB_BYTE_PTR(data_tag);
-            z->avail_in = 8;
-            do {
-                z->next_out  = buf;
-                z->avail_out = buf_size;
-                deflate(z,Z_NO_FLUSH);
-                byteswritten += fwrite(buf,1,buf_size-z->avail_out,(FILE*)mat->fp);
-            } while ( z->avail_out == 0 );
-
-            /* exit early if this is an empty data */
-            if ( NULL == data || N < 1 )
-                break;
-
-            z->next_in  = (Bytef*)data;
-            z->avail_in = data_size*N;
-            ptr = (mat_uint8_t*)data;
-            for ( i = 0; i < N; i++ ) {
-                c = (mat_uint16_t)*(char *)ptr;
-                z->next_in  = ZLIB_BYTE_PTR(&c);
-                z->avail_in = 2;
-                do {
-                    z->next_out  = buf;
-                    z->avail_out = buf_size;
-                    deflate(z,Z_NO_FLUSH);
-                    byteswritten += fwrite(buf,1,buf_size-z->avail_out,(FILE*)mat->fp);
-                } while ( z->avail_out == 0 );
-                ptr++;
-            }
-            /* Add/Compress padding to pad to 8-byte boundary */
-            if ( N*data_size % 8 ) {
-                z->next_in  = pad;
-                z->avail_in = 8 - (N*data_size % 8);
-                do {
-                    z->next_out  = buf;
-                    z->avail_out = buf_size;
-                    deflate(z,Z_NO_FLUSH);
-                    byteswritten += fwrite(buf,1,buf_size-z->avail_out,(FILE*)mat->fp);
-                } while ( z->avail_out == 0 );
-            }
-            break;
-        }
         case MAT_T_UNKNOWN:
             /* Sometimes empty char data will have MAT_T_UNKNOWN, so just write a data tag */
             data_size = 2;
@@ -3298,18 +3248,21 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = tag[1];
                 }
             }
-            /* FIXME: */
-            matvar->data_type = MAT_T_UINT8;
-            if ( nBytes == 0 ) {
-                matvar->nbytes = 0;
-                matvar->data   = calloc(1,1);
+            if ( matvar->compression == MAT_COMPRESSION_NONE ) {
+                matvar->data_type = MAT_T_UINT8;
+                matvar->data_size = (int)Mat_SizeOf(MAT_T_UINT8);
+                matvar->nbytes = len*matvar->data_size;
+            } else {
+                matvar->data_type = packed_type;
+                matvar->data_size = (int)Mat_SizeOf(matvar->data_type);
+                matvar->nbytes = nBytes;
+            }
+            matvar->data = calloc(matvar->nbytes+1,1);
+            if ( NULL == matvar->data ) {
+                Mat_Critical("Failed to allocate %d bytes",matvar->nbytes + 1);
                 break;
             }
-            matvar->data_size = sizeof(char);
-            matvar->nbytes = len*matvar->data_size;
-            matvar->data   = calloc(matvar->nbytes+1,1);
-            if ( NULL == matvar->data ) {
-                Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
+            if ( 0 == matvar->nbytes ) {
                 break;
             }
             if ( matvar->compression == MAT_COMPRESSION_NONE ) {

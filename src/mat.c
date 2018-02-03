@@ -1950,6 +1950,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
             {
                 switch ( matvar->data_type ) {
                     case MAT_T_UINT16:
+                    case MAT_T_UTF16:
                     {
                         const mat_uint16_t *data = (const mat_uint16_t*)matvar->data;
                         for ( i = 0; i < matvar->dims[0]; i++ ) {

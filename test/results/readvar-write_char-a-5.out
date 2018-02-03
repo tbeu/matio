@@ -1,0 +1,11 @@
+      Name: a
+      Rank: 2
+Dimensions: 4 x 26
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+abcdefghijklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+1234567890!@#$%^&*()-_=+`~
+[{]}\|;:'",<.>/?          
+}

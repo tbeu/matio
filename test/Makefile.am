@@ -211,10 +211,12 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var22.out \
                  $(srcdir)/results/read-var23.out \
                  $(srcdir)/results/read-var24.out \
+                 $(srcdir)/results/read-var24-5.out \
                  $(srcdir)/results/read-var24-73.out \
                  $(srcdir)/results/read-var25.out \
                  $(srcdir)/results/read-var26.out \
                  $(srcdir)/results/read-var27.out \
+                 $(srcdir)/results/read-var27-5.out \
                  $(srcdir)/results/read-var28.out \
                  $(srcdir)/results/read-var29.out \
                  $(srcdir)/results/read-var30.out \
@@ -238,6 +240,7 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var48.out \
                  $(srcdir)/results/read-var49.out \
                  $(srcdir)/results/read-var50.out \
+                 $(srcdir)/results/read-var50-5.out \
                  $(srcdir)/results/read-var51.out \
                  $(srcdir)/results/read-var52.out \
                  $(srcdir)/results/read-var53.out \
@@ -253,18 +256,23 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var63.out \
                  $(srcdir)/results/read-var64.out \
                  $(srcdir)/results/read-var65.out \
+                 $(srcdir)/results/read-var65-5.out \
                  $(srcdir)/results/read-var66.out \
+                 $(srcdir)/results/read-var66-5.out \
                  $(srcdir)/results/read-var67.out \
                  $(srcdir)/results/read-var68.out \
                  $(srcdir)/results/read-var69.out \
+                 $(srcdir)/results/read-var69-5.out \
                  $(srcdir)/results/read-var69-73.out \
                  $(srcdir)/results/read-var90.out \
                  $(srcdir)/results/read-var91.out \
                  $(srcdir)/results/read-var92.out \
+                 $(srcdir)/results/read-var95-5.out \
                  $(srcdir)/results/read-var95-73.out \
                  $(srcdir)/results/read-x.out \
                  $(srcdir)/results/readvar-write_cell_empty_struct-var1.out \
                  $(srcdir)/results/readvar-write_char-a.out \
+                 $(srcdir)/results/readvar-write_char-a-5.out \
                  $(srcdir)/results/readvar-write_char-a-73.out \
                  $(srcdir)/results/readvar-write_complex_sparse-sparse_matrix-double.out \
                  $(srcdir)/results/readvar-write_complex_sparse-sparse_matrix-int8.out \
@@ -283,6 +291,7 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/readvar-write_empty_struct-var2.out \
                  $(srcdir)/results/readvar-write_empty_struct-var3.out \
                  $(srcdir)/results/readvar-write_empty_struct-var4.out \
+                 $(srcdir)/results/readvar-write_empty_struct-var4-5.out \
                  $(srcdir)/results/readvar-write_sparse-sparse_matrix-double.out \
                  $(srcdir)/results/readvar-write_sparse-sparse_matrix-int8.out \
                  $(srcdir)/results/readvar-write_sparse-sparse_matrix-int16.out \
@@ -366,6 +375,7 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/write_struct_2d_numeric-uint32.out \
                  $(srcdir)/results/write_struct_2d_numeric-uint64.out \
                  $(srcdir)/results/write_struct_char.out \
+                 $(srcdir)/results/write_struct_char-5.out \
                  $(srcdir)/results/write_struct_complex_2d_numeric-double.out \
                  $(srcdir)/results/write_struct_complex_2d_numeric-int8.out \
                  $(srcdir)/results/write_struct_complex_2d_numeric-int16.out \

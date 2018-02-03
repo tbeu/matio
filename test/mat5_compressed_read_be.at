@@ -173,7 +173,7 @@ AT_CLEANUP
 
 AT_SETUP([Read 2D character array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([cp $srcdir/results/read-var24.out expout
+AT_CHECK([cp $srcdir/results/read-var24-5.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var24],[0],[expout],[])
 AT_CLEANUP
 
@@ -194,7 +194,7 @@ AT_CLEANUP
 AT_SETUP([Read struct with empty fields])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([cp $srcdir/results/read-var27.out expout
+AT_CHECK([cp $srcdir/results/read-var27-5.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var27],[0],[expout],[])
 AT_CLEANUP
 
@@ -338,7 +338,7 @@ AT_CLEANUP
 
 AT_SETUP([Read struct with character fields])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([cp $srcdir/results/read-var50.out expout
+AT_CHECK([cp $srcdir/results/read-var50-5.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var50],[0],[expout],[])
 AT_CLEANUP
 
@@ -436,14 +436,14 @@ AT_CLEANUP
 
 AT_SETUP([Read cell array with character arrays])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([cp $srcdir/results/read-var65.out expout
+AT_CHECK([cp $srcdir/results/read-var65-5.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var65],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with empty structs])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([cp $srcdir/results/read-var66.out expout
+AT_CHECK([cp $srcdir/results/read-var66-5.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var66],[0],[expout],[])
 AT_CLEANUP
 
@@ -461,7 +461,7 @@ AT_CLEANUP
 
 AT_SETUP([Read cell array with structs (character fields)])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([cp $srcdir/results/read-var69.out expout
+AT_CHECK([cp $srcdir/results/read-var69-5.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_be.mat var69],[0],[expout],[])
 AT_CLEANUP
 
