@@ -95,7 +95,7 @@ static hid_t   ClassType2H5T(enum matio_classes class_type);
 static hid_t   DataType2H5T(enum matio_types data_type);
 static hid_t   SizeType2H5T(void);
 static void    Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims);
-static void    Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id);
+static void    Mat_H5ReadVarInfo(matvar_t *matvar,hid_t dset_id);
 static size_t* Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank);
 static void    Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields);
 static void    Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
@@ -396,9 +396,21 @@ Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims)
 }
 
 static void
-Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id)
+Mat_H5ReadVarInfo(matvar_t *matvar,hid_t dset_id)
 {
     hid_t attr_id, type_id;
+    ssize_t name_len;
+
+    /* Get the HDF5 name of the variable */
+    name_len = H5Iget_name(dset_id,NULL,0);
+    if ( name_len > 0 ) {
+        matvar->internal->hdf5_name = (char*)malloc(name_len+1);
+        (void)H5Iget_name(dset_id,matvar->internal->hdf5_name,name_len+1);
+    } else {
+        /* Can not get an internal name, so leave the identifier open */
+        matvar->internal->id = dset_id;
+    }
+
     attr_id = H5Aopen_by_name(dset_id,".","MATLAB_class",H5P_DEFAULT,H5P_DEFAULT);
     type_id  = H5Aget_type(attr_id);
     if ( H5T_STRING == H5Tget_class(type_id) ) {
@@ -448,6 +460,14 @@ Mat_H5ReadClassType(matvar_t *matvar,hid_t dset_id)
     }
     H5Tclose(type_id);
     H5Aclose(attr_id);
+
+    /* Check if the variable is global */
+    if ( H5Aexists_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT) ) {
+        attr_id = H5Aopen_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT,H5P_DEFAULT);
+        /* FIXME: Check that dataspace is scalar */
+        H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
+        H5Aclose(attr_id);
+    }
 }
 
 static size_t*
@@ -541,44 +561,14 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
 static void
 Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 {
-    ssize_t name_len;
     hid_t   attr_id,type_id;
     hsize_t numel;
 
-#if 0
-    matvar->fp = mat;
-    name_len = H5Gget_objname_by_idx(fid,mat->next_index,NULL,0);
-    matvar->name = malloc(1+name_len);
-    if ( matvar->name ) {
-        name_len = H5Gget_objname_by_idx(fid,mat->next_index,
-                                         matvar->name,1+name_len);
-        matvar->name[name_len] = '\0';
-    }
-    dset_id = H5Dopen(fid,matvar->name);
-#endif
-
-    /* Get the HDF5 name of the variable */
-    name_len = H5Iget_name(dset_id,NULL,0);
-    if ( name_len > 0 ) {
-        matvar->internal->hdf5_name = (char*)malloc(name_len+1);
-        (void)H5Iget_name(dset_id,matvar->internal->hdf5_name,name_len+1);
-    } else {
-        /* Can not get an internal name, so leave the identifier open */
-        matvar->internal->id = dset_id;
-    }
+    Mat_H5ReadVarInfo(matvar, dset_id);
 
     matvar->dims = Mat_H5ReadDims(dset_id, &numel, &matvar->rank);
     if ( NULL == matvar->dims ) {
         return;
-    }
-
-    Mat_H5ReadClassType(matvar, dset_id);
-
-    if ( H5Aexists_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT) ) {
-        attr_id = H5Aopen_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT,H5P_DEFAULT);
-        /* FIXME: Check that dataspace is scalar */
-        H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
-        H5Aclose(attr_id);
     }
 
     /* Check for attribute that indicates an empty array */
@@ -645,44 +635,13 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 static void
 Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 {
-    ssize_t  name_len;
     int      fields_are_variables = 1;
     hsize_t  nfields=0,numel;
     hid_t    attr_id,field_id;
     matvar_t **fields;
     H5O_type_t obj_type;
 
-#if 0
-    matvar->fp = mat;
-    name_len = H5Gget_objname_by_idx(fid,mat->next_index,NULL,0);
-    matvar->name = malloc(1+name_len);
-    if ( matvar->name ) {
-        name_len = H5Gget_objname_by_idx(fid,mat->next_index,
-                                         matvar->name,1+name_len);
-        matvar->name[name_len] = '\0';
-    }
-    dset_id = H5Gopen(fid,matvar->name);
-#endif
-
-    /* Get the HDF5 name of the variable */
-    name_len = H5Iget_name(dset_id,NULL,0);
-    if ( name_len > 0 ) {
-        matvar->internal->hdf5_name = (char*)malloc(name_len+1);
-        (void)H5Iget_name(dset_id,matvar->internal->hdf5_name,name_len+1);
-    } else {
-        /* Can not get an internal name, so leave the identifier open */
-        matvar->internal->id = dset_id;
-    }
-
-    Mat_H5ReadClassType(matvar,dset_id);
-
-    /* Check if the variable is global */
-    if ( H5Aexists_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT) ) {
-        attr_id = H5Aopen_by_name(dset_id,".","MATLAB_global",H5P_DEFAULT,H5P_DEFAULT);
-        /* FIXME: Check that dataspace is scalar */
-        H5Aread(attr_id,H5T_NATIVE_INT,&matvar->isGlobal);
-        H5Aclose(attr_id);
-    }
+    Mat_H5ReadVarInfo(matvar,dset_id);
 
     /* Check if the variable is sparse */
     if ( H5Aexists_by_name(dset_id,".","MATLAB_sparse",H5P_DEFAULT) ) {
@@ -855,6 +814,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                             H5P_DEFAULT,ref_ids);
                     for ( l = 0; l < numel; l++ ) {
                         hid_t ref_id;
+                        ssize_t name_len;
                         fields[l*nfields+k] = Mat_VarCalloc();
                         fields[l*nfields+k]->name =
                             strdup(matvar->internal->fieldnames[k]);
@@ -2642,7 +2602,7 @@ Mat_VarReadDataLinear73(mat_t *mat,matvar_t *matvar,void *data,
 matvar_t *
 Mat_VarReadNextInfo73( mat_t *mat )
 {
-    hid_t   fid;
+    hid_t   id;
     hsize_t idx;
     herr_t  herr;
     struct ReadNextIterData mat_data;
@@ -2653,18 +2613,18 @@ Mat_VarReadNextInfo73( mat_t *mat )
     if ( mat->next_index >= mat->num_datasets )
         return NULL;
 
-    fid = *(hid_t*)mat->fp;
+    id = *(hid_t*)mat->fp;
     idx = (hsize_t)mat->next_index;
     mat_data.mat = mat;
     mat_data.matvar = NULL;
-    herr = H5Literate(fid, H5_INDEX_NAME, H5_ITER_NATIVE, &idx, Mat_VarReadNextInfoIterate, (void*)&mat_data);
+    herr = H5Literate(id, H5_INDEX_NAME, H5_ITER_NATIVE, &idx, Mat_VarReadNextInfoIterate, (void*)&mat_data);
     if ( herr > 0 )
         mat->next_index = (size_t)idx;
     return mat_data.matvar;
 }
 
 static herr_t
-Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, void *op_data)
+Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, void *op_data)
 {
     mat_t *mat;
     matvar_t *matvar;
@@ -2677,7 +2637,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
     if ( 0 == strcmp(name, "#refs#") || 0 == strcmp(name, "#subsystem#") )
         return 0;
 
-    H5Oget_info_by_name(fid, name, &object_info, H5P_DEFAULT);
+    H5Oget_info_by_name(id, name, &object_info, H5P_DEFAULT);
     if ( H5O_TYPE_DATASET != object_info.type && H5O_TYPE_GROUP != object_info.type )
         return 0;
 
@@ -2699,7 +2659,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
     switch ( object_info.type ) {
         case H5O_TYPE_DATASET:
         {
-            hid_t dset_id = H5Dopen(fid,matvar->name,H5P_DEFAULT);
+            hid_t dset_id = H5Dopen(id,matvar->name,H5P_DEFAULT);
 
             Mat_H5ReadDatasetInfo(mat,matvar,dset_id);
             if ( matvar->internal->id != dset_id ) {
@@ -2711,7 +2671,7 @@ Mat_VarReadNextInfoIterate(hid_t fid, const char *name, const H5L_info_t *info, 
         }
         case H5O_TYPE_GROUP:
         {
-            hid_t dset_id = H5Gopen(fid,matvar->name,H5P_DEFAULT);
+            hid_t dset_id = H5Gopen(id,matvar->name,H5P_DEFAULT);
 
             Mat_H5ReadGroupInfo(mat,matvar,dset_id);
             H5Gclose(dset_id);
