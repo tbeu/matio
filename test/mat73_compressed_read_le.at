@@ -152,13 +152,6 @@ AT_CHECK([cp $srcdir/results/read-var90.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_hdf_le.mat var90],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read 2D logical array])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
-AT_CHECK([cp $srcdir/results/read-var90.out expout
-         $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_hdf_le.mat var90],[0],
-[expout], [ignore])
-AT_CLEANUP
-
 AT_SETUP([Read sparse double array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/read-var21.out expout
@@ -331,13 +324,6 @@ AT_CHECK([cp $srcdir/results/read-var91.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_hdf_le.mat var91],[0],[expout],[])
 AT_CLEANUP
 
-AT_SETUP([Read struct with logical fields])
-AT_CHECK([if test $MAT73 -ne 1;then exit 77;fi])
-AT_CHECK([cp $srcdir/results/read-var91.out expout
-         $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_hdf_le.mat var91],[0],
-[expout], [ignore])
-AT_CLEANUP
-
 AT_SETUP([Read struct with sparse double fields])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/read-var48.out expout
@@ -434,13 +420,6 @@ AT_SETUP([Read cell array with logical arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/read-var92.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_hdf_le.mat var92],[0],[expout],[])
-AT_CLEANUP
-
-AT_SETUP([Read cell array with logical arrays])
-AT_SKIP_IF([test $MAT73 -ne 1])
-AT_CHECK([cp $srcdir/results/read-var92.out expout
-         $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_hdf_le.mat var92],[0],
-[expout], [ignore])
 AT_CLEANUP
 
 AT_SETUP([Read cell array with sparse double arrays])
