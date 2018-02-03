@@ -177,6 +177,12 @@ AT_CHECK([cp $srcdir/results/read-var24-73.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_hdf_le.mat var24],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read 2D Unicode character array])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-var95-73.out expout
+         $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_hdf_le.mat var95],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read empty struct])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])

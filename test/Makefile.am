@@ -261,6 +261,7 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var90.out \
                  $(srcdir)/results/read-var91.out \
                  $(srcdir)/results/read-var92.out \
+                 $(srcdir)/results/read-var95-73.out \
                  $(srcdir)/results/read-x.out \
                  $(srcdir)/results/readvar-write_cell_empty_struct-var1.out \
                  $(srcdir)/results/readvar-write_char-a.out \
