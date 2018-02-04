@@ -319,6 +319,7 @@ DataType2H5T(enum matio_types data_type)
             return H5T_NATIVE_LLONG;
 #       endif
         case MAT_T_UINT16:
+        case MAT_T_UTF16:
 #       if CHAR_BIT == 16
             return H5T_NATIVE_UCHAR;
 #       elif CHAR_BIT*SIZEOF_SHORT == 16

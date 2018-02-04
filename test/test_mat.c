@@ -147,6 +147,7 @@ static const char *helptestsstr[] = {
 "    Character Variable Tests",
 "================================================================",
 "write_char               - Write a 2D character array.",
+"write_char_unicode       - Write a 2D Unicode character array.",
 "",
 "    MAT File Tests",
 "================================================================",
@@ -347,6 +348,23 @@ static const char *helptest_write_char[] = {
     "         'ABCDEFGHIJKLMNOPQRSTUVWXYZ';",
     "         '1234567890!@#$%^&*()-_=+`~';",
     "         '[{]}\\|;:''\",<.>/?          '];",
+    "",
+    NULL
+};
+
+static const char *helptest_write_char_unicode[] = {
+    "TEST: write_char_unicode",
+    "",
+    "Usage: test_mat write_char_unicode",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a 2d character",
+    "array of dimensions 2x4. The MAT file is the default file version, or",
+    "set by the -v option. If the MAT file is version 5, compression can be",
+    "enabled using the -z option if built with zlib library",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    a = char([1576,1580,1604,1740;273,105,7879,110]); ",
     "",
     NULL
 };
@@ -700,6 +718,8 @@ help_test(const char *test)
         Mat_Help(helptest_write_empty_2d_numeric);
     else if ( !strcmp(test,"write_char") )
         Mat_Help(helptest_write_char);
+    else if ( !strcmp(test,"write_char_unicode") )
+        Mat_Help(helptest_write_char_unicode);
     else if ( !strcmp(test,"write_struct_2d_numeric") )
         Mat_Help(helptest_write_struct_2d_numeric);
     else if ( !strcmp(test,"write_struct_complex_2d_numeric") )
@@ -1277,6 +1297,30 @@ test_write_char(const char *output_name)
         dims[0]   = 4;
         dims[1]   = 26;
         matvar = Mat_VarCreate("a",MAT_C_CHAR,MAT_T_UINT8,2,
+                    dims,(void*)str,MAT_F_DONT_COPY_DATA);
+        err = Mat_VarWrite(mat,matvar,compression);
+        Mat_VarFree(matvar);
+        Mat_Close(mat);
+    } else {
+        err = 1;
+    }
+    return err;
+}
+
+static int
+test_write_char_unicode(const char *output_name)
+{
+    const mat_uint16_t str[] = {1576, 273, 1580, 105, 1604, 7879, 1740, 110};
+    int       err = 0;
+    size_t    dims[2];
+    mat_t    *mat;
+    matvar_t *matvar;
+
+    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
+    if ( mat ) {
+        dims[0]   = 2;
+        dims[1]   = 4;
+        matvar = Mat_VarCreate("a",MAT_C_CHAR,MAT_T_UTF16,2,
                     dims,(void*)str,MAT_F_DONT_COPY_DATA);
         err = Mat_VarWrite(mat,matvar,compression);
         Mat_VarFree(matvar);
@@ -3875,6 +3919,12 @@ int main (int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_write_char.mat";
             err += test_write_char(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k],"write_char_unicode") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_char_unicode.mat";
+            err += test_write_char_unicode(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k],"writenull") ) {
             k++;

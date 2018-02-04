@@ -87,6 +87,7 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/matlab/test_write_cell_2d_numeric.m \
                  $(srcdir)/matlab/test_write_cell_complex_2d_numeric.m \
                  $(srcdir)/matlab/test_write_cell_empty_struct.m \
+                 $(srcdir)/matlab/test_write_char_unicode.m \
                  $(srcdir)/matlab/test_write_char.m \
                  $(srcdir)/matlab/test_write_complex_2d_numeric.m \
                  $(srcdir)/matlab/test_write_empty.m \
@@ -271,6 +272,8 @@ TEST_DATAFILES = $(srcdir)/datasets/matio_test_cases.m \
                  $(srcdir)/results/read-var95-73.out \
                  $(srcdir)/results/read-x.out \
                  $(srcdir)/results/readvar-write_cell_empty_struct-var1.out \
+                 $(srcdir)/results/readvar-write_char_unicode-a-5.out \
+                 $(srcdir)/results/readvar-write_char_unicode-a-73.out \
                  $(srcdir)/results/readvar-write_char-a.out \
                  $(srcdir)/results/readvar-write_char-a-5.out \
                  $(srcdir)/results/readvar-write_char-a-73.out \
