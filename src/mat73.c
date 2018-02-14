@@ -94,6 +94,7 @@ static enum matio_classes ClassStr2ClassType(const char *name);
 static hid_t   ClassType2H5T(enum matio_classes class_type);
 static hid_t   DataType2H5T(enum matio_types data_type);
 static hid_t   SizeType2H5T(void);
+static hid_t   DataType(hid_t h5_type, int isComplex);
 static void    Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims);
 static void    Mat_H5ReadVarInfo(matvar_t *matvar,hid_t dset_id);
 static size_t* Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank);
@@ -130,6 +131,8 @@ static herr_t  Mat_VarReadNextInfoIterate(hid_t id, const char *name,
 static herr_t  Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name,
                    const H5L_info_t *info, void *op_data);
 static void    Mat_H5ReadData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space,
+                   int isComplex, void *data);
+static int     Mat_H5WriteData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space,
                    int isComplex, void *data);
 
 static enum matio_classes
@@ -377,6 +380,21 @@ SizeType2H5T(void)
         return H5T_NATIVE_USHORT;
     else
         return -1;
+}
+
+static hid_t
+DataType(hid_t h5_type, int isComplex)
+{
+    hid_t h5_dtype;
+    if ( isComplex ) {
+        size_t h5_size = H5Tget_size(h5_type);
+        h5_dtype = H5Tcreate(H5T_COMPOUND, 2*h5_size);
+        H5Tinsert(h5_dtype,"real",0,h5_type);
+        H5Tinsert(h5_dtype,"imag",h5_size,h5_type);
+    } else {
+        h5_dtype = H5Tcopy(h5_type);
+    }
+    return h5_dtype;
 }
 
 static void
@@ -929,14 +947,15 @@ Mat_H5ReadData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space, 
     } else {
         mat_complex_split_t *complex_data = (mat_complex_split_t*)data;
         hid_t h5_complex;
+        size_t h5_size = H5Tget_size(h5_type);
 
-        h5_complex = H5Tcreate(H5T_COMPOUND,H5Tget_size(h5_type));
+        h5_complex = H5Tcreate(H5T_COMPOUND, h5_size);
         H5Tinsert(h5_complex,"real",0,h5_type);
         H5Dread(dset_id,h5_complex,mem_space,dset_space,H5P_DEFAULT,
                 complex_data->Re);
         H5Tclose(h5_complex);
 
-        h5_complex = H5Tcreate(H5T_COMPOUND,H5Tget_size(h5_type));
+        h5_complex = H5Tcreate(H5T_COMPOUND, h5_size);
         H5Tinsert(h5_complex,"imag",0,h5_type);
         H5Dread(dset_id,h5_complex,mem_space,dset_space,H5P_DEFAULT,
                 complex_data->Im);
@@ -1037,6 +1056,38 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
     }
 
     return;
+}
+
+static int
+Mat_H5WriteData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space, int isComplex, void *data)
+{
+    int err = 0;
+    if ( !isComplex ) {
+        if ( 0 > H5Dwrite(dset_id,h5_type,mem_space,dset_space,H5P_DEFAULT,data) )
+            err = 5;
+    } else {
+        mat_complex_split_t *complex_data = (mat_complex_split_t*)data;
+        hid_t h5_complex;
+        size_t h5_size = H5Tget_size(h5_type);
+
+        /* Write real part of dataset */
+        h5_complex = H5Tcreate(H5T_COMPOUND, h5_size);
+        H5Tinsert(h5_complex,"real",0,h5_type);
+        if ( 0 > H5Dwrite(dset_id,h5_complex,mem_space,dset_space,H5P_DEFAULT,
+                          complex_data->Re) )
+            err = 5;
+        H5Tclose(h5_complex);
+
+        /* Write imaginary part of dataset */
+        h5_complex = H5Tcreate(H5T_COMPOUND, h5_size);
+        H5Tinsert(h5_complex,"imag",0,h5_type);
+        if ( 0 > H5Dwrite(dset_id,h5_complex,mem_space,dset_space,H5P_DEFAULT,
+                          complex_data->Im) )
+            err += 5;
+        H5Tclose(h5_complex);
+    }
+
+    return err;
 }
 
 static int
@@ -1446,7 +1497,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
 {
     int err = 0, k;
     hsize_t numel = 1;
-    hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id,plist;
+    hid_t plist;
 
     for ( k = 0; k < matvar->rank; k++ ) {
         numel *= dims[k];
@@ -1477,18 +1528,14 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
 
     if ( 0 == numel || NULL == matvar->data ) {
         err = Mat_VarWriteEmpty(id, matvar, name, ClassNames[matvar->class_type]);
-    } else if ( matvar->isComplex ) {
-        hid_t h5_complex,h5_complex_base;
+    } else {
+        hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
+        hid_t h5_type = ClassType2H5T(matvar->class_type);
+        hid_t h5_dtype = DataType(h5_type, matvar->isComplex);
 
-        h5_complex_base = ClassType2H5T(matvar->class_type);
-        h5_complex      = H5Tcreate(H5T_COMPOUND,
-                                    2*H5Tget_size(h5_complex_base));
-        H5Tinsert(h5_complex,"real",0,h5_complex_base);
-        H5Tinsert(h5_complex,"imag",H5Tget_size(h5_complex_base),
-                  h5_complex_base);
         mspace_id = H5Screate_simple(matvar->rank,dims,max_dims);
-        dset_id = H5Dcreate(id,name,h5_complex,mspace_id,H5P_DEFAULT,
-                            plist,H5P_DEFAULT);
+        dset_id = H5Dcreate(id,name,h5_dtype,mspace_id,
+                            H5P_DEFAULT,plist,H5P_DEFAULT);
         attr_type_id = H5Tcopy(H5T_C_S1);
         H5Tset_size(attr_type_id, strlen(ClassNames[matvar->class_type]));
         aspace_id = H5Screate(H5S_SCALAR);
@@ -1499,45 +1546,9 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
         H5Sclose(aspace_id);
         H5Aclose(attr_id);
         H5Tclose(attr_type_id);
-        H5Tclose(h5_complex);
-
-        /* Write real part of dataset */
-        h5_complex = H5Tcreate(H5T_COMPOUND,
-                               H5Tget_size(h5_complex_base));
-        H5Tinsert(h5_complex,"real",0,h5_complex_base);
-        if ( 0 > H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                          ((mat_complex_split_t*)matvar->data)->Re) )
-            err += 5;
-        H5Tclose(h5_complex);
-
-        /* Write imaginary part of dataset */
-        h5_complex = H5Tcreate(H5T_COMPOUND,
-                               H5Tget_size(h5_complex_base));
-        H5Tinsert(h5_complex,"imag",0,h5_complex_base);
-        if ( 0 > H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                          ((mat_complex_split_t*)matvar->data)->Im) )
-            err += 5;
-        H5Tclose(h5_complex);
-        H5Dclose(dset_id);
-        H5Sclose(mspace_id);
-    } else { /* matvar->isComplex */
-        mspace_id = H5Screate_simple(matvar->rank,dims,max_dims);
-        dset_id = H5Dcreate(id,name,
-                            ClassType2H5T(matvar->class_type),
-                            mspace_id,H5P_DEFAULT,plist,H5P_DEFAULT);
-        attr_type_id = H5Tcopy(H5T_C_S1);
-        H5Tset_size(attr_type_id, strlen(ClassNames[matvar->class_type]));
-        aspace_id = H5Screate(H5S_SCALAR);
-        attr_id = H5Acreate(dset_id,"MATLAB_class",attr_type_id,
-                            aspace_id,H5P_DEFAULT,H5P_DEFAULT);
-        if ( 0 > H5Awrite(attr_id, attr_type_id, ClassNames[matvar->class_type]) )
-            err = 5;
-        H5Sclose(aspace_id);
-        H5Aclose(attr_id);
-        H5Tclose(attr_type_id);
-        if ( 0 > H5Dwrite(dset_id,DataType2H5T(matvar->data_type),
-                          H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->data) )
-            err += 5;
+        H5Tclose(h5_dtype);
+        err += Mat_H5WriteData(dset_id, h5_type, H5S_ALL, H5S_ALL,
+                               matvar->isComplex, matvar->data);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
     }
@@ -1602,37 +1613,13 @@ Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,h
                     /* Need to reopen */
                     H5Sclose(space_id);
                     space_id = H5Dget_space(dset_id);
-                    H5Sselect_hyperslab(space_id, H5S_SELECT_SET, size_offset_dims, NULL,
-                                        dims, NULL);
+                    H5Sselect_hyperslab(space_id, H5S_SELECT_SET, size_offset_dims,
+                                        NULL, dims, NULL);
                     free(size_offset_dims);
                     mspace_id = H5Screate_simple(rank, dims, NULL);
-                    if ( matvar->isComplex ) {
-                        hid_t h5_complex, h5_complex_base;
-
-                        h5_complex_base = ClassType2H5T(matvar->class_type);
-
-                        /* Write real part of dataset */
-                        h5_complex = H5Tcreate(H5T_COMPOUND,
-                                               H5Tget_size(h5_complex_base));
-                        H5Tinsert(h5_complex,"real",0,h5_complex_base);
-                        if ( 0 > H5Dwrite(dset_id, h5_complex, mspace_id, space_id, H5P_DEFAULT,
-                                          ((mat_complex_split_t*)matvar->data)->Re) )
-                            err = 5;
-                        H5Tclose(h5_complex);
-
-                        /* Write imaginary part of dataset */
-                        h5_complex = H5Tcreate(H5T_COMPOUND,
-                                               H5Tget_size(h5_complex_base));
-                        H5Tinsert(h5_complex,"imag",0,h5_complex_base);
-                        if ( 0 > H5Dwrite(dset_id, h5_complex, mspace_id, space_id ,H5P_DEFAULT,
-                                          ((mat_complex_split_t*)matvar->data)->Im) )
-                            err += 5;
-                        H5Tclose(h5_complex);
-                    } else {
-                        if ( 0 > H5Dwrite(dset_id, DataType2H5T(matvar->data_type),
-                                          mspace_id, space_id, H5P_DEFAULT, matvar->data) )
-                            err = 5;
-                    }
+                    err = Mat_H5WriteData(dset_id, ClassType2H5T(matvar->class_type),
+                                          mspace_id, space_id, matvar->isComplex,
+                                          matvar->data);
                     H5Sclose(mspace_id);
                 } else {
                     err = -3;
@@ -1697,7 +1684,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
                      matvar->name);
         err = -1;
     } else {
-        hid_t size_type_id,data_type_id;
+        hid_t size_type_id,h5_type,h5_dtype;
         hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
         mat_sparse_t *sparse;
         hsize_t nir, njc, ndata;
@@ -1742,66 +1729,23 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         H5Aclose(attr_id);
 
         ndata = sparse->ndata;
-        data_type_id = DataType2H5T(matvar->data_type);
-        if ( matvar->isComplex ) {
-            hid_t h5_complex;
-            mat_complex_split_t *complex_data;
-            hsize_t dims[1];
-
-            complex_data = (mat_complex_split_t*)sparse->data;
-
-            /* Create dataset datatype as compound with real and
-             * imaginary fields
-             */
-            h5_complex = H5Tcreate(H5T_COMPOUND,
-                                   2*H5Tget_size(data_type_id));
-            H5Tinsert(h5_complex,"real",0,data_type_id);
-            H5Tinsert(h5_complex,"imag",H5Tget_size(data_type_id),
-                      data_type_id);
-
-            /* Create dataset */
-            dims[0] = ndata;
-            mspace_id = H5Screate_simple(1,dims,NULL);
-            dset_id = H5Dcreate(sparse_id,"data",h5_complex,mspace_id,
-                                H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-            H5Tclose(h5_complex);
-
-            /* Write real part of dataset */
-            h5_complex = H5Tcreate(H5T_COMPOUND,
-                                   H5Tget_size(data_type_id));
-            H5Tinsert(h5_complex,"real",0,data_type_id);
-            if ( 0 > H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                              complex_data->Re) )
-                err += 5;
-            H5Tclose(h5_complex);
-
-            /* Write imaginary part of dataset */
-            h5_complex = H5Tcreate(H5T_COMPOUND,H5Tget_size(data_type_id));
-            H5Tinsert(h5_complex,"imag",0,data_type_id);
-            if ( 0 > H5Dwrite(dset_id,h5_complex,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                              complex_data->Im) )
-                err += 5;
-            H5Tclose(h5_complex);
-            H5Dclose(dset_id);
-            H5Sclose(mspace_id);
-        } else { /* if ( matvar->isComplex ) */
-            mspace_id = H5Screate_simple(1,&ndata,NULL);
-            dset_id = H5Dcreate(sparse_id,"data",data_type_id,mspace_id,
-                                H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-            if ( 0 > H5Dwrite(dset_id,data_type_id,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                              sparse->data) )
-                err += 5;
-            H5Dclose(dset_id);
-            H5Sclose(mspace_id);
-        }
+        h5_type = DataType2H5T(matvar->data_type);
+        h5_dtype = DataType(h5_type, matvar->isComplex);
+        mspace_id = H5Screate_simple(1,&ndata,NULL);
+        dset_id = H5Dcreate(sparse_id,"data",h5_dtype,mspace_id,
+                            H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+        H5Tclose(h5_dtype);
+        err += Mat_H5WriteData(dset_id, h5_type, H5S_ALL, H5S_ALL,
+                               matvar->isComplex, sparse->data);
+        H5Dclose(dset_id);
+        H5Sclose(mspace_id);
 
         nir = sparse->nir;
         mspace_id = H5Screate_simple(1,&nir,NULL);
         dset_id = H5Dcreate(sparse_id,"ir",size_type_id,mspace_id,
                             H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        if ( 0 > H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                          sparse->ir) )
-            err += 5;
+        err += Mat_H5WriteData(dset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL,
+                               0, sparse->ir);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
 
@@ -1809,9 +1753,8 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         mspace_id = H5Screate_simple(1,&njc,NULL);
         dset_id = H5Dcreate(sparse_id,"jc",size_type_id,mspace_id,
                             H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        if ( 0 > H5Dwrite(dset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,
-                          sparse->jc) )
-            err += 5;
+        err += Mat_H5WriteData(dset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL,
+                               0, sparse->jc);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
         H5Gclose(sparse_id);
