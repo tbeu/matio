@@ -1584,11 +1584,9 @@ Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,h
     }
 
     if ( 0 != numel && NULL != matvar->data ) {
-        hid_t dset_id, mspace_id;
-
         if ( H5Lexists(id, matvar->name, H5P_DEFAULT) ) {
             /* Append */
-            hid_t space_id;
+            hid_t dset_id, space_id;
             int rank;
 
             if ( dim < 1 || dim > matvar->rank )
@@ -1602,6 +1600,8 @@ Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,int dim,h
                 size_offset_dims = (hsize_t*)malloc(rank*sizeof(*size_offset_dims));
                 if ( NULL != size_offset_dims ) {
                     hsize_t offset;
+                    hid_t mspace_id;
+
                     (void)H5Sget_simple_extent_dims(space_id,size_offset_dims,NULL);
                     offset = size_offset_dims[matvar->rank - dim];
                     size_offset_dims[matvar->rank - dim] += matvar->dims[dim - 1];
