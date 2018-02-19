@@ -1126,7 +1126,7 @@ Mat_VarWriteEmpty(hid_t id,matvar_t *matvar,const char *name,const char* class_n
                 fields     = (matvar_t**)matvar->data;
                 for ( k = 0; k < nfields; k++ ) {
                     fieldnames[k].len =
-                    strlen(matvar->internal->fieldnames[k]);
+                        strlen(matvar->internal->fieldnames[k]);
                     fieldnames[k].p   = matvar->internal->fieldnames[k];
                 }
                 H5Tset_size(str_type_id,1);
@@ -1204,10 +1204,8 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
     if ( 0 == nmemb || NULL == matvar->data ) {
         err = Mat_VarWriteEmpty(id, matvar, name, ClassNames[matvar->class_type]);
     } else {
-        char  id_name[128] = {'\0',};
         hid_t mspace_id,dset_id,attr_id,aspace_id;
 
-        (void)H5Iget_name(id,id_name,127);
         if ( *refs_id < 0 ) {
             if ( H5Lexists(id,"/#refs#",H5P_DEFAULT) ) {
                 *refs_id = H5Gopen(id,"/#refs#",H5P_DEFAULT);
@@ -1789,11 +1787,8 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
         err = Mat_VarWriteEmpty(id, matvar, name, ClassNames[matvar->class_type]);
     } else {
         hid_t struct_id;
-        char id_name[128] = {'\0',};
 
-        (void)H5Iget_name(id,id_name,127);
-        struct_id = H5Gcreate(id,name,H5P_DEFAULT,H5P_DEFAULT,
-                              H5P_DEFAULT);
+        struct_id = H5Gcreate(id,name,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
         if ( struct_id < 0 ) {
             Mat_Critical("Error creating group for struct %s",name);
             err = -1;
@@ -1827,7 +1822,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
             fields     = (matvar_t**)matvar->data;
             for ( k = 0; k < nfields; k++ ) {
                 fieldnames[k].len =
-                strlen(matvar->internal->fieldnames[k]);
+                    strlen(matvar->internal->fieldnames[k]);
                 fieldnames[k].p   = matvar->internal->fieldnames[k];
             }
             H5Tset_size(str_type_id,1);
