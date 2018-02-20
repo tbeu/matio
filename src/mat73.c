@@ -1856,7 +1856,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
                     }
                 }
                 if ( *refs_id > -1 ) {
-                    char name[64];
+                    char obj_name[64];
                     hobj_ref_t **refs;
                     int l;
 
@@ -1868,15 +1868,15 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
                         for ( l = 0; l < nfields; l++ ) {
                             H5G_info_t group_info;
                             H5Gget_info(*refs_id, &group_info);
-                            sprintf(name,"%llu",group_info.nlinks);
+                            sprintf(obj_name,"%llu",group_info.nlinks);
                             if ( NULL != fields[k*nfields+l] )
                                 fields[k*nfields+l]->compression =
                                     matvar->compression;
                             if ( 0 != Mat_VarWriteNext73(*refs_id,fields[k*nfields+l],
-                                name,refs_id) )
+                                obj_name,refs_id) )
                                 err += 5;
-                            sprintf(name,"/#refs#/%llu",group_info.nlinks);
-                            H5Rcreate(refs[l]+k,id,name,H5R_OBJECT,-1);
+                            sprintf(obj_name,"/#refs#/%llu",group_info.nlinks);
+                            H5Rcreate(refs[l]+k,id,obj_name,H5R_OBJECT,-1);
                         }
                     }
 
