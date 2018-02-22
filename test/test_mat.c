@@ -234,7 +234,7 @@ static const char *helptest_write_complex_2d_numeric[] = {
     "of the variable is double, or set by the -c option. The MAT file is the ",
     "default file version, or set by the -v option. If the MAT file is ",
     "version 5, compression can be enabled using the -z option if built with",
-    "zlib library. If the MAT file is version 7.3 and the -a  option is set, "
+    "zlib library. If the MAT file is version 7.3 and the -a option is set, "
     "the MAT file is created by appending the data in a loop.",
     "",
     "MATLAB code to generate expected data",
@@ -389,7 +389,9 @@ static const char *helptest_write_struct_2d_numeric[] = {
     "array with 2d real numeric array fields. The class of the variable is",
     "double, or set by the -c option. The MAT file is the default file",
     "version, or set by the -v option. If the MAT file is version 5,",
-    "compression can be enabled using the -z option if built with zlib library",
+    "compression can be enabled using the -z option if built with zlib ",
+    "library. If the MAT file is version 7.3 and the -a option is set, ",
+    "the MAT file is created by appending the data.",
     "",
     "MATLAB code to generate expected data",
     "",
@@ -411,7 +413,9 @@ static const char *helptest_write_struct_complex_2d_numeric[] = {
     "array with 2d complex numeric array fields. The class of the variable is",
     "double, or set by the -c option. The MAT file is the default file",
     "version, or set by the -v option. If the MAT file is version 5,",
-    "compression can be enabled using the -z option if built with zlib library",
+    "compression can be enabled using the -z option if built with zlib ",
+    "library. If the MAT file is version 7.3 and the -a option is set, ",
+    "the MAT file is created by appending the data.",
     "",
     "MATLAB code to generate expected data",
     "",
@@ -1509,9 +1513,9 @@ test_write_struct_char(const char *output_name)
 
 static int
 test_write_struct_2d_numeric(enum matio_classes matvar_class,
-    const char *output_name)
+    const char *output_name, int dim_append)
 {
-    size_t dims[2] = {5,10};
+    size_t dims[2] = {3,4};
     int    err = 0, i;
     double    d[50];
     float     f[50];
@@ -1519,15 +1523,15 @@ test_write_struct_2d_numeric(enum matio_classes matvar_class,
     mat_uint32_t ui32[50];
     mat_int16_t   i16[50];
     mat_uint16_t ui16[50];
-    mat_int8_t    i8[50];
-    mat_uint8_t  ui8[50];
+    mat_int8_t     i8[50];
+    mat_uint8_t   ui8[50];
 #ifdef HAVE_MAT_INT64_T
-    mat_int64_t i64[50];
+    mat_int64_t   i64[50];
 #endif
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t ui64[50];
 #endif
-    void *data[4] = {NULL,NULL,NULL,NULL};
+    void *data[4];
     mat_t *mat;
     matvar_t *matvar[5], *struct_matvar;
     enum matio_types data_type;
@@ -1633,22 +1637,40 @@ test_write_struct_2d_numeric(enum matio_classes matvar_class,
         return 1;
     }
 
-    dims[0] = 3;
-    dims[1] = 4;
     matvar[0] = Mat_VarCreate("field1",matvar_class,data_type,2,
                    dims,data[0],MAT_F_DONT_COPY_DATA);
     matvar[1] = Mat_VarCreate("field2",matvar_class,data_type,2,
                    dims,data[1],MAT_F_DONT_COPY_DATA);
-    matvar[2] = Mat_VarCreate("field1",matvar_class,data_type,2,
-                   dims,data[2],MAT_F_DONT_COPY_DATA);
-    matvar[3] = Mat_VarCreate("field2",matvar_class,data_type,2,
-                   dims,data[3],MAT_F_DONT_COPY_DATA);
-    matvar[4] = NULL;
-    dims[0] = 2;
-    dims[1] = 1;
-    struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
-                                  matvar,0);
-    Mat_VarWrite(mat,struct_matvar,compression);
+    if ( 0 == dim_append ) {
+        matvar[2] = Mat_VarCreate("field1",matvar_class,data_type,2,
+                       dims,data[2],MAT_F_DONT_COPY_DATA);
+        matvar[3] = Mat_VarCreate("field2",matvar_class,data_type,2,
+                       dims,data[3],MAT_F_DONT_COPY_DATA);
+        matvar[4] = NULL;
+        dims[0] = 2;
+        dims[1] = 1;
+        struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
+                                      matvar,0);
+        err = Mat_VarWrite(mat,struct_matvar,compression);
+    } else if ( 1 == dim_append ) {
+        matvar[2] = NULL;
+        dims[0] = 1;
+        dims[1] = 1;
+        struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
+                                      matvar,0);
+        err = Mat_VarWriteAppend(mat,struct_matvar,compression,dim_append);
+        dims[0] = 3;
+        dims[1] = 4;
+        matvar[0] = Mat_VarCreate("field1",matvar_class,data_type,2,
+                       dims,data[2],MAT_F_DONT_COPY_DATA);
+        matvar[1] = Mat_VarCreate("field2",matvar_class,data_type,2,
+                       dims,data[3],MAT_F_DONT_COPY_DATA);
+        dims[0] = 1;
+        dims[1] = 1;
+        struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
+                                      matvar,0);
+        err += Mat_VarWriteAppend(mat,struct_matvar,compression,dim_append);
+    }
     Mat_VarFree(struct_matvar);
 
     Mat_Close(mat);
@@ -1658,25 +1680,25 @@ test_write_struct_2d_numeric(enum matio_classes matvar_class,
 
 static int
 test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
-    const char *output_name)
+    const char *output_name, int dim_append)
 {
-    size_t dims[2] = {5,10};
+    size_t dims[2] = {3,4};
     int    err = 0, i;
     double    d_real[50], d_imag[50];
     float     f_real[50], f_imag[50];
-    mat_int32_t   i32_real[50], i32_imag[50];
+    mat_int32_t   i32_real[50],  i32_imag[50];
     mat_uint32_t ui32_real[50], ui32_imag[50];
-    mat_int16_t   i16_real[50], i16_imag[50];
+    mat_int16_t   i16_real[50],  i16_imag[50];
     mat_uint16_t ui16_real[50], ui16_imag[50];
-    mat_int8_t    i8_real[50], i8_imag[50];
-    mat_uint8_t  ui8_real[50], ui8_imag[50];
+    mat_int8_t     i8_real[50],   i8_imag[50];
+    mat_uint8_t   ui8_real[50],  ui8_imag[50];
 #ifdef HAVE_MAT_INT64_T
-    mat_int64_t i64_real[50], i64_imag[50];
+    mat_int64_t   i64_real[50],  i64_imag[50];
 #endif
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t ui64_real[50], ui64_imag[50];
 #endif
-    mat_complex_split_t data[4] = {NULL,NULL};
+    mat_complex_split_t data[4];
     mat_t *mat;
     matvar_t *matvar[5], *struct_matvar;
     enum matio_types data_type;
@@ -1832,22 +1854,40 @@ test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
         return 1;
     }
 
-    dims[0] = 3;
-    dims[1] = 4;
     matvar[0] = Mat_VarCreate("field1",matvar_class,data_type,2,
                    dims,data,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
     matvar[1] = Mat_VarCreate("field2",matvar_class,data_type,2,
                    dims,data+1,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
-    matvar[2] = Mat_VarCreate("field1",matvar_class,data_type,2,
-                   dims,data+2,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
-    matvar[3] = Mat_VarCreate("field2",matvar_class,data_type,2,
-                   dims,data+3,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
-    matvar[4] = NULL;
-    dims[0] = 2;
-    dims[1] = 1;
-    struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
-                                  matvar,0);
-    Mat_VarWrite(mat,struct_matvar,compression);
+    if ( 0 == dim_append ) {
+        matvar[2] = Mat_VarCreate("field1",matvar_class,data_type,2,
+                       dims,data+2,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
+        matvar[3] = Mat_VarCreate("field2",matvar_class,data_type,2,
+                       dims,data+3,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
+        matvar[4] = NULL;
+        dims[0] = 2;
+        dims[1] = 1;
+        struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
+                                      matvar,0);
+        err = Mat_VarWrite(mat,struct_matvar,compression);
+    } else if ( 1 == dim_append ) {
+        matvar[2] = NULL;
+        dims[0] = 1;
+        dims[1] = 1;
+        struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
+                                      matvar,0);
+        err = Mat_VarWriteAppend(mat,struct_matvar,compression,dim_append);
+        dims[0] = 3;
+        dims[1] = 4;
+        matvar[0] = Mat_VarCreate("field1",matvar_class,data_type,2,
+                       dims,data+2,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
+        matvar[1] = Mat_VarCreate("field2",matvar_class,data_type,2,
+                       dims,data+3,MAT_F_DONT_COPY_DATA | MAT_F_COMPLEX);
+        dims[0] = 1;
+        dims[1] = 1;
+        struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
+                                      matvar,0);
+        err += Mat_VarWriteAppend(mat,struct_matvar,compression,dim_append);
+    }
     Mat_VarFree(struct_matvar);
 
     Mat_Close(mat);
@@ -3968,14 +4008,14 @@ int main (int argc, char *argv[])
             k++;
             if ( NULL == output_name )
                 output_name = "test_write_struct_2d_numeric.mat";
-            err += test_write_struct_2d_numeric(matvar_class,output_name);
+            err += test_write_struct_2d_numeric(matvar_class,output_name,dim_append);
             ntests++;
         } else if ( !strcasecmp(argv[k],"write_struct_complex_2d_numeric") ) {
             k++;
             if ( NULL == output_name )
                 output_name = "test_write_struct_complex_2d_numeric.mat";
             err += test_write_struct_complex_2d_numeric(matvar_class,
-                                                        output_name);
+                                                        output_name,dim_append);
             ntests++;
         } else if ( !strcasecmp(argv[k],"write_empty_struct") ) {
             k++;
