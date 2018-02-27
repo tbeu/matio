@@ -1198,8 +1198,12 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     out->mem_conserve = in->mem_conserve;
     out->compression  = in->compression;
 
-    if ( in->name != NULL && (NULL != (out->name = (char*)malloc(strlen(in->name)+1))) )
-        memcpy(out->name,in->name,strlen(in->name)+1);
+    if ( NULL != in->name ) {
+        size_t len = strlen(in->name) + 1;
+        out->name = (char*)malloc(len);
+        if ( NULL != out->name )
+            memcpy(out->name,in->name,len);
+    }
 
     out->dims = (size_t*)malloc(in->rank*sizeof(*out->dims));
     if ( out->dims != NULL )
