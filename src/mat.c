@@ -2527,7 +2527,7 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
  *
  * Writes the numeric data of the MAT variable stored in matvar to the given
  * MAT file. The variable will be written to the end of the file if it does
- * not yet exist or appended to the exsiting variable.
+ * not yet exist or appended to the existing variable.
  * @ingroup MAT
  * @param mat MAT file to write to
  * @param matvar MAT variable information to write
