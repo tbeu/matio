@@ -1,3 +1,11 @@
+Changes in 1.5.12 (7 March 2018)
+* Updated Mat_VarWriteAppend: Added support to append a variable to a previously written
+  struct array in HDF5 MAT file
+* Fixed bug reading MAT_T_UINT16 encoded character array from HDF5 MAT file
+* Fixed bug reading MAT_T_UTF16 encoded character array from compressed v5 MAT file
+* Fixed bug writing MAT_T_UTF16 encoded character array to HDF5 MAT file
+* Fixed buffer overflow in Mat_VarGetCells/Mat_VarGetStructs
+
 Changes in 1.5.11 (22 October 2017)
 * Added new API function Mat_VarWriteAppend to append a numeric array to a
   previously written variable in HDF5 MAT file
