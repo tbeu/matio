@@ -198,39 +198,6 @@ ClassType2DataType(enum matio_classes class_type)
     }
 }
 
-enum matio_classes
-DataType2ClassType(enum matio_types type)
-{
-    switch ( type ) {
-        case MAT_T_DOUBLE:
-            return MAT_C_DOUBLE;
-        case MAT_T_SINGLE:
-            return MAT_C_SINGLE;
-#ifdef HAVE_MAT_INT64_T
-        case MAT_T_INT64:
-            return MAT_C_INT64;
-#endif
-#ifdef HAVE_MAT_UINT64_T
-        case MAT_T_UINT64:
-            return MAT_C_UINT64;
-#endif
-        case MAT_T_INT32:
-            return MAT_C_INT32;
-        case MAT_T_UINT32:
-            return MAT_C_UINT32;
-        case MAT_T_INT16:
-            return MAT_C_INT16;
-        case MAT_T_UINT16:
-            return MAT_C_UINT16;
-        case MAT_T_INT8:
-            return MAT_C_INT8;
-        case MAT_T_UINT8:
-            return MAT_C_UINT8;
-        default:
-            return MAT_C_EMPTY;
-    }
-}
-
 /*
  *===================================================================
  *                 Public Functions
