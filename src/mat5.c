@@ -4082,7 +4082,7 @@ Read5(mat_t *mat, matvar_t *matvar)
         } \
     } while (0)
 #else
-#define GET_DATA_SLAB2_INT64
+#define GET_DATA_SLAB2_INT64(T)
 #endif /* HAVE_MAT_INT64_T */
 
 #ifdef HAVE_MAT_UINT64_T
@@ -4095,7 +4095,7 @@ Read5(mat_t *mat, matvar_t *matvar)
         } \
     } while (0)
 #else
-#define GET_DATA_SLAB2_UINT64
+#define GET_DATA_SLAB2_UINT64(T)
 #endif /* HAVE_MAT_UINT64_T */
 
 #define GET_DATA_SLAB2_TYPE(T) \
@@ -4167,7 +4167,7 @@ Read5(mat_t *mat, matvar_t *matvar)
         } \
     } while (0)
 #else
-#define GET_DATA_SLABN_INT64
+#define GET_DATA_SLABN_INT64(T)
 #endif /* HAVE_MAT_INT64_T */
 
 #ifdef HAVE_MAT_UINT64_T
@@ -4180,7 +4180,7 @@ Read5(mat_t *mat, matvar_t *matvar)
         } \
     } while (0)
 #else
-#define GET_DATA_SLABN_UINT64
+#define GET_DATA_SLABN_UINT64(T)
 #endif /* HAVE_MAT_UINT64_T */
 
 #define GET_DATA_SLABN_TYPE(T) \

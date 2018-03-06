@@ -102,7 +102,7 @@
         } \
     } while (0)
 #else
-#define READ_DATA_INT64
+#define READ_DATA_INT64(T)
 #endif /* HAVE_MAT_INT64_T */
 
 #ifdef HAVE_MAT_UINT64_T
@@ -114,7 +114,7 @@
         } \
     } while (0)
 #else
-#define READ_DATA_UINT64
+#define READ_DATA_UINT64(T)
 #endif /* HAVE_MAT_UINT64_T */
 
 #define READ_DATA_TYPE(T) \
@@ -200,7 +200,7 @@
         } \
     } while (0)
 #else
-#define READ_COMPRESSED_DATA_INT64
+#define READ_COMPRESSED_DATA_INT64(T)
 #endif /* HAVE_MAT_INT64_T */
 
 #ifdef HAVE_MAT_UINT64_T
@@ -212,7 +212,7 @@
         } \
     } while (0)
 #else
-#define READ_COMPRESSED_DATA_UINT64
+#define READ_COMPRESSED_DATA_UINT64(T)
 #endif /* HAVE_MAT_UINT64_T */
 
 #define READ_COMPRESSED_DATA_TYPE(T) \
