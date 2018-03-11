@@ -453,7 +453,7 @@ clean-local:
 	test ! -f '$(TESTSUITE)' || $(SHELL) '$(TESTSUITE)' --clean
 
 $(TESTSUITE): $(srcdir)/package.m4 $(TESTSUITE_AT)
-	$(AUTOTEST) -I '$(srcdir)' $@.at -o $@.tmp
+	$(AUTOTEST) -I '$(srcdir)' -I '$(tests_dir)' $@.at -o $@.tmp
 	mv $@.tmp $@
 
 $(srcdir)/package.m4: $(top_srcdir)/configure.ac
