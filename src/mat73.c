@@ -192,7 +192,7 @@ DataType2ClassType(enum matio_types type)
     }
 }
 
-static inline hid_t
+static hid_t
 int_2H5T(const unsigned sz)
 {
     if (sz==sizeof(char))
@@ -208,7 +208,7 @@ int_2H5T(const unsigned sz)
     Mat_Error("No support for MAT_C_INT64.");
 }
 
-static inline hid_t
+static hid_t
 uint_2H5T(const unsigned sz)
 {
     if (sz==sizeof(unsigned char))
