@@ -1700,7 +1700,7 @@ Mat_VarGetSize(matvar_t *matvar)
         overhead = 60;
         ptr = 4;
     } else {
-        Matio_Error("Pointers of size %d are not supported by matio.",sizeof(void*)*CHAR_BIT);
+        Mat_Error("Pointers of size %d are not supported by matio.",sizeof(void*)*CHAR_BIT);
     }
 
     if ( matvar->class_type == MAT_C_STRUCT ) {
