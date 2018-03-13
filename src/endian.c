@@ -244,6 +244,7 @@ Mat_doubleSwap( double *a )
             break;
         default:
             Mat_Error("The double type of this architecture (%d) is not handled",sizeof(double));
+    }
             
     *a = tmp.b;
     return *a;
