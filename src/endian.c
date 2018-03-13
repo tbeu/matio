@@ -214,35 +214,37 @@ Mat_floatSwap( float *a )
 double
 Mat_doubleSwap( double *a )
 {
-#ifndef SIZEOF_DOUBLE
-#define SIZEOF_DOUBLE 8
-#endif
-
     union {
-        char   a[SIZEOF_DOUBLE];
+        char   a[sizeof(double)];
         double b;
     } tmp;
 
     tmp.b = *a;
 
-#if SIZEOF_DOUBLE == 4
-    swap( tmp.a[0], tmp.a[3] );
-    swap( tmp.a[1], tmp.a[2] );
-#elif SIZEOF_DOUBLE == 8
-    swap( tmp.a[0], tmp.a[7] );
-    swap( tmp.a[1], tmp.a[6] );
-    swap( tmp.a[2], tmp.a[5] );
-    swap( tmp.a[3], tmp.a[4] );
-#elif SIZEOF_DOUBLE == 16
-    swap( tmp.a[0], tmp.a[15] );
-    swap( tmp.a[1], tmp.a[14] );
-    swap( tmp.a[2], tmp.a[13] );
-    swap( tmp.a[3], tmp.a[12] );
-    swap( tmp.a[4], tmp.a[11] );
-    swap( tmp.a[5], tmp.a[10] );
-    swap( tmp.a[6], tmp.a[9] );
-    swap( tmp.a[7], tmp.a[8] );
-#endif
+    switch (sizeof(double)) {
+        case 4:
+            swap( tmp.a[0], tmp.a[3] );
+            swap( tmp.a[1], tmp.a[2] );
+            break;
+        case 8:
+            swap( tmp.a[0], tmp.a[7] );
+            swap( tmp.a[1], tmp.a[6] );
+            swap( tmp.a[2], tmp.a[5] );
+            swap( tmp.a[3], tmp.a[4] );
+            break;
+        case 16:
+            swap( tmp.a[0], tmp.a[15] );
+            swap( tmp.a[1], tmp.a[14] );
+            swap( tmp.a[2], tmp.a[13] );
+            swap( tmp.a[3], tmp.a[12] );
+            swap( tmp.a[4], tmp.a[11] );
+            swap( tmp.a[5], tmp.a[10] );
+            swap( tmp.a[6], tmp.a[9] );
+            swap( tmp.a[7], tmp.a[8] );
+            break;
+        default:
+            Mat_Error("The double type of this architecture (%d) is not handled",sizeof(double));
+            
     *a = tmp.b;
     return *a;
 }

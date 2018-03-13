@@ -242,9 +242,6 @@
 /* The size of `char', as computed by sizeof. */
 #define SIZEOF_CHAR 1
 
-/* The size of `double', as computed by sizeof. */
-#define SIZEOF_DOUBLE 8
-
 /* The size of `float', as computed by sizeof. */
 #define SIZEOF_FLOAT 4
 

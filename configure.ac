@@ -158,7 +158,6 @@ AC_CHECK_FUNCS([localeconv])
 
 MATIO_CHECK_GETOPT_LONG
 
-AC_CHECK_SIZEOF([double])
 AC_CHECK_SIZEOF([float])
 AC_CHECK_SIZEOF([long long])
 AC_CHECK_SIZEOF([long])
