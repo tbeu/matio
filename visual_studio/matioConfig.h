@@ -239,24 +239,6 @@
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "1.5.12"
 
-/* The size of `char', as computed by sizeof. */
-#define SIZEOF_CHAR 1
-
-/* The size of `float', as computed by sizeof. */
-#define SIZEOF_FLOAT 4
-
-/* The size of `int', as computed by sizeof. */
-#define SIZEOF_INT 4
-
-/* The size of `long', as computed by sizeof. */
-#define SIZEOF_LONG 4
-
-/* The size of `long long', as computed by sizeof. */
-#define SIZEOF_LONG_LONG 8
-
-/* The size of `short', as computed by sizeof. */
-#define SIZEOF_SHORT 2
-
 #if defined(_WIN64)
     /* The size of `void *', as computed by sizeof. */
 #   define SIZEOF_VOID_P 8

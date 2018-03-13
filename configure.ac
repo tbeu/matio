@@ -158,21 +158,15 @@ AC_CHECK_FUNCS([localeconv])
 
 MATIO_CHECK_GETOPT_LONG
 
-AC_CHECK_SIZEOF([float])
-AC_CHECK_SIZEOF([long long])
-AC_CHECK_SIZEOF([long])
-AC_CHECK_SIZEOF([int])
-AC_CHECK_SIZEOF([short])
-AC_CHECK_SIZEOF([char])
 AC_CHECK_SIZEOF([void *])
+
+dnl Only used by the fortran code
 AC_CHECK_SIZEOF([size_t])
 
 dnl
 dnl Substitute size of int, size_t, and void * to matio_t.inc
-SIZEOF_INT="$ac_cv_sizeof_int"
 SIZEOF_SIZE_T="$ac_cv_sizeof_size_t"
 SIZEOF_VOID_P="$ac_cv_sizeof_void_p"
-AC_SUBST(SIZEOF_INT)
 AC_SUBST(SIZEOF_SIZE_T)
 AC_SUBST(SIZEOF_VOID_P)
 
