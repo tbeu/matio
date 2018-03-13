@@ -1691,15 +1691,17 @@ Mat_VarGetSize(matvar_t *matvar)
     int i;
     size_t bytes = 0, overhead = 0, ptr = 0;
 
-#if defined(_WIN64) || (defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 8)) || (defined(SIZEOF_VOID_P) && (SIZEOF_VOID_P == 8))
-    /* 112 bytes cell/struct overhead for 64-bit system */
-    overhead = 112;
-    ptr = 8;
-#elif defined(_WIN32) || (defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 4)) || (defined(SIZEOF_VOID_P) && (SIZEOF_VOID_P == 4))
-    /* 60 bytes cell/struct overhead for 32-bit system */
-    overhead = 60;
-    ptr = 4;
-#endif
+    if (sizeof(void*)==8) {
+        /* 112 bytes cell/struct overhead for 64-bit system */
+        overhead = 112;
+        ptr = 8;
+    } else if (sizeof(void*)==4) {
+        /* 60 bytes cell/struct overhead for 32-bit system */
+        overhead = 60;
+        ptr = 4;
+    } else {
+        Matio_Error("Pointers of size %d are not supported by matio.",sizeof(void*)*CHAR_BIT);
+    }
 
     if ( matvar->class_type == MAT_C_STRUCT ) {
         int nfields = matvar->internal->num_fields;
@@ -1741,13 +1743,7 @@ Mat_VarGetSize(matvar_t *matvar)
             bytes = sparse->ndata*Mat_SizeOf(matvar->data_type);
             if ( matvar->isComplex )
                 bytes *= 2;
-#if defined(_WIN64) || (defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 8)) || (defined(SIZEOF_VOID_P) && (SIZEOF_VOID_P == 8))
-            /* 8 byte integers for 64-bit system (as displayed in MATLAB (x64) whos) */
-            bytes += (sparse->nir + sparse->njc)*8;
-#elif defined(_WIN32) || (defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 4)) || (defined(SIZEOF_VOID_P) && (SIZEOF_VOID_P == 4))
-            /* 4 byte integers for 32-bit system (as defined by mat_sparse_t) */
-            bytes += (sparse->nir + sparse->njc)*4;
-#endif
+            bytes += (sparse->nir + sparse->njc)*sizeof(void*);
             if ( sparse->ndata == 0 || sparse->nir == 0 || sparse->njc == 0 )
                 bytes += matvar->isLogical ? 1 : 8;
         }
