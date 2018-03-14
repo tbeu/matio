@@ -1,19 +1,28 @@
-/* src/matioConfig.h.in.  Generated from configure.ac by autoheader.  */
-
-/* Predefined possible va_copy() implementation (id: ASP) */
-#define __VA_COPY_USE_ASP(d, s) do { *(d) = *(s); } while (0)
-
-/* Predefined possible va_copy() implementation (id: ASS) */
-#define __VA_COPY_USE_ASS(d, s) do { (d) = (s); } while (0)
-
-/* Predefined possible va_copy() implementation (id: C99) */
-#define __VA_COPY_USE_C99(d, s) va_copy((d), (s))
-
-/* Predefined possible va_copy() implementation (id: CPP) */
-#define __VA_COPY_USE_CPP(d, s) memcpy((void *)(d), (void *)(s)), sizeof(*(s))
-
-/* Predefined possible va_copy() implementation (id: CPS) */
-#define __VA_COPY_USE_CPS(d, s) memcpy((void *)&(d), (void *)&(s)), sizeof((s))
+/*
+ * Copyright (c) 2012-2018, Christopher C. Hulbert
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 /* Debug enabled */
 #undef DEBUG
@@ -21,14 +30,19 @@
 /* Extended sparse matrix data types */
 #undef EXTENDED_SPARSE
 
-/* Predefined possible va_copy() implementation (id: GCB) */
-#define __VA_COPY_USE_GCB(d, s) __builtin_va_copy((d), (s))
+/* Define to dummy `main' function (if any) required to link to the Fortran
+   libraries. */
+#undef FC_DUMMY_MAIN
 
-/* Predefined possible va_copy() implementation (id: GCH) */
-#define __VA_COPY_USE_GCH(d, s) __va_copy((d), (s))
+/* Define if F77 and FC dummy `main' functions are identical. */
+#undef FC_DUMMY_MAIN_EQ_F77
 
-/* Predefined possible va_copy() implementation (id: GCM) */
-#define __VA_COPY_USE_GCM(d, s) VA_COPY((d), (s))
+/* Define to a macro mangling the given C identifier (in lower and upper
+   case), which must not contain underscores, for linking with Fortran. */
+#undef FC_FUNC
+
+/* As FC_FUNC, but for C identifiers containing underscores. */
+#undef FC_FUNC_
 
 /* Define to 1 if you have the `asprintf' function. */
 #undef HAVE_ASPRINTF
@@ -57,7 +71,7 @@
 /* Define to 1 if the system has the type `long double'. */
 #undef HAVE_LONG_DOUBLE
 
-/* Define to 1 if the system has the type 'long long int'. */
+/* Define to 1 if the system has the type `long long int'. */
 #undef HAVE_LONG_LONG_INT
 
 /* Have MAT int16 */
@@ -72,16 +86,16 @@
 /* Have MAT int8 */
 #undef HAVE_MAT_INT8_T
 
-/* Have MAT int16 */
+/* Have MAT uint16 */
 #undef HAVE_MAT_UINT16_T
 
-/* Have MAT int32 */
+/* Have MAT uint32 */
 #undef HAVE_MAT_UINT32_T
 
-/* Have MAT int64 */
+/* Have MAT uint64 */
 #undef HAVE_MAT_UINT64_T
 
-/* Have MAT int8 */
+/* Have MAT uint8 */
 #undef HAVE_MAT_UINT8_T
 
 /* Define to 1 if you have the <memory.h> header file. */
@@ -105,16 +119,16 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Matio has access to strings.h */
+/* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if `decimal_point' is a member of `struct lconv'. */
+/* Define to 1 if `decimal_point' is member of `struct lconv'. */
 #undef HAVE_STRUCT_LCONV_DECIMAL_POINT
 
-/* Define to 1 if `thousands_sep' is a member of `struct lconv'. */
+/* Define to 1 if `thousands_sep' is member of `struct lconv'. */
 #undef HAVE_STRUCT_LCONV_THOUSANDS_SEP
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
@@ -129,10 +143,10 @@
 /* Define to 1 if the system has the type `uintptr_t'. */
 #undef HAVE_UINTPTR_T
 
-/* Matio has access to unistd.h */
+/* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if the system has the type 'unsigned long long int'. */
+/* Define to 1 if the system has the type `unsigned long long int'. */
 #undef HAVE_UNSIGNED_LONG_LONG_INT
 
 /* Define to 1 if you have the <varargs.h> header file. */
@@ -141,8 +155,7 @@
 /* Define to 1 if you have the `vasprintf' function. */
 #undef HAVE_VASPRINTF
 
-/* Define if va_copy() macro exists (and no fallback implementation is
-   required) */
+/* Define to 1 if you have the `va_copy' function or macro. */
 #undef HAVE_VA_COPY
 
 /* Define to 1 if you have a C99 compliant `vsnprintf' function. */
@@ -151,41 +164,21 @@
 /* Have zlib */
 #undef HAVE_ZLIB
 
+/* Define to 1 if you have the `__va_copy' function or macro. */
+#undef HAVE___VA_COPY
+
 /* OS is Linux */
 #undef LINUX
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
 #undef LT_OBJDIR
 
 /* MAT v7.3 file support */
 #undef MAT73
 
-/* Matio has access to inttypes.h */
-#undef MATIO_HAVE_INTTYPES_H
-
-/* Matio has access to stdint.h */
-#undef MATIO_HAVE_STDINT_H
-
-/* Matio major version number */
-#undef MATIO_MAJOR_VERSION
-
-/* Matio minor version number */
-#undef MATIO_MINOR_VERSION
-
 /* Platform */
 #undef MATIO_PLATFORM
-
-/* Matio release level number */
-#undef MATIO_RELEASE_LEVEL
-
-/* Matio version number */
-#undef MATIO_VERSION
-
-/* Matio version number */
-#undef MATIO_VERSION_STR
-
-/* Default file format */
-#undef MAT_FT_DEFAULT
 
 /* Debug disabled */
 #undef NODEBUG
@@ -211,6 +204,27 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* The size of `char', as computed by sizeof. */
+#undef SIZEOF_CHAR
+
+/* The size of `double', as computed by sizeof. */
+#undef SIZEOF_DOUBLE
+
+/* The size of `float', as computed by sizeof. */
+#undef SIZEOF_FLOAT
+
+/* The size of `int', as computed by sizeof. */
+#undef SIZEOF_INT
+
+/* The size of `long', as computed by sizeof. */
+#undef SIZEOF_LONG
+
+/* The size of `long long', as computed by sizeof. */
+#undef SIZEOF_LONG_LONG
+
+/* The size of `short', as computed by sizeof. */
+#undef SIZEOF_SHORT
+
 /* The size of `size_t', as computed by sizeof. */
 #undef SIZEOF_SIZE_T
 
@@ -226,56 +240,5 @@
 /* Version number of package */
 #undef VERSION
 
-/* OS is CygWin */
-#undef WINNT
-
 /* Z prefix */
 #undef Z_PREFIX
-
-/* Optional va_copy() implementation activation */
-#ifndef HAVE_VA_COPY
-#define va_copy(d, s) __VA_COPY_USE(d, s)
-#endif
-
-
-/* Define to id of used va_copy() implementation */
-#undef __VA_COPY_USE
-
-/* int16 type */
-#undef _mat_int16_t
-
-/* int32 type */
-#undef _mat_int32_t
-
-/* int64 type */
-#undef _mat_int64_t
-
-/* int8 type */
-#undef _mat_int8_t
-
-/* int16 type */
-#undef _mat_uint16_t
-
-/* int32 type */
-#undef _mat_uint32_t
-
-/* int64 type */
-#undef _mat_uint64_t
-
-/* int8 type */
-#undef _mat_uint8_t
-
-/* Define to the widest signed integer type if <stdint.h> and <inttypes.h> do
-   not define. */
-#undef intmax_t
-
-/* Define to `unsigned int' if <sys/types.h> does not define. */
-#undef size_t
-
-/* Define to the widest unsigned integer type if <stdint.h> and <inttypes.h>
-   do not define. */
-#undef uintmax_t
-
-/* Define to the type of an unsigned integer type wide enough to hold a
-   pointer, if such a type exists, and if the system does not define it. */
-#undef uintptr_t
