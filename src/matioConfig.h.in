@@ -1,0 +1,281 @@
+/* src/matioConfig.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Predefined possible va_copy() implementation (id: ASP) */
+#define __VA_COPY_USE_ASP(d, s) do { *(d) = *(s); } while (0)
+
+/* Predefined possible va_copy() implementation (id: ASS) */
+#define __VA_COPY_USE_ASS(d, s) do { (d) = (s); } while (0)
+
+/* Predefined possible va_copy() implementation (id: C99) */
+#define __VA_COPY_USE_C99(d, s) va_copy((d), (s))
+
+/* Predefined possible va_copy() implementation (id: CPP) */
+#define __VA_COPY_USE_CPP(d, s) memcpy((void *)(d), (void *)(s)), sizeof(*(s))
+
+/* Predefined possible va_copy() implementation (id: CPS) */
+#define __VA_COPY_USE_CPS(d, s) memcpy((void *)&(d), (void *)&(s)), sizeof((s))
+
+/* Debug enabled */
+#undef DEBUG
+
+/* Extended sparse matrix data types */
+#undef EXTENDED_SPARSE
+
+/* Predefined possible va_copy() implementation (id: GCB) */
+#define __VA_COPY_USE_GCB(d, s) __builtin_va_copy((d), (s))
+
+/* Predefined possible va_copy() implementation (id: GCH) */
+#define __VA_COPY_USE_GCH(d, s) __va_copy((d), (s))
+
+/* Predefined possible va_copy() implementation (id: GCM) */
+#define __VA_COPY_USE_GCM(d, s) VA_COPY((d), (s))
+
+/* Define to 1 if you have the `asprintf' function. */
+#undef HAVE_ASPRINTF
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Have HDF5 */
+#undef HAVE_HDF5
+
+/* Define to 1 if the system has the type `intmax_t'. */
+#undef HAVE_INTMAX_T
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `m' library (-lm). */
+#undef HAVE_LIBM
+
+/* Define to 1 if you have the `localeconv' function. */
+#undef HAVE_LOCALECONV
+
+/* Define to 1 if you have the <locale.h> header file. */
+#undef HAVE_LOCALE_H
+
+/* Define to 1 if the system has the type `long double'. */
+#undef HAVE_LONG_DOUBLE
+
+/* Define to 1 if the system has the type 'long long int'. */
+#undef HAVE_LONG_LONG_INT
+
+/* Have MAT int16 */
+#undef HAVE_MAT_INT16_T
+
+/* Have MAT int32 */
+#undef HAVE_MAT_INT32_T
+
+/* Have MAT int64 */
+#undef HAVE_MAT_INT64_T
+
+/* Have MAT int8 */
+#undef HAVE_MAT_INT8_T
+
+/* Have MAT int16 */
+#undef HAVE_MAT_UINT16_T
+
+/* Have MAT int32 */
+#undef HAVE_MAT_UINT32_T
+
+/* Have MAT int64 */
+#undef HAVE_MAT_UINT64_T
+
+/* Have MAT int8 */
+#undef HAVE_MAT_UINT8_T
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if the system has the type `ptrdiff_t'. */
+#undef HAVE_PTRDIFF_T
+
+/* Define to 1 if you have a C99 compliant `snprintf' function. */
+#undef HAVE_SNPRINTF
+
+/* Define to 1 if you have the <stdarg.h> header file. */
+#undef HAVE_STDARG_H
+
+/* Define to 1 if you have the <stddef.h> header file. */
+#undef HAVE_STDDEF_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Matio has access to strings.h */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if `decimal_point' is a member of `struct lconv'. */
+#undef HAVE_STRUCT_LCONV_DECIMAL_POINT
+
+/* Define to 1 if `thousands_sep' is a member of `struct lconv'. */
+#undef HAVE_STRUCT_LCONV_THOUSANDS_SEP
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if the system has the type `uintmax_t'. */
+#undef HAVE_UINTMAX_T
+
+/* Define to 1 if the system has the type `uintptr_t'. */
+#undef HAVE_UINTPTR_T
+
+/* Matio has access to unistd.h */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if the system has the type 'unsigned long long int'. */
+#undef HAVE_UNSIGNED_LONG_LONG_INT
+
+/* Define to 1 if you have the <varargs.h> header file. */
+#undef HAVE_VARARGS_H
+
+/* Define to 1 if you have the `vasprintf' function. */
+#undef HAVE_VASPRINTF
+
+/* Define if va_copy() macro exists (and no fallback implementation is
+   required) */
+#undef HAVE_VA_COPY
+
+/* Define to 1 if you have a C99 compliant `vsnprintf' function. */
+#undef HAVE_VSNPRINTF
+
+/* Have zlib */
+#undef HAVE_ZLIB
+
+/* OS is Linux */
+#undef LINUX
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#undef LT_OBJDIR
+
+/* MAT v7.3 file support */
+#undef MAT73
+
+/* Matio has access to inttypes.h */
+#undef MATIO_HAVE_INTTYPES_H
+
+/* Matio has access to stdint.h */
+#undef MATIO_HAVE_STDINT_H
+
+/* Matio major version number */
+#undef MATIO_MAJOR_VERSION
+
+/* Matio minor version number */
+#undef MATIO_MINOR_VERSION
+
+/* Platform */
+#undef MATIO_PLATFORM
+
+/* Matio release level number */
+#undef MATIO_RELEASE_LEVEL
+
+/* Matio version number */
+#undef MATIO_VERSION
+
+/* Matio version number */
+#undef MATIO_VERSION_STR
+
+/* Default file format */
+#undef MAT_FT_DEFAULT
+
+/* Debug disabled */
+#undef NODEBUG
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* The size of `size_t', as computed by sizeof. */
+#undef SIZEOF_SIZE_T
+
+/* The size of `void *', as computed by sizeof. */
+#undef SIZEOF_VOID_P
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* OS is Solaris */
+#undef SUN
+
+/* Version number of package */
+#undef VERSION
+
+/* OS is CygWin */
+#undef WINNT
+
+/* Z prefix */
+#undef Z_PREFIX
+
+/* Optional va_copy() implementation activation */
+#ifndef HAVE_VA_COPY
+#define va_copy(d, s) __VA_COPY_USE(d, s)
+#endif
+
+
+/* Define to id of used va_copy() implementation */
+#undef __VA_COPY_USE
+
+/* int16 type */
+#undef _mat_int16_t
+
+/* int32 type */
+#undef _mat_int32_t
+
+/* int64 type */
+#undef _mat_int64_t
+
+/* int8 type */
+#undef _mat_int8_t
+
+/* int16 type */
+#undef _mat_uint16_t
+
+/* int32 type */
+#undef _mat_uint32_t
+
+/* int64 type */
+#undef _mat_uint64_t
+
+/* int8 type */
+#undef _mat_uint8_t
+
+/* Define to the widest signed integer type if <stdint.h> and <inttypes.h> do
+   not define. */
+#undef intmax_t
+
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+#undef size_t
+
+/* Define to the widest unsigned integer type if <stdint.h> and <inttypes.h>
+   do not define. */
+#undef uintmax_t
+
+/* Define to the type of an unsigned integer type wide enough to hold a
+   pointer, if such a type exists, and if the system does not define it. */
+#undef uintptr_t
