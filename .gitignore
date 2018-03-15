@@ -27,6 +27,7 @@ aclocal.m4
 config/lt*
 config/libtool.m4
 config/texinfo.tex
+config/compile
 test/package.m4
 test/testsuite
 
