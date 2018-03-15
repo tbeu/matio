@@ -142,7 +142,7 @@ dnl
 dnl  Headers
 dnl
 
-AC_CONFIG_HEADERS([src/matioConfig.h src/matio_pubconf.h])
+AC_CONFIG_HEADERS([src/matioConfig.h src/matio_pubconf.h src/snprintf_private.h])
 AC_STDC_HEADERS
 AC_CHECK_HEADERS_ONCE([stdarg.h])
 AC_CHECK_HEADERS_ONCE([varargs.h])

@@ -27,9 +27,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#if defined(HAVE_STRINGS_H)
-#include <strings.h>
-#endif
 #include "matio.h"
 #include "matio_private.h"
 

@@ -24,26 +24,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Extended sparse matrix data types */
-#undef EXTENDED_SPARSE
+/* Define to 1 if you have the `asprintf' function. */
+#undef HAVE_ASPRINTF
 
-/* As FC_FUNC, but for C identifiers containing underscores. */
-#undef FC_FUNC_
+/* Define to 1 if the system has the type `intmax_t'. */
+#undef HAVE_INTMAX_T
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Have MAT int64 */
-#undef HAVE_MAT_INT64_T
+/* Define to 1 if you have the `localeconv' function. */
+#undef HAVE_LOCALECONV
 
-/* Have MAT uint64 */
-#undef HAVE_MAT_UINT64_T
+/* Define to 1 if you have the <locale.h> header file. */
+#undef HAVE_LOCALE_H
+
+/* Define to 1 if the system has the type `long double'. */
+#undef HAVE_LONG_DOUBLE
+
+/* Define to 1 if the system has the type `long long int'. */
+#undef HAVE_LONG_LONG_INT
+
+/* Define to 1 if the system has the type `ptrdiff_t'. */
+#undef HAVE_PTRDIFF_T
 
 /* Define to 1 if you have a C99 compliant `snprintf' function. */
 #undef HAVE_SNPRINTF
 
+/* Define to 1 if you have the <stdarg.h> header file. */
+#undef HAVE_STDARG_H
+
+/* Define to 1 if you have the <stddef.h> header file. */
+#undef HAVE_STDDEF_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if the system has the type `uintmax_t'. */
+#undef HAVE_UINTMAX_T
+
+/* Define to 1 if the system has the type `uintptr_t'. */
+#undef HAVE_UINTPTR_T
 
 /* Define to 1 if the system has the type `unsigned long long int'. */
 #undef HAVE_UNSIGNED_LONG_LONG_INT
@@ -68,6 +92,3 @@
 
 /* Platform */
 #undef MATIO_PLATFORM
-
-/* Define to the version of this package. */
-#undef PACKAGE_VERSION

@@ -39,7 +39,6 @@
 #include "matio_private.h"
 
 #if defined(MAT73) && MAT73
-#if HAVE_HDF5
 
 #include "mat73.h"
 
@@ -2684,5 +2683,4 @@ Mat_VarWriteAppend73(mat_t *mat,matvar_t *matvar,int compress,int dim)
     return Mat_VarWriteAppendNext73(id,matvar,matvar->name,&(mat->refs_id),dim);
 }
 
-#endif
 #endif

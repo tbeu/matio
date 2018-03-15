@@ -162,7 +162,7 @@
  * <http://www.jhweiss.de/software/snprintf.html>.
  */
 
-#include "matioConfig.h"
+#include "snprintf_private.h"
 
 #if !HAVE_SNPRINTF || !HAVE_VSNPRINTF || !HAVE_ASPRINTF || !HAVE_VASPRINTF
 #include <stdio.h>  /* For NULL, size_t, vsnprintf(3), and vasprintf(3). */
