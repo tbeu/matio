@@ -240,13 +240,9 @@
 #define PACKAGE_VERSION "1.5.12"
 
 #if defined(_WIN64)
-    /* The size of `void *', as computed by sizeof. */
-#   define SIZEOF_VOID_P 8
     /* The size of `size_t', as computed by sizeof. */
 #    define SIZEOF_SIZE_T 8
 #elif defined(_WIN32)
-    /* The size of `void *', as computed by sizeof. */
-#   define SIZEOF_VOID_P 4
     /* The size of `size_t', as computed by sizeof. */
 #    define SIZEOF_SIZE_T 4
 #endif

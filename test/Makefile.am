@@ -417,6 +417,7 @@ CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
                     HAVE_UINT64=$(HAVE_UINT64) HAVE_INT64=$(HAVE_INT64) \
                     EXTENDED_SPARSE=$(EXTENDED_SPARSE) \
                     COMPRESSION_ZLIB=$(COMPRESSION_ZLIB) \
+					SIZEOF_VOID_P=$(SIZEOF_VOID_P) \
                     LIBTOOL="$(top_builddir)/libtool"
 
 EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4 \
