@@ -25,7 +25,7 @@
 AT_SETUP([Copy variables])
 AT_KEYWORDS([copy])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_SKIP_IF([SIZEOF_VOID_P = 4])
+AT_SKIP_IF([! test $SIZEOF_VOID_P -eq 4])
 AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/matio_test_cases_compressed_le.mat],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-mat_copy-5_32.out expout
           $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],[expout],[])
@@ -34,7 +34,7 @@ AT_CLEANUP
 AT_SETUP([Copy variables])
 AT_KEYWORDS([copy])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_SKIP_IF([SIZEOF_VOID_P = 8])
+AT_SKIP_IF([! test $SIZEOF_VOID_P -eq 8])
 AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/matio_test_cases_compressed_le.mat],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-mat_copy-5.out expout
           $builddir/../tools/matdump -f whos -h -d test_mat_copy.mat],[0],[expout],[])
@@ -146,7 +146,7 @@ AT_CLEANUP
 AT_SETUP([Copy large struct])
 AT_KEYWORDS([copy large_struct])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_SKIP_IF([SIZEOF_VOID_P = 4])
+AT_SKIP_IF([! test $SIZEOF_VOID_P -eq 4])
 AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/large_struct_compressed_le.mat],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-large_struct_compressed_32.out expout
           $builddir/../tools/matdump -f whos -d test_mat_copy.mat],[0],[expout],[])
@@ -155,7 +155,7 @@ AT_CLEANUP
 AT_SETUP([Copy large struct])
 AT_KEYWORDS([copy large_struct])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_SKIP_IF([SIZEOF_VOID_P = 8])
+AT_SKIP_IF([! test $SIZEOF_VOID_P -eq 8])
 AT_CHECK([$builddir/test_mat -v 5 -z copy $srcdir/datasets/large_struct_compressed_le.mat],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-large_struct_compressed.out expout
           $builddir/../tools/matdump -f whos -d test_mat_copy.mat],[0],[expout],[])
