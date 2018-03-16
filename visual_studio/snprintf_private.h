@@ -1,4 +1,4 @@
-m matio /*
+/*
  * Copyright (c) 2012-2018, Christopher C. Hulbert
  * All rights reserved.
  *
