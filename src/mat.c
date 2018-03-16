@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <limits.h>
 #if HAVE_INTTYPES_H
 #   define __STDC_FORMAT_MACROS
 #   include <inttypes.h>
