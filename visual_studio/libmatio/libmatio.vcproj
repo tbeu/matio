@@ -420,6 +420,10 @@
 				RelativePath="..\matioConfig.h"
 				>
 			</File>
+			<File
+				RelativePath="..\snprintf_private.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
