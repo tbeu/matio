@@ -63,6 +63,12 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
+/* Define to 1 if `decimal_point' is member of `struct lconv'. */
+#undef HAVE_STRUCT_LCONV_DECIMAL_POINT
+
+/* Define to 1 if `thousands_sep' is member of `struct lconv'. */
+#undef HAVE_STRUCT_LCONV_THOUSANDS_SEP
+
 /* Define to 1 if the system has the type `uintmax_t'. */
 #undef HAVE_UINTMAX_T
 
@@ -81,14 +87,5 @@
 /* Define to 1 if you have a C99 compliant `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
 
-/* Have zlib */
-#undef HAVE_ZLIB
-
 /* Define to 1 if you have the `__va_copy' function or macro. */
 #undef HAVE___VA_COPY
-
-/* MAT v7.3 file support */
-#undef MAT73
-
-/* Platform */
-#undef MATIO_PLATFORM
