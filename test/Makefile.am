@@ -413,10 +413,17 @@ else
 EXTENDED_SPARSE = 0
 endif
 
+if IS_WIN32
+IS_WIN32 = 1
+else
+IS_WIN32 = 0
+endif
+
 CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
                     HAVE_UINT64=$(HAVE_UINT64) HAVE_INT64=$(HAVE_INT64) \
                     EXTENDED_SPARSE=$(EXTENDED_SPARSE) \
                     COMPRESSION_ZLIB=$(COMPRESSION_ZLIB) \
+                    IS_WIN32=$(IS_WIN32) \
                     LIBTOOL="$(top_builddir)/libtool"
 
 EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4 \

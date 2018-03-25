@@ -52,7 +52,7 @@ seq () {
     done
 }
 
-if test "$IS_WIN32" = "yes"; then
+if test $IS_WIN32 -eq 1; then
     pwd () {
         command pwd -W "$@"
     }

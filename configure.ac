@@ -300,7 +300,7 @@ else
     AC_DEFINE_UNQUOTED([MAT73],[1],[MAT v7.3 file support])
     mat73=yes
 fi
-AM_CONDITIONAL(MAT73, test "x$mat73" = "xyes")
+AM_CONDITIONAL([MAT73], [test "x$mat73" = "xyes"])
 
 MATIO_CHECK_DEFAULT_FILE_VERSION
 
@@ -319,7 +319,7 @@ else
     AC_MSG_RESULT(yes)
     AC_DEFINE_UNQUOTED([EXTENDED_SPARSE],[],[Extended sparse matrix data types])
 fi
-AM_CONDITIONAL(EXTENDED_SPARSE, test "x$extended_sparse" = "xyes")
+AM_CONDITIONAL([EXTENDED_SPARSE], [test "x$extended_sparse" = "xyes"])
 
 linux="no"
 winnt="no"
@@ -342,9 +342,17 @@ case $build_os in
     AC_DEFINE_UNQUOTED([SUN],[],[OS is Solaris]);;
 esac
 
-AM_CONDITIONAL(LINUX, test "x$linux" = "xyes")
-AM_CONDITIONAL(WINNT, test "x$winnt" = "xyes")
-AM_CONDITIONAL(SUN,   test "x$sun"   = "xyes")
+AM_CONDITIONAL([LINUX], [test "x$linux" = "xyes"])
+AM_CONDITIONAL([WINNT], [test "x$winnt" = "xyes"])
+AM_CONDITIONAL([SUN],   [test "x$sun"   = "xyes"])
+
+winnt="no"
+case "${host_os}" in
+cygwin*|mingw*)
+    winnt=yes;;
+esac
+
+AM_CONDITIONAL([IS_WIN32], [test "x$winnt" = "xyes"])
 
 # Initialize the test suite.
 AC_CONFIG_TESTDIR([test])
