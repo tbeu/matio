@@ -16,17 +16,22 @@
 .libs
 Makefile
 Makefile.in
+matio.pc
 config.log
 config.status
 configure
 libtool
 src/stamp-h1
+src/matio_pubconf.h
+src/stamp-h2
 src/matioConfig.h
 autom4te.cache/
 aclocal.m4
+config/compile
 config/lt*
 config/libtool.m4
 config/texinfo.tex
+test/atconfig
 test/package.m4
 test/testsuite
 
