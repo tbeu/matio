@@ -148,13 +148,16 @@ Table of Contents
         2.2.3 Visual Studio
             Visual Studio solutions are provided as visual_studio/matio_vs2008.sln
             for VS2008 and as visual_studio/matio.sln for VS2010 (and newer).
-            The solutions are set up to build a DLL of the matio library
-            (libmatio.dll) and matdump tool and assume HDF5 is available in the
-            directory specified by the HDF5_DIR environment variable. It is
-            assumed that the shared libraries of HDF5 (and zlib) are available.
-            If the static libraries of HDF5 (and zlib) are installed/built the
-            macro 'H5_BUILT_AS_STATIC_LIB' needs to be defined (instead of
-            'H5_BUILT_AS_DYNAMIC_LIB').
+            The Debug and Release configurations of both solutions are set up to
+            build a DLL of the matio library (libmatio.dll) and the matdump tool
+            and assume HDF5 is available in the directory specified by the
+            HDF5_DIR environment variable. It is assumed that the shared libraries
+            of HDF5 (and zlib) are available. If the static libraries of HDF5 (and
+            zlib) are installed/built the macro 'H5_BUILT_AS_STATIC_LIB' needs to
+            be defined (instead of 'H5_BUILT_AS_DYNAMIC_LIB'). Furthermore, the
+            Release Lib configuration of the VS2010 solution is set up to build a
+            static LIB of the matio library (libmatio.lib) and assumes that the
+            static libraries of HDF5 (and zlib) are installed/built.
 
         2.2.4 Testsuite
             A testsuite is available when building with the GNU autotools. To
