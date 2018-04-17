@@ -234,7 +234,7 @@ main(int argc,char **argv)
     if ( NULL == matvar ) {
         fprintf(stderr,"Error creating variable for 'x'\n");
     } else {
-        Mat_VarWrite(matfp,matvar,COMPRESSION_NONE);
+        Mat_VarWrite(matfp,matvar,MAT_COMPRESSION_NONE);
         Mat_VarFree(matvar);
     }
 
@@ -242,7 +242,7 @@ main(int argc,char **argv)
     if ( NULL == matvar ) {
         fprintf(stderr,"Error creating variable for 'y'\n");
     } else {
-        Mat_VarWrite(matfp,matvar,COMPRESSION_NONE);
+        Mat_VarWrite(matfp,matvar,MAT_COMPRESSION_NONE);
         Mat_VarFree(matvar);
     }
 
@@ -251,7 +251,7 @@ main(int argc,char **argv)
     if ( NULL == matvar ) {
         fprintf(stderr,"Error creating variable for 'z'\n");
     } else {
-        Mat_VarWrite(matfp,matvar,COMPRESSION_NONE);
+        Mat_VarWrite(matfp,matvar,MAT_COMPRESSION_NONE);
         Mat_VarFree(matvar);
     }
 
