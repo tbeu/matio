@@ -1,0 +1,22 @@
+clone_depth: 5
+environment:
+  matrix:
+  - configuration: Release
+    platform: Win32
+    HDF5_DIR: C:\projects\HDF5-1.8.13-win32
+before_build:
+- cmd: >-
+    appveyor DownloadFile https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-shared.zip
+
+    7z x -y hdf5-1.8.13-win32-VS2010-shared.zip | FIND "ing archive"
+
+    7z x -oC:\projects\HDF5-1.8.13-win32 -y hdf5-1.8.13\HDF5-1.8.13-win32.exe | FIND "ing archive"
+build:
+  project: visual_studio/matio.sln
+  verbosity: normal
+test: off
+artifacts:
+- path: visual_studio\Release\libmatio.lib
+  name: libmatio.lib
+- path: visual_studio\Release\libmatio.dll
+  name: libmatio.dll
