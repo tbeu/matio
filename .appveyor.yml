@@ -1,22 +1,68 @@
 clone_depth: 5
+
+platform:
+  - Win32
+  - x64
+
 environment:
   matrix:
   - configuration: Release
-    platform: Win32
-    HDF5_DIR: C:\projects\HDF5-1.8.13-win32
+  - configuration: Release Lib
+
+# # To allow remote connection to appveyor
+# init:
+#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 before_build:
-- cmd: >-
-    appveyor DownloadFile https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-shared.zip
+- ps: >-
+      If ($env:Platform -Match "Win32") {
+        $env:PCRE_PLATFORM="Win32"
+        $env:VCVARS_PLATFORM="x86"
+        $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win32"
+        If ($env:configuration -Match "Release Lib") {
+          Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-static.zip'
+          7z x -y hdf5-1.8.13-win32-VS2010-static.zip
+        } Else {
+          Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-shared.zip'
+          7z x -y hdf5-1.8.13-win32-VS2010-shared.zip
+        }
+        7z x -oC:\projects\HDF5-1.8.13-win32 -y hdf5-1.8.13\HDF5-1.8.13-win32.exe
+      } Else {
+        $env:PCRE_PLATFORM="x64"
+        $env:VCVARS_PLATFORM="amd64"
+        $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win64"
+        If ($env:configuration -Match "Release Lib") {
+          Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win64-VS2010-static.zip'
+          7z x -y hdf5-1.8.13-win64-VS2010-static.zip
+        } Else {
+          Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win64-VS2010-shared.zip'
+          7z x -y hdf5-1.8.13-win64-VS2010-shared.zip
+        }
+        7z x -oC:\projects\HDF5-1.8.13-win64 -y hdf5-1.8.13\HDF5-1.8.13-win64.exe
+      }
+- call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %VCVARS_PLATFORM%
 
-    7z x -y hdf5-1.8.13-win32-VS2010-shared.zip | FIND "ing archive"
-
-    7z x -oC:\projects\HDF5-1.8.13-win32 -y hdf5-1.8.13\HDF5-1.8.13-win32.exe | FIND "ing archive"
 build:
   project: visual_studio/matio.sln
   verbosity: normal
+
+after_build:
+- cmd: >-
+    7z a myapp.zip %APPVEYOR_BUILD_FOLDER%\visual_studio
+
 test: off
+
 artifacts:
-- path: visual_studio\Release\libmatio.lib
-  name: libmatio.lib
-- path: visual_studio\Release\libmatio.dll
-  name: libmatio.dll
+  - path: visual_studio\Release\libmatio.lib
+    name: libmatio.lib
+  - path: visual_studio\Release\libmatio.dll
+    name: libmatio.dll
+  - path: visual_studio\matio_pubconf.h
+    name: matio_pubconf.h
+  - path: src\matio.h
+    name: matio.h
+  - path: myapp.zip
+    name: MyApp
+
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
