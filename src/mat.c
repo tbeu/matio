@@ -1269,7 +1269,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     } else if ( (in->data != NULL) && (in->class_type == MAT_C_STRUCT) ) {
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
-            int nfields = in->nbytes / in->data_size;
+            size_t nfields = in->nbytes / in->data_size;
             matvar_t **infields  = (matvar_t **)in->data;
             matvar_t **outfields = (matvar_t **)out->data;
             for ( i = 0; i < nfields; i++ ) {
@@ -1279,7 +1279,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     } else if ( (in->data != NULL) && (in->class_type == MAT_C_CELL) ) {
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
-            int ncells = in->nbytes / in->data_size;
+            size_t ncells = in->nbytes / in->data_size;
             matvar_t **incells  = (matvar_t **)in->data;
             matvar_t **outcells = (matvar_t **)out->data;
             for ( i = 0; i < ncells; i++ ) {

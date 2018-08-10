@@ -1346,7 +1346,7 @@ ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
  */
 int
 ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type,size_t len)
 {
     int nBytes = 0;
     unsigned int data_size;
