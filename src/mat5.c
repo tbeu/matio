@@ -41,9 +41,9 @@
 #include "mat5.h"
 
 /** Get type from tag */
-#define TYPE_FROM_TAG(a)          (enum matio_types)((a) & 0x000000ff)
+#define TYPE_FROM_TAG(a)          ( ((a) & 0x000000ff) <= MAT_T_FUNCTION ) ? (enum matio_types)((a) & 0x000000ff) : MAT_T_UNKNOWN
 /** Get class from array flag */
-#define CLASS_FROM_ARRAY_FLAGS(a) (enum matio_classes)((a) & 0x000000ff)
+#define CLASS_FROM_ARRAY_FLAGS(a) ( ((a) & 0x000000ff) <= MAT_C_OPAQUE ) ? ((enum matio_classes)((a) & 0x000000ff)) : MAT_C_EMPTY
 /** Class type mask */
 #define CLASS_TYPE_MASK           0x000000ff
 
@@ -3119,11 +3119,11 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
 void
 Read5(mat_t *mat, matvar_t *matvar)
 {
-    int nBytes = 0, len = 1, i, byteswap, data_in_tag = 0;
+    int nBytes = 0, i, byteswap, data_in_tag = 0;
     enum matio_types packed_type = MAT_T_UNKNOWN;
     long fpos;
     mat_uint32_t tag[2];
-    size_t bytesread = 0;
+    size_t bytesread = 0, len = 1;
 
     if ( matvar == NULL )
         return;
@@ -5717,6 +5717,10 @@ Mat_VarReadNextInfo5( mat_t *mat )
             if ( buf[4] == MAT_T_INT32 ) {
                 int nbytes = buf[5], i;
 
+                if ( nbytes > 64 ) {
+                    Mat_Critical("%d exceeds the maximum supported number of dimensions.", nbytes / 4);
+                    return matvar;
+                }
                 matvar->rank = nbytes / 4;
                 matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
 

@@ -220,7 +220,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
                     fwrite(&tmp, sizeof(double), 1, (FILE*)mat->fp);
                 }
             }
-            tmp = matvar->dims[0];
+            tmp = (double)matvar->dims[0];
             fwrite(&tmp, sizeof(double), 1, (FILE*)mat->fp);
             for ( i = 0; i < sparse->njc - 1; i++ ) {
                 for ( j = sparse->jc[i];
@@ -229,7 +229,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
                     fwrite(&tmp, sizeof(double), 1, (FILE*)mat->fp);
                 }
             }
-            tmp = matvar->dims[1];
+            tmp = (double)matvar->dims[1];
             fwrite(&tmp, sizeof(double), 1, (FILE*)mat->fp);
             tmp = 0.;
             if ( matvar->isComplex ) {
@@ -282,7 +282,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
 void
 Read4(mat_t *mat,matvar_t *matvar)
 {
-    unsigned int N;
+    size_t N;
 
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
@@ -295,8 +295,8 @@ Read4(mat_t *mat,matvar_t *matvar)
                 mat_complex_split_t *complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL != complex_data ) {
                     matvar->data = complex_data;
-                    ReadDoubleData(mat, (double*)complex_data->Re, matvar->data_type, N);
-                    ReadDoubleData(mat, (double*)complex_data->Im, matvar->data_type, N);
+                    ReadDoubleData(mat, (double*)complex_data->Re, matvar->data_type, (int)N);
+                    ReadDoubleData(mat, (double*)complex_data->Im, matvar->data_type, (int)N);
                 }
                 else {
                     Mat_Critical("Memory allocation failure");
@@ -304,7 +304,7 @@ Read4(mat_t *mat,matvar_t *matvar)
             } else {
                 matvar->data = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
-                    ReadDoubleData(mat, (double*)matvar->data, matvar->data_type, N);
+                    ReadDoubleData(mat, (double*)matvar->data, matvar->data_type, (int)N);
                 }
                 else {
                     Mat_Critical("Memory allocation failure");
@@ -318,7 +318,7 @@ Read4(mat_t *mat,matvar_t *matvar)
             matvar->nbytes = N;
             matvar->data = malloc(matvar->nbytes);
             if ( NULL != matvar->data ) {
-                ReadUInt8Data(mat,(mat_uint8_t*)matvar->data,matvar->data_type,N);
+                ReadUInt8Data(mat,(mat_uint8_t*)matvar->data,matvar->data_type, (int)N);
             }
             else {
                 Mat_Critical("Memory allocation failure");
@@ -338,7 +338,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 /* matvar->dims[1] either is 3 for real or 4 for complex sparse */
                 matvar->isComplex = matvar->dims[1] == 4 ? 1 : 0;
                 sparse = (mat_sparse_t*)matvar->data;
-                sparse->nir = matvar->dims[0] - 1;
+                sparse->nir = (int)(matvar->dims[0] - 1);
                 sparse->nzmax = sparse->nir;
                 sparse->ir = (mat_int32_t*)malloc(sparse->nir*sizeof(mat_int32_t));
                 if ( sparse->ir != NULL ) {
@@ -362,7 +362,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                     Mat_Critical("Couldn't determine file position");
                     return;
                 }
-                (void)fseek((FILE*)mat->fp,sparse->nir*Mat_SizeOf(data_type),
+                (void)fseek((FILE*)mat->fp,(long)(sparse->nir*Mat_SizeOf(data_type)),
                     SEEK_CUR);
                 ReadDoubleData(mat, &tmp, data_type, 1);
                 if ( tmp > INT_MAX-1 || tmp < 0 ) {
@@ -643,11 +643,11 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
             err = 1;
         if ( matvar->isComplex ) {
             mat_complex_split_t *cdata = (mat_complex_split_t*)data;
-            long nbytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
+            size_t nbytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
 
             ReadDataSlab2(mat,cdata->Re,matvar->class_type,matvar->data_type,
                 matvar->dims,start,stride,edge);
-            (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos+(long)nbytes,SEEK_SET);
             ReadDataSlab2(mat,cdata->Im,matvar->class_type,
                 matvar->data_type,matvar->dims,start,stride,edge);
         } else {
@@ -657,14 +657,14 @@ ReadData4(mat_t *mat,matvar_t *matvar,void *data,
     } else if ( matvar->isComplex ) {
         int i;
         mat_complex_split_t *cdata = (mat_complex_split_t*)data;
-        long nbytes = Mat_SizeOf(matvar->data_type);
+        size_t nbytes = Mat_SizeOf(matvar->data_type);
 
         for ( i = 0; i < matvar->rank; i++ )
             nbytes *= matvar->dims[i];
 
         ReadDataSlabN(mat,cdata->Re,matvar->class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
-        (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+        (void)fseek((FILE*)mat->fp,matvar->internal->datapos+(long)nbytes,SEEK_SET);
         ReadDataSlabN(mat,cdata->Im,matvar->class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
     } else {
@@ -697,7 +697,7 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
 
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
-    matvar->data_size = Mat_SizeOf(matvar->data_type);
+    matvar->data_size = (int)Mat_SizeOf(matvar->data_type);
 
     for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
@@ -707,11 +707,11 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
     }
     if ( matvar->isComplex ) {
             mat_complex_split_t *complex_data = (mat_complex_split_t*)data;
-            long nbytes = nmemb*matvar->data_size;
+            size_t nbytes = nmemb*matvar->data_size;
 
             ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
                           matvar->data_type,start,stride,edge);
-            (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos+(long)nbytes,SEEK_SET);
             ReadDataSlab1(mat,complex_data->Im,matvar->class_type,
                           matvar->data_type,start,stride,edge);
     } else {
@@ -735,8 +735,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
 {
     int       M,O,data_type,class_type;
     mat_int32_t tmp;
-    long      nBytes;
-    size_t    err;
+    size_t    nBytes, err;
     matvar_t *matvar = NULL;
     union {
         mat_uint32_t u;
@@ -893,7 +892,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     nBytes = matvar->dims[0]*matvar->dims[1]*Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex )
         nBytes *= 2;
-    (void)fseek((FILE*)mat->fp,nBytes,SEEK_CUR);
+    (void)fseek((FILE*)mat->fp,(long)nBytes,SEEK_CUR);
 
     return matvar;
 }
