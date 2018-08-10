@@ -2358,7 +2358,8 @@ int
 Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
       int *start,int *stride,int *edge)
 {
-    int err = 0, k, N = 1;
+	int err = 0, k;
+	size_t N = 1;
 
     if ( mat == NULL || matvar == NULL )
         return -1;
@@ -2372,7 +2373,7 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
         for ( k = 0; k < matvar->rank; k++ )
             N *= matvar->dims[k];
         if ( matvar->compression == MAT_COMPRESSION_NONE )
-            WriteData(mat,data,N,matvar->data_type);
+            WriteData(mat,data,(int)N,matvar->data_type);
 #if 0
         else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             WriteCompressedData(mat,matvar->internal->z,data,N,matvar->data_type);

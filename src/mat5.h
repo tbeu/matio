@@ -44,7 +44,7 @@ EXTERN int       Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,
 EXTERN int       Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress);
 EXTERN int       WriteCharDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
                      size_t *dims,int *start,int *stride,int *edge);
-EXTERN int       WriteData(mat_t *mat,void *data,int N,enum matio_types data_type);
+EXTERN int       WriteData(mat_t *mat,void *data,size_t N,enum matio_types data_type);
 EXTERN int       WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,
                      size_t *dims,int *start,int *stride,int *edge);
 EXTERN void      WriteInfo5(mat_t *mat, matvar_t *matvar);

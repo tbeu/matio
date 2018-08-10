@@ -301,7 +301,7 @@
  * @retval Number of bytes read from the file
  */
 int
-ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
+ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -403,7 +403,7 @@ ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type, size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
@@ -791,7 +791,7 @@ ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
+ReadSingleData(mat_t *mat,float *data,enum matio_types data_type, size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -821,7 +821,7 @@ ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type, size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
@@ -851,7 +851,7 @@ ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
+ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type, size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -882,7 +882,7 @@ ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type, size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
@@ -913,7 +913,7 @@ ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
+ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type, size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -944,7 +944,7 @@ ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type,size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
@@ -974,7 +974,7 @@ ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
+ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type, size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -1005,7 +1005,7 @@ ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type, size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
@@ -1034,7 +1034,7 @@ ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
+ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type, size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -1065,7 +1065,7 @@ ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type, size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
@@ -1094,7 +1094,7 @@ ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
+ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type, size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -1125,7 +1125,7 @@ ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type, size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
@@ -1154,7 +1154,7 @@ ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
+ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type, size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -1185,7 +1185,7 @@ ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type, size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
@@ -1214,7 +1214,7 @@ ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
+ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type, size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -1245,7 +1245,7 @@ ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type, size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
@@ -1274,7 +1274,7 @@ ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
  * @retval Number of bytes read from the file
  */
 int
-ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
+ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type, size_t len)
 {
     int bytesread = 0, i, j;
     size_t data_size;
@@ -1305,7 +1305,7 @@ ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
  */
 int
 ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
-    enum matio_types data_type,int len)
+    enum matio_types data_type, size_t len)
 {
     int nBytes = 0, i;
     unsigned int data_size;
