@@ -866,7 +866,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                     nfields++;
                 if ( nmemb )
                     nfields = nfields / nmemb;
-                matvar->internal->num_fields = nfields;
+                matvar->internal->num_fields = (unsigned)nfields;
                 if ( nfields ) {
                     matvar->internal->fieldnames =
                         (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
@@ -886,7 +886,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         matvar->data_size = sizeof(mat_sparse_t);
         matvar->nbytes    = matvar->data_size;
     } else {
-        matvar->data_size = data_size;
+        matvar->data_size = (int)data_size;
         matvar->nbytes = nmemb*matvar->data_size;
     }
     if ( data == NULL ) {
@@ -1148,7 +1148,7 @@ matvar_t *
 Mat_VarDuplicate(const matvar_t *in, int opt)
 {
     matvar_t *out;
-    int i;
+    unsigned i;
 
     out = Mat_VarCalloc();
     if ( out == NULL )
@@ -1724,7 +1724,7 @@ Mat_VarGetSize(matvar_t *matvar)
     } else if ( matvar->class_type == MAT_C_CELL ) {
         matvar_t **cells = (matvar_t**)matvar->data;
         if ( NULL != cells ) {
-            int ncells = matvar->nbytes / matvar->data_size;
+            size_t ncells = matvar->nbytes / matvar->data_size;
             bytes = ncells*overhead;
             for ( i = 0; i < ncells; i++ ) {
                 if ( NULL != cells[i] ) {
@@ -1849,7 +1849,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         return;
     } else if ( MAT_C_CELL == matvar->class_type ) {
         matvar_t **cells = (matvar_t **)matvar->data;
-        int ncells = matvar->nbytes / matvar->data_size;
+        size_t ncells = matvar->nbytes / matvar->data_size;
         printf("{\n");
         for ( i = 0; i < ncells; i++ )
             Mat_VarPrint(cells[i],printdata);

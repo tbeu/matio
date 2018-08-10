@@ -4030,15 +4030,15 @@ Read5(mat_t *mat, matvar_t *matvar)
 #define GET_DATA_SLABN(T) \
     do { \
         inc[0]  = stride[0]-1; \
-        dimp[0] = dims[0]; \
+        dimp[0] = (int)dims[0]; \
         N       = edge[0]; \
         I       = 0; /* start[0]; */ \
         for ( i = 1; i < rank; i++ ) { \
             inc[i]  = stride[i]-1; \
-            dimp[i] = dims[i-1]; \
+            dimp[i] = (int)dims[i-1]; \
             for ( j = i; j--; ) { \
-                inc[i]  *= dims[j]; \
-                dimp[i] *= dims[j+1]; \
+                inc[i]  *= (int)dims[j]; \
+                dimp[i] *= (int)dims[j+1]; \
             } \
             N *= edge[i]; \
             I += dimp[i-1]*start[i]; \
@@ -4054,7 +4054,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 for ( k = 0; k < edge[0]; k++ ) { \
                     *(ptr+i+k) = (T)(*(ptr_in+k)); \
                 } \
-                I += dims[0]-start[0]; \
+                I += (int)dims[0]-start[0]; \
                 ptr_in += dims[0]-start[0]; \
                 GET_DATA_SLABN_RANK_LOOP; \
             } \
@@ -4069,7 +4069,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     ptr_in += stride[0]; \
                     I += stride[0]; \
                 } \
-                I += dims[0]-edge[0]*stride[0]-start[0]; \
+                I += (int)dims[0]-edge[0]*stride[0]-start[0]; \
                 ptr_in += dims[0]-edge[0]*stride[0]-start[0]; \
                 GET_DATA_SLABN_RANK_LOOP; \
             } \
@@ -4762,7 +4762,7 @@ ReadData5(mat_t *mat,matvar_t *matvar,void *data,
         return err;
 
     matvar->data_type = ClassType2DataType(matvar->class_type);
-    matvar->data_size = Mat_SizeOfClass(matvar->class_type);
+    matvar->data_size = (int)Mat_SizeOfClass(matvar->class_type);
 
     return err;
 }
@@ -4784,12 +4784,12 @@ int
 Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
                       int stride,int edge)
 {
-    int err = 0, nmemb = 1, i, real_bytes = 0;
+    int err = 0, i, real_bytes = 0;
     mat_int32_t tag[2];
 #if defined(HAVE_ZLIB)
     z_stream z;
 #endif
-    size_t bytesread = 0;
+    size_t bytesread = 0, nmemb = 1;
 
     if ( mat->version == MAT_FT_MAT4 )
         return -1;
@@ -4919,7 +4919,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
     }
 
     matvar->data_type = ClassType2DataType(matvar->class_type);
-    matvar->data_size = Mat_SizeOfClass(matvar->class_type);
+    matvar->data_size = (int)Mat_SizeOfClass(matvar->class_type);
 
     return err;
 }
@@ -5295,7 +5295,7 @@ WriteInfo5(mat_t *mat, matvar_t *matvar)
             }
             case MAT_C_CELL:
             {
-                int        ncells;
+                size_t     ncells;
                 matvar_t **cells = (matvar_t **)matvar->data;
 
                 /* Check for an empty cell array */
@@ -5394,10 +5394,10 @@ Mat_VarReadNextInfo5( mat_t *mat )
         Mat_Critical("Couldn't determine file position");
         return NULL;
     }
-    err = fread(&data_type,4,1,(FILE*)mat->fp);
+    err = (int)fread(&data_type,4,1,(FILE*)mat->fp);
     if ( err == 0 )
         return NULL;
-    err = fread(&nBytes,4,1,(FILE*)mat->fp);
+    err = (int)fread(&nBytes,4,1,(FILE*)mat->fp);
     if ( mat->byteswap ) {
         Mat_int32Swap(&data_type);
         Mat_int32Swap(&nBytes);
