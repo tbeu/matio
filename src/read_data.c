@@ -1382,7 +1382,7 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
 #endif
 
 int
-ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
+ReadCharData(mat_t *mat,char *data,enum matio_types data_type,size_t len)
 {
     int bytesread = 0;
     unsigned int data_size;
