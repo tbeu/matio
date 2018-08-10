@@ -1752,12 +1752,14 @@ Mat_VarGetSize(matvar_t *matvar)
                 bytes += matvar->isLogical ? 1 : 8;
         }
     } else {
-        int nmemb = 1;
-        for ( i = 0; i < matvar->rank; i++ )
-            nmemb *= matvar->dims[i];
-        bytes = nmemb*Mat_SizeOfClass(matvar->class_type);
-        if ( matvar->isComplex )
-            bytes *= 2;
+        if ( matvar->rank > 0 ) {
+            size_t nmemb = 1;
+            for ( i = 0; i < matvar->rank; i++ )
+                nmemb *= matvar->dims[i];
+            bytes = nmemb*Mat_SizeOfClass(matvar->class_type);
+            if ( matvar->isComplex )
+                bytes *= 2;
+        }
     }
 
     return bytes;
