@@ -64,6 +64,8 @@ static size_t WriteEmptyData(mat_t *mat,int N,enum matio_types data_type);
 static size_t ReadNextCell( mat_t *mat, matvar_t *matvar );
 static size_t ReadNextStructField( mat_t *mat, matvar_t *matvar );
 static size_t ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar);
+static size_t ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type,
+                  mat_uint32_t nbytes);
 static int    WriteType(mat_t *mat,matvar_t *matvar);
 static int    WriteCellArrayFieldInfo(mat_t *mat,matvar_t *matvar);
 static int    WriteCellArrayField(mat_t *mat,matvar_t *matvar );
@@ -1359,8 +1361,8 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 #endif
 
     } else {
-        mat_uint32_t buf[16];
-        int nbytes,nBytes;
+        mat_uint32_t buf[6];
+        int nBytes;
         mat_uint32_t array_flags;
 
         for ( i = 0; i < ncells; i++ ) {
@@ -1420,28 +1422,10 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                }
             }
             /* Rank and dimension */
-            if ( buf[4] == MAT_T_INT32 ) {
-                int j;
-                nbytes = buf[5];
-                nBytes-=nbytes;
-
-                cells[i]->rank = nbytes / 4;
-                cells[i]->dims = (size_t*)malloc(cells[i]->rank*sizeof(*cells[i]->dims));
-
-                /* Assumes rank <= 16 */
-                if ( cells[i]->rank % 2 != 0 ) {
-                    bytesread+=fread(buf,4,cells[i]->rank+1,(FILE*)mat->fp);
-                    nBytes-=4;
-                } else
-                    bytesread+=fread(buf,4,cells[i]->rank,(FILE*)mat->fp);
-
-                if ( mat->byteswap ) {
-                    for ( j = 0; j < cells[i]->rank; j++ )
-                        cells[i]->dims[j] = Mat_uint32Swap(buf+j);
-                } else {
-                    for ( j = 0; j < cells[i]->rank; j++ )
-                        cells[i]->dims[j] = buf[j];
-                }
+            {
+                size_t nbytes = ReadRankDims(mat, cells[i], (enum matio_types)buf[4], buf[5]);
+                bytesread += nbytes;
+                nBytes -= nbytes;
             }
             /* Variable name tag */
             bytesread+=fread(buf,1,8,(FILE*)mat->fp);
@@ -1686,8 +1670,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         Mat_Critical("Not compiled with zlib support");
 #endif
     } else {
-        mat_uint32_t buf[16] = {0,};
-        int nbytes,nBytes,j;
+        mat_uint32_t buf[6];
+        int nBytes,j;
         mat_uint32_t array_flags;
 
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
@@ -1796,30 +1780,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                }
             }
             /* Rank and dimension */
-            if ( buf[4] == MAT_T_INT32 ) {
-                int j;
-
-                nbytes = buf[5];
-                nBytes-=nbytes;
-
-                fields[i]->rank = nbytes / 4;
-                fields[i]->dims = (size_t*)malloc(fields[i]->rank*
-                                         sizeof(*fields[i]->dims));
-
-                /* Assumes rank <= 16 */
-                if ( fields[i]->rank % 2 != 0 ) {
-                    bytesread+=fread(buf,4,fields[i]->rank+1,(FILE*)mat->fp);
-                    nBytes-=4;
-                } else
-                    bytesread+=fread(buf,4,fields[i]->rank,(FILE*)mat->fp);
-
-                if ( mat->byteswap ) {
-                    for ( j = 0; j < fields[i]->rank; j++ )
-                        fields[i]->dims[j] = Mat_uint32Swap(buf+j);
-                } else {
-                    for ( j = 0; j < fields[i]->rank; j++ )
-                        fields[i]->dims[j] = buf[j];
-                }
+            {
+                size_t nbytes = ReadRankDims(mat, fields[i], (enum matio_types)buf[4], buf[5]);
+                bytesread += nbytes;
+                nBytes -= nbytes;
             }
             /* Variable name tag */
             bytesread+=fread(buf,1,8,(FILE*)mat->fp);
@@ -1869,6 +1833,63 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
         matvar->nbytes    = 0;
     }
 
+    return bytesread;
+}
+
+/** @brief Reads the rank and dimensions in @c matvar
+ *
+ * @ingroup mat_internal
+ * @param mat MAT file pointer
+ * @param matvar MAT variable pointer
+ * @param data_type data type of dimension array
+ * @param nbytes len of dimension array in bytes
+ * @return Number of bytes read
+ */
+static size_t
+ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint32_t nbytes)
+{
+    size_t bytesread = 0;
+    /* Rank and dimension */
+    if ( data_type == MAT_T_INT32 ) {
+        matvar->rank = nbytes / sizeof(mat_uint32_t);
+        matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
+        if ( NULL != matvar->dims ) {
+            int i;
+            mat_uint32_t buf;
+
+            for ( i = 0; i < matvar->rank; i++) {
+                size_t readresult = fread(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp);
+                int readerror = readresult != 1;
+                if ( readerror == 0 ) {
+                    bytesread += sizeof(mat_uint32_t);
+                    if ( mat->byteswap ) {
+                        matvar->dims[i] = Mat_uint32Swap(&buf);
+                    } else {
+                        matvar->dims[i] = buf;
+                    }
+                } else {
+                    free(matvar->dims);
+                    matvar->dims = NULL;
+                    matvar->rank = 0;
+                    Mat_Critical("An error occurred in reading the MAT file");
+                    return bytesread;
+                }
+            }
+
+            if ( matvar->rank % 2 != 0 ) {
+                size_t readresult = fread(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp);
+                int readerror = readresult != 1;
+                if ( readerror == 0 ) {
+                    bytesread += sizeof(mat_uint32_t);
+                } else {
+                    Mat_Critical("An error occurred in reading the MAT file");
+                }
+            }
+        } else {
+            matvar->rank = 0;
+            Mat_Critical("Error allocating memory for dims");
+        }
+    }
     return bytesread;
 }
 
@@ -5680,7 +5701,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
         }
         case MAT_T_MATRIX:
         {
-            mat_uint32_t buf[32];
+            mat_uint32_t buf[6];
             size_t bytesread = 0;
 
             matvar = Mat_VarCalloc();
@@ -5707,27 +5728,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                    matvar->nbytes = buf[3];
                }
             }
-            /* Rank and dimension */
-            if ( buf[4] == MAT_T_INT32 ) {
-                int nbytes = buf[5], i;
-
-                matvar->rank = nbytes / 4;
-                matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
-
-                /* Assumes rank <= 16 */
-                if ( matvar->rank % 2 != 0 )
-                    bytesread+=fread(buf,4,matvar->rank+1,(FILE*)mat->fp);
-                else
-                    bytesread+=fread(buf,4,matvar->rank,(FILE*)mat->fp);
-
-                if ( mat->byteswap ) {
-                    for ( i = 0; i < matvar->rank; i++ )
-                        matvar->dims[i] = Mat_uint32Swap(buf+i);
-                } else {
-                    for ( i = 0; i < matvar->rank; i++ )
-                        matvar->dims[i] = buf[i];
-                }
-            }
+            ReadRankDims(mat, matvar, (enum matio_types)buf[4], buf[5]);
             /* Variable name tag */
             bytesread+=fread(buf,4,2,(FILE*)mat->fp);
             if ( mat->byteswap )
