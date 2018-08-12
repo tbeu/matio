@@ -1202,7 +1202,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
     }
     cells = (matvar_t **)matvar->data;
 
-    if ( matvar->compression ) {
+    if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
         mat_uint32_t uncomp_buf[16] = {0,};
         int nbytes;
@@ -1496,7 +1496,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
     for ( i = 0; i < matvar->rank; i++ )
         nmemb *= matvar->dims[i];
 
-    if ( matvar->compression ) {
+    if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
         mat_uint32_t uncomp_buf[16] = {0,};
         int nbytes, j;
@@ -2959,7 +2959,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
     enum matio_types packed_type = MAT_T_UNKNOWN;
     mat_uint32_t tag[2];
 
-    if ( matvar->compression ) {
+    if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
         matvar->internal->z->avail_in = 0;
         InflateDataType(mat,matvar->internal->z,tag);
@@ -3151,7 +3151,6 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->nbytes = 0;
             matvar->data_size = sizeof(double);
             matvar->data_type = MAT_T_DOUBLE;
-            matvar->class_type = MAT_C_EMPTY;
             matvar->rank = 2;
             matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*(matvar->dims)));
             matvar->dims[0] = 0;
@@ -3212,10 +3211,9 @@ Read5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_UINT8;
             break;
         case MAT_C_CHAR:
-            if ( matvar->compression ) {
+            (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
+            if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
-                (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
-
                 matvar->internal->z->avail_in = 0;
                 InflateDataType(mat,matvar->internal->z,tag);
                 if ( byteswap )
@@ -3232,8 +3230,10 @@ Read5(mat_t *mat, matvar_t *matvar)
                     nBytes = tag[1];
                 }
 #endif
+                matvar->data_type = packed_type;
+                matvar->data_size = (int)Mat_SizeOf(matvar->data_type);
+                matvar->nbytes = nBytes;
             } else {
-                (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
                 bytesread += fread(tag,4,1,(FILE*)mat->fp);
                 if ( byteswap )
                     (void)Mat_uint32Swap(tag);
@@ -3248,15 +3248,9 @@ Read5(mat_t *mat, matvar_t *matvar)
                         (void)Mat_uint32Swap(tag+1);
                     nBytes = tag[1];
                 }
-            }
-            if ( matvar->compression == MAT_COMPRESSION_NONE ) {
                 matvar->data_type = MAT_T_UINT8;
                 matvar->data_size = (int)Mat_SizeOf(MAT_T_UINT8);
                 matvar->nbytes = len*matvar->data_size;
-            } else {
-                matvar->data_type = packed_type;
-                matvar->data_size = (int)Mat_SizeOf(matvar->data_type);
-                matvar->nbytes = nBytes;
             }
             matvar->data = calloc(matvar->nbytes+1,1);
             if ( NULL == matvar->data ) {
@@ -3341,7 +3335,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             data->nzmax  = matvar->nbytes;
             (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
             /*  Read ir    */
-            if ( matvar->compression ) {
+            if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
                 matvar->internal->z->avail_in = 0;
                 InflateDataType(mat,matvar->internal->z,tag);
@@ -3405,7 +3399,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 break;
             }
             /*  Read jc    */
-            if ( matvar->compression ) {
+            if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
                 matvar->internal->z->avail_in = 0;
                 InflateDataType(mat,matvar->internal->z,tag);
@@ -3468,7 +3462,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 break;
             }
             /*  Read data    */
-            if ( matvar->compression ) {
+            if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
                 matvar->internal->z->avail_in = 0;
                 InflateDataType(mat,matvar->internal->z,tag);
@@ -3648,7 +3642,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                     }
 #else /* EXTENDED_SPARSE */
                     nBytes = ReadDoubleData(mat,(double*)complex_data->Im,
-                                 packed_type,data->ndata);
+                                packed_type,data->ndata);
 #endif /* EXTENDED_SPARSE */
                     if ( data_in_tag )
                         nBytes+=4;

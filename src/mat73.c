@@ -1505,7 +1505,7 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
         numel *= dims[k];
     }
 
-    if ( matvar->compression ) {
+    if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         plist = H5Pcreate(H5P_DATASET_CREATE);
         if ( MAX_RANK >= matvar->rank ) {
             hsize_t chunk_dims[MAX_RANK];
@@ -1611,7 +1611,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
                 return -1;
             }
         }
-        if ( matvar->compression )
+        if ( matvar->compression == MAT_COMPRESSION_ZLIB )
             H5Pset_deflate(plist, 9);
     } else {
         plist = H5P_DEFAULT;
