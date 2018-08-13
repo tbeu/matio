@@ -299,7 +299,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                     ReadDoubleData(mat, (double*)complex_data->Im, matvar->data_type, N);
                 }
                 else {
-                    Mat_Critical("Memory allocation failure");
+                    Mat_Critical("Couldn't allocate memory for the complex data");
                 }
             } else {
                 matvar->data = malloc(matvar->nbytes);
@@ -307,7 +307,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                     ReadDoubleData(mat, (double*)matvar->data, matvar->data_type, N);
                 }
                 else {
-                    Mat_Critical("Memory allocation failure");
+                    Mat_Critical("Couldn't allocate memory for the data");
                 }
             }
             /* Update data type to match format of matvar->data */
@@ -321,7 +321,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 ReadUInt8Data(mat,(mat_uint8_t*)matvar->data,matvar->data_type,N);
             }
             else {
-                Mat_Critical("Memory allocation failure");
+                Mat_Critical("Couldn't allocate memory for the data");
             }
             matvar->data_type = MAT_T_UINT8;
             break;
@@ -348,7 +348,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                 } else {
                     free(matvar->data);
                     matvar->data = NULL;
-                    Mat_Critical("Memory allocation failure");
+                    Mat_Critical("Couldn't allocate memory for the sparse row array");
                     return;
                 }
                 ReadDoubleData(mat, &tmp, data_type, 1);
@@ -403,14 +403,14 @@ Read4(mat_t *mat,matvar_t *matvar)
                         free(sparse->ir);
                         free(matvar->data);
                         matvar->data = NULL;
-                        Mat_Critical("Memory allocation failure");
+                        Mat_Critical("Couldn't allocate memory for the sparse index array");
                         return;
                     }
                 } else {
                     free(sparse->ir);
                     free(matvar->data);
                     matvar->data = NULL;
-                    Mat_Critical("Memory allocation failure");
+                    Mat_Critical("Couldn't allocate memory for the sparse index array");
                     return;
                 }
                 ReadDoubleData(mat, &tmp, data_type, 1);
@@ -512,7 +512,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                         free(sparse->ir);
                         free(matvar->data);
                         matvar->data = NULL;
-                        Mat_Critical("Memory allocation failure");
+                        Mat_Critical("Couldn't allocate memory for the complex sparse data");
                         return;
                     }
                 } else {
@@ -584,14 +584,14 @@ Read4(mat_t *mat,matvar_t *matvar)
                         free(sparse->ir);
                         free(matvar->data);
                         matvar->data = NULL;
-                        Mat_Critical("Memory allocation failure");
+                        Mat_Critical("Couldn't allocate memory for the sparse data");
                         return;
                     }
                 }
                 break;
             }
             else {
-                Mat_Critical("Memory allocation failure");
+                Mat_Critical("Couldn't allocate memory for the data");
                 return;
             }
         default:

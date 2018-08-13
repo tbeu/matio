@@ -1542,8 +1542,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
         matvar->data = calloc(nmemb*nfields, matvar->data_size);
         if ( NULL == matvar->data ) {
-            if ( NULL != matvar->name )
-                Mat_Critical("Couldn't allocate memory for %s->data", matvar->name);
+            Mat_Critical("Couldn't allocate memory for the data");
             return bytesread;
         }
 
@@ -3275,7 +3274,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             }
             matvar->data = calloc(matvar->nbytes+1,1);
             if ( NULL == matvar->data ) {
-                Mat_Critical("Failed to allocate %d bytes",matvar->nbytes + 1);
+                Mat_Critical("Couldn't allocate memory for the data");
                 break;
             }
             if ( 0 == matvar->nbytes ) {
@@ -3535,7 +3534,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 mat_complex_split_t *complex_data =
                     ComplexMalloc(data->ndata*Mat_SizeOf(matvar->data_type));
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Memory allocation failure");
+                    Mat_Critical("Couldn't allocate memory for the complex sparse data");
                     break;
                 }
                 if ( matvar->compression == MAT_COMPRESSION_NONE ) {
@@ -3812,8 +3811,7 @@ Read5(mat_t *mat, matvar_t *matvar)
             } else { /* isComplex */
                 data->data = malloc(data->ndata*Mat_SizeOf(matvar->data_type));
                 if ( data->data == NULL ) {
-                    Mat_Critical("Failed to allocate %d bytes",
-                                 data->ndata*Mat_SizeOf(MAT_T_DOUBLE));
+                    Mat_Critical("Couldn't allocate memory for the sparse data");
                     break;
                 }
                 if ( matvar->compression == MAT_COMPRESSION_NONE ) {
@@ -3982,7 +3980,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->nbytes = len*matvar->data_size;
                 complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    Mat_Critical("Memory allocation failure");
+                    Mat_Critical("Couldn't allocate memory for the complex data");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,len);
@@ -3992,7 +3990,7 @@ Read5(mat_t *mat, matvar_t *matvar)
                 matvar->nbytes = len*matvar->data_size;
                 matvar->data   = malloc(matvar->nbytes);
                 if ( NULL == matvar->data ) {
-                    Mat_Critical("Failed to allocate %d bytes",matvar->nbytes);
+                    Mat_Critical("Couldn't allocate memory for the data");
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,matvar->data,len);
