@@ -3118,7 +3118,8 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
 void
 Read5(mat_t *mat, matvar_t *matvar)
 {
-    int nBytes = 0, len = 1, i, byteswap, data_in_tag = 0;
+    int nBytes = 0, i, byteswap, data_in_tag = 0;
+    size_t len = 1;
     enum matio_types packed_type = MAT_T_UNKNOWN;
     long fpos;
     mat_uint32_t tag[2];
