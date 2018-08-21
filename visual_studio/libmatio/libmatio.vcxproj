@@ -165,18 +165,8 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>
-      </DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
-    <Link>
-      <AdditionalDependencies>hdf5.lib;zlib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(HDF5_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>$(SolutionDir)\matio.def</ModuleDefinitionFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>$(HDF5_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -221,19 +211,9 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>
-      </DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
-    <Link>
-      <AdditionalDependencies>hdf5.lib;zlib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(HDF5_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <ModuleDefinitionFile>$(SolutionDir)\matio.def</ModuleDefinitionFile>
-    </Link>
     <Lib>
-      <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(HDF5_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libhdf5.lib;libzlib.lib;libszip.lib</AdditionalDependencies>
     </Lib>

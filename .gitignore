@@ -46,6 +46,7 @@ test/testsuite
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+[Rr]elease Lib/
 x64/
 x86/
 build/
