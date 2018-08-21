@@ -17,6 +17,7 @@ before_build:
 - ps: >-
       If ($env:Platform -Match "Win32") {
         $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win32"
+        $env:sdk_platform_env="x86"
         If ($env:configuration -Match "Release Lib") {
           Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-static.zip'
           7z x -y hdf5-1.8.13-win32-VS2010-static.zip
@@ -27,6 +28,7 @@ before_build:
         7z x -oC:\projects\HDF5-1.8.13-win32 -y hdf5-1.8.13\HDF5-1.8.13-win32.exe
       } Else {
         $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win64"
+        $env:sdk_platform_env="x64"
         If ($env:configuration -Match "Release Lib") {
           Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win64-VS2010-static.zip'
           7z x -y hdf5-1.8.13-win64-VS2010-static.zip
@@ -38,7 +40,7 @@ before_build:
       }
 - cmd: >-
     "C:\Program Files\Microsoft SDKs\Windows\v7.1\Setup\WindowsSdkVer.exe" -version:v7.1
-- cmd: call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64 /release
+- cmd: call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /%sdk_platform_env% /release
 
 build:
   project: visual_studio/matio.sln
