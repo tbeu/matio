@@ -7,7 +7,7 @@ configuration:
 environment:
   matrix:
   - platform: Win32
-    VisualStudioVersion: 10.0
+    VisualStudioVersion: 4.0
   - platform: x64
     VisualStudioVersion: 14.0
 
@@ -19,6 +19,7 @@ before_build:
 - ps: >-
       If ($env:Platform -Match "Win32") {
         $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win32"
+        $env:VCVARS_PLATFORM="x86"
         If ($env:configuration -Match "Release Lib") {
           Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-static.zip'
           7z x -y hdf5-1.8.13-win32-VS2010-static.zip
@@ -28,11 +29,13 @@ before_build:
         }
         7z x -oC:\projects\HDF5-1.8.13-win32 -y hdf5-1.8.13\HDF5-1.8.13-win32.exe
       } Else {
+        $env:HDF5_DIR="C:\Program Files\HDF_Group\HDF5\1.8.21\"
+        $env:PCRE_PLATFORM="x64"
         Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.21/bin/hdf5-1.8.21-Std-win7_64-vs14.zip'
         7z x -y hdf5-1.8.21-Std-win7_64-vs14.zip
         Start-Process -Wait -FilePath msiexec -ArgumentList /i, "hdf\HDF5-1.8.21-win64.msi", /qn, /quiet
-        $env:HDF5_DIR="C:\Program Files\HDF_Group\HDF5\1.8.21\"
       }
+- call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %VCVARS_PLATFORM%
 
 build_script:
   - msbuild visual_studio\matio.sln /toolsversion:%VisualStudioVersion% /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
