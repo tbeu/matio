@@ -1,7 +1,7 @@
 clone_depth: 5
 
 platform:
-  - Win32
+  # - Win32
   - x64
 
 environment:
@@ -27,7 +27,7 @@ before_build:
         7z x -oC:\projects\HDF5-1.8.13-win32 -y hdf5-1.8.13\HDF5-1.8.13-win32.exe
       } Else {
         $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win64"
-        $env:Path="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\x64;$env:Path"
+        $env:WindowsSdkDir="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\"
         If ($env:configuration -Match "Release Lib") {
           Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win64-VS2010-static.zip'
           7z x -y hdf5-1.8.13-win64-VS2010-static.zip
