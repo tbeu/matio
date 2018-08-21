@@ -40,7 +40,7 @@ before_build:
         }
         7z x -oC:\projects\HDF5-1.8.13-win64 -y hdf5-1.8.13\HDF5-1.8.13-win64.exe
       }
-- call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %VCVARS_PLATFORM%
+- call "%VS100COMNTOOLS%vcvarsall.bat" %VCVARS_PLATFORM%
 
 build:
   project: visual_studio/matio.sln
