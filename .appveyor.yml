@@ -38,9 +38,7 @@ before_build:
         }
         7z x -oC:\projects\HDF5-1.8.13-win64 -y hdf5-1.8.13\HDF5-1.8.13-win64.exe
       }
-- cmd: >-
-    "C:\Program Files\Microsoft SDKs\Windows\v7.1\Setup\WindowsSdkVer.exe" -version:v7.1
-- cmd: call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /%sdk_platform_env% /release
+- call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /%sdk_platform_env%
 
 build:
   project: visual_studio/matio.sln
