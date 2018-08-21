@@ -34,9 +34,8 @@ before_build:
         $env:HDF5_DIR="C:\Program Files\HDF_Group\HDF5\1.8.21\"
       }
 
-build:
-  project: visual_studio/matio.sln
-  verbosity: normal
+build_script:
+  - msbuild visual_studio\matio.sln /toolsversion:%VisualStudioVersion% /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
 - cmd: >-
