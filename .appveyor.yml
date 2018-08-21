@@ -16,8 +16,6 @@ environment:
 before_build:
 - ps: >-
       If ($env:Platform -Match "Win32") {
-        $env:PCRE_PLATFORM="Win32"
-        $env:VCVARS_PLATFORM="x86"
         $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win32"
         If ($env:configuration -Match "Release Lib") {
           Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-static.zip'
@@ -28,9 +26,8 @@ before_build:
         }
         7z x -oC:\projects\HDF5-1.8.13-win32 -y hdf5-1.8.13\HDF5-1.8.13-win32.exe
       } Else {
-        $env:PCRE_PLATFORM="x64"
-        $env:VCVARS_PLATFORM="amd64"
         $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win64"
+        $env:Path="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\x64;$env:Path"
         If ($env:configuration -Match "Release Lib") {
           Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win64-VS2010-static.zip'
           7z x -y hdf5-1.8.13-win64-VS2010-static.zip
@@ -40,7 +37,6 @@ before_build:
         }
         7z x -oC:\projects\HDF5-1.8.13-win64 -y hdf5-1.8.13\HDF5-1.8.13-win64.exe
       }
-- call "%VS100COMNTOOLS%vcvarsall.bat" %VCVARS_PLATFORM%
 
 build:
   project: visual_studio/matio.sln
