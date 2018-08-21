@@ -4,7 +4,8 @@ configuration:
   - Release
   - Release Lib
 
-matrix:
+environment:
+  matrix:
   - platform: Win32
     VisualStudioVersion: 10.0
   - platform: x64
