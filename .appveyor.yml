@@ -49,6 +49,14 @@ artifacts:
     name: libmatio.lib
   - path: visual_studio\Release\libmatio.dll
     name: libmatio.dll
+  - path: visual_studio\x64\Release\libmatio.lib
+    name: libmatio.lib
+  - path: visual_studio\x64\Release\libmatio.dll
+    name: libmatio.dll
+  - path: visual_studio\Release Lib\libmatio.lib
+    name: libmatio.lib
+  - path: visual_studio\x64\Release Lib\libmatio.lib
+    name: libmatio.lib
   - path: visual_studio\matio_pubconf.h
     name: matio_pubconf.h
   - path: src\matio.h
