@@ -43,6 +43,7 @@ test/testsuite
 *.sln.docstates
 # Build results
 [Dd]ebug/
+[Dd]ebug Lib/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
@@ -98,6 +99,7 @@ ipch/
 *.opensdf
 *.sdf
 *.cachefile
+*.res
 # Visual Studio profiler
 *.psess
 *.vsp
