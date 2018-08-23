@@ -9,10 +9,6 @@ environment:
   - configuration: Release
   - configuration: Release Lib
 
-# # To allow remote connection to appveyor
-# init:
-#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
 before_build:
 - ps: >-
       If ($env:Platform -Match "Win32") {
@@ -46,10 +42,6 @@ build:
   project: visual_studio/matio.sln
   verbosity: normal
 
-after_build:
-- cmd: >-
-    7z a myapp.zip %APPVEYOR_BUILD_FOLDER%\visual_studio
-
 test: off
 
 artifacts:
@@ -61,8 +53,3 @@ artifacts:
     name: matio_pubconf.h
   - path: src\matio.h
     name: matio.h
-  - path: myapp.zip
-    name: MyApp
-
-# on_finish:
-#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
