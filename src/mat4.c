@@ -372,7 +372,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                     Mat_Critical("Invalid column dimension for sparse matrix");
                     return;
                 }
-                matvar->dims[1] = tmp < 0 ? 0 : ( tmp > INT_MAX-1 ? INT_MAX-1 : (size_t)tmp );
+                matvar->dims[1] = (size_t)tmp;
                 (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
                 if ( matvar->dims[1] > INT_MAX-1 ) {
                     free(sparse->ir);
