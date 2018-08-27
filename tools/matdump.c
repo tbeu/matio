@@ -858,7 +858,7 @@ main (int argc, char *argv[])
                     }
                 } else {
                     Mat_Warning("Missing output format. "
-                            "Using default\n", optarg);
+                            "Using default\n");
                 }
                 break;
             case 'h':
