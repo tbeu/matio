@@ -154,4 +154,29 @@
 #define MATIO_NORETURNATTR
 #endif
 
+/*
+  The following macros handle format attributes for type-checks against a
+  format string.
+*/
+
+#if defined(__GNUC__) && __GNUC__ >= 3
+#define MATIO_FORMATATTR_PRINTF1 __attribute__((format(printf, 1, 2)))
+#define MATIO_FORMATATTR_PRINTF2 __attribute__((format(printf, 2, 3)))
+#define MATIO_FORMATATTR_VPRINTF __attribute__((format(printf, 1, 0)))
+#elif defined(__clang__)
+#if __has_attribute(format)
+#define MATIO_FORMATATTR_PRINTF1 __attribute__((format(printf, 1, 2)))
+#define MATIO_FORMATATTR_PRINTF2 __attribute__((format(printf, 2, 3)))
+#define MATIO_FORMATATTR_VPRINTF __attribute__((format(printf, 1, 0)))
+#else
+#define MATIO_FORMATATTR_PRINTF1
+#define MATIO_FORMATATTR_PRINTF2
+#define MATIO_FORMATATTR_VPRINTF
+#endif
+#else
+#define MATIO_FORMATATTR_PRINTF1
+#define MATIO_FORMATATTR_PRINTF2
+#define MATIO_FORMATATTR_VPRINTF
+#endif
+
 #endif /* MATIO_PUBCONF_H */

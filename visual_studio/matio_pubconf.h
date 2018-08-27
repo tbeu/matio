@@ -166,4 +166,13 @@
 #define MATIO_NORETURN
 #endif
 
+/*
+  The following macros handle format attributes for type-checks against a
+  format string.
+*/
+
+#define MATIO_FORMATATTR_PRINTF1
+#define MATIO_FORMATATTR_PRINTF2
+#define MATIO_FORMATATTR_VPRINTF
+
 #endif /* MATIO_PUBCONF_H */
