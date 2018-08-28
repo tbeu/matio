@@ -99,7 +99,6 @@ ipch/
 *.opensdf
 *.sdf
 *.cachefile
-*.res
 # Visual Studio profiler
 *.psess
 *.vsp
