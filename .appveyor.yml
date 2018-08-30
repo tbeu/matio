@@ -14,7 +14,7 @@ before_build:
       If ($env:Platform -Match "Win32") {
         $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win32"
         $env:sdk_platform_env="x86"
-        If ($env:configuration -Match "Release Lib") {
+        If ($env:configuration -Match "Lib") {
           Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-static.zip'
           7z x -y hdf5-1.8.13-win32-VS2010-static.zip
         } Else {
@@ -25,7 +25,7 @@ before_build:
       } Else {
         $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win64"
         $env:sdk_platform_env="x64"
-        If ($env:configuration -Match "Release Lib") {
+        If ($env:configuration -Match "Lib") {
           Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win64-VS2010-static.zip'
           7z x -y hdf5-1.8.13-win64-VS2010-static.zip
         } Else {
