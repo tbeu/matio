@@ -6,8 +6,8 @@ platform:
 
 environment:
   matrix:
-  - configuration: Debug
-  - configuration: Debug Lib
+  - configuration: Release
+  - configuration: Release Lib
 
 before_build:
 - ps: >-
