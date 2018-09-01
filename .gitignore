@@ -43,9 +43,11 @@ test/testsuite
 *.sln.docstates
 # Build results
 [Dd]ebug/
+[Dd]ebug Lib/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+[Rr]elease Lib/
 x64/
 x86/
 build/

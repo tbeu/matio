@@ -1,22 +1,63 @@
 clone_depth: 5
+
+platform:
+  - Win32
+  - x64
+
 environment:
   matrix:
   - configuration: Release
-    platform: Win32
-    HDF5_DIR: C:\projects\HDF5-1.8.13-win32
+  - configuration: Release Lib
+
 before_build:
-- cmd: >-
-    appveyor DownloadFile https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-shared.zip
+- ps: >-
+      If ($env:Platform -Match "Win32") {
+        $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win32"
+        $env:sdk_platform_env="x86"
+        If ($env:configuration -Match "Lib") {
+          Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-static.zip'
+          7z x -y hdf5-1.8.13-win32-VS2010-static.zip | FIND "ing archive"
+        } Else {
+          Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2010-shared.zip'
+          7z x -y hdf5-1.8.13-win32-VS2010-shared.zip | FIND "ing archive"
+        }
+        7z x -oC:\projects\HDF5-1.8.13-win32 -y hdf5-1.8.13\HDF5-1.8.13-win32.exe | FIND "ing archive"
+      } Else {
+        $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win64"
+        $env:sdk_platform_env="x64"
+        If ($env:configuration -Match "Lib") {
+          Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win64-VS2010-static.zip'
+          7z x -y hdf5-1.8.13-win64-VS2010-static.zip | FIND "ing archive"
+        } Else {
+          Start-FileDownload 'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win64-VS2010-shared.zip'
+          7z x -y hdf5-1.8.13-win64-VS2010-shared.zip | FIND "ing archive"
+        }
+        7z x -oC:\projects\HDF5-1.8.13-win64 -y hdf5-1.8.13\HDF5-1.8.13-win64.exe | FIND "ing archive"
+      }
+- ps: $env:CONFIGURATION_OLD=$env:configuration
+- call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /%sdk_platform_env%
+- ps: $env:configuration=$env:CONFIGURATION_OLD
 
-    7z x -y hdf5-1.8.13-win32-VS2010-shared.zip | FIND "ing archive"
-
-    7z x -oC:\projects\HDF5-1.8.13-win32 -y hdf5-1.8.13\HDF5-1.8.13-win32.exe | FIND "ing archive"
 build:
   project: visual_studio/matio.sln
   verbosity: normal
+
 test: off
+
 artifacts:
-- path: visual_studio\Release\libmatio.lib
-  name: libmatio.lib
-- path: visual_studio\Release\libmatio.dll
-  name: libmatio.dll
+  - path: visual_studio\Release\libmatio.lib
+    name: libmatio.lib
+  - path: visual_studio\Release\libmatio.dll
+    name: libmatio.dll
+  - path: visual_studio\x64\Release\libmatio.lib
+    name: libmatio.lib
+  - path: visual_studio\x64\Release\libmatio.dll
+    name: libmatio.dll
+  - path: visual_studio\Release Lib\libmatio.lib
+    name: libmatio.lib
+  - path: visual_studio\x64\Release Lib\libmatio.lib
+    name: libmatio.lib
+  - path: visual_studio\matio_pubconf.h
+    name: matio_pubconf.h
+  - path: src\matio.h
+    name: matio.h
