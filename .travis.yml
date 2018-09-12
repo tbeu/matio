@@ -136,13 +136,7 @@ before_install:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh; fi
 
 install:
-  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_3" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then git clone --depth 5 https://github.com/madler/zlib; fi
-  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_3" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then cd zlib; fi
-  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_3" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./configure --prefix=$TRAVIS_BUILD_DIR/zlib --eprefix=$TRAVIS_BUILD_DIR/zlib; fi
-  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_3" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then make install; fi
-  - cd $TRAVIS_BUILD_DIR
-  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./.install_hdf5_1_8.sh; fi
-  - if [[ "$HDF5_VERSION_DIR" == "hdf5_1_10_3" ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./.install_hdf5_1_10.sh; fi
+  - if [[ "$ENABLE_MAT73" == "yes" ]]; then ./.travis_install.sh; fi
   - cd $TRAVIS_BUILD_DIR
   - mkdir MSL
   - cd MSL
