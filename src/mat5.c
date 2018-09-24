@@ -29,6 +29,7 @@
  */
 
 /* FIXME: Implement Unicode support */
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -857,16 +858,16 @@ WriteCompressedEmptyData(mat_t *mat,z_streamp z,int N,
     do { \
         int i, j; \
         long pos, row_stride, col_stride, pos2; \
-        row_stride = (stride[0]-1)*data_size; \
-        col_stride = stride[1]*dims[0]*data_size; \
-        (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR); \
+        row_stride = (long)(stride[0]-1)*data_size; \
+        col_stride = (long)stride[1]*dims[0]*data_size; \
+        (void)fseek((FILE*)mat->fp,(long)start[1]*dims[0]*data_size,SEEK_CUR); \
         for ( i = 0; i < edge[1]; i++ ) { \
             pos = ftell((FILE*)mat->fp); \
             if ( pos == -1L ) { \
                 Mat_Critical("Couldn't determine file position"); \
                 return -1; \
             } \
-            (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR); \
+            (void)fseek((FILE*)mat->fp,(long)start[0]*data_size,SEEK_CUR); \
             for ( j = 0; j < edge[0]; j++ ) { \
                 fwrite(ptr++,data_size,1,(FILE*)mat->fp); \
                 (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR); \
@@ -901,7 +902,8 @@ int
 WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
     int *start,int *stride,int *edge)
 {
-    int nBytes = 0, data_size;
+    int nBytes = 0;
+    size_t data_size;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
@@ -4080,8 +4082,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                     ptr_in += stride[0]; \
                     I += stride[0]; \
                 } \
-                I += dims[0]-edge[0]*stride[0]-start[0]; \
-                ptr_in += dims[0]-edge[0]*stride[0]-start[0]; \
+                I += dims[0]-(ptrdiff_t)edge[0]*stride[0]-start[0]; \
+                ptr_in += dims[0]-(ptrdiff_t)edge[0]*stride[0]-start[0]; \
                 GET_DATA_SLABN_RANK_LOOP; \
             } \
         } \
@@ -4449,7 +4451,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
     do { \
         ptr_in += start; \
         if ( !stride ) { \
-            memcpy(ptr, ptr_in, edge*data_size); \
+            memcpy(ptr, ptr_in, (size_t)edge*data_size); \
         } else { \
             int i; \
             for ( i = 0; i < edge; i++ ) \
@@ -4462,7 +4464,7 @@ GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
     enum matio_types data_type, int start, int stride, int edge)
 {
     int err = 0;
-    int data_size = Mat_SizeOf(data_type);
+    size_t data_size = Mat_SizeOf(data_type);
 
     switch ( class_type ) {
         case MAT_C_DOUBLE:
