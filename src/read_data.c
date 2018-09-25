@@ -1713,7 +1713,91 @@ ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
         case MAT_C_DOUBLE:
         {
             double *ptr = (double*)data;
-            READ_COMPRESSED_DATA_SLABN(ReadCompressedDoubleData);
+    do {
+        inc[0]  = stride[0]-1;
+        dimp[0] = dims[0];
+        N       = edge[0];
+        I       = 0;
+        for ( i = 1; i < rank; i++ ) {
+            inc[i]  = stride[i]-1;
+            dimp[i] = dims[i-1];
+            for ( j = i; j--; ) {
+                inc[i]  *= dims[j];
+                dimp[i] *= dims[j+1];
+            }
+            N *= edge[i];
+            I += (ptrdiff_t)dimp[i-1]*start[i];
+        }
+        InflateSkipData(mat,&z_copy,data_type,I);
+        if ( stride[0] == 1 ) {
+            for ( i = 0; i < N; i+=edge[0] ) {
+                if ( start[0] ) {
+                    InflateSkipData(mat,&z_copy,data_type,start[0]);
+                    I += start[0];
+                }
+                ReadCompressedDoubleData(mat,&z_copy,ptr+i,data_type,edge[0]);
+                InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]);
+                I += dims[0]-start[0];
+    do {
+        for ( j = 1; j < rank; j++ ) {
+            cnt[j]++;
+            if ( (cnt[j] % edge[j]) == 0 ) {
+                cnt[j] = 0;
+                if ( (I % dimp[j]) != 0 ) {
+                    InflateSkipData(mat,&z_copy,data_type, dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]);
+                    I += dimp[j]-(I % dimp[j]) + (ptrdiff_t)dimp[j-1]*start[j];
+                } else if ( start[j] ) {
+                    InflateSkipData(mat,&z_copy,data_type, dimp[j-1]*start[j]);
+                    I += (ptrdiff_t)dimp[j-1]*start[j];
+                }
+            } else {
+                if ( inc[j] ) {
+                    I += inc[j];
+                    InflateSkipData(mat,&z_copy,data_type,inc[j]);
+                }
+                break;
+            }
+        }
+    } while (0);
+            }
+        } else {
+            for ( i = 0; i < N; i+=edge[0] ) {
+                if ( start[0] ) {
+                    InflateSkipData(mat,&z_copy,data_type,start[0]);
+                    I += start[0];
+                }
+                for ( j = 0; j < edge[0]-1; j++ ) {
+                    ReadCompressedDoubleData(mat,&z_copy,ptr+i+j,data_type,1);
+                    InflateSkipData(mat,&z_copy,data_type,(stride[0]-1));
+                    I += stride[0];
+                }
+                ReadCompressedDoubleData(mat,&z_copy,ptr+i+j,data_type,1);
+                I += dims[0]-(ptrdiff_t)(edge[0]-1)*stride[0]-start[0];
+                InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1);
+    do {
+        for ( j = 1; j < rank; j++ ) {
+            cnt[j]++;
+            if ( (cnt[j] % edge[j]) == 0 ) {
+                cnt[j] = 0;
+                if ( (I % dimp[j]) != 0 ) {
+                    InflateSkipData(mat,&z_copy,data_type, dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]);
+                    I += dimp[j]-(I % dimp[j]) + (ptrdiff_t)dimp[j-1]*start[j];
+                } else if ( start[j] ) {
+                    InflateSkipData(mat,&z_copy,data_type, dimp[j-1]*start[j]);
+                    I += (ptrdiff_t)dimp[j-1]*start[j];
+                }
+            } else {
+                if ( inc[j] ) {
+                    I += inc[j];
+                    InflateSkipData(mat,&z_copy,data_type,inc[j]);
+                }
+                break;
+            }
+        }
+    } while (0);
+            }
+        }
+    } while (0);
             break;
         }
         case MAT_C_SINGLE:
