@@ -408,8 +408,15 @@ Mat_Open(const char *matname,int mode)
 
         if ( (mode & 0x01) == MAT_ACC_RDONLY )
             *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDONLY,H5P_DEFAULT);
-        else if ( (mode & 0x01) == MAT_ACC_RDWR )
-            *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDWR,H5P_DEFAULT);
+        else if ( (mode & 0x01) == MAT_ACC_RDWR ) {
+            hid_t plist_ap;
+            plist_ap = H5Pcreate(H5P_FILE_ACCESS);
+#if H5_VERSION_GE(1,10,2)
+            H5Pset_libver_bounds(plist_ap,H5F_LIBVER_EARLIEST,H5F_LIBVER_V18);
+#endif
+            *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDWR,plist_ap);
+            H5Pclose(plist_ap);
+        }
 
         if ( -1 < *(hid_t*)mat->fp ) {
             H5G_info_t group_info;

@@ -2200,11 +2200,15 @@ Mat_Create73(const char *matname,const char *hdr_str)
     mat_t *mat = NULL;
     size_t err;
     time_t t;
-    hid_t plist_id,fid;
+    hid_t plist_id,fid,plist_ap;
 
     plist_id = H5Pcreate(H5P_FILE_CREATE);
     H5Pset_userblock(plist_id,512);
-    fid = H5Fcreate(matname,H5F_ACC_TRUNC,plist_id,H5P_DEFAULT);
+    plist_ap = H5Pcreate(H5P_FILE_ACCESS);
+#if H5_VERSION_GE(1,10,2)
+    H5Pset_libver_bounds(plist_ap,H5F_LIBVER_EARLIEST,H5F_LIBVER_V18);
+#endif
+    fid = H5Fcreate(matname,H5F_ACC_TRUNC,plist_id,plist_ap);
     H5Fclose(fid);
     H5Pclose(plist_id);
 
@@ -2263,7 +2267,8 @@ Mat_Create73(const char *matname,const char *hdr_str)
 
     fclose(fp);
 
-    fid = H5Fopen(matname,H5F_ACC_RDWR,H5P_DEFAULT);
+    fid = H5Fopen(matname,H5F_ACC_RDWR,plist_ap);
+    H5Pclose(plist_ap);
 
     mat->fp = malloc(sizeof(hid_t));
     *(hid_t*)mat->fp = fid;
