@@ -29,13 +29,17 @@
  */
 
 /* FIXME: Implement Unicode support */
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
 #if defined(_MSC_VER) || defined(__MINGW32__)
+#   define SIZE_T_FMTSTR "Iu"
 #   define strdup _strdup
+#else
+#   define SIZE_T_FMTSTR "zu"
 #endif
 #include "matio_private.h"
 #include "mat5.h"
@@ -857,16 +861,16 @@ WriteCompressedEmptyData(mat_t *mat,z_streamp z,int N,
     do { \
         int i, j; \
         long pos, row_stride, col_stride, pos2; \
-        row_stride = (stride[0]-1)*data_size; \
-        col_stride = stride[1]*dims[0]*data_size; \
-        (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR); \
+        row_stride = (long)(stride[0]-1)*data_size; \
+        col_stride = (long)stride[1]*dims[0]*data_size; \
+        (void)fseek((FILE*)mat->fp,(long)start[1]*dims[0]*data_size,SEEK_CUR); \
         for ( i = 0; i < edge[1]; i++ ) { \
             pos = ftell((FILE*)mat->fp); \
             if ( pos == -1L ) { \
                 Mat_Critical("Couldn't determine file position"); \
                 return -1; \
             } \
-            (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR); \
+            (void)fseek((FILE*)mat->fp,(long)start[0]*data_size,SEEK_CUR); \
             for ( j = 0; j < edge[0]; j++ ) { \
                 fwrite(ptr++,data_size,1,(FILE*)mat->fp); \
                 (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR); \
@@ -901,7 +905,8 @@ int
 WriteDataSlab2(mat_t *mat,void *data,enum matio_types data_type,size_t *dims,
     int *start,int *stride,int *edge)
 {
-    int nBytes = 0, data_size;
+    int nBytes = 0;
+    size_t data_size;
 
     if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
          (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
@@ -1187,13 +1192,12 @@ WriteCompressedData(mat_t *mat,z_streamp z,void *data,int N,
 static size_t
 ReadNextCell( mat_t *mat, matvar_t *matvar )
 {
-    size_t bytesread = 0;
-    int ncells, i;
+    size_t bytesread = 0, ncells = 1, i;
+    int j;
     matvar_t **cells = NULL;
 
-    ncells = 1;
-    for ( i = 0; i < matvar->rank; i++ )
-        ncells *= matvar->dims[i];
+    for ( j = 0; j < matvar->rank; j++ )
+        ncells *= matvar->dims[j];
     matvar->data_size = sizeof(matvar_t *);
     matvar->nbytes    = ncells*matvar->data_size;
     matvar->data      = calloc(ncells, matvar->data_size);
@@ -1214,7 +1218,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
         for ( i = 0; i < ncells; i++ ) {
             cells[i] = Mat_VarCalloc();
             if ( NULL == cells[i] ) {
-                Mat_Critical("Couldn't allocate memory for cell %d", i);
+                Mat_Critical("Couldn't allocate memory for cell %" SIZE_T_FMTSTR, i);
                 continue;
             }
 
@@ -1235,7 +1239,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             } else if ( uncomp_buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
-                Mat_Critical("cells[%d], Uncompressed type not MAT_T_MATRIX",i);
+                Mat_Critical("cells[%" SIZE_T_FMTSTR "], Uncompressed type not MAT_T_MATRIX", i);
                 break;
             }
             cells[i]->compression = MAT_COMPRESSION_ZLIB;
@@ -1369,7 +1373,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             int cell_bytes_read,name_len;
             cells[i] = Mat_VarCalloc();
             if ( !cells[i] ) {
-                Mat_Critical("Couldn't allocate memory for cell %d", i);
+                Mat_Critical("Couldn't allocate memory for cell %" SIZE_T_FMTSTR, i);
                 continue;
             }
 
@@ -1393,7 +1397,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             } else if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
-                Mat_Critical("cells[%d] not MAT_T_MATRIX, fpos = %ld",i,
+                Mat_Critical("cells[%" SIZE_T_FMTSTR "] not MAT_T_MATRIX, fpos = %ld", i,
                     ftell((FILE*)mat->fp));
                 break;
             }
@@ -1473,17 +1477,17 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 static size_t
 ReadNextStructField( mat_t *mat, matvar_t *matvar )
 {
-    int fieldname_size,nfields, nmemb = 1, i;
-    size_t bytesread = 0;
+    int fieldname_size, j;
+    size_t bytesread = 0, nfields, nmemb = 1, i;
     matvar_t **fields = NULL;
 
-    for ( i = 0; i < matvar->rank; i++ )
-        nmemb *= matvar->dims[i];
+    for ( j = 0; j < matvar->rank; j++ )
+        nmemb *= matvar->dims[j];
 
     if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
         mat_uint32_t uncomp_buf[16] = {0,};
-        int nbytes, j;
+        int nbytes;
         mat_uint32_t array_flags;
         int err;
 
@@ -1548,9 +1552,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
         fields = (matvar_t**)matvar->data;
         for ( i = 0; i < nmemb; i++ ) {
-            for ( j = 0; j < nfields; j++ ) {
-                fields[i*nfields+j] = Mat_VarCalloc();
-                fields[i*nfields+j]->name = strdup(matvar->internal->fieldnames[j]);
+            size_t k;
+            for ( k = 0; k < nfields; k++ ) {
+                fields[i*nfields+k] = Mat_VarCalloc();
+                fields[i*nfields+k]->name = strdup(matvar->internal->fieldnames[k]);
             }
         }
 
@@ -1565,7 +1570,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
-                Mat_Critical("fields[%d], Uncompressed type not MAT_T_MATRIX",i);
+                Mat_Critical("fields[%" SIZE_T_FMTSTR "], Uncompressed type not MAT_T_MATRIX", i);
                 continue;
             } else if ( 0 == nbytes ) {
                 /* Empty field: Memory optimization */
@@ -1607,8 +1612,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 }
                 /* Rank and dimension */
                 if ( uncomp_buf[0] == MAT_T_INT32 ) {
-                    int j = 0;
-
+                    j = 0;
                     fields[i]->rank = uncomp_buf[1];
                     nbytes -= fields[i]->rank;
                     fields[i]->rank /= 4;
@@ -1670,7 +1674,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 #endif
     } else {
         mat_uint32_t buf[6];
-        int nBytes,j;
+        int nBytes;
         mat_uint32_t array_flags;
 
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
@@ -1728,9 +1732,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
         fields = (matvar_t**)matvar->data;
         for ( i = 0; i < nmemb; i++ ) {
-            for ( j = 0; j < nfields; j++ ) {
-                fields[i*nfields+j] = Mat_VarCalloc();
-                fields[i*nfields+j]->name = strdup(matvar->internal->fieldnames[j]);
+            size_t k;
+            for ( k = 0; k < nfields; k++ ) {
+                fields[i*nfields+k] = Mat_VarCalloc();
+                fields[i*nfields+k]->name = strdup(matvar->internal->fieldnames[k]);
             }
         }
 
@@ -1745,7 +1750,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
-                Mat_Critical("fields[%d] not MAT_T_MATRIX, fpos = %ld",i,
+                Mat_Critical("fields[%" SIZE_T_FMTSTR "] not MAT_T_MATRIX, fpos = %ld", i,
                     ftell((FILE*)mat->fp));
                 return bytesread;
             } else if ( 0 == nBytes ) {
@@ -1813,11 +1818,11 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 static size_t
 ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
 {
-    int nfunctions = 1, i;
-    size_t bytesread = 0;
+    int j;
+    size_t bytesread = 0, nfunctions = 1, i;
 
-    for ( i = 0; i < matvar->rank; i++ )
-        nfunctions *= matvar->dims[i];
+    for ( j = 0; j < matvar->rank; j++ )
+        nfunctions *= matvar->dims[j];
 
     matvar->data = malloc(nfunctions*sizeof(matvar_t *));
     if ( matvar->data != NULL ) {
@@ -4080,8 +4085,8 @@ Read5(mat_t *mat, matvar_t *matvar)
                     ptr_in += stride[0]; \
                     I += stride[0]; \
                 } \
-                I += dims[0]-edge[0]*stride[0]-start[0]; \
-                ptr_in += dims[0]-edge[0]*stride[0]-start[0]; \
+                I += dims[0]-(ptrdiff_t)edge[0]*stride[0]-start[0]; \
+                ptr_in += dims[0]-(ptrdiff_t)edge[0]*stride[0]-start[0]; \
                 GET_DATA_SLABN_RANK_LOOP; \
             } \
         } \
@@ -4449,7 +4454,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
     do { \
         ptr_in += start; \
         if ( !stride ) { \
-            memcpy(ptr, ptr_in, edge*data_size); \
+            memcpy(ptr, ptr_in, (size_t)edge*data_size); \
         } else { \
             int i; \
             for ( i = 0; i < edge; i++ ) \
@@ -4462,7 +4467,7 @@ GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
     enum matio_types data_type, int start, int stride, int edge)
 {
     int err = 0;
-    int data_size = Mat_SizeOf(data_type);
+    size_t data_size = Mat_SizeOf(data_type);
 
     switch ( class_type ) {
         case MAT_C_DOUBLE:

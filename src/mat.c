@@ -1688,7 +1688,7 @@ Mat_CalcSubscripts2(int rank,size_t *dims,size_t index)
 size_t
 Mat_VarGetSize(matvar_t *matvar)
 {
-    int i;
+    size_t i;
     size_t bytes = 0, overhead = 0, ptr = 0;
 
 #if defined(_WIN64) || (defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 8)) || (defined(SIZEOF_VOID_P) && (SIZEOF_VOID_P == 8))
@@ -1703,9 +1703,10 @@ Mat_VarGetSize(matvar_t *matvar)
 
     if ( matvar->class_type == MAT_C_STRUCT ) {
         int nfields = matvar->internal->num_fields;
-        int nmemb = 1;
-        for ( i = 0; i < matvar->rank; i++ )
-            nmemb *= matvar->dims[i];
+        size_t nmemb = 1;
+        int j;
+        for ( j = 0; j < matvar->rank; j++ )
+            nmemb *= matvar->dims[j];
         if ( nmemb*nfields > 0 ) {
             matvar_t **fields = (matvar_t**)matvar->data;
             if ( NULL != fields ) {
@@ -1724,7 +1725,7 @@ Mat_VarGetSize(matvar_t *matvar)
     } else if ( matvar->class_type == MAT_C_CELL ) {
         matvar_t **cells = (matvar_t**)matvar->data;
         if ( NULL != cells ) {
-            int ncells = matvar->nbytes / matvar->data_size;
+            size_t ncells = matvar->nbytes / matvar->data_size;
             bytes = ncells*overhead;
             for ( i = 0; i < ncells; i++ ) {
                 if ( NULL != cells[i] ) {
@@ -1754,8 +1755,9 @@ Mat_VarGetSize(matvar_t *matvar)
     } else {
         if ( matvar->rank > 0 ) {
             size_t nmemb = 1;
-            for ( i = 0; i < matvar->rank; i++ )
-                nmemb *= matvar->dims[i];
+            int j;
+            for ( j = 0; j < matvar->rank; j++ )
+                nmemb *= matvar->dims[j];
             bytes = nmemb*Mat_SizeOfClass(matvar->class_type);
             if ( matvar->isComplex )
                 bytes *= 2;

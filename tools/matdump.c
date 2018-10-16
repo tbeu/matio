@@ -359,7 +359,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
             /* Check if the users selection is valid and if so read the data */
             if ((nmemb = slab_select_valid(rank,start,stride,edge,matvar))) {
                  matvar->data_size = Mat_SizeOfClass(matvar->class_type);
-                 matvar->nbytes = nmemb*matvar->data_size;
+                 matvar->nbytes = (size_t)nmemb*matvar->data_size;
                 if ( matvar->isComplex ) {
                     mat_complex_split_t *z;
                     matvar->data = malloc(sizeof(*z));

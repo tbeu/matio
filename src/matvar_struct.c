@@ -45,7 +45,8 @@ matvar_t *
 Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
     unsigned nfields)
 {
-    int i, nmemb = 1;
+    size_t i, nmemb = 1;
+    int j;
     matvar_t *matvar;
 
     if ( NULL == dims )
@@ -60,9 +61,9 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
         matvar->name = strdup(name);
     matvar->rank = rank;
     matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
-    for ( i = 0; i < matvar->rank; i++ ) {
-        matvar->dims[i] = dims[i];
-        nmemb *= dims[i];
+    for ( j = 0; j < matvar->rank; j++ ) {
+        matvar->dims[j] = dims[j];
+        nmemb *= dims[j];
     }
     matvar->class_type = MAT_C_STRUCT;
     matvar->data_type  = MAT_T_STRUCT;
@@ -113,15 +114,16 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
 int
 Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 {
-    int       i, f, nfields, nmemb, cnt = 0;
+    int j, cnt = 0;
+    size_t i, nfields, nmemb;
     matvar_t **new_data, **old_data;
     char     **fieldnames;
 
     if ( matvar == NULL || fieldname == NULL )
         return -1;
     nmemb = 1;
-    for ( i = 0; i < matvar->rank; i++ )
-        nmemb *= matvar->dims[i];
+    for ( j = 0; j < matvar->rank; j++ )
+        nmemb *= matvar->dims[j];
 
     nfields = matvar->internal->num_fields+1;
     matvar->internal->num_fields = nfields;
@@ -138,6 +140,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 
     old_data = (matvar_t**)matvar->data;
     for ( i = 0; i < nmemb; i++ ) {
+        size_t f;
         for ( f = 0; f < nfields-1; f++ )
             new_data[cnt++] = old_data[i*(nfields-1)+f];
         new_data[cnt++] = NULL;
@@ -445,7 +448,7 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
 
         nfields = matvar->internal->num_fields;
 
-        struct_slab->nbytes = edge*nfields*sizeof(matvar_t *);
+        struct_slab->nbytes = (size_t)edge*nfields*sizeof(matvar_t *);
         struct_slab->data = malloc(struct_slab->nbytes);
         struct_slab->dims[0] = edge;
         struct_slab->dims[1] = 1;

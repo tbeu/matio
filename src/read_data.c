@@ -29,6 +29,7 @@
  */
 
 /* FIXME: Implement Unicode support */
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -1437,10 +1438,10 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
                 cnt[j] = 0; \
                 if ( (I % dimp[j]) != 0 ) { \
                     (void)fseek((FILE*)mat->fp,data_size*(dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]),SEEK_CUR); \
-                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]; \
+                    I += dimp[j]-(I % dimp[j]) + (ptrdiff_t)dimp[j-1]*start[j]; \
                 } else if ( start[j] ) { \
                     (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),SEEK_CUR); \
-                    I += dimp[j-1]*start[j]; \
+                    I += (ptrdiff_t)dimp[j-1]*start[j]; \
                 } \
             } else { \
                 I += inc[j]; \
@@ -1464,7 +1465,7 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
                 dimp[i] *= dims[j+1]; \
             } \
             N *= edge[i]; \
-            I += dimp[i-1]*start[i]; \
+            I += (ptrdiff_t)dimp[i-1]*start[i]; \
         } \
         (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR); \
         if ( stride[0] == 1 ) { \
@@ -1490,9 +1491,9 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
                     (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR); \
                     I += stride[0]; \
                 } \
-                I += dims[0]-edge[0]*stride[0]-start[0]; \
+                I += dims[0]-(ptrdiff_t)edge[0]*stride[0]-start[0]; \
                 (void)fseek((FILE*)mat->fp,data_size* \
-                    (dims[0]-edge[0]*stride[0]-start[0]),SEEK_CUR); \
+                    (dims[0]-(ptrdiff_t)edge[0]*stride[0]-start[0]),SEEK_CUR); \
                 READ_DATA_SLABN_RANK_LOOP; \
             } \
         } \
@@ -1613,10 +1614,10 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
                 cnt[j] = 0; \
                 if ( (I % dimp[j]) != 0 ) { \
                     InflateSkipData(mat,&z_copy,data_type, dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]); \
-                    I += dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]; \
+                    I += dimp[j]-(I % dimp[j]) + (ptrdiff_t)dimp[j-1]*start[j]; \
                 } else if ( start[j] ) { \
                     InflateSkipData(mat,&z_copy,data_type, dimp[j-1]*start[j]); \
-                    I += dimp[j-1]*start[j]; \
+                    I += (ptrdiff_t)dimp[j-1]*start[j]; \
                 } \
             } else { \
                 if ( inc[j] ) { \
@@ -1642,7 +1643,7 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
                 dimp[i] *= dims[j+1]; \
             } \
             N *= edge[i]; \
-            I += dimp[i-1]*start[i]; \
+            I += (ptrdiff_t)dimp[i-1]*start[i]; \
         } \
         /* Skip all data to the starting indices */ \
         InflateSkipData(mat,&z_copy,data_type,I); \
@@ -1669,8 +1670,8 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
                     I += stride[0]; \
                 } \
                 ReadDataFunc(mat,&z_copy,ptr+i+j,data_type,1); \
-                I += dims[0]-(edge[0]-1)*stride[0]-start[0]; \
-                InflateSkipData(mat,&z_copy,data_type,dims[0]-(edge[0]-1)*stride[0]-start[0]-1); \
+                I += dims[0]-(ptrdiff_t)(edge[0]-1)*stride[0]-start[0]; \
+                InflateSkipData(mat,&z_copy,data_type,dims[0]-(ptrdiff_t)(edge[0]-1)*stride[0]-start[0]-1); \
                 READ_COMPRESSED_DATA_SLABN_RANK_LOOP; \
             } \
         } \
@@ -1901,23 +1902,23 @@ ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
         /* data so get rid of the loops. */ \
         if ( (stride[0] == 1 && edge[0] == dims[0]) && \
              (stride[1] == 1) ) { \
-            ReadDataFunc(mat,ptr,data_type,edge[0]*edge[1]); \
+            ReadDataFunc(mat,ptr,data_type,(ptrdiff_t)edge[0]*edge[1]); \
         } else { \
-            row_stride = (stride[0]-1)*data_size; \
-            col_stride = stride[1]*dims[0]*data_size; \
+            row_stride = (long)(stride[0]-1)*data_size; \
+            col_stride = (long)stride[1]*dims[0]*data_size; \
             pos = ftell((FILE*)mat->fp); \
             if ( pos == -1L ) { \
                 Mat_Critical("Couldn't determine file position"); \
                 return -1; \
             } \
-            (void)fseek((FILE*)mat->fp,start[1]*dims[0]*data_size,SEEK_CUR); \
+            (void)fseek((FILE*)mat->fp,(long)start[1]*dims[0]*data_size,SEEK_CUR); \
             for ( i = 0; i < edge[1]; i++ ) { \
                 pos = ftell((FILE*)mat->fp); \
                 if ( pos == -1L ) { \
                     Mat_Critical("Couldn't determine file position"); \
                     return -1; \
                 } \
-                (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR); \
+                (void)fseek((FILE*)mat->fp,(long)start[0]*data_size,SEEK_CUR); \
                 for ( j = 0; j < edge[0]; j++ ) { \
                     ReadDataFunc(mat,ptr++,data_type,1); \
                     (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR); \
@@ -2161,13 +2162,13 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
         /* to speed up the code */ \
         if ( (stride[0] == 1 && edge[0] == dims[0]) && \
              (stride[1] == 1) ) { \
-            ReadDataFunc(mat,&z_copy,ptr,data_type,edge[0]*edge[1]); \
+            ReadDataFunc(mat,&z_copy,ptr,data_type,(ptrdiff_t)edge[0]*edge[1]); \
         } else if ( stride[0] == 1 ) { \
             for ( i = 0; i < edge[1]; i++ ) { \
                 InflateSkipData(mat,&z_copy,data_type,start[0]); \
                 ReadDataFunc(mat,&z_copy,ptr,data_type,edge[0]); \
                 ptr += edge[0]; \
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride; \
+                pos = dims[0]-(ptrdiff_t)(edge[0]-1)*stride[0]-1-start[0] + col_stride; \
                 InflateSkipData(mat,&z_copy,data_type,pos); \
             } \
         } else { \
@@ -2178,7 +2179,7 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
                     InflateSkipData(mat,&z_copy,data_type,row_stride); \
                 } \
                 ReadDataFunc(mat,&z_copy,ptr++,data_type,1); \
-                pos = dims[0]-(edge[0]-1)*stride[0]-1-start[0] + col_stride; \
+                pos = dims[0]-(ptrdiff_t)(edge[0]-1)*stride[0]-1-start[0] + col_stride; \
                 InflateSkipData(mat,&z_copy,data_type,pos); \
             } \
         } \

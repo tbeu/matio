@@ -282,7 +282,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
 void
 Read4(mat_t *mat,matvar_t *matvar)
 {
-    unsigned int N;
+    size_t N;
 
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
