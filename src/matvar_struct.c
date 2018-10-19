@@ -435,7 +435,6 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
 {
     matvar_t *struct_slab;
 
-    /* FIXME: Check allocations */
     if ( matvar == NULL || matvar->rank > 10 ) {
        struct_slab = NULL;
     } else {
@@ -450,6 +449,10 @@ Mat_VarGetStructsLinear(matvar_t *matvar,int start,int stride,int edge,
 
         struct_slab->nbytes = (size_t)edge*nfields*sizeof(matvar_t *);
         struct_slab->data = malloc(struct_slab->nbytes);
+        if ( struct_slab->data == NULL ) {
+            Mat_VarFree(struct_slab);
+            return NULL;
+        }
         struct_slab->dims[0] = edge;
         struct_slab->dims[1] = 1;
         fields = (matvar_t**)struct_slab->data;
