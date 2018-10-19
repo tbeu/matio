@@ -73,19 +73,15 @@ struct ReadGroupInfoIterData {
     matvar_t *matvar;
 };
 
-#if defined(H5Rdereference)
-/* HDF5 1.10.0 */
+#if H5_VERSION_GE(1,10,0)
 #define H5RDEREFERENCE(obj_id, ref_type, _ref) H5Rdereference2((obj_id), H5P_DATASET_ACCESS_DEFAULT, (ref_type), (_ref))
 #else
-/* HDF5 prior to 1.10.0 */
 #define H5RDEREFERENCE(obj_id, ref_type, _ref) H5Rdereference((obj_id), (ref_type), (_ref))
 #endif
 
-#if defined(H5Oget_info_by_name)
-/* HDF5 1.10.3 */
+#if H5_VERSION_GE(1,10,3)
 #define H5OGET_INFO_BY_NAME(loc_id, name, oinfo, lapl_id) H5Oget_info_by_name2((loc_id), (name), (oinfo), H5O_INFO_BASIC, (lapl_id));
 #else
-/* HDF5 prior to 1.10.3 */
 #define H5OGET_INFO_BY_NAME(loc_id, name, oinfo, lapl_id) H5Oget_info_by_name((loc_id), (name), (oinfo), (lapl_id));
 #endif
 
