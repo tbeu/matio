@@ -3145,7 +3145,7 @@ void
 Read5(mat_t *mat, matvar_t *matvar)
 {
     int nBytes = 0, i, byteswap, data_in_tag = 0;
-    size_t len = 1;
+    size_t len;
     enum matio_types packed_type = MAT_T_UNKNOWN;
     long fpos;
     mat_uint32_t tag[2];
