@@ -3266,13 +3266,13 @@ Read5(mat_t *mat, matvar_t *matvar)
                 packed_type = TYPE_FROM_TAG(tag[0]);
                 if ( tag[0] & 0xffff0000 ) { /* Data is in the tag */
                     data_in_tag = 1;
-                    nBytes = (tag[0] & 0xffff0000) >> 16;
+                    /* nBytes = (tag[0] & 0xffff0000) >> 16; */
                 } else {
                     data_in_tag = 0;
                     bytesread += fread(tag+1,4,1,(FILE*)mat->fp);
                     if ( byteswap )
                         (void)Mat_uint32Swap(tag+1);
-                    nBytes = tag[1];
+                    /* nBytes = tag[1]; */
                 }
                 matvar->data_type = MAT_T_UINT8;
                 matvar->data_size = (int)Mat_SizeOf(MAT_T_UINT8);
