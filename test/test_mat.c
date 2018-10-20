@@ -1533,7 +1533,7 @@ test_write_struct_2d_numeric(enum matio_classes matvar_class,
 #endif
     void *data[4];
     mat_t *mat;
-    matvar_t *matvar[5], *struct_matvar;
+    matvar_t *matvar[5], *struct_matvar = NULL;
     enum matio_types data_type;
 
     for ( i = 0; i < 50; i++ ) {
@@ -1659,6 +1659,7 @@ test_write_struct_2d_numeric(enum matio_classes matvar_class,
         struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
                                       matvar,0);
         err = Mat_VarWriteAppend(mat,struct_matvar,compression,dim_append);
+        Mat_VarFree(struct_matvar);
         dims[0] = 3;
         dims[1] = 4;
         matvar[0] = Mat_VarCreate("field1",matvar_class,data_type,2,
@@ -1700,7 +1701,7 @@ test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
 #endif
     mat_complex_split_t data[4];
     mat_t *mat;
-    matvar_t *matvar[5], *struct_matvar;
+    matvar_t *matvar[5], *struct_matvar = NULL;
     enum matio_types data_type;
 
     for ( i = 0; i < 50; i++ ) {
@@ -1876,6 +1877,7 @@ test_write_struct_complex_2d_numeric(enum matio_classes matvar_class,
         struct_matvar = Mat_VarCreate("a",MAT_C_STRUCT,MAT_T_STRUCT,2,dims,
                                       matvar,0);
         err = Mat_VarWriteAppend(mat,struct_matvar,compression,dim_append);
+        Mat_VarFree(struct_matvar);
         dims[0] = 3;
         dims[1] = 4;
         matvar[0] = Mat_VarCreate("field1",matvar_class,data_type,2,
