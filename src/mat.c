@@ -796,8 +796,9 @@ matvar_t *
 Mat_VarCreate(const char *name,enum matio_classes class_type,
     enum matio_types data_type,int rank,size_t *dims,void *data,int opt)
 {
-    size_t i, nmemb = 1, data_size;
+    size_t nmemb = 1, data_size;
     matvar_t *matvar = NULL;
+    int j;
 
     if ( dims == NULL )
         return NULL;
@@ -814,9 +815,9 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         matvar->name = strdup_printf("%s",name);
     matvar->rank = rank;
     matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
-    for ( i = 0; i < matvar->rank; i++ ) {
-        matvar->dims[i] = dims[i];
-        nmemb *= dims[i];
+    for ( j = 0; j < matvar->rank; j++ ) {
+        matvar->dims[j] = dims[j];
+        nmemb *= dims[j];
     }
     matvar->class_type = class_type;
     matvar->data_type  = data_type;
@@ -875,6 +876,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                     nfields = nfields / nmemb;
                 matvar->internal->num_fields = nfields;
                 if ( nfields ) {
+                    size_t i;
                     matvar->internal->fieldnames =
                         (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
                     for ( i = 0; i < nfields; i++ )
@@ -1155,7 +1157,7 @@ matvar_t *
 Mat_VarDuplicate(const matvar_t *in, int opt)
 {
     matvar_t *out;
-    int i;
+    size_t i;
 
     out = Mat_VarCalloc();
     if ( out == NULL )
@@ -1276,7 +1278,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     } else if ( (in->data != NULL) && (in->class_type == MAT_C_STRUCT) ) {
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
-            int nfields = in->nbytes / in->data_size;
+            size_t nfields = in->nbytes / in->data_size;
             matvar_t **infields  = (matvar_t **)in->data;
             matvar_t **outfields = (matvar_t **)out->data;
             for ( i = 0; i < nfields; i++ ) {
@@ -1286,7 +1288,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     } else if ( (in->data != NULL) && (in->class_type == MAT_C_CELL) ) {
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
-            int ncells = in->nbytes / in->data_size;
+            size_t ncells = in->nbytes / in->data_size;
             matvar_t **incells  = (matvar_t **)in->data;
             matvar_t **outcells = (matvar_t **)out->data;
             for ( i = 0; i < ncells; i++ ) {
@@ -1361,13 +1363,15 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 void
 Mat_VarFree(matvar_t *matvar)
 {
-    size_t nmemb = 0, i;
+    size_t nmemb = 0;
+
     if ( NULL == matvar )
         return;
     if ( NULL != matvar->dims ) {
+        int j;
         nmemb = 1;
-        for ( i = 0; i < matvar->rank; i++ )
-            nmemb *= matvar->dims[i];
+        for ( j = 0; j < matvar->rank; j++ )
+            nmemb *= matvar->dims[j];
         free(matvar->dims);
     }
     if ( NULL != matvar->data ) {
@@ -1375,7 +1379,7 @@ Mat_VarFree(matvar_t *matvar)
             case MAT_C_STRUCT:
                 if ( !matvar->mem_conserve ) {
                     matvar_t **fields = (matvar_t**)matvar->data;
-                    int nfields = matvar->internal->num_fields;
+                    size_t nfields = matvar->internal->num_fields, i;
                     for ( i = 0; i < nmemb*nfields; i++ )
                         Mat_VarFree(fields[i]);
 
@@ -1385,6 +1389,7 @@ Mat_VarFree(matvar_t *matvar)
             case MAT_C_CELL:
                 if ( !matvar->mem_conserve ) {
                     matvar_t **cells = (matvar_t**)matvar->data;
+                    size_t i;
                     for ( i = 0; i < nmemb; i++ )
                         Mat_VarFree(cells[i]);
 
@@ -1784,8 +1789,7 @@ Mat_VarGetSize(matvar_t *matvar)
 void
 Mat_VarPrint( matvar_t *matvar, int printdata )
 {
-    size_t nmemb = 0;
-    int i, j;
+    size_t nmemb = 0, i, j;
     const char *class_type_desc[18] = {"Undefined","Cell Array","Structure",
        "Object","Character Array","Sparse Array","Double Precision Array",
        "Single Precision Array", "8-bit, signed integer array",
@@ -1802,11 +1806,12 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     if ( matvar->rank <= 0 )
         return;
     if ( NULL != matvar->dims ) {
+        int k;
         printf("Dimensions: %" SIZE_T_FMTSTR,matvar->dims[0]);
         nmemb = matvar->dims[0];
-        for ( i = 1; i < matvar->rank; i++ ) {
-            printf(" x %" SIZE_T_FMTSTR,matvar->dims[i]);
-            nmemb *= matvar->dims[i];
+        for ( k = 1; k < matvar->rank; k++ ) {
+            printf(" x %" SIZE_T_FMTSTR,matvar->dims[k]);
+            nmemb *= matvar->dims[k];
         }
         printf("\n");
     }
@@ -1832,7 +1837,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
 
     if ( MAT_C_STRUCT == matvar->class_type ) {
         matvar_t **fields = (matvar_t **)matvar->data;
-        int nfields = matvar->internal->num_fields;
+        size_t nfields = matvar->internal->num_fields;
         if ( nmemb*nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nfields*nmemb);
             for ( i = 0; i < nfields*nmemb; i++ ) {
@@ -1845,7 +1850,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
             }
             printf("}\n");
         } else {
-            printf("Fields[%d] {\n", nfields);
+            printf("Fields[%" SIZE_T_FMTSTR "] {\n", nfields);
             for ( i = 0; i < nfields; i++ )
                 printf("      Name: %s\n      Rank: %d\n",
                        matvar->internal->fieldnames[i],0);
@@ -1858,7 +1863,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         return;
     } else if ( MAT_C_CELL == matvar->class_type ) {
         matvar_t **cells = (matvar_t **)matvar->data;
-        int ncells = matvar->nbytes / matvar->data_size;
+        size_t ncells = matvar->nbytes / matvar->data_size;
         printf("{\n");
         for ( i = 0; i < ncells; i++ )
             Mat_VarPrint(cells[i],printdata);
@@ -1989,7 +1994,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                     for ( i = 0; i < sparse->njc-1; i++ ) {
                         for ( j = sparse->jc[i];
                               j < sparse->jc[i+1] && j < sparse->ndata; j++ ) {
-                            printf("    (%d,%d)  ",sparse->ir[j]+1,i+1);
+                            printf("    (%d,%" SIZE_T_FMTSTR ")  ",sparse->ir[j]+1,i+1);
                             Mat_PrintNumber(matvar->data_type,re+j*stride);
                             printf(" + ");
                             Mat_PrintNumber(matvar->data_type,im+j*stride);
@@ -2001,7 +2006,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                     for ( i = 0; i < sparse->njc-1; i++ ) {
                         for ( j = sparse->jc[i];
                               j < sparse->jc[i+1] && j < sparse->ndata; j++ ) {
-                            printf("    (%d,%d)  ",sparse->ir[j]+1,i+1);
+                            printf("    (%d,%" SIZE_T_FMTSTR ")  ",sparse->ir[j]+1,i+1);
                             Mat_PrintNumber(matvar->data_type,data+j*stride);
                             printf("\n");
                         }
@@ -2393,9 +2398,9 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
     } else if ( start == NULL || stride == NULL || edge == NULL ) {
         err = 1;
     } else if ( matvar->rank == 2 ) {
-        if ( stride[0]*(edge[0]-1)+start[0]+1 > matvar->dims[0] ) {
+        if ( (size_t)stride[0]*(edge[0]-1)+start[0]+1 > matvar->dims[0] ) {
             err = 1;
-        } else if ( stride[1]*(edge[1]-1)+start[1]+1 > matvar->dims[1] ) {
+        } else if ( (size_t)stride[1]*(edge[1]-1)+start[1]+1 > matvar->dims[1] ) {
             err = 1;
         } else {
             switch ( matvar->class_type ) {
@@ -2518,7 +2523,7 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
 int
 Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,int dim)
 {
-    int err, append = 0;
+    int err;
 
     if ( NULL == mat || NULL == matvar )
         return -1;
@@ -2528,20 +2533,20 @@ Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,i
         (void)Mat_GetDir(mat, &n);
     }
 
-    {
-        /* Check if MAT variable already exists in MAT file */
-        size_t i;
-        for ( i = 0; i < mat->num_datasets; i++ ) {
-            if ( NULL != mat->dir[i] &&
-                0 == strcmp(mat->dir[i], matvar->name) ) {
-                append = 1;
-                break;
-            }
-        }
-    }
-
     if ( mat->version == MAT_FT_MAT73 ) {
 #if defined(MAT73) && MAT73
+        int append = 0;
+        {
+            /* Check if MAT variable already exists in MAT file */
+            size_t i;
+            for ( i = 0; i < mat->num_datasets; i++ ) {
+                if ( NULL != mat->dir[i] &&
+                    0 == strcmp(mat->dir[i], matvar->name) ) {
+                    append = 1;
+                    break;
+                }
+            }
+        }
         err = Mat_VarWriteAppend73(mat,matvar,compress,dim);
         if ( err == 0 && 0 == append ) {
             /* Update directory */

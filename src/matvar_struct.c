@@ -45,7 +45,7 @@ matvar_t *
 Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
     unsigned nfields)
 {
-    size_t i, nmemb = 1;
+    size_t nmemb = 1;
     int j;
     matvar_t *matvar;
 
@@ -78,6 +78,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
             Mat_VarFree(matvar);
             matvar = NULL;
         } else {
+            size_t i;
             for ( i = 0; i < nfields; i++ ) {
                 if ( NULL == fields[i] ) {
                     Mat_VarFree(matvar);
@@ -89,6 +90,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
             }
         }
         if ( NULL != matvar && nmemb > 0 ) {
+            size_t i;
             matvar_t **field_vars;
             matvar->nbytes = nmemb*nfields*matvar->data_size;
             matvar->data = malloc(matvar->nbytes);
@@ -204,9 +206,9 @@ Mat_VarGetStructFieldnames(const matvar_t *matvar)
 matvar_t *
 Mat_VarGetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index)
 {
-    int       i, nfields;
+    int       i;
     matvar_t *field = NULL;
-    size_t nmemb;
+    size_t nmemb, nfields;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
         matvar->data_size == 0 )
@@ -341,8 +343,9 @@ matvar_t *
 Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
     int copy_fields)
 {
-    size_t i,j,N,I,nfields,field,idx[10] = {0,},cnt[10] = {0,},dimp[10] = {0,};
+    size_t i,N,I,nfields,field,idx[10] = {0,},cnt[10] = {0,},dimp[10] = {0,};
     matvar_t **fields, *struct_slab;
+    int j;
 
     if ( (matvar == NULL) || (start == NULL) || (stride == NULL) ||
          (edge == NULL) ) {
@@ -364,12 +367,12 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
     I = start[0];
     struct_slab->dims[0] = edge[0];
     idx[0] = start[0];
-    for ( i = 1; i < matvar->rank; i++ ) {
-        idx[i]  = start[i];
-        dimp[i] = dimp[i-1]*matvar->dims[i];
-        N *= edge[i];
-        I += start[i]*dimp[i-1];
-        struct_slab->dims[i] = edge[i];
+    for ( j = 1; j < matvar->rank; j++ ) {
+        idx[j]  = start[j];
+        dimp[j] = dimp[j-1]*matvar->dims[j];
+        N *= edge[j];
+        I += start[j]*dimp[j-1];
+        struct_slab->dims[j] = edge[j];
     }
     I *= nfields;
     struct_slab->nbytes = N*nfields*sizeof(matvar_t *);
@@ -492,9 +495,9 @@ matvar_t *
 Mat_VarSetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index,
     matvar_t *field)
 {
-    int       i, nfields;
+    int       i;
     matvar_t *old_field = NULL;
-    size_t nmemb;
+    size_t nmemb, nfields;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT ||
         matvar->data == NULL )

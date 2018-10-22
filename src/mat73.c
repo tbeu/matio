@@ -660,17 +660,19 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     /* If the dataset is a cell array read the info of the cells */
     if ( MAT_C_CELL == matvar->class_type ) {
         matvar_t **cells;
-        int i,ncells = 1;
+        size_t ncells = 1;
+        int j;
         hobj_ref_t *ref_ids;
 
-        for ( i = 0; i < matvar->rank; i++ )
-            ncells *= matvar->dims[i];
+        for ( j = 0; j < matvar->rank; j++ )
+            ncells *= matvar->dims[j];
         matvar->data_size = sizeof(matvar_t**);
         matvar->nbytes    = ncells*matvar->data_size;
         matvar->data      = malloc(matvar->nbytes);
         cells = (matvar_t**)matvar->data;
 
         if ( ncells ) {
+            size_t i;
             ref_ids = (hobj_ref_t*)malloc(ncells*sizeof(*ref_ids));
             H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,ref_ids);
             for ( i = 0; i < ncells; i++ ) {
@@ -1077,7 +1079,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 Mat_VarRead73(mat,matvar);
             } else {
                 matvar_t **fields;
-                int i,nfields = 0;
+                size_t i,nfields = 0;
 
                 if ( !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
                     break;
@@ -1670,8 +1672,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
 static int
 Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,int dim)
 {
-    int err = 0;
-    unsigned long k;
+    int err = 0, k;
     hsize_t numel = 1;
 
     for ( k = 0; k < matvar->rank; k++ ) {
@@ -1972,8 +1973,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
 static int
 Mat_VarWriteAppendStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims,int dim)
 {
-    int err = 0;
-    unsigned long k;
+    int err = 0, k;
     hsize_t nmemb = 1;
 
     for ( k = 0; k < matvar->rank; k++ ) {
@@ -2367,7 +2367,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_STRUCT:
         {
             matvar_t **fields;
-            int i,nfields = 0;
+            size_t i,nfields = 0;
 
             if ( !matvar->internal->num_fields || NULL == matvar->data )
                 break;
@@ -2390,7 +2390,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_CELL:
         {
             matvar_t **cells;
-            int i,ncells = 0;
+            size_t i,ncells = 0;
 
             ncells = matvar->nbytes / matvar->data_size;
             cells  = (matvar_t**)matvar->data;
