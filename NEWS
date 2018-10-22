@@ -1,3 +1,10 @@
+Changes in 1.5.13 (22 October 2018)
+* Fixed bug calculating size for zero-rank variables in Mat_VarGetSize
+* Fixed bug reading dimensions from (crafted) v5 MAT file
+* Fixed bug reading tag and class from (crafted) v5 MAT file
+* Fixed integer multiplication overflows
+* Fixed HDF5 compatibility in Mat_Open and Mat_Create for HDF5 > v1.10.1
+
 Changes in 1.5.12 (7 March 2018)
 * Updated Mat_VarWriteAppend: Added support to append a variable to a previously written
   struct array in HDF5 MAT file
