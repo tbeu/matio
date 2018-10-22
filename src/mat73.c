@@ -554,7 +554,7 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank)
             int k;
             (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
             *numel = 1;
-            /* Permutate dimensions */
+            /* Permute dimensions */
             for ( k = 0; k < *rank; k++ ) {
                 perm_dims[k] = (size_t)dims[*rank - k - 1];
                 *numel *= perm_dims[k];
@@ -566,7 +566,7 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank)
                 int k;
                 (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
                 *numel = 1;
-                /* Permutate dimensions */
+                /* Permute dimensions */
                 for ( k = 0; k < *rank; k++ ) {
                     perm_dims[k] = (size_t)dims[*rank - k - 1];
                     *numel *= perm_dims[k];
@@ -1294,7 +1294,7 @@ Mat_VarWriteEmpty(hid_t id,matvar_t *matvar,const char *name,const char* class_n
  * @param matvar pointer to the cell array variable
  * @param name Name of the HDF dataset
  * @param refs_id pointer to the id of the /#refs# group in HDF5
- * @param dims array of permutated dimensions
+ * @param dims array of permuted dimensions
  * @retval 0 on success
  * @endif
  */
@@ -1366,7 +1366,7 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
  * @param id HDF id of the parent object
  * @param matvar pointer to the character variable
  * @param name Name of the HDF dataset
- * @param dims array of permutated dimensions
+ * @param dims array of permuted dimensions
  * @retval 0 on success
  * @endif
  */
@@ -1494,7 +1494,7 @@ Mat_WriteEmptyVariable73(hid_t id,const char *name,hsize_t rank,size_t *dims)
  * @param id HDF id of the parent object
  * @param matvar pointer to the logical variable
  * @param name Name of the HDF dataset
- * @param dims array of permutated dimensions
+ * @param dims array of permuted dimensions
  * @retval 0 on success
  * @endif
  */
@@ -1582,7 +1582,7 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
  * @param id HDF id of the parent object
  * @param matvar pointer to the numeric variable
  * @param name Name of the HDF dataset
- * @param dims array of permutated dimensions
+ * @param dims array of permuted dimensions
  * @param max_dims maximum dimensions
  * @retval 0 on success
  * @endif
@@ -1662,7 +1662,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
  * @param id HDF id of the parent object
  * @param matvar pointer to the numeric variable
  * @param name Name of the HDF dataset
- * @param dims array of permutated dimensions
+ * @param dims array of permuted dimensions
  * @param dim dimension to append data
  * @retval 0 on success
  * @endif
@@ -1825,7 +1825,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
  * @param matvar pointer to the structure variable
  * @param name Name of the HDF dataset
  * @param refs_id pointer to the id of the /#refs# group in HDF5
- * @param dims array of permutated dimensions
+ * @param dims array of permuted dimensions
  * @param max_dims maximum dimensions
  * @retval 0 on success
  * @endif
@@ -2084,7 +2084,7 @@ Mat_VarWriteNextType73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id
 {
     int err = -1, k;
 
-    /* Permutate dimensions */
+    /* Permute dimensions */
     for ( k = 0; k < matvar->rank; k++ ) {
         dims[k] = matvar->dims[matvar->rank - k - 1];
     }
@@ -2135,7 +2135,7 @@ Mat_VarWriteAppendNextType73(hid_t id,matvar_t *matvar,const char *name,hid_t *r
 {
     int err = -1, k;
 
-    /* Permutate dimensions */
+    /* Permute dimensions */
     for ( k = 0; k < matvar->rank; k++ ) {
         dims[k] = matvar->dims[matvar->rank - k - 1];
     }
