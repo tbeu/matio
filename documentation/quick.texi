@@ -105,7 +105,7 @@ in separate function calls provides several conveniences including:
 @end itemize
 
 @subsection Reading a Variable by Name
-If the name if the variable is known, the @code{Mat_VarRead} and
+If the name of the variable is known, the @code{Mat_VarRead} and
 @code{Mat_VarReadInfo} functions can be used. The @code{Mat_VarRead} function
 reads both the information and data for a variable, and the
 @code{Mat_VarReadInfo} reads information only. The short example below reads a
