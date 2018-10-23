@@ -56,13 +56,14 @@ main(int argc,char **argv)
 }
 @end verbatim
 
-The @code{Mat_CreateVer} creates a new MAT file (or overwrites and existing
-file) with a specific version. The @emph{matio} library can write version 5
-MAT files, version 5 files with variable compression (if built with zlib), and
-an HDF5 format MAT file introduced in MATLAB version 7.3. The format of the MAT
-file is specified by the third argument. The short example below creates a
-version 5 file named @emph{matfile5.mat} and an HDF5 format MAT file named
-@emph{matfile73.mat}.
+The @code{Mat_CreateVer} creates a new MAT file (or overwrites an existing
+file) with a specific version. The @emph{matio} library can write version 4
+MAT files, version 5 MAT files, version 5 MAT files with variable
+compression (if built with zlib), and HDF5 format MAT files introduced in
+MATLAB version 7.3. The format of the MAT file is specified by the third
+argument. The short example below creates a version 4 MAT file named
+@emph{matfile4.mat}, a version 5 MAT file named @emph{matfile5.mat} and an
+HDF5 format MAT file named @emph{matfile73.mat}.
 
 @verbatim
 #include <stdlib.h>
@@ -73,6 +74,13 @@ int
 main(int argc,char **argv)
 {
     mat_t *matfp;
+
+    matfp = Mat_CreateVer("matfile4.mat",NULL,MAT_FT_MAT4);
+    if ( NULL == matfp ) {
+        fprintf(stderr,"Error creating MAT file \"matfile4.mat\"!\n");
+        return EXIT_FAILURE;
+    }
+    Mat_Close(matfp);
 
     matfp = Mat_CreateVer("matfile5.mat",NULL,MAT_FT_MAT5);
     if ( NULL == matfp ) {
