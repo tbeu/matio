@@ -157,6 +157,11 @@ install:
   - rm ./src/test/resources/object.mat
   - rm ./src/test/resources/SPM.mat
   - cd $TRAVIS_BUILD_DIR
+  - git clone --depth 1 https://github.com/ianlancetaylor/libbacktrace
+  - pushd libbacktrace && ./configure --prefix="$TRAVIS_BUILD_DIR"/libbacktrace && make install && popd
+  - git clone --depth 1 https://github.com/ralight/mallocfail
+  - pushd mallocfail && make CFLAGS="-Wall -ggdb -O2 -Ideps/uthash -Ideps/sha3 -Isrc -I$TRAVIS_BUILD_DIR/libbacktrace/include" LDFLAGS=-L"$TRAVIS_BUILD_DIR"/libbacktrace/lib && popd
+  - cd $TRAVIS_BUILD_DIR
 
 before_script:
   - ./autogen.sh
@@ -165,20 +170,22 @@ before_script:
 
 script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make "CPPFLAGS=-DMAX_RANK=$MAX_RANK"; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make check; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_snprintf; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -H; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -L; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -V; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -v -H; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -v -H; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -V; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v6.mat s; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.mat s; fi
+  - LD_LIBRARY_PATH=/home/travis/build/tbeu/matio/libbacktrace/lib:$LD_LIBRARY_PATH LD_PRELOAD=/home/travis/build/tbeu/matio/mallocfail/mallocfail.so MALLOCFAIL_DEBUG=1 ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v4.mat s
+  - LD_LIBRARY_PATH=/home/travis/build/tbeu/matio/libbacktrace/lib:$LD_LIBRARY_PATH LD_PRELOAD=/home/travis/build/tbeu/matio/mallocfail/mallocfail.so MALLOCFAIL_DEBUG=1 ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v4.mat s
+  - LD_LIBRARY_PATH=/home/travis/build/tbeu/matio/libbacktrace/lib:$LD_LIBRARY_PATH LD_PRELOAD=/home/travis/build/tbeu/matio/mallocfail/mallocfail.so MALLOCFAIL_DEBUG=1 ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v4.mat s
+  - LD_LIBRARY_PATH=/home/travis/build/tbeu/matio/libbacktrace/lib:$LD_LIBRARY_PATH LD_PRELOAD=/home/travis/build/tbeu/matio/mallocfail/mallocfail.so MALLOCFAIL_DEBUG=1 ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v4.mat s
+  - LD_LIBRARY_PATH=/home/travis/build/tbeu/matio/libbacktrace/lib:$LD_LIBRARY_PATH LD_PRELOAD=/home/travis/build/tbeu/matio/mallocfail/mallocfail.so MALLOCFAIL_DEBUG=1 ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v4.mat s
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/*.mat; do ./tools/matdump -v $f; done; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/*.mat; do ./tools/matdump -v -d -f whos -h $f; done; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/mcos/*.mat; do ./tools/matdump -v $f; done; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/mcos/*.mat; do ./tools/matdump -v -f whos $f; done; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
 
 after_success:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e matfilerw -e MSL -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e test/mat2hdf.c -e share -e patches -e $HDF5_VERSION_DIR -e visual_studio -e zlib --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
