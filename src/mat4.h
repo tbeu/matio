@@ -36,8 +36,8 @@
 EXTERN mat_t    *Mat_Create4(const char* matname);
 
 EXTERN int       Mat_VarWrite4(mat_t *mat,matvar_t *matvar);
-EXTERN void      Read4(mat_t *mat, matvar_t *matvar);
-EXTERN int       ReadData4(mat_t *mat,matvar_t *matvar,void *data,
+EXTERN void      Mat_VarRead4(mat_t *mat, matvar_t *matvar);
+EXTERN int       Mat_VarReadData4(mat_t *mat,matvar_t *matvar,void *data,
                      int *start,int *stride,int *edge);
 EXTERN int       Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
                      int stride,int edge);

@@ -280,7 +280,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
  * @endif
  */
 void
-Read4(mat_t *mat,matvar_t *matvar)
+Mat_VarRead4(mat_t *mat,matvar_t *matvar)
 {
     size_t N;
 
@@ -494,7 +494,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                                 free(sparse->ir);
                                 free(matvar->data);
                                 matvar->data = NULL;
-                                Mat_Critical("Read4: %d is not a supported data type for "
+                                Mat_Critical("Mat_VarRead4: %d is not a supported data type for "
                                     "extended sparse", data_type);
                                 return;
                         }
@@ -571,7 +571,7 @@ Read4(mat_t *mat,matvar_t *matvar)
                                 free(sparse->ir);
                                 free(matvar->data);
                                 matvar->data = NULL;
-                                Mat_Critical("Read4: %d is not a supported data type for "
+                                Mat_Critical("Mat_VarRead4: %d is not a supported data type for "
                                     "extended sparse", data_type);
                                 return;
                         }
@@ -617,7 +617,7 @@ Read4(mat_t *mat,matvar_t *matvar)
  * @endif
  */
 int
-ReadData4(mat_t *mat,matvar_t *matvar,void *data,
+Mat_VarReadData4(mat_t *mat,matvar_t *matvar,void *data,
       int *start,int *stride,int *edge)
 {
     int err = 0;

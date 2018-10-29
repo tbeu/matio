@@ -633,18 +633,6 @@ static const char *helptest_readslab[] = {
     NULL
 };
 
-static const char *helptest_writeslab[] = {
-    "TEST: writeslab",
-    "",
-    "Usage: test_mat writeslab",
-    "",
-    "Writes slabs of data to test_mat_writelslab.mat  Every other element",
-    "in the file is written.  Three datasets are written of types double,",
-    "single, and int32",
-    "",
-    NULL
-};
-
 static const char *helptest_writenan[] = {
     "TEST: writenan",
     "",
@@ -748,8 +736,6 @@ help_test(const char *test)
         Mat_Help(helptest_writeinf);
     else if ( !strcmp(test,"writenan") )
         Mat_Help(helptest_writenan);
-    else if ( !strcmp(test,"writeslab") )
-        Mat_Help(helptest_writeslab);
     else if ( !strcmp(test,"getstructfield") )
         Mat_Help(helptest_getstructfield);
     else if ( !strcmp(test,"ind2sub") )
@@ -3354,53 +3340,6 @@ test_readslab(const char *file, const char *var, enum matio_classes matvar_class
 }
 
 static int
-test_writeslab(const char* output_name)
-{
-    int        err = 0, i;
-    size_t     dims[2] = {6,10};
-    int        start[2]={0,0},stride[2]={2,2},edge[2]={3,5};
-    double     data[60]={0.0,};
-    float     fdata[60]={0.0,};
-    int       idata[60]={0,};
-    mat_t    *mat;
-    matvar_t *matvar, *matvar2, *matvar3;
-
-    for ( i = 0; i < 60; i++ ) {
-         data[i] = i+1;
-        fdata[i] = (float)(i+1);
-        idata[i] = i+1;
-    }
-
-    mat = Mat_CreateVer(output_name,NULL,mat_file_ver);
-    if ( mat != NULL ) {
-        matvar = Mat_VarCreate("d",MAT_C_DOUBLE,MAT_T_DOUBLE,2,
-                       dims,NULL,0);
-        matvar2 = Mat_VarCreate("f",MAT_C_SINGLE,MAT_T_SINGLE,2,
-                       dims,NULL,0);
-        matvar3 = Mat_VarCreate("i",MAT_C_INT32,MAT_T_INT32,2,
-                       dims,NULL,0);
-        err = Mat_VarWriteInfo(mat,matvar);
-        if ( err != 0 )
-            err = Mat_VarWriteInfo(mat,matvar2);
-        if ( err != 0 )
-            err = Mat_VarWriteInfo(mat,matvar3);
-        if ( err != 0 )
-            err = Mat_VarWriteData(mat,matvar3,idata,start,stride,edge);
-        if ( err != 0 )
-            err = Mat_VarWriteData(mat,matvar,data,start,stride,edge);
-        if ( err != 0 )
-            err = Mat_VarWriteData(mat,matvar2,fdata,start,stride,edge);
-        Mat_VarFree(matvar);
-        Mat_VarFree(matvar2);
-        Mat_VarFree(matvar3);
-        Mat_Close(mat);
-    } else {
-        err = 1;
-    }
-    return err;
-}
-
-static int
 test_writenan(void)
 {
     int        err = 0, i;
@@ -4128,32 +4067,6 @@ int main (int argc, char *argv[])
                 err ++;
             }
             ntests++;
-        } else if ( !strcasecmp(argv[k],"writeslab") ) {
-           k++;
-            if ( NULL == output_name )
-                output_name = "test_mat_writeslab.mat";
-            err += test_writeslab(output_name);
-            ntests++;
-    #if 0
-        } else if ( !strcasecmp(argv[1],"cellslab") ) {
-            matvar_t *cellmatvar, **cellfields;
-                cellfields = malloc(6*sizeof(matvar_t *));
-                cellfields[0] = matvar;
-                cellfields[1] = matvar2;
-                cellfields[2] = matvar3;
-                cellfields[3] = matvar;
-                cellfields[4] = matvar2;
-                cellfields[5] = matvar3;
-                dims[0] = 3;
-                dims[1] = 2;
-                cellmatvar = Mat_VarCreate("c",MAT_C_CELL,MAT_T_CELL,2,
-                               dims,cellfields,0);
-                Mat_VarWriteInfo(mat,cellmatvar);
-                Mat_VarPrint(Mat_VarGetCell(cellmatvar,1,1),0);
-                cellmatvar->data = NULL;
-                Mat_VarFree(cellmatvar);
-            ntests++;
-    #endif
         } else if ( !strcasecmp(argv[k],"readslab") ) {
             k++;
             if ( NULL == output_name )
@@ -4161,32 +4074,6 @@ int main (int argc, char *argv[])
             test_readslab(argv[k],argv[k+1],matvar_class);
             k+=2;
             ntests++;
-    #if 0
-        } else if ( !strcasecmp(argv[k],"slab3") ) {
-            int   start[3]={1,1,1},stride[3]={1,1,1},edge[3]={1,1,1};
-            int j, l;
-            double ptr[150] = {0,};
-
-            k++;
-            mat = Mat_Open("test_slab_d3.mat",MAT_ACC_RDONLY);
-            if ( NULL != mat ) {
-                matvar = Mat_VarReadInfo(mat,"d3");
-                if ( NULL != matvar ) {
-                    Mat_VarReadData(mat,matvar,ptr,start,stride,edge);
-                    for ( i = 0; i < 3; i++ ) {
-                       for ( j = 0; j < 5; j++ ) {
-                          for ( l = 0; l < 10; l++ )
-                              printf("%f ",*(ptr+50*i+5*l+j));
-                          printf("\n");
-                        }
-                        printf("\n\n");
-                    }
-                    Mat_VarFree(matvar);
-                }
-                Mat_Close(mat);
-            }
-            ntests++;
-    #endif
         } else if ( !strcasecmp(argv[k],"write_sparse") ) {
             k++;
             if ( NULL == output_name )
