@@ -39,7 +39,7 @@ The following people/organizations have helped in the development of matio throu
 * Nils Jannasch ([https://github.com/NJannasch](https://github.com/NJannasch))
 * OpenMEEG ([http://openmeeg.github.io/](http://openmeeg.github.io/))
 * Scilab ([http://www.scilab.org/](http://www.scilab.org/))
-* Sébastien Villemot ([https://github.com/sebastien-villemot](https://github.com/sebastien-villemot))
+* Sébastien Villemot ([https://github.com/svillemot](https://github.com/svillemot))
 * SGI in support of Interactive Supercomputing, Inc.
 * Steven Leibman <sleibman@alum.mit.edu>
 
