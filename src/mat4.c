@@ -197,7 +197,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         {
             mat_sparse_t* sparse;
             double tmp;
-            int i, j;
+            int j;
             size_t stride = Mat_SizeOf(matvar->data_type);
 #if !defined(EXTENDED_SPARSE)
             if ( MAT_T_DOUBLE != matvar->data_type )

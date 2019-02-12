@@ -712,7 +712,6 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     if ( H5Aexists_by_name(dset_id,".","MATLAB_sparse",H5P_DEFAULT) ) {
         hid_t sparse_dset_id;
         unsigned nrows = 0;
-        hsize_t numel;
 
         attr_id = H5Aopen_by_name(dset_id,".","MATLAB_sparse",H5P_DEFAULT,H5P_DEFAULT);
         H5Aread(attr_id,H5T_NATIVE_UINT,&nrows);
@@ -1229,12 +1228,10 @@ Mat_VarWriteEmpty(hid_t id,matvar_t *matvar,const char *name,const char* class_n
         if ( nfields ) {
             hvl_t *fieldnames = (hvl_t*)malloc((size_t)nfields*sizeof(*fieldnames));
             if ( NULL != fieldnames ) {
-                hid_t      str_type_id,fieldnames_id;
-                matvar_t **fields;
-                hsize_t    k;
+                hid_t str_type_id,fieldnames_id;
+                hsize_t k;
 
                 str_type_id = H5Tcopy(H5T_C_S1);
-                fields     = (matvar_t**)matvar->data;
                 for ( k = 0; k < nfields; k++ ) {
                     fieldnames[k].len =
                         strlen(matvar->internal->fieldnames[k]);
@@ -1725,12 +1722,8 @@ Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *
 static int
 Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
 {
-    int err = 0, k;
-    hid_t   sparse_id;
-    hsize_t nmemb = 1;
-
-    for ( k = 0; k < matvar->rank; k++ )
-        nmemb *= matvar->dims[k];
+    int err = 0;
+    hid_t sparse_id;
 
     sparse_id = H5Gcreate(id,name,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
     if ( sparse_id < 0 ) {
@@ -2287,7 +2280,6 @@ void
 Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 {
     int k;
-    size_t numel;
     hid_t fid,dset_id,ref_id;
 
     if ( NULL == mat || NULL == matvar )
@@ -2308,7 +2300,8 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_UINT16:
         case MAT_C_INT8:
         case MAT_C_UINT8:
-            numel = 1;
+        {
+            size_t numel = 1;
             for ( k = 0; k < matvar->rank; k++ )
                 numel *= matvar->dims[k];
             matvar->data_size = Mat_SizeOfClass(matvar->class_type);
@@ -2342,8 +2335,10 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             H5Dclose(dset_id);
             H5Dclose(ref_id);
             break;
+        }
         case MAT_C_CHAR:
-            numel = 1;
+        {
+            size_t numel = 1;
             for ( k = 0; k < matvar->rank; k++ )
                 numel *= matvar->dims[k];
             matvar->data_size = Mat_SizeOf(matvar->data_type);
@@ -2364,14 +2359,14 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             }
             H5Dclose(dset_id);
             break;
+        }
         case MAT_C_STRUCT:
         {
             matvar_t **fields;
-            size_t i,nfields = 0;
+            size_t i, nfields = 0, numel = 1;
 
             if ( !matvar->internal->num_fields || NULL == matvar->data )
                 break;
-            numel = 1;
             for ( k = 0; k < matvar->rank; k++ )
                 numel *= matvar->dims[k];
             nfields = matvar->internal->num_fields;
@@ -2390,7 +2385,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_CELL:
         {
             matvar_t **cells;
-            size_t i,ncells = 0;
+            size_t i, ncells = 0;
 
             ncells = matvar->nbytes / matvar->data_size;
             cells  = (matvar_t**)matvar->data;
