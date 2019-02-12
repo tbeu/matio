@@ -141,7 +141,7 @@ install:
   - mkdir MSL
   - cd MSL
   - git init
-  - git remote add -f origin https://github.com/svn2github/Modelica_StandardLibrary
+  - git remote add -f origin https://github.com/modelica/ModelicaStandardLibrary
   - git config core.sparseCheckout true
   - echo "Modelica/Resources/Data/Tables/" >> .git/info/sparse-checkout
   - git pull origin master
