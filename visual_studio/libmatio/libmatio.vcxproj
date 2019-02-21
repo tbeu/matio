@@ -119,7 +119,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(HDF5_DIR)/include;$(ProjectDir)..;$(ProjectDir)../../src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;H5_BUILT_AS_DYNAMIC_LIB;H5_NO_DEPRECATED_SYMBOLS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling />
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -139,7 +138,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(HDF5_DIR)/include;$(ProjectDir)..;$(ProjectDir)../../src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;H5_BUILT_AS_STATIC_LIB;H5_NO_DEPRECATED_SYMBOLS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling />
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -159,7 +157,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(HDF5_DIR)/include;$(ProjectDir)..;$(ProjectDir)../../src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;H5_BUILT_AS_DYNAMIC_LIB;H5_NO_DEPRECATED_SYMBOLS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling />
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -182,7 +179,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(HDF5_DIR)/include;$(ProjectDir)..;$(ProjectDir)../../src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>REPLACE_GETOPT;MAT73=1;HAVE_HDF5=1;HAVE_ZLIB=1;H5_BUILT_AS_STATIC_LIB;H5_NO_DEPRECATED_SYMBOLS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling />
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
