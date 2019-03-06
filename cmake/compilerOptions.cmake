@@ -1,0 +1,28 @@
+# Check C types
+include(CheckTypeSize)
+check_type_size(char        SIZEOF_CHAR)
+check_type_size(double      SIZEOF_DOUBLE)
+check_type_size(float       SIZEOF_FLOAT)
+check_type_size(int         SIZEOF_INT)
+check_type_size(long        SIZEOF_LONG)
+check_type_size("long long" SIZEOF_LONG_LONG)
+check_type_size(short       SIZEOF_SHORT)
+check_type_size(size_t      SIZEOF_SIZE_T)
+
+# Check functions
+include(CheckFunctionExists)
+check_function_exists(vsnprintf  HAVE_VSNPRINTF)
+check_function_exists(snprintf   HAVE_SNPRINTF)
+check_function_exists(vasprintf  HAVE_VASPRINTF)
+check_function_exists(asprintf   HAVE_ASPRINTF)
+check_function_exists(strcasecmp HAVE_STRCASECMP)
+check_function_exists(getopt     HAVE_GETOPT)
+
+include(CheckIncludeFile)
+check_include_file(inttypes.h HAVE_INTTYPES_H)
+check_include_file(stdint.h   HAVE_STDINT_H)
+check_include_file(strings.h  HAVE_STRINGS_H)
+check_include_file(ctype.h    HAVE_CTYPE_H)
+check_include_file(stdlib.h   HAVE_STDLIB_H)
+check_include_file(string.h   HAVE_STRING_H)
+check_include_file(stdarg.h   HAVE_STDARG_H)
