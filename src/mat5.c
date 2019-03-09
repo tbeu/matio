@@ -766,7 +766,13 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
             }
             if ( cells[i]->class_type != MAT_C_OPAQUE ) {
-                bytesread += InflateDimensions(mat,matvar,uncomp_buf);
+                mat_uint32_t* dims = NULL;
+                int do_clean = 0;
+                bytesread += InflateRankDims(mat,matvar,uncomp_buf,sizeof(uncomp_buf),&dims);
+                if ( NULL == dims )
+                    dims = uncomp_buf + 2;
+                else
+                    do_clean = 1;
                 nbytes -= 8;
                 if ( mat->byteswap ) {
                     (void)Mat_uint32Swap(uncomp_buf);
@@ -780,14 +786,16 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                     cells[i]->dims = (size_t*)malloc(cells[i]->rank*sizeof(*cells[i]->dims));
                     if ( mat->byteswap ) {
                         for ( j = 0; j < cells[i]->rank; j++ )
-                            cells[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
+                            cells[i]->dims[j] = Mat_uint32Swap(dims + j);
                     } else {
                         for ( j = 0; j < cells[i]->rank; j++ )
-                            cells[i]->dims[j] = uncomp_buf[2+j];
+                            cells[i]->dims[j] = dims[j];
                     }
                     if ( cells[i]->rank % 2 != 0 )
                         nbytes -= 4;
                 }
+                if ( do_clean )
+                    free(dims);
                 bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
                 nbytes -= 8;
                 if ( mat->byteswap ) {
@@ -797,24 +805,28 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 /* Handle cell elements written with a variable name */
                 if ( uncomp_buf[1] > 0 ) {
                     /* Name of variable */
-                    int len = 0;
                     if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
-                        len = uncomp_buf[1];
+                        mat_uint32_t len = uncomp_buf[1];
 
                         if ( len % 8 > 0 )
                             len = len+(8-(len % 8));
                         cells[i]->name = (char*)malloc(len+1);
-                        /* Inflate variable name */
-                        bytesread += InflateVarName(mat,matvar,cells[i]->name,len);
-                        cells[i]->name[len] = '\0';
                         nbytes -= len;
-                    } else if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
-                               ((uncomp_buf[0] & 0xffff0000) != 0x00) ) {
-                        /* Name packed in tag */
-                        len = (uncomp_buf[0] & 0xffff0000) >> 16;
-                        cells[i]->name = (char*)malloc(len+1);
-                        memcpy(cells[i]->name,uncomp_buf+1,len);
-                        cells[i]->name[len] = '\0';
+                        if ( NULL != cells[i]->name ) {
+                            /* Inflate variable name */
+                            bytesread += InflateVarName(mat,matvar,cells[i]->name,len);
+                            cells[i]->name[len] = '\0';
+                        }
+                    } else {
+                        mat_uint32_t len = (uncomp_buf[0] & 0xffff0000) >> 16;
+                        if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) && len > 0 && len <= 4 ) {
+                            /* Name packed in tag */
+                            cells[i]->name = (char*)malloc(len+1);
+                            if ( NULL != cells[i]->name ) {
+                                memcpy(cells[i]->name,uncomp_buf+1,len);
+                                cells[i]->name[len] = '\0';
+                            }
+                        }
                     }
                 }
                 cells[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
@@ -973,7 +985,8 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 static size_t
 ReadNextStructField( mat_t *mat, matvar_t *matvar )
 {
-    int fieldname_size, j;
+    mat_uint32_t fieldname_size;
+    int j;
     size_t bytesread = 0, nfields, nmemb = 1, i;
     matvar_t **fields = NULL;
 
@@ -995,10 +1008,6 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
         if ( (uncomp_buf[0] & 0x0000ffff) == MAT_T_INT32 ) {
             fieldname_size = uncomp_buf[1];
-            if ( 0 >= fieldname_size ) {
-                Mat_Critical("Size of fieldname must be positive");
-                return bytesread;
-            }
         } else {
             Mat_Critical("Error getting fieldname size");
             return bytesread;
@@ -1009,8 +1018,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             (void)Mat_uint32Swap(uncomp_buf);
             (void)Mat_uint32Swap(uncomp_buf+1);
         }
-        nfields = uncomp_buf[1];
-        nfields = nfields / fieldname_size;
+        nfields = uncomp_buf[1] / fieldname_size;
         matvar->data_size = sizeof(matvar_t *);
 
         if ( nfields*fieldname_size % 8 != 0 )
@@ -1019,18 +1027,22 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             i = 0;
         if ( nfields ) {
             char *ptr = (char*)malloc(nfields*fieldname_size+i);
-            bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
-            matvar->internal->num_fields = nfields;
-            matvar->internal->fieldnames =
-                (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
-            for ( i = 0; i < nfields; i++ ) {
-                matvar->internal->fieldnames[i] = (char*)malloc(fieldname_size);
-                if ( NULL != matvar->internal->fieldnames[i] ) {
-                    memcpy(matvar->internal->fieldnames[i], ptr+i*fieldname_size, fieldname_size);
-                    matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+            if ( NULL != ptr ) {
+                bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
+                matvar->internal->num_fields = nfields;
+                matvar->internal->fieldnames =
+                    (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
+                if ( NULL != matvar->internal->fieldnames ) {
+                    for ( i = 0; i < nfields; i++ ) {
+                        matvar->internal->fieldnames[i] = (char*)malloc(fieldname_size);
+                        if ( NULL != matvar->internal->fieldnames[i] ) {
+                            memcpy(matvar->internal->fieldnames[i], ptr+i*fieldname_size, fieldname_size);
+                            matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+                        }
+                    }
                 }
+                free(ptr);
             }
-            free(ptr);
         } else {
             matvar->internal->num_fields = 0;
             matvar->internal->fieldnames = NULL;
@@ -1100,7 +1112,13 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
             }
             if ( fields[i]->class_type != MAT_C_OPAQUE ) {
-                bytesread += InflateDimensions(mat,matvar,uncomp_buf);
+                mat_uint32_t* dims = NULL;
+                int do_clean = 0;
+                bytesread += InflateRankDims(mat,matvar,uncomp_buf,sizeof(uncomp_buf),&dims);
+                if ( NULL == dims )
+                    dims = uncomp_buf + 2;
+                else
+                    do_clean = 1;
                 nbytes -= 8;
                 if ( mat->byteswap ) {
                     (void)Mat_uint32Swap(uncomp_buf);
@@ -1116,14 +1134,16 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                                              sizeof(*fields[i]->dims));
                     if ( mat->byteswap ) {
                         for ( j = 0; j < fields[i]->rank; j++ )
-                            fields[i]->dims[j] = Mat_uint32Swap(uncomp_buf+2+j);
+                            fields[i]->dims[j] = Mat_uint32Swap(dims+j);
                     } else {
                         for ( j = 0; j < fields[i]->rank; j++ )
-                            fields[i]->dims[j] = uncomp_buf[2+j];
+                            fields[i]->dims[j] = dims[j];
                     }
                     if ( fields[i]->rank % 2 != 0 )
                         nbytes -= 4;
                 }
+                if ( do_clean )
+                    free(dims);
                 bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
                 nbytes -= 8;
                 fields[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
@@ -1180,10 +1200,6 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
         if ( (buf[0] & 0x0000ffff) == MAT_T_INT32 ) {
             fieldname_size = buf[1];
-            if ( 0 >= fieldname_size ) {
-                Mat_Critical("Size of fieldname must be positive");
-                return bytesread;
-            }
         } else {
             Mat_Critical("Error getting fieldname size");
             return bytesread;
@@ -1193,19 +1209,20 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             (void)Mat_uint32Swap(buf);
             (void)Mat_uint32Swap(buf+1);
         }
-        nfields = buf[1];
-        nfields = nfields / fieldname_size;
+        nfields = buf[1] / fieldname_size;
         matvar->data_size = sizeof(matvar_t *);
 
         if ( nfields ) {
             matvar->internal->num_fields = nfields;
             matvar->internal->fieldnames =
                 (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
-            for ( i = 0; i < nfields; i++ ) {
-                matvar->internal->fieldnames[i] = (char*)malloc(fieldname_size);
-                if ( NULL != matvar->internal->fieldnames[i] ) {
-                    bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,(FILE*)mat->fp);
-                    matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+            if ( NULL != matvar->internal->fieldnames ) {
+                for ( i = 0; i < nfields; i++ ) {
+                    matvar->internal->fieldnames[i] = (char*)malloc(fieldname_size);
+                    if ( NULL != matvar->internal->fieldnames[i] ) {
+                        bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,(FILE*)mat->fp);
+                        matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
+                    }
                 }
             }
         } else {
@@ -1360,8 +1377,7 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
 
             for ( i = 0; i < matvar->rank; i++) {
                 size_t readresult = fread(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp);
-                int readerror = readresult != 1;
-                if ( readerror == 0 ) {
+                if ( 1 == readresult ) {
                     bytesread += sizeof(mat_uint32_t);
                     if ( mat->byteswap ) {
                         matvar->dims[i] = Mat_uint32Swap(&buf);
@@ -1379,8 +1395,7 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
 
             if ( matvar->rank % 2 != 0 ) {
                 size_t readresult = fread(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp);
-                int readerror = readresult != 1;
-                if ( readerror == 0 ) {
+                if ( 1 == readresult ) {
                     bytesread += sizeof(mat_uint32_t);
                 } else {
                     Mat_Critical("An error occurred in reading the MAT file");
@@ -2612,6 +2627,9 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 matvar->data_size = (int)Mat_SizeOf(MAT_T_UINT8);
                 matvar->nbytes = len*matvar->data_size;
             }
+            if ( matvar->isComplex ) {
+                break;
+            }
             matvar->data = calloc(matvar->nbytes+1,1);
             if ( NULL == matvar->data ) {
                 Mat_Critical("Couldn't allocate memory for the data");
@@ -2621,7 +2639,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 break;
             }
             if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-                nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,len);
+                nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,(int)matvar->nbytes);
                 /*
                  * If the data was in the tag we started on a 4-byte
                  * boundary so add 4 to make it an 8-byte
@@ -2633,7 +2651,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 #if defined(HAVE_ZLIB)
             } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                 nBytes = ReadCompressedCharData(mat,matvar->internal->z,
-                             (char*)matvar->data,packed_type,len);
+                             (char*)matvar->data,packed_type,(int)matvar->nbytes);
                 /*
                  * If the data was in the tag we started on a 4-byte
                  * boundary so add 4 to make it an 8-byte
@@ -4616,54 +4634,65 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 }
             }
             if ( matvar->class_type != MAT_C_OPAQUE ) {
-                /* Inflate dimensions */
-                bytesread += InflateDimensions(mat,matvar,uncomp_buf);
+                mat_uint32_t* dims = NULL;
+                int do_clean = 0;
+                bytesread += InflateRankDims(mat,matvar,uncomp_buf,sizeof(uncomp_buf),&dims);
+                if ( NULL == dims )
+                    dims = uncomp_buf + 2;
+                else
+                    do_clean = 1;
                 if ( mat->byteswap ) {
                     (void)Mat_uint32Swap(uncomp_buf);
                     (void)Mat_uint32Swap(uncomp_buf+1);
                 }
                 /* Rank and dimension */
                 if ( uncomp_buf[0] == MAT_T_INT32 ) {
-                    int i;
+                    int j;
                     nbytes = uncomp_buf[1];
                     matvar->rank = nbytes / 4;
                     matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
                     if ( mat->byteswap ) {
-                        for ( i = 0; i < matvar->rank; i++ )
-                            matvar->dims[i] = Mat_uint32Swap(&(uncomp_buf[2+i]));
+                        for ( j = 0; j < matvar->rank; j++ )
+                            matvar->dims[j] = Mat_uint32Swap(dims + j);
                     } else {
-                        for ( i = 0; i < matvar->rank; i++ )
-                            matvar->dims[i] = uncomp_buf[2+i];
+                        for ( j = 0; j < matvar->rank; j++ )
+                            matvar->dims[j] = dims[j];
                     }
                 }
+                if ( do_clean )
+                    free(dims);
                 /* Inflate variable name tag */
                 bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
                 if ( mat->byteswap )
                     (void)Mat_uint32Swap(uncomp_buf);
                 /* Name of variable */
                 if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
-                    int len, i;
+                    mat_uint32_t len, len_pad;
                     if ( mat->byteswap )
                         len = Mat_uint32Swap(uncomp_buf+1);
                     else
                         len = uncomp_buf[1];
 
                     if ( len % 8 == 0 )
-                        i = len;
+                        len_pad = len;
                     else
-                        i = len+(8-(len % 8));
-                    matvar->name = (char*)malloc(i+1);
-                    /* Inflate variable name */
-                    bytesread += InflateVarName(mat,matvar,matvar->name,i);
-                    matvar->name[len] = '\0';
-                } else if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) &&
-                            ((uncomp_buf[0] & 0xffff0000) != 0x00) ) {
-                    /* Name packed in tag */
-                    int len;
-                    len = (uncomp_buf[0] & 0xffff0000) >> 16;
-                    matvar->name = (char*)malloc(len+1);
-                    memcpy(matvar->name,uncomp_buf+1,len);
-                    matvar->name[len] = '\0';
+                        len_pad = len + 8 - (len % 8);
+                    matvar->name = (char*)malloc(len_pad + 1);
+                    if ( NULL != matvar->name ) {
+                        /* Inflate variable name */
+                        bytesread += InflateVarName(mat,matvar,matvar->name,len_pad);
+                        matvar->name[len] = '\0';
+                    }
+                } else {
+                    mat_uint32_t len = (uncomp_buf[0] & 0xffff0000) >> 16;
+                    if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) && len > 0 && len <= 4 ) {
+                        /* Name packed in tag */
+                        matvar->name = (char*)malloc(len+1);
+                        if ( NULL != matvar->name ) {
+                            memcpy(matvar->name,uncomp_buf+1,len);
+                            matvar->name[len] = '\0';
+                        }
+                    }
                 }
                 if ( matvar->class_type == MAT_C_STRUCT )
                     (void)ReadNextStructField(mat,matvar);
@@ -4720,30 +4749,37 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 (void)Mat_uint32Swap(buf);
             /* Name of variable */
             if ( buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
-                int len, i;
-
+                mat_uint32_t len, len_pad;
                 if ( mat->byteswap )
                     len = Mat_uint32Swap(buf+1);
                 else
                     len = buf[1];
                 if ( len % 8 == 0 )
-                    i = len;
+                    len_pad = len;
                 else
-                    i = len+(8-(len % 8));
-                bytesread+=fread(buf,1,i,(FILE*)mat->fp);
-
-                matvar->name = (char*)malloc(len+1);
-                memcpy(matvar->name,buf,len);
-                matvar->name[len] = '\0';
-            } else if ( ((buf[0] & 0x0000ffff) == MAT_T_INT8) &&
-                        ((buf[0] & 0xffff0000) != 0x00) ) {
-                /* Name packed in the tag */
-                int len;
-
-                len = (buf[0] & 0xffff0000) >> 16;
-                matvar->name = (char*)malloc(len+1);
-                memcpy(matvar->name,buf+1,len);
-                matvar->name[len] = '\0';
+                    len_pad = len + 8 - (len % 8);
+                matvar->name = (char*)malloc(len_pad + 1);
+                if ( NULL != matvar->name ) {
+                    size_t readresult = fread(matvar->name,1,len_pad,(FILE*)mat->fp);
+                    bytesread += readresult;
+                    if ( readresult == len_pad) {
+                        matvar->name[len] = '\0';
+                    } else {
+                        free(matvar->name);
+                        matvar->name = NULL;
+                        Mat_Critical("An error occurred in reading the MAT file");
+                    }
+                }
+            } else {
+                mat_uint32_t len = (buf[0] & 0xffff0000) >> 16;
+                if ( ((buf[0] & 0x0000ffff) == MAT_T_INT8) && len > 0 && len <= 4 ) {
+                    /* Name packed in tag */
+                    matvar->name = (char*)malloc(len+1);
+                    if ( NULL != matvar->name ) {
+                        memcpy(matvar->name,buf+1,len);
+                        matvar->name[len] = '\0';
+                    }
+                }
             }
             if ( matvar->class_type == MAT_C_STRUCT )
                 (void)ReadNextStructField(mat,matvar);

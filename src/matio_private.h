@@ -210,7 +210,7 @@ EXTERN size_t InflateSkip2(mat_t *mat, matvar_t *matvar, int nbytes);
 EXTERN size_t InflateSkipData(mat_t *mat,z_streamp z,enum matio_types data_type,int len);
 EXTERN size_t InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN size_t InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf);
-EXTERN size_t InflateDimensions(mat_t *mat, matvar_t *matvar, void *buf);
+EXTERN size_t InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nbytes, mat_uint32_t** dims);
 EXTERN size_t InflateVarNameTag(mat_t *mat, matvar_t *matvar, void *buf);
 EXTERN size_t InflateVarName(mat_t *mat,matvar_t *matvar,void *buf,int N);
 EXTERN size_t InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf);
