@@ -873,7 +873,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                 while ( fields[nfields] != NULL )
                     nfields++;
                 if ( nmemb )
-                    nfields = nfields / nmemb;
+                    nfields /= nmemb;
                 matvar->internal->num_fields = nfields;
                 if ( nfields ) {
                     size_t i;
@@ -1822,7 +1822,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         printf(" (logical)");
     printf("\n");
     if ( matvar->data_type ) {
-        const char *data_type_desc[23] = {"Unknown","8-bit, signed integer",
+        const char *data_type_desc[25] = {"Unknown","8-bit, signed integer",
            "8-bit, unsigned integer","16-bit, signed integer",
            "16-bit, unsigned integer","32-bit, signed integer",
            "32-bit, unsigned integer","IEEE 754 single-precision","RESERVED",
@@ -1830,8 +1830,8 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
            "64-bit, signed integer","64-bit, unsigned integer", "Matlab Array",
            "Compressed Data","Unicode UTF-8 Encoded Character Data",
            "Unicode UTF-16 Encoded Character Data",
-           "Unicode UTF-32 Encoded Character Data","","String","Cell Array",
-           "Structure"};
+           "Unicode UTF-32 Encoded Character Data","RESERVED","String","Cell Array",
+           "Structure","Array","Function"};
         printf(" Data Type: %s\n", data_type_desc[matvar->data_type]);
     }
 

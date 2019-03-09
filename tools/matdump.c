@@ -759,7 +759,6 @@ print_default(matvar_t *matvar)
             break;
         case MAT_C_STRUCT:
         {
-            matvar_t **fields = (matvar_t **)matvar->data;
             int        nfields;
             int        i;
             size_t     nmemb;
@@ -785,8 +784,12 @@ print_default(matvar_t *matvar)
             } else if ( nfields > 0 && nmemb > 0 ) {
                 Mat_Message("Fields[%d] {", nfields);
                 indent++;
-                for ( i = 0; i < nfields*nmemb; i++ )
-                    print_default(fields[i]);
+                {
+                    matvar_t **fields = (matvar_t **)matvar->data;
+                    if ( NULL != fields )
+                        for ( i = 0; i < nfields*nmemb; i++ )
+                            print_default(fields[i]);
+                }
                 indent--;
                 Mat_Message("}");
             }
@@ -794,7 +797,6 @@ print_default(matvar_t *matvar)
         }
         case MAT_C_CELL:
         {
-            matvar_t **cells = (matvar_t **)matvar->data;
             size_t     ncells;
             int        i;
 
@@ -809,8 +811,12 @@ print_default(matvar_t *matvar)
             Mat_Message("Class Type: Cell Array");
             Mat_Message("{");
             indent++;
-            for ( i = 0; i < ncells; i++ )
-                print_default(cells[i]);
+            {
+                matvar_t **cells = (matvar_t **)matvar->data;
+                if ( NULL != cells )
+                    for ( i = 0; i < ncells; i++ )
+                        print_default(cells[i]);
+            }
             indent--;
             Mat_Message("}");
             break;
