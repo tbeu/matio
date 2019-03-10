@@ -1063,7 +1063,16 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             size_t k;
             for ( k = 0; k < nfields; k++ ) {
                 fields[i*nfields+k] = Mat_VarCalloc();
-                fields[i*nfields+k]->name = strdup(matvar->internal->fieldnames[k]);
+            }
+        }
+        if ( NULL != matvar->internal->fieldnames ) {
+            for ( i = 0; i < nmemb; i++ ) {
+                size_t k;
+                for ( k = 0; k < nfields; k++ ) {
+                    if ( NULL != matvar->internal->fieldnames[k] ) {
+                        fields[i*nfields+k]->name = strdup(matvar->internal->fieldnames[k]);
+                    }
+                }
             }
         }
 
@@ -1248,7 +1257,16 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             size_t k;
             for ( k = 0; k < nfields; k++ ) {
                 fields[i*nfields+k] = Mat_VarCalloc();
-                fields[i*nfields+k]->name = strdup(matvar->internal->fieldnames[k]);
+            }
+        }
+        if ( NULL != matvar->internal->fieldnames ) {
+            for ( i = 0; i < nmemb; i++ ) {
+                size_t k;
+                for ( k = 0; k < nfields; k++ ) {
+                    if ( NULL != matvar->internal->fieldnames[k] ) {
+                        fields[i*nfields+k]->name = strdup(matvar->internal->fieldnames[k]);
+                    }
+                }
             }
         }
 
