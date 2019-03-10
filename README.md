@@ -47,9 +47,9 @@ The following people/organizations have helped in the development of matio throu
 If you are interested in collaborations, contact us via email (see Section [1.1](#11-contact)).
 
 ### 1.4 Questions and Reporting Bugs
-Questions can be asked using the forums on the sourceforge site hosting matio ([http://sourceforge.net/projects/matio/forums](http://sourceforge.net/projects/matio/forums)).
+Questions can be asked using the forums on the sourceforge site hosting matio ([https://sourceforge.net/p/matio/discussion](https://sourceforge.net/p/matio/discussion)).
 
-Bugs, enhancements, etc. should be submitted using one of the trackers on the sourceforge page ([http://sourceforge.net/p/matio/_list/tickets](http://sourceforge.net/p/matio/_list/tickets)).
+Bugs, enhancements, etc. should be submitted using one of the trackers on the sourceforge page ([https://sourceforge.net/p/matio/_list/tickets](https://sourceforge.net/p/matio/_list/tickets)).
 
 ## 2.0 Building
 This section describes how to build matio. Section [2.1](#21-dependencies) describes the dependencies, Section [2.2](#22-building-matio) how to build/test matio, and Section [2.3](#23-platforms) documents the platforms matio has been tested on.

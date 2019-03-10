@@ -50,10 +50,10 @@ Table of Contents
 
     1.4 Questions and Reporting Bugs
         Questions can be asked using the forums on the sourceforge site hosting
-        matio (http://sourceforge.net/projects/matio/forums).
+        matio (https://sourceforge.net/p/matio/discussion).
 
         Bugs, enhancements, etc. should be submitted using one of the trackers
-        on the sourceforge page (http://sourceforge.net/p/matio/_list/tickets).
+        on the sourceforge page (https://sourceforge.net/p/matio/_list/tickets).
 
 2.0 Building
     This section describes how to build matio. Section 2.1 describes the

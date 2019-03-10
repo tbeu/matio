@@ -1,3 +1,10 @@
+Changes in 1.5.14 (11 March 2019)
+* Deprecated usage of Mat_VarWriteInfo/Mat_VarWriteData in favor of 
+  Mat_VarWrite/Mat_VarWriteAppend
+* Fixed bug reading dimensions from (crafted) compressed v5 MAT file
+* Fixed bug reading name (> 24 characters) from v5 MAT file (regression of v1.5.13)
+* Fixed bug printing datatype in Mat_VarPrint
+
 Changes in 1.5.13 (22 October 2018)
 * Fixed bug calculating size for zero-rank variables in Mat_VarGetSize
 * Fixed bug reading dimensions from (crafted) v5 MAT file
@@ -26,7 +33,7 @@ Changes in 1.5.11 (22 October 2017)
 
 Changes in 1.5.10 (14 February 2017)
 * Added new API function Mat_GetDir to retrieve all variable names of a MAT file
-* Fixed performance of repeated calls to Mat_VarWrite (broken by v1.5.7)
+* Fixed performance of repeated calls to Mat_VarWrite (regression of v1.5.7)
 * Fixed bugs reading (hyperslabs of) numeric array where the variable data type
   differs from the desired output data type
 * Increased testsuite coverage
@@ -41,7 +48,7 @@ Changes in 1.5.9 (22 October 2016)
 * Updated support of HDF5 v1.10.x: No longer depend on deprecated v1.8.x symbols
 
 Changes in 1.5.8 (30 June 2016)
-* Fixed bug writing array to v4 MAT file on big endian architecture (broken by v1.5.7)
+* Fixed bug writing array to v4 MAT file on big endian architecture (regression of v1.5.7)
 
 Changes in 1.5.7 (22 June 2016)
 * Added support for MAT_T_UTF16 when reading character array from v5 MAT file
@@ -79,7 +86,7 @@ Changes in 1.5.5 (19 February 2016)
 * Increased testsuite coverage
 * Fixed bug writing complex array to v4 MAT file
 * Fixed bug writing cell containing a struct with fields but empty array to compressed v5 MAT file
-* Fixed bug reading hyperslabs of cells and struct fields from compressed v5 MAT file (broken by v1.5.3)
+* Fixed bug reading hyperslabs of cells and struct fields from compressed v5 MAT file (regression of v1.5.3)
 * Fixed bug writing empty character array to uncompressed v5 MAT file
 * Fixed bug reading cells and struct fields from HDF5 MAT file
 * Fixed bug printing array dimensions in Mat_VarPrint on MinGW
