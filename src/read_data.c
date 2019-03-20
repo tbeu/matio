@@ -1386,12 +1386,12 @@ int
 ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
 {
     int bytesread = 0;
-    unsigned int data_size;
+    size_t data_size;
 
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
+    if ( mat == NULL || data == NULL || mat->fp == NULL )
         return 0;
 
-    data_size = (unsigned int)Mat_SizeOf(data_type);
+    data_size = Mat_SizeOf(data_type);
 
     switch ( data_type ) {
         case MAT_T_UINT8:

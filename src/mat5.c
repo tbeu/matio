@@ -2650,7 +2650,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 }
 #endif
                 matvar->data_type = packed_type;
-                matvar->data_size = (int)Mat_SizeOf(matvar->data_type);
+                matvar->data_size = Mat_SizeOf(matvar->data_type);
                 matvar->nbytes = nBytes;
             } else {
                 bytesread += fread(tag,4,1,(FILE*)mat->fp);
@@ -2687,7 +2687,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 break;
             }
             if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-                nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,(int)matvar->nbytes);
+                nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,(int)nelems);
                 /*
                  * If the data was in the tag we started on a 4-byte
                  * boundary so add 4 to make it an 8-byte
@@ -2699,7 +2699,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 #if defined(HAVE_ZLIB)
             } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                 nBytes = ReadCompressedCharData(mat,matvar->internal->z,
-                             (char*)matvar->data,packed_type,(int)matvar->nbytes);
+                             (char*)matvar->data,packed_type,(int)nelems);
                 /*
                  * If the data was in the tag we started on a 4-byte
                  * boundary so add 4 to make it an 8-byte
