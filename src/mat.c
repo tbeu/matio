@@ -1477,9 +1477,13 @@ Mat_VarFree(matvar_t *matvar)
                     }
                 }
                 break;
+            case MAT_C_FUNCTION:
+                if ( !matvar->mem_conserve ) {
+                    free(matvar->data);
+                }
+                break;
             case MAT_C_EMPTY:
             case MAT_C_OBJECT:
-            case MAT_C_FUNCTION:
             case MAT_C_OPAQUE:
                 break;
         }
