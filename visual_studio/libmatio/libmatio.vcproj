@@ -393,6 +393,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\src\exact-int.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\mat4.h"
 				>
 			</File>
@@ -418,6 +422,10 @@
 			</File>
 			<File
 				RelativePath="..\matioConfig.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\safe-math.h"
 				>
 			</File>
 		</Filter>

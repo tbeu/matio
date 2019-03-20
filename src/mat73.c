@@ -102,7 +102,7 @@ static hid_t   SizeType2H5T(void);
 static hid_t   DataType(hid_t h5_type, int isComplex);
 static void    Mat_H5GetChunkSize(size_t rank,hsize_t *dims,hsize_t *chunk_dims);
 static void    Mat_H5ReadVarInfo(matvar_t *matvar,hid_t dset_id);
-static size_t* Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank);
+static size_t* Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank);
 static void    Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields);
 static void    Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
 static void    Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id);
@@ -534,12 +534,12 @@ Mat_H5ReadVarInfo(matvar_t *matvar,hid_t dset_id)
 }
 
 static size_t*
-Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank)
+Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank)
 {
     hid_t space_id;
     size_t* perm_dims;
 
-    *numel = 0;
+    *nelems = 0;
     space_id = H5Dget_space(dset_id);
     *rank = H5Sget_simple_extent_ndims(space_id);
     if ( 0 > *rank ) {
@@ -552,25 +552,27 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *numel, int *rank)
         if ( MAX_RANK >= *rank ) {
             hsize_t dims[MAX_RANK];
             int k;
+            size_t tmp = 1;
             (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
-            *numel = 1;
             /* Permute dimensions */
             for ( k = 0; k < *rank; k++ ) {
                 perm_dims[k] = (size_t)dims[*rank - k - 1];
-                *numel *= perm_dims[k];
+                SafeMul(&tmp, tmp, perm_dims[k]);
             }
+            *nelems = (hsize_t)tmp;
             H5Sclose(space_id);
         } else {
             hsize_t* dims = (hsize_t*)malloc(*rank*sizeof(hsize_t));
             if ( NULL != dims ) {
                 int k;
+                size_t tmp = 1;
                 (void)H5Sget_simple_extent_dims(space_id,dims,NULL);
-                *numel = 1;
                 /* Permute dimensions */
                 for ( k = 0; k < *rank; k++ ) {
                     perm_dims[k] = (size_t)dims[*rank - k - 1];
-                    *numel *= perm_dims[k];
+                    SafeMul(&tmp, tmp, perm_dims[k]);
                 }
+                *nelems = (hsize_t)tmp;
                 free(dims);
                 H5Sclose(space_id);
             } else {
@@ -625,11 +627,11 @@ static void
 Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 {
     hid_t   attr_id,type_id;
-    hsize_t numel;
+    hsize_t nelems;
 
     Mat_H5ReadVarInfo(matvar, dset_id);
 
-    matvar->dims = Mat_H5ReadDims(dset_id, &numel, &matvar->rank);
+    matvar->dims = Mat_H5ReadDims(dset_id, &nelems, &matvar->rank);
     if ( NULL == matvar->dims ) {
         return;
     }
@@ -646,6 +648,11 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             free(matvar->dims);
             matvar->dims = (size_t*)calloc(matvar->rank,sizeof(*matvar->dims));
             H5Dread(dset_id,SizeType2H5T(),H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->dims);
+            {
+                size_t tmp = 1;
+                SafeMulDims(matvar, &tmp);
+                nelems = (hsize_t)tmp;
+            }
         }
     }
 
@@ -660,22 +667,18 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     /* If the dataset is a cell array read the info of the cells */
     if ( MAT_C_CELL == matvar->class_type ) {
         matvar_t **cells;
-        size_t ncells = 1;
-        int j;
         hobj_ref_t *ref_ids;
 
-        for ( j = 0; j < matvar->rank; j++ )
-            ncells *= matvar->dims[j];
         matvar->data_size = sizeof(matvar_t**);
-        matvar->nbytes    = ncells*matvar->data_size;
-        matvar->data      = malloc(matvar->nbytes);
+        SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+        matvar->data = malloc(matvar->nbytes);
         cells = (matvar_t**)matvar->data;
 
-        if ( ncells ) {
+        if ( nelems ) {
             size_t i;
-            ref_ids = (hobj_ref_t*)malloc(ncells*sizeof(*ref_ids));
+            ref_ids = (hobj_ref_t*)malloc(nelems*sizeof(*ref_ids));
             H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,ref_ids);
-            for ( i = 0; i < ncells; i++ ) {
+            for ( i = 0; i < nelems; i++ ) {
                 hid_t ref_id;
                 cells[i] = Mat_VarCalloc();
                 cells[i]->internal->hdf5_ref = ref_ids[i];
@@ -701,7 +704,7 @@ static void
 Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 {
     int      fields_are_variables = 1;
-    hsize_t  nfields=0,numel;
+    hsize_t  nfields=0,nelems;
     hid_t    attr_id,field_id;
     matvar_t **fields;
     H5O_type_t obj_type;
@@ -720,7 +723,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         matvar->class_type = MAT_C_SPARSE;
 
         sparse_dset_id = H5Dopen(dset_id,"jc",H5P_DEFAULT);
-        matvar->dims = Mat_H5ReadDims(sparse_dset_id, &numel, &matvar->rank);
+        matvar->dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &matvar->rank);
         H5Dclose(sparse_dset_id);
         if ( NULL != matvar->dims ) {
             if ( 1 == matvar->rank ) {
@@ -807,7 +810,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 if ( NULL != matvar->dims ) {
                     matvar->dims[0] = 1;
                     matvar->dims[1] = 1;
-                    numel = 1;
+                    nelems = 1;
                 } else {
                     H5Tclose(field_type_id);
                     H5Dclose(field_id);
@@ -815,7 +818,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                     return;
                 }
             } else {
-                matvar->dims = Mat_H5ReadDims(field_id, &numel, &matvar->rank);
+                matvar->dims = Mat_H5ReadDims(field_id, &nelems, &matvar->rank);
                 if ( NULL != matvar->dims ) {
                     fields_are_variables = 0;
                 } else {
@@ -831,7 +834,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             if ( NULL != matvar->dims ) {
                 matvar->dims[0] = 1;
                 matvar->dims[1] = 1;
-                numel = 1;
+                nelems = 1;
             } else {
                 H5Tclose(field_type_id);
                 H5Dclose(field_id);
@@ -848,20 +851,24 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         if ( NULL != matvar->dims ) {
             matvar->dims[0] = 1;
             matvar->dims[1] = 1;
-            numel = 1;
+            nelems = 1;
         } else {
             Mat_Critical("Error allocating memory for matvar->dims");
             return;
         }
     }
 
-    if ( numel < 1 || nfields < 1 )
+    if ( nelems < 1 || nfields < 1 )
         return;
 
-    fields = (matvar_t**)malloc((size_t)(nfields*numel)*sizeof(*fields));
-    matvar->data = fields;
     matvar->data_size = sizeof(*fields);
-    matvar->nbytes    = (size_t)(nfields*numel*matvar->data_size);
+    {
+        size_t nelems_x_nfields;
+        SafeMul(&nelems_x_nfields, nelems, nfields);
+        SafeMul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
+    }
+    fields = (matvar_t**)malloc(matvar->nbytes);
+    matvar->data = fields;
     if ( NULL != fields ) {
         int k;
         for ( k = 0; k < nfields; k++ ) {
@@ -873,10 +880,10 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                                    H5P_DEFAULT);
                 if ( !fields_are_variables ) {
                     int l;
-                    hobj_ref_t *ref_ids = (hobj_ref_t*)malloc((size_t)numel*sizeof(*ref_ids));
+                    hobj_ref_t *ref_ids = (hobj_ref_t*)malloc((size_t)nelems*sizeof(*ref_ids));
                     H5Dread(field_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,
                             H5P_DEFAULT,ref_ids);
-                    for ( l = 0; l < numel; l++ ) {
+                    for ( l = 0; l < nelems; l++ ) {
                         hid_t ref_id;
                         ssize_t name_len;
                         fields[l*nfields+k] = Mat_VarCalloc();
@@ -1011,8 +1018,7 @@ Mat_H5ReadData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space, 
 static void
 Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
 {
-    int k;
-    size_t numel;
+    size_t nelems = 1;
 
     if ( ref_id < 0 || matvar == NULL )
         return;
@@ -1024,10 +1030,8 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
     if ( MAT_C_CELL == matvar->class_type ) {
         size_t i;
         matvar_t **cells = (matvar_t**)matvar->data;
-        numel = 1;
-        for ( k = 0; k < matvar->rank; k++ )
-            numel *= matvar->dims[k];
-        for ( i = 0; i < numel; i++ )
+        SafeMulDims(matvar, &nelems);
+        for ( i = 0; i < nelems; i++ )
             Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
         return;
     }
@@ -1036,9 +1040,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
         case H5I_DATASET:
         {
             hid_t data_type_id, dset_id;
-            numel = 1;
-            for ( k = 0; k < matvar->rank; k++ )
-                numel *= matvar->dims[k];
+            SafeMulDims(matvar, &nelems);
 
             if ( MAT_C_CHAR == matvar->class_type ) {
                 matvar->data_type = MAT_T_UINT8;
@@ -1051,7 +1053,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 matvar->data_size = Mat_SizeOfClass(matvar->class_type);
                 data_type_id      = ClassType2H5T(matvar->class_type);
             }
-            matvar->nbytes = numel*matvar->data_size;
+            SafeMul(&matvar->nbytes, nelems, matvar->data_size);
 
             if ( matvar->nbytes < 1 ) {
                 H5Dclose(ref_id);
@@ -1078,13 +1080,13 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 Mat_VarRead73(mat,matvar);
             } else {
                 matvar_t **fields;
-                size_t i,nfields = 0;
+                size_t i;
 
                 if ( !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
                     break;
-                nfields = matvar->nbytes / matvar->data_size;
+                nelems = matvar->nbytes / matvar->data_size;
                 fields  = (matvar_t**)matvar->data;
-                for ( i = 0; i < nfields; i++ ) {
+                for ( i = 0; i < nelems; i++ ) {
                     if (  0 < fields[i]->internal->hdf5_ref &&
                          -1 < fields[i]->internal->id ) {
                         /* Dataset of references */
@@ -1301,15 +1303,15 @@ static int
 Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims)
 {
     int        k;
-    hsize_t    nmemb = 1;
+    hsize_t    nelems = 1;
     matvar_t **cells;
     int        err = 0;
 
     cells = (matvar_t**)matvar->data;
     for ( k = 0; k < matvar->rank; k++ )
-        nmemb *= dims[k];
+        nelems *= dims[k];
 
-    if ( 0 == nmemb || NULL == matvar->data ) {
+    if ( 0 == nelems || NULL == matvar->data ) {
         err = Mat_VarWriteEmpty(id, matvar, name, ClassNames[matvar->class_type]);
     } else {
         if ( *refs_id < 0 ) {
@@ -1324,12 +1326,12 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
             hobj_ref_t *refs;
             hid_t       str_type_id,mspace_id,dset_id,attr_id,aspace_id;
 
-            refs = (hobj_ref_t*)malloc((size_t)nmemb*sizeof(*refs));
+            refs = (hobj_ref_t*)malloc((size_t)nelems*sizeof(*refs));
             mspace_id = H5Screate_simple(matvar->rank,dims,NULL);
             dset_id = H5Dcreate(id,name,H5T_STD_REF_OBJ,mspace_id,
                                 H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
 
-            for ( k = 0; k < nmemb; k++ ) {
+            for ( k = 0; k < nelems; k++ ) {
                 err += Mat_VarWriteRef(id, cells[k], matvar->compression,
                                        refs_id, refs+k);
             }
@@ -1373,13 +1375,13 @@ static int
 Mat_VarWriteChar73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
 {
     int     err = 0, k;
-    hsize_t numel = 1;
+    hsize_t nelems = 1;
 
     for ( k = 0; k < matvar->rank; k++ ) {
-        numel *= dims[k];
+        nelems *= dims[k];
     }
 
-    if ( 0 == numel || NULL == matvar->data ) {
+    if ( 0 == nelems || NULL == matvar->data ) {
         err = Mat_VarWriteEmpty(id, matvar, name, ClassNames[matvar->class_type]);
     } else {
         int   matlab_int_decode = 2;
@@ -1501,11 +1503,11 @@ static int
 Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
 {
     int     err = 0, k;
-    hsize_t numel = 1;
+    hsize_t nelems = 1;
     hid_t   plist;
 
     for ( k = 0; k < matvar->rank; k++ ) {
-        numel *= dims[k];
+        nelems *= dims[k];
     }
 
     if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
@@ -1530,7 +1532,7 @@ Mat_VarWriteLogical73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims)
         plist = H5P_DEFAULT;
     }
 
-    if ( 0 == numel || NULL == matvar->data ) {
+    if ( 0 == nelems || NULL == matvar->data ) {
         err = Mat_VarWriteEmpty(id, matvar, name, "logical");
     } else {
         int   int_decode = 1;
@@ -1590,11 +1592,11 @@ static int
 Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,hsize_t* max_dims)
 {
     int err = 0, k;
-    hsize_t numel = 1;
+    hsize_t nelems = 1;
     hid_t plist;
 
     for ( k = 0; k < matvar->rank; k++ ) {
-        numel *= dims[k];
+        nelems *= dims[k];
     }
 
     if ( matvar->compression || NULL != max_dims ) {
@@ -1620,7 +1622,7 @@ Mat_VarWriteNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,h
         plist = H5P_DEFAULT;
     }
 
-    if ( 0 == numel || NULL == matvar->data ) {
+    if ( 0 == nelems || NULL == matvar->data ) {
         err = Mat_VarWriteEmpty(id, matvar, name, ClassNames[matvar->class_type]);
     } else {
         hid_t mspace_id,dset_id,attr_type_id,attr_id,aspace_id;
@@ -1670,13 +1672,13 @@ static int
 Mat_VarWriteAppendNumeric73(hid_t id,matvar_t *matvar,const char *name,hsize_t *dims,int dim)
 {
     int err = 0, k;
-    hsize_t numel = 1;
+    hsize_t nelems = 1;
 
     for ( k = 0; k < matvar->rank; k++ ) {
-        numel *= dims[k];
+        nelems *= dims[k];
     }
 
-    if ( 0 != numel && NULL != matvar->data ) {
+    if ( 0 != nelems && NULL != matvar->data ) {
         if ( H5Lexists(id, matvar->name, H5P_DEFAULT) ) {
             err = Mat_H5WriteAppendData(id, ClassType2H5T(matvar->class_type), matvar->rank,
                 matvar->name, matvar->dims, dims, dim, matvar->isComplex, matvar->data);
@@ -1828,12 +1830,15 @@ static int
 Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims,hsize_t* max_dims)
 {
     int     err = 0, k;
-    hsize_t nmemb = 1;
+    hsize_t nelems;
 
-    for ( k = 0; k < matvar->rank; k++ )
-        nmemb *= matvar->dims[k];
+    {
+        size_t tmp = 1;
+        SafeMulDims(matvar, &tmp);
+        nelems = (hsize_t)tmp;
+    }
 
-    if ( 0 == nmemb || NULL == matvar->data ) {
+    if ( 0 == nelems || NULL == matvar->data ) {
         err = Mat_VarWriteEmpty(id, matvar, name, ClassNames[matvar->class_type]);
     } else {
         hid_t struct_id = H5Gcreate(id,name,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
@@ -1883,7 +1888,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
             H5Tclose(str_type_id);
             free(fieldnames);
 
-            if ( 1 == nmemb && NULL == max_dims ) {
+            if ( 1 == nelems && NULL == max_dims ) {
                 for ( k = 0; k < nfields; k++ ) {
                     if ( NULL != fields[k] )
                         fields[k]->compression = matvar->compression;
@@ -1907,9 +1912,9 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
 
                     refs = (hobj_ref_t**)malloc((size_t)nfields*sizeof(*refs));
                     for ( l = 0; l < nfields; l++ )
-                        refs[l] = (hobj_ref_t*)malloc((size_t)nmemb*sizeof(*refs[l]));
+                        refs[l] = (hobj_ref_t*)malloc((size_t)nelems*sizeof(*refs[l]));
 
-                    for ( k = 0; k < nmemb; k++ ) {
+                    for ( k = 0; k < nelems; k++ ) {
                         for ( l = 0; l < nfields; l++ ) {
                             err += Mat_VarWriteRef(id, fields[k*nfields+l], matvar->compression,
                                                    refs_id, refs[l]+k);
@@ -1967,13 +1972,13 @@ static int
 Mat_VarWriteAppendStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims,int dim)
 {
     int err = 0, k;
-    hsize_t nmemb = 1;
+    hsize_t nelems = 1;
 
     for ( k = 0; k < matvar->rank; k++ ) {
-        nmemb *= dims[k];
+        nelems *= dims[k];
     }
 
-    if ( 0 != nmemb && NULL != matvar->data ) {
+    if ( 0 != nelems && NULL != matvar->data ) {
         if ( H5Lexists(id, name, H5P_DEFAULT) ) {
             hid_t struct_id;
             hobj_ref_t **refs;
@@ -1986,9 +1991,9 @@ Mat_VarWriteAppendStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *ref
 
             refs = (hobj_ref_t**)malloc((size_t)nfields*sizeof(*refs));
             for ( l = 0; l < nfields; l++ )
-                refs[l] = (hobj_ref_t*)malloc((size_t)nmemb*sizeof(*refs[l]));
+                refs[l] = (hobj_ref_t*)malloc((size_t)nelems*sizeof(*refs[l]));
 
-            for ( k = 0; k < nmemb; k++ ) {
+            for ( k = 0; k < nelems; k++ ) {
                 for ( l = 0; l < nfields; l++ ) {
                     err += Mat_VarWriteRef(id, fields[k*nfields+l], matvar->compression,
                                            refs_id, refs[l]+k);
@@ -2279,7 +2284,6 @@ Mat_Create73(const char *matname,const char *hdr_str)
 void
 Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 {
-    int k;
     hid_t fid,dset_id,ref_id;
 
     if ( NULL == mat || NULL == matvar )
@@ -2301,13 +2305,12 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_INT8:
         case MAT_C_UINT8:
         {
-            size_t numel = 1;
-            for ( k = 0; k < matvar->rank; k++ )
-                numel *= matvar->dims[k];
+            size_t nelems = 1;
+            SafeMulDims(matvar, &nelems);
             matvar->data_size = Mat_SizeOfClass(matvar->class_type);
-            matvar->nbytes    = numel*matvar->data_size;
+            SafeMul(&matvar->nbytes, nelems, matvar->data_size);
 
-            if ( numel < 1 )
+            if ( nelems < 1 )
                 break;
 
             if ( NULL != matvar->internal->hdf5_name ) {
@@ -2338,11 +2341,10 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         }
         case MAT_C_CHAR:
         {
-            size_t numel = 1;
-            for ( k = 0; k < matvar->rank; k++ )
-                numel *= matvar->dims[k];
+            size_t nelems = 1;
+            SafeMulDims(matvar, &nelems);
             matvar->data_size = Mat_SizeOf(matvar->data_type);
-            matvar->nbytes    = numel*matvar->data_size;
+            SafeMul(&matvar->nbytes, nelems, matvar->data_size);
 
             if ( NULL != matvar->internal->hdf5_name ) {
                 dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
@@ -2363,15 +2365,14 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_STRUCT:
         {
             matvar_t **fields;
-            size_t i, nfields = 0, numel = 1;
+            size_t i, nelems_x_nfields, nelems = 1;
 
             if ( !matvar->internal->num_fields || NULL == matvar->data )
                 break;
-            for ( k = 0; k < matvar->rank; k++ )
-                numel *= matvar->dims[k];
-            nfields = matvar->internal->num_fields;
+            SafeMulDims(matvar, &nelems);
+            SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
             fields  = (matvar_t**)matvar->data;
-            for ( i = 0; i < nfields*numel; i++ ) {
+            for ( i = 0; i < nelems_x_nfields; i++ ) {
                 if (  0 < fields[i]->internal->hdf5_ref &&
                      -1 < fields[i]->internal->id ) {
                     /* Dataset of references */
@@ -2385,12 +2386,12 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_CELL:
         {
             matvar_t **cells;
-            size_t i, ncells = 0;
+            size_t i, nelems = 0;
 
-            ncells = matvar->nbytes / matvar->data_size;
+            nelems = matvar->nbytes / matvar->data_size;
             cells  = (matvar_t**)matvar->data;
 
-            for ( i = 0; i < ncells; i++ )
+            for ( i = 0; i < nelems; i++ )
                 Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
             break;
         }
@@ -2409,11 +2410,11 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
             if ( H5Lexists(dset_id,"ir",H5P_DEFAULT) ) {
                 size_t *dims;
-                hsize_t numel;
+                hsize_t nelems;
                 int rank;
 
                 sparse_dset_id = H5Dopen(dset_id,"ir",H5P_DEFAULT);
-                dims = Mat_H5ReadDims(sparse_dset_id, &numel, &rank);
+                dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
                     sparse_data->nir = dims[0];
                     free(dims);
@@ -2427,11 +2428,11 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
             if ( H5Lexists(dset_id,"jc",H5P_DEFAULT) ) {
                 size_t *dims;
-                hsize_t numel;
+                hsize_t nelems;
                 int rank;
 
                 sparse_dset_id = H5Dopen(dset_id,"jc",H5P_DEFAULT);
-                dims = Mat_H5ReadDims(sparse_dset_id, &numel, &rank);
+                dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
                     sparse_data->njc = dims[0];
                     free(dims);
@@ -2445,11 +2446,11 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
             if ( H5Lexists(dset_id,"data",H5P_DEFAULT) ) {
                 size_t *dims;
-                hsize_t numel;
+                hsize_t nelems;
                 int rank;
 
                 sparse_dset_id = H5Dopen(dset_id,"data",H5P_DEFAULT);
-                dims = Mat_H5ReadDims(sparse_dset_id, &numel, &rank);
+                dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
                     size_t ndata_bytes;
                     sparse_data->nzmax = dims[0];

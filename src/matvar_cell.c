@@ -40,16 +40,15 @@
 matvar_t *
 Mat_VarGetCell(matvar_t *matvar,int index)
 {
-    int       nmemb = 1, i;
+    size_t nelems = 1;
     matvar_t *cell = NULL;
 
     if ( matvar == NULL )
         return NULL;
 
-    for ( i = 0; i < matvar->rank; i++ )
-        nmemb *= matvar->dims[i];
+    SafeMulDims(matvar, &nelems);
 
-    if ( index < nmemb )
+    if ( 0 <= index && index < nelems )
         cell = *((matvar_t **)matvar->data + index);
 
     return cell;
@@ -167,17 +166,15 @@ Mat_VarGetCellsLinear(matvar_t *matvar,int start,int stride,int edge)
 matvar_t *
 Mat_VarSetCell(matvar_t *matvar,int index,matvar_t *cell)
 {
-    int nmemb = 1, i;
+    size_t nelems = 1;
     matvar_t **cells, *old_cell = NULL;
 
     if ( matvar == NULL || matvar->rank < 1 )
         return NULL;
 
-    for ( i = 0; i < matvar->rank; i++ )
-        nmemb *= matvar->dims[i];
-
+   SafeMulDims(matvar, &nelems);
     cells = (matvar_t**)matvar->data;
-    if ( index < nmemb ) {
+    if ( 0 <= index && index < nelems ) {
         old_cell = cells[index];
         cells[index] = cell;
     }

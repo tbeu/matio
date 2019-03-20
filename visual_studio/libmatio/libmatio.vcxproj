@@ -290,11 +290,13 @@
     <ClCompile Include="..\..\src\snprintf.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\exact-int.h" />
     <ClInclude Include="..\..\src\mat4.h" />
     <ClInclude Include="..\..\src\mat5.h" />
     <ClInclude Include="..\..\src\mat73.h" />
     <ClInclude Include="..\..\src\matio.h" />
     <ClInclude Include="..\..\src\matio_private.h" />
+    <ClInclude Include="..\..\src\safe-math.h" />
     <ClInclude Include="..\matio_pubconf.h" />
     <ClInclude Include="..\matioConfig.h" />
   </ItemGroup>
