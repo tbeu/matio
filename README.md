@@ -36,6 +36,7 @@ The following people/organizations have helped in the development of matio throu
 * Jacco van Beek ([https://sourceforge.net/u/jabe](https://sourceforge.net/u/jabe))
 * John Filo ([https://github.com/jfilo](https://github.com/jfilo))
 * Modelica Association ([https://modelica.org/association](https://modelica.org/association))
+* Nelson ([https://nelson-numerical-software.github.io/nelson-website/](https://nelson-numerical-software.github.io/nelson-website/))
 * Nils Jannasch ([https://github.com/NJannasch](https://github.com/NJannasch))
 * OpenMEEG ([http://openmeeg.github.io/](http://openmeeg.github.io/))
 * Scilab ([http://www.scilab.org/](http://www.scilab.org/))
