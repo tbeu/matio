@@ -3719,16 +3719,19 @@ test_directory(char *file)
 
     mat = Mat_Open(file,MAT_ACC_RDWR);
     if ( NULL != mat ) {
-        size_t n, i;
-        char** dir = Mat_GetDir(mat, &n);
+        size_t n1;
+        char** dir = Mat_GetDir(mat, &n1);
         if ( NULL != dir ) {
-            for ( i = 0; i < n; ++i ) {
+            size_t i, n2 = n1 + 1;
+            for ( i = 0; i < n1; ++i ) {
                 if ( NULL != dir[i] ) {
                     printf("%s\n", dir[i]);
                 } else {
                     printf("\n");
                 }
             }
+            (void)Mat_GetDir(mat, &n2);
+            err = n1 != n2;
         } else {
             err = 1;
         }

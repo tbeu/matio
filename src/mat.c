@@ -645,6 +645,15 @@ Mat_GetDir(mat_t *mat, size_t *n)
             (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
             *n = mat->num_datasets;
         }
+    } else {
+        if ( mat->version == MAT_FT_MAT73 ) {
+            *n = 0;
+            while ( *n < mat->num_datasets && NULL != mat->dir[*n] ) {
+                (*n)++;
+            }
+        } else {
+            *n = mat->num_datasets;
+        }
     }
     dir = mat->dir;
     return dir;
