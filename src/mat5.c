@@ -2686,6 +2686,13 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             if ( 0 == matvar->nbytes ) {
                 break;
             }
+            {
+                size_t nbytes;
+                err = SafeMul(&nbytes, nelems, matvar->data_size);
+                if ( err || nbytes > matvar->nbytes ) {
+                    break;
+                }
+            }
             if ( matvar->compression == MAT_COMPRESSION_NONE ) {
                 nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,(int)nelems);
                 /*
