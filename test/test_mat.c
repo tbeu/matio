@@ -3741,6 +3741,12 @@ test_directory(char *file)
         if ( MAT_FT_UNDEFINED == Mat_GetVersion(mat) ) {
             err++;
         }
+        {
+            const char *header = Mat_GetHeader(mat);
+            if ( NULL != header && strlen(header) > 128 ) {
+                err++;
+            }
+        }
         Mat_Close(mat);
     } else {
         Mat_Critical("MAT file %s doesn't exist", file);

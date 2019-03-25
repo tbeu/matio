@@ -23,24 +23,24 @@
 .\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
 .Dd March 25, 2019
-.Dt MAT_GETFILENAME 3
+.Dt MAT_GETHEADER 3
 .Os
 .Sh NAME
-.Nm Mat_GetFilename
-.Nd Returns the filename of a MATLAB MAT file given a MAT file structure.
+.Nm Mat_GetHeader
+.Nd Returns the header of a MATLAB MAT file given a MAT file structure.
 .Sh SYNOPSIS
 .Fd #include <matio.h>
 .Ft const char *
-.Fo Mat_GetFilename
+.Fo Mat_GetHeader
 .Fa "mat_t *matfp"
 .Fc
 .Sh DESCRIPTION
 The
-.Fn Mat_GetFilename
-function returns the filename of the MATLAB MAT file given by the MAT file
+.Fn Mat_GetHeader
+function returns the header of the MATLAB MAT file given by the MAT file
 structure.
 .Sh SEE ALSO
 .Xr Mat_CreateVer 3 ,
 .Xr Mat_Open 3 ,
-.Xr Mat_GetHeader 3 ,
+.Xr Mat_GetFilename 3 ,
 .Xr Mat_GetVersion 3

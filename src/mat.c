@@ -539,6 +539,22 @@ Mat_GetFilename(mat_t *mat)
     return filename;
 }
 
+/** @brief Gets the header for the given MAT file
+ *
+ * Gets the header for the given MAT file
+ * @ingroup MAT
+ * @param mat Pointer to the MAT file
+ * @return MAT header
+ */
+const char *
+Mat_GetHeader(mat_t *mat)
+{
+    const char *header = NULL;
+    if ( NULL != mat )
+        header = mat->header;
+    return header;
+}
+
 /** @brief Gets the version of the given MAT file
  *
  * Gets the version of the given MAT file

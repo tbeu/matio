@@ -19,6 +19,7 @@ EXPORTS
     Mat_Open
     Mat_GetDir
     Mat_GetFilename
+    Mat_GetHeader
     Mat_GetVersion
     Mat_Rewind
     Mat_VarCalloc
