@@ -1,3 +1,12 @@
+Changes in 1.5.15 (29 March 2019)
+* Added new API function Mat_GetHeader to retrieve header string of a MAT file
+* Fixed integer multiplication overflows when calculating total number of
+  elements from (crafted) MAT file
+* Fixed bug reading character array from (compressed) v5 MAT file (regression
+  of v1.5.14)
+* Fixed number of variables for repeated calls of Mat_GetDir
+* Fixed memory leak in Mat_VarFree for function class
+
 Changes in 1.5.14 (11 March 2019)
 * Deprecated usage of Mat_VarWriteInfo/Mat_VarWriteData in favor of 
   Mat_VarWrite/Mat_VarWriteAppend
