@@ -2,7 +2,7 @@
 include(cmake/utils/VA_COPY.cmake)
 VA_COPY()
 
-// This needs to be before check_header_stdc()
+# This needs to be before check_header_stdc()
 if (NOT HAVE_GETOPT)
     add_library(gnu STATIC ${PROJECT_SOURCE_DIR}/getopt/getopt_long.c)
     target_compile_definitions(gnu
