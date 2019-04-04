@@ -15,7 +15,14 @@ include(cmake/options.cmake)
 include(cmake/thirdParties.cmake)
 include(cmake/compilerOptions.cmake)
 
-include(cmake/xxxxx.cmake)
+set(MATIO_PLATFORM ${CMAKE_SYSTEM_PROCESSOR}-unknown-${CMAKE_SYSTEM_NAME})
+
+include(cmake/run_utils_checks.cmake)
+
+# Setting the include directory for the application to find config.h
+include_directories( ${CMAKE_BINARY_DIR} )
+# Since we have created a config.h add a global define for it
+add_definitions( "-DHAVE_CONFIG_H" )
 
 include(cmake/src.cmake)
 include(cmake/getopt.cmake)
