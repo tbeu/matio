@@ -1,16 +1,16 @@
 set(MATIO_PLATFORM ${CMAKE_SYSTEM_PROCESSOR}-unknown-${CMAKE_SYSTEM_NAME})
 
-include(cmake/utils/VA_COPY.cmake)
-VA_COPY()
+# include(cmake/utils/VA_COPY.cmake)
+# VA_COPY()
 
-if (NOT HAVE_GETOPT)
-    add_library(gnu STATIC ${PROJECT_SOURCE_DIR}/getopt/getopt_long.c)
-    target_compile_definitions(gnu
-        PUBLIC -DREPLACE_GETOPT)
-    target_include_directories(gnu
-        PUBLIC ${PROJECT_SOURCE_DIR}/getopt/)
-    set(GETOPT_LIB gnu)
-endif()
+# if (NOT HAVE_GETOPT)
+#     add_library(gnu STATIC ${PROJECT_SOURCE_DIR}/getopt/getopt_long.c)
+#     target_compile_definitions(gnu
+#         PUBLIC -DREPLACE_GETOPT)
+#     target_include_directories(gnu
+#         PUBLIC ${PROJECT_SOURCE_DIR}/getopt/)
+#     set(GETOPT_LIB gnu)
+# endif()
 
 
 include(cmake/utils/CheckHeaderSTDC.cmake)
