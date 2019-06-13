@@ -225,7 +225,8 @@ EXTERN size_t InflateFieldNames(mat_t *mat,matvar_t *matvar,void *buf,int nfield
 /* mat.c */
 EXTERN mat_complex_split_t *ComplexMalloc(size_t nbytes);
 EXTERN enum matio_types ClassType2DataType(enum matio_classes class_type);
-EXTERN int SafeMul(size_t* res, size_t a, size_t b);
 EXTERN int SafeMulDims(const matvar_t *matvar, size_t* nelems);
+EXTERN int SafeMul(size_t* res, size_t a, size_t b);
+EXTERN int SafeAdd(size_t* res, size_t a, size_t b);
 
 #endif

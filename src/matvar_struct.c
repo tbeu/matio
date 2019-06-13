@@ -45,6 +45,7 @@ matvar_t *
 Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
     unsigned nfields)
 {
+    int err;
     size_t nelems = 1;
     int j;
     matvar_t *matvar;
@@ -91,8 +92,10 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
         }
         if ( NULL != matvar && nelems > 0 ) {
             size_t nelems_x_nfields;
-            SafeMul(&nelems_x_nfields, nelems, nfields);
-            SafeMul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
+            err = SafeMul(&nelems_x_nfields, nelems, nfields);
+            err |= SafeMul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
+            if ( err )
+                return NULL;
             matvar->data = calloc(nelems_x_nfields, matvar->data_size);
         }
     }
@@ -113,6 +116,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
 int
 Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 {
+    int err;
     int cnt = 0;
     size_t i, nfields, nelems = 1;
     matvar_t **new_data, **old_data;
@@ -120,7 +124,11 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 
     if ( matvar == NULL || fieldname == NULL )
         return -1;
-    SafeMulDims(matvar, &nelems);
+
+    err = SafeMulDims(matvar, &nelems);
+    if ( err )
+        return -1;
+
     nfields = matvar->internal->num_fields+1;
     matvar->internal->num_fields = nfields;
     fieldnames = (char**)realloc(matvar->internal->fieldnames,
@@ -132,8 +140,12 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
 
     {
         size_t nelems_x_nfields;
-        SafeMul(&nelems_x_nfields, nelems, nfields);
-        SafeMul(&matvar->nbytes, nelems_x_nfields, sizeof(*new_data));
+        err = SafeMul(&nelems_x_nfields, nelems, nfields);
+        err |= SafeMul(&matvar->nbytes, nelems_x_nfields, sizeof(*new_data));
+        if ( err ) {
+            matvar->nbytes = 0;
+            return -1;
+        }
     }
     new_data = (matvar_t**)malloc(matvar->nbytes);
     if ( new_data == NULL ) {
@@ -206,14 +218,18 @@ Mat_VarGetStructFieldnames(const matvar_t *matvar)
 matvar_t *
 Mat_VarGetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index)
 {
+    int err;
     matvar_t *field = NULL;
     size_t nelems = 1, nfields;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT ||
         matvar->data_size == 0 )
-        return field;
+        return NULL;
 
-    SafeMulDims(matvar, &nelems);
+    err = SafeMulDims(matvar, &nelems);
+    if ( err )
+        return NULL;
+
     nfields = matvar->internal->num_fields;
 
     if ( nelems > 0 && index >= nelems ) {
@@ -242,15 +258,18 @@ matvar_t *
 Mat_VarGetStructFieldByName(matvar_t *matvar,const char *field_name,
                             size_t index)
 {
-    int       i, nfields, field_index;
+    int i, nfields, field_index, err;
     matvar_t *field = NULL;
     size_t nelems = 1;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT   ||
         matvar->data_size == 0 )
-        return field;
+        return NULL;
 
-    SafeMulDims(matvar, &nelems);
+    err = SafeMulDims(matvar, &nelems);
+    if ( err )
+        return NULL;
+
     nfields = matvar->internal->num_fields;
     field_index = -1;
     for ( i = 0; i < nfields; i++ ) {
@@ -285,11 +304,11 @@ Mat_VarGetStructFieldByName(matvar_t *matvar,const char *field_name,
 matvar_t *
 Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
 {
-    int       err = 0, nfields;
+    int err, nfields;
     matvar_t *field = NULL;
     size_t nelems = 1;
 
-    SafeMulDims(matvar, &nelems);
+    err = SafeMulDims(matvar, &nelems);
     nfields = matvar->internal->num_fields;
     if ( index < 0 || (nelems > 0 && index >= nelems ))
         err = 1;
@@ -485,14 +504,18 @@ matvar_t *
 Mat_VarSetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index,
     matvar_t *field)
 {
+    int err;
     matvar_t *old_field = NULL;
     size_t nelems = 1, nfields;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT ||
         matvar->data == NULL )
-        return old_field;
+        return NULL;
 
-    SafeMulDims(matvar, &nelems);
+    err = SafeMulDims(matvar, &nelems);
+    if ( err )
+        return NULL;
+
     nfields = matvar->internal->num_fields;
 
     if ( index < nelems && field_index < nfields ) {
@@ -523,15 +546,18 @@ matvar_t *
 Mat_VarSetStructFieldByName(matvar_t *matvar,const char *field_name,
     size_t index,matvar_t *field)
 {
-    int       i, nfields, field_index;
+    int err, i, nfields, field_index;
     matvar_t *old_field = NULL;
     size_t nelems = 1;
 
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT ||
          matvar->data == NULL )
-        return old_field;
+        return NULL;
 
-    SafeMulDims(matvar, &nelems);
+    err = SafeMulDims(matvar, &nelems);
+    if ( err )
+        return NULL;
+
     nfields = matvar->internal->num_fields;
     field_index = -1;
     for ( i = 0; i < nfields; i++ ) {
