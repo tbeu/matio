@@ -2342,14 +2342,13 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_UINT8:
         {
             size_t nelems = 1;
+            matvar->data_size = Mat_SizeOfClass(matvar->class_type);
             err = SafeMulDims(matvar, &nelems);
             err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return;
             }
-
-            matvar->data_size = Mat_SizeOfClass(matvar->class_type);
 
             if ( nelems < 1 )
                 break;
@@ -2383,14 +2382,13 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_CHAR:
         {
             size_t nelems = 1;
+            matvar->data_size = Mat_SizeOf(matvar->data_type);
             err = SafeMulDims(matvar, &nelems);
             err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return;
             }
-
-            matvar->data_size = Mat_SizeOf(matvar->data_type);
 
             if ( NULL != matvar->internal->hdf5_name ) {
                 dset_id = H5Dopen(fid,matvar->internal->hdf5_name,H5P_DEFAULT);
@@ -2417,13 +2415,13 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 break;
 
             err = SafeMulDims(matvar, &nelems);
-            err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+            err |= SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return;
             }
 
-            fields  = (matvar_t**)matvar->data;
+            fields = (matvar_t**)matvar->data;
             for ( i = 0; i < nelems_x_nfields; i++ ) {
                 if (  0 < fields[i]->internal->hdf5_ref &&
                      -1 < fields[i]->internal->id ) {

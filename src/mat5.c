@@ -1477,11 +1477,11 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
     size_t nelems = 1;
 
     err = SafeMulDims(matvar, &nelems);
+    matvar->data_size = sizeof(matvar_t *);
     err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
     if ( err )
         return 0;
 
-    matvar->data_size = sizeof(matvar_t *);
     matvar->data = malloc(matvar->nbytes);
     if ( matvar->data != NULL ) {
         size_t i;
@@ -4496,7 +4496,6 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
 int
 Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
 {
-    int err;
     mat_uint32_t array_flags;
     int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
     int array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
