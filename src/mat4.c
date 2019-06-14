@@ -732,7 +732,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     int       M,O,data_type,class_type;
     mat_int32_t tmp;
     long      nBytes;
-    size_t    err;
+    size_t    readresult;
     matvar_t *matvar = NULL;
     union {
         mat_uint32_t u;
@@ -744,8 +744,8 @@ Mat_VarReadNextInfo4(mat_t *mat)
     else if ( NULL == (matvar = Mat_VarCalloc()) )
         return NULL;
 
-    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
-    if ( !err ) {
+    readresult = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
+    if ( 1 != readresult ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -831,25 +831,25 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
+    readresult = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( mat->byteswap )
         Mat_int32Swap(&tmp);
     matvar->dims[0] = tmp;
-    if ( !err ) {
+    if ( 1 != readresult ) {
         Mat_VarFree(matvar);
         return NULL;
     }
-    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
+    readresult = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( mat->byteswap )
         Mat_int32Swap(&tmp);
     matvar->dims[1] = tmp;
-    if ( !err ) {
+    if ( 1 != readresult ) {
         Mat_VarFree(matvar);
         return NULL;
     }
 
-    err = fread(&(matvar->isComplex),sizeof(int),1,(FILE*)mat->fp);
-    if ( !err ) {
+    readresult = fread(&(matvar->isComplex),sizeof(int),1,(FILE*)mat->fp);
+    if ( 1 != readresult ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -857,8 +857,8 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    err = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
-    if ( !err ) {
+    readresult = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
+    if ( 1 != readresult ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -874,8 +874,8 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    err = fread(matvar->name,1,tmp,(FILE*)mat->fp);
-    if ( !err ) {
+    readresult = fread(matvar->name,1,tmp,(FILE*)mat->fp);
+    if ( tmp != readresult ) {
         Mat_VarFree(matvar);
         return NULL;
     }
