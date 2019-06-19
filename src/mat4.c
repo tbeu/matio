@@ -220,7 +220,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
                     fwrite(&tmp, sizeof(double), 1, (FILE*)mat->fp);
                 }
             }
-            tmp = matvar->dims[0];
+            tmp = (double)matvar->dims[0];
             fwrite(&tmp, sizeof(double), 1, (FILE*)mat->fp);
             for ( i = 0; i < sparse->njc - 1; i++ ) {
                 for ( j = sparse->jc[i];
@@ -229,7 +229,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
                     fwrite(&tmp, sizeof(double), 1, (FILE*)mat->fp);
                 }
             }
-            tmp = matvar->dims[1];
+            tmp = (double)matvar->dims[1];
             fwrite(&tmp, sizeof(double), 1, (FILE*)mat->fp);
             tmp = 0.;
             if ( matvar->isComplex ) {
