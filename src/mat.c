@@ -1917,7 +1917,6 @@ Mat_VarGetSize(matvar_t *matvar)
 void
 Mat_VarPrint( matvar_t *matvar, int printdata )
 {
-    int err;
     size_t nelems = 0, i, j;
     const char *class_type_desc[18] = {"Undefined","Cell Array","Structure",
        "Object","Character Array","Sparse Array","Double Precision Array",
@@ -1937,10 +1936,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     if ( NULL != matvar->dims ) {
         int k;
         nelems = 1;
-        err = SafeMulDims(matvar, &nelems);
-        if ( err )
-            return;
-
+        SafeMulDims(matvar, &nelems);
         printf("Dimensions: %" SIZE_T_FMTSTR,matvar->dims[0]);
         for ( k = 1; k < matvar->rank; k++ ) {
             printf(" x %" SIZE_T_FMTSTR,matvar->dims[k]);
@@ -1971,10 +1967,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         matvar_t **fields = (matvar_t **)matvar->data;
         size_t nfields = matvar->internal->num_fields;
         size_t nelems_x_nfields = 1;
-        err = SafeMul(&nelems_x_nfields, nelems, nfields);
-        if ( err )
-            return;
-
+        SafeMul(&nelems_x_nfields, nelems, nfields);
         if ( nelems_x_nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
             for ( i = 0; i < nelems_x_nfields; i++ ) {
