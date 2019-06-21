@@ -204,7 +204,7 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
             err |= SafeAdd(&nBytes, nBytes, tag_size);
             err |= SafeAdd(&nBytes, nBytes, data_bytes);
 
-            err = SafeMul(&data_bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+            err |= SafeMul(&data_bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
             if ( data_bytes % 8 )
                 err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
             err |= SafeAdd(&nBytes, nBytes, tag_size);
@@ -2113,7 +2113,6 @@ WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
 static size_t
 WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
 {
-    int err;
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
     int buf_size = 512;
@@ -2124,7 +2123,7 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
 
     uncomp_buf[0] = MAT_T_MATRIX;
     if ( MAT_C_EMPTY != matvar->class_type ) {
-        err = GetCellArrayFieldBufSize(matvar, &field_buf_size);
+        int err = GetCellArrayFieldBufSize(matvar, &field_buf_size);
         if (err || field_buf_size > UINT32_MAX)
             return 0;
 
@@ -2240,7 +2239,6 @@ WriteStructField(mat_t *mat,matvar_t *matvar)
 static size_t
 WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
 {
-    int err;
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
     int buf_size = 512;
@@ -2257,7 +2255,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
 
     uncomp_buf[0] = MAT_T_MATRIX;
     if ( MAT_C_EMPTY != matvar->class_type ) {
-        err = GetStructFieldBufSize(matvar, &field_buf_size);
+        int err = GetStructFieldBufSize(matvar, &field_buf_size);
         if (err || field_buf_size > UINT32_MAX)
             return 0;
         uncomp_buf[1] = field_buf_size;

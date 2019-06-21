@@ -1873,7 +1873,7 @@ Mat_VarGetSize(matvar_t *matvar)
     } else if ( matvar->class_type == MAT_C_SPARSE ) {
         mat_sparse_t *sparse = (mat_sparse_t*)matvar->data;
         if ( NULL != sparse ) {
-            size_t sparse_size;
+            size_t sparse_size = 0;
             err = SafeMul(&bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
             if ( err )
                 return 0;

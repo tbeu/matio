@@ -536,7 +536,6 @@ Mat_H5ReadVarInfo(matvar_t *matvar,hid_t dset_id)
 static size_t*
 Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank)
 {
-    int err = 0;
     hid_t space_id;
     size_t* perm_dims;
 
@@ -550,6 +549,7 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank)
     }
     perm_dims = (size_t*)malloc(*rank*sizeof(*perm_dims));
     if ( NULL != perm_dims ) {
+        int err = 0;
         if ( MAX_RANK >= *rank ) {
             hsize_t dims[MAX_RANK];
             int k;
@@ -1864,7 +1864,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
 static int
 Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims,hsize_t* max_dims)
 {
-    int     err = 0, k;
+    int     err;
     hsize_t nelems;
 
     {
@@ -1885,7 +1885,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
             hid_t str_type_id,fieldnames_id;
             matvar_t **fields = (matvar_t**)matvar->data;
             hvl_t     *fieldnames;
-            hsize_t    nfields = matvar->internal->num_fields;
+            hsize_t    nfields = matvar->internal->num_fields, k;
 
             str_type_id = H5Tcopy(H5T_C_S1);
             H5Tset_size(str_type_id,6);

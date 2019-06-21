@@ -45,7 +45,6 @@ matvar_t *
 Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
     unsigned nfields)
 {
-    int err;
     size_t nelems = 1;
     int j;
     matvar_t *matvar;
@@ -92,7 +91,7 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
         }
         if ( NULL != matvar && nelems > 0 ) {
             size_t nelems_x_nfields;
-            err = SafeMul(&nelems_x_nfields, nelems, nfields);
+            int err = SafeMul(&nelems_x_nfields, nelems, nfields);
             err |= SafeMul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
             if ( err )
                 return NULL;
