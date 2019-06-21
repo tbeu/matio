@@ -1456,20 +1456,14 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 void
 Mat_VarFree(matvar_t *matvar)
 {
-    int err;
     size_t nelems = 0;
 
     if ( NULL == matvar )
         return;
     if ( NULL != matvar->dims ) {
         nelems = 1;
-        err = SafeMulDims(matvar, &nelems);
+        SafeMulDims(matvar, &nelems);
         free(matvar->dims);
-        if ( err ) {
-            /* Result will be zero, so following free loops will do nothing anyway */
-            Mat_Critical("Integer multiplication overflow");
-            return;
-        }
     }
     if ( NULL != matvar->data ) {
         switch (matvar->class_type ) {
@@ -1477,13 +1471,7 @@ Mat_VarFree(matvar_t *matvar)
                 if ( !matvar->mem_conserve ) {
                     matvar_t **fields = (matvar_t**)matvar->data;
                     size_t nelems_x_nfields, i;
-                    err = SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
-                    if ( err ) {
-                        Mat_Critical("Integer multiplication overflow");
-                        free(matvar->data);
-                        return;
-                    }
-
+                    SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
                     for ( i = 0; i < nelems_x_nfields; i++ )
                         Mat_VarFree(fields[i]);
 
