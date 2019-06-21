@@ -39,7 +39,7 @@
 #   define __STDC_FORMAT_MACROS
 #   include <inttypes.h>
 #endif
-#if defined(_WIN64) || defined(_WIN32)
+#if (defined(_WIN64) || defined(_WIN32)) && !defined(__CYGWIN__)
 #   include <io.h>
 #   define mktemp _mktemp
 #endif
