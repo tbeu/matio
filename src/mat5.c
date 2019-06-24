@@ -57,13 +57,13 @@ static mat_complex_split_t null_complex_data = {NULL,NULL};
  *  Private functions
  *===========================================================================
  */
-static size_t GetTypeBufSize(matvar_t *matvar);
-static size_t GetStructFieldBufSize(matvar_t *matvar);
-static size_t GetCellArrayFieldBufSize(matvar_t *matvar);
+static int GetTypeBufSize(matvar_t *matvar, size_t *size);
+static int GetStructFieldBufSize(matvar_t *matvar, size_t *size);
+static int GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size);
 #if defined(HAVE_ZLIB)
-static size_t GetMatrixMaxBufSize(matvar_t *matvar);
+static int GetMatrixMaxBufSize(matvar_t *matvar, size_t *size);
 #endif
-static size_t GetEmptyMatrixMaxBufSize(const char *name,int rank);
+static int GetEmptyMatrixMaxBufSize(const char *name, int rank, size_t *size);
 static size_t WriteCharData(mat_t *mat, void *data, int N,enum matio_types data_type);
 static size_t ReadNextCell( mat_t *mat, matvar_t *matvar );
 static size_t ReadNextStructField( mat_t *mat, matvar_t *matvar );
@@ -97,29 +97,44 @@ static size_t Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,
  *
  * @ingroup mat_internal
  * @param matvar MAT variable
- * @return the number of bytes needed to store the MAT variable
+ * @param size the number of bytes needed to store the MAT variable
+ * @return 0 on success
  */
-static size_t
-GetTypeBufSize(matvar_t *matvar)
+static int
+GetTypeBufSize(matvar_t *matvar, size_t *size)
 {
-    size_t nBytes = 0, data_bytes;
+    int err;
+    size_t nBytes, data_bytes;
     size_t tag_size = 8;
     size_t nelems = 1;
+    size_t rank_size;
 
-    SafeMulDims(matvar, &nelems);
+    *size = 0;
+
+    err = SafeMulDims(matvar, &nelems);
+    if ( err )
+        return 1;
 
     /* Add rank and dimensions, padded to an 8 byte block */
+    err = SafeMul(&rank_size, matvar->rank, 4);
+    if ( err )
+        return 1;
+
     if ( matvar->rank % 2 )
-        nBytes += tag_size + matvar->rank*4 + 4;
+        nBytes = tag_size + 4;
     else
-        nBytes += tag_size + matvar->rank*4;
+        nBytes = tag_size;
+
+    err = SafeAdd(&nBytes, nBytes, rank_size);
+    if ( err )
+        return 1;
 
     switch ( matvar->class_type ) {
         case MAT_C_STRUCT:
         {
             matvar_t **fields = (matvar_t**)matvar->data;
             size_t nfields = matvar->internal->num_fields;
-            size_t maxlen = 0, i;
+            size_t maxlen = 0, i, field_buf_size;
 
             for ( i = 0; i < nfields; i++ ) {
                 char *fieldname = matvar->internal->fieldnames[i];
@@ -130,14 +145,26 @@ GetTypeBufSize(matvar_t *matvar)
             while ( nfields*maxlen % 8 != 0 )
                 maxlen++;
 
-            nBytes += tag_size + tag_size + maxlen*nfields;
+            err = SafeMul(&field_buf_size, maxlen, nfields);
+            err |= SafeAdd(&nBytes, nBytes, tag_size + tag_size);
+            err |= SafeAdd(&nBytes, nBytes, field_buf_size);
+            if ( err )
+                return 1;
 
             /* FIXME: Add bytes for the fieldnames */
             if ( NULL != fields && nfields > 0 ) {
                 size_t nelems_x_nfields = 1;
-                SafeMul(&nelems_x_nfields, nelems, nfields);
-                for ( i = 0; i < nelems_x_nfields; i++ )
-                    nBytes += tag_size + GetStructFieldBufSize(fields[i]);
+                err = SafeMul(&nelems_x_nfields, nelems, nfields);
+                if ( err )
+                    return 1;
+
+                for ( i = 0; i < nelems_x_nfields; i++ ) {
+                    err = GetStructFieldBufSize(fields[i], &field_buf_size);
+                    err |= SafeAdd(&nBytes, nBytes, tag_size);
+                    err |= SafeAdd(&nBytes, nBytes, field_buf_size);
+                    if ( err )
+                        return 1;
+                }
             }
             break;
         }
@@ -150,9 +177,14 @@ GetTypeBufSize(matvar_t *matvar)
 
             nelems = matvar->nbytes / matvar->data_size;
             if ( NULL != cells && nelems > 0 ) {
-                size_t i;
-                for ( i = 0; i < nelems; i++ )
-                    nBytes += tag_size + GetCellArrayFieldBufSize(cells[i]);
+                size_t i, field_buf_size;
+                for ( i = 0; i < nelems; i++ ) {
+                    err = GetCellArrayFieldBufSize(cells[i], &field_buf_size);
+                    err |= SafeAdd(&nBytes, nBytes, tag_size);
+                    err |= SafeAdd(&nBytes, nBytes, field_buf_size);
+                    if ( err )
+                        return 1;
+                }
             }
             break;
         }
@@ -160,64 +192,94 @@ GetTypeBufSize(matvar_t *matvar)
         {
             mat_sparse_t *sparse = (mat_sparse_t*)matvar->data;
 
-            SafeMul(&data_bytes, sparse->nir, sizeof(mat_int32_t));
+            err = SafeMul(&data_bytes, sparse->nir, sizeof(mat_int32_t));
             if ( data_bytes % 8 )
-                data_bytes += (8 - (data_bytes % 8));
-            nBytes += tag_size + data_bytes;
+                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
+            err |= SafeAdd(&nBytes, nBytes, tag_size);
+            err |= SafeAdd(&nBytes, nBytes, data_bytes);
 
-            SafeMul(&data_bytes, sparse->njc, sizeof(mat_int32_t));
+            err |= SafeMul(&data_bytes, sparse->njc, sizeof(mat_int32_t));
             if ( data_bytes % 8 )
-                data_bytes += (8 - (data_bytes % 8));
-            nBytes += tag_size + data_bytes;
+                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
+            err |= SafeAdd(&nBytes, nBytes, tag_size);
+            err |= SafeAdd(&nBytes, nBytes, data_bytes);
 
-            SafeMul(&data_bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+            err |= SafeMul(&data_bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
             if ( data_bytes % 8 )
-                data_bytes += (8 - (data_bytes % 8));
-            nBytes += tag_size + data_bytes;
+                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
+            err |= SafeAdd(&nBytes, nBytes, tag_size);
+            err |= SafeAdd(&nBytes, nBytes, data_bytes);
 
-            if ( matvar->isComplex )
-                nBytes += tag_size + data_bytes;
+            if ( matvar->isComplex ) {
+                err |= SafeAdd(&nBytes, nBytes, tag_size);
+                err |= SafeAdd(&nBytes, nBytes, data_bytes);
+            }
+
+            if ( err )
+                return 1;
 
             break;
         }
         case MAT_C_CHAR:
             if ( MAT_T_UINT8 == matvar->data_type ||
                  MAT_T_INT8 == matvar->data_type )
-                SafeMul(&data_bytes, nelems, Mat_SizeOf(MAT_T_UINT16));
+                err = SafeMul(&data_bytes, nelems, Mat_SizeOf(MAT_T_UINT16));
             else
-                SafeMul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
+                err = SafeMul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
             if ( data_bytes % 8 )
-                data_bytes += (8 - (data_bytes % 8));
-            nBytes += tag_size + data_bytes;
-            if ( matvar->isComplex )
-                nBytes += tag_size + data_bytes;
+                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
+
+            err |= SafeAdd(&nBytes, nBytes, tag_size);
+            err |= SafeAdd(&nBytes, nBytes, data_bytes);
+
+            if ( matvar->isComplex ) {
+                err |= SafeAdd(&nBytes, nBytes, tag_size);
+                err |= SafeAdd(&nBytes, nBytes, data_bytes);
+            }
+
+            if ( err )
+                return 1;
+
             break;
         default:
-            SafeMul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
+            err = SafeMul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
             if ( data_bytes % 8 )
-                data_bytes += (8 - (data_bytes % 8));
-            nBytes += tag_size + data_bytes;
-            if ( matvar->isComplex )
-                nBytes += tag_size + data_bytes;
+                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
+
+            err |= SafeAdd(&nBytes, nBytes, tag_size);
+            err |= SafeAdd(&nBytes, nBytes, data_bytes);
+
+            if ( matvar->isComplex ) {
+                err |= SafeAdd(&nBytes, nBytes, tag_size);
+                err |= SafeAdd(&nBytes, nBytes, data_bytes);
+            }
+
+            if ( err )
+                return 1;
     } /* switch ( matvar->class_type ) */
 
-    return nBytes;
+    *size = nBytes;
+    return 0;
 }
 
 /** @brief determines the number of bytes needed to store the given struct field
  *
  * @ingroup mat_internal
  * @param matvar field of a structure
- * @return the number of bytes needed to store the struct field
+ * @param size the number of bytes needed to store the struct field
+ * @return 0 on success
  */
-static size_t
-GetStructFieldBufSize(matvar_t *matvar)
+static int
+GetStructFieldBufSize(matvar_t *matvar, size_t *size)
 {
-    size_t nBytes = 0;
+    int err;
+    size_t nBytes = 0, type_buf_size;
     size_t tag_size = 8, array_flags_size = 8;
 
+    *size = 0;
+
     if ( matvar == NULL )
-        return GetEmptyMatrixMaxBufSize(NULL, 2);
+        return GetEmptyMatrixMaxBufSize(NULL, 2, size);
 
     /* Add the Array Flags tag and space to the number of bytes */
     nBytes += tag_size + array_flags_size;
@@ -225,25 +287,33 @@ GetStructFieldBufSize(matvar_t *matvar)
     /* In a struct field, the name is just a tag with 0 bytes */
     nBytes += tag_size;
 
-    nBytes += GetTypeBufSize(matvar);
+    err = GetTypeBufSize(matvar, &type_buf_size);
+    err |= SafeAdd(&nBytes, nBytes, type_buf_size);
+    if ( err )
+        return 1;
 
-    return nBytes;
+    *size = nBytes;
+    return 0;
 }
 
 /** @brief determines the number of bytes needed to store the cell array element
  *
  * @ingroup mat_internal
  * @param matvar MAT variable
- * @return the number of bytes needed to store the variable
+ * @param size the number of bytes needed to store the variable
+ * @return 0 on success
  */
-static size_t
-GetCellArrayFieldBufSize(matvar_t *matvar)
+static int
+GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size)
 {
-    size_t nBytes = 0;
+    int err;
+    size_t nBytes = 0, type_buf_size;
     size_t tag_size = 8, array_flags_size = 8;
 
+    *size = 0;
+
     if ( matvar == NULL )
-        return nBytes;
+        return 1;
 
     /* Add the Array Flags tag and space to the number of bytes */
     nBytes += tag_size + array_flags_size;
@@ -251,21 +321,28 @@ GetCellArrayFieldBufSize(matvar_t *matvar)
     /* In an element of a cell array, the name is just a tag with 0 bytes */
     nBytes += tag_size;
 
-    nBytes += GetTypeBufSize(matvar);
+    err = GetTypeBufSize(matvar, &type_buf_size);
+    err |= SafeAdd(&nBytes, nBytes, type_buf_size);
+    if ( err )
+        return 1;
 
-    return nBytes;
+    *size = nBytes;
+    return 0;
 }
 
 /** @brief determines the number of bytes needed to store the given variable
  *
  * @ingroup mat_internal
  * @param matvar MAT variable
- * @return the number of bytes needed to store the variable
+ * @param rank rank of the variable
+ * @param size the number of bytes needed to store the variable
+ * @return 0 on success
  */
-static size_t
-GetEmptyMatrixMaxBufSize(const char *name,int rank)
+static int
+GetEmptyMatrixMaxBufSize(const char *name, int rank, size_t *size)
 {
-    size_t nBytes = 0, len;
+    int err = 0;
+    size_t nBytes = 0, len, rank_size;
     size_t tag_size = 8, array_flags_size = 8;
 
     /* Add the Array Flags tag and space to the number of bytes */
@@ -280,21 +357,29 @@ GetEmptyMatrixMaxBufSize(const char *name,int rank)
     if ( len <= 4 ) {
         nBytes += tag_size;
     } else {
+        nBytes += tag_size;
         if ( len % 8 )
-            len = len + (8 - len % 8);
-        nBytes += tag_size + len;
+            err |= SafeAdd(&len, len, 8 - len % 8);
+
+        err |= SafeAdd(&nBytes, nBytes, len);
     }
 
     /* Add rank and dimensions, padded to an 8 byte block */
+    err |= SafeMul(&rank_size, rank, 4);
     if ( rank % 2 )
-        nBytes += tag_size + rank*4 + 4;
+        err |= SafeAdd(&nBytes, nBytes, tag_size + 4);
     else
-        nBytes += tag_size + rank*4;
+        err |= SafeAdd(&nBytes, nBytes, tag_size);
 
+    err |= SafeAdd(&nBytes, nBytes, rank_size);
     /* Data tag */
-    nBytes += tag_size;
+    err |= SafeAdd(&nBytes, nBytes, tag_size);
 
-    return nBytes;
+    if ( err )
+        return 1;
+
+    *size = nBytes;
+    return 0;
 }
 
 #if defined(HAVE_ZLIB)
@@ -302,16 +387,18 @@ GetEmptyMatrixMaxBufSize(const char *name,int rank)
  *
  * @ingroup mat_internal
  * @param matvar MAT variable
- * @return the number of bytes needed to store the variable
+ * @param size the number of bytes needed to store the variable
+ * @return 0 on success
  */
-static size_t
-GetMatrixMaxBufSize(matvar_t *matvar)
+static int
+GetMatrixMaxBufSize(matvar_t *matvar, size_t *size)
 {
-    size_t nBytes = 0, len;
+    int err = 0;
+    size_t nBytes = 0, len, type_buf_size;
     size_t tag_size = 8, array_flags_size = 8;
 
     if ( matvar == NULL )
-        return nBytes;
+        return 1;
 
     /* Add the Array Flags tag and space to the number of bytes */
     nBytes += tag_size + array_flags_size;
@@ -320,19 +407,26 @@ GetMatrixMaxBufSize(matvar_t *matvar)
     if ( NULL != matvar->name )
         len = strlen(matvar->name);
     else
-        len=4;
+        len = 4;
 
     if ( len <= 4 ) {
         nBytes += tag_size;
     } else {
+        nBytes += tag_size;
         if ( len % 8 )
-            len = len + (8 - len % 8);
-        nBytes += tag_size + len;
+            err |= SafeAdd(&len, len, 8 - len % 8);
+
+        err |= SafeAdd(&nBytes, nBytes, len);
     }
 
-    nBytes += GetTypeBufSize(matvar);
+    err |= GetTypeBufSize(matvar, &type_buf_size);
+    err |= SafeAdd(&nBytes, nBytes, type_buf_size);
 
-    return nBytes;
+    if ( err )
+        return 1;
+
+    *size = nBytes;
+    return 0;
 }
 #endif
 
@@ -1379,11 +1473,15 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 static size_t
 ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
 {
+    int err;
     size_t nelems = 1;
 
-    SafeMulDims(matvar, &nelems);
+    err = SafeMulDims(matvar, &nelems);
     matvar->data_size = sizeof(matvar_t *);
-    SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+    err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+    if ( err )
+        return 0;
+
     matvar->data = malloc(matvar->nbytes);
     if ( matvar->data != NULL ) {
         size_t i;
@@ -1463,12 +1561,15 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
 static int
 WriteType(mat_t *mat,matvar_t *matvar)
 {
+    int err;
     mat_int16_t array_name_type = MAT_T_INT8;
     mat_int8_t pad1 = 0;
     int nBytes, j;
     size_t nelems = 1;
 
-    SafeMulDims(matvar, &nelems);
+    err = SafeMulDims(matvar, &nelems);
+    if ( err )
+        return err;
 
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
@@ -1585,7 +1686,9 @@ WriteType(mat_t *mat,matvar_t *matvar)
                 fwrite(padzero,1,fieldname_size-len,(FILE*)mat->fp);
             }
             free(padzero);
-            SafeMul(&nelems_x_nfields, nelems, nfields);
+            err = SafeMul(&nelems_x_nfields, nelems, nfields);
+            if ( err )
+                break;
             for ( i = 0; i < nelems_x_nfields; i++ )
                 WriteStructField(mat,fields[i]);
             break;
@@ -1629,7 +1732,7 @@ WriteType(mat_t *mat,matvar_t *matvar)
             break;
     }
 
-    return 0;
+    return err;
 }
 
 /** @brief Writes the header and data for an element of a cell array
@@ -1652,10 +1755,6 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar)
 
     if ( matvar == NULL || mat == NULL )
         return 1;
-
-#if 0
-    nBytes = GetMatrixMaxBufSize(matvar);
-#endif
 
     fwrite(&matrix_type,4,1,(FILE*)mat->fp);
     fwrite(&pad4,4,1,(FILE*)mat->fp);
@@ -1829,6 +1928,7 @@ WriteCompressedTypeArrayFlags(mat_t *mat,matvar_t *matvar,z_streamp z)
 static size_t
 WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
 {
+    int err;
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
     size_t byteswritten = 0, nelems = 1;
@@ -1838,7 +1938,11 @@ WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
         return byteswritten;
     }
 
-    SafeMulDims(matvar, &nelems);
+    err = SafeMulDims(matvar, &nelems);
+    if ( err ) {
+        Mat_Critical("Integer multiplication overflow");
+        return byteswritten;
+    }
 
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
@@ -1960,7 +2064,11 @@ WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
                 } while ( z->avail_out == 0 );
             }
             free(padzero);
-            SafeMul(&nelems_x_nfields, nelems, nfields);
+            err = SafeMul(&nelems_x_nfields, nelems, nfields);
+            if ( err ) {
+                Mat_Critical("Integer multiplication overflow");
+                return byteswritten;
+            }
             for ( i = 0; i < nelems_x_nfields; i++ )
                 byteswritten += WriteCompressedStructField(mat,fields[i],z);
             break;
@@ -2008,14 +2116,18 @@ WriteCompressedCellArrayField(mat_t *mat,matvar_t *matvar,z_streamp z)
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
     int buf_size = 512;
-    size_t byteswritten = 0;
+    size_t byteswritten = 0, field_buf_size;
 
     if ( NULL == matvar || NULL == mat || NULL == z)
         return 0;
 
     uncomp_buf[0] = MAT_T_MATRIX;
     if ( MAT_C_EMPTY != matvar->class_type ) {
-        uncomp_buf[1] = (int)GetCellArrayFieldBufSize(matvar);
+        int err = GetCellArrayFieldBufSize(matvar, &field_buf_size);
+        if (err || field_buf_size > UINT32_MAX)
+            return 0;
+
+        uncomp_buf[1] = field_buf_size;
     } else {
         uncomp_buf[1] = 0;
     }
@@ -2130,7 +2242,7 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
     int buf_size = 512;
-    size_t byteswritten = 0;
+    size_t byteswritten = 0, field_buf_size;
 
     if ( NULL == mat || NULL == z)
         return 0;
@@ -2143,7 +2255,10 @@ WriteCompressedStructField(mat_t *mat,matvar_t *matvar,z_streamp z)
 
     uncomp_buf[0] = MAT_T_MATRIX;
     if ( MAT_C_EMPTY != matvar->class_type ) {
-        uncomp_buf[1] = (int)GetStructFieldBufSize(matvar);
+        int err = GetStructFieldBufSize(matvar, &field_buf_size);
+        if (err || field_buf_size > UINT32_MAX)
+            return 0;
+        uncomp_buf[1] = field_buf_size;
     } else {
         uncomp_buf[1] = 0;
     }
@@ -2248,7 +2363,8 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
     mat_uint32_t array_flags;
     int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
     int array_flags_size = 8;
-    int nBytes, i;
+    int i, err;
+    size_t nBytes, empty_matrix_max_buf_size;
 
     mat_uint32_t comp_buf[512];
     mat_uint32_t uncomp_buf[512] = {0,};
@@ -2256,7 +2372,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
     size_t byteswritten = 0, buf_size_bytes;
 
     if ( NULL == mat || NULL == z)
-        return 1;
+        return byteswritten;
 
     buf_size_bytes = buf_size*sizeof(*comp_buf);
 
@@ -2264,7 +2380,10 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
     array_flags = MAT_C_DOUBLE;
 
     uncomp_buf[0] = MAT_T_MATRIX;
-    uncomp_buf[1] = (int)GetEmptyMatrixMaxBufSize(name,rank);
+    err = GetEmptyMatrixMaxBufSize(name, rank, &empty_matrix_max_buf_size);
+    if (err || empty_matrix_max_buf_size > UINT32_MAX)
+        return byteswritten;
+    uncomp_buf[1] = empty_matrix_max_buf_size;
     z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
     z->avail_in = 8;
     do {
@@ -2724,9 +2843,9 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             size_t i, nelems_x_nfields;
 
             matvar->data_type = MAT_T_STRUCT;
-            if ( !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
+            err = SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
+            if ( err || !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
                 break;
-            SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
             fields = (matvar_t **)matvar->data;
             for ( i = 0; i < nelems_x_nfields; i++ ) {
                 if ( NULL != fields[i] ) {
@@ -3392,17 +3511,28 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
-                SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+                err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+                if ( err ) {
+                    Mat_Critical("Integer multiplication overflow");
+                    break;
+                }
+
                 complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
                     Mat_Critical("Couldn't allocate memory for the complex data");
                     break;
                 }
+
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Re,nelems);
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,nelems);
                 matvar->data = complex_data;
             } else {
-                SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+                err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+                if ( err ) {
+                    Mat_Critical("Integer multiplication overflow");
+                    break;
+                }
+
                 matvar->data = malloc(matvar->nbytes);
                 if ( NULL == matvar->data ) {
                     Mat_Critical("Couldn't allocate memory for the data");
@@ -4281,6 +4411,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
     err = SafeMulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
+        return -1;
     }
 
     if ( (size_t)stride*(edge-1)+start+1 > nelems ) {
@@ -4456,7 +4587,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         mat_uint32_t comp_buf[512];
         mat_uint32_t uncomp_buf[512] = {0,};
         int buf_size = 512, err;
-        size_t byteswritten = 0;
+        size_t byteswritten = 0, matrix_max_buf_size;
         z_streamp z;
 
         z = (z_streamp)calloc(1,sizeof(*z));
@@ -4486,7 +4617,10 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
         uncomp_buf[0] = MAT_T_MATRIX;
-        uncomp_buf[1] = (int)GetMatrixMaxBufSize(matvar);
+        err = GetMatrixMaxBufSize(matvar, &matrix_max_buf_size);
+        if (err || matrix_max_buf_size > UINT32_MAX)
+            return -1;
+        uncomp_buf[1] = matrix_max_buf_size;
         z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
         z->avail_in = 8;
         do {

@@ -282,15 +282,26 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
 void
 Mat_VarRead4(mat_t *mat,matvar_t *matvar)
 {
+    int err;
     size_t nelems = 1;
 
-    SafeMulDims(matvar, &nelems);
+    err = SafeMulDims(matvar, &nelems);
+    if ( err ) {
+        Mat_Critical("Integer multiplication overflow");
+        return;
+    }
+
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
             matvar->data_size = sizeof(double);
-            SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+            err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+            if ( err ) {
+                Mat_Critical("Integer multiplication overflow");
+                return;
+            }
+
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL != complex_data ) {
@@ -644,7 +655,11 @@ Mat_VarReadData4(mat_t *mat,matvar_t *matvar,void *data,
         if ( matvar->isComplex ) {
             mat_complex_split_t *cdata = (mat_complex_split_t*)data;
             size_t nbytes = Mat_SizeOf(matvar->data_type);
-            SafeMulDims(matvar, &nbytes);
+            err = SafeMulDims(matvar, &nbytes);
+            if ( err ) {
+                Mat_Critical("Integer multiplication overflow");
+                return err;
+            }
 
             ReadDataSlab2(mat,cdata->Re,matvar->class_type,matvar->data_type,
                 matvar->dims,start,stride,edge);
@@ -658,7 +673,11 @@ Mat_VarReadData4(mat_t *mat,matvar_t *matvar,void *data,
     } else if ( matvar->isComplex ) {
         mat_complex_split_t *cdata = (mat_complex_split_t*)data;
         size_t nbytes = Mat_SizeOf(matvar->data_type);
-        SafeMulDims(matvar, &nbytes);
+        err = SafeMulDims(matvar, &nbytes);
+        if ( err ) {
+            Mat_Critical("Integer multiplication overflow");
+            return err;
+        }
 
         ReadDataSlabN(mat,cdata->Re,matvar->class_type,matvar->data_type,
             matvar->rank,matvar->dims,start,stride,edge);
@@ -690,10 +709,15 @@ int
 Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
                        int stride,int edge)
 {
-    int err = 0;
+    int err;
     size_t nelems = 1;
 
     err = SafeMulDims(matvar, &nelems);
+    if ( err ) {
+        Mat_Critical("Integer multiplication overflow");
+        return err;
+    }
+
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
 
     matvar->data_size = Mat_SizeOf(matvar->data_type);
@@ -702,14 +726,18 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
         return 1;
     }
     if ( matvar->isComplex ) {
-            mat_complex_split_t *complex_data = (mat_complex_split_t*)data;
-            long nbytes = nelems*matvar->data_size;
+        mat_complex_split_t *complex_data = (mat_complex_split_t*)data;
+        err = SafeMul(&nelems, nelems, matvar->data_size);
+        if ( err ) {
+            Mat_Critical("Integer multiplication overflow");
+            return err;
+        }
 
-            ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
-                          matvar->data_type,start,stride,edge);
-            (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nbytes,SEEK_SET);
-            ReadDataSlab1(mat,complex_data->Im,matvar->class_type,
-                          matvar->data_type,start,stride,edge);
+        ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
+                      matvar->data_type,start,stride,edge);
+        (void)fseek((FILE*)mat->fp,matvar->internal->datapos+nelems,SEEK_SET);
+        ReadDataSlab1(mat,complex_data->Im,matvar->class_type,
+                      matvar->data_type,start,stride,edge);
     } else {
         ReadDataSlab1(mat,data,matvar->class_type,matvar->data_type,start,
                       stride,edge);
@@ -887,10 +915,17 @@ Mat_VarReadNextInfo4(mat_t *mat)
         return NULL;
     }
     {
+        int err;
         size_t tmp2 = Mat_SizeOf(matvar->data_type);
         if ( matvar->isComplex )
             tmp2 *= 2;
-        SafeMulDims(matvar, &tmp2);
+        err = SafeMulDims(matvar, &tmp2);
+        if ( err ) {
+            Mat_VarFree(matvar);
+            Mat_Critical("Integer multiplication overflow");
+            return NULL;
+        }
+
         nBytes = (long)tmp2;
     }
     (void)fseek((FILE*)mat->fp,nBytes,SEEK_CUR);
