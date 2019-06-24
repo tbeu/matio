@@ -1,3 +1,6 @@
+Changes in 1.5.16 (25 June 2019)
+* Fixed error handling on integer addition/multiplication overflows
+
 Changes in 1.5.15 (29 March 2019)
 * Added new API function Mat_GetHeader to retrieve header string of a MAT file
 * Fixed integer multiplication overflows when calculating total number of
