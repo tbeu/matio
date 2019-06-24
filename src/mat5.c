@@ -1322,7 +1322,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             (void)Mat_uint32Swap(buf);
             (void)Mat_uint32Swap(buf+1);
         }
-        if ( (buf[0] & 0x0000ffff) == MAT_T_INT32 ) {
+        if ( (buf[0] & 0x0000ffff) == MAT_T_INT32 && buf[1] > 0 ) {
             fieldname_size = buf[1];
         } else {
             Mat_Critical("Error getting fieldname size");
