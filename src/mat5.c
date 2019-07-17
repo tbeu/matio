@@ -920,7 +920,8 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 }
                 if ( do_clean )
                     free(dims);
-                bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
+                /* Variable name tag */
+                bytesread += InflateVarTag(mat,matvar,uncomp_buf);
                 nbytes -= 8;
                 if ( mat->byteswap ) {
                     (void)Mat_uint32Swap(uncomp_buf);
@@ -937,7 +938,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                         cells[i]->name = (char*)malloc(len+1);
                         nbytes -= len;
                         if ( NULL != cells[i]->name ) {
-                            /* Inflate variable name */
+                            /* Variable name */
                             bytesread += InflateVarName(mat,matvar,cells[i]->name,len);
                             cells[i]->name[len] = '\0';
                         }
@@ -1127,7 +1128,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         mat_uint32_t array_flags, len;
 
         /* Field name length */
-        bytesread += InflateFieldNameLength(mat,matvar,uncomp_buf);
+        bytesread += InflateVarTag(mat,matvar,uncomp_buf);
         if ( mat->byteswap ) {
             (void)Mat_uint32Swap(uncomp_buf);
             (void)Mat_uint32Swap(uncomp_buf+1);
@@ -1140,7 +1141,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         /* Field name tag */
-        bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
+        bytesread += InflateVarTag(mat,matvar,uncomp_buf);
         if ( mat->byteswap )
             (void)Mat_uint32Swap(uncomp_buf);
         /* Name of field */
@@ -1157,7 +1158,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( nfields ) {
                 char *ptr = (char*)malloc(nfields*fieldname_size+i);
                 if ( NULL != ptr ) {
-                    bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
+                    bytesread += InflateVarName(mat,matvar,ptr,nfields*fieldname_size+i);
                     SetFieldNames(matvar, ptr, nfields, fieldname_size);
                     free(ptr);
                 }
@@ -1296,7 +1297,8 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 }
                 if ( do_clean )
                     free(dims);
-                bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
+                /* Variable name tag */
+                bytesread += InflateVarTag(mat,matvar,uncomp_buf);
                 nbytes -= 8;
                 fields[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
                 if ( fields[i]->internal->z != NULL ) {
@@ -4850,7 +4852,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 Mat_Critical("Uncompressed type not MAT_T_MATRIX");
                 break;
             }
-            /* Inflate array flags */
+            /* Array flags */
             bytesread += InflateArrayFlags(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(uncomp_buf);
@@ -4897,8 +4899,8 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 }
                 if ( do_clean )
                     free(dims);
-                /* Inflate variable name tag */
-                bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
+                /* Variable name tag */
+                bytesread += InflateVarTag(mat,matvar,uncomp_buf);
                 if ( mat->byteswap )
                     (void)Mat_uint32Swap(uncomp_buf);
                 /* Name of variable */
@@ -4915,7 +4917,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                         len_pad = len + 8 - (len % 8);
                     matvar->name = (char*)malloc(len_pad + 1);
                     if ( NULL != matvar->name ) {
-                        /* Inflate variable name */
+                        /* Variable name */
                         bytesread += InflateVarName(mat,matvar,matvar->name,len_pad);
                         matvar->name[len] = '\0';
                     }
