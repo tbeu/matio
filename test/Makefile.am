@@ -74,7 +74,9 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
 
 TESTSUITE = $(srcdir)/testsuite
 
-TEST_DATAFILES = $(datasets_dir)/matio_test_cases.m \
+TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
+                 $(datasets_dir)/matio_test_cases.m \
+                 $(datasets_dir)/matio_test_cases.py \
                  $(datasets_dir)/matio_test_cases_compressed_be.mat \
                  $(datasets_dir)/matio_test_cases_compressed_le.mat \
                  $(datasets_dir)/matio_test_cases_hdf_be.mat \
@@ -84,9 +86,10 @@ TEST_DATAFILES = $(datasets_dir)/matio_test_cases.m \
                  $(datasets_dir)/matio_test_cases_uncompressed_le.mat \
                  $(datasets_dir)/matio_test_cases_v4_be.mat \
                  $(datasets_dir)/matio_test_cases_v4_le.mat \
+                 $(datasets_dir)/packed_field_name_compressed_le.mat \
+                 $(datasets_dir)/packed_field_name_uncompressed_le.mat \
                  $(datasets_dir)/small_v4_be.mat \
                  $(datasets_dir)/small_v4_le.mat \
-                 $(datasets_dir)/large_struct_compressed_le.mat \
                  $(matlab_dir)/test_write_2d_logical.m \
                  $(matlab_dir)/test_write_2d_numeric.m \
                  $(matlab_dir)/test_write_cell_2d_logical.m \
@@ -190,6 +193,7 @@ TEST_DATAFILES = $(datasets_dir)/matio_test_cases.m \
                  $(results_dir)/dump-var89-4.out \
                  $(results_dir)/getstructfield-large_struct_compressed.out \
                  $(results_dir)/ind2sub.out \
+                 $(results_dir)/read-packed_field_name.out \
                  $(results_dir)/readslab-var1.out \
                  $(results_dir)/readslab-var11.out \
                  $(results_dir)/readslab-var28.out \

@@ -60,6 +60,8 @@ static mat_complex_split_t null_complex_data = {NULL,NULL};
 static int GetTypeBufSize(matvar_t *matvar, size_t *size);
 static int GetStructFieldBufSize(matvar_t *matvar, size_t *size);
 static int GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size);
+static void SetFieldNames(matvar_t *matvar, char *buf, size_t nfields,
+                  mat_uint32_t fieldname_length);
 #if defined(HAVE_ZLIB)
 static int GetMatrixMaxBufSize(matvar_t *matvar, size_t *size);
 #endif
@@ -380,6 +382,24 @@ GetEmptyMatrixMaxBufSize(const char *name, int rank, size_t *size)
 
     *size = nBytes;
     return 0;
+}
+
+static void
+SetFieldNames(matvar_t *matvar, char *buf, size_t nfields, mat_uint32_t fieldname_length)
+{
+    size_t i;
+    matvar->internal->num_fields = nfields;
+    matvar->internal->fieldnames =
+        (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
+    if ( NULL != matvar->internal->fieldnames ) {
+        for ( i = 0; i < nfields; i++ ) {
+            matvar->internal->fieldnames[i] = (char*)malloc(fieldname_length);
+            if ( NULL != matvar->internal->fieldnames[i] ) {
+                memcpy(matvar->internal->fieldnames[i], buf+i*fieldname_length, fieldname_length);
+                matvar->internal->fieldnames[i][fieldname_length-1] = '\0';
+            }
+        }
+    }
 }
 
 #if defined(HAVE_ZLIB)
@@ -1104,56 +1124,64 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 #if defined(HAVE_ZLIB)
         mat_uint32_t uncomp_buf[16] = {0,};
         int nbytes;
-        mat_uint32_t array_flags;
+        mat_uint32_t array_flags, len;
 
-        /* Inflate Field name length */
+        /* Field name length */
         bytesread += InflateFieldNameLength(mat,matvar,uncomp_buf);
         if ( mat->byteswap ) {
             (void)Mat_uint32Swap(uncomp_buf);
             (void)Mat_uint32Swap(uncomp_buf+1);
         }
-        if ( (uncomp_buf[0] & 0x0000ffff) == MAT_T_INT32 ) {
+        if ( (uncomp_buf[0] & 0x0000ffff) == MAT_T_INT32 && uncomp_buf[1] > 0 ) {
             fieldname_size = uncomp_buf[1];
         } else {
             Mat_Critical("Error getting fieldname size");
             return bytesread;
         }
 
-        bytesread += InflateFieldNamesTag(mat,matvar,uncomp_buf);
-        if ( mat->byteswap ) {
+        /* Field name tag */
+        bytesread += InflateVarNameTag(mat,matvar,uncomp_buf);
+        if ( mat->byteswap )
             (void)Mat_uint32Swap(uncomp_buf);
-            (void)Mat_uint32Swap(uncomp_buf+1);
-        }
-        nfields = uncomp_buf[1] / fieldname_size;
-        matvar->data_size = sizeof(matvar_t *);
-
-        if ( nfields*fieldname_size % 8 != 0 )
-            i = 8-(nfields*fieldname_size % 8);
-        else
-            i = 0;
-        if ( nfields ) {
-            char *ptr = (char*)malloc(nfields*fieldname_size+i);
-            if ( NULL != ptr ) {
-                bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
-                matvar->internal->num_fields = nfields;
-                matvar->internal->fieldnames =
-                    (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
-                if ( NULL != matvar->internal->fieldnames ) {
-                    for ( i = 0; i < nfields; i++ ) {
-                        matvar->internal->fieldnames[i] = (char*)malloc(fieldname_size);
-                        if ( NULL != matvar->internal->fieldnames[i] ) {
-                            memcpy(matvar->internal->fieldnames[i], ptr+i*fieldname_size, fieldname_size);
-                            matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
-                        }
-                    }
+        /* Name of field */
+        if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
+            if ( mat->byteswap )
+                len = Mat_uint32Swap(uncomp_buf+1);
+            else
+                len = uncomp_buf[1];
+            nfields = len / fieldname_size;
+            if ( nfields*fieldname_size % 8 != 0 )
+                i = 8-(nfields*fieldname_size % 8);
+            else
+                i = 0;
+            if ( nfields ) {
+                char *ptr = (char*)malloc(nfields*fieldname_size+i);
+                if ( NULL != ptr ) {
+                    bytesread += InflateFieldNames(mat,matvar,ptr,nfields,fieldname_size,i);
+                    SetFieldNames(matvar, ptr, nfields, fieldname_size);
+                    free(ptr);
                 }
-                free(ptr);
+            } else {
+                matvar->internal->num_fields = 0;
+                matvar->internal->fieldnames = NULL;
             }
-        } else {
-            matvar->internal->num_fields = 0;
-            matvar->internal->fieldnames = NULL;
+       } else {
+            len = (uncomp_buf[0] & 0xffff0000) >> 16;
+            if ( ((uncomp_buf[0] & 0x0000ffff) == MAT_T_INT8) && len > 0 && len <= 4 ) {
+                /* Name packed in tag */
+                nfields = len / fieldname_size;
+                if ( nfields ) {
+                    SetFieldNames(matvar, (char*)(uncomp_buf + 1), nfields, fieldname_size);
+                } else {
+                    matvar->internal->num_fields = 0;
+                    matvar->internal->fieldnames = NULL;
+                }
+            } else {
+                nfields = 0;
+            }
         }
 
+        matvar->data_size = sizeof(matvar_t *);
         err = SafeMul(&nelems_x_nfields, nelems, nfields);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
@@ -1315,7 +1343,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
     } else {
         mat_uint32_t buf[6];
         int nBytes;
-        mat_uint32_t array_flags;
+        mat_uint32_t array_flags, len;
 
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
         if ( mat->byteswap ) {
@@ -1328,37 +1356,54 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             Mat_Critical("Error getting fieldname size");
             return bytesread;
         }
+
+        /* Field name tag */
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
-        if ( mat->byteswap ) {
+        if ( mat->byteswap )
             (void)Mat_uint32Swap(buf);
-            (void)Mat_uint32Swap(buf+1);
-        }
-        nfields = buf[1] / fieldname_size;
-        matvar->data_size = sizeof(matvar_t *);
-
-        if ( nfields ) {
-            matvar->internal->num_fields = nfields;
-            matvar->internal->fieldnames =
-                (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
-            if ( NULL != matvar->internal->fieldnames ) {
-                for ( i = 0; i < nfields; i++ ) {
-                    matvar->internal->fieldnames[i] = (char*)malloc(fieldname_size);
-                    if ( NULL != matvar->internal->fieldnames[i] ) {
-                        bytesread+=fread(matvar->internal->fieldnames[i],1,fieldname_size,(FILE*)mat->fp);
-                        matvar->internal->fieldnames[i][fieldname_size-1] = '\0';
-                    }
+        /* Name of field */
+        if ( buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
+            if ( mat->byteswap )
+                len = Mat_uint32Swap(buf+1);
+            else
+                len = buf[1];
+            nfields = len / fieldname_size;
+            if ( nfields ) {
+                char *ptr = (char*)malloc(nfields*fieldname_size);
+                if ( NULL != ptr ) {
+                    size_t readresult = fread(ptr, 1, nfields*fieldname_size, (FILE*)mat->fp);
+                    bytesread += readresult;
+                    if ( nfields*fieldname_size == readresult )
+                        SetFieldNames(matvar, ptr, nfields, fieldname_size);
+                    else
+                        matvar->internal->fieldnames = NULL;
+                    free(ptr);
                 }
+                if ( (nfields*fieldname_size) % 8 ) {
+                    (void)fseek((FILE*)mat->fp,8-((nfields*fieldname_size) % 8),SEEK_CUR);
+                    bytesread+=8-((nfields*fieldname_size) % 8);
+                }
+            } else {
+                matvar->internal->num_fields = 0;
+                matvar->internal->fieldnames = NULL;
             }
-        } else {
-            matvar->internal->num_fields = 0;
-            matvar->internal->fieldnames = NULL;
+       } else {
+            len = (buf[0] & 0xffff0000) >> 16;
+            if ( ((buf[0] & 0x0000ffff) == MAT_T_INT8) && len > 0 && len <= 4 ) {
+                /* Name packed in tag */
+                nfields = len / fieldname_size;
+                if ( nfields ) {
+                    SetFieldNames(matvar, (char*)(buf + 1), nfields, fieldname_size);
+                } else {
+                    matvar->internal->num_fields = 0;
+                    matvar->internal->fieldnames = NULL;
+                }
+            } else {
+                nfields = 0;
+            }
         }
 
-        if ( (nfields*fieldname_size) % 8 ) {
-            (void)fseek((FILE*)mat->fp,8-((nfields*fieldname_size) % 8),SEEK_CUR);
-            bytesread+=8-((nfields*fieldname_size) % 8);
-        }
-
+        matvar->data_size = sizeof(matvar_t *);
         err = SafeMul(&nelems_x_nfields, nelems, nfields);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
@@ -4953,7 +4998,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 if ( NULL != matvar->name ) {
                     size_t readresult = fread(matvar->name,1,len_pad,(FILE*)mat->fp);
                     bytesread += readresult;
-                    if ( readresult == len_pad) {
+                    if ( readresult == len_pad ) {
                         matvar->name[len] = '\0';
                     } else {
                         free(matvar->name);

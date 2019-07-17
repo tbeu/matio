@@ -398,3 +398,9 @@ AT_KEYWORDS([directory])
 AT_CHECK([cp $srcdir/results/dir_le.out expout
          $builddir/test_mat directory $srcdir/datasets/matio_test_cases_uncompressed_le.mat],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read struct with packed field names])
+AT_KEYWORDS([packed])
+AT_CHECK([cp $srcdir/results/read-packed_field_name.out expout
+         $builddir/../tools/matdump -d $srcdir/datasets/packed_field_name_uncompressed_le.mat],[0],[expout],[])
+AT_CLEANUP
