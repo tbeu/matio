@@ -1,3 +1,6 @@
+Changes in 1.5.17 (18 July 2019)
+* Fix bug reading struct array with packed field names from v5 MAT file
+
 Changes in 1.5.16 (25 June 2019)
 * Fixed error handling on integer addition/multiplication overflows
 
@@ -11,7 +14,7 @@ Changes in 1.5.15 (29 March 2019)
 * Fixed memory leak in Mat_VarFree for function class
 
 Changes in 1.5.14 (11 March 2019)
-* Deprecated usage of Mat_VarWriteInfo/Mat_VarWriteData in favor of 
+* Deprecated usage of Mat_VarWriteInfo/Mat_VarWriteData in favor of
   Mat_VarWrite/Mat_VarWriteAppend
 * Fixed bug reading dimensions from (crafted) compressed v5 MAT file
 * Fixed bug reading name (> 24 characters) from v5 MAT file (regression of v1.5.13)
