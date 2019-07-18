@@ -1,5 +1,6 @@
 Changes in 1.5.17 (18 July 2019)
-* Fix bug reading struct array with packed field names from v5 MAT file
+* Fixed bug reading struct array with packed field names from v5 MAT file
+* Fixed bug reading past EOF from (crafted) uncompressed v5 MAT file
 
 Changes in 1.5.16 (25 June 2019)
 * Fixed error handling on integer addition/multiplication overflows
