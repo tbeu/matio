@@ -1653,8 +1653,7 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
                     free(matvar->dims);
                     matvar->dims = NULL;
                     matvar->rank = 0;
-                    Mat_Critical("An error occurred in reading the MAT file");
-                    return bytesread;
+                    return 0;
                 }
             }
 
@@ -1663,7 +1662,10 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
                 if ( 1 == readresult ) {
                     bytesread += sizeof(mat_uint32_t);
                 } else {
-                    Mat_Critical("An error occurred in reading the MAT file");
+                    free(matvar->dims);
+                    matvar->dims = NULL;
+                    matvar->rank = 0;
+                    return 0;
                 }
             }
         } else {
@@ -4779,9 +4781,13 @@ Mat_VarReadNextInfo5( mat_t *mat )
             int      nbytes;
             long     bytesread = 0;
 
-            matvar               = Mat_VarCalloc();
-            matvar->compression  = MAT_COMPRESSION_ZLIB;
+            matvar = Mat_VarCalloc();
+            if ( NULL == matvar ) {
+                Mat_Critical("Couldn't allocate memory");
+                break;
+            }
 
+            matvar->compression = MAT_COMPRESSION_ZLIB;
             matvar->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
             err = inflateInit(matvar->internal->z);
             if ( err != Z_OK ) {
@@ -4907,12 +4913,14 @@ Mat_VarReadNextInfo5( mat_t *mat )
         case MAT_T_MATRIX:
         {
             mat_uint32_t buf[6];
-            size_t bytesread = 0;
-
-            matvar = Mat_VarCalloc();
+            size_t readresult;
 
             /* Read array flags and the dimensions tag */
-            bytesread += fread(buf,4,6,(FILE*)mat->fp);
+            readresult = fread(buf, 4, 6, (FILE*)mat->fp);
+            if ( 6 != readresult ) {
+                (void)fseek((FILE*)mat->fp, fpos, SEEK_SET);
+                break;
+            }
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
                 (void)Mat_uint32Swap(buf+1);
@@ -4921,6 +4929,13 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 (void)Mat_uint32Swap(buf+4);
                 (void)Mat_uint32Swap(buf+5);
             }
+
+            matvar = Mat_VarCalloc();
+            if ( NULL == matvar ) {
+                Mat_Critical("Couldn't allocate memory");
+                break;
+            }
+
             /* Array flags */
             if ( buf[0] == MAT_T_UINT32 ) {
                array_flags = buf[2];
@@ -4933,9 +4948,21 @@ Mat_VarReadNextInfo5( mat_t *mat )
                    matvar->nbytes = buf[3];
                }
             }
-            ReadRankDims(mat, matvar, (enum matio_types)buf[4], buf[5]);
+            readresult = ReadRankDims(mat, matvar, (enum matio_types)buf[4], buf[5]);
+            if ( 0 == readresult && 0 < matvar->rank ) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+                (void)fseek((FILE*)mat->fp, fpos, SEEK_SET);
+                break;
+            }
             /* Variable name tag */
-            bytesread+=fread(buf,4,2,(FILE*)mat->fp);
+            readresult = fread(buf, 4, 2, (FILE*)mat->fp);
+            if ( 2 != readresult ) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+                (void)fseek((FILE*)mat->fp, fpos, SEEK_SET);
+                break;
+            }
             if ( mat->byteswap )
                 (void)Mat_uint32Swap(buf);
             /* Name of variable */
@@ -4951,14 +4978,14 @@ Mat_VarReadNextInfo5( mat_t *mat )
                     len_pad = len + 8 - (len % 8);
                 matvar->name = (char*)malloc(len_pad + 1);
                 if ( NULL != matvar->name ) {
-                    size_t readresult = fread(matvar->name,1,len_pad,(FILE*)mat->fp);
-                    bytesread += readresult;
+                    readresult = fread(matvar->name, 1, len_pad, (FILE*)mat->fp);
                     if ( readresult == len_pad ) {
                         matvar->name[len] = '\0';
                     } else {
-                        free(matvar->name);
-                        matvar->name = NULL;
-                        Mat_Critical("An error occurred in reading the MAT file");
+                        Mat_VarFree(matvar);
+                        matvar = NULL;
+                        (void)fseek((FILE*)mat->fp, fpos, SEEK_SET);
+                        break;
                     }
                 }
             } else {
@@ -4967,7 +4994,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                     /* Name packed in tag */
                     matvar->name = (char*)malloc(len+1);
                     if ( NULL != matvar->name ) {
-                        memcpy(matvar->name,buf+1,len);
+                        memcpy(matvar->name, buf+1, len);
                         matvar->name[len] = '\0';
                     }
                 }
