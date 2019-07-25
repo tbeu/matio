@@ -47,14 +47,14 @@
 size_t
 InflateSkip(mat_t *mat, z_streamp z, int nbytes)
 {
-    mat_uint8_t comp_buf[512],uncomp_buf[512];
+    mat_uint8_t comp_buf[READ_BLOCK_SIZE], uncomp_buf[READ_BLOCK_SIZE];
     int    n, err, cnt = 0;
     size_t bytesread = 0;
 
     if ( nbytes < 1 )
         return 0;
 
-    n = (nbytes<512) ? nbytes : 512;
+    n = nbytes < READ_BLOCK_SIZE ? nbytes : READ_BLOCK_SIZE;
     if ( !z->avail_in ) {
         z->next_in = comp_buf;
         z->avail_in += fread(comp_buf,1,n,(FILE*)mat->fp);
@@ -71,7 +71,7 @@ InflateSkip(mat_t *mat, z_streamp z, int nbytes)
     }
     if ( !z->avail_out ) {
         cnt += n;
-        n = ((nbytes-cnt)<512) ? nbytes-cnt : 512;
+        n = nbytes - cnt < READ_BLOCK_SIZE ? nbytes - cnt : READ_BLOCK_SIZE;
         z->avail_out = n;
         z->next_out  = uncomp_buf;
     }
@@ -89,8 +89,8 @@ InflateSkip(mat_t *mat, z_streamp z, int nbytes)
             break;
         }
         if ( !z->avail_out ) {
-            cnt         += n;
-            n            = ((nbytes-cnt)<512) ? nbytes-cnt : 512;
+            cnt += n;
+            n = nbytes - cnt < READ_BLOCK_SIZE ? nbytes - cnt : READ_BLOCK_SIZE;
             z->avail_out = n;
             z->next_out  = uncomp_buf;
         }
@@ -252,7 +252,7 @@ InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf)
         bytesread += fread(comp_buf,1,1,(FILE*)mat->fp);
     }
     matvar->internal->z->avail_out = 8;
-    matvar->internal->z->next_out = (Bytef*)buf;
+    matvar->internal->z->next_out = ZLIB_BYTE_PTR(buf);
     err = inflate(matvar->internal->z,Z_NO_FLUSH);
     if ( err != Z_OK ) {
         Mat_Critical("InflateVarTag: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
@@ -304,7 +304,7 @@ InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf)
         bytesread += fread(comp_buf,1,1,(FILE*)mat->fp);
     }
     matvar->internal->z->avail_out = 16;
-    matvar->internal->z->next_out = (Bytef*)buf;
+    matvar->internal->z->next_out = ZLIB_BYTE_PTR(buf);
     err = inflate(matvar->internal->z,Z_NO_FLUSH);
     if ( err != Z_OK ) {
         Mat_Critical("InflateArrayFlags: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
@@ -361,7 +361,7 @@ InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nbytes, mat_uint
         bytesread += fread(comp_buf,1,1,(FILE*)mat->fp);
     }
     matvar->internal->z->avail_out = 8;
-    matvar->internal->z->next_out = (Bytef*)buf;
+    matvar->internal->z->next_out = ZLIB_BYTE_PTR(buf);
     err = inflate(matvar->internal->z,Z_NO_FLUSH);
     if ( err != Z_OK ) {
         Mat_Critical("InflateRankDims: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
@@ -403,12 +403,12 @@ InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nbytes, mat_uint
 
     matvar->internal->z->avail_out = rank;
     if ( sizeof(mat_uint32_t)*(rank + 2) <= nbytes ) {
-        matvar->internal->z->next_out = (Bytef*)((mat_int32_t *)buf+2);
+        matvar->internal->z->next_out = ZLIB_BYTE_PTR((mat_int32_t *)buf+2);
     } else {
         /* Cannot use too small buf, but can allocate output buffer dims */
         *dims = (mat_uint32_t*)calloc(rank, sizeof(mat_uint32_t));
         if ( NULL != *dims ) {
-            matvar->internal->z->next_out = (Bytef*)*dims;
+            matvar->internal->z->next_out = ZLIB_BYTE_PTR(*dims);
         } else {
             *((mat_int32_t *)buf+1) = 0;
             Mat_Critical("Error allocating memory for dims");
@@ -467,7 +467,7 @@ InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
         bytesread += fread(comp_buf,1,1,(FILE*)mat->fp);
     }
     matvar->internal->z->avail_out = N;
-    matvar->internal->z->next_out = (Bytef*)buf;
+    matvar->internal->z->next_out = ZLIB_BYTE_PTR(buf);
     err = inflate(matvar->internal->z,Z_NO_FLUSH);
     if ( err != Z_OK ) {
         Mat_Critical("InflateVarName: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
@@ -519,7 +519,7 @@ InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf)
         bytesread += fread(comp_buf,1,1,(FILE*)mat->fp);
     }
     matvar->internal->z->avail_out = 8;
-    matvar->internal->z->next_out = (Bytef*)buf;
+    matvar->internal->z->next_out = ZLIB_BYTE_PTR(buf);
     err = inflate(matvar->internal->z,Z_NO_FLUSH);
     if ( err == Z_STREAM_END ) {
         return bytesread;
@@ -575,7 +575,7 @@ InflateDataType(mat_t *mat, z_streamp z, void *buf)
         bytesread += fread(comp_buf,1,1,(FILE*)mat->fp);
     }
     z->avail_out = 4;
-    z->next_out = (Bytef*)buf;
+    z->next_out = ZLIB_BYTE_PTR(buf);
     err = inflate(z,Z_NO_FLUSH);
     if ( err != Z_OK ) {
         Mat_Critical("InflateDataType: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
@@ -615,7 +615,7 @@ InflateDataType(mat_t *mat, z_streamp z, void *buf)
 size_t
 InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
 {
-    mat_uint8_t comp_buf[1024];
+    mat_uint8_t comp_buf[READ_BLOCK_SIZE];
     int    err;
     unsigned int bytesread = 0;
 
@@ -626,8 +626,8 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     }
 
     if ( !z->avail_in ) {
-        if ( nBytes > 1024 ) {
-            z->avail_in = fread(comp_buf,1,1024,(FILE*)mat->fp);
+        if ( nBytes > READ_BLOCK_SIZE ) {
+            z->avail_in = fread(comp_buf,1,READ_BLOCK_SIZE,(FILE*)mat->fp);
         } else {
             z->avail_in = fread(comp_buf,1,nBytes,(FILE*)mat->fp);
         }
@@ -635,7 +635,7 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
         z->next_in = comp_buf;
     }
     z->avail_out = nBytes;
-    z->next_out = (Bytef*)buf;
+    z->next_out = ZLIB_BYTE_PTR(buf);
     err = inflate(z,Z_FULL_FLUSH);
     if ( err == Z_STREAM_END ) {
         return bytesread;
@@ -644,8 +644,8 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
         return bytesread;
     }
     while ( z->avail_out && !z->avail_in ) {
-        if ( nBytes > 1024 + bytesread ) {
-            z->avail_in = fread(comp_buf,1,1024,(FILE*)mat->fp);
+        if ( nBytes > READ_BLOCK_SIZE + bytesread ) {
+            z->avail_in = fread(comp_buf,1,READ_BLOCK_SIZE,(FILE*)mat->fp);
         } else if ( nBytes < 1 + bytesread ) { /* Read a byte at a time */
             z->avail_in = fread(comp_buf,1,1,(FILE*)mat->fp);
         } else {

@@ -27,7 +27,7 @@
 VPATH = @srcdir@
 
 LT_CURRENT=10
-LT_REVISION=2
+LT_REVISION=2	
 LT_AGE=1
 
 AM_CFLAGS  = -I. $(HDF5_CFLAGS) $(ZLIB_CFLAGS) $(LT_CFLAGS)
@@ -40,7 +40,8 @@ endif
 nodist_noinst_HEADERS  = matioConfig.h
 nodist_include_HEADERS = matio_pubconf.h
 include_HEADERS        = matio.h
-noinst_HEADERS         = exact-int.h matio_private.h mat4.h mat5.h mat73.h safe-math.h
+noinst_HEADERS         = exact-int.h matio_private.h mat4.h mat5.h mat73.h \
+                         read_data_impl.h safe-math.h
 lib_LTLIBRARIES        = libmatio.la
 libmatio_la_SOURCES    = snprintf.c endian.c io.c $(ZLIB_SRC) read_data.c \
                          mat5.c mat4.c mat.c matvar_cell.c matvar_struct.c

@@ -40,245 +40,79 @@
 #   include <zlib.h>
 #endif
 
-#if !defined(READ_BLOCK_SIZE)
-#define READ_BLOCK_SIZE (256)
-#endif
-
 #define READ_DATA_NOSWAP(T) \
     do { \
-        if ( len <= READ_BLOCK_SIZE ) { \
-            bytesread += fread(v,data_size,len,(FILE*)mat->fp); \
+        const size_t block_size = READ_BLOCK_SIZE/data_size; \
+        if ( len <= block_size ) { \
+            bytesread += fread(v, data_size, len, (FILE*)mat->fp); \
             for ( j = 0; j < len; j++ ) { \
                 data[j] = (T)v[j]; \
             } \
         } else { \
-            for ( i = 0; i < len-READ_BLOCK_SIZE; i+=READ_BLOCK_SIZE ) { \
-                bytesread += fread(v,data_size,READ_BLOCK_SIZE,(FILE*)mat->fp); \
-                for ( j = 0; j < READ_BLOCK_SIZE; j++ ) { \
-                    data[i+j] = (T)v[j]; \
+            for ( i = 0; i < len - block_size; i += block_size ) { \
+                bytesread += fread(v, data_size, block_size, (FILE*)mat->fp); \
+                for ( j = 0; j < block_size; j++ ) { \
+                    data[i + j] = (T)v[j]; \
                 } \
             } \
             if ( len > i ) { \
-                bytesread += fread(v,data_size,len-i,(FILE*)mat->fp); \
-                for ( j = 0; j < len-i; j++ ) { \
-                    data[i+j] = (T)v[j]; \
+                bytesread += fread(v, data_size, len - i, (FILE*)mat->fp); \
+                for ( j = 0; j < len - i; j++ ) { \
+                    data[i + j] = (T)v[j]; \
                 } \
-            }\
+            } \
         } \
     } while (0)
 
 #define READ_DATA(T, SwapFunc) \
     do { \
         if ( mat->byteswap ) { \
-            if ( len <= READ_BLOCK_SIZE ) { \
-                bytesread += fread(v,data_size,len,(FILE*)mat->fp); \
+            const size_t block_size = READ_BLOCK_SIZE/data_size; \
+            if ( len <= block_size ) { \
+                bytesread += fread(v, data_size, len, (FILE*)mat->fp); \
                 for ( j = 0; j < len; j++ ) { \
                     data[j] = (T)SwapFunc(&v[j]); \
                 } \
             } else { \
-                for ( i = 0; i < len-READ_BLOCK_SIZE; i+=READ_BLOCK_SIZE ) { \
-                    bytesread += fread(v,data_size,READ_BLOCK_SIZE,(FILE*)mat->fp); \
-                    for ( j = 0; j < READ_BLOCK_SIZE; j++ ) { \
-                        data[i+j] = (T)SwapFunc(&v[j]); \
+                for ( i = 0; i < len - block_size; i += block_size ) { \
+                    bytesread += fread(v, data_size, block_size, (FILE*)mat->fp); \
+                    for ( j = 0; j < block_size; j++ ) { \
+                        data[i + j] = (T)SwapFunc(&v[j]); \
                     } \
                 } \
                 if ( len > i ) { \
-                    bytesread += fread(v,data_size,len-i,(FILE*)mat->fp); \
+                    bytesread += fread(v, data_size, len - i, (FILE*)mat->fp); \
                     for ( j = 0; j < len-i; j++ ) { \
-                        data[i+j] = (T)SwapFunc(&v[j]); \
+                        data[i + j] = (T)SwapFunc(&v[j]); \
                     } \
-                }\
+                } \
             } \
         } else { \
             READ_DATA_NOSWAP(T); \
         } \
     } while (0)
 
-#ifdef HAVE_MAT_INT64_T
-#define READ_DATA_INT64(T) \
-    do { \
-        if ( MAT_T_INT64 == data_type ) { \
-            mat_int64_t v[READ_BLOCK_SIZE]; \
-            READ_DATA(T, Mat_int64Swap); \
-        } \
-    } while (0)
-#else
-#define READ_DATA_INT64(T)
-#endif /* HAVE_MAT_INT64_T */
-
-#ifdef HAVE_MAT_UINT64_T
-#define READ_DATA_UINT64(T) \
-    do { \
-        if ( MAT_T_UINT64 == data_type ) { \
-            mat_uint64_t v[READ_BLOCK_SIZE]; \
-            READ_DATA(T, Mat_uint64Swap); \
-        } \
-    } while (0)
-#else
-#define READ_DATA_UINT64(T)
-#endif /* HAVE_MAT_UINT64_T */
-
-#define READ_DATA_TYPE(T) \
-    do { \
-        switch ( data_type ) { \
-            case MAT_T_DOUBLE: \
-            { \
-                double v[READ_BLOCK_SIZE]; \
-                READ_DATA(T, Mat_doubleSwap); \
-                break; \
-            } \
-            case MAT_T_SINGLE: \
-            { \
-                float v[READ_BLOCK_SIZE]; \
-                READ_DATA(T, Mat_floatSwap); \
-                break; \
-            } \
-            case MAT_T_INT32: \
-            { \
-                mat_int32_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(T, Mat_int32Swap); \
-                break; \
-            } \
-            case MAT_T_UINT32: \
-            { \
-                mat_uint32_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(T, Mat_uint32Swap); \
-                break; \
-            } \
-            case MAT_T_INT16: \
-            { \
-                mat_int16_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(T, Mat_int16Swap); \
-                break; \
-            } \
-            case MAT_T_UINT16: \
-            { \
-                mat_uint16_t v[READ_BLOCK_SIZE]; \
-                READ_DATA(T, Mat_uint16Swap); \
-                break; \
-            } \
-            case MAT_T_INT8: \
-            { \
-                mat_int8_t v[READ_BLOCK_SIZE]; \
-                READ_DATA_NOSWAP(T); \
-                break; \
-            } \
-            case MAT_T_UINT8: \
-            { \
-                mat_uint8_t v[READ_BLOCK_SIZE]; \
-                READ_DATA_NOSWAP(T); \
-                break; \
-            } \
-            default: \
-                READ_DATA_INT64(T); \
-                READ_DATA_UINT64(T); \
-                break; \
-        } \
-    } while (0)
-
 #if defined(HAVE_ZLIB)
+#define READ_COMPRESSED_DATA_NOSWAP(T) \
+    do { \
+        for ( i = 0; i < len; i++ ) { \
+            InflateData(mat, z, &v, data_size); \
+            data[i] = (T)v; \
+        } \
+    } while (0)
+
 #define READ_COMPRESSED_DATA(T, SwapFunc) \
     do { \
         if ( mat->byteswap ) { \
             for ( i = 0; i < len; i++ ) { \
-                InflateData(mat,z,&v,data_size); \
+                InflateData(mat, z, &v, data_size); \
                 data[i] = (T)SwapFunc(&v); \
             } \
         } else { \
-            for ( i = 0; i < len; i++ ) { \
-                InflateData(mat,z,&v,data_size); \
-                data[i] = (T)v; \
-            } \
+            READ_COMPRESSED_DATA_NOSWAP(T); \
         } \
     } while (0)
 
-#ifdef HAVE_MAT_INT64_T
-#define READ_COMPRESSED_DATA_INT64(T) \
-    do { \
-        if ( MAT_T_INT64 == data_type ) { \
-            mat_int64_t v; \
-            READ_COMPRESSED_DATA(T, Mat_int64Swap); \
-        } \
-    } while (0)
-#else
-#define READ_COMPRESSED_DATA_INT64(T)
-#endif /* HAVE_MAT_INT64_T */
-
-#ifdef HAVE_MAT_UINT64_T
-#define READ_COMPRESSED_DATA_UINT64(T) \
-    do { \
-        if ( MAT_T_UINT64 == data_type ) { \
-            mat_uint64_t v; \
-            READ_COMPRESSED_DATA(T, Mat_uint64Swap); \
-        } \
-    } while (0)
-#else
-#define READ_COMPRESSED_DATA_UINT64(T)
-#endif /* HAVE_MAT_UINT64_T */
-
-#define READ_COMPRESSED_DATA_TYPE(T) \
-    do { \
-        switch ( data_type ) { \
-            case MAT_T_DOUBLE: \
-            { \
-                double v; \
-                READ_COMPRESSED_DATA(T, Mat_doubleSwap); \
-                break; \
-            } \
-            case MAT_T_SINGLE: \
-            { \
-                float v; \
-                READ_COMPRESSED_DATA(T, Mat_floatSwap); \
-                break; \
-            } \
-            case MAT_T_INT32: \
-            { \
-                mat_int32_t v; \
-                READ_COMPRESSED_DATA(T, Mat_int32Swap); \
-                break; \
-            } \
-            case MAT_T_UINT32: \
-            { \
-                mat_uint32_t v; \
-                READ_COMPRESSED_DATA(T, Mat_uint32Swap); \
-                break; \
-            } \
-            case MAT_T_INT16: \
-            { \
-                mat_int16_t v; \
-                READ_COMPRESSED_DATA(T, Mat_int16Swap); \
-                break; \
-            } \
-            case MAT_T_UINT16: \
-            { \
-                mat_uint16_t v; \
-                READ_COMPRESSED_DATA(T, Mat_uint16Swap); \
-                break; \
-            } \
-            case MAT_T_UINT8: \
-            { \
-                mat_uint8_t v; \
-                for ( i = 0; i < len; i++ ) { \
-                    InflateData(mat,z,&v,data_size); \
-                    data[i] = (T)v; \
-                } \
-                break; \
-            } \
-            case MAT_T_INT8: \
-            { \
-                mat_int8_t v; \
-                for ( i = 0; i < len; i++ ) { \
-                    InflateData(mat,z,&v,data_size); \
-                    data[i] = (T)v; \
-                } \
-                break; \
-            } \
-            default: \
-                READ_COMPRESSED_DATA_INT64(T); \
-                READ_COMPRESSED_DATA_UINT64(T); \
-                break; \
-        } \
-    } while (0)
 #endif
 
 /*
@@ -289,1048 +123,124 @@
 
 /** @cond mat_devman */
 
-/** @brief Reads data of type @c data_type into a double type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as double's in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output double values (len*sizeof(double))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadDoubleData(mat_t *mat,double *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
+#define READ_TYPE_DOUBLE 1
+#define READ_TYPE_SINGLE 2
+#define READ_TYPE_INT64  3
+#define READ_TYPE_UINT64 4
+#define READ_TYPE_INT32  5
+#define READ_TYPE_UINT32 6
+#define READ_TYPE_INT16  7
+#define READ_TYPE_UINT16 8
+#define READ_TYPE_INT8   9
+#define READ_TYPE_UINT8 10
 
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
+#define READ_TYPE double
+#define READ_TYPE_TYPE READ_TYPE_DOUBLE
+#define READ_TYPED_FUNC1 ReadDoubleData
+#define READ_TYPED_FUNC2 ReadCompressedDoubleData
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 
-    data_size = Mat_SizeOf(data_type);
-
-    switch ( data_type ) {
-        case MAT_T_DOUBLE:
-        {
-            bytesread += fread(data,data_size,len,(FILE*)mat->fp);
-            if ( mat->byteswap ) {
-                for ( i = 0; i < len; i++ ) {
-                    (void)Mat_doubleSwap(data+i);
-                }
-            }
-            break;
-        }
-        case MAT_T_SINGLE:
-        {
-            float v[READ_BLOCK_SIZE];
-            READ_DATA(double, Mat_floatSwap);
-            break;
-        }
-#ifdef HAVE_MAT_INT64_T
-        case MAT_T_INT64:
-        {
-            mat_int64_t v[READ_BLOCK_SIZE];
-            READ_DATA(double, Mat_int64Swap);
-            break;
-        }
-#endif
-#ifdef HAVE_MAT_UINT64_T
-        case MAT_T_UINT64:
-        {
-            mat_uint64_t v[READ_BLOCK_SIZE];
-            READ_DATA(double, Mat_uint64Swap);
-            break;
-        }
-#endif
-        case MAT_T_INT32:
-        {
-            mat_int32_t v[READ_BLOCK_SIZE];
-            READ_DATA(double, Mat_int32Swap);
-            break;
-        }
-        case MAT_T_UINT32:
-        {
-            mat_uint32_t v[READ_BLOCK_SIZE];
-            READ_DATA(double, Mat_uint32Swap);
-            break;
-        }
-        case MAT_T_INT16:
-        {
-            mat_int16_t v[READ_BLOCK_SIZE];
-            READ_DATA(double, Mat_int16Swap);
-            break;
-        }
-        case MAT_T_UINT16:
-        {
-            mat_uint16_t v[READ_BLOCK_SIZE];
-            READ_DATA(double, Mat_uint16Swap);
-            break;
-        }
-        case MAT_T_INT8:
-        {
-            mat_int8_t v[READ_BLOCK_SIZE];
-            READ_DATA_NOSWAP(double);
-            break;
-        }
-        case MAT_T_UINT8:
-        {
-            mat_uint8_t v[READ_BLOCK_SIZE];
-            READ_DATA_NOSWAP(double);
-            break;
-        }
-        default:
-            return 0;
-    }
-    bytesread *= data_size;
-    return bytesread;
-}
-
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into a double type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as double's in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output double values (len*sizeof(double))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedDoubleData(mat_t *mat,z_streamp z,double *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
-    union _buf {
-        float           f[256];
-#ifdef HAVE_MAT_INT64_T
-        mat_int64_t   i64[128];
-#endif
-#ifdef HAVE_MAT_UINT64_T
-        mat_uint64_t ui64[128];
-#endif
-        mat_int32_t   i32[256];
-        mat_uint32_t ui32[256];
-        mat_int16_t   i16[512];
-        mat_uint16_t ui16[512];
-        mat_int8_t     i8[1024];
-        mat_uint8_t   ui8[1024];
-    } buf;
-
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-
-    switch ( data_type ) {
-        case MAT_T_DOUBLE:
-        {
-            if ( mat->byteswap ) {
-                InflateData(mat,z,data,len*data_size);
-                for ( i = 0; i < len; i++ )
-                    (void)Mat_doubleSwap(data+i);
-            } else {
-                InflateData(mat,z,data,len*data_size);
-            }
-            break;
-        }
-        case MAT_T_SINGLE:
-        {
-            if ( mat->byteswap ) {
-                if ( len <= 256 ){
-                    InflateData(mat,z,buf.f,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = Mat_floatSwap(buf.f+i);
-                } else {
-                    int j;
-                    len -= 256;
-                    for ( i = 0; i < len; i+=256 ) {
-                        InflateData(mat,z,buf.f,256*data_size);
-                        for ( j = 0; j < 256; j++ )
-                            data[i+j] = Mat_floatSwap(buf.f+j);
-                    }
-                    len = len-(i-256);
-                    InflateData(mat,z,buf.f,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = Mat_floatSwap(buf.f+j);
-                }
-            } else {
-                if ( len <= 256 ){
-                    InflateData(mat,z,buf.f,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = buf.f[i];
-                } else {
-                    int j;
-                    len -= 256;
-                    for ( i = 0; i < len; i+=256 ) {
-                        InflateData(mat,z,buf.f,256*data_size);
-                        for ( j = 0; j < 256; j++ )
-                            data[i+j] = buf.f[j];
-                    }
-                    len = len-(i-256);
-                    InflateData(mat,z,buf.f,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = buf.f[j];
-                }
-            }
-            break;
-        }
-#ifdef HAVE_MAT_INT64_T
-        case MAT_T_INT64:
-        {
-            if ( mat->byteswap ) {
-                if ( len <= 128 ){
-                    InflateData(mat,z,buf.i64,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = (double)Mat_int64Swap(buf.i64+i);
-                } else {
-                    int j;
-                    len -= 128;
-                    for ( i = 0; i < len; i+=128 ) {
-                        InflateData(mat,z,buf.i64,128*data_size);
-                        for ( j = 0; j < 128; j++ )
-                            data[i+j] = (double)Mat_int64Swap(buf.i64+j);
-                    }
-                    len = len-(i-128);
-                    InflateData(mat,z,buf.i64,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = (double)Mat_int64Swap(buf.i64+j);
-                }
-            } else {
-                if ( len <= 128 ){
-                    InflateData(mat,z,buf.i64,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = (double)buf.i64[i];
-                } else {
-                    int j;
-                    len -= 128;
-                    for ( i = 0; i < len; i+=128 ) {
-                        InflateData(mat,z,buf.i64,128*data_size);
-                        for ( j = 0; j < 128; j++ )
-                            data[i+j] = (double)buf.i64[j];
-                    }
-                    len = len-(i-128);
-                    InflateData(mat,z,buf.i64,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = (double)buf.i64[j];
-                }
-            }
-            break;
-        }
-#endif
-#ifdef HAVE_MAT_UINT64_T
-        case MAT_T_UINT64:
-        {
-            if ( mat->byteswap ) {
-                if ( len <= 128 ){
-                    InflateData(mat,z,buf.ui64,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = (double)Mat_uint64Swap(buf.ui64+i);
-                } else {
-                    int j;
-                    len -= 128;
-                    for ( i = 0; i < len; i+=128 ) {
-                        InflateData(mat,z,buf.ui64,128*data_size);
-                        for ( j = 0; j < 128; j++ )
-                            data[i+j] = (double)Mat_uint64Swap(buf.ui64+j);
-                    }
-                    len = len-(i-128);
-                    InflateData(mat,z,buf.ui64,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = (double)Mat_uint64Swap(buf.ui64+j);
-                }
-            } else {
-                if ( len <= 128 ){
-                    InflateData(mat,z,buf.ui64,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = (double)buf.ui64[i];
-                } else {
-                    int j;
-                    len -= 128;
-                    for ( i = 0; i < len; i+=128 ) {
-                        InflateData(mat,z,buf.ui64,128*data_size);
-                        for ( j = 0; j < 128; j++ )
-                            data[i+j] = (double)buf.ui64[j];
-                    }
-                    len = len-(i-128);
-                    InflateData(mat,z,buf.ui64,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = (double)buf.ui64[j];
-                }
-            }
-            break;
-        }
-#endif
-        case MAT_T_INT32:
-        {
-            if ( mat->byteswap ) {
-                if ( len <= 256 ){
-                    InflateData(mat,z,buf.i32,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = Mat_int32Swap(buf.i32+i);
-                } else {
-                    int j;
-                    len -= 256;
-                    for ( i = 0; i < len; i+=256 ) {
-                        InflateData(mat,z,buf.i32,256*data_size);
-                        for ( j = 0; j < 256; j++ )
-                            data[i+j] = Mat_int32Swap(buf.i32+j);
-                    }
-                    len = len-(i-256);
-                    InflateData(mat,z,buf.i32,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = Mat_int32Swap(buf.i32+j);
-                }
-            } else {
-                if ( len <= 256 ){
-                    InflateData(mat,z,buf.i32,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = buf.i32[i];
-                } else {
-                    int j;
-                    len -= 256;
-                    for ( i = 0; i < len; i+=256 ) {
-                        InflateData(mat,z,buf.i32,256*data_size);
-                        for ( j = 0; j < 256; j++ )
-                            data[i+j] = buf.i32[j];
-                    }
-                    len = len-(i-256);
-                    InflateData(mat,z,buf.i32,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = buf.i32[j];
-                }
-            }
-            break;
-        }
-        case MAT_T_UINT32:
-        {
-            if ( mat->byteswap ) {
-                if ( len <= 256 ){
-                    InflateData(mat,z,buf.ui32,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = Mat_uint32Swap(buf.ui32+i);
-                } else {
-                    int j;
-                    len -= 256;
-                    for ( i = 0; i < len; i+=256 ) {
-                        InflateData(mat,z,buf.ui32,256*data_size);
-                        for ( j = 0; j < 256; j++ )
-                            data[i+j] = Mat_uint32Swap(buf.ui32+j);
-                    }
-                    len = len-(i-256);
-                    InflateData(mat,z,buf.ui32,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = Mat_uint32Swap(buf.ui32+j);
-                }
-            } else {
-                if ( len <= 256 ) {
-                    InflateData(mat,z,buf.ui32,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = buf.ui32[i];
-                } else {
-                    int j;
-                    len -= 256;
-                    for ( i = 0; i < len; i+=256 ) {
-                        InflateData(mat,z,buf.ui32,256*data_size);
-                        for ( j = 0; j < 256; j++ )
-                            data[i+j] = buf.ui32[j];
-                    }
-                    len = len-(i-256);
-                    InflateData(mat,z,buf.ui32,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = buf.ui32[j];
-                }
-            }
-            break;
-        }
-        case MAT_T_INT16:
-        {
-            if ( mat->byteswap ) {
-                if ( len <= 512 ){
-                    InflateData(mat,z,buf.i16,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = Mat_int16Swap(buf.i16+i);
-                } else {
-                    int j;
-                    len -= 512;
-                    for ( i = 0; i < len; i+=512 ) {
-                        InflateData(mat,z,buf.i16,512*data_size);
-                        for ( j = 0; j < 512; j++ )
-                            data[i+j] = Mat_int16Swap(buf.i16+j);
-                    }
-                    len = len-(i-512);
-                    InflateData(mat,z,buf.i16,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = Mat_int16Swap(buf.i16+j);
-                }
-            } else {
-                if ( len <= 512 ) {
-                    InflateData(mat,z,buf.i16,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = buf.i16[i];
-                } else {
-                    int j;
-                    len -= 512;
-                    for ( i = 0; i < len; i+=512 ) {
-                        InflateData(mat,z,buf.i16,512*data_size);
-                        for ( j = 0; j < 512; j++ )
-                            data[i+j] = buf.i16[j];
-                    }
-                    len = len-(i-512);
-                    InflateData(mat,z,buf.i16,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = buf.i16[j];
-                }
-            }
-            break;
-        }
-        case MAT_T_UINT16:
-        {
-            if ( mat->byteswap ) {
-                if ( len <= 512 ){
-                    InflateData(mat,z,buf.ui16,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = Mat_uint16Swap(buf.ui16+i);
-                } else {
-                    int j;
-                    len -= 512;
-                    for ( i = 0; i < len; i+=512 ) {
-                        InflateData(mat,z,buf.ui16,512*data_size);
-                        for ( j = 0; j < 512; j++ )
-                            data[i+j] = Mat_uint16Swap(buf.ui16+j);
-                    }
-                    len = len-(i-512);
-                    InflateData(mat,z,buf.ui16,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = Mat_uint16Swap(buf.ui16+j);
-                }
-            } else {
-                if ( len <= 512 ) {
-                    InflateData(mat,z,buf.ui16,len*data_size);
-                    for ( i = 0; i < len; i++ )
-                        data[i] = buf.ui16[i];
-                } else {
-                    int j;
-                    len -= 512;
-                    for ( i = 0; i < len; i+=512 ) {
-                        InflateData(mat,z,buf.ui16,512*data_size);
-                        for ( j = 0; j < 512; j++ )
-                            data[i+j] = buf.ui16[j];
-                    }
-                    len = len-(i-512);
-                    InflateData(mat,z,buf.ui16,len*data_size);
-                    for ( j = 0; j < len; j++ )
-                        data[i+j] = buf.ui16[j];
-                }
-            }
-            break;
-        }
-        case MAT_T_UINT8:
-        {
-            if ( len <= 1024 ) {
-                InflateData(mat,z,buf.ui8,len*data_size);
-                for ( i = 0; i < len; i++ )
-                    data[i] = buf.ui8[i];
-            } else {
-                int j;
-                len -= 1024;
-                for ( i = 0; i < len; i+=1024 ) {
-                    InflateData(mat,z,buf.ui8,1024*data_size);
-                    for ( j = 0; j < 1024; j++ )
-                        data[i+j] = buf.ui8[j];
-                }
-                len = len-(i-1024);
-                InflateData(mat,z,buf.ui8,len*data_size);
-                for ( j = 0; j < len; j++ )
-                    data[i+j] = buf.ui8[j];
-            }
-            break;
-        }
-        case MAT_T_INT8:
-        {
-            if ( len <= 1024 ) {
-                InflateData(mat,z,buf.i8,len*data_size);
-                for ( i = 0; i < len; i++ )
-                    data[i] = buf.i8[i];
-            } else {
-                int j;
-                len -= 1024;
-                for ( i = 0; i < len; i+=1024 ) {
-                    InflateData(mat,z,buf.i8,1024*data_size);
-                    for ( j = 0; j < 1024; j++ )
-                        data[i+j] = buf.i8[j];
-                }
-                len = len-(i-1024);
-                InflateData(mat,z,buf.i8,len*data_size);
-                for ( j = 0; j < len; j++ )
-                    data[i+j] = buf.i8[j];
-            }
-            break;
-        }
-        default:
-            return 0;
-    }
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif
-
-/** @brief Reads data of type @c data_type into a float type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as float's in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output float values (len*sizeof(float))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadSingleData(mat_t *mat,float *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
-
-    data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE(float);
-    bytesread *= data_size;
-    return bytesread;
-}
-
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into a float type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as float's in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output float values (len*sizeof(float))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedSingleData(mat_t *mat,z_streamp z,float *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (z == NULL) )
-        return 0;
-
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE(float);
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif
+#define READ_TYPE float
+#define READ_TYPE_TYPE READ_TYPE_SINGLE
+#define READ_TYPED_FUNC1 ReadSingleData
+#define READ_TYPED_FUNC2 ReadCompressedSingleData
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 
 #ifdef HAVE_MAT_INT64_T
-/** @brief Reads data of type @c data_type into a signed 64-bit integer type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as signed 64-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output signed 64-bit integer values
- *             (len*sizeof(mat_int64_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadInt64Data(mat_t *mat,mat_int64_t *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
-
-    data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE(mat_int64_t);
-    bytesread *= data_size;
-    return bytesread;
-}
-
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into a signed 64-bit integer type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as signed 64-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output signed 64-bit integer values
- *             (len*sizeof(mat_int64_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedInt64Data(mat_t *mat,z_streamp z,mat_int64_t *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (z == NULL) )
-        return 0;
-
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE(mat_int64_t);
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif
+#define READ_TYPE mat_int64_t
+#define READ_TYPE_TYPE READ_TYPE_INT64
+#define READ_TYPED_FUNC1 ReadInt64Data
+#define READ_TYPED_FUNC2 ReadCompressedInt64Data
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 #endif /* HAVE_MAT_INT64_T */
 
 #ifdef HAVE_MAT_UINT64_T
-/** @brief Reads data of type @c data_type into an unsigned 64-bit integer type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as unsigned 64-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output unsigned 64-bit integer values
- *             (len*sizeof(mat_uint64_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadUInt64Data(mat_t *mat,mat_uint64_t *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
-
-    data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE(mat_uint64_t);
-    bytesread *= data_size;
-    return bytesread;
-}
-
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into an unsigned 64-bit integer type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as unsigned 64-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output unsigned 64-bit integer values
- *             (len*sizeof(mat_uint64_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedUInt64Data(mat_t *mat,z_streamp z,mat_uint64_t *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (z == NULL) )
-        return 0;
-
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE(mat_uint64_t);
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif /* HAVE_ZLIB */
+#define READ_TYPE mat_uint64_t
+#define READ_TYPE_TYPE READ_TYPE_UINT64
+#define READ_TYPED_FUNC1 ReadUInt64Data
+#define READ_TYPED_FUNC2 ReadCompressedUInt64Data
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 #endif /* HAVE_MAT_UINT64_T */
 
-/** @brief Reads data of type @c data_type into a signed 32-bit integer type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as signed 32-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output signed 32-bit integer values
- *             (len*sizeof(mat_int32_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadInt32Data(mat_t *mat,mat_int32_t *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
+#define READ_TYPE mat_int32_t
+#define READ_TYPE_TYPE READ_TYPE_INT32
+#define READ_TYPED_FUNC1 ReadInt32Data
+#define READ_TYPED_FUNC2 ReadCompressedInt32Data
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
+#define READ_TYPE mat_uint32_t
+#define READ_TYPE_TYPE READ_TYPE_UINT32
+#define READ_TYPED_FUNC1 ReadUInt32Data
+#define READ_TYPED_FUNC2 ReadCompressedUInt32Data
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 
-    data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE(mat_int32_t);
-    bytesread *= data_size;
-    return bytesread;
-}
+#define READ_TYPE mat_int16_t
+#define READ_TYPE_TYPE READ_TYPE_INT16
+#define READ_TYPED_FUNC1 ReadInt16Data
+#define READ_TYPED_FUNC2 ReadCompressedInt16Data
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into a signed 32-bit integer type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as signed 32-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output signed 32-bit integer values
- *             (len*sizeof(mat_int32_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedInt32Data(mat_t *mat,z_streamp z,mat_int32_t *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
+#define READ_TYPE mat_uint16_t
+#define READ_TYPE_TYPE READ_TYPE_UINT16
+#define READ_TYPED_FUNC1 ReadUInt16Data
+#define READ_TYPED_FUNC2 ReadCompressedUInt16Data
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 
-    if ( (mat == NULL) || (data == NULL) || (z == NULL) )
-        return 0;
+#define READ_TYPE mat_int8_t
+#define READ_TYPE_TYPE READ_TYPE_INT8
+#define READ_TYPED_FUNC1 ReadInt8Data
+#define READ_TYPED_FUNC2 ReadCompressedInt8Data
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE(mat_int32_t);
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif
-
-/** @brief Reads data of type @c data_type into an unsigned 32-bit integer type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as unsigned 32-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output unsigned 32-bit integer values
- *             (len*sizeof(mat_uint32_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadUInt32Data(mat_t *mat,mat_uint32_t *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
-
-    data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE(mat_uint32_t);
-    bytesread *= data_size;
-    return bytesread;
-}
-
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into an unsigned 32-bit integer type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as unsigned 32-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output unsigned 32-bit integer values
- *             (len*sizeof(mat_uint32_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedUInt32Data(mat_t *mat,z_streamp z,mat_uint32_t *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (z == NULL) )
-        return 0;
-
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE(mat_uint32_t);
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif
-
-/** @brief Reads data of type @c data_type into a signed 16-bit integer type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as signed 16-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output signed 16-bit integer values
- *             (len*sizeof(mat_int16_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadInt16Data(mat_t *mat,mat_int16_t *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
-
-    data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE(mat_int16_t);
-    bytesread *= data_size;
-    return bytesread;
-}
-
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into a signed 16-bit integer type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as signed 16-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output signed 16-bit integer values
- *             (len*sizeof(mat_int16_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedInt16Data(mat_t *mat,z_streamp z,mat_int16_t *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (z == NULL) )
-        return 0;
-
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE(mat_int16_t);
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif
-
-/** @brief Reads data of type @c data_type into an unsigned 16-bit integer type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as unsigned 16-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output unsigned 16-bit integer values
- *             (len*sizeof(mat_uint16_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadUInt16Data(mat_t *mat,mat_uint16_t *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
-
-    data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE(mat_uint16_t);
-    bytesread *= data_size;
-    return bytesread;
-}
-
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into an unsigned 16-bit integer type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as unsigned 16-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output n unsigned 16-bit integer values
- *             (len*sizeof(mat_uint16_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedUInt16Data(mat_t *mat,z_streamp z,mat_uint16_t *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (z == NULL) )
-        return 0;
-
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE(mat_uint16_t);
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif
-
-/** @brief Reads data of type @c data_type into a signed 8-bit integer type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as signed 8-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output signed 8-bit integer values
- *             (len*sizeof(mat_int8_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadInt8Data(mat_t *mat,mat_int8_t *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
-
-    data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE(mat_int8_t);
-    bytesread *= data_size;
-    return bytesread;
-}
-
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into a signed 8-bit integer type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as signed 8-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output signed 8-bit integer values
- *             (len*sizeof(mat_int8_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedInt8Data(mat_t *mat,z_streamp z,mat_int8_t *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (z == NULL) )
-        return 0;
-
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE(mat_int8_t);
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif
-
-/** @brief Reads data of type @c data_type into an unsigned 8-bit integer type
- *
- * Reads from the MAT file @c len elements of data type @c data_type storing
- * them as unsigned 8-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param data Pointer to store the output unsigned 8-bit integer values
- *             (len*sizeof(mat_uint8_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadUInt8Data(mat_t *mat,mat_uint8_t *data,enum matio_types data_type,int len)
-{
-    int bytesread = 0, i, j;
-    size_t data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
-        return 0;
-
-    data_size = Mat_SizeOf(data_type);
-    READ_DATA_TYPE(mat_uint8_t);
-    bytesread *= data_size;
-    return bytesread;
-}
-
-#if defined(HAVE_ZLIB)
-/** @brief Reads data of type @c data_type into an unsigned 8-bit integer type
- *
- * Reads from the MAT file @c len compressed elements of data type @c data_type
- * storing them as unsigned 8-bit integers in @c data.
- * @ingroup mat_internal
- * @param mat MAT file pointer
- * @param z Pointer to the zlib stream for inflation
- * @param data Pointer to store the output 8-bit integer values
- *             (len*sizeof(mat_uint8_t))
- * @param data_type one of the @c matio_types enumerations which is the source
- *                  data type in the file
- * @param len Number of elements of type @c data_type to read from the file
- * @retval Number of bytes read from the file
- */
-int
-ReadCompressedUInt8Data(mat_t *mat,z_streamp z,mat_uint8_t *data,
-    enum matio_types data_type,int len)
-{
-    int nBytes = 0, i;
-    unsigned int data_size;
-
-    if ( (mat == NULL) || (data == NULL) || (z == NULL) )
-        return 0;
-
-    data_size = (unsigned int)Mat_SizeOf(data_type);
-    READ_COMPRESSED_DATA_TYPE(mat_uint8_t);
-    nBytes = len*data_size;
-    return nBytes;
-}
-#endif
+#define READ_TYPE mat_uint8_t
+#define READ_TYPE_TYPE READ_TYPE_UINT8
+#define READ_TYPED_FUNC1 ReadUInt8Data
+#define READ_TYPED_FUNC2 ReadCompressedUInt8Data
+#include "read_data_impl.h"
+#undef READ_TYPE
+#undef READ_TYPE_TYPE
+#undef READ_TYPED_FUNC1
+#undef READ_TYPED_FUNC2
 
 #undef READ_DATA
-#undef READ_DATA_TYPE
-#undef READ_DATA_INT64
-#undef READ_DATA_UINT64
-#if defined(HAVE_ZLIB)
-#undef READ_COMPRESSED_DATA
-#undef READ_COMPRESSED_DATA_TYPE
-#undef READ_COMPRESSED_DATA_INT64
-#undef READ_COMPRESSED_DATA_UINT64
-#endif
+#undef READ_DATA_NOSWAP
+
 #if defined(HAVE_ZLIB)
 /** @brief Reads data of type @c data_type into a char type
  *

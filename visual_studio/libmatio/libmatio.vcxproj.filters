@@ -68,6 +68,9 @@
     <ClInclude Include="..\..\src\matio_private.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\read_data_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\matio_pubconf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
