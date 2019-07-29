@@ -1009,9 +1009,16 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                     if ( uncomp_buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
                         mat_uint32_t len = uncomp_buf[1];
 
-                        if ( len % 8 > 0 )
-                            len = len+(8-(len % 8));
-                        cells[i]->name = (char*)malloc(len+1);
+                        if ( len % 8 > 0 ) {
+                            if ( len < UINT32_MAX - 8 + (len % 8) )
+                              len = len + 8 - (len % 8);
+                            else {
+                                Mat_VarFree(cells[i]);
+                                cells[i] = NULL;
+                                break;
+                            }
+                        }
+                        cells[i]->name = (char*)malloc(len + 1);
                         nbytes -= len;
                         if ( NULL != cells[i]->name ) {
                             /* Variable name */
@@ -1079,7 +1086,8 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
         mat_uint32_t array_flags;
 
         for ( i = 0; i < nelems; i++ ) {
-            int cell_bytes_read,name_len;
+            int cell_bytes_read;
+            mat_uint32_t name_len;
             cells[i] = Mat_VarCalloc();
             if ( !cells[i] ) {
                 Mat_Critical("Couldn't allocate memory for cell %" SIZE_T_FMTSTR, i);
@@ -1153,7 +1161,13 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 if ( buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
                     name_len = buf[1];
                     if ( name_len % 8 > 0 )
-                        name_len = name_len+(8-(name_len % 8));
+                        if ( name_len < UINT32_MAX - 8 + (name_len % 8) )
+                            name_len = name_len + 8 - (name_len % 8);
+                        else {
+                            Mat_VarFree(cells[i]);
+                            cells[i] = NULL;
+                            break;
+                        }
                     nBytes -= name_len;
                     (void)fseek((FILE*)mat->fp,name_len,SEEK_CUR);
                 }
@@ -4872,8 +4886,13 @@ Mat_VarReadNextInfo5( mat_t *mat )
 
                     if ( len % 8 == 0 )
                         len_pad = len;
-                    else
+                    else if ( len < UINT32_MAX - 8 + (len % 8) )
                         len_pad = len + 8 - (len % 8);
+                    else {
+                        Mat_VarFree(matvar);
+                        matvar = NULL;
+                        break;
+                    }
                     matvar->name = (char*)malloc(len_pad + 1);
                     if ( NULL != matvar->name ) {
                         /* Variable name */
@@ -4974,8 +4993,14 @@ Mat_VarReadNextInfo5( mat_t *mat )
                     len = buf[1];
                 if ( len % 8 == 0 )
                     len_pad = len;
-                else
+                else if ( len < UINT32_MAX - 8 + (len % 8) )
                     len_pad = len + 8 - (len % 8);
+                else {
+                    Mat_VarFree(matvar);
+                    matvar = NULL;
+                    (void)fseek((FILE*)mat->fp, fpos, SEEK_SET);
+                    break;
+                }
                 matvar->name = (char*)malloc(len_pad + 1);
                 if ( NULL != matvar->name ) {
                     readresult = fread(matvar->name, 1, len_pad, (FILE*)mat->fp);
