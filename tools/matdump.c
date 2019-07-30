@@ -283,12 +283,12 @@ slab_select_valid(int rank,int *start,int *stride,int *edge,matvar_t *matvar)
             } else if ( edge[i] < 0 ) {
                 /* index of the form 1:stride:end */
                 edge[i] = (int)floor((double)(matvar->dims[i]-start[i]-1) / (double)stride[i])+1;
-            } else if ( edge[i] > matvar->dims[i] ) {
+            } else if ( (size_t)edge[i] > matvar->dims[i] ) {
                 /* edge can't be bigger than the size of the dimension */
                 fprintf(stderr,"edge out of bound on dimension %d",i+1);
                 valid = 0;
                 break;
-            } else if ( start[i] >= matvar->dims[i] ||
+            } else if ( (size_t)start[i] >= matvar->dims[i] ||
                         (start[i] > edge[i] && edge[i] > 0) ) {
                 /* Start can't be bigger than the size of the dimension and
                  * can't be greater than the edge unless edge == -1 => end
@@ -572,12 +572,12 @@ print_whos(matvar_t *matvar)
     return;
 }
 
-static int indent = 0;
+static size_t indent = 0;
 
 static void
 default_printf_func(int log_level,char *message)
 {
-    int i;
+    size_t i;
 
     for ( i = 0; i < indent; i++ )
         printf("    ");
@@ -787,10 +787,11 @@ print_default(matvar_t *matvar)
                 Mat_Message("Fields[%d] {", nfields);
                 indent++;
                 {
+                    size_t j;
                     matvar_t **fields = (matvar_t **)matvar->data;
                     if ( NULL != fields )
-                        for ( i = 0; i < nfields*nmemb; i++ )
-                            print_default(fields[i]);
+                        for ( j = 0; j < nfields*nmemb; j++ )
+                            print_default(fields[j]);
                 }
                 indent--;
                 Mat_Message("}");
@@ -814,10 +815,11 @@ print_default(matvar_t *matvar)
             Mat_Message("{");
             indent++;
             {
+                size_t j;
                 matvar_t **cells = (matvar_t **)matvar->data;
                 if ( NULL != cells )
-                    for ( i = 0; i < ncells; i++ )
-                        print_default(cells[i]);
+                    for ( j = 0; j < ncells; j++ )
+                        print_default(cells[j]);
             }
             indent--;
             Mat_Message("}");

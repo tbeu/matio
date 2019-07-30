@@ -309,7 +309,7 @@ Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
 
     err = SafeMulDims(matvar, &nelems);
     nfields = matvar->internal->num_fields;
-    if ( index < 0 || (nelems > 0 && index >= nelems ))
+    if ( index < 0 || (nelems > 0 && (size_t)index >= nelems ))
         err = 1;
     else if ( nfields < 1 )
         err = 1;

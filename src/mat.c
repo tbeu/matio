@@ -2121,9 +2121,9 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                     mat_complex_split_t *complex_data = (mat_complex_split_t*)sparse->data;
                     char *re = (char*)complex_data->Re;
                     char *im = (char*)complex_data->Im;
-                    for ( i = 0; i < sparse->njc-1; i++ ) {
+                    for ( i = 0; i < (size_t)sparse->njc-1; i++ ) {
                         for ( j = sparse->jc[i];
-                              j < sparse->jc[i+1] && j < sparse->ndata; j++ ) {
+                              j < (size_t)sparse->jc[i+1] && j < (size_t)sparse->ndata; j++ ) {
                             printf("    (%d,%" SIZE_T_FMTSTR ")  ",sparse->ir[j]+1,i+1);
                             Mat_PrintNumber(matvar->data_type,re+j*stride);
                             printf(" + ");
@@ -2133,9 +2133,9 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                     }
                 } else {
                     char *data = (char*)sparse->data;
-                    for ( i = 0; i < sparse->njc-1; i++ ) {
+                    for ( i = 0; i < (size_t)sparse->njc-1; i++ ) {
                         for ( j = sparse->jc[i];
-                              j < sparse->jc[i+1] && j < sparse->ndata; j++ ) {
+                              j < (size_t)sparse->jc[i+1] && j < (size_t)sparse->ndata; j++ ) {
                             printf("    (%d,%" SIZE_T_FMTSTR ")  ",sparse->ir[j]+1,i+1);
                             Mat_PrintNumber(matvar->data_type,data+j*stride);
                             printf("\n");
