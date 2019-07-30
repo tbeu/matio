@@ -1160,14 +1160,15 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 /* Name of variable */
                 if ( buf[0] == MAT_T_INT8 ) {    /* Name not in tag */
                     name_len = buf[1];
-                    if ( name_len % 8 > 0 )
-                        if ( name_len < UINT32_MAX - 8 + (name_len % 8) )
+                    if ( name_len % 8 > 0 ) {
+                        if ( name_len < UINT32_MAX - 8 + (name_len % 8) ) {
                             name_len = name_len + 8 - (name_len % 8);
-                        else {
+                        } else {
                             Mat_VarFree(cells[i]);
                             cells[i] = NULL;
                             break;
                         }
+                    }
                     nBytes -= name_len;
                     (void)fseek((FILE*)mat->fp,name_len,SEEK_CUR);
                 }
