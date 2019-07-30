@@ -42,7 +42,8 @@ VS_FILES = visual_studio/libmatio/libmatio.vcproj \
            visual_studio/matio.sln \
            visual_studio/matioConfig.h \
            visual_studio/matio_pubconf.h \
-           visual_studio/matio.rc
+           visual_studio/matio.rc \
+           visual_studio/stdint_msvc.h
 
 EXTRA_DIST = matio.pc.in autogen.sh patches/inflate.patch \
              share/test_file.mat share/test_file_v6.mat $(VS_FILES)

@@ -123,6 +123,9 @@
 
 #if MATIO_HAVE_STDINT_H
 #   include <stdint.h>
+#else
+#   include "stdint_msvc.h"
+#define MATIO_HAVE_STDINT_H 1
 #endif
 
 #ifdef _mat_int64_t
