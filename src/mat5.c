@@ -545,13 +545,21 @@ GetMatrixMaxBufSize(matvar_t *matvar, size_t *size)
 mat_t *
 Mat_Create5(const char *matname,const char *hdr_str)
 {
-    FILE *fp;
+    FILE *fp = NULL;
     mat_int16_t endian = 0, version;
     mat_t *mat = NULL;
     size_t err;
     time_t t;
 
-    fp = fopen(matname,"w+b");
+#if defined(_WIN32) && defined(_MSC_VER)
+    wchar_t* wname = utf82u(matname);
+    if ( NULL != wname ) {
+        fp = _wfopen(wname, L"w+b");
+        free(wname);
+    }
+#else
+    fp = fopen(matname, "w+b");
+#endif
     if ( !fp )
         return NULL;
 

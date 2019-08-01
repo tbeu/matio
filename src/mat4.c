@@ -52,10 +52,18 @@
 mat_t *
 Mat_Create4(const char* matname)
 {
-    FILE *fp;
+    FILE *fp = NULL;
     mat_t *mat = NULL;
 
-    fp = fopen(matname,"w+b");
+#if defined(_WIN32) && defined(_MSC_VER)
+    wchar_t* wname = utf82u(matname);
+    if ( NULL != wname ) {
+        fp = _wfopen(wname, L"w+b");
+        free(wname);
+    }
+#else
+    fp = fopen(matname, "w+b");
+#endif
     if ( !fp )
         return NULL;
 

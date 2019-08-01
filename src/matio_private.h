@@ -231,4 +231,9 @@ EXTERN int SafeMulDims(const matvar_t *matvar, size_t* nelems);
 EXTERN int SafeMul(size_t* res, size_t a, size_t b);
 EXTERN int SafeAdd(size_t* res, size_t a, size_t b);
 
+/* io.c */
+#if defined(_WIN32) && defined(_MSC_VER)
+EXTERN wchar_t* utf82u(const char* src);
+#endif
+
 #endif

@@ -340,11 +340,27 @@ Mat_Open(const char *matname,int mode)
     size_t bytesread = 0;
 
     if ( (mode & 0x01) == MAT_ACC_RDONLY ) {
-        fp = fopen( matname, "rb" );
+#if defined(_WIN32) && defined(_MSC_VER)
+        wchar_t* wname = utf82u(matname);
+        if ( NULL != wname ) {
+            fp = _wfopen(wname, L"rb");
+            free(wname);
+        }
+#else
+        fp = fopen(matname, "rb");
+#endif
         if ( !fp )
             return NULL;
     } else if ( (mode & 0x01) == MAT_ACC_RDWR ) {
-        fp = fopen( matname, "r+b" );
+#if defined(_WIN32) && defined(_MSC_VER)
+        wchar_t* wname = utf82u(matname);
+        if ( NULL != wname ) {
+            fp = _wfopen(wname, L"r+b");
+            free(wname);
+        }
+#else
+        fp = fopen(matname, "r+b");
+#endif
         if ( !fp ) {
             mat = Mat_CreateVer(matname,NULL,(enum mat_ft)(mode&0xfffffffe));
             return mat;
@@ -465,14 +481,14 @@ Mat_Open(const char *matname,int mode)
         mat->fp = malloc(sizeof(hid_t));
 
         if ( (mode & 0x01) == MAT_ACC_RDONLY )
-            *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDONLY,H5P_DEFAULT);
+            *(hid_t*)mat->fp=H5Fopen(matname,H5F_ACC_RDONLY,H5P_DEFAULT);
         else if ( (mode & 0x01) == MAT_ACC_RDWR ) {
             hid_t plist_ap;
             plist_ap = H5Pcreate(H5P_FILE_ACCESS);
 #if H5_VERSION_GE(1,10,2)
             H5Pset_libver_bounds(plist_ap,H5F_LIBVER_EARLIEST,H5F_LIBVER_V18);
 #endif
-            *(hid_t*)mat->fp=H5Fopen(mat->filename,H5F_ACC_RDWR,plist_ap);
+            *(hid_t*)mat->fp=H5Fopen(matname,H5F_ACC_RDWR,plist_ap);
             H5Pclose(plist_ap);
         }
 
@@ -1076,16 +1092,36 @@ mat_copy(const char* src, const char* dst)
 {
     size_t len;
     char buf[BUFSIZ] = {'\0'};
-    FILE* in;
-    FILE* out;
+    FILE* in = NULL;
+    FILE* out = NULL;
 
+#if defined(_WIN32) && defined(_MSC_VER)
+    {
+        wchar_t* wname = utf82u(src);
+        if ( NULL != wname ) {
+            in = _wfopen(wname, L"rb");
+            free(wname);
+        }
+    }
+#else
     in = fopen(src, "rb");
+#endif
     if ( in == NULL ) {
         Mat_Critical("Cannot open file \"%s\" for reading.", src);
         return -1;
     }
 
+#if defined(_WIN32) && defined(_MSC_VER)
+    {
+        wchar_t* wname = utf82u(dst);
+        if ( NULL != wname ) {
+            out = _wfopen(wname, L"wb");
+            free(wname);
+        }
+    }
+#else
     out = fopen(dst, "wb");
+#endif
     if ( out == NULL ) {
         fclose(in);
         Mat_Critical("Cannot open file \"%s\" for writing.", dst);

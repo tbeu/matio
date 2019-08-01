@@ -1,4 +1,4 @@
-/** @file mat73.c
+﻿/** @file mat73.c
  * Matlab MAT version 7.3 file functions
  * @ingroup MAT
  */
@@ -2213,7 +2213,7 @@ Mat_VarWriteAppendNextType73(hid_t id,matvar_t *matvar,const char *name,hid_t *r
 mat_t *
 Mat_Create73(const char *matname,const char *hdr_str)
 {
-    FILE *fp;
+    FILE *fp = NULL;
     mat_int16_t endian = 0, version;
     mat_t *mat = NULL;
     size_t err;
@@ -2230,7 +2230,17 @@ Mat_Create73(const char *matname,const char *hdr_str)
     H5Fclose(fid);
     H5Pclose(plist_id);
 
-    fp = fopen(matname,"r+b");
+#if defined(_WIN32) && defined(_MSC_VER) && H5_VERSION_GE(1,11,6)
+    {
+        wchar_t* wname = utf82u(matname);
+        if ( NULL != wname ) {
+            fp = _wfopen(wname, L"r+b");
+            free(wname);
+        }
+    }
+#else
+    fp = fopen(matname, "r+b");
+#endif
     if ( !fp ) {
         H5Pclose(plist_ap);
         return NULL;

@@ -27,6 +27,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if defined(_WIN32) && defined(_MSC_VER)
+#define WIN32_LEAN_AND_MEAN
+#define NOGDI
+#include <Windows.h>
+#endif
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -84,6 +89,44 @@ strdup_printf(const char* format, ...)
     va_end(ap);
     return buffer;
 }
+
+#if defined(_WIN32) && defined(_MSC_VER)
+/** @brief Convert from narrow UTF-8 string to wide string
+ *
+ * @ingroup mat_util
+ * @param src narrow string
+ * @return Pointer to resulting wide string, or NULL if there was an error
+ */
+wchar_t*
+utf82u(const char* src)
+{
+    if ( NULL != src ) {
+        int srcLen = (int)strlen(src);
+        if ( 0 != srcLen ) {
+            int rc = MultiByteToWideChar(CP_UTF8, 0, src, srcLen, 0, 0);
+            if ( 0 != rc ) {
+                wchar_t* w = (wchar_t*)malloc(sizeof(wchar_t)*(rc + 1));
+                if ( NULL != w ) {
+                    w[rc] = L'\0';
+                    rc = MultiByteToWideChar(CP_UTF8, 0, src, srcLen, w, rc);
+                    if ( 0 != rc ) {
+                        return w;
+                    } else {
+                        free(w);
+                    }
+                }
+            }
+        } else {
+            wchar_t* w = (wchar_t*)malloc(sizeof(wchar_t));
+            if ( NULL != w ) {
+                w[0] = L'\0';
+                return w;
+            }
+        }
+    }
+    return NULL;
+}
+#endif
 
 /** @brief Default logging function
  *
