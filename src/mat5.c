@@ -637,7 +637,7 @@ WriteCharData(mat_t *mat, void *data, int N,enum matio_types data_type)
 {
     int nBytes = 0, i;
     size_t byteswritten = 0;
-    mat_int8_t pad1 = 0;
+    const mat_uint8_t pad1 = 0;
 
     switch ( data_type ) {
         case MAT_T_UINT16:
@@ -1710,8 +1710,7 @@ static int
 WriteType(mat_t *mat,matvar_t *matvar)
 {
     int err;
-    mat_int16_t array_name_type = MAT_T_INT8;
-    mat_int8_t pad1 = 0;
+    const mat_uint8_t pad1 = 0;
     int nBytes, j;
     size_t nelems = 1;
 
@@ -1772,13 +1771,14 @@ WriteType(mat_t *mat,matvar_t *matvar)
         }
         case MAT_C_STRUCT:
         {
-            mat_int16_t fieldname_type = MAT_T_INT32;
-            mat_int16_t fieldname_data_size = 4;
+            const mat_uint32_t array_name_type = MAT_T_INT8;
+            const mat_uint32_t fieldname_type = MAT_T_INT32;
+            const mat_uint32_t fieldname_data_size = 4;
             char *padzero;
             int fieldname_size;
             size_t maxlen = 0, nfields, i, nelems_x_nfields;
             matvar_t **fields = (matvar_t **)matvar->data;
-            unsigned fieldname;
+            mat_uint32_t fieldname;
 
             /* nelems*matvar->data_size can be zero when saving a struct that
              * contains an empty struct in one of its fields
@@ -1788,18 +1788,11 @@ WriteType(mat_t *mat,matvar_t *matvar)
             nfields = matvar->internal->num_fields;
             /* Check for a structure with no fields */
             if ( nfields < 1 ) {
-#if 0
-                fwrite(&fieldname_type,2,1,(FILE*)mat->fp);
-                fwrite(&fieldname_data_size,2,1,(FILE*)mat->fp);
-#else
-                fieldname = (fieldname_data_size<<16) | fieldname_type;
+                fieldname = (fieldname_data_size << 16) | fieldname_type;
                 fwrite(&fieldname,4,1,(FILE*)mat->fp);
-#endif
                 fieldname_size = 1;
                 fwrite(&fieldname_size,4,1,(FILE*)mat->fp);
-                fwrite(&array_name_type,2,1,(FILE*)mat->fp);
-                fwrite(&pad1,1,1,(FILE*)mat->fp);
-                fwrite(&pad1,1,1,(FILE*)mat->fp);
+                fwrite(&array_name_type,4,1,(FILE*)mat->fp);
                 nBytes = 0;
                 fwrite(&nBytes,4,1,(FILE*)mat->fp);
                 break;
@@ -1814,17 +1807,10 @@ WriteType(mat_t *mat,matvar_t *matvar)
             fieldname_size = maxlen;
             while ( nfields*fieldname_size % 8 != 0 )
                 fieldname_size++;
-#if 0
-            fwrite(&fieldname_type,2,1,(FILE*)mat->fp);
-            fwrite(&fieldname_data_size,2,1,(FILE*)mat->fp);
-#else
-            fieldname = (fieldname_data_size<<16) | fieldname_type;
+            fieldname = (fieldname_data_size << 16) | fieldname_type;
             fwrite(&fieldname,4,1,(FILE*)mat->fp);
-#endif
             fwrite(&fieldname_size,4,1,(FILE*)mat->fp);
-            fwrite(&array_name_type,2,1,(FILE*)mat->fp);
-            fwrite(&pad1,1,1,(FILE*)mat->fp);
-            fwrite(&pad1,1,1,(FILE*)mat->fp);
+            fwrite(&array_name_type,4,1,(FILE*)mat->fp);
             nBytes = nfields*fieldname_size;
             fwrite(&nBytes,4,1,(FILE*)mat->fp);
             padzero = (char*)calloc(fieldname_size,1);
@@ -1894,10 +1880,10 @@ static int
 WriteCellArrayField(mat_t *mat,matvar_t *matvar)
 {
     mat_uint32_t array_flags;
-    mat_int16_t array_name_type = MAT_T_INT8;
     int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
-    const mat_int8_t pad1 = 0;
+    int array_flags_size = 8, matrix_type = MAT_T_MATRIX;
+    const mat_uint32_t pad4 = 0;
+    const mat_uint8_t pad1 = 0;
     int nBytes, i, nzmax = 0;
     long start = 0, end = 0;
 
@@ -1942,22 +1928,21 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar)
         fwrite(&pad4,4,1,(FILE*)mat->fp);
     /* Name of variable */
     if ( !matvar->name ) {
-        fwrite(&array_name_type,2,1,(FILE*)mat->fp);
-        fwrite(&pad1,1,1,(FILE*)mat->fp);
-        fwrite(&pad1,1,1,(FILE*)mat->fp);
+        const mat_uint32_t array_name_type = MAT_T_INT8;
+        fwrite(&array_name_type,4,1,(FILE*)mat->fp);
         fwrite(&pad4,4,1,(FILE*)mat->fp);
     } else if ( strlen(matvar->name) <= 4 ) {
-        mat_int16_t array_name_len = (mat_int16_t)strlen(matvar->name);
-        fwrite(&array_name_type,2,1,(FILE*)mat->fp);
-        fwrite(&array_name_len,2,1,(FILE*)mat->fp);
+        mat_uint32_t array_name_type = MAT_T_INT8;
+        const mat_uint32_t array_name_len = (mat_uint32_t)strlen(matvar->name);
+        array_name_type = (array_name_len << 16) | array_name_type;
+        fwrite(&array_name_type,4,1,(FILE*)mat->fp);
         fwrite(matvar->name,1,array_name_len,(FILE*)mat->fp);
         for ( i = array_name_len; i < 4; i++ )
             fwrite(&pad1,1,1,(FILE*)mat->fp);
     } else {
-        mat_int32_t array_name_len = (mat_int32_t)strlen(matvar->name);
-        fwrite(&array_name_type,2,1,(FILE*)mat->fp);
-        fwrite(&pad1,1,1,(FILE*)mat->fp);
-        fwrite(&pad1,1,1,(FILE*)mat->fp);
+        const mat_uint32_t array_name_type = MAT_T_INT8;
+        const mat_uint32_t array_name_len = (mat_uint32_t)strlen(matvar->name);
+        fwrite(&array_name_type,4,1,(FILE*)mat->fp);
         fwrite(&array_name_len,4,1,(FILE*)mat->fp);
         fwrite(matvar->name,1,array_name_len,(FILE*)mat->fp);
         if ( array_name_len % 8 )
@@ -1991,7 +1976,7 @@ static size_t
 WriteCompressedTypeArrayFlags(mat_t *mat,matvar_t *matvar,z_streamp z)
 {
     mat_uint32_t array_flags;
-    mat_int16_t  array_name_type = MAT_T_INT8;
+    const mat_uint32_t array_name_type = MAT_T_INT8;
     int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
     int array_flags_size = 8;
     int nBytes, i, nzmax = 0;
@@ -2030,7 +2015,7 @@ WriteCompressedTypeArrayFlags(mat_t *mat,matvar_t *matvar,z_streamp z)
         uncomp_buf[6+i] = dim;
     }
     if ( matvar->rank % 2 != 0 ) {
-        int pad4 = 0;
+        const mat_uint32_t pad4 = 0;
         uncomp_buf[6+i] = pad4;
         i++;
     }
@@ -2145,12 +2130,12 @@ WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
         case MAT_C_STRUCT:
         {
             int buf_size = 512;
-            mat_int16_t fieldname_type = MAT_T_INT32;
-            mat_int16_t fieldname_data_size = 4;
+            const mat_uint32_t fieldname_type = MAT_T_INT32;
+            const mat_uint32_t fieldname_data_size = 4;
             unsigned char *padzero;
             int fieldname_size;
             size_t maxlen = 0, nfields, i, nelems_x_nfields;
-            mat_int32_t array_name_type = MAT_T_INT8;
+            const mat_uint32_t array_name_type = MAT_T_INT8;
             matvar_t **fields = (matvar_t **)matvar->data;
 
             nfields = matvar->internal->num_fields;
@@ -2305,9 +2290,10 @@ static int
 WriteStructField(mat_t *mat,matvar_t *matvar)
 {
     mat_uint32_t array_flags;
-    mat_int32_t  array_name_type = MAT_T_INT8;
+    const mat_uint32_t array_name_type = MAT_T_INT8;
     int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
+    int array_flags_size = 8, matrix_type = MAT_T_MATRIX;
+    const mat_uint32_t pad4 = 0;
     int nBytes, i, nzmax = 0;
     long start = 0, end = 0;
 
@@ -2429,10 +2415,12 @@ static size_t
 Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,size_t *dims)
 {
     mat_uint32_t array_flags;
-    mat_int32_t  array_name_type = MAT_T_INT8, matrix_type = MAT_T_MATRIX;
+    mat_uint32_t array_name_type = MAT_T_INT8;
+    const mat_uint32_t matrix_type = MAT_T_MATRIX;
     int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int array_flags_size = 8, pad4 = 0, nBytes, i;
-    const mat_int8_t pad1 = 0;
+    int array_flags_size = 8, nBytes, i;
+    const mat_uint32_t pad4 = 0;
+    const mat_uint8_t pad1 = 0;
     size_t byteswritten = 0;
     long start = 0, end = 0;
 
@@ -2554,7 +2542,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
         uncomp_buf[6+i] = dim;
     }
     if ( rank % 2 != 0 ) {
-        int pad4 = 0;
+        const mat_uint32_t pad4 = 0;
         uncomp_buf[6+i] = pad4;
         i++;
     }
@@ -2569,7 +2557,7 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
     } while ( z->avail_out == 0 );
     /* Name of variable */
     if ( NULL == name ) {
-        mat_int16_t array_name_type = MAT_T_INT8;
+        const mat_uint32_t array_name_type = MAT_T_INT8;
         uncomp_buf[0] = array_name_type;
         uncomp_buf[1] = 0;
         z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
@@ -2581,8 +2569,8 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
             byteswritten += fwrite(comp_buf,1,buf_size_bytes-z->avail_out,(FILE*)mat->fp);
         } while ( z->avail_out == 0 );
     } else if ( strlen(name) <= 4 ) {
-        mat_int16_t array_name_len = (mat_int16_t)strlen(name);
-        mat_int16_t array_name_type = MAT_T_INT8;
+        mat_uint32_t array_name_len = (mat_uint32_t)strlen(name);
+        const mat_uint32_t array_name_type = MAT_T_INT8;
 
         memset(uncomp_buf,0,8);
         uncomp_buf[0] = (array_name_len << 16) | array_name_type;
@@ -2600,8 +2588,8 @@ Mat_WriteCompressedEmptyVariable5(mat_t *mat,const char *name,int rank,
                 (FILE*)mat->fp);
         } while ( z->avail_out == 0 );
     } else {
-        mat_int32_t array_name_len = (mat_int32_t)strlen(name);
-        mat_int32_t array_name_type = MAT_T_INT8;
+        mat_uint32_t array_name_len = (mat_uint32_t)strlen(name);
+        const mat_uint32_t array_name_type = MAT_T_INT8;
 
         memset(uncomp_buf,0,buf_size*sizeof(*uncomp_buf));
         uncomp_buf[0] = array_name_type;
@@ -4521,7 +4509,8 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
 {
     mat_uint32_t array_flags;
     int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
-    int array_flags_size = 8, pad4 = 0, matrix_type = MAT_T_MATRIX;
+    int array_flags_size = 8, matrix_type = MAT_T_MATRIX;
+    const mat_uint32_t pad4 = 0;
     int nBytes, i, nzmax = 0;
     long start = 0, end = 0;
 
@@ -4571,23 +4560,18 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             fwrite(&pad4,4,1,(FILE*)mat->fp);
         /* Name of variable */
         if ( strlen(matvar->name) <= 4 ) {
-            mat_int32_t  array_name_type = MAT_T_INT8;
-            mat_int32_t array_name_len   = (mat_int32_t)strlen(matvar->name);
-            mat_int8_t  pad1 = 0;
-#if 0
-            fwrite(&array_name_type,2,1,(FILE*)mat->fp);
-            fwrite(&array_name_len,2,1,(FILE*)mat->fp);
-#else
+            mat_uint32_t array_name_type = MAT_T_INT8;
+            const mat_uint32_t array_name_len = (mat_uint32_t)strlen(matvar->name);
+            const mat_uint8_t  pad1 = 0;
             array_name_type = (array_name_len << 16) | array_name_type;
             fwrite(&array_name_type,4,1,(FILE*)mat->fp);
-#endif
             fwrite(matvar->name,1,array_name_len,(FILE*)mat->fp);
             for ( i = array_name_len; i < 4; i++ )
                 fwrite(&pad1,1,1,(FILE*)mat->fp);
         } else {
-            mat_int32_t array_name_type = MAT_T_INT8;
-            mat_int32_t array_name_len  = (mat_int32_t)strlen(matvar->name);
-            mat_int8_t  pad1 = 0;
+            const mat_uint32_t array_name_type = MAT_T_INT8;
+            const mat_uint32_t array_name_len = (mat_uint32_t)strlen(matvar->name);
+            const mat_uint8_t  pad1 = 0;
 
             fwrite(&array_name_type,4,1,(FILE*)mat->fp);
             fwrite(&array_name_len,4,1,(FILE*)mat->fp);
@@ -4684,8 +4668,8 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         } while ( z->avail_out == 0 );
         /* Name of variable */
         if ( strlen(matvar->name) <= 4 ) {
-            mat_int16_t array_name_len = (mat_int16_t)strlen(matvar->name);
-            mat_int16_t array_name_type = MAT_T_INT8;
+            mat_uint32_t array_name_len = (mat_uint32_t)strlen(matvar->name);
+            const mat_uint32_t array_name_type = MAT_T_INT8;
 
             memset(uncomp_buf,0,8);
             uncomp_buf[0] = (array_name_len << 16) | array_name_type;
@@ -4703,8 +4687,8 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
                     buf_size*sizeof(*comp_buf)-z->avail_out,(FILE*)mat->fp);
             } while ( z->avail_out == 0 );
         } else {
-            mat_int32_t array_name_len = (mat_int32_t)strlen(matvar->name);
-            mat_int32_t array_name_type = MAT_T_INT8;
+            mat_uint32_t array_name_len = (mat_uint32_t)strlen(matvar->name);
+            const mat_uint32_t array_name_type = MAT_T_INT8;
 
             memset(uncomp_buf,0,buf_size*sizeof(*uncomp_buf));
             uncomp_buf[0] = array_name_type;
