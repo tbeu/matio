@@ -1775,7 +1775,7 @@ WriteType(mat_t *mat,matvar_t *matvar)
             const mat_uint32_t fieldname_type = MAT_T_INT32;
             const mat_uint32_t fieldname_data_size = 4;
             char *padzero;
-            int fieldname_size;
+            mat_uint32_t fieldname_size;
             size_t maxlen = 0, nfields, i, nelems_x_nfields;
             matvar_t **fields = (matvar_t **)matvar->data;
             mat_uint32_t fieldname;
@@ -1934,7 +1934,7 @@ WriteCellArrayField(mat_t *mat,matvar_t *matvar)
     } else if ( strlen(matvar->name) <= 4 ) {
         mat_uint32_t array_name_type = MAT_T_INT8;
         const mat_uint32_t array_name_len = (mat_uint32_t)strlen(matvar->name);
-        array_name_type = (array_name_len << 16) | array_name_type;
+        array_name_type |= array_name_len << 16;
         fwrite(&array_name_type,4,1,(FILE*)mat->fp);
         fwrite(matvar->name,1,array_name_len,(FILE*)mat->fp);
         for ( i = array_name_len; i < 4; i++ )
@@ -2457,7 +2457,7 @@ Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,size_t *dims)
         mat_int32_t array_name_len = (mat_int32_t)strlen(name);
         /* Name of variable */
         if ( array_name_len <= 4 ) {
-            array_name_type = (array_name_len << 16) | array_name_type;
+            array_name_type |= array_name_len << 16;
             byteswritten += fwrite(&array_name_type,4,1,(FILE*)mat->fp);
             byteswritten += fwrite(name,1,array_name_len,(FILE*)mat->fp);
             for ( i = array_name_len; i < 4; i++ )
@@ -4563,7 +4563,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
             mat_uint32_t array_name_type = MAT_T_INT8;
             const mat_uint32_t array_name_len = (mat_uint32_t)strlen(matvar->name);
             const mat_uint8_t  pad1 = 0;
-            array_name_type = (array_name_len << 16) | array_name_type;
+            array_name_type |= array_name_len << 16;
             fwrite(&array_name_type,4,1,(FILE*)mat->fp);
             fwrite(matvar->name,1,array_name_len,(FILE*)mat->fp);
             for ( i = array_name_len; i < 4; i++ )
