@@ -797,32 +797,31 @@ Mat_VarReadNextInfo4(mat_t *mat)
     }
 
     M = (int)floor(tmp / 1000.0);
-    tmp -= M*1000;
-    O = (int)floor(tmp / 100.0);
-    tmp -= O*100;
-    data_type = (int)floor(tmp / 10.0);
-    tmp -= data_type*10;
-    class_type = (int)floor(tmp / 1.0);
-
     switch ( M ) {
         case 0:
             /* IEEE little endian */
-            mat->byteswap = (endian.c[0] != 4);
+            mat->byteswap = endian.c[0] != 4;
             break;
         case 1:
             /* IEEE big endian */
-            mat->byteswap = (endian.c[0] != 1);
+            mat->byteswap = endian.c[0] != 1;
             break;
         default:
             /* VAX, Cray, or bogus */
             Mat_VarFree(matvar);
             return NULL;
     }
+
+    tmp -= M*1000;
+    O = (int)floor(tmp / 100.0);
     /* O must be zero */
     if ( 0 != O ) {
         Mat_VarFree(matvar);
         return NULL;
     }
+
+    tmp -= O*100;
+    data_type = (int)floor(tmp / 10.0);
     /* Convert the V4 data type */
     switch ( data_type ) {
         case 0:
@@ -847,6 +846,9 @@ Mat_VarReadNextInfo4(mat_t *mat)
             Mat_VarFree(matvar);
             return NULL;
     }
+
+    tmp -= data_type*10;
+    class_type = (int)floor(tmp / 1.0);
     switch ( class_type ) {
         case 0:
             matvar->class_type = MAT_C_DOUBLE;
@@ -861,6 +863,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
             Mat_VarFree(matvar);
             return NULL;
     }
+
     matvar->rank = 2;
     matvar->dims = (size_t*)malloc(2*sizeof(*matvar->dims));
     if ( NULL == matvar->dims ) {
