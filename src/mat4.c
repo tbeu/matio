@@ -865,7 +865,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     }
 
     matvar->rank = 2;
-    matvar->dims = (size_t*)malloc(2*sizeof(*matvar->dims));
+    matvar->dims = (size_t*)calloc(2, sizeof(*matvar->dims));
     if ( NULL == matvar->dims ) {
         Mat_VarFree(matvar);
         return NULL;
