@@ -917,6 +917,8 @@ Mat_VarReadNextInfo4(mat_t *mat)
     if ( tmp != readresult ) {
         Mat_VarFree(matvar);
         return NULL;
+    } else {
+        matvar->name[tmp - 1] = '\0';
     }
 
     matvar->internal->datapos = ftell((FILE*)mat->fp);
