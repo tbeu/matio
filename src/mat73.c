@@ -990,7 +990,7 @@ Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *in
 static void
 Mat_H5ReadNextReferenceInfo(hid_t ref_id,matvar_t *matvar,mat_t *mat)
 {
-    if( ref_id < 0 || matvar == NULL)
+    if ( ref_id < 0 || matvar == NULL )
         return;
 
     switch ( H5Iget_type(ref_id) ) {
@@ -2313,18 +2313,19 @@ Mat_Create73(const char *matname,const char *hdr_str)
  * @ingroup mat_internal
  * @param mat MAT file pointer
  * @param matvar MAT variable pointer
+ * @retval 0 on success
  * @endif
  */
-void
+int
 Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 {
-    int err;
+    int err = 0;
     hid_t fid,dset_id,ref_id;
 
     if ( NULL == mat || NULL == matvar )
-        return;
+        return 1;
     else if ( NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id )
-        return;
+        return 1;
 
     fid = *(hid_t*)mat->fp;
 
@@ -2346,7 +2347,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return;
+                return err;
             }
 
             if ( nelems < 1 )
@@ -2386,7 +2387,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return;
+                return err;
             }
 
             if ( NULL != matvar->internal->hdf5_name ) {
@@ -2417,7 +2418,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             err |= SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return;
+                return err;
             }
 
             fields = (matvar_t**)matvar->data;
@@ -2427,7 +2428,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                     /* Dataset of references */
                     Mat_H5ReadNextReferenceData(fields[i]->internal->id,fields[i],mat);
                 } else {
-                    Mat_VarRead73(mat,fields[i]);
+                    err |= Mat_VarRead73(mat,fields[i]);
                 }
             }
             break;
@@ -2531,6 +2532,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_OPAQUE:
             break;
     }
+    return err;
 }
 
 /** @if mat_devman

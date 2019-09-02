@@ -285,9 +285,10 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
  * @ingroup mat_internal
  * @param mat MAT file pointer
  * @param matvar MAT variable pointer to read the data
+ * @retval 0 on success
  * @endif
  */
-void
+int
 Mat_VarRead4(mat_t *mat,matvar_t *matvar)
 {
     int err;
@@ -296,7 +297,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
     err = SafeMulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
-        return;
+        return err;
     }
 
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
@@ -307,7 +308,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
             err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return;
+                return err;
             }
 
             if ( matvar->isComplex ) {
@@ -319,6 +320,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                 }
                 else {
                     Mat_Critical("Couldn't allocate memory for the complex data");
+                    err = 1;
                 }
             } else {
                 matvar->data = malloc(matvar->nbytes);
@@ -327,6 +329,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                 }
                 else {
                     Mat_Critical("Couldn't allocate memory for the data");
+                    err = 1;
                 }
             }
             /* Update data type to match format of matvar->data */
@@ -341,6 +344,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
             }
             else {
                 Mat_Critical("Couldn't allocate memory for the data");
+                err = 1;
             }
             matvar->data_type = MAT_T_UINT8;
             break;
@@ -368,7 +372,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                     free(matvar->data);
                     matvar->data = NULL;
                     Mat_Critical("Couldn't allocate memory for the sparse row array");
-                    return;
+                    return 1;
                 }
                 ReadDoubleData(mat, &tmp, data_type, 1);
                 matvar->dims[0] = (size_t)tmp;
@@ -379,7 +383,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                     free(matvar->data);
                     matvar->data = NULL;
                     Mat_Critical("Couldn't determine file position");
-                    return;
+                    return 1;
                 }
                 (void)fseek((FILE*)mat->fp,sparse->nir*Mat_SizeOf(data_type),
                     SEEK_CUR);
@@ -389,7 +393,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                     free(matvar->data);
                     matvar->data = NULL;
                     Mat_Critical("Invalid column dimension for sparse matrix");
-                    return;
+                    return 1;
                 }
                 matvar->dims[1] = (size_t)tmp;
                 (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
@@ -398,7 +402,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                     free(matvar->data);
                     matvar->data = NULL;
                     Mat_Critical("Invalid column dimension for sparse matrix");
-                    return;
+                    return 1;
                 }
                 sparse->njc = (int)matvar->dims[1] + 1;
                 sparse->jc = (mat_int32_t*)malloc(sparse->njc*sizeof(mat_int32_t));
@@ -423,14 +427,14 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                         free(matvar->data);
                         matvar->data = NULL;
                         Mat_Critical("Couldn't allocate memory for the sparse index array");
-                        return;
+                        return 1;
                     }
                 } else {
                     free(sparse->ir);
                     free(matvar->data);
                     matvar->data = NULL;
                     Mat_Critical("Couldn't allocate memory for the sparse index array");
-                    return;
+                    return 1;
                 }
                 ReadDoubleData(mat, &tmp, data_type, 1);
                 sparse->ndata = sparse->nir;
@@ -515,7 +519,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                                 matvar->data = NULL;
                                 Mat_Critical("Mat_VarRead4: %d is not a supported data type for "
                                     "extended sparse", data_type);
-                                return;
+                                return 1;
                         }
 #else
                         ReadDoubleData(mat, (double*)complex_data->Re,
@@ -532,7 +536,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                         free(matvar->data);
                         matvar->data = NULL;
                         Mat_Critical("Couldn't allocate memory for the complex sparse data");
-                        return;
+                        return 1;
                     }
                 } else {
                     sparse->data = malloc(sparse->ndata*Mat_SizeOf(data_type));
@@ -592,7 +596,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                                 matvar->data = NULL;
                                 Mat_Critical("Mat_VarRead4: %d is not a supported data type for "
                                     "extended sparse", data_type);
-                                return;
+                                return 1;
                         }
 #else
                         ReadDoubleData(mat, (double*)sparse->data, data_type, sparse->ndata);
@@ -604,21 +608,21 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                         free(matvar->data);
                         matvar->data = NULL;
                         Mat_Critical("Couldn't allocate memory for the sparse data");
-                        return;
+                        return 1;
                     }
                 }
                 break;
             }
             else {
                 Mat_Critical("Couldn't allocate memory for the data");
-                return;
+                return 1;
             }
         default:
             Mat_Critical("MAT V4 data type error");
-            return;
+            return 1;
     }
 
-    return;
+    return err;
 }
 
 /** @if mat_devman

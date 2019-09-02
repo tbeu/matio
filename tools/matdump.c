@@ -324,10 +324,10 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
     while ( !done ) {
         /* Check If the user is selecting a subset of the dataset */
         if ( next_tok == '(' ) {
-            int rank, *start, *stride, *edge,nmemb;
+            int rank, *start, *stride, *edge, nmemb;
 
-            open    = next_tok_pos;
-            close   = strchr(open+1,')');
+            open  = next_tok_pos;
+            close = strchr(open+1,')');
 
             /* Get the next token after this selection */
             next_tok_pos = get_next_token(close+1);
@@ -385,7 +385,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                         matvar->dims[1] = 1;
                     }
                 } else {
-                    Mat_VarReadData(mat,matvar,matvar->data,start,stride,edge);
+                    err = Mat_VarReadData(mat,matvar,matvar->data,start,stride,edge);
                     for ( i = 0; i < rank; i++ )
                         matvar->dims[i] = (size_t)edge[i];
                 }
@@ -417,7 +417,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 Mat_VarFree(matvar);
                 matvar = field;
                 if ( done == 1 ) {
-                    Mat_VarReadDataAll(mat, matvar);
+                    err = Mat_VarReadDataAll(mat, matvar);
                 }
             } else if ( matvar->class_type == MAT_C_CELL ) {
                 int ncells;
@@ -457,7 +457,7 @@ read_selected_data(mat_t *mat,matvar_t **_matvar,char *index_str)
                 break;
             }
         } else if ( next_tok == '{' ) {
-            int rank, *start, *stride, *edge,nmemb, err = 0;
+            int rank, *start, *stride, *edge, nmemb;
 
             if ( matvar->class_type != MAT_C_CELL ) {
                 fprintf(stderr,"Only Cell Arrays can index with {}");
@@ -920,7 +920,7 @@ main (int argc, char *argv[])
                 if ( printdata ) {
                     if ( next_tok == '\0' ) {
                         /* No indexing tokens found, so read all of the data */
-                        Mat_VarReadDataAll(mat,matvar);
+                        err = Mat_VarReadDataAll(mat,matvar);
                     } else {
                         *next_tok_pos = next_tok;
                         read_selected_data(mat,&matvar,next_tok_pos);

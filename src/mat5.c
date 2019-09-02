@@ -1059,7 +1059,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                             else if ( nbytes <= (1 << MAX_WBITS) ) {
                                 /* Memory optimization: Read data if less in size
                                    than the zlib inflate state (approximately) */
-                                Mat_VarRead5(mat,cells[i]);
+                                err = Mat_VarRead5(mat,cells[i]);
                                 cells[i]->internal->data = cells[i]->data;
                                 cells[i]->data = NULL;
                             }
@@ -1413,7 +1413,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                             else if ( nbytes <= (1 << MAX_WBITS) ) {
                                 /* Memory optimization: Read data if less in size
                                    than the zlib inflate state (approximately) */
-                                Mat_VarRead5(mat,fields[i]);
+                                err = Mat_VarRead5(mat,fields[i]);
                                 fields[i]->internal->data = fields[i]->data;
                                 fields[i]->data = NULL;
                             }
@@ -2785,9 +2785,10 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
  * @ingroup mat_internal
  * @param mat MAT file pointer
  * @param matvar MAT variable pointer to read the data
+ * @retval 0 on success
  * @endif
  */
-void
+int
 Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 {
     int nBytes = 0, byteswap, data_in_tag = 0, err;
@@ -2798,26 +2799,26 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
     size_t bytesread = 0;
 
     if ( matvar == NULL )
-        return;
+        return 1;
     else if ( matvar->rank == 0 )        /* An empty data set */
-        return;
+        return 0;
 #if defined(HAVE_ZLIB)
     else if ( NULL != matvar->internal->data ) {
         /* Data already read in ReadNextStructField or ReadNextCell */
         matvar->data = matvar->internal->data;
         matvar->internal->data = NULL;
-        return;
+        return 0;
     }
 #endif
     fpos = ftell((FILE*)mat->fp);
     if ( fpos == -1L ) {
         Mat_Critical("Couldn't determine file position");
-        return;
+        return 1;
     }
     err = SafeMulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
-        return;
+        return err;
     }
     byteswap = mat->byteswap;
     switch ( matvar->class_type ) {
@@ -2933,9 +2934,10 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             if ( matvar->isComplex ) {
                 break;
             }
-            matvar->data = calloc(matvar->nbytes+1,1);
+            matvar->data = calloc(matvar->nbytes+1, 1);
             if ( NULL == matvar->data ) {
                 Mat_Critical("Couldn't allocate memory for the data");
+                err = 1;
                 break;
             }
             if ( 0 == matvar->nbytes ) {
@@ -2985,7 +2987,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             fields = (matvar_t **)matvar->data;
             for ( i = 0; i < nelems_x_nfields; i++ ) {
                 if ( NULL != fields[i] ) {
-                    Mat_VarRead5(mat,fields[i]);
+                    err |= Mat_VarRead5(mat,fields[i]);
                 }
             }
             break;
@@ -2997,12 +2999,13 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 
             if ( NULL == matvar->data ) {
                 Mat_Critical("Data is NULL for cell array %s",matvar->name);
+                err = 1;
                 break;
             }
             cells = (matvar_t **)matvar->data;
             for ( i = 0; i < nelems; i++ ) {
                 if ( NULL != cells[i] ) {
-                    Mat_VarRead5(mat, cells[i]);
+                    err |= Mat_VarRead5(mat, cells[i]);
                 }
             }
             /* FIXME: */
@@ -3018,6 +3021,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             matvar->data      = malloc(matvar->data_size);
             if ( matvar->data == NULL ) {
                 Mat_Critical("Mat_VarRead5: Allocation of data pointer failed");
+                err = 1;
                 break;
             }
             data = (mat_sparse_t*)matvar->data;
@@ -3081,6 +3085,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     ComplexMalloc(data->ndata*Mat_SizeOf(matvar->data_type));
                 if ( NULL == complex_data ) {
                     Mat_Critical("Couldn't allocate memory for the complex sparse data");
+                    err = 1;
                     break;
                 }
                 if ( matvar->compression == MAT_COMPRESSION_NONE ) {
@@ -3358,6 +3363,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 data->data = malloc(data->ndata*Mat_SizeOf(matvar->data_type));
                 if ( data->data == NULL ) {
                     Mat_Critical("Couldn't allocate memory for the sparse data");
+                    err = 1;
                     break;
                 }
                 if ( matvar->compression == MAT_COMPRESSION_NONE ) {
@@ -3505,6 +3511,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
         }
         default:
             Mat_Critical("Mat_VarRead5: %d is not a supported class", matvar->class_type);
+            err = 1;
     }
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
@@ -3533,6 +3540,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 complex_data = ComplexMalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
                     Mat_Critical("Couldn't allocate memory for the complex data");
+                    err = 1;
                     break;
                 }
 
@@ -3549,6 +3557,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 matvar->data = malloc(matvar->nbytes);
                 if ( NULL == matvar->data ) {
                     Mat_Critical("Couldn't allocate memory for the data");
+                    err = 1;
                     break;
                 }
                 Mat_VarReadNumeric5(mat,matvar,matvar->data,nelems);
@@ -3558,7 +3567,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
     }
     (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
 
-    return;
+    return err;
 }
 
 #if defined(HAVE_ZLIB)

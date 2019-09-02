@@ -62,20 +62,20 @@
  *===================================================================
  */
 
-static void
+static int
 ReadData(mat_t *mat, matvar_t *matvar)
 {
     if ( mat == NULL || matvar == NULL || mat->fp == NULL )
-        return;
+        return 1;
     else if ( mat->version == MAT_FT_MAT5 )
-        Mat_VarRead5(mat,matvar);
+        return Mat_VarRead5(mat,matvar);
 #if defined(MAT73) && MAT73
     else if ( mat->version == MAT_FT_MAT73 )
-        Mat_VarRead73(mat,matvar);
+        return Mat_VarRead73(mat,matvar);
 #endif
     else if ( mat->version == MAT_FT_MAT4 )
-        Mat_VarRead4(mat,matvar);
-    return;
+        return Mat_VarRead4(mat,matvar);
+    return 1;
 }
 
 static void
@@ -2260,10 +2260,10 @@ Mat_VarReadDataAll(mat_t *mat,matvar_t *matvar)
 {
     int err = 0;
 
-    if ( (mat == NULL) || (matvar == NULL) )
+    if ( mat == NULL || matvar == NULL )
         err = 1;
     else
-        ReadData(mat,matvar);
+        err = ReadData(mat,matvar);
 
     return err;
 }
@@ -2448,15 +2448,25 @@ Mat_VarRead( mat_t *mat, const char *name )
             return NULL;
         }
         matvar = Mat_VarReadInfo(mat,name);
-        if ( matvar )
-            ReadData(mat,matvar);
+        if ( matvar ) {
+            const int err = ReadData(mat,matvar);
+            if ( err ) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+            }
+        }
         (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
     } else {
         size_t fpos = mat->next_index;
         mat->next_index = 0;
         matvar = Mat_VarReadInfo(mat,name);
-        if ( matvar )
-            ReadData(mat,matvar);
+        if ( matvar ) {
+            const int err = ReadData(mat,matvar);
+            if ( err ) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+            }
+        }
         mat->next_index = fpos;
     }
 
@@ -2489,7 +2499,11 @@ Mat_VarReadNext( mat_t *mat )
     }
     matvar = Mat_VarReadNextInfo(mat);
     if ( matvar ) {
-        ReadData(mat,matvar);
+        const int err = ReadData(mat,matvar);
+        if ( err ) {
+            Mat_VarFree(matvar);
+            matvar = NULL;
+        }
     } else if ( mat->version != MAT_FT_MAT73 ) {
         (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
     }
