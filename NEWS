@@ -3,7 +3,7 @@ Changes in 1.5.17 (18 July 2019)
 * Fixed bug reading past EOF from (crafted) uncompressed v5 MAT file
 
 Changes in 1.5.16 (25 June 2019)
-* Fixed error handling on integer addition/multiplication overflows
+* Fixed error handling on integer addition/multiplication overflows (CVE-2019-13107)
 
 Changes in 1.5.15 (29 March 2019)
 * Added new API function Mat_GetHeader to retrieve header string of a MAT file
@@ -17,9 +17,11 @@ Changes in 1.5.15 (29 March 2019)
 Changes in 1.5.14 (11 March 2019)
 * Deprecated usage of Mat_VarWriteInfo/Mat_VarWriteData in favor of
   Mat_VarWrite/Mat_VarWriteAppend
-* Fixed bug reading dimensions from (crafted) compressed v5 MAT file
+* Fixed bug reading dimensions from (crafted) compressed v5 MAT file (CVE-2019-9026,
+  CVE-2019-9027, CVE-2019-9028, CVE-2019-9029, CVE-2019-9030, CVE-2019-9031, CVE-2019-9032,
+  CVE-2019-9033, CVE-2019-9034, CVE-2019-9035, CVE-2019-9036, CVE-2019-9038)
 * Fixed bug reading name (> 24 characters) from v5 MAT file (regression of v1.5.13)
-* Fixed bug printing datatype in Mat_VarPrint
+* Fixed bug printing datatype in Mat_VarPrint (CVE-2019-9037)
 
 Changes in 1.5.13 (22 October 2018)
 * Fixed bug calculating size for zero-rank variables in Mat_VarGetSize
