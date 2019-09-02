@@ -160,6 +160,14 @@ ComplexMalloc(size_t nbytes)
     return complex_data;
 }
 
+void
+ComplexFree(mat_complex_split_t* complex_data)
+{
+    free(complex_data->Re);
+    free(complex_data->Im);
+    free(complex_data);
+}
+
 enum matio_types
 ClassType2DataType(enum matio_classes class_type)
 {
@@ -1533,10 +1541,7 @@ Mat_VarFree(matvar_t *matvar)
                     if ( sparse->jc != NULL )
                         free(sparse->jc);
                     if ( matvar->isComplex && NULL != sparse->data ) {
-                        mat_complex_split_t *complex_data = (mat_complex_split_t*)sparse->data;
-                        free(complex_data->Re);
-                        free(complex_data->Im);
-                        free(complex_data);
+                        ComplexFree((mat_complex_split_t*)sparse->data);
                     } else if ( sparse->data != NULL ) {
                         free(sparse->data);
                     }
@@ -1556,10 +1561,7 @@ Mat_VarFree(matvar_t *matvar)
             case MAT_C_CHAR:
                 if ( !matvar->mem_conserve ) {
                     if ( matvar->isComplex ) {
-                        mat_complex_split_t *complex_data = (mat_complex_split_t*)matvar->data;
-                        free(complex_data->Re);
-                        free(complex_data->Im);
-                        free(complex_data);
+                        ComplexFree((mat_complex_split_t*)matvar->data);
                     } else {
                         free(matvar->data);
                     }
@@ -1582,7 +1584,7 @@ Mat_VarFree(matvar_t *matvar)
         if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             inflateEnd(matvar->internal->z);
             free(matvar->internal->z);
-            if ( (matvar->internal->data != NULL) && (matvar->class_type == MAT_C_SPARSE) ) {
+            if ( matvar->class_type == MAT_C_SPARSE && NULL != matvar->internal->data ) {
                 mat_sparse_t *sparse;
                 sparse = (mat_sparse_t*)matvar->internal->data;
                 if ( sparse->ir != NULL )
@@ -1590,21 +1592,14 @@ Mat_VarFree(matvar_t *matvar)
                 if ( sparse->jc != NULL )
                     free(sparse->jc);
                 if ( matvar->isComplex && NULL != sparse->data ) {
-                    mat_complex_split_t *complex_data = (mat_complex_split_t*)sparse->data;
-                    free(complex_data->Re);
-                    free(complex_data->Im);
-                    free(complex_data);
+                    ComplexFree((mat_complex_split_t*)sparse->data);
                 } else if ( sparse->data != NULL ) {
                     free(sparse->data);
                 }
                 free(sparse);
             }
-            else if ( (matvar->internal->data != NULL) && matvar->isComplex ) {
-                mat_complex_split_t *complex_data =
-                    (mat_complex_split_t*)matvar->internal->data;
-                free(complex_data->Re);
-                free(complex_data->Im);
-                free(complex_data);
+            else if ( matvar->isComplex && NULL != matvar->internal->data ) {
+                ComplexFree((mat_complex_split_t*)matvar->internal->data);
             } else if ( NULL != matvar->internal->data ) {
                 free(matvar->internal->data);
             }
