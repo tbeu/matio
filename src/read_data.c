@@ -44,20 +44,20 @@
     do { \
         const size_t block_size = READ_BLOCK_SIZE/data_size; \
         if ( len <= block_size ) { \
-            bytesread += fread(v, data_size, len, (FILE*)mat->fp); \
+            readcount += fread(v, data_size, len, (FILE*)mat->fp); \
             for ( i = 0; i < len; i++ ) { \
                 data[i] = (T)v[i]; \
             } \
         } else { \
             size_t j; \
             for ( i = 0; i < len - block_size; i += block_size ) { \
-                bytesread += fread(v, data_size, block_size, (FILE*)mat->fp); \
+                readcount += fread(v, data_size, block_size, (FILE*)mat->fp); \
                 for ( j = 0; j < block_size; j++ ) { \
                     data[i + j] = (T)v[j]; \
                 } \
             } \
             if ( len > i ) { \
-                bytesread += fread(v, data_size, len - i, (FILE*)mat->fp); \
+                readcount += fread(v, data_size, len - i, (FILE*)mat->fp); \
                 for ( j = 0; j < len - i; j++ ) { \
                     data[i + j] = (T)v[j]; \
                 } \
@@ -70,20 +70,20 @@
         if ( mat->byteswap ) { \
             const size_t block_size = READ_BLOCK_SIZE/data_size; \
             if ( len <= block_size ) { \
-                bytesread += fread(v, data_size, len, (FILE*)mat->fp); \
+                readcount += fread(v, data_size, len, (FILE*)mat->fp); \
                 for ( i = 0; i < len; i++ ) { \
                     data[i] = (T)SwapFunc(&v[i]); \
                 } \
             } else { \
                 size_t j; \
                 for ( i = 0; i < len - block_size; i += block_size ) { \
-                    bytesread += fread(v, data_size, block_size, (FILE*)mat->fp); \
+                    readcount += fread(v, data_size, block_size, (FILE*)mat->fp); \
                     for ( j = 0; j < block_size; j++ ) { \
                         data[i + j] = (T)SwapFunc(&v[j]); \
                     } \
                 } \
                 if ( len > i ) { \
-                    bytesread += fread(v, data_size, len - i, (FILE*)mat->fp); \
+                    readcount += fread(v, data_size, len - i, (FILE*)mat->fp); \
                     for ( j = 0; j < len-i; j++ ) { \
                         data[i + j] = (T)SwapFunc(&v[j]); \
                     } \

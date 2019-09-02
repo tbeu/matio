@@ -453,7 +453,8 @@ ReadSparse(mat_t *mat, matvar_t *matvar, int *n, mat_int32_t **v)
                 * If the data was in the tag we started on a 4-byte
                 * boundary so add 4 to make it an 8-byte
                 */
-            if ( data_in_tag )
+            nBytes *= Mat_SizeOf(packed_type);
+			if ( data_in_tag )
                 nBytes+=4;
             if ( (nBytes % 8) != 0 )
                 (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
@@ -2709,6 +2710,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
             default:
                 break;
         }
+        nBytes *= Mat_SizeOf(packed_type);
         /*
          * If the data was in the tag we started on a 4-byte
          * boundary so add 4 to make it an 8-byte
@@ -3142,6 +3144,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadDoubleData(mat,(double*)complex_data->Re,
                                  packed_type,data->ndata);
 #endif
+                    nBytes *= Mat_SizeOf(packed_type);
                     if ( data_in_tag )
                         nBytes+=4;
                     if ( (nBytes % 8) != 0 )
@@ -3215,6 +3218,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadDoubleData(mat,(double*)complex_data->Im,
                                 packed_type,data->ndata);
 #endif /* EXTENDED_SPARSE */
+                    nBytes *= Mat_SizeOf(packed_type);
                     if ( data_in_tag )
                         nBytes+=4;
                     if ( (nBytes % 8) != 0 )
@@ -3420,6 +3424,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     nBytes = ReadDoubleData(mat,(double*)data->data,packed_type,
                                  data->ndata);
 #endif
+                    nBytes *= Mat_SizeOf(packed_type);
                     if ( data_in_tag )
                         nBytes+=4;
                     if ( (nBytes % 8) != 0 )
