@@ -114,7 +114,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         mat_int32_t namelen;
     } Fmatrix;
 
-    mat_int32_t nelems = 1, i;
+    mat_int32_t i;
     Fmatrix x;
 
     if ( NULL == mat || NULL == matvar || NULL == matvar->name || matvar->rank != 2 )
@@ -179,10 +179,12 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         case MAT_C_INT16:
         case MAT_C_UINT16:
         case MAT_C_UINT8:
-            for ( i = 0; i < matvar->rank; i++ ) {
-                mat_int32_t dim;
-                dim = (mat_int32_t)matvar->dims[i];
-                nelems *= dim;
+        {
+            size_t nelems = 1;
+            int err = SafeMulDims(matvar, &nelems);
+            if ( err ) {
+                Mat_Critical("Integer multiplication overflow");
+                return -1;
             }
 
             x.mrows = (mat_int32_t)matvar->dims[0];
@@ -201,6 +203,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
                 fwrite(matvar->data, matvar->data_size, nelems, (FILE*)mat->fp);
             }
             break;
+        }
         case MAT_C_SPARSE:
         {
             mat_sparse_t* sparse;
