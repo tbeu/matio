@@ -382,7 +382,12 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                 sparse = (mat_sparse_t*)matvar->data;
                 sparse->nir = matvar->dims[0] - 1;
                 sparse->nzmax = sparse->nir;
-                sparse->ir = (mat_int32_t*)malloc(sparse->nir*sizeof(mat_int32_t));
+                err = SafeMul(&readcount, (size_t)sparse->nir, sizeof(mat_int32_t));
+                if ( err ) {
+                    Mat_Critical("Integer multiplication overflow");
+                    return err;
+                }
+                sparse->ir = (mat_int32_t*)malloc(readcount);
                 if ( sparse->ir != NULL ) {
                     readcount = ReadInt32Data(mat, sparse->ir, data_type, sparse->nir);
                     if ( readcount != sparse->nir ) {
@@ -436,10 +441,20 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                     return 1;
                 }
                 sparse->njc = (int)matvar->dims[1] + 1;
-                sparse->jc = (mat_int32_t*)malloc(sparse->njc*sizeof(mat_int32_t));
+                err = SafeMul(&readcount, (size_t)sparse->njc, sizeof(mat_int32_t));
+                if ( err ) {
+                    Mat_Critical("Integer multiplication overflow");
+                    return err;
+                }
+                sparse->jc = (mat_int32_t*)malloc(readcount);
                 if ( sparse->jc != NULL ) {
                     mat_int32_t *jc;
-                    jc = (mat_int32_t*)malloc(sparse->nir*sizeof(mat_int32_t));
+                    err = SafeMul(&readcount, (size_t)sparse->nir, sizeof(mat_int32_t));
+                    if ( err ) {
+                        Mat_Critical("Integer multiplication overflow");
+                        return err;
+                    }
+                    jc = (mat_int32_t*)malloc(readcount);
                     if ( jc != NULL ) {
                         int j = 0;
                         sparse->jc[0] = 0;
