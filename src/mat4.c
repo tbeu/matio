@@ -371,7 +371,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
             break;
         case MAT_C_SPARSE:
             matvar->data_size = sizeof(mat_sparse_t);
-            matvar->data      = malloc(matvar->data_size);
+            matvar->data      = calloc(1, matvar->data_size);
             if ( NULL != matvar->data ) {
                 double tmp;
                 int i;
