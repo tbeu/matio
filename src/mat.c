@@ -1033,11 +1033,11 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
             sparse_data->nir   = sparse_data_in->nir;
             sparse_data->njc   = sparse_data_in->njc;
             sparse_data->ndata = sparse_data_in->ndata;
-            sparse_data->ir = (mat_int32_t*)malloc(sparse_data->nir*sizeof(*sparse_data->ir));
+            sparse_data->ir = (mat_uint32_t*)malloc(sparse_data->nir*sizeof(*sparse_data->ir));
             if ( NULL != sparse_data->ir )
                 memcpy(sparse_data->ir,sparse_data_in->ir,
                        sparse_data->nir*sizeof(*sparse_data->ir));
-            sparse_data->jc = (mat_int32_t*)malloc(sparse_data->njc*sizeof(*sparse_data->jc));
+            sparse_data->jc = (mat_uint32_t*)malloc(sparse_data->njc*sizeof(*sparse_data->jc));
             if ( NULL != sparse_data->jc )
                 memcpy(sparse_data->jc,sparse_data_in->jc,
                        sparse_data->njc*sizeof(*sparse_data->jc));
@@ -1357,11 +1357,11 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                     mat_sparse_t *in_sparse  = (mat_sparse_t*)in->internal->data;
                     out_sparse->nzmax = in_sparse->nzmax;
                     out_sparse->nir = in_sparse->nir;
-                    out_sparse->ir = (mat_int32_t*)malloc(in_sparse->nir*sizeof(*out_sparse->ir));
+                    out_sparse->ir = (mat_uint32_t*)malloc(in_sparse->nir*sizeof(*out_sparse->ir));
                     if ( out_sparse->ir != NULL )
                         memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(*out_sparse->ir));
                     out_sparse->njc = in_sparse->njc;
-                    out_sparse->jc = (mat_int32_t*)malloc(in_sparse->njc*sizeof(*out_sparse->jc));
+                    out_sparse->jc = (mat_uint32_t*)malloc(in_sparse->njc*sizeof(*out_sparse->jc));
                     if ( out_sparse->jc != NULL )
                         memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(*out_sparse->jc));
                     out_sparse->ndata = in_sparse->ndata;
@@ -1439,11 +1439,11 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
             mat_sparse_t *in_sparse  = (mat_sparse_t*)in->data;
             out_sparse->nzmax = in_sparse->nzmax;
             out_sparse->nir = in_sparse->nir;
-            out_sparse->ir = (mat_int32_t*)malloc(in_sparse->nir*sizeof(*out_sparse->ir));
+            out_sparse->ir = (mat_uint32_t*)malloc(in_sparse->nir*sizeof(*out_sparse->ir));
             if ( out_sparse->ir != NULL )
                 memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir*sizeof(*out_sparse->ir));
             out_sparse->njc = in_sparse->njc;
-            out_sparse->jc = (mat_int32_t*)malloc(in_sparse->njc*sizeof(*out_sparse->jc));
+            out_sparse->jc = (mat_uint32_t*)malloc(in_sparse->njc*sizeof(*out_sparse->jc));
             if ( out_sparse->jc != NULL )
                 memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc*sizeof(*out_sparse->jc));
             out_sparse->ndata = in_sparse->ndata;

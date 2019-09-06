@@ -3402,8 +3402,8 @@ test_write_sparse(enum matio_classes matvar_class,const char *output_name)
 {
     int    err = 0;
     size_t dims[2] = {5,10};
-    mat_int32_t  ir[25] = {0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3};
-    mat_int32_t  jc[11] = {0,2,5,7,10,12,15,17,20,22,25};
+    mat_uint32_t  ir[25] = {0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3};
+    mat_uint32_t  jc[11] = {0,2,5,7,10,12,15,17,20,22,25};
     mat_t *mat;
     matvar_t *matvar;
     mat_sparse_t  sparse = {0,};
@@ -3529,8 +3529,8 @@ test_write_complex_sparse(enum matio_classes matvar_class,const char *output_nam
 {
     int    err = 0;
     size_t dims[2] = {5,10};
-    mat_int32_t  ir[25] = {0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3};
-    mat_int32_t  jc[11] = {0,2,5,7,10,12,15,17,20,22,25};
+    mat_uint32_t  ir[25] = {0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3,0,4,1,2,3};
+    mat_uint32_t  jc[11] = {0,2,5,7,10,12,15,17,20,22,25};
     mat_t *mat;
     matvar_t *matvar;
     mat_sparse_t  sparse = {0,};

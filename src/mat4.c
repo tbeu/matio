@@ -114,7 +114,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         mat_int32_t namelen;
     } Fmatrix;
 
-    mat_int32_t i;
+    mat_uint32_t i;
     Fmatrix x;
 
     if ( NULL == mat || NULL == matvar || NULL == matvar->name || matvar->rank != 2 )
@@ -208,7 +208,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         {
             mat_sparse_t* sparse;
             double tmp;
-            int j;
+            mat_uint32_t j;
             size_t stride = Mat_SizeOf(matvar->data_type);
 #if !defined(EXTENDED_SPARSE)
             if ( MAT_T_DOUBLE != matvar->data_type )
@@ -374,7 +374,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
             matvar->data      = calloc(1, matvar->data_size);
             if ( NULL != matvar->data ) {
                 double tmp;
-                int i;
+                mat_uint32_t i;
                 mat_sparse_t* sparse;
                 long fpos;
                 enum matio_types data_type = MAT_T_DOUBLE;
@@ -383,24 +383,38 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                 /* matvar->dims[1] either is 3 for real or 4 for complex sparse */
                 matvar->isComplex = matvar->dims[1] == 4 ? 1 : 0;
                 sparse = (mat_sparse_t*)matvar->data;
+                if ( 0 == matvar->dims[0] ) {
+                    return  1;
+                }
                 sparse->nir = matvar->dims[0] - 1;
                 sparse->nzmax = sparse->nir;
-                err = SafeMul(&readcount, (size_t)sparse->nir, sizeof(mat_int32_t));
+                err = SafeMul(&readcount, sparse->nir, sizeof(mat_uint32_t));
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     return err;
                 }
-                sparse->ir = (mat_int32_t*)malloc(readcount);
+                sparse->ir = (mat_uint32_t*)malloc(readcount);
                 if ( sparse->ir != NULL ) {
-                    readcount = ReadInt32Data(mat, sparse->ir, data_type, sparse->nir);
+                    readcount = ReadUInt32Data(mat, sparse->ir, data_type, sparse->nir);
                     if ( readcount != sparse->nir ) {
                         free(sparse->ir);
                         free(matvar->data);
                         matvar->data = NULL;
                         return 1;
                     }
-                    for ( i = 0; i < sparse->nir; i++ )
+                    for ( i = 0; i < sparse->nir; i++ ) {
+                        if ( 0 == sparse->ir[i] ) {
+                            err = 1;
+                            break;
+                        }
                         sparse->ir[i] = sparse->ir[i] - 1;
+                    }
+                    if ( err ) {
+                        free(sparse->ir);
+                        free(matvar->data);
+                        matvar->data = NULL;
+                        return err;
+                    }
                 } else {
                     free(matvar->data);
                     matvar->data = NULL;
@@ -408,7 +422,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                     return 1;
                 }
                 readcount = ReadDoubleData(mat, &tmp, data_type, 1);
-                if ( readcount != 1 || tmp > INT_MAX-1 || tmp < 0 ) {
+                if ( readcount != 1 || tmp > UINT_MAX - 1 || tmp < 0 ) {
                     free(sparse->ir);
                     free(matvar->data);
                     matvar->data = NULL;
@@ -427,7 +441,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                 }
                 (void)fseek((FILE*)mat->fp,sparse->nir*Mat_SizeOf(data_type),SEEK_CUR);
                 readcount = ReadDoubleData(mat, &tmp, data_type, 1);
-                if ( readcount != 1 || tmp > INT_MAX-1 || tmp < 0 ) {
+                if ( readcount != 1 || tmp > UINT_MAX - 1 || tmp < 0 ) {
                     free(sparse->ir);
                     free(matvar->data);
                     matvar->data = NULL;
@@ -436,32 +450,32 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                 }
                 matvar->dims[1] = (size_t)tmp;
                 (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
-                if ( matvar->dims[1] > INT_MAX-1 ) {
+                if ( matvar->dims[1] > UINT_MAX - 1 ) {
                     free(sparse->ir);
                     free(matvar->data);
                     matvar->data = NULL;
                     Mat_Critical("Invalid column dimension for sparse matrix");
                     return 1;
                 }
-                sparse->njc = (int)matvar->dims[1] + 1;
-                err = SafeMul(&readcount, (size_t)sparse->njc, sizeof(mat_int32_t));
+                sparse->njc = (mat_uint32_t)matvar->dims[1] + 1;
+                err = SafeMul(&readcount, sparse->njc, sizeof(mat_uint32_t));
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     return err;
                 }
-                sparse->jc = (mat_int32_t*)malloc(readcount);
+                sparse->jc = (mat_uint32_t*)malloc(readcount);
                 if ( sparse->jc != NULL ) {
-                    mat_int32_t *jc;
-                    err = SafeMul(&readcount, (size_t)sparse->nir, sizeof(mat_int32_t));
+                    mat_uint32_t *jc;
+                    err = SafeMul(&readcount, sparse->nir, sizeof(mat_uint32_t));
                     if ( err ) {
                         Mat_Critical("Integer multiplication overflow");
                         return err;
                     }
-                    jc = (mat_int32_t*)malloc(readcount);
+                    jc = (mat_uint32_t*)malloc(readcount);
                     if ( jc != NULL ) {
-                        int j = 0;
+                        mat_uint32_t j = 0;
                         sparse->jc[0] = 0;
-                        readcount = ReadInt32Data(mat, jc, data_type, sparse->nir);
+                        readcount = ReadUInt32Data(mat, jc, data_type, sparse->nir);
                         if ( readcount != sparse->nir ) {
                             free(jc);
                             free(sparse->jc);
@@ -470,14 +484,14 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                             matvar->data = NULL;
                             return 1;
                         }
-                        for ( i = 1; i < sparse->njc-1; i++ ) {
+                        for ( i = 1; i < sparse->njc - 1; i++ ) {
                             while ( j < sparse->nir && jc[j] <= i )
                                 j++;
                             sparse->jc[i] = j;
                         }
                         free(jc);
                         /* terminating nnz */
-                        sparse->jc[sparse->njc-1] = sparse->nir;
+                        sparse->jc[sparse->njc - 1] = sparse->nir;
                     } else {
                         free(sparse->jc);
                         free(sparse->ir);

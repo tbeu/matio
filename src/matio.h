@@ -205,17 +205,17 @@ typedef struct matvar_t {
  * @ingroup MAT
  */
 typedef struct mat_sparse_t {
-    int nzmax;               /**< Maximum number of non-zero elements */
-    mat_int32_t *ir;         /**< Array of size nzmax where ir[k] is the row of
+    mat_uint32_t  nzmax;     /**< Maximum number of non-zero elements */
+    mat_uint32_t *ir;        /**< Array of size nzmax where ir[k] is the row of
                                *  data[k].  0 <= k <= nzmax
                                */
-    int nir;                 /**< number of elements in ir */
-    mat_int32_t *jc;         /**< Array size N+1 (N is number of columns) with
+    mat_uint32_t  nir;       /**< number of elements in ir */
+    mat_uint32_t *jc;        /**< Array size N+1 (N is number of columns) with
                                *  jc[k] being the index into ir/data of the
                                *  first non-zero element for row k.
                                */
-    int   njc;               /**< Number of elements in jc */
-    int   ndata;             /**< Number of complex/real data values */
+    mat_uint32_t  njc;       /**< Number of elements in jc */
+    mat_uint32_t  ndata;     /**< Number of complex/real data values */
     void *data;              /**< Array of data elements */
 } mat_sparse_t;
 
