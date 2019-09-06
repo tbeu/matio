@@ -4641,8 +4641,10 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
 
         uncomp_buf[0] = MAT_T_MATRIX;
         err = GetMatrixMaxBufSize(matvar, &matrix_max_buf_size);
-        if (err || matrix_max_buf_size > UINT32_MAX)
+        if ( err || matrix_max_buf_size > UINT32_MAX ) {
+            free(z);
             return -1;
+        }
         uncomp_buf[1] = matrix_max_buf_size;
         z->next_in  = ZLIB_BYTE_PTR(uncomp_buf);
         z->avail_in = 8;
