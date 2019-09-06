@@ -93,8 +93,10 @@ Mat_VarCreateStruct(const char *name,int rank,size_t *dims,const char **fields,
             size_t nelems_x_nfields;
             int err = SafeMul(&nelems_x_nfields, nelems, nfields);
             err |= SafeMul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
-            if ( err )
+            if ( err ) {
+                Mat_VarFree(matvar);
                 return NULL;
+            }
             matvar->data = calloc(nelems_x_nfields, matvar->data_size);
         }
     }
