@@ -1817,7 +1817,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         mspace_id = H5Screate_simple(1,&nir,NULL);
         dset_id = H5Dcreate(sparse_id,"ir",size_type_id,mspace_id,
                             H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        err += Mat_H5WriteData(dset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL,
+        err += Mat_H5WriteData(dset_id, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL,
                                0, sparse->ir);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
@@ -1826,7 +1826,7 @@ Mat_VarWriteSparse73(hid_t id,matvar_t *matvar,const char *name)
         mspace_id = H5Screate_simple(1,&njc,NULL);
         dset_id = H5Dcreate(sparse_id,"jc",size_type_id,mspace_id,
                             H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-        err += Mat_H5WriteData(dset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL,
+        err += Mat_H5WriteData(dset_id, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL,
                                0, sparse->jc);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
@@ -2466,11 +2466,19 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id,"ir",H5P_DEFAULT);
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
+                    size_t nbytes;
                     sparse_data->nir = dims[0];
                     free(dims);
-                    sparse_data->ir = (int*)malloc(sparse_data->nir*
-                                            sizeof(*sparse_data->ir));
-                    H5Dread(sparse_dset_id,H5T_NATIVE_INT,
+                    err = SafeMul(&nbytes, sparse_data->nir, sizeof(mat_uint32_t));
+                    if ( err ) {
+                        H5Dclose(sparse_dset_id);
+                        H5Gclose(dset_id);
+                        free(sparse_data);
+                        Mat_Critical("Integer multiplication overflow");
+                        return err;
+                    }
+                    sparse_data->ir = (mat_uint32_t*)malloc(nbytes);
+                    H5Dread(sparse_dset_id,H5T_NATIVE_UINT,
                             H5S_ALL,H5S_ALL,H5P_DEFAULT,sparse_data->ir);
                 }
                 H5Dclose(sparse_dset_id);
@@ -2484,11 +2492,19 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id,"jc",H5P_DEFAULT);
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
+                    size_t nbytes;
                     sparse_data->njc = dims[0];
                     free(dims);
-                    sparse_data->jc = (int*)malloc(sparse_data->njc*
-                                            sizeof(*sparse_data->jc));
-                    H5Dread(sparse_dset_id,H5T_NATIVE_INT,
+                    err = SafeMul(&nbytes, sparse_data->njc, sizeof(mat_uint32_t));
+                    if ( err ) {
+                        H5Dclose(sparse_dset_id);
+                        H5Gclose(dset_id);
+                        free(sparse_data);
+                        Mat_Critical("Integer multiplication overflow");
+                        return err;
+                    }
+                    sparse_data->jc = (mat_uint32_t*)malloc(nbytes);
+                    H5Dread(sparse_dset_id,H5T_NATIVE_UINT,
                             H5S_ALL,H5S_ALL,H5P_DEFAULT,sparse_data->jc);
                 }
                 H5Dclose(sparse_dset_id);
@@ -2506,10 +2522,16 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                     sparse_data->nzmax = dims[0];
                     sparse_data->ndata = dims[0];
                     free(dims);
+                    err = SafeMul(&ndata_bytes, sparse_data->nzmax, Mat_SizeOf(matvar->data_type));
+                    if ( err ) {
+                        H5Dclose(sparse_dset_id);
+                        H5Gclose(dset_id);
+                        free(sparse_data);
+                        Mat_Critical("Integer multiplication overflow");
+                        return err;
+                    }
                     matvar->data_size = sizeof(mat_sparse_t);
                     matvar->nbytes    = matvar->data_size;
-
-                    ndata_bytes = sparse_data->nzmax*Mat_SizeOf(matvar->data_type);
                     if ( !matvar->isComplex ) {
                         sparse_data->data = malloc(ndata_bytes);
                     } else {

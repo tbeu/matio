@@ -62,7 +62,7 @@ static int GetStructFieldBufSize(matvar_t *matvar, size_t *size);
 static int GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size);
 static void SetFieldNames(matvar_t *matvar, char *buf, size_t nfields,
                   mat_uint32_t fieldname_length);
-static size_t ReadSparse(mat_t *mat, matvar_t *matvar, int *n, mat_int32_t **v);
+static size_t ReadSparse(mat_t *mat, matvar_t *matvar, int *n, mat_uint32_t **v);
 #if defined(HAVE_ZLIB)
 static int GetMatrixMaxBufSize(matvar_t *matvar, size_t *size);
 #endif
@@ -76,7 +76,7 @@ static size_t ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_t
 static int    WriteType(mat_t *mat,matvar_t *matvar);
 static int    WriteCellArrayField(mat_t *mat,matvar_t *matvar );
 static int    WriteStructField(mat_t *mat,matvar_t *matvar);
-static int    WriteData(mat_t *mat,void *data,int N,enum matio_types data_type);
+static int    WriteData(mat_t *mat,void *data,size_t N,enum matio_types data_type);
 static size_t Mat_WriteEmptyVariable5(mat_t *mat,const char *name,int rank,
                   size_t *dims);
 static void   Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N);
@@ -195,13 +195,13 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
         {
             mat_sparse_t *sparse = (mat_sparse_t*)matvar->data;
 
-            err = SafeMul(&data_bytes, sparse->nir, sizeof(mat_int32_t));
+            err = SafeMul(&data_bytes, sparse->nir, sizeof(mat_uint32_t));
             if ( data_bytes % 8 )
                 err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
             err |= SafeAdd(&nBytes, nBytes, tag_size);
             err |= SafeAdd(&nBytes, nBytes, data_bytes);
 
-            err |= SafeMul(&data_bytes, sparse->njc, sizeof(mat_int32_t));
+            err |= SafeMul(&data_bytes, sparse->njc, sizeof(mat_uint32_t));
             if ( data_bytes % 8 )
                 err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
             err |= SafeAdd(&nBytes, nBytes, tag_size);
@@ -404,13 +404,13 @@ SetFieldNames(matvar_t *matvar, char *buf, size_t nfields, mat_uint32_t fieldnam
 }
 
 static size_t
-ReadSparse(mat_t *mat, matvar_t *matvar, int *n, mat_int32_t **v)
+ReadSparse(mat_t *mat, matvar_t *matvar, int *n, mat_uint32_t **v)
 {
     int data_in_tag = 0;
     enum matio_types packed_type;
     mat_uint32_t tag[2];
     size_t bytesread = 0;
-    mat_int32_t N = 0;
+    mat_uint32_t N = 0;
 
     if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(HAVE_ZLIB)
@@ -424,8 +424,8 @@ ReadSparse(mat_t *mat, matvar_t *matvar, int *n, mat_int32_t **v)
             N = (tag[0] & 0xffff0000) >> 16;
         } else {
             data_in_tag = 0;
-            (void)ReadCompressedInt32Data(mat,matvar->internal->z,
-                        (mat_int32_t*)&N,MAT_T_INT32,1);
+            (void)ReadCompressedUInt32Data(mat,matvar->internal->z,
+                        &N,MAT_T_UINT32,1);
         }
 #endif
     } else {
@@ -440,27 +440,27 @@ ReadSparse(mat_t *mat, matvar_t *matvar, int *n, mat_int32_t **v)
             data_in_tag = 0;
             bytesread += fread(&N,4,1,(FILE*)mat->fp);
             if ( mat->byteswap )
-                (void)Mat_int32Swap(&N);
+                (void)Mat_uint32Swap(&N);
         }
     }
     *n = N / 4;
-    *v = (mat_int32_t*)malloc(*n*sizeof(mat_int32_t));
+    *v = (mat_uint32_t*)malloc(*n*sizeof(mat_uint32_t));
     if ( NULL != *v ) {
         int nBytes;
         if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-            nBytes = ReadInt32Data(mat,*v,packed_type,*n);
+            nBytes = ReadUInt32Data(mat,*v,packed_type,*n);
             /*
                 * If the data was in the tag we started on a 4-byte
                 * boundary so add 4 to make it an 8-byte
                 */
             nBytes *= Mat_SizeOf(packed_type);
-			if ( data_in_tag )
+            if ( data_in_tag )
                 nBytes+=4;
             if ( (nBytes % 8) != 0 )
                 (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 #if defined(HAVE_ZLIB)
         } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
-            nBytes = ReadCompressedInt32Data(mat,matvar->internal->z,
+            nBytes = ReadCompressedUInt32Data(mat,matvar->internal->z,
                             *v,packed_type,*n);
             /*
                 * If the data was in the tag we started on a 4-byte
@@ -809,7 +809,7 @@ WriteCompressedCharData(mat_t *mat,z_streamp z,void *data,int N,
  * @return number of bytes written
  */
 static int
-WriteData(mat_t *mat,void *data,int N,enum matio_types data_type)
+WriteData(mat_t *mat,void *data,size_t N,enum matio_types data_type)
 {
     int nBytes = 0, data_size;
 
@@ -1832,11 +1832,11 @@ WriteType(mat_t *mat,matvar_t *matvar)
         {
             mat_sparse_t *sparse = (mat_sparse_t*)matvar->data;
 
-            nBytes = WriteData(mat,sparse->ir,sparse->nir,MAT_T_INT32);
+            nBytes = WriteData(mat,sparse->ir,sparse->nir,MAT_T_UINT32);
             if ( nBytes % 8 )
                 for ( j = nBytes % 8; j < 8; j++ )
                     fwrite(&pad1,1,1,(FILE*)mat->fp);
-            nBytes = WriteData(mat,sparse->jc,sparse->njc,MAT_T_INT32);
+            nBytes = WriteData(mat,sparse->jc,sparse->njc,MAT_T_UINT32);
             if ( nBytes % 8 )
                 for ( j = nBytes % 8; j < 8; j++ )
                     fwrite(&pad1,1,1,(FILE*)mat->fp);
@@ -1880,12 +1880,12 @@ WriteType(mat_t *mat,matvar_t *matvar)
 static int
 WriteCellArrayField(mat_t *mat,matvar_t *matvar)
 {
-    mat_uint32_t array_flags;
+    mat_uint32_t array_flags, nzmax = 0;
     int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
     int array_flags_size = 8, matrix_type = MAT_T_MATRIX;
     const mat_uint32_t pad4 = 0;
     const mat_uint8_t pad1 = 0;
-    int nBytes, i, nzmax = 0;
+    int nBytes, i;
     long start = 0, end = 0;
 
     if ( matvar == NULL || mat == NULL )
@@ -2212,9 +2212,9 @@ WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
             mat_sparse_t *sparse = (mat_sparse_t*)matvar->data;
 
             byteswritten += WriteCompressedData(mat,z,sparse->ir,
-                sparse->nir,MAT_T_INT32);
+                sparse->nir,MAT_T_UINT32);
             byteswritten += WriteCompressedData(mat,z,sparse->jc,
-                sparse->njc,MAT_T_INT32);
+                sparse->njc,MAT_T_UINT32);
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data = (mat_complex_split_t*)sparse->data;
                 byteswritten += WriteCompressedData(mat,z,
