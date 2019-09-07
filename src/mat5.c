@@ -404,7 +404,7 @@ SetFieldNames(matvar_t *matvar, char *buf, size_t nfields, mat_uint32_t fieldnam
 }
 
 static size_t
-ReadSparse(mat_t *mat, matvar_t *matvar, int *n, mat_uint32_t **v)
+ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
 {
     int data_in_tag = 0;
     enum matio_types packed_type;
