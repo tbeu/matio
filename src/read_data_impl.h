@@ -42,10 +42,10 @@
 static size_t
 READ_TYPE_DOUBLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_DOUBLE
-    readcount += fread(data, sizeof(double), len, (FILE*)mat->fp);
-    if ( mat->byteswap ) {
+    readcount = fread(data, sizeof(double), len, (FILE*)mat->fp);
+    if ( readcount == len && mat->byteswap ) {
         size_t i;
         for ( i = 0; i < len; i++ ) {
             (void)Mat_doubleSwap(data + i);
@@ -63,10 +63,10 @@ READ_TYPE_DOUBLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 static size_t
 READ_TYPE_SINGLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_SINGLE
-    readcount += fread(data, sizeof(float), len, (FILE*)mat->fp);
-    if ( mat->byteswap ) {
+    readcount = fread(data, sizeof(float), len, (FILE*)mat->fp);
+    if ( readcount == len && mat->byteswap ) {
         size_t i;
         for ( i = 0; i < len; i++ ) {
             (void)Mat_floatSwap(data + i);
@@ -84,10 +84,10 @@ READ_TYPE_SINGLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 static size_t
 READ_TYPE_INT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_INT32
-    readcount += fread(data, sizeof(mat_int32_t), len, (FILE*)mat->fp);
-    if ( mat->byteswap ) {
+    readcount = fread(data, sizeof(mat_int32_t), len, (FILE*)mat->fp);
+    if ( readcount == len && mat->byteswap ) {
         size_t i;
         for ( i = 0; i < len; i++ ) {
             (void)Mat_int32Swap(data + i);
@@ -105,10 +105,10 @@ READ_TYPE_INT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 static size_t
 READ_TYPE_UINT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_UINT32
-    readcount += fread(data, sizeof(mat_uint32_t), len, (FILE*)mat->fp);
-    if ( mat->byteswap ) {
+    readcount = fread(data, sizeof(mat_uint32_t), len, (FILE*)mat->fp);
+    if ( readcount == len && mat->byteswap ) {
         size_t i;
         for ( i = 0; i < len; i++ ) {
             (void)Mat_uint32Swap(data + i);
@@ -126,10 +126,10 @@ READ_TYPE_UINT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 static size_t
 READ_TYPE_INT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_INT16
-    readcount += fread(data, sizeof(mat_int16_t), len, (FILE*)mat->fp);
-    if ( mat->byteswap ) {
+    readcount = fread(data, sizeof(mat_int16_t), len, (FILE*)mat->fp);
+    if ( readcount == len && mat->byteswap ) {
         size_t i;
         for ( i = 0; i < len; i++ ) {
             (void)Mat_int16Swap(data + i);
@@ -147,10 +147,10 @@ READ_TYPE_INT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 static size_t
 READ_TYPE_UINT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_UINT16
-    readcount += fread(data, sizeof(mat_uint16_t), len, (FILE*)mat->fp);
-    if ( mat->byteswap ) {
+    readcount = fread(data, sizeof(mat_uint16_t), len, (FILE*)mat->fp);
+    if ( readcount == len && mat->byteswap ) {
         size_t i;
         for ( i = 0; i < len; i++ ) {
             (void)Mat_uint16Swap(data + i);
@@ -168,9 +168,9 @@ READ_TYPE_UINT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 static size_t
 READ_TYPE_INT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_INT8
-    readcount += fread(data, sizeof(mat_int8_t), len, (FILE*)mat->fp);
+    readcount = fread(data, sizeof(mat_int8_t), len, (FILE*)mat->fp);
 #else
     size_t i;
     const size_t data_size = sizeof(mat_int8_t);
@@ -183,9 +183,9 @@ READ_TYPE_INT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 static size_t
 READ_TYPE_UINT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_UINT8
-    readcount += fread(data, sizeof(mat_uint8_t), len, (FILE*)mat->fp);
+    readcount = fread(data, sizeof(mat_uint8_t), len, (FILE*)mat->fp);
 #else
     size_t i;
     const size_t data_size = sizeof(mat_uint8_t);
@@ -199,10 +199,10 @@ READ_TYPE_UINT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 static size_t
 READ_TYPE_INT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_INT64
-    readcount += fread(data, sizeof(mat_int64_t), len, (FILE*)mat->fp);
-    if ( mat->byteswap ) {
+    readcount = fread(data, sizeof(mat_int64_t), len, (FILE*)mat->fp);
+    if ( readcount == len && mat->byteswap ) {
         size_t i;
         for ( i = 0; i < len; i++ ) {
             (void)Mat_int64Swap(data + i);
@@ -222,10 +222,10 @@ READ_TYPE_INT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 static size_t
 READ_TYPE_UINT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
-    size_t readcount = 0;
+    size_t readcount;
 #if READ_TYPE_TYPE == READ_TYPE_UINT64
-    readcount += fread(data, sizeof(mat_uint64_t), len, (FILE*)mat->fp);
-    if ( mat->byteswap ) {
+    readcount = fread(data, sizeof(mat_uint64_t), len, (FILE*)mat->fp);
+    if ( readcount == len && mat->byteswap ) {
         size_t i;
         for ( i = 0; i < len; i++ ) {
             (void)Mat_uint64Swap(data + i);
@@ -254,7 +254,7 @@ READ_TYPE_UINT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
  * @param len Number of elements of type @c data_type to read from the file
  * @retval Number of elements read from the file
  */
-int
+size_t
 READ_TYPED_FUNC1(mat_t *mat, READ_TYPE *data, enum matio_types data_type, size_t len)
 {
     size_t readcount;

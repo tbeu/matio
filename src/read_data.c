@@ -44,22 +44,35 @@
     do { \
         const size_t block_size = READ_BLOCK_SIZE/data_size; \
         if ( len <= block_size ) { \
-            readcount += fread(v, data_size, len, (FILE*)mat->fp); \
-            for ( i = 0; i < len; i++ ) { \
-                data[i] = (T)v[i]; \
+            readcount = fread(v, data_size, len, (FILE*)mat->fp); \
+            if ( readcount == len ) { \
+                for ( i = 0; i < len; i++ ) { \
+                    data[i] = (T)v[i]; \
+                } \
             } \
         } else { \
             size_t j; \
+            int err = 0 ; \
+            readcount = 0; \
             for ( i = 0; i < len - block_size; i += block_size ) { \
-                readcount += fread(v, data_size, block_size, (FILE*)mat->fp); \
-                for ( j = 0; j < block_size; j++ ) { \
-                    data[i + j] = (T)v[j]; \
+                j = fread(v, data_size, block_size, (FILE*)mat->fp); \
+                readcount += j; \
+                if ( j == block_size ) { \
+                    for ( j = 0; j < block_size; j++ ) { \
+                        data[i + j] = (T)v[j]; \
+                    } \
+                } else { \
+                    err = 1; \
+                    break;\
                 } \
             } \
-            if ( len > i ) { \
-                readcount += fread(v, data_size, len - i, (FILE*)mat->fp); \
-                for ( j = 0; j < len - i; j++ ) { \
-                    data[i + j] = (T)v[j]; \
+            if ( 0 == err && len > i ) { \
+                j = fread(v, data_size, len - i, (FILE*)mat->fp); \
+                readcount += j; \
+                if ( j == len - i ) { \
+                    for ( j = 0; j < len - i; j++ ) { \
+                        data[i + j] = (T)v[j]; \
+                    } \
                 } \
             } \
         } \
@@ -70,22 +83,35 @@
         if ( mat->byteswap ) { \
             const size_t block_size = READ_BLOCK_SIZE/data_size; \
             if ( len <= block_size ) { \
-                readcount += fread(v, data_size, len, (FILE*)mat->fp); \
-                for ( i = 0; i < len; i++ ) { \
-                    data[i] = (T)SwapFunc(&v[i]); \
+                readcount = fread(v, data_size, len, (FILE*)mat->fp); \
+                if ( readcount == len ) { \
+                    for ( i = 0; i < len; i++ ) { \
+                        data[i] = (T)SwapFunc(&v[i]); \
+                    } \
                 } \
             } else { \
                 size_t j; \
+                int err = 0 ; \
+                readcount = 0; \
                 for ( i = 0; i < len - block_size; i += block_size ) { \
-                    readcount += fread(v, data_size, block_size, (FILE*)mat->fp); \
-                    for ( j = 0; j < block_size; j++ ) { \
-                        data[i + j] = (T)SwapFunc(&v[j]); \
+                    j = fread(v, data_size, block_size, (FILE*)mat->fp); \
+                    readcount += j; \
+                    if ( j == block_size ) { \
+                        for ( j = 0; j < block_size; j++ ) { \
+                            data[i + j] = (T)SwapFunc(&v[j]); \
+                        } \
+                    } else { \
+                        err = 1; \
+                        break;\
                     } \
                 } \
-                if ( len > i ) { \
-                    readcount += fread(v, data_size, len - i, (FILE*)mat->fp); \
-                    for ( j = 0; j < len-i; j++ ) { \
-                        data[i + j] = (T)SwapFunc(&v[j]); \
+                if ( 0 == err && len > i ) { \
+                    j = fread(v, data_size, len - i, (FILE*)mat->fp); \
+                    readcount += j; \
+                    if ( j == len - i ) { \
+                        for ( j = 0; j < len-i; j++ ) { \
+                            data[i + j] = (T)SwapFunc(&v[j]); \
+                        } \
                     } \
                 } \
             } \
@@ -328,7 +354,7 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
 }
 #endif
 
-int
+size_t
 ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
 {
     int bytesread = 0;
