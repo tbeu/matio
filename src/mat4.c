@@ -382,10 +382,10 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
 
                 /* matvar->dims[1] either is 3 for real or 4 for complex sparse */
                 matvar->isComplex = matvar->dims[1] == 4 ? 1 : 0;
-                sparse = (mat_sparse_t*)matvar->data;
-                if ( 0 == matvar->dims[0] ) {
-                    return  1;
+                if ( matvar->dims[0] < 2 ) {
+                    return 1;
                 }
+                sparse = (mat_sparse_t*)matvar->data;
                 sparse->nir = matvar->dims[0] - 1;
                 sparse->nzmax = sparse->nir;
                 err = SafeMul(&readcount, sparse->nir, sizeof(mat_uint32_t));
