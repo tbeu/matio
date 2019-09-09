@@ -62,7 +62,7 @@ static int GetStructFieldBufSize(matvar_t *matvar, size_t *size);
 static int GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size);
 static void SetFieldNames(matvar_t *matvar, char *buf, size_t nfields,
                   mat_uint32_t fieldname_length);
-static size_t ReadSparse(mat_t *mat, matvar_t *matvar, int *n, mat_uint32_t **v);
+static size_t ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v);
 #if defined(HAVE_ZLIB)
 static int GetMatrixMaxBufSize(matvar_t *matvar, size_t *size);
 #endif
