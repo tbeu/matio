@@ -3016,7 +3016,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
         }
         case MAT_C_SPARSE:
         {
-            mat_int32_t N = 0;
+            mat_uint32_t N = 0;
             mat_sparse_t *sparse;
 
             matvar->data_size = sizeof(mat_sparse_t);
@@ -3046,8 +3046,8 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     N = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    (void)ReadCompressedInt32Data(mat,matvar->internal->z,
-                             (mat_int32_t*)&N,MAT_T_INT32,1);
+                    (void)ReadCompressedUInt32Data(mat,matvar->internal->z,
+                             &N,MAT_T_UINT32,1);
                 }
 #endif
             } else {
@@ -3062,7 +3062,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     data_in_tag = 0;
                     bytesread += fread(&N,4,1,(FILE*)mat->fp);
                     if ( mat->byteswap )
-                        (void)Mat_int32Swap(&N);
+                        (void)Mat_uint32Swap(&N);
                 }
             }
             if ( matvar->isLogical && packed_type == MAT_T_DOUBLE ) {
