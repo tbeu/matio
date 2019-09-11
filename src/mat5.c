@@ -444,7 +444,7 @@ ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
         }
     }
     *n = N / 4;
-    *v = (mat_uint32_t*)malloc(*n*sizeof(mat_uint32_t));
+    *v = (mat_uint32_t*)malloc(N);
     if ( NULL != *v ) {
         int nBytes;
         if ( matvar->compression == MAT_COMPRESSION_NONE ) {
@@ -3083,8 +3083,14 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 sparse->ndata = N / s_type;
             }
             if ( matvar->isComplex ) {
-                mat_complex_split_t *complex_data =
-                    ComplexMalloc(sparse->ndata*Mat_SizeOf(matvar->data_type));
+                mat_complex_split_t *complex_data;
+                size_t nbytes;
+                err = SafeMul(&nbytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+                if ( err ) {
+                    Mat_Critical("Integer multiplication overflow");
+                    break;
+                }
+                complex_data = ComplexMalloc(nbytes);
                 if ( NULL == complex_data ) {
                     Mat_Critical("Couldn't allocate memory for the complex sparse data");
                     err = 1;
@@ -3364,7 +3370,13 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 }
                 sparse->data = complex_data;
             } else { /* isComplex */
-                sparse->data = malloc(sparse->ndata*Mat_SizeOf(matvar->data_type));
+                size_t nbytes;
+                err = SafeMul(&nbytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+                if ( err ) {
+                    Mat_Critical("Integer multiplication overflow");
+                    break;
+                }
+                sparse->data = malloc(nbytes);
                 if ( sparse->data == NULL ) {
                     Mat_Critical("Couldn't allocate memory for the sparse data");
                     err = 1;
