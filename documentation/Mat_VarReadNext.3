@@ -22,7 +22,7 @@
 .\" OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 .\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd April 21, 2011
+.Dd September 12, 2019
 .Dt MAT_VARREADNEXT 3
 .Os
 .Sh NAME
@@ -58,19 +58,19 @@ function is used to display the information and data of the variable.
 #include "matio.h"
 
 int
-main(int argc,char **argv)
+main(int argc, char **argv)
 {
     mat_t    *matfp;
     matvar_t *matvar;
 
-    matfp = Mat_Open(argv[1],MAT_ACC_RDONLY);
+    matfp = Mat_Open(argv[1], MAT_ACC_RDONLY);
     if ( NULL == matfp ) {
-        fprintf(stderr,"Error opening MAT file %s\n",argv[1]);
+        fprintf(stderr, "Error opening MAT file %s\n", argv[1]);
         return EXIT_FAILURE;
     }
 
     while ( NULL != (matvar = Mat_VarReadNext(matfp)) ) {
-        Mat_VarPrint(matvar,1);
+        Mat_VarPrint(matvar, 1);
         Mat_VarFree(matvar);
     }
 

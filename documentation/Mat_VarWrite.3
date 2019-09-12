@@ -22,7 +22,7 @@
 .\" OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 .\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd March 18, 2012
+.Dd September 12, 2019
 .Dt MAT_VARWRITE 3
 .Os
 .Sh NAME
@@ -61,22 +61,23 @@ to the file.
 #include "matio.h"
 
 int
-main(int argc,char **argv)
+main(int argc, char **argv)
 {
     mat_t    *matfp;
     matvar_t *matvar;
-    size_t    dims[2] = {1,1};
+    size_t    dims[2] = {1, 1};
     double    m_pi = M_PI;
 
-    matfp = Mat_CreateVer(argv[1],NULL,MAT_FT_DEFAULT);
+    matfp = Mat_CreateVer(argv[1], NULL, MAT_FT_DEFAULT);
     if ( NULL == matfp ) {
-        fprintf(stderr,"Error creating MAT file %s\n",argv[1]);
+        fprintf(stderr, "Error creating MAT file %s\n", argv[1]);
         return EXIT_FAILURE;
     }
 
-    matvar = Mat_VarCreate("m_pi",MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&m_pi,0);
+    matvar = Mat_VarCreate("m_pi", MAT_C_DOUBLE, MAT_T_DOUBLE,
+                           2, dims, &m_pi, 0);
     if ( NULL != matvar ) {
-        Mat_VarWrite(matfp,matvar,MAT_COMPRESSION_ZLIB);
+        Mat_VarWrite(matfp, matvar, MAT_COMPRESSION_ZLIB);
         Mat_VarFree(matvar);
     }
 

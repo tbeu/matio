@@ -22,7 +22,7 @@
 .\" OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 .\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd March 25, 2019
+.Dd September 12, 2019
 .Dt MAT_CREATEVER 3
 .Os
 .Sh NAME
@@ -59,6 +59,7 @@ The
 .Em mat_file_ver
 argument specifies the MAT file version to create.
 The matio library can write
+version 4 files (MAT_FT_MAT4),
 version 5 files (MAT_FT_MAT5), and an HDF5 file format introduced in MATLAB
 version 7.3 (MAT_FT_MAT73).
 .Pp
@@ -73,13 +74,13 @@ with MAT_FT_DEFAULT as the file version.
 #include <stdio.h>
 #include "matio.h"
 
-int main(int argc,char **argv)
+int main(int argc, char **argv)
 {
     mat_t *matfp;
 
-    matfp = Mat_CreateVer(argv[1],NULL,MAT_FT_73);
+    matfp = Mat_CreateVer(argv[1], NULL, MAT_FT_73);
     if ( NULL == matfp ) {
-        fprintf(stderr,"Error creating MAT file %s\n",argv[1]);
+        fprintf(stderr, "Error creating MAT file %s\n", argv[1]);
         return EXIT_FAILURE;
     }
 

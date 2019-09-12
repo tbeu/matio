@@ -22,7 +22,7 @@
 .\" OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 .\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd March 18, 2012
+.Dd September 12, 2019
 .Dt MAT_VARCREATESTRUCT 3
 .Os
 .Sh NAME
@@ -61,37 +61,37 @@ to the file.
 #include "matio.h"
 
 int
-main(int argc,char **argv)
+main(int argc, char **argv)
 {
     mat_t    *matfp;
     matvar_t *matvar;
     matvar_t *field;
-    const char *fields[2] = {"field1","field2"};
+    const char *fields[2] = {"field1", "field2"};
     double       data1 = 1, data2 = 2;
     size_t       dims[2] = {1, 1};
 
-    matfp = Mat_Open(argv[1],MAT_ACC_RDWR);
+    matfp = Mat_Open(argv[1], MAT_ACC_RDWR);
     if ( NULL == matfp ) {
-        fprintf(stderr,"Error opening MAT file %s\n",argv[1]);
+        fprintf(stderr, "Error opening MAT file %s\n", argv[1]);
         return EXIT_FAILURE;
     }
 
     dims[0] = 1; dims[1] = 1;
-    matvar = Mat_VarCreateStruct("a",2,dims,fields,2);
+    matvar = Mat_VarCreateStruct("a", 2, dims, fields, 2);
     if ( NULL == matvar ) {
         Mat_Close(matfp);
         return EXIT_FAILURE;
     }
 
-    field = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&data1,
+    field = Mat_VarCreate(NULL, MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, &data1,
                 MAT_F_DONT_COPY_DATA);
     Mat_VarSetStructFieldByName(matvar, "field1", 0, field);
 
-    field = Mat_VarCreate(NULL,MAT_C_DOUBLE,MAT_T_DOUBLE,2,dims,&data2,
+    field = Mat_VarCreate(NULL, MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, &data2,
                 MAT_F_DONT_COPY_DATA);
     Mat_VarSetStructFieldByName(matvar, "field2", 0, field);
 
-    Mat_VarWrite(matfp,matvar,MAT_COMPRESSION_NONE);
+    Mat_VarWrite(matfp, matvar, MAT_COMPRESSION_NONE);
     Mat_VarFree(matvar);
 
     Mat_Close(matfp);
