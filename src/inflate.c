@@ -494,62 +494,6 @@ InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
     return bytesread;
 }
 
-/** @brief Inflates the data's tag
- *
- * buf must hold at least 8 bytes
- * @ingroup mat_internal
- * @param mat Pointer to the MAT file
- * @param matvar Pointer to the MAT variable
- * @param buf Pointer to store the data tag
- * @return Number of bytes read from the file
- */
-size_t
-InflateDataTag(mat_t *mat, matvar_t *matvar, void *buf)
-{
-    mat_uint8_t comp_buf[32];
-    int    err;
-    size_t bytesread = 0, readresult = 1;
-
-    if ( buf == NULL )
-        return 0;
-
-    if ( !matvar->internal->z->avail_in ) {
-        matvar->internal->z->avail_in = 1;
-        matvar->internal->z->next_in = comp_buf;
-        bytesread += fread(comp_buf,1,1,(FILE*)mat->fp);
-    }
-    matvar->internal->z->avail_out = 8;
-    matvar->internal->z->next_out = ZLIB_BYTE_PTR(buf);
-    err = inflate(matvar->internal->z,Z_NO_FLUSH);
-    if ( err == Z_STREAM_END ) {
-        return bytesread;
-    } else if ( err != Z_OK ) {
-        Mat_Critical("InflateDataTag: %s - inflate returned %s",matvar->name,zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
-        return bytesread;
-    }
-    while ( matvar->internal->z->avail_out && !matvar->internal->z->avail_in && 1 == readresult ) {
-        matvar->internal->z->avail_in = 1;
-        matvar->internal->z->next_in = comp_buf;
-        readresult = fread(comp_buf,1,1,(FILE*)mat->fp);
-        bytesread += readresult;
-        err = inflate(matvar->internal->z,Z_NO_FLUSH);
-        if ( err == Z_STREAM_END ) {
-            break;
-        } else if ( err != Z_OK ) {
-            Mat_Critical("InflateDataTag: %s - inflate returned %s",matvar->name,zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
-            return bytesread;
-        }
-    }
-
-    if ( matvar->internal->z->avail_in ) {
-        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        bytesread -= matvar->internal->z->avail_in;
-        matvar->internal->z->avail_in = 0;
-    }
-
-    return bytesread;
-}
-
 /** @brief Inflates the data's type
  *
  * buf must hold at least 4 bytes
