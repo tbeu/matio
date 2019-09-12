@@ -2829,9 +2829,10 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             matvar->data_size = sizeof(double);
             matvar->data_type = MAT_T_DOUBLE;
             matvar->rank = 2;
-            matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*(matvar->dims)));
-            matvar->dims[0] = 0;
-            matvar->dims[1] = 0;
+            if ( NULL != matvar->dims ) {
+                free(matvar->dims);
+            }
+            matvar->dims = (size_t*)calloc(matvar->rank, sizeof(*(matvar->dims)));
             break;
         case MAT_C_DOUBLE:
             (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
