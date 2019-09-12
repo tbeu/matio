@@ -36,7 +36,7 @@
 #include <math.h>
 #include <time.h>
 #include "matio_private.h"
-#if defined(HAVE_ZLIB)
+#if HAVE_ZLIB
 #   include <zlib.h>
 #endif
 
@@ -120,7 +120,7 @@
         } \
     } while (0)
 
-#if defined(HAVE_ZLIB)
+#if HAVE_ZLIB
 #define READ_COMPRESSED_DATA_NOSWAP(T) \
     do { \
         const size_t block_size = READ_BLOCK_SIZE/data_size; \
@@ -303,7 +303,7 @@
 #undef READ_DATA
 #undef READ_DATA_NOSWAP
 
-#if defined(HAVE_ZLIB)
+#if HAVE_ZLIB
 /** @brief Reads data of type @c data_type into a char type
  *
  * Reads from the MAT file @c len compressed elements of data type @c data_type
@@ -577,7 +577,7 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
 #undef READ_DATA_SLABN
 #undef READ_DATA_SLABN_RANK_LOOP
 
-#if defined(HAVE_ZLIB)
+#if HAVE_ZLIB
 #define READ_COMPRESSED_DATA_SLABN_RANK_LOOP \
     do { \
         for ( j = 1; j < rank; j++ ) { \
@@ -1007,7 +1007,7 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
 
 #undef READ_DATA_SLAB2
 
-#if defined(HAVE_ZLIB)
+#if HAVE_ZLIB
 #define READ_COMPRESSED_DATA_SLAB1(ReadDataFunc) \
     do { \
         if ( !stride ) { \

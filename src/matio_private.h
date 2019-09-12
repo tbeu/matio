@@ -29,7 +29,7 @@
 
 #include "matioConfig.h"
 #include "matio.h"
-#if defined(HAVE_ZLIB)
+#if HAVE_ZLIB
 #   include <zlib.h>
 #endif
 #if defined(MAT73) && MAT73
@@ -44,7 +44,7 @@
 #   endif
 #endif
 
-#if defined(HAVE_ZLIB) && HAVE_ZLIB
+#if HAVE_ZLIB
 #   define ZLIB_BYTE_PTR(a) ((Bytef *)(a))
 #endif
 
@@ -93,7 +93,7 @@ struct matvar_internal {
     long       datapos;     /**< Offset from the beginning of the MAT file to the data */
     unsigned   num_fields;  /**< Number of fields */
     char     **fieldnames;  /**< Pointer to fieldnames */
-#if defined(HAVE_ZLIB)
+#if HAVE_ZLIB
     z_streamp  z;           /**< zlib compression state */
     void      *data;        /**< Inflated data array */
 #endif
@@ -174,7 +174,7 @@ EXTERN int ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
 EXTERN int ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
                enum matio_types data_type,int rank,size_t *dims,int *start,
                int *stride,int *edge);
-#if defined(HAVE_ZLIB)
+#if HAVE_ZLIB
 EXTERN int ReadCompressedDoubleData(mat_t *mat,z_streamp z,double  *data,
                enum matio_types data_type,int len);
 EXTERN int ReadCompressedSingleData(mat_t *mat,z_streamp z,float   *data,

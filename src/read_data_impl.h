@@ -319,7 +319,7 @@ READ_TYPED_FUNC1(mat_t *mat, READ_TYPE *data, enum matio_types data_type, size_t
 #undef READ_TYPE_UINT64_DATA
 #endif /* HAVE_MAT_UINT64_T */
 
-#if defined(HAVE_ZLIB)
+#if HAVE_ZLIB
 
 #define READ_TYPE_DOUBLE_DATA CAT(READ_TYPED_FUNC2, Double)
 #define READ_TYPE_SINGLE_DATA CAT(READ_TYPED_FUNC2, Single)
