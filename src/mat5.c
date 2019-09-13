@@ -4805,6 +4805,8 @@ Mat_VarReadNextInfo5( mat_t *mat )
     if ( err == 0 )
         return NULL;
     err = fread(&nBytes,4,1,(FILE*)mat->fp);
+    if ( err == 0 )
+        return NULL;
     if ( mat->byteswap ) {
         (void)Mat_int32Swap(&data_type);
         (void)Mat_int32Swap(&nBytes);
