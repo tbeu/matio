@@ -46,7 +46,10 @@ VS_FILES = visual_studio/libmatio/libmatio.vcproj \
            visual_studio/stdint_msvc.h
 
 EXTRA_DIST = matio.pc.in autogen.sh patches/inflate.patch \
-             share/test_file.mat share/test_file_v6.mat $(VS_FILES)
+             share/test_file.mat \
+             share/test_file_v6.mat \
+             share/test_file_hdf5.mat \
+             $(VS_FILES)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = matio.pc
@@ -66,10 +69,10 @@ doc:
 
 
 print:
-	subdirs='$(SUBDIRS)'; \
-	here=`pwd`;\
-	for f in $$subdirs; do \
-	    cd $$f; \
-	    make print;\
-	    cd $$here;\
-	done
+    subdirs='$(SUBDIRS)'; \
+    here=`pwd`;\
+    for f in $$subdirs; do \
+        cd $$f; \
+        make print;\
+        cd $$here;\
+    done
