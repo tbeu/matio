@@ -4883,9 +4883,29 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 /* Rank and dimension */
                 if ( uncomp_buf[0] == MAT_T_INT32 ) {
                     int j;
+                    size_t size;
                     nbytes = uncomp_buf[1];
                     matvar->rank = nbytes / 4;
-                    matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
+                    err = SafeMul(&size, matvar->rank, sizeof(*matvar->dims));
+                    if ( err ) {
+                        if ( do_clean )
+                            free(dims);
+                        (void)fseek((FILE*)mat->fp,nBytes-bytesread,SEEK_CUR);
+                        Mat_VarFree(matvar);
+                        matvar = NULL;
+                        Mat_Critical("Integer multiplication overflow");
+                        break;
+                    }
+                    matvar->dims = (size_t*)malloc(size);
+                    if ( NULL == matvar->dims ) {
+                        if ( do_clean )
+                            free(dims);
+                        (void)fseek((FILE*)mat->fp,nBytes-bytesread,SEEK_CUR);
+                        Mat_VarFree(matvar);
+                        matvar = NULL;
+                        Mat_Critical("Couldn't allocate memory");
+                        break;
+                    }
                     if ( mat->byteswap ) {
                         for ( j = 0; j < matvar->rank; j++ )
                             matvar->dims[j] = Mat_uint32Swap(dims + j);
