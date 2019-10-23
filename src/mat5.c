@@ -1631,7 +1631,7 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
     matvar->data = malloc(matvar->nbytes);
     if ( matvar->data != NULL ) {
         size_t i;
-        matvar_t **functions = (matvar_t**)matvar->data;;
+        matvar_t **functions = (matvar_t**)matvar->data;
         for ( i = 0; i < nelems; i++ )
             functions[i] = Mat_VarReadNextInfo(mat);
     } else {
