@@ -909,20 +909,10 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                             H5P_DEFAULT,ref_ids);
                     for ( l = 0; l < nelems; l++ ) {
                         hid_t ref_id;
-                        ssize_t name_len;
                         fields[l*nfields+k] = Mat_VarCalloc();
                         fields[l*nfields+k]->name =
                             strdup(matvar->internal->fieldnames[k]);
                         fields[l*nfields+k]->internal->hdf5_ref=ref_ids[l];
-                        /* Get the HDF5 name of the variable */
-                        name_len = H5Iget_name(field_id,NULL,0);
-                        if ( name_len > 0 ) {
-                            fields[l*nfields+k]->internal->hdf5_name =
-                                (char*)malloc(name_len+1);
-                            (void)H5Iget_name(field_id,
-                                fields[l*nfields+k]->internal->hdf5_name,
-                                name_len+1);
-                        }
                         /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
                         ref_id = H5RDEREFERENCE(field_id,H5R_OBJECT,ref_ids+l);
                         fields[l*nfields+k]->internal->id = ref_id;
