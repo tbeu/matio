@@ -2953,7 +2953,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 }
             }
             if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-                nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,(int)nelems);
+                nBytes = ReadCharData(mat,(char*)matvar->data,packed_type,nelems);
                 /*
                  * If the data was in the tag we started on a 4-byte
                  * boundary so add 4 to make it an 8-byte

@@ -300,9 +300,6 @@
 #undef READ_TYPED_FUNC1
 #undef READ_TYPED_FUNC2
 
-#undef READ_DATA
-#undef READ_DATA_NOSWAP
-
 #if HAVE_ZLIB
 /** @brief Reads data of type @c data_type into a char type
  *
@@ -355,9 +352,8 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
 #endif
 
 size_t
-ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
+ReadCharData(mat_t *mat,char *data,enum matio_types data_type,size_t len)
 {
-    int bytesread = 0;
     size_t data_size;
 
     if ( mat == NULL || data == NULL || mat->fp == NULL )
@@ -368,33 +364,28 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,int len)
     switch ( data_type ) {
         case MAT_T_UINT8:
         case MAT_T_UTF8:
-            bytesread += fread(data,data_size,len,(FILE*)mat->fp);
-            break;
+        {
+            size_t readcount = fread(data,Mat_SizeOf(data_type),len,(FILE*)mat->fp);
+            return readcount*data_size;
+        }
         case MAT_T_UINT16:
         case MAT_T_UTF16:
         {
-            mat_uint16_t ui16;
-            int i;
-            if ( mat->byteswap ) {
-                for ( i = 0; i < len; i++ ) {
-                    bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
-                    data[i] = (char)Mat_uint16Swap(&ui16);
-                }
-            } else {
-                for ( i = 0; i < len; i++ ) {
-                    bytesread += fread(&ui16,data_size,1,(FILE*)mat->fp);
-                    data[i] = (char)ui16;
-                }
-            }
-            break;
+            size_t i, readcount;
+            mat_uint16_t v[READ_BLOCK_SIZE/sizeof(mat_uint16_t)];
+            READ_DATA(mat_uint16_t, Mat_uint16Swap);
+            return readcount*data_size;
         }
         default:
             Mat_Warning("ReadCharData: %d is not a supported data type for "
                 "character data", data_type);
             break;
     }
-    return bytesread;
+    return 0;
 }
+
+#undef READ_DATA
+#undef READ_DATA_NOSWAP
 
 /*
  *-------------------------------------------------------------------

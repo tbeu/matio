@@ -165,7 +165,7 @@ EXTERN size_t ReadInt8Data  (mat_t *mat,mat_int8_t  *data,
 EXTERN size_t ReadUInt8Data (mat_t *mat,mat_uint8_t  *data,
                enum matio_types data_type,size_t len);
 EXTERN size_t ReadCharData  (mat_t *mat,char  *data,enum matio_types data_type,
-               int len);
+               size_t len);
 EXTERN int ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
                enum matio_types data_type,int start,int stride,int edge);
 EXTERN int ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
