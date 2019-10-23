@@ -4810,6 +4810,8 @@ Mat_VarReadNextInfo5( mat_t *mat )
         (void)Mat_int32Swap(&data_type);
         (void)Mat_int32Swap(&nBytes);
     }
+    if ( nBytes > INT32_MAX - 8 - fpos )
+        return NULL;
     switch ( data_type ) {
         case MAT_T_COMPRESSED:
         {
