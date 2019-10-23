@@ -1444,8 +1444,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 #endif
     } else {
         mat_uint32_t buf[6];
-        int nBytes;
-        mat_uint32_t array_flags, len;
+        mat_uint32_t array_flags, len, nBytes;
 
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
         if ( mat->byteswap ) {
