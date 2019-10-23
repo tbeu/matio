@@ -165,7 +165,7 @@ m4_include([mat73_compressed_write.at])
 AT_BANNER([Write/Append Compressed MAT version 7.3])
 m4_include([mat73_compressed_writeappend.at])
 
-AT_BANNER([Extended Sparse version 4])
+AT_BANNER([Extended Sparse MAT version 4])
 m4_include([mat4_extended_sparse.at])
 
 AT_BANNER([Extended Sparse Uncompressed MAT version 5])
@@ -174,10 +174,10 @@ m4_include([mat5_uncompressed_extended_sparse.at])
 AT_BANNER([Extended Sparse Compressed MAT version 5])
 m4_include([mat5_compressed_extended_sparse.at])
 
-AT_BANNER([Extended Sparse version 7.3])
+AT_BANNER([Extended Sparse Uncompressed MAT version 7.3])
 m4_include([mat73_uncompressed_extended_sparse.at])
 
-AT_BANNER([Extended Sparse Compressed version 7.3])
+AT_BANNER([Extended Sparse Compressed MAT version 7.3])
 m4_include([mat73_compressed_extended_sparse.at])
 
 AT_BANNER([API Tests])
