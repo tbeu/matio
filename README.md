@@ -2,7 +2,7 @@
 MATLAB MAT file I/O library
 
 ## Build status
-[![Build Status](https://travis-ci.org/tbeu/matio.svg?branch=master)](https://travis-ci.org/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Coverage Status](https://coveralls.io/repos/github/tbeu/matio/badge.svg?branch=master)](https://coveralls.io/github/tbeu/matio?branch=master) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master) [![BCH Compliance](https://bettercodehub.com/edge/badge/tbeu/matio?branch=master)](https://bettercodehub.com/) [![Total Alerts](https://img.shields.io/lgtm/alerts/g/tbeu/matio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tbeu/matio/alerts/) [![Packaging status](https://repology.org/badge/tiny-repos/matio.svg)](https://repology.org/metapackage/matio/versions)
+[![Build Status](https://travis-ci.org/tbeu/matio.svg?branch=master)](https://travis-ci.org/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Coverage Status](https://coveralls.io/repos/github/tbeu/matio/badge.svg?branch=master)](https://coveralls.io/github/tbeu/matio?branch=master) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master) [![BCH Compliance](https://bettercodehub.com/edge/badge/tbeu/matio?branch=master)](https://bettercodehub.com/) [![Total Alerts](https://img.shields.io/lgtm/alerts/g/tbeu/matio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tbeu/matio/alerts/) [![Packaging status](https://repology.org/badge/tiny-repos/matio.svg)](https://repology.org/metapackage/matio/versions) [![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/matio.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:matio)
 
 ## Table of Contents
 1. [Introduction](#10-introduction)
@@ -45,7 +45,7 @@ The following people/organizations have helped in the development of matio throu
 * Steven Leibman <sleibman@alum.mit.edu>
 
 ### 1.3 Contributing
-If you are interested in collaborations, contact us via email (see Section [1.1](#11-contact)).
+If you are interested in collaborations, contact me via email (see Section [1.1](#11-contact)).
 
 ### 1.4 Questions and Reporting Bugs
 Questions can be asked using the forums on the sourceforge site hosting matio ([https://sourceforge.net/p/matio/discussion](https://sourceforge.net/p/matio/discussion)).
