@@ -1091,7 +1091,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 
     } else {
         mat_uint32_t buf[6];
-        int nBytes;
+        mat_uint32_t nBytes;
         mat_uint32_t array_flags;
 
         for ( i = 0; i < nelems; i++ ) {
