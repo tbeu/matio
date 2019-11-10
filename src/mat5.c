@@ -4887,6 +4887,12 @@ Mat_VarReadNextInfo5( mat_t *mat )
                     size_t size;
                     nbytes = uncomp_buf[1];
                     matvar->rank = nbytes / 4;
+                    if ( 0 == do_clean && matvar->rank > 13 ) {
+                        int rank = matvar->rank;
+                        matvar->rank = 0;
+                        Mat_Critical("%d is not a valid rank", rank);
+                        break;
+                    }
                     err = SafeMul(&size, matvar->rank, sizeof(*matvar->dims));
                     if ( err ) {
                         if ( do_clean )
