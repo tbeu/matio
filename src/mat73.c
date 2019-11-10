@@ -2417,7 +2417,8 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
 
             fields = (matvar_t**)matvar->data;
             for ( i = 0; i < nelems_x_nfields; i++ ) {
-                if (  0 < fields[i]->internal->hdf5_ref &&
+                if ( NULL != fields[i] &&
+                      0 < fields[i]->internal->hdf5_ref &&
                      -1 < fields[i]->internal->id ) {
                     /* Dataset of references */
                     Mat_H5ReadNextReferenceData(fields[i]->internal->id,fields[i],mat);
