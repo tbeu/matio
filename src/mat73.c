@@ -690,6 +690,10 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             return;
         }
         matvar->data = malloc(matvar->nbytes);
+        if ( NULL == matvar->data ) {
+            Mat_Critical("Couldn't allocate memory for the data");
+            return;
+        }
         cells = (matvar_t**)matvar->data;
 
         if ( nelems ) {
@@ -2426,13 +2430,20 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         case MAT_C_CELL:
         {
             matvar_t **cells;
-            size_t i, nelems = 0;
+            size_t i, nelems;
 
+            if ( NULL == matvar->data ) {
+                Mat_Critical("Data is NULL for cell array %s", matvar->name);
+                err = 1;
+                break;
+            }
             nelems = matvar->nbytes / matvar->data_size;
             cells  = (matvar_t**)matvar->data;
-
-            for ( i = 0; i < nelems; i++ )
-                Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
+            for ( i = 0; i < nelems; i++ ) {
+                if ( NULL != cells[i] ) {
+                    Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
+                }
+            }
             break;
         }
         case MAT_C_SPARSE:
