@@ -1380,11 +1380,26 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 /* Rank and dimension */
                 if ( uncomp_buf[0] == MAT_T_INT32 ) {
                     int j;
+                    size_t size;
                     fields[i]->rank = uncomp_buf[1];
                     nbytes -= fields[i]->rank;
                     fields[i]->rank /= 4;
-                    fields[i]->dims = (size_t*)malloc(fields[i]->rank*
-                                             sizeof(*fields[i]->dims));
+                    if ( 0 == do_clean && fields[i]->rank > 13 ) {
+                        int rank = fields[i]->rank;
+                        fields[i]->rank = 0;
+                        Mat_Critical("%d is not a valid rank", rank);
+                        continue;
+                    }
+                    err = SafeMul(&size, fields[i]->rank, sizeof(*fields[i]->dims));
+                    if ( err ) {
+                        if ( do_clean )
+                            free(dims);
+                        Mat_VarFree(fields[i]);
+                        fields[i] = NULL;
+                        Mat_Critical("Integer multiplication overflow");
+                        continue;
+                    }
+                    fields[i]->dims = (size_t*)malloc(size);
                     if ( mat->byteswap ) {
                         for ( j = 0; j < fields[i]->rank; j++ )
                             fields[i]->dims[j] = Mat_uint32Swap(dims+j);
