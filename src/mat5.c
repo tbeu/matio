@@ -989,10 +989,26 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 /* Rank and Dimension */
                 if ( uncomp_buf[0] == MAT_T_INT32 ) {
                     int j;
+                    size_t size;
                     cells[i]->rank = uncomp_buf[1];
                     nbytes -= cells[i]->rank;
                     cells[i]->rank /= 4;
-                    cells[i]->dims = (size_t*)malloc(cells[i]->rank*sizeof(*cells[i]->dims));
+                    if ( 0 == do_clean && cells[i]->rank > 13 ) {
+                        int rank = cells[i]->rank;
+                        cells[i]->rank = 0;
+                        Mat_Critical("%d is not a valid rank", rank);
+                        continue;
+                    }
+                    err = SafeMul(&size, cells[i]->rank, sizeof(*cells[i]->dims));
+                    if ( err ) {
+                        if ( do_clean )
+                            free(dims);
+                        Mat_VarFree(cells[i]);
+                        cells[i] = NULL;
+                        Mat_Critical("Integer multiplication overflow");
+                        continue;
+                    }
+                    cells[i]->dims = (size_t*)malloc(size);
                     if ( mat->byteswap ) {
                         for ( j = 0; j < cells[i]->rank; j++ )
                             cells[i]->dims[j] = Mat_uint32Swap(dims + j);
