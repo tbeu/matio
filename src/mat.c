@@ -220,6 +220,11 @@ int SafeMulDims(const matvar_t *matvar, size_t* nelems)
 {
     int i;
 
+    if ( matvar->rank == 0 ) {
+        *nelems = 0;
+        return 0;
+    }
+
     for ( i = 0; i < matvar->rank; i++ ) {
         if ( !psnip_safe_size_mul(nelems, *nelems, matvar->dims[i]) ) {
             *nelems = 0;
@@ -1640,7 +1645,7 @@ Mat_VarFree(matvar_t *matvar)
         }
 #endif
         if ( NULL != matvar->internal->fieldnames &&
-             matvar->internal->num_fields > 0 ) {
+            matvar->internal->num_fields > 0 ) {
             size_t i;
             for ( i = 0; i < matvar->internal->num_fields; i++ ) {
                 if ( NULL != matvar->internal->fieldnames[i] )
