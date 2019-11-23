@@ -10,7 +10,6 @@ addons:
     packages:
       - gcc-4.8-multilib
       - linux-libc-dev
-      - linux-libc-dev:i386
       - g++-4.8
       - texlive
       - texinfo
@@ -35,6 +34,15 @@ env:
 matrix:
   include:
     - os: linux
+      compiler: gcc-4.8
+      env:
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=yes
+        - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
+        - HDF5_VERSION_DIR=hdf5_1_10_6
+        - MAX_RANK=3
+    - os: linux
+      arch: arm64
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
@@ -143,8 +151,8 @@ matrix:
         - HOMEBREW_NO_ANALYTICS=1
 
 before_install:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ "$HOMEBREW_DEPLOY" == "yes" ]]; then brew update; brew install zlib; brew install libtool; brew install automake; brew install hdf5; fi
 
 install:
@@ -195,11 +203,11 @@ script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
 
 after_success:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e matfilerw -e MSL -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e ossfuzz -e patches -e share -e $HDF5_VERSION_DIR -e visual_studio -e zlib --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then make pdf; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then make dist-gzip; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && [[ "$TRAVIS_BRANCH" == "master" ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.pdf; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && [[ "$TRAVIS_BRANCH" == "master" ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./matio-1.5.17.tar.gz; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e matfilerw -e MSL -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e ossfuzz -e patches -e share -e $HDF5_VERSION_DIR -e visual_studio -e zlib --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then make pdf; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then make dist-gzip; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && [[ "$TRAVIS_BRANCH" == "master" ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.pdf; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && [[ "$TRAVIS_BRANCH" == "master" ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./matio-1.5.17.tar.gz; fi
 
 notifications:
   email: false
