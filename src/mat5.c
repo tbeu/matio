@@ -1240,7 +1240,6 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
     if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if HAVE_ZLIB
         mat_uint32_t uncomp_buf[16] = {0,};
-        int nbytes;
         mat_uint32_t array_flags, len;
 
         /* Field name length */
@@ -1337,19 +1336,20 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         for ( i = 0; i < nelems_x_nfields; i++ ) {
+            mat_uint32_t nBytes;
             /* Read variable tag for struct field */
             bytesread += InflateVarTag(mat,matvar,uncomp_buf);
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(uncomp_buf);
                 (void)Mat_uint32Swap(uncomp_buf+1);
             }
-            nbytes = uncomp_buf[1];
+            nBytes = uncomp_buf[1];
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
                 Mat_Critical("fields[%" SIZE_T_FMTSTR "], Uncompressed type not MAT_T_MATRIX", i);
                 continue;
-            } else if ( 0 == nbytes ) {
+            } else if ( 0 == nBytes ) {
                 /* Empty field: Memory optimization */
                 free(fields[i]->internal);
                 fields[i]->internal = NULL;
@@ -1357,7 +1357,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
             fields[i]->compression = MAT_COMPRESSION_ZLIB;
             bytesread += InflateArrayFlags(mat,matvar,uncomp_buf);
-            nbytes -= 16;
+            nBytes -= 16;
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(uncomp_buf);
                 (void)Mat_uint32Swap(uncomp_buf+1);
@@ -1378,7 +1378,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             } else {
                 Mat_Critical("Expected MAT_T_UINT32 for array tags, got %d",
                     uncomp_buf[0]);
-                bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
+                bytesread+=InflateSkip(mat,matvar->internal->z,nBytes);
             }
             if ( fields[i]->class_type != MAT_C_OPAQUE ) {
                 mat_uint32_t* dims = NULL;
@@ -1388,7 +1388,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                     dims = uncomp_buf + 2;
                 else
                     do_clean = 1;
-                nbytes -= 8;
+                nBytes -= 8;
                 if ( mat->byteswap ) {
                     (void)Mat_uint32Swap(uncomp_buf);
                     (void)Mat_uint32Swap(uncomp_buf+1);
@@ -1398,7 +1398,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                     int j;
                     size_t size;
                     fields[i]->rank = uncomp_buf[1];
-                    nbytes -= fields[i]->rank;
+                    nBytes -= fields[i]->rank;
                     fields[i]->rank /= 4;
                     if ( 0 == do_clean && fields[i]->rank > 13 ) {
                         int rank = fields[i]->rank;
@@ -1424,13 +1424,13 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                             fields[i]->dims[j] = dims[j];
                     }
                     if ( fields[i]->rank % 2 != 0 )
-                        nbytes -= 4;
+                        nBytes -= 4;
                 }
                 if ( do_clean )
                     free(dims);
                 /* Variable name tag */
                 bytesread += InflateVarTag(mat,matvar,uncomp_buf);
-                nbytes -= 8;
+                nBytes -= 8;
                 fields[i]->internal->z = (z_streamp)calloc(1,sizeof(z_stream));
                 if ( fields[i]->internal->z != NULL ) {
                     err = inflateCopy(fields[i]->internal->z,matvar->internal->z);
@@ -1442,7 +1442,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                                 bytesread+=ReadNextStructField(mat,fields[i]);
                             else if ( fields[i]->class_type == MAT_C_CELL )
                                 bytesread+=ReadNextCell(mat,fields[i]);
-                            else if ( nbytes <= (1 << MAX_WBITS) ) {
+                            else if ( nBytes <= (1 << MAX_WBITS) ) {
                                 /* Memory optimization: Read data if less in size
                                    than the zlib inflate state (approximately) */
                                 err = Mat_VarRead5(mat,fields[i]);
@@ -1468,14 +1468,14 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                     Mat_Critical("Couldn't allocate memory");
                 }
             }
-            bytesread+=InflateSkip(mat,matvar->internal->z,nbytes);
+            bytesread+=InflateSkip(mat,matvar->internal->z,nBytes);
         }
 #else
         Mat_Critical("Not compiled with zlib support");
 #endif
     } else {
         mat_uint32_t buf[6];
-        mat_uint32_t array_flags, len, nBytes;
+        mat_uint32_t array_flags, len;
 
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
         if ( mat->byteswap ) {
@@ -1572,6 +1572,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         for ( i = 0; i < nelems_x_nfields; i++ ) {
+            mat_uint32_t nBytes;
             /* Read variable tag for struct field */
             bytesread += fread(buf,4,2,(FILE*)mat->fp);
             if ( mat->byteswap ) {
