@@ -1105,7 +1105,8 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 nelems = matvar->nbytes / matvar->data_size;
                 fields  = (matvar_t**)matvar->data;
                 for ( i = 0; i < nelems; i++ ) {
-                    if (  0 < fields[i]->internal->hdf5_ref &&
+                    if ( NULL != fields[i] &&
+                          0 < fields[i]->internal->hdf5_ref &&
                          -1 < fields[i]->internal->id ) {
                         /* Dataset of references */
                         Mat_H5ReadNextReferenceData(fields[i]->internal->id,fields[i],mat);
