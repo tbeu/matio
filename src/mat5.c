@@ -1474,7 +1474,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         Mat_Critical("Not compiled with zlib support");
 #endif
     } else {
-        mat_uint32_t buf[6];
+        mat_uint32_t buf[6] = {0,};
         mat_uint32_t array_flags, len;
 
         bytesread+=fread(buf,4,2,(FILE*)mat->fp);
