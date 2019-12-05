@@ -41,7 +41,6 @@
 #endif
 #if (defined(_WIN64) || defined(_WIN32)) && !defined(__CYGWIN__)
 #   include <io.h>
-#   define mktemp _mktemp
 #endif
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
@@ -61,6 +60,28 @@
  *                 Private Functions
  *===================================================================
  */
+
+static char *
+Mat_mktemp(char *temp)
+{
+    char *ret = NULL;
+
+#if (defined(_WIN64) || defined(_WIN32)) && !defined(__CYGWIN__)
+    if(_mktemp(temp) != NULL) {
+        ret = malloc(strlen(temp) + 1);
+        strcpy(ret, temp);
+    }
+#else
+    const char *name = "/temp.mat";
+    if(mkdtemp(temp) != NULL) {
+        ret = malloc(strlen(temp) + strlen(name) + 1);
+        strcpy(ret, temp);
+        strcat(ret, name);
+    }
+#endif
+
+    return ret;
+}
 
 static int
 ReadData(mat_t *mat, matvar_t *matvar)
@@ -1169,7 +1190,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
     if ( NULL == mat || NULL == name )
         return err;
 
-    if ( (tmp_name = mktemp(temp)) != NULL ) {
+    if ( (tmp_name = Mat_mktemp(temp)) != NULL ) {
         enum mat_ft mat_file_ver;
         mat_t *tmp;
 
@@ -1274,6 +1295,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                 Mat_Critical("Cannot remove file \"%s\".",tmp_name);
             }
         }
+        free(tmp_name);
     } else {
         Mat_Critical("Cannot create a unique file name.");
     }
