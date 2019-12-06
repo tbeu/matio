@@ -587,7 +587,7 @@ Mat_Create5(const char *matname,const char *hdr_str)
 
     t = time(NULL);
     mat->fp       = fp;
-    mat->filename = strdup_printf("%s",matname);
+    mat->filename = strdup(matname);
     mat->mode     = MAT_ACC_RDWR;
     mat->byteswap = 0;
     mat->header   = (char*)malloc(128*sizeof(char));

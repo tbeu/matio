@@ -231,8 +231,6 @@ typedef struct mat_sparse_t {
 EXTERN void Mat_GetLibraryVersion(int *major,int *minor,int *release);
 
 /* io.c */
-EXTERN char  *strdup_vprintf(const char *format, va_list ap) MATIO_FORMATATTR_VPRINTF;
-EXTERN char  *strdup_printf(const char *format, ...) MATIO_FORMATATTR_PRINTF1;
 EXTERN int    Mat_SetVerbose(int verb, int s);
 EXTERN int    Mat_SetDebug(int d);
 EXTERN void   Mat_Critical(const char *format, ...) MATIO_FORMATATTR_PRINTF1;

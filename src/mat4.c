@@ -36,6 +36,9 @@
 #if defined(__GLIBC__)
 #include <endian.h>
 #endif
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#   define strdup _strdup
+#endif
 #include "matio_private.h"
 #include "mat4.h"
 
@@ -77,7 +80,7 @@ Mat_Create4(const char* matname)
     mat->fp            = fp;
     mat->header        = NULL;
     mat->subsys_offset = NULL;
-    mat->filename      = strdup_printf("%s",matname);
+    mat->filename      = strdup(matname);
     mat->version       = MAT_FT_MAT4;
     mat->byteswap      = 0;
     mat->mode          = 0;

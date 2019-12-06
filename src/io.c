@@ -46,6 +46,7 @@
 
 static void (*logfunc)(int log_level, char *message ) = NULL;
 static const char *progname = NULL;
+static char *strdup_vprintf(const char *format, va_list ap) MATIO_FORMATATTR_VPRINTF;
 
 /** @brief Allocates and prints to a new string
  *
@@ -54,7 +55,7 @@ static const char *progname = NULL;
  * @param ap variable argument list
  * @return Newly allocated string with format printed to it
  */
-char *
+static char *
 strdup_vprintf(const char* format, va_list ap)
 {
     va_list ap2;
@@ -70,23 +71,6 @@ strdup_vprintf(const char* format, va_list ap)
         return NULL;
 
     mat_vsnprintf(buffer, size, format, ap);
-    return buffer;
-}
-
-/** @brief Allocates and prints to a new string using printf format
- *
- * @ingroup mat_util
- * @param format format string
- * @return Pointer to resulting string, or NULL if there was an error
- */
-char *
-strdup_printf(const char* format, ...)
-{
-    char* buffer;
-    va_list ap;
-    va_start(ap, format);
-    buffer = strdup_vprintf(format, ap);
-    va_end(ap);
     return buffer;
 }
 

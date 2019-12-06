@@ -2264,7 +2264,7 @@ Mat_Create73(const char *matname,const char *hdr_str)
     mat->dir           = NULL;
 
     t = time(NULL);
-    mat->filename = strdup_printf("%s",matname);
+    mat->filename = strdup(matname);
     mat->mode     = MAT_ACC_RDWR;
     mat->byteswap = 0;
     mat->header   = (char*)malloc(128*sizeof(char));

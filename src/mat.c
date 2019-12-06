@@ -485,7 +485,7 @@ Mat_Open(const char *matname,int mode)
     if ( NULL == mat )
         return mat;
 
-    mat->filename = strdup_printf("%s",matname);
+    mat->filename = strdup(matname);
     mat->mode = mode;
 
     if ( mat->version == 0x0200 ) {
@@ -659,8 +659,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
                 matvar = Mat_VarReadNextInfo(mat);
                 if ( NULL != matvar ) {
                     if ( NULL != matvar->name ) {
-                        mat->dir[i++] = strdup_printf("%s",
-                            matvar->name);
+                        mat->dir[i++] = strdup(matvar->name);
                     }
                     Mat_VarFree(matvar);
                 } else {
@@ -691,8 +690,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
                         }
                         if ( NULL != dir ) {
                             mat->dir = dir;
-                            mat->dir[mat->num_datasets++] =
-                                strdup_printf("%s", matvar->name);
+                            mat->dir[mat->num_datasets++] = strdup(matvar->name);
                         } else {
                             Mat_Critical("Couldn't allocate memory for the directory");
                             break;
@@ -924,7 +922,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
     matvar->isGlobal    = opt & MAT_F_GLOBAL;
     matvar->isLogical   = opt & MAT_F_LOGICAL;
     if ( name )
-        matvar->name = strdup_printf("%s",name);
+        matvar->name = strdup(name);
     matvar->rank = rank;
     matvar->dims = (size_t*)malloc(matvar->rank*sizeof(*matvar->dims));
     for ( j = 0; j < matvar->rank; j++ ) {
@@ -1210,7 +1208,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
             Mat_Close(tmp);
 
             if ( 0 == err ) {
-                char *new_name = strdup_printf("%s",mat->filename);
+                char *new_name = strdup(mat->filename);
 #if defined(MAT73) && MAT73
                 if ( mat_file_ver == MAT_FT_MAT73 ) {
                     if ( mat->refs_id > -1 )
@@ -2618,8 +2616,7 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
         if ( NULL != dir ) {
             mat->dir = dir;
             if ( NULL != matvar->name ) {
-                mat->dir[mat->num_datasets++] =
-                    strdup_printf("%s", matvar->name);
+                mat->dir[mat->num_datasets++] = strdup(matvar->name);
             } else {
                 mat->dir[mat->num_datasets++] = NULL;
             }
@@ -2686,8 +2683,7 @@ Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,i
             if ( NULL != dir ) {
                 mat->dir = dir;
                 if ( NULL != matvar->name ) {
-                    mat->dir[mat->num_datasets++] =
-                        strdup_printf("%s", matvar->name);
+                    mat->dir[mat->num_datasets++] = strdup(matvar->name);
                 } else {
                     mat->dir[mat->num_datasets++] = NULL;
                 }
