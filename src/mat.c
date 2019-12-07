@@ -65,8 +65,8 @@
 #define MAT_MKTEMP_TPL "XXXXXX"
 #define MAT_MKTEMP_FILE "/temp.mat"
 
-static const size_t MAT_MKTEMP_BUF_SIZE =
-  sizeof(MAT_MKTEMP_DIR)+sizeof(MAT_MKTEMP_TPL)+sizeof(MAT_MKTEMP_FILE)-2;
+#define MAT_MKTEMP_BUF_SIZE \
+  (sizeof(MAT_MKTEMP_DIR)+sizeof(MAT_MKTEMP_TPL)+sizeof(MAT_MKTEMP_FILE)-2)
 
 static char *
 Mat_mktemp(char *path_buf, char *dir_buf)
