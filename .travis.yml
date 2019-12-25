@@ -40,7 +40,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION_DIR=hdf5_1_10_5
+        - HDF5_VERSION_DIR=hdf5_1_10_6
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
