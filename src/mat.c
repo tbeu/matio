@@ -41,7 +41,6 @@
 #endif
 #if (defined(_WIN64) || defined(_WIN32)) && !defined(__CYGWIN__)
 #   include <io.h>
-#   define mktemp _mktemp
 #endif
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
@@ -61,6 +60,41 @@
  *                 Private Functions
  *===================================================================
  */
+
+#define MAT_MKTEMP_DIR "/tmp/"
+#define MAT_MKTEMP_TPL "XXXXXX"
+#define MAT_MKTEMP_FILE "/temp.mat"
+
+#define MAT_MKTEMP_BUF_SIZE \
+  (sizeof(MAT_MKTEMP_DIR)+sizeof(MAT_MKTEMP_TPL)+sizeof(MAT_MKTEMP_FILE)-2)
+
+static char *
+Mat_mktemp(char *path_buf, char *dir_buf)
+{
+    char *ret = NULL;
+
+    *path_buf = '\0';
+    *dir_buf  = '\0';
+
+#if (defined(_WIN64) || defined(_WIN32)) && !defined(__CYGWIN__)
+    strcpy(path_buf, MAT_MKTEMP_TPL);
+    if ( NULL != _mktemp(path_buf) )
+        ret = path_buf;
+#else
+    /* On Linux, using mktemp() causes annoying linker errors that can't be
+       suppressed. So, create a temporary directory with mkdtemp() instead,
+       and then just always use the same hardcoded filename inside that temp dir.
+     */
+    strcpy(dir_buf, MAT_MKTEMP_DIR MAT_MKTEMP_TPL);
+    if ( NULL != mkdtemp(dir_buf) ) {
+        strcpy(path_buf, dir_buf);
+        strcat(path_buf, MAT_MKTEMP_FILE);
+        ret = path_buf;
+    }
+#endif
+
+    return ret;
+}
 
 static int
 ReadData(mat_t *mat, matvar_t *matvar)
@@ -1162,14 +1196,14 @@ mat_copy(const char* src, const char* dst)
 int
 Mat_VarDelete(mat_t *mat, const char *name)
 {
-    int   err = 1;
-    char *tmp_name;
-    char temp[7] = "XXXXXX";
+    int err = 1;
+    char path_buf[MAT_MKTEMP_BUF_SIZE];
+    char dir_buf[MAT_MKTEMP_BUF_SIZE];
 
     if ( NULL == mat || NULL == name )
         return err;
 
-    if ( (tmp_name = mktemp(temp)) != NULL ) {
+    if ( NULL != Mat_mktemp(path_buf, dir_buf) ) {
         enum mat_ft mat_file_ver;
         mat_t *tmp;
 
@@ -1188,7 +1222,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                 break;
         }
 
-        tmp = Mat_CreateVer(tmp_name,mat->header,mat_file_ver);
+        tmp = Mat_CreateVer(path_buf,mat->header,mat_file_ver);
         if ( tmp != NULL ) {
             matvar_t *matvar;
             char **dir;
@@ -1223,7 +1257,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     mat->fp = NULL;
                 }
 
-                if ( (err = mat_copy(tmp_name,new_name)) == -1 ) {
+                if ( (err = mat_copy(path_buf,new_name)) == -1 ) {
                     if ( NULL != dir ) {
                         size_t i;
                         for ( i = 0; i < n; i++ ) {
@@ -1233,8 +1267,8 @@ Mat_VarDelete(mat_t *mat, const char *name)
                         free(dir);
                     }
                     Mat_Critical("Cannot copy file from \"%s\" to \"%s\".",
-                        tmp_name, new_name);
-                } else if ( (err = remove(tmp_name)) == -1 ) {
+                        path_buf, new_name);
+                } else if ( (err = remove(path_buf)) == -1 ) {
                     if ( NULL != dir ) {
                         size_t i;
                         for ( i = 0; i < n; i++ ) {
@@ -1243,7 +1277,17 @@ Mat_VarDelete(mat_t *mat, const char *name)
                         }
                         free(dir);
                     }
-                    Mat_Critical("Cannot remove file \"%s\".",tmp_name);
+                    Mat_Critical("Cannot remove file \"%s\".",path_buf);
+                } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) == -1 ) {
+                    if ( NULL != dir ) {
+                        size_t i;
+                        for ( i = 0; i < n; i++ ) {
+                            if ( dir[i] )
+                                free(dir[i]);
+                        }
+                        free(dir);
+                    }
+                    Mat_Critical("Cannot remove directory \"%s\".",dir_buf);
                 } else {
                     tmp = Mat_Open(new_name,mat->mode);
                     if ( NULL != tmp ) {
@@ -1270,8 +1314,10 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     }
                 }
                 free(new_name);
-            } else if ( (err = remove(tmp_name)) == -1 ) {
-                Mat_Critical("Cannot remove file \"%s\".",tmp_name);
+            } else if ( (err = remove(path_buf)) == -1 ) {
+                Mat_Critical("Cannot remove file \"%s\".",path_buf);
+            } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) == -1 ) {
+                Mat_Critical("Cannot remove directory \"%s\".",dir_buf);
             }
         }
     } else {
