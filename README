@@ -176,7 +176,7 @@ Table of Contents
             information on reporting bugs).
 
     2.3 Platforms
-        The library has been tested/used on Linux, Windows, OS X, and AIX
+        The library has been tested/used on Linux, Windows, and OS X
         including both little-endian and big-endian architecture.
 
 3.0 License

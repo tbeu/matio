@@ -116,7 +116,7 @@ A testsuite is available when building with the GNU autotools. To run the testsu
 To report matio testsuite failures, compress the testsuite.log file in the test sub-directory of the build directory. Upload the compressed log file along with a bug report (see Section [1.4](#14-questions-and-reporting-bugs) for information on reporting bugs).
 
 ### 2.3 Platforms
-The library has been tested/used on Linux, Windows, OS X, and AIX including both little-endian and big-endian architecture.
+The library has been tested/used on Linux, Windows, and OS X including both little-endian and big-endian architecture.
 
 ## 3.0 License
 This software is provided under a Simplified BSD license. See the [COPYING](COPYING) file for details on the license.
