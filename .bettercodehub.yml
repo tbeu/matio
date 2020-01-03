@@ -3,6 +3,7 @@ exclude:
 - /.install_hdf5_1_8.sh
 - /coverity_model.c
 - /getopt/.*
+- /ossfuzz/.*
 - /src/fortran/matio_internal.c
 - /src/snprintf.c
 component_depth: 1
