@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019, Christopher C. Hulbert
+ * Copyright (c) 2012-2020, Christopher C. Hulbert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

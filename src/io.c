@@ -2,7 +2,7 @@
  * MAT File I/O Utility Functions
  */
 /*
- * Copyright (c) 2005-2019, Christopher C. Hulbert
+ * Copyright (c) 2005-2020, Christopher C. Hulbert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
