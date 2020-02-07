@@ -79,9 +79,14 @@ struct ReadGroupInfoIterData {
 #define H5RDEREFERENCE(obj_id, ref_type, _ref) H5Rdereference((obj_id), (ref_type), (_ref))
 #endif
 
-#if H5_VERSION_GE(1,10,3)
+#if H5_VERSION_GE(1,12,0)
+#define H5O_INFO_T H5O_info2_t
+#define H5OGET_INFO_BY_NAME(loc_id, name, oinfo, lapl_id) H5Oget_info_by_name3((loc_id), (name), (oinfo), H5O_INFO_BASIC, (lapl_id));
+#elif H5_VERSION_GE(1,10,3)
+#define H5O_INFO_T H5O_info_t
 #define H5OGET_INFO_BY_NAME(loc_id, name, oinfo, lapl_id) H5Oget_info_by_name2((loc_id), (name), (oinfo), H5O_INFO_BASIC, (lapl_id));
 #else
+#define H5O_INFO_T H5O_info_t
 #define H5OGET_INFO_BY_NAME(loc_id, name, oinfo, lapl_id) H5Oget_info_by_name((loc_id), (name), (oinfo), (lapl_id));
 #endif
 
@@ -629,7 +634,11 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
             fieldnames_vl[i].len);
     }
 
+#if H5_VERSION_GE(1,12,0)
+    H5Treclaim(field_id,space_id,H5P_DEFAULT,fieldnames_vl);
+#else
     H5Dvlen_reclaim(field_id,space_id,H5P_DEFAULT,fieldnames_vl);
+#endif
     H5Sclose(space_id);
     H5Tclose(field_id);
     H5Aclose(attr_id);
@@ -811,7 +820,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     }
 
     if ( nfields > 0 ) {
-        H5O_info_t object_info;
+        H5O_INFO_T object_info;
         H5OGET_INFO_BY_NAME(dset_id, matvar->internal->fieldnames[0], &object_info, H5P_DEFAULT);
         obj_type = object_info.type;
     } else {
@@ -900,7 +909,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     if ( NULL != fields ) {
         int k;
         for ( k = 0; k < nfields; k++ ) {
-            H5O_info_t object_info;
+            H5O_INFO_T object_info;
             fields[k] = NULL;
             H5OGET_INFO_BY_NAME(dset_id, matvar->internal->fieldnames[k], &object_info, H5P_DEFAULT);
             if ( object_info.type == H5O_TYPE_DATASET ) {
@@ -947,7 +956,7 @@ static herr_t
 Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *info, void *op_data)
 {
     matvar_t  *matvar;
-    H5O_info_t object_info;
+    H5O_INFO_T object_info;
     struct ReadGroupInfoIterData *group_data;
 
     /* FIXME: follow symlinks, datatypes? */
@@ -2779,7 +2788,7 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
 {
     mat_t *mat;
     matvar_t *matvar;
-    H5O_info_t object_info;
+    H5O_INFO_T object_info;
     struct ReadNextIterData *mat_data;
 
     /* FIXME: follow symlinks, datatypes? */

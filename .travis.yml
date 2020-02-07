@@ -39,7 +39,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION_DIR=hdf5_1_10_6
+        - HDF5_VERSION_DIR=hdf5_1_12_0
         - MAX_RANK=3
     - os: linux
       arch: arm64
@@ -48,10 +48,18 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION_DIR=hdf5_1_10_6
+        - HDF5_VERSION_DIR=hdf5_1_12_0
         - MAX_RANK=3
     - os: linux
       arch: s390x
+      compiler: gcc-4.8
+      env:
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=yes
+        - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
+        - HDF5_VERSION_DIR=hdf5_1_12_0
+        - MAX_RANK=3
+    - os: linux
       compiler: gcc-4.8
       env:
         - ENABLE_EXTENDED_SPARSE=yes
@@ -162,7 +170,7 @@ matrix:
 before_install:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ "$HOMEBREW_DEPLOY" == "yes" ]]; then brew update; brew install zlib; brew install libtool; brew install automake; brew install hdf5; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ "$HOMEBREW_DEPLOY" == "yes" ]]; then brew update; brew install zlib; brew install libtool; brew install automake; brew upgrade hdf5; fi
 
 install:
   - if [[ "$ENABLE_MAT73" == "yes" ]]; then ./.travis_install.sh; fi
