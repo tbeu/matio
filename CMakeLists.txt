@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.7)
 
 project( matio
-         VERSION 1.5.13
+         VERSION 1.5.17
          LANGUAGES C CXX #Fortran
 )
 
