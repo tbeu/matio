@@ -36,6 +36,15 @@ matrix:
     - os: linux
       compiler: gcc-4.8
       env:
+        - USE_CMAKE=yes
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=yes
+        - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
+        - HDF5_VERSION_DIR=hdf5_1_10_6
+        - MAX_RANK=3
+    - os: linux
+      compiler: gcc-4.8
+      env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
@@ -168,9 +177,28 @@ matrix:
         - HOMEBREW_NO_ANALYTICS=1
 
 before_install:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ "$HOMEBREW_DEPLOY" == "yes" ]]; then brew update; brew install zlib; brew install libtool; brew install automake; brew install hdf5; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]]; then
+        pip install --upgrade pip;
+        pip install --user cpp-coveralls;
+    fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then
+        curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh;
+    fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ "$HOMEBREW_DEPLOY" == "yes" ]]; then
+        brew update;
+        brew install zlib;
+        brew install libtool;
+        brew install automake;
+        brew install hdf5;
+    fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "${USE_CMAKE:-no}" == "yes" ]]; then
+        pushd ${HOME};
+        CMAKE_VERSION=3.11.4;
+        CMAKE_URL="https://cmake.org/files/v${CMAKE_VERSION%.[0-9]}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz";
+        mkdir cmake && wget --no-check-certificate -nv -O - ${CMAKE_URL} | tar --strip-components=1 -xzC cmake;
+        export PATH=${HOME}/cmake/bin:${PATH};
+        popd;
+    fi
 
 install:
   - if [[ "$ENABLE_MAT73" == "yes" ]]; then ./.travis_install.sh; fi
@@ -196,15 +224,28 @@ install:
   - cd $TRAVIS_BUILD_DIR
 
 before_script:
-  - ./autogen.sh
-  - if [[ "$HDF5_VERSION_DIR" == "foo" ]]; then ./configure --quiet --enable-shared --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic; CC=foo; fi
-  - if [[ "$CC" == "gcc-4.8" ]]; then ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5; fi
-  - if [[ "$CC" == "clang" ]]; then ./configure --quiet --enable-shared --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5; fi
-  - if [[ "$HDF5_VERSION_DIR" == "foo" ]]; then CC=$(which clang); fi
+  - if [[ "${USE_CMAKE:-no}" == "no" ]]; then ./autogen.sh; fi
+  - if [[ "$HDF5_VERSION_DIR" == "foo" ]] && [[ "${USE_CMAKE:-no}" == "no" ]]; then ./configure --quiet --enable-shared --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic; CC=foo; fi
+  - if [[ "$CC" == "gcc-4.8" ]] && [[ "${USE_CMAKE:-no}" == "no" ]]; then ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5; fi
+  - if [[ "$CC" == "clang" ]] && [[ "${USE_CMAKE:-no}" == "no" ]]; then ./configure --quiet --enable-shared --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5; fi
+  - if [[ "$HDF5_VERSION_DIR" == "foo" ]] && [[ "${USE_CMAKE:-no}" == "no" ]]; then CC=$(which clang); fi
+  - if [[ "${USE_CMAKE:-no}" == "yes" ]]; then
+        SRC_DIR=${TRAVIS_BUILD_DIR};
+        BUILD_DIR=${TRAVIS_BUILD_DIR}/building_dir;
+        INSTALL_DIR=$BUILD_DIR/simulate_install_dir;
+        HDF5_VERSION=1.10.6;
+        HDF5_DIR=${HOME}/CMake-hdf5-${HDF5_VERSION}/HDF_Group/HDF5/${HDF5_VERSION};
+        export CMAKE_PREFIX_PATH=${HDF5_DIR}/share/cmake;
+        mkdir -p $BUILD_DIR;
+        mkdir -p $INSTALL_DIR;
+        cmake $SRC_DIR -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR -DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH -DZLIB_LIBRARY=${HDF5_DIR}/lib/libz.so -DZLIB_INCLUDE_DIR=${HDF5_DIR}/include -DHDF5_DIR=$HDF5_DIR;
+        cmake --build . -- -j 8;
+    fi
 
 script:
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make "CPPFLAGS=-DMAX_RANK=$MAX_RANK"; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make check; fi
+  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "${USE_CMAKE:-no}" == "no" ]]; then make check; fi
+  - if [[ "${USE_CMAKE:-no}" == "yes" ]]; then mkdir -p test && cp ./test_snprintf ./test && cp ./test_mat ./test && mkdir -p tools && cp ./matdump ./tools; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_snprintf; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -H; fi
   - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -L; fi
