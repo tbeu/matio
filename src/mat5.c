@@ -1106,12 +1106,12 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
 #endif
 
     } else {
-        mat_uint32_t buf[6];
+        mat_uint32_t buf[6] = {0,};
         mat_uint32_t nBytes;
         mat_uint32_t array_flags;
 
         for ( i = 0; i < nelems; i++ ) {
-            int cell_bytes_read;
+            size_t readresult;
             mat_uint32_t name_len;
             cells[i] = Mat_VarCalloc();
             if ( !cells[i] ) {
@@ -1120,12 +1120,17 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read variable tag for cell */
-            cell_bytes_read = fread(buf,4,2,(FILE*)mat->fp);
+            readresult = fread(buf,4,2,(FILE*)mat->fp);
 
             /* Empty cells at the end of a file may cause an EOF */
-            if ( !cell_bytes_read )
+            if ( 0 == readresult )
                 continue;
-            bytesread += cell_bytes_read;
+            bytesread += readresult;
+            if ( 1 == readresult ) {
+                Mat_VarFree(cells[i]);
+                cells[i] = NULL;
+                break;
+            }
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
                 (void)Mat_uint32Swap(buf+1);
@@ -1145,7 +1150,13 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read array flags and the dimensions tag */
-            bytesread += fread(buf,4,6,(FILE*)mat->fp);
+            readresult = fread(buf,4,6,(FILE*)mat->fp);
+            bytesread += readresult;
+            if ( 6 != readresult ) {
+                Mat_VarFree(cells[i]);
+                cells[i] = NULL;
+                break;
+            }
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
                 (void)Mat_uint32Swap(buf+1);
@@ -1174,8 +1185,14 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 nBytes -= nbytes;
             }
             /* Variable name tag */
-            bytesread+=fread(buf,1,8,(FILE*)mat->fp);
-            nBytes-=8;
+            readresult = fread(buf,1,8,(FILE*)mat->fp);
+            bytesread += readresult;
+            if ( 8 != readresult ) {
+                Mat_VarFree(cells[i]);
+                cells[i] = NULL;
+                break;
+            }
+            nBytes -= 8;
             if ( mat->byteswap ) {
                 (void)Mat_uint32Swap(buf);
                 (void)Mat_uint32Swap(buf+1);
