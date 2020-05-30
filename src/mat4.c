@@ -184,7 +184,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         case MAT_C_UINT8:
         {
             size_t nelems = 1;
-            int err = SafeMulDims(matvar, &nelems);
+            int err = MulDims(matvar, &nelems);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return -1;
@@ -300,7 +300,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
     int err;
     size_t nelems = 1;
 
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return err;
@@ -311,7 +311,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
             matvar->data_size = sizeof(double);
-            err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+            err = Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return err;
@@ -391,7 +391,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                 sparse = (mat_sparse_t*)matvar->data;
                 sparse->nir = matvar->dims[0] - 1;
                 sparse->nzmax = sparse->nir;
-                err = SafeMul(&readcount, sparse->nir, sizeof(mat_uint32_t));
+                err = Mul(&readcount, sparse->nir, sizeof(mat_uint32_t));
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     return err;
@@ -461,7 +461,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                     return 1;
                 }
                 sparse->njc = (mat_uint32_t)matvar->dims[1] + 1;
-                err = SafeMul(&readcount, sparse->njc, sizeof(mat_uint32_t));
+                err = Mul(&readcount, sparse->njc, sizeof(mat_uint32_t));
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     return err;
@@ -469,7 +469,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
                 sparse->jc = (mat_uint32_t*)malloc(readcount);
                 if ( sparse->jc != NULL ) {
                     mat_uint32_t *jc;
-                    err = SafeMul(&readcount, sparse->nir, sizeof(mat_uint32_t));
+                    err = Mul(&readcount, sparse->nir, sizeof(mat_uint32_t));
                     if ( err ) {
                         Mat_Critical("Integer multiplication overflow");
                         return err;
@@ -804,7 +804,7 @@ Mat_VarReadData4(mat_t *mat,matvar_t *matvar,void *data,
         if ( matvar->isComplex ) {
             mat_complex_split_t *cdata = (mat_complex_split_t*)data;
             size_t nbytes = Mat_SizeOf(matvar->data_type);
-            err = SafeMulDims(matvar, &nbytes);
+            err = MulDims(matvar, &nbytes);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return err;
@@ -822,7 +822,7 @@ Mat_VarReadData4(mat_t *mat,matvar_t *matvar,void *data,
     } else if ( matvar->isComplex ) {
         mat_complex_split_t *cdata = (mat_complex_split_t*)data;
         size_t nbytes = Mat_SizeOf(matvar->data_type);
-        err = SafeMulDims(matvar, &nbytes);
+        err = MulDims(matvar, &nbytes);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             return err;
@@ -861,7 +861,7 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
     int err;
     size_t nelems = 1;
 
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return err;
@@ -876,7 +876,7 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
     }
     if ( matvar->isComplex ) {
         mat_complex_split_t *complex_data = (mat_complex_split_t*)data;
-        err = SafeMul(&nelems, nelems, matvar->data_size);
+        err = Mul(&nelems, nelems, matvar->data_size);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             return err;
@@ -909,7 +909,6 @@ Mat_VarReadNextInfo4(mat_t *mat)
     int       M,O,data_type,class_type;
     mat_int32_t tmp;
     long      nBytes;
-    size_t    readresult;
     matvar_t *matvar = NULL;
     union {
         mat_uint32_t u;
@@ -921,8 +920,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
     else if ( NULL == (matvar = Mat_VarCalloc()) )
         return NULL;
 
-    readresult = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
-    if ( 1 != readresult ) {
+    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -1011,25 +1009,23 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    readresult = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
+    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
+        Mat_VarFree(matvar);
+        return NULL;
+    }
     if ( mat->byteswap )
         Mat_int32Swap(&tmp);
     matvar->dims[0] = tmp;
-    if ( 1 != readresult ) {
+
+    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
         Mat_VarFree(matvar);
         return NULL;
     }
-    readresult = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
     if ( mat->byteswap )
         Mat_int32Swap(&tmp);
     matvar->dims[1] = tmp;
-    if ( 1 != readresult ) {
-        Mat_VarFree(matvar);
-        return NULL;
-    }
 
-    readresult = fread(&(matvar->isComplex),sizeof(int),1,(FILE*)mat->fp);
-    if ( 1 != readresult ) {
+    if ( 0 != Read(&(matvar->isComplex), sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -1037,8 +1033,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    readresult = fread(&tmp,sizeof(int),1,(FILE*)mat->fp);
-    if ( 1 != readresult ) {
+    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -1054,8 +1049,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    readresult = fread(matvar->name,1,tmp,(FILE*)mat->fp);
-    if ( tmp != readresult ) {
+    if ( 0 != Read(matvar->name, sizeof(char), tmp, (FILE*)mat->fp, NULL) ) {
         Mat_VarFree(matvar);
         return NULL;
     } else {
@@ -1073,7 +1067,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         size_t tmp2 = Mat_SizeOf(matvar->data_type);
         if ( matvar->isComplex )
             tmp2 *= 2;
-        err = SafeMulDims(matvar, &tmp2);
+        err = MulDims(matvar, &tmp2);
         if ( err ) {
             Mat_VarFree(matvar);
             Mat_Critical("Integer multiplication overflow");

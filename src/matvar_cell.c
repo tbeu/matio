@@ -46,7 +46,7 @@ Mat_VarGetCell(matvar_t *matvar,int index)
     if ( matvar == NULL )
         return NULL;
 
-    SafeMulDims(matvar, &nelems);
+    MulDims(matvar, &nelems);
 
     if ( 0 <= index && (size_t)index < nelems )
         cell = *((matvar_t **)matvar->data + index);
@@ -172,7 +172,7 @@ Mat_VarSetCell(matvar_t *matvar,int index,matvar_t *cell)
     if ( matvar == NULL || matvar->rank < 1 )
         return NULL;
 
-    SafeMulDims(matvar, &nelems);
+    MulDims(matvar, &nelems);
     cells = (matvar_t**)matvar->data;
     if ( 0 <= index && (size_t)index < nelems ) {
         old_cell = cells[index];

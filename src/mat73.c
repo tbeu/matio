@@ -563,7 +563,7 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank)
             /* Permute dimensions */
             for ( k = 0; k < *rank; k++ ) {
                 perm_dims[k] = (size_t)dims[*rank - k - 1];
-                err |= SafeMul(&tmp, tmp, perm_dims[k]);
+                err |= Mul(&tmp, tmp, perm_dims[k]);
             }
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
@@ -582,7 +582,7 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank)
                 /* Permute dimensions */
                 for ( k = 0; k < *rank; k++ ) {
                     perm_dims[k] = (size_t)dims[*rank - k - 1];
-                    err |= SafeMul(&tmp, tmp, perm_dims[k]);
+                    err |= Mul(&tmp, tmp, perm_dims[k]);
                 }
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
@@ -673,7 +673,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             H5Dread(dset_id,SizeType2H5T(),H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->dims);
             {
                 size_t tmp = 1;
-                err = SafeMulDims(matvar, &tmp);
+                err = MulDims(matvar, &tmp);
                 nelems = (hsize_t)tmp;
             }
         }
@@ -693,7 +693,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         hobj_ref_t *ref_ids;
 
         matvar->data_size = sizeof(matvar_t**);
-        err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+        err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             return;
@@ -896,8 +896,8 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     {
         int err;
         size_t nelems_x_nfields;
-        err = SafeMul(&nelems_x_nfields, nelems, nfields);
-        err |= SafeMul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
+        err = Mul(&nelems_x_nfields, nelems, nfields);
+        err |= Mul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             matvar->nbytes = 0;
@@ -1057,7 +1057,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
     if ( MAT_C_CELL == matvar->class_type ) {
         size_t i;
         matvar_t **cells = (matvar_t**)matvar->data;
-        SafeMulDims(matvar, &nelems);
+        MulDims(matvar, &nelems);
         for ( i = 0; i < nelems; i++ )
             Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
         return;
@@ -1080,8 +1080,8 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 data_type_id      = ClassType2H5T(matvar->class_type);
             }
 
-            err = SafeMulDims(matvar, &nelems);
-            err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+            err = MulDims(matvar, &nelems);
+            err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err || matvar->nbytes < 1 ) {
                 H5Dclose(ref_id);
                 break;
@@ -1862,7 +1862,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
 
     {
         size_t tmp = 1;
-        err = SafeMulDims(matvar, &tmp);
+        err = MulDims(matvar, &tmp);
         nelems = (hsize_t)tmp;
     }
 
@@ -2347,8 +2347,8 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         {
             size_t nelems = 1;
             matvar->data_size = Mat_SizeOfClass(matvar->class_type);
-            err = SafeMulDims(matvar, &nelems);
-            err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+            err = MulDims(matvar, &nelems);
+            err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return err;
@@ -2387,8 +2387,8 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         {
             size_t nelems = 1;
             matvar->data_size = Mat_SizeOf(matvar->data_type);
-            err = SafeMulDims(matvar, &nelems);
-            err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+            err = MulDims(matvar, &nelems);
+            err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return err;
@@ -2418,8 +2418,8 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             if ( !matvar->internal->num_fields || NULL == matvar->data )
                 break;
 
-            err = SafeMulDims(matvar, &nelems);
-            err |= SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
+            err = MulDims(matvar, &nelems);
+            err |= Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return err;
@@ -2481,7 +2481,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                     size_t nbytes;
                     sparse_data->nir = dims[0];
                     free(dims);
-                    err = SafeMul(&nbytes, sparse_data->nir, sizeof(mat_uint32_t));
+                    err = Mul(&nbytes, sparse_data->nir, sizeof(mat_uint32_t));
                     if ( err ) {
                         H5Dclose(sparse_dset_id);
                         H5Gclose(dset_id);
@@ -2507,7 +2507,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                     size_t nbytes;
                     sparse_data->njc = dims[0];
                     free(dims);
-                    err = SafeMul(&nbytes, sparse_data->njc, sizeof(mat_uint32_t));
+                    err = Mul(&nbytes, sparse_data->njc, sizeof(mat_uint32_t));
                     if ( err ) {
                         H5Dclose(sparse_dset_id);
                         H5Gclose(dset_id);
@@ -2534,7 +2534,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
                     sparse_data->nzmax = dims[0];
                     sparse_data->ndata = dims[0];
                     free(dims);
-                    err = SafeMul(&ndata_bytes, sparse_data->nzmax, Mat_SizeOf(matvar->data_type));
+                    err = Mul(&ndata_bytes, sparse_data->nzmax, Mat_SizeOf(matvar->data_type));
                     if ( err ) {
                         H5Dclose(sparse_dset_id);
                         H5Gclose(dset_id);

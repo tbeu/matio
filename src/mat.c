@@ -250,7 +250,7 @@ ClassType2DataType(enum matio_classes class_type)
  * @param nelems Number of elements
  * @retval 0 on success
  */
-int SafeMulDims(const matvar_t *matvar, size_t* nelems)
+int MulDims(const matvar_t *matvar, size_t* nelems)
 {
     int i;
 
@@ -276,7 +276,7 @@ int SafeMulDims(const matvar_t *matvar, size_t* nelems)
  * @param b Second operand
  * @retval 0 on success
  */
-int SafeMul(size_t* res, size_t a, size_t b)
+int Mul(size_t* res, size_t a, size_t b)
 {
     if ( !psnip_safe_size_mul(res, a, b) ) {
         *res = 0;
@@ -293,7 +293,7 @@ int SafeMul(size_t* res, size_t a, size_t b)
  * @param b Second operand
  * @retval 0 on success
  */
-int SafeAdd(size_t* res, size_t a, size_t b)
+int Add(size_t* res, size_t a, size_t b)
 {
     if ( !psnip_safe_size_add(res, a, b) ) {
         *res = 0;
@@ -301,6 +301,33 @@ int SafeAdd(size_t* res, size_t a, size_t b)
     }
 
     return 0;
+}
+
+/** @brief Read from file and check success
+ *
+ * @param buf Buffer for reading
+ * @param size Element size in bytes
+ * @param count Element count
+ * @param fp File pointer
+ * @param[out] bytesread Number of bytes read from the file
+ * @retval 0 on success
+ */
+int
+Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread) {
+    const size_t readcount = fread(buf, size, count, fp);
+    int err = readcount != count;
+    if ( NULL != bytesread ) {
+        *bytesread += readcount*size;
+    }
+    if ( err && feof(fp) && 0 == readcount) {
+        err = 0;
+    }
+    if ( err ) {
+        Mat_DebugMessage(1, "Read beyond EOF error: Read %"
+            SIZE_T_FMTSTR " bytes, expected %"
+            SIZE_T_FMTSTR " bytes", readcount*size, count*size);
+    }
+    return err;
 }
 
 /*
@@ -425,7 +452,7 @@ Mat_Open(const char *matname,int mode)
     }
 
     mat->fp = fp;
-    mat->header        = (char*)calloc(128,sizeof(char));
+    mat->header = (char*)calloc(128,sizeof(char));
     if ( NULL == mat->header ) {
         free(mat);
         fclose(fp);
@@ -1025,7 +1052,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
                         (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
                     for ( i = 0; i < nfields; i++ )
                         matvar->internal->fieldnames[i] = strdup(fields[i]->name);
-                    err = SafeMul(&nelems, nelems, nfields);
+                    err = Mul(&nelems, nelems, nfields);
                     if ( err ) {
                         Mat_VarFree(matvar);
                         Mat_Critical("Integer multiplication overflow");
@@ -1045,7 +1072,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
         matvar->nbytes    = matvar->data_size;
     } else {
         matvar->data_size = data_size;
-        err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+        err = Mul(&matvar->nbytes, nelems, matvar->data_size);
         if ( err ) {
             Mat_VarFree(matvar);
             Mat_Critical("Integer multiplication overflow");
@@ -1555,7 +1582,7 @@ Mat_VarFree(matvar_t *matvar)
         return;
     if ( NULL != matvar->dims ) {
         nelems = 1;
-        SafeMulDims(matvar, &nelems);
+        MulDims(matvar, &nelems);
         free(matvar->dims);
     }
     if ( NULL != matvar->data ) {
@@ -1564,7 +1591,7 @@ Mat_VarFree(matvar_t *matvar)
                 if ( !matvar->mem_conserve ) {
                     matvar_t **fields = (matvar_t**)matvar->data;
                     size_t nelems_x_nfields, i;
-                    SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
+                    Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
                     for ( i = 0; i < nelems_x_nfields; i++ )
                         Mat_VarFree(fields[i]);
 
@@ -1895,15 +1922,15 @@ Mat_VarGetSize(matvar_t *matvar)
         size_t field_name_length;
         if ( NULL != fields ) {
             size_t nelems_x_nfields = matvar->internal->num_fields;
-            err = SafeMulDims(matvar, &nelems_x_nfields);
-            err |= SafeMul(&bytes, nelems_x_nfields, overhead);
+            err = MulDims(matvar, &nelems_x_nfields);
+            err |= Mul(&bytes, nelems_x_nfields, overhead);
             if ( err )
                 return 0;
 
             for ( i = 0; i < nelems_x_nfields; i++ ) {
                 if ( NULL != fields[i] ) {
                     if ( MAT_C_EMPTY != fields[i]->class_type ) {
-                        err = SafeAdd(&bytes, bytes, Mat_VarGetSize(fields[i]));
+                        err = Add(&bytes, bytes, Mat_VarGetSize(fields[i]));
                         if ( err )
                             return 0;
                     } else {
@@ -1913,22 +1940,22 @@ Mat_VarGetSize(matvar_t *matvar)
                 }
             }
         }
-        err = SafeMul(&field_name_length, 64 /* max field name length */, matvar->internal->num_fields);
-        err |= SafeAdd(&bytes, bytes, field_name_length);
+        err = Mul(&field_name_length, 64 /* max field name length */, matvar->internal->num_fields);
+        err |= Add(&bytes, bytes, field_name_length);
         if ( err )
             return 0;
     } else if ( matvar->class_type == MAT_C_CELL ) {
         matvar_t **cells = (matvar_t**)matvar->data;
         if ( NULL != cells ) {
             size_t nelems = matvar->nbytes / matvar->data_size;
-            err = SafeMul(&bytes, nelems, overhead);
+            err = Mul(&bytes, nelems, overhead);
             if ( err )
                 return 0;
 
             for ( i = 0; i < nelems; i++ ) {
                 if ( NULL != cells[i] ) {
                     if ( MAT_C_EMPTY != cells[i]->class_type ) {
-                        err = SafeAdd(&bytes, bytes, Mat_VarGetSize(cells[i]));
+                        err = Add(&bytes, bytes, Mat_VarGetSize(cells[i]));
                         if ( err )
                             return 0;
                     } else {
@@ -1942,29 +1969,29 @@ Mat_VarGetSize(matvar_t *matvar)
         mat_sparse_t *sparse = (mat_sparse_t*)matvar->data;
         if ( NULL != sparse ) {
             size_t sparse_size = 0;
-            err = SafeMul(&bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+            err = Mul(&bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
             if ( err )
                 return 0;
 
             if ( matvar->isComplex ) {
-                err = SafeMul(&bytes, bytes, 2);
+                err = Mul(&bytes, bytes, 2);
                 if ( err )
                     return 0;
             }
 
 #if defined(_WIN64) || (defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 8)) || (defined(SIZEOF_VOID_P) && (SIZEOF_VOID_P == 8))
             /* 8 byte integers for 64-bit system (as displayed in MATLAB (x64) whos) */
-            err = SafeMul(&sparse_size, sparse->nir + sparse->njc, 8);
+            err = Mul(&sparse_size, sparse->nir + sparse->njc, 8);
 #elif defined(_WIN32) || (defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 4)) || (defined(SIZEOF_VOID_P) && (SIZEOF_VOID_P == 4))
             /* 4 byte integers for 32-bit system (as defined by mat_sparse_t) */
-            err = SafeMul(&sparse_size, sparse->nir + sparse->njc, 4);
+            err = Mul(&sparse_size, sparse->nir + sparse->njc, 4);
 #endif
-            err |= SafeAdd(&bytes, bytes, sparse_size);
+            err |= Add(&bytes, bytes, sparse_size);
             if ( err )
                 return 0;
 
             if ( sparse->ndata == 0 || sparse->nir == 0 || sparse->njc == 0 ) {
-                err = SafeAdd(&bytes, bytes, matvar->isLogical ? 1 : 8);
+                err = Add(&bytes, bytes, matvar->isLogical ? 1 : 8);
                 if ( err )
                     return 0;
             }
@@ -1972,12 +1999,12 @@ Mat_VarGetSize(matvar_t *matvar)
     } else {
         if ( matvar->rank > 0 ) {
             bytes = Mat_SizeOfClass(matvar->class_type);
-            err = SafeMulDims(matvar, &bytes);
+            err = MulDims(matvar, &bytes);
             if ( err )
                 return 0;
 
             if ( matvar->isComplex ) {
-                err = SafeMul(&bytes, bytes, 2);
+                err = Mul(&bytes, bytes, 2);
                 if (err)
                     return 0;
             }
@@ -2016,7 +2043,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     if ( NULL != matvar->dims ) {
         int k;
         nelems = 1;
-        SafeMulDims(matvar, &nelems);
+        MulDims(matvar, &nelems);
         printf("Dimensions: %" SIZE_T_FMTSTR,matvar->dims[0]);
         for ( k = 1; k < matvar->rank; k++ ) {
             printf(" x %" SIZE_T_FMTSTR,matvar->dims[k]);
@@ -2047,7 +2074,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         matvar_t **fields = (matvar_t **)matvar->data;
         size_t nfields = matvar->internal->num_fields;
         size_t nelems_x_nfields = 1;
-        SafeMul(&nelems_x_nfields, nelems, nfields);
+        Mul(&nelems_x_nfields, nelems, nfields);
         if ( nelems_x_nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
             for ( i = 0; i < nelems_x_nfields; i++ ) {

@@ -3775,6 +3775,7 @@ int main (int argc, char *argv[])
     }
 
     Mat_LogInit(prog_name);
+    Mat_SetDebug(1);
 
     while ( (c = getopt_long(argc,argv,optstring,options,NULL)) != EOF ) {
         switch ( c ) {
