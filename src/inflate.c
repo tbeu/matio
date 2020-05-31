@@ -58,7 +58,7 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes)
     if ( !z->avail_in ) {
         size_t nbytes = fread(comp_buf, 1, n, (FILE*)mat->fp);
         if ( 0 == nbytes ) {
-            return nbytes;
+            return bytesread;
         }
         bytesread += nbytes;
         z->avail_in = (uInt)nbytes;
@@ -131,12 +131,11 @@ InflateSkip2(mat_t *mat, matvar_t *matvar, int nBytes)
     size_t bytesread = 0;
 
     if ( !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
-        bytesread += nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+        if ( 0 == nbytes ) {
             return bytesread;
         }
+        bytesread += nbytes;
         matvar->internal->z->avail_in = (uInt)nbytes;
         matvar->internal->z->next_in = comp_buf;
     }
@@ -153,11 +152,10 @@ InflateSkip2(mat_t *mat, matvar_t *matvar, int nBytes)
     }
     while ( cnt < nBytes ) {
         if ( !matvar->internal->z->avail_in ) {
-            size_t nbytes = 0;
-            err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+            size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
             bytesread += nbytes;
             matvar->internal->z->avail_in = (uInt)nbytes;
-            if ( 0 != err || 0 == nbytes ) {
+            if ( 0 == nbytes ) {
                 break;
             }
             matvar->internal->z->next_in = comp_buf;
@@ -265,12 +263,11 @@ InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf)
         return 0;
 
     if ( !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
-        bytesread += nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+        if ( 0 == nbytes ) {
             return bytesread;
         }
+        bytesread += nbytes;
         matvar->internal->z->avail_in = (uInt)nbytes;
         matvar->internal->z->next_in = comp_buf;
     }
@@ -282,11 +279,10 @@ InflateVarTag(mat_t *mat, matvar_t *matvar, void *buf)
         return bytesread;
     }
     while ( matvar->internal->z->avail_out && !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
         bytesread += nbytes;
         matvar->internal->z->avail_in = (uInt)nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        if ( 0 == nbytes ) {
             break;
         }
         matvar->internal->z->next_in = comp_buf;
@@ -326,12 +322,11 @@ InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf)
         return 0;
 
     if ( !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
-        bytesread += nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+        if ( 0 == nbytes ) {
             return bytesread;
         }
+        bytesread += nbytes;
         matvar->internal->z->avail_in = (uInt)nbytes;
         matvar->internal->z->next_in = comp_buf;
     }
@@ -343,11 +338,10 @@ InflateArrayFlags(mat_t *mat, matvar_t *matvar, void *buf)
         return bytesread;
     }
     while ( matvar->internal->z->avail_out && !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
         bytesread += nbytes;
         matvar->internal->z->avail_in = (uInt)nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        if ( 0 == nbytes ) {
             break;
         }
         matvar->internal->z->next_in = comp_buf;
@@ -392,12 +386,11 @@ InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nBytes, mat_uint
         return 0;
 
     if ( !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
-        bytesread += nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+        if ( 0 == nbytes ) {
             return bytesread;
         }
+        bytesread += nbytes;
         matvar->internal->z->avail_in = (uInt)nbytes;
         matvar->internal->z->next_in = comp_buf;
     }
@@ -409,11 +402,10 @@ InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nBytes, mat_uint
         return bytesread;
     }
     while ( matvar->internal->z->avail_out && !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
         bytesread += nbytes;
         matvar->internal->z->avail_in = (uInt)nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        if ( 0 == nbytes ) {
             break;
         }
         matvar->internal->z->next_in = comp_buf;
@@ -441,13 +433,12 @@ InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nBytes, mat_uint
     rank+=i;
 
     if ( !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
-        bytesread += nbytes;
-        matvar->internal->z->avail_in = (uInt)nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+        if ( 0 == nbytes ) {
             return bytesread;
         }
+        bytesread += nbytes;
+        matvar->internal->z->avail_in = (uInt)nbytes;
         matvar->internal->z->next_in = comp_buf;
     }
 
@@ -471,11 +462,10 @@ InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nBytes, mat_uint
         return bytesread;
     }
     while ( matvar->internal->z->avail_out && !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
         bytesread += nbytes;
         matvar->internal->z->avail_in = (uInt)nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        if ( 0 == nbytes ) {
             break;
         }
         matvar->internal->z->next_in = comp_buf;
@@ -516,12 +506,11 @@ InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
         return 0;
 
     if ( !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
-        bytesread += nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+        if ( 0 == nbytes ) {
             return bytesread;
         }
+        bytesread += nbytes;
         matvar->internal->z->avail_in = (uInt)nbytes;
         matvar->internal->z->next_in = comp_buf;
     }
@@ -533,11 +522,10 @@ InflateVarName(mat_t *mat, matvar_t *matvar, void *buf, int N)
         return bytesread;
     }
     while ( matvar->internal->z->avail_out && !matvar->internal->z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
         bytesread += nbytes;
-        matvar->internal->z->avail_in = 1;
-        if ( 0 != err || 0 == nbytes ) {
+        matvar->internal->z->avail_in = (uInt)nbytes;
+        if ( 0 == nbytes ) {
             break;
         }
         matvar->internal->z->next_in = comp_buf;
@@ -577,12 +565,11 @@ InflateDataType(mat_t *mat, z_streamp z, void *buf)
         return 0;
 
     if ( !z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
-        bytesread += nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+        if ( 0 == nbytes ) {
             return bytesread;
         }
+        bytesread += nbytes;
         z->avail_in = (uInt)nbytes;
         z->next_in = comp_buf;
     }
@@ -594,11 +581,10 @@ InflateDataType(mat_t *mat, z_streamp z, void *buf)
         return bytesread;
     }
     while ( z->avail_out && !z->avail_in ) {
-        size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
         bytesread += nbytes;
         z->avail_in = (uInt)nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        if ( 0 == nbytes ) {
             break;
         }
         z->next_in = comp_buf;
@@ -642,15 +628,13 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     }
 
     if ( !z->avail_in ) {
-        size_t nbytes = 0;
+        size_t nbytes;
         if ( nBytes > READ_BLOCK_SIZE ) {
-            err = SafeRead(comp_buf, 1, READ_BLOCK_SIZE, (FILE*)mat->fp, &nbytes);
+            nbytes = fread(comp_buf, 1, READ_BLOCK_SIZE, (FILE*)mat->fp);
         } else {
-            err = SafeRead(comp_buf, 1, nBytes, (FILE*)mat->fp, &nbytes);
+            nbytes = fread(comp_buf, 1, nBytes, (FILE*)mat->fp);
         }
-        if ( 0 != err || 0 == nbytes ) {
-            const long offset = -(long)nbytes;
-            (void)fseek((FILE*)mat->fp,offset,SEEK_CUR);
+        if ( 0 == nbytes ) {
             return bytesread;
         }
         bytesread += nbytes;
@@ -667,17 +651,17 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
         return bytesread;
     }
     while ( z->avail_out && !z->avail_in ) {
-        size_t nbytes = 0;
+        size_t nbytes;
         if ( nBytes > READ_BLOCK_SIZE + bytesread ) {
-            err = SafeRead(comp_buf, 1, READ_BLOCK_SIZE, (FILE*)mat->fp, &nbytes);
+            nbytes = fread(comp_buf, 1, READ_BLOCK_SIZE, (FILE*)mat->fp);
         } else if ( nBytes < 1 + bytesread ) { /* Read a byte at a time */
-            err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+            nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
         } else {
-            err = SafeRead(comp_buf, 1, nBytes - bytesread, (FILE*)mat->fp, &nbytes);
+            nbytes = fread(comp_buf, 1, nBytes - bytesread, (FILE*)mat->fp);
         }
         bytesread += nbytes;
         z->avail_in = (uInt)nbytes;
-        if ( 0 != err || 0 == nbytes ) {
+        if ( 0 == nbytes ) {
             break;
         }
         z->next_in = comp_buf;
