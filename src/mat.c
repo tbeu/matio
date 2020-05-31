@@ -313,19 +313,19 @@ int SafeAdd(size_t* res, size_t a, size_t b)
  * @retval 0 on success
  */
 int
-SafeRead(void* buf, size_t size, size_t count, FILE* fp, size_t* read_bytes) {
-    const size_t read_result = fread(buf, size, count, fp);
-    int err = read_result != count;
-    if ( NULL != read_bytes ) {
-        *read_bytes += read_result*size;
+SafeRead(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread) {
+    const size_t readcount = fread(buf, size, count, fp);
+    int err = readcount != count;
+    if ( NULL != bytesread ) {
+        *bytesread += readcount*size;
     }
-    if ( err && feof(fp) && 0 == read_result) {
+    if ( err && feof(fp) && 0 == readcount) {
         err = 0;
     }
     if ( err ) {
         Mat_Critical("Read beyond EOF error: Read %"
             SIZE_T_FMTSTR " bytes, expected %"
-            SIZE_T_FMTSTR " bytes", read_result*size, count*size);
+            SIZE_T_FMTSTR " bytes", readcount*size, count*size);
     }
     return err;
 }

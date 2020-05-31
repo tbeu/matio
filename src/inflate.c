@@ -48,7 +48,7 @@ size_t
 InflateSkip(mat_t *mat, z_streamp z, int nBytes)
 {
     mat_uint8_t comp_buf[READ_BLOCK_SIZE], uncomp_buf[READ_BLOCK_SIZE];
-    int    n, err, cnt = 0;
+    int n, err, cnt = 0;
     size_t bytesread = 0;
 
     if ( nBytes < 1 )
@@ -82,11 +82,11 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes)
     while ( cnt < nBytes ) {
         if ( !z->avail_in ) {
             size_t nbytes = fread(comp_buf, 1, n, (FILE*)mat->fp);
-            bytesread += nbytes;
-            z->avail_in = (uInt)nbytes;
             if ( 0 == nbytes ) {
                 break;
             }
+            bytesread += nbytes;
+            z->avail_in = (uInt)nbytes;
             z->next_in = comp_buf;
         }
         err = inflate(z,Z_FULL_FLUSH);
@@ -105,8 +105,8 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes)
     }
 
     if ( z->avail_in ) {
-        long offset = -(long)z->avail_in;
-        (void)fseek((FILE*)mat->fp,offset,SEEK_CUR);
+        const long offset = -(long)z->avail_in;
+        (void)fseek((FILE*)mat->fp, offset, SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
@@ -203,18 +203,19 @@ InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t*
 
 /** @brief Inflates the data
  *
+ * buf must hold at least @c nBytes bytes
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param z zlib compression stream
- * @param buf Pointer to store the variables name
- * @param nBytes Number of characters in the name
+ * @param buf Pointer to store the uncompressed data
+ * @param nBytes Number of uncompressed bytes to inflate
  * @return Number of bytes read from the file
  */
 size_t
 Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
 {
-    mat_uint8_t comp_buf[32];
-    int    err;
+    mat_uint8_t comp_buf[4];
+    int err;
     size_t bytesread = 0;
 
     if ( buf == NULL )
@@ -238,11 +239,11 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     }
     while ( z->avail_out && !z->avail_in ) {
         size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
-        bytesread += nbytes;
-        z->avail_in = (uInt)nbytes;
         if ( 0 == nbytes ) {
             break;
         }
+        bytesread += nbytes;
+        z->avail_in = (uInt)nbytes;
         z->next_in = comp_buf;
         err = inflate(z,Z_NO_FLUSH);
         if ( err != Z_OK ) {
@@ -252,7 +253,8 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     }
 
     if ( z->avail_in ) {
-        (void)fseek((FILE*)mat->fp,-(int)z->avail_in,SEEK_CUR);
+        const long offset = -(long)z->avail_in;
+        (void)fseek((FILE*)mat->fp, offset, SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
@@ -271,8 +273,8 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
  * @param z zlib compression stream
- * @param buf Pointer to store the data type
- * @param nBytes Number of bytes to inflate
+ * @param buf Pointer to store the uncompressed data
+ * @param nBytes Number of uncompressed bytes to inflate
  * @return Number of bytes read from the file
  */
 size_t
@@ -317,16 +319,16 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
         } else {
             nbytes = fread(comp_buf, 1, nBytes - bytesread, (FILE*)mat->fp);
         }
-        bytesread += nbytes;
-        z->avail_in = (uInt)nbytes;
         if ( 0 == nbytes ) {
             break;
         }
+        bytesread += nbytes;
+        z->avail_in = (uInt)nbytes;
         z->next_in = comp_buf;
         err = inflate(z,Z_FULL_FLUSH);
         if ( err == Z_STREAM_END ) {
             break;
-        } else if ( err != Z_OK && err != Z_BUF_ERROR ) {
+        } else if ( err != Z_OK ) {
             Mat_Critical("InflateData: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
             break;
         }
@@ -334,7 +336,7 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
 
     if ( z->avail_in ) {
         const long offset = -(long)z->avail_in;
-        (void)fseek((FILE*)mat->fp,offset,SEEK_CUR);
+        (void)fseek((FILE*)mat->fp, offset, SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
