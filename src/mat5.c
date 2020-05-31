@@ -4933,7 +4933,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
     {
         size_t nbytes = 0;
         err = SafeRead(&data_type, 4, 1, (FILE*)mat->fp, &nbytes);
-        if ( 0 != err || 0 == nbytes)
+        if ( 0 != err || 0 == nbytes )
             return NULL;
     }
     err = SafeRead(&nBytes, 4, 1, (FILE*)mat->fp, NULL);

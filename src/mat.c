@@ -323,7 +323,8 @@ SafeRead(void* buf, size_t size, size_t count, FILE* fp, size_t* read_bytes) {
         err = 0;
     }
     if ( err ) {
-        Mat_Warning("Read %" SIZE_T_FMTSTR " bytes from file, but expected %"
+        Mat_Critical("Read beyond EOF error: Read %"
+            SIZE_T_FMTSTR " bytes, expected %"
             SIZE_T_FMTSTR " bytes", read_result*size, count*size);
     }
     return err;
