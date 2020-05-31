@@ -213,13 +213,9 @@ EXTERN int ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
 
 /* inflate.c */
 EXTERN size_t InflateSkip(mat_t *mat, z_streamp z, int nBytes);
-EXTERN size_t InflateSkip2(mat_t *mat, matvar_t *matvar, int nBytes);
-EXTERN size_t InflateSkipData(mat_t *mat,z_streamp z,enum matio_types data_type,int len);
-EXTERN size_t InflateVarTag(mat_t *mat, z_streamp z, void *buf);
-EXTERN size_t InflateArrayFlags(mat_t *mat,z_streamp z, void *buf);
-EXTERN size_t InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nBytes, mat_uint32_t** dims);
+EXTERN size_t InflateSkipData(mat_t *mat, z_streamp z, enum matio_types data_type, int len);
+EXTERN size_t InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t** dims);
 EXTERN size_t Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes);
-EXTERN size_t InflateDataType(mat_t *mat, z_streamp z, void *buf);
 EXTERN size_t InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes);
 #endif
 

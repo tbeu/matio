@@ -114,73 +114,6 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes)
     return bytesread;
 }
 
-/** @brief Inflate the data until @c nBytes of compressed data has been
- *         inflated
- *
- * @ingroup mat_internal
- * @param mat Pointer to the MAT file
- * @param z zlib compression stream
- * @param nBytes Number of uncompressed bytes to skip
- * @return Number of bytes read from the file
- */
-size_t
-InflateSkip2(mat_t *mat, matvar_t *matvar, int nBytes)
-{
-    mat_uint8_t comp_buf[32], uncomp_buf[32];
-    int    err, cnt = 0;
-    size_t bytesread = 0;
-
-    if ( !matvar->internal->z->avail_in ) {
-        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
-        if ( 0 == nbytes ) {
-            return bytesread;
-        }
-        bytesread += nbytes;
-        matvar->internal->z->avail_in = (uInt)nbytes;
-        matvar->internal->z->next_in = comp_buf;
-    }
-    matvar->internal->z->avail_out = 1;
-    matvar->internal->z->next_out = uncomp_buf;
-    err = inflate(matvar->internal->z,Z_NO_FLUSH);
-    if ( err != Z_OK ) {
-        Mat_Critical("InflateSkip2: %s - inflate returned %s",matvar->name,zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
-        return bytesread;
-    }
-    if ( !matvar->internal->z->avail_out ) {
-        matvar->internal->z->avail_out = 1;
-        matvar->internal->z->next_out = uncomp_buf;
-    }
-    while ( cnt < nBytes ) {
-        if ( !matvar->internal->z->avail_in ) {
-            size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
-            bytesread += nbytes;
-            matvar->internal->z->avail_in = (uInt)nbytes;
-            if ( 0 == nbytes ) {
-                break;
-            }
-            matvar->internal->z->next_in = comp_buf;
-            cnt++;
-        }
-        err = inflate(matvar->internal->z,Z_NO_FLUSH);
-        if ( err != Z_OK ) {
-            Mat_Critical("InflateSkip2: %s - inflate returned %s",matvar->name,zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
-            return bytesread;
-        }
-        if ( !matvar->internal->z->avail_out ) {
-            matvar->internal->z->avail_out = 1;
-            matvar->internal->z->next_out = uncomp_buf;
-        }
-    }
-
-    if ( matvar->internal->z->avail_in ) {
-        (void)fseek((FILE*)mat->fp,-(int)matvar->internal->z->avail_in,SEEK_CUR);
-        bytesread -= matvar->internal->z->avail_in;
-        matvar->internal->z->avail_in = 0;
-    }
-
-    return bytesread;
-}
-
 /** @brief Inflate the data until @c len elements of compressed data with data
  *         type @c data_type has been inflated
  *
@@ -192,85 +125,22 @@ InflateSkip2(mat_t *mat, matvar_t *matvar, int nBytes)
  * @return Number of bytes read from the file
  */
 size_t
-InflateSkipData(mat_t *mat,z_streamp z,enum matio_types data_type,int len)
+InflateSkipData(mat_t *mat, z_streamp z, enum matio_types data_type, int len)
 {
-    int data_size = 0;
-
-    if ( (mat == NULL) || (z == NULL) )
-        return 0;
-    else if ( len < 1 )
+    if ( mat == NULL || z == NULL || len < 1 )
         return 0;
 
     switch ( data_type ) {
-        case MAT_T_DOUBLE:
-            data_size = sizeof(double);
-            break;
-        case MAT_T_SINGLE:
-            data_size = sizeof(float);
-            break;
-#ifdef HAVE_MAT_INT64_T
-        case MAT_T_INT64:
-            data_size = sizeof(mat_int64_t);
-            break;
-#endif /* HAVE_MAT_INT64_T */
-#ifdef HAVE_MAT_UINT64_T
-        case MAT_T_UINT64:
-            data_size = sizeof(mat_uint64_t);
-            break;
-#endif /* HAVE_MAT_UINT64_T */
-        case MAT_T_INT32:
-            data_size = sizeof(mat_int32_t);
-            break;
-        case MAT_T_UINT32:
-            data_size = sizeof(mat_uint32_t);
-            break;
-        case MAT_T_INT16:
-            data_size = sizeof(mat_int16_t);
-            break;
-        case MAT_T_UINT16:
-            data_size = sizeof(mat_uint16_t);
-            break;
-        case MAT_T_UINT8:
-            data_size = sizeof(mat_uint8_t);
-            break;
-        case MAT_T_INT8:
-            data_size = sizeof(mat_int8_t);
-            break;
-        default:
+        case MAT_T_UTF8:
+        case MAT_T_UTF16:
+        case MAT_T_UTF32:
             return 0;
+        default:
+            break;
     }
-    InflateSkip(mat,z,len*data_size);
+
+    InflateSkip(mat, z, (unsigned int)Mat_SizeOf(data_type)*len);
     return len;
-}
-
-/** @brief Inflates the variable tag
- *
- * @c buf must hold at least 8 bytes
- * @ingroup mat_internal
- * @param mat Pointer to the MAT file
- * @param z zlib compression stream
- * @param buf Pointer to store the 8-byte variable tag
- * @return Number of bytes read from the file
- */
-size_t
-InflateVarTag(mat_t *mat, z_streamp z, void *buf)
-{
-    return Inflate(mat, z, buf, 8);
-}
-
-/** @brief Inflates the Array Flags Tag and the Array Flags data
- *
- * @c buf must hold at least 16 bytes
- * @ingroup mat_internal
- * @param mat Pointer to the MAT file
- * @param z zlib compression stream
- * @param buf Pointer to store the 16-byte array flags tag and data
- * @return Number of bytes read from the file
- */
-size_t
-InflateArrayFlags(mat_t *mat, z_streamp z, void *buf)
-{
-    return Inflate(mat, z, buf, 16);
 }
 
 /** @brief Inflates the dimensions tag and the dimensions data
@@ -280,24 +150,23 @@ InflateArrayFlags(mat_t *mat, z_streamp z, void *buf)
  * boundary, this function eats up those bytes and stores then in @c buf.
  * @ingroup mat_internal
  * @param mat Pointer to the MAT file
- * @param matvar Pointer to the MAT variable
+ * @param z zlib compression stream
  * @param buf Pointer to store the dimensions flag and data
  * @param nBytes Size of buf in bytes
  * @param dims Output buffer to be allocated if (8+4*rank) > nBytes
  * @return Number of bytes read from the file
  */
 size_t
-InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nBytes, mat_uint32_t** dims)
+InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t** dims)
 {
-    mat_uint8_t comp_buf[32];
     mat_int32_t tag[2];
-    int    err, rank, i;
+    int rank, i;
     size_t bytesread = 0;
 
     if ( buf == NULL )
         return 0;
 
-    bytesread += Inflate(mat, matvar->internal->z, buf, 8);
+    bytesread += Inflate(mat, z, buf, 8);
     tag[0] = *(int *)buf;
     tag[1] = *((int *)buf+1);
     if ( mat->byteswap ) {
@@ -316,12 +185,12 @@ InflateRankDims(mat_t *mat, matvar_t *matvar, void *buf, size_t nBytes, mat_uint
     rank+=i;
 
     if ( sizeof(mat_uint32_t)*(rank + 2) <= nBytes ) {
-        bytesread += Inflate(mat, matvar->internal->z, (mat_int32_t *)buf+2, (unsigned int)rank);
+        bytesread += Inflate(mat, z, (mat_int32_t *)buf+2, (unsigned int)rank);
     } else {
         /* Cannot use too small buf, but can allocate output buffer dims */
         *dims = (mat_uint32_t*)calloc(rank, sizeof(mat_uint32_t));
         if ( NULL != *dims ) {
-            bytesread += Inflate(mat, matvar->internal->z, *dims, (unsigned int)rank);
+            bytesread += Inflate(mat, z, *dims, (unsigned int)rank);
         } else {
             *((mat_int32_t *)buf+1) = 0;
             Mat_Critical("Error allocating memory for dims");
@@ -396,21 +265,6 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     return bytesread;
 }
 
-/** @brief Inflates the data type
- *
- * buf must hold at least 4 bytes
- * @ingroup mat_internal
- * @param mat Pointer to the MAT file
- * @param z zlib compression stream
- * @param buf Pointer to store the data type
- * @return Number of bytes read from the file
- */
-size_t
-InflateDataType(mat_t *mat, z_streamp z, void *buf)
-{
-    return Inflate(mat, z, buf, 4);
-}
-
 /** @brief Inflates the data in blocks
  *
  * buf must hold at least @c nBytes bytes
@@ -425,7 +279,8 @@ size_t
 InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
 {
     mat_uint8_t comp_buf[READ_BLOCK_SIZE];
-    int    err;
+    int err;
+    unsigned int n;
     size_t bytesread = 0;
 
     if ( buf == NULL )
@@ -434,13 +289,9 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
         return bytesread;
     }
 
+    n = nBytes < READ_BLOCK_SIZE ? nBytes : READ_BLOCK_SIZE;
     if ( !z->avail_in ) {
-        size_t nbytes;
-        if ( nBytes > READ_BLOCK_SIZE ) {
-            nbytes = fread(comp_buf, 1, READ_BLOCK_SIZE, (FILE*)mat->fp);
-        } else {
-            nbytes = fread(comp_buf, 1, nBytes, (FILE*)mat->fp);
-        }
+        size_t nbytes = fread(comp_buf, 1, n, (FILE*)mat->fp);
         if ( 0 == nbytes ) {
             return bytesread;
         }
