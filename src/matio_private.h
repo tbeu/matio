@@ -230,6 +230,7 @@ EXTERN enum matio_types ClassType2DataType(enum matio_classes class_type);
 EXTERN int SafeMulDims(const matvar_t *matvar, size_t* nelems);
 EXTERN int SafeMul(size_t* res, size_t a, size_t b);
 EXTERN int SafeAdd(size_t* res, size_t a, size_t b);
+EXTERN int SafeRead(void* buf, size_t size, size_t count, FILE* fp, size_t* read_bytes);
 
 /* io.c */
 #if defined(_WIN32) && defined(_MSC_VER)
