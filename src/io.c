@@ -432,6 +432,7 @@ int
 Mat_LogInit( const char *prog_name )
 {
     logfunc = &mat_logfunc;
+    progname = prog_name;
 #if defined(MAT73) && MAT73
     H5Eset_auto(H5E_DEFAULT, mat_h5_log_cb, NULL);
 #endif
