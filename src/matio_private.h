@@ -212,11 +212,11 @@ EXTERN int ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
                int rank,size_t *dims,int *start,int *stride,int *edge);
 
 /* inflate.c */
-EXTERN size_t InflateSkip(mat_t *mat, z_streamp z, int nBytes);
-EXTERN size_t InflateSkipData(mat_t *mat, z_streamp z, enum matio_types data_type, int len);
-EXTERN size_t InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t** dims);
-EXTERN size_t Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes);
-EXTERN size_t InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes);
+EXTERN int InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread);
+EXTERN int InflateSkipData(mat_t *mat, z_streamp z, enum matio_types data_type, int len);
+EXTERN int InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t** dims, size_t* bytesread);
+EXTERN int Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesread);
+EXTERN int InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes);
 #endif
 
 /* mat.c */
@@ -226,7 +226,7 @@ EXTERN enum matio_types ClassType2DataType(enum matio_classes class_type);
 EXTERN int SafeMulDims(const matvar_t *matvar, size_t* nelems);
 EXTERN int SafeMul(size_t* res, size_t a, size_t b);
 EXTERN int SafeAdd(size_t* res, size_t a, size_t b);
-EXTERN int SafeRead(void* buf, size_t size, size_t count, FILE* fp, size_t* read_bytes);
+EXTERN int SafeRead(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread);
 
 /* io.c */
 #if defined(_WIN32) && defined(_MSC_VER)

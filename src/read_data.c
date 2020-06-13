@@ -329,7 +329,7 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
     switch ( data_type ) {
         case MAT_T_UINT8:
         case MAT_T_UTF8:
-            InflateData(mat,z,data,len*data_size);
+            InflateData(mat, z, data, len*data_size);
             break;
         case MAT_T_UINT16:
         case MAT_T_UTF16:
@@ -1039,7 +1039,7 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
 
     stride--;
     err = inflateCopy(&z_copy,z);
-    InflateSkipData(mat,&z_copy,data_type,start);
+    InflateSkipData(mat, &z_copy, data_type, start);
     switch ( class_type ) {
         case MAT_C_DOUBLE:
         {

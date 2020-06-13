@@ -309,7 +309,7 @@ int SafeAdd(size_t* res, size_t a, size_t b)
  * @param size Element size in bytes
  * @param count Element count
  * @param fp File pointer
- * @param[out] read_bytes Read bytes
+ * @param[out] bytesread Number of bytes read from the file
  * @retval 0 on success
  */
 int
@@ -323,7 +323,7 @@ SafeRead(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread) {
         err = 0;
     }
     if ( err ) {
-        Mat_Critical("Read beyond EOF error: Read %"
+        Mat_DebugMessage(1, "Read beyond EOF error: Read %"
             SIZE_T_FMTSTR " bytes, expected %"
             SIZE_T_FMTSTR " bytes", readcount*size, count*size);
     }
