@@ -71,7 +71,7 @@ static size_t WriteCharData(mat_t *mat, void *data, int N,enum matio_types data_
 static size_t ReadNextCell( mat_t *mat, matvar_t *matvar );
 static size_t ReadNextStructField( mat_t *mat, matvar_t *matvar );
 static size_t ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar);
-static int    SafeReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type,
+static int    ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type,
                   mat_uint32_t nbytes, size_t *read_bytes);
 static int    WriteType(mat_t *mat,matvar_t *matvar);
 static int    WriteCellArrayField(mat_t *mat,matvar_t *matvar );
@@ -114,12 +114,12 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
 
     *size = 0;
 
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     if ( err )
         return 1;
 
     /* Add rank and dimensions, padded to an 8 byte block */
-    err = SafeMul(&rank_size, matvar->rank, 4);
+    err = Mul(&rank_size, matvar->rank, 4);
     if ( err )
         return 1;
 
@@ -128,7 +128,7 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
     else
         nBytes = tag_size;
 
-    err = SafeAdd(&nBytes, nBytes, rank_size);
+    err = Add(&nBytes, nBytes, rank_size);
     if ( err )
         return 1;
 
@@ -148,23 +148,23 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
             while ( nfields*maxlen % 8 != 0 )
                 maxlen++;
 
-            err = SafeMul(&field_buf_size, maxlen, nfields);
-            err |= SafeAdd(&nBytes, nBytes, tag_size + tag_size);
-            err |= SafeAdd(&nBytes, nBytes, field_buf_size);
+            err = Mul(&field_buf_size, maxlen, nfields);
+            err |= Add(&nBytes, nBytes, tag_size + tag_size);
+            err |= Add(&nBytes, nBytes, field_buf_size);
             if ( err )
                 return 1;
 
             /* FIXME: Add bytes for the fieldnames */
             if ( NULL != fields && nfields > 0 ) {
                 size_t nelems_x_nfields = 1;
-                err = SafeMul(&nelems_x_nfields, nelems, nfields);
+                err = Mul(&nelems_x_nfields, nelems, nfields);
                 if ( err )
                     return 1;
 
                 for ( i = 0; i < nelems_x_nfields; i++ ) {
                     err = GetStructFieldBufSize(fields[i], &field_buf_size);
-                    err |= SafeAdd(&nBytes, nBytes, tag_size);
-                    err |= SafeAdd(&nBytes, nBytes, field_buf_size);
+                    err |= Add(&nBytes, nBytes, tag_size);
+                    err |= Add(&nBytes, nBytes, field_buf_size);
                     if ( err )
                         return 1;
                 }
@@ -183,8 +183,8 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
                 size_t i, field_buf_size;
                 for ( i = 0; i < nelems; i++ ) {
                     err = GetCellArrayFieldBufSize(cells[i], &field_buf_size);
-                    err |= SafeAdd(&nBytes, nBytes, tag_size);
-                    err |= SafeAdd(&nBytes, nBytes, field_buf_size);
+                    err |= Add(&nBytes, nBytes, tag_size);
+                    err |= Add(&nBytes, nBytes, field_buf_size);
                     if ( err )
                         return 1;
                 }
@@ -195,27 +195,27 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
         {
             mat_sparse_t *sparse = (mat_sparse_t*)matvar->data;
 
-            err = SafeMul(&data_bytes, sparse->nir, sizeof(mat_uint32_t));
+            err = Mul(&data_bytes, sparse->nir, sizeof(mat_uint32_t));
             if ( data_bytes % 8 )
-                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
-            err |= SafeAdd(&nBytes, nBytes, tag_size);
-            err |= SafeAdd(&nBytes, nBytes, data_bytes);
+                err |= Add(&data_bytes, data_bytes, 8 - data_bytes % 8);
+            err |= Add(&nBytes, nBytes, tag_size);
+            err |= Add(&nBytes, nBytes, data_bytes);
 
-            err |= SafeMul(&data_bytes, sparse->njc, sizeof(mat_uint32_t));
+            err |= Mul(&data_bytes, sparse->njc, sizeof(mat_uint32_t));
             if ( data_bytes % 8 )
-                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
-            err |= SafeAdd(&nBytes, nBytes, tag_size);
-            err |= SafeAdd(&nBytes, nBytes, data_bytes);
+                err |= Add(&data_bytes, data_bytes, 8 - data_bytes % 8);
+            err |= Add(&nBytes, nBytes, tag_size);
+            err |= Add(&nBytes, nBytes, data_bytes);
 
-            err |= SafeMul(&data_bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+            err |= Mul(&data_bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
             if ( data_bytes % 8 )
-                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
-            err |= SafeAdd(&nBytes, nBytes, tag_size);
-            err |= SafeAdd(&nBytes, nBytes, data_bytes);
+                err |= Add(&data_bytes, data_bytes, 8 - data_bytes % 8);
+            err |= Add(&nBytes, nBytes, tag_size);
+            err |= Add(&nBytes, nBytes, data_bytes);
 
             if ( matvar->isComplex ) {
-                err |= SafeAdd(&nBytes, nBytes, tag_size);
-                err |= SafeAdd(&nBytes, nBytes, data_bytes);
+                err |= Add(&nBytes, nBytes, tag_size);
+                err |= Add(&nBytes, nBytes, data_bytes);
             }
 
             if ( err )
@@ -226,18 +226,18 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
         case MAT_C_CHAR:
             if ( MAT_T_UINT8 == matvar->data_type ||
                  MAT_T_INT8 == matvar->data_type )
-                err = SafeMul(&data_bytes, nelems, Mat_SizeOf(MAT_T_UINT16));
+                err = Mul(&data_bytes, nelems, Mat_SizeOf(MAT_T_UINT16));
             else
-                err = SafeMul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
+                err = Mul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
             if ( data_bytes % 8 )
-                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
+                err |= Add(&data_bytes, data_bytes, 8 - data_bytes % 8);
 
-            err |= SafeAdd(&nBytes, nBytes, tag_size);
-            err |= SafeAdd(&nBytes, nBytes, data_bytes);
+            err |= Add(&nBytes, nBytes, tag_size);
+            err |= Add(&nBytes, nBytes, data_bytes);
 
             if ( matvar->isComplex ) {
-                err |= SafeAdd(&nBytes, nBytes, tag_size);
-                err |= SafeAdd(&nBytes, nBytes, data_bytes);
+                err |= Add(&nBytes, nBytes, tag_size);
+                err |= Add(&nBytes, nBytes, data_bytes);
             }
 
             if ( err )
@@ -245,16 +245,16 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
 
             break;
         default:
-            err = SafeMul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
+            err = Mul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
             if ( data_bytes % 8 )
-                err |= SafeAdd(&data_bytes, data_bytes, 8 - data_bytes % 8);
+                err |= Add(&data_bytes, data_bytes, 8 - data_bytes % 8);
 
-            err |= SafeAdd(&nBytes, nBytes, tag_size);
-            err |= SafeAdd(&nBytes, nBytes, data_bytes);
+            err |= Add(&nBytes, nBytes, tag_size);
+            err |= Add(&nBytes, nBytes, data_bytes);
 
             if ( matvar->isComplex ) {
-                err |= SafeAdd(&nBytes, nBytes, tag_size);
-                err |= SafeAdd(&nBytes, nBytes, data_bytes);
+                err |= Add(&nBytes, nBytes, tag_size);
+                err |= Add(&nBytes, nBytes, data_bytes);
             }
 
             if ( err )
@@ -291,7 +291,7 @@ GetStructFieldBufSize(matvar_t *matvar, size_t *size)
     nBytes += tag_size;
 
     err = GetTypeBufSize(matvar, &type_buf_size);
-    err |= SafeAdd(&nBytes, nBytes, type_buf_size);
+    err |= Add(&nBytes, nBytes, type_buf_size);
     if ( err )
         return 1;
 
@@ -325,7 +325,7 @@ GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size)
     nBytes += tag_size;
 
     err = GetTypeBufSize(matvar, &type_buf_size);
-    err |= SafeAdd(&nBytes, nBytes, type_buf_size);
+    err |= Add(&nBytes, nBytes, type_buf_size);
     if ( err )
         return 1;
 
@@ -362,21 +362,21 @@ GetEmptyMatrixMaxBufSize(const char *name, int rank, size_t *size)
     } else {
         nBytes += tag_size;
         if ( len % 8 )
-            err |= SafeAdd(&len, len, 8 - len % 8);
+            err |= Add(&len, len, 8 - len % 8);
 
-        err |= SafeAdd(&nBytes, nBytes, len);
+        err |= Add(&nBytes, nBytes, len);
     }
 
     /* Add rank and dimensions, padded to an 8 byte block */
-    err |= SafeMul(&rank_size, rank, 4);
+    err |= Mul(&rank_size, rank, 4);
     if ( rank % 2 )
-        err |= SafeAdd(&nBytes, nBytes, tag_size + 4);
+        err |= Add(&nBytes, nBytes, tag_size + 4);
     else
-        err |= SafeAdd(&nBytes, nBytes, tag_size);
+        err |= Add(&nBytes, nBytes, tag_size);
 
-    err |= SafeAdd(&nBytes, nBytes, rank_size);
+    err |= Add(&nBytes, nBytes, rank_size);
     /* Data tag */
-    err |= SafeAdd(&nBytes, nBytes, tag_size);
+    err |= Add(&nBytes, nBytes, tag_size);
 
     if ( err )
         return 1;
@@ -431,7 +431,7 @@ ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
         }
 #endif
     } else {
-        if ( 0 != SafeRead(tag, 4, 1, (FILE*)mat->fp, &bytesread) ) {
+        if ( 0 != Read(tag, 4, 1, (FILE*)mat->fp, &bytesread) ) {
             return bytesread;
         }
         if ( mat->byteswap )
@@ -442,7 +442,7 @@ ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
             N = (tag[0] & 0xffff0000) >> 16;
         } else {
             data_in_tag = 0;
-            if ( 0 != SafeRead(&N, 4, 1, (FILE*)mat->fp, &bytesread) ) {
+            if ( 0 != Read(&N, 4, 1, (FILE*)mat->fp, &bytesread) ) {
                 return bytesread;
             }
             if ( mat->byteswap )
@@ -517,13 +517,13 @@ GetMatrixMaxBufSize(matvar_t *matvar, size_t *size)
     } else {
         nBytes += tag_size;
         if ( len % 8 )
-            err |= SafeAdd(&len, len, 8 - len % 8);
+            err |= Add(&len, len, 8 - len % 8);
 
-        err |= SafeAdd(&nBytes, nBytes, len);
+        err |= Add(&nBytes, nBytes, len);
     }
 
     err |= GetTypeBufSize(matvar, &type_buf_size);
-    err |= SafeAdd(&nBytes, nBytes, type_buf_size);
+    err |= Add(&nBytes, nBytes, type_buf_size);
 
     if ( err )
         return 1;
@@ -901,13 +901,13 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
     matvar_t **cells = NULL;
     size_t nelems = 1;
 
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return bytesread;
     }
     matvar->data_size = sizeof(matvar_t *);
-    err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+    err = Mul(&matvar->nbytes, nelems, matvar->data_size);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return bytesread;
@@ -1023,7 +1023,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                         Mat_Critical("%d is not a valid rank", rank);
                         continue;
                     }
-                    err = SafeMul(&size, cells[i]->rank, sizeof(*cells[i]->dims));
+                    err = Mul(&size, cells[i]->rank, sizeof(*cells[i]->dims));
                     if ( err ) {
                         if ( do_clean ) {
                             free(dims);
@@ -1156,7 +1156,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read variable tag for cell */
-            err = SafeRead(buf, 4, 2, (FILE*)mat->fp, &nbytes);
+            err = Read(buf, 4, 2, (FILE*)mat->fp, &nbytes);
 
             /* Empty cells at the end of a file may cause an EOF */
             if ( 0 == err && 0 == nbytes )
@@ -1186,7 +1186,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read array flags and the dimensions tag */
-            err = SafeRead(buf, 4, 6, (FILE*)mat->fp, &bytesread);
+            err = Read(buf, 4, 6, (FILE*)mat->fp, &bytesread);
             if ( 0 != err ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
@@ -1216,7 +1216,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             /* Rank and dimension */
             {
                 size_t nbytes = 0;
-                err = SafeReadRankDims(mat, cells[i], (enum matio_types)buf[4], buf[5], &nbytes);
+                err = ReadRankDims(mat, cells[i], (enum matio_types)buf[4], buf[5], &nbytes);
                 bytesread += nbytes;
                 nBytes -= nbytes;
                 if ( 0 != err ) {
@@ -1226,7 +1226,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 }
             }
             /* Variable name tag */
-            if ( 0 != SafeRead(buf, 1, 8, (FILE*)mat->fp, &bytesread) ) {
+            if ( 0 != Read(buf, 1, 8, (FILE*)mat->fp, &bytesread) ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
                 break;
@@ -1288,7 +1288,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
     matvar_t **fields = NULL;
     size_t nelems = 1, nelems_x_nfields;
 
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return bytesread;
@@ -1364,12 +1364,12 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         matvar->data_size = sizeof(matvar_t *);
-        err = SafeMul(&nelems_x_nfields, nelems, nfields);
+        err = Mul(&nelems_x_nfields, nelems, nfields);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             return bytesread;
         }
-        err = SafeMul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
+        err = Mul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             return bytesread;
@@ -1490,7 +1490,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                         Mat_Critical("%d is not a valid rank", rank);
                         continue;
                     }
-                    err = SafeMul(&size, fields[i]->rank, sizeof(*fields[i]->dims));
+                    err = Mul(&size, fields[i]->rank, sizeof(*fields[i]->dims));
                     if ( err ) {
                         if ( do_clean ) {
                             free(dims);
@@ -1568,7 +1568,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         mat_uint32_t buf[6] = {0,};
         mat_uint32_t array_flags, len;
 
-        err = SafeRead(buf, 4, 2, (FILE*)mat->fp, &bytesread);
+        err = Read(buf, 4, 2, (FILE*)mat->fp, &bytesread);
         if ( 0 != err ) {
             return bytesread;
         }
@@ -1584,7 +1584,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         /* Field name tag */
-        err = SafeRead(buf, 4, 2, (FILE*)mat->fp, &bytesread);
+        err = Read(buf, 4, 2, (FILE*)mat->fp, &bytesread);
         if ( 0 != err ) {
             return bytesread;
         }
@@ -1600,7 +1600,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( nfields ) {
                 char *ptr = (char*)malloc(nfields*fieldname_size);
                 if ( NULL != ptr ) {
-                    err = SafeRead(ptr, 1, nfields*fieldname_size, (FILE*)mat->fp, &bytesread);
+                    err = Read(ptr, 1, nfields*fieldname_size, (FILE*)mat->fp, &bytesread);
                     if ( 0 == err ) {
                         SetFieldNames(matvar, ptr, nfields, fieldname_size);
                     } else {
@@ -1633,12 +1633,12 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         matvar->data_size = sizeof(matvar_t *);
-        err = SafeMul(&nelems_x_nfields, nelems, nfields);
+        err = Mul(&nelems_x_nfields, nelems, nfields);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             return bytesread;
         }
-        err = SafeMul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
+        err = Mul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             return bytesread;
@@ -1661,7 +1661,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read variable tag for struct field */
-            err = SafeRead(buf, 4, 2, (FILE*)mat->fp, &bytesread);
+            err = Read(buf, 4, 2, (FILE*)mat->fp, &bytesread);
             if ( 0 != err ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
@@ -1686,7 +1686,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read array flags and the dimensions tag */
-            err = SafeRead(buf, 4, 6, (FILE*)mat->fp, &bytesread);
+            err = Read(buf, 4, 6, (FILE*)mat->fp, &bytesread);
             if ( 0 != err ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
@@ -1716,7 +1716,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             /* Rank and dimension */
             {
                 size_t nbytes = 0;
-                err = SafeReadRankDims(mat, fields[i], (enum matio_types)buf[4], buf[5], &nbytes);
+                err = ReadRankDims(mat, fields[i], (enum matio_types)buf[4], buf[5], &nbytes);
                 bytesread += nbytes;
                 nBytes -= nbytes;
                 if ( 0 != err ) {
@@ -1726,7 +1726,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 }
             }
             /* Variable name tag */
-            err = SafeRead(buf, 1, 8, (FILE*)mat->fp, &bytesread);
+            err = Read(buf, 1, 8, (FILE*)mat->fp, &bytesread);
             if ( 0 != err ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
@@ -1773,9 +1773,9 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
     int err;
     size_t nelems = 1;
 
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     matvar->data_size = sizeof(matvar_t *);
-    err |= SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+    err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
     if ( err )
         return 0;
 
@@ -1814,7 +1814,7 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
  * @retval 0 on success
  */
 static int
-SafeReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint32_t nbytes, size_t* read_bytes)
+ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint32_t nbytes, size_t* read_bytes)
 {
     int err = 0;
     /* Rank and dimension */
@@ -1826,7 +1826,7 @@ SafeReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_u
             mat_uint32_t buf;
 
             for ( i = 0; i < matvar->rank; i++) {
-                err = SafeRead(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, read_bytes);
+                err = Read(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, read_bytes);
                 if ( 0 == err ) {
                     if ( mat->byteswap ) {
                         matvar->dims[i] = Mat_uint32Swap(&buf);
@@ -1842,7 +1842,7 @@ SafeReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_u
             }
 
             if ( matvar->rank % 2 != 0 ) {
-                err = SafeRead(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, read_bytes);
+                err = Read(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, read_bytes);
                 if ( 0 != err ) {
                     free(matvar->dims);
                     matvar->dims = NULL;
@@ -1874,7 +1874,7 @@ WriteType(mat_t *mat,matvar_t *matvar)
     int nBytes, j;
     size_t nelems = 1;
 
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     if ( err )
         return err;
 
@@ -1980,7 +1980,7 @@ WriteType(mat_t *mat,matvar_t *matvar)
                 fwrite(padzero,1,fieldname_size-len,(FILE*)mat->fp);
             }
             free(padzero);
-            err = SafeMul(&nelems_x_nfields, nelems, nfields);
+            err = Mul(&nelems_x_nfields, nelems, nfields);
             if ( err )
                 break;
             for ( i = 0; i < nelems_x_nfields; i++ )
@@ -2231,7 +2231,7 @@ WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
         return byteswritten;
     }
 
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return byteswritten;
@@ -2357,7 +2357,7 @@ WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
                 } while ( z->avail_out == 0 );
             }
             free(padzero);
-            err = SafeMul(&nelems_x_nfields, nelems, nfields);
+            err = Mul(&nelems_x_nfields, nelems, nfields);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return byteswritten;
@@ -2814,7 +2814,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
         }
 #endif
     } else {
-        if ( 0 != SafeRead(tag, 4, 1, (FILE*)mat->fp, NULL) ) {
+        if ( 0 != Read(tag, 4, 1, (FILE*)mat->fp, NULL) ) {
             return;
         }
         if ( mat->byteswap )
@@ -2825,7 +2825,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
             nBytes = (tag[0] & 0xffff0000) >> 16;
         } else {
             data_in_tag = 0;
-            if ( 0 != SafeRead(tag+1, 4, 1, (FILE*)mat->fp, NULL) ) {
+            if ( 0 != Read(tag+1, 4, 1, (FILE*)mat->fp, NULL) ) {
                 return;
             }
             if ( mat->byteswap )
@@ -2984,7 +2984,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
         Mat_Critical("Couldn't determine file position");
         return 1;
     }
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return err;
@@ -3085,7 +3085,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 matvar->data_size = Mat_SizeOf(matvar->data_type);
                 matvar->nbytes = nBytes;
             } else {
-                err = SafeRead(tag, 4, 1, (FILE*)mat->fp, &bytesread);
+                err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread);
                 if ( 0 != err ) {
                     break;
                 }
@@ -3097,7 +3097,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     /* nBytes = (tag[0] & 0xffff0000) >> 16; */
                 } else {
                     data_in_tag = 0;
-                    err = SafeRead(tag+1, 4, 1, (FILE*)mat->fp, &bytesread);
+                    err = Read(tag+1, 4, 1, (FILE*)mat->fp, &bytesread);
                     if ( 0 != err ) {
                         break;
                     }
@@ -3107,7 +3107,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 }
                 matvar->data_type = MAT_T_UINT8;
                 matvar->data_size = Mat_SizeOf(MAT_T_UINT8);
-                err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+                err = Mul(&matvar->nbytes, nelems, matvar->data_size);
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     break;
@@ -3127,7 +3127,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             }
             {
                 size_t nbytes;
-                err = SafeMul(&nbytes, nelems, matvar->data_size);
+                err = Mul(&nbytes, nelems, matvar->data_size);
                 if ( err || nbytes > matvar->nbytes ) {
                     break;
                 }
@@ -3163,7 +3163,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             size_t i, nelems_x_nfields;
 
             matvar->data_type = MAT_T_STRUCT;
-            err = SafeMul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
+            err = Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
             if ( err || !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
                 break;
             fields = (matvar_t **)matvar->data;
@@ -3234,7 +3234,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 }
 #endif
             } else {
-                err = SafeRead(tag, 4, 1, (FILE*)mat->fp, &bytesread);
+                err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread);
                 if ( 0 != err ) {
                     break;
                 }
@@ -3246,7 +3246,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     N = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    err = SafeRead(&N, 4, 1, (FILE*)mat->fp, &bytesread);
+                    err = Read(&N, 4, 1, (FILE*)mat->fp, &bytesread);
                     if ( 0 != err ) {
                         break;
                     }
@@ -3274,7 +3274,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
                 size_t nbytes;
-                err = SafeMul(&nbytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+                err = Mul(&nbytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     break;
@@ -3346,7 +3346,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 
                     /* Complex Data Tag */
-                    err = SafeRead(tag, 4, 1, (FILE*)mat->fp, &bytesread);
+                    err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread);
                     if ( 0 != err ) {
                         break;
                     }
@@ -3358,7 +3358,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        err = SafeRead(tag+1, 4, 1, (FILE*)mat->fp, &bytesread);
+                        err = Read(tag+1, 4, 1, (FILE*)mat->fp, &bytesread);
                         if ( 0 != err ) {
                             break;
                         }
@@ -3572,7 +3572,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 sparse->data = complex_data;
             } else { /* isComplex */
                 size_t nbytes;
-                err = SafeMul(&nbytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+                err = Mul(&nbytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     break;
@@ -3749,7 +3749,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 
-                err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+                err = Mul(&matvar->nbytes, nelems, matvar->data_size);
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     break;
@@ -3766,7 +3766,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 Mat_VarReadNumeric5(mat,matvar,complex_data->Im,nelems);
                 matvar->data = complex_data;
             } else {
-                err = SafeMul(&matvar->nbytes, nelems, matvar->data_size);
+                err = Mul(&matvar->nbytes, nelems, matvar->data_size);
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     break;
@@ -4361,7 +4361,7 @@ Mat_VarReadData5(mat_t *mat,matvar_t *matvar,void *data,
 
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-        err = SafeRead(tag, 4, 2, (FILE*)mat->fp, NULL);
+        err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
         if ( 0 != err ) {
             return err;
         }
@@ -4443,7 +4443,7 @@ Mat_VarReadData5(mat_t *mat,matvar_t *matvar,void *data,
                 ReadDataSlab2(mat,complex_data->Re,matvar->class_type,
                     matvar->data_type,matvar->dims,start,stride,edge);
                 (void)fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
-                err = SafeRead(tag, 4, 2, (FILE*)mat->fp, NULL);
+                err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
                 if ( 0 != err ) {
                     return err;
                 }
@@ -4513,7 +4513,7 @@ Mat_VarReadData5(mat_t *mat,matvar_t *matvar,void *data,
                     start,stride,edge);
 
                 (void)fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
-                err = SafeRead(tag, 4, 2, (FILE*)mat->fp, NULL);
+                err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
                 if ( 0 != err ) {
                     return err;
                 }
@@ -4610,7 +4610,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
         return -1;
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-        err = SafeRead(tag, 4, 2, (FILE*)mat->fp, NULL);
+        err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
         if ( 0 != err ) {
             return err;
         }
@@ -4678,7 +4678,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
     if ( real_bytes % 8 )
         real_bytes += (8-(real_bytes % 8));
 
-    err = SafeMulDims(matvar, &nelems);
+    err = MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return -1;
@@ -4693,7 +4693,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
             ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
                           matvar->data_type,start,stride,edge);
             (void)fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
-            err = SafeRead(tag, 4, 2, (FILE*)mat->fp, NULL);
+            err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
             if ( 0 != err ) {
                 return err;
             }
@@ -5040,11 +5040,11 @@ Mat_VarReadNextInfo5( mat_t *mat )
     }
     {
         size_t nbytes = 0;
-        err = SafeRead(&data_type, 4, 1, (FILE*)mat->fp, &nbytes);
+        err = Read(&data_type, 4, 1, (FILE*)mat->fp, &nbytes);
         if ( 0 != err || 0 == nbytes )
             return NULL;
     }
-    err = SafeRead(&nBytes, 4, 1, (FILE*)mat->fp, NULL);
+    err = Read(&nBytes, 4, 1, (FILE*)mat->fp, NULL);
     if ( 0 != err )
         return NULL;
     if ( mat->byteswap ) {
@@ -5148,7 +5148,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                         Mat_Critical("%d is not a valid rank", rank);
                         break;
                     }
-                    err = SafeMul(&size, matvar->rank, sizeof(*matvar->dims));
+                    err = Mul(&size, matvar->rank, sizeof(*matvar->dims));
                     if ( err ) {
                         if ( do_clean ) {
                             free(dims);
@@ -5252,7 +5252,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
             mat_uint32_t buf[6];
 
             /* Read array flags and the dimensions tag */
-            err = SafeRead(buf, 4, 6, (FILE*)mat->fp, NULL);
+            err = Read(buf, 4, 6, (FILE*)mat->fp, NULL);
             if ( 0 != err ) {
                 (void)fseek((FILE*)mat->fp, fpos, SEEK_SET);
                 break;
@@ -5287,7 +5287,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
             /* Rank and dimension */
             {
                 size_t nbytes = 0;
-                err = SafeReadRankDims(mat, matvar, (enum matio_types)buf[4], buf[5], &nbytes);
+                err = ReadRankDims(mat, matvar, (enum matio_types)buf[4], buf[5], &nbytes);
                 if ( 0 == nbytes && 0 < matvar->rank ) {
                     Mat_VarFree(matvar);
                     matvar = NULL;
@@ -5296,7 +5296,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 }
             }
             /* Variable name tag */
-            err = SafeRead(buf, 4, 2, (FILE*)mat->fp, NULL);
+            err = Read(buf, 4, 2, (FILE*)mat->fp, NULL);
             if ( 0 != err ) {
                 Mat_VarFree(matvar);
                 matvar = NULL;
@@ -5324,7 +5324,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 }
                 matvar->name = (char*)malloc(len_pad + 1);
                 if ( NULL != matvar->name ) {
-                    err = SafeRead(matvar->name, 1, len_pad, (FILE*)mat->fp, NULL);
+                    err = Read(matvar->name, 1, len_pad, (FILE*)mat->fp, NULL);
                     if ( 0 == err ) {
                         matvar->name[len] = '\0';
                     } else {

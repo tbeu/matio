@@ -223,10 +223,10 @@ EXTERN int InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes);
 EXTERN mat_complex_split_t *ComplexMalloc(size_t nbytes);
 EXTERN void ComplexFree(mat_complex_split_t* complex_data);
 EXTERN enum matio_types ClassType2DataType(enum matio_classes class_type);
-EXTERN int SafeMulDims(const matvar_t *matvar, size_t* nelems);
-EXTERN int SafeMul(size_t* res, size_t a, size_t b);
-EXTERN int SafeAdd(size_t* res, size_t a, size_t b);
-EXTERN int SafeRead(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread);
+EXTERN int Add(size_t* res, size_t a, size_t b);
+EXTERN int Mul(size_t* res, size_t a, size_t b);
+EXTERN int MulDims(const matvar_t *matvar, size_t* nelems);
+EXTERN int Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread);
 
 /* io.c */
 #if defined(_WIN32) && defined(_MSC_VER)

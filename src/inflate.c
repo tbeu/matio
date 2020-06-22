@@ -58,7 +58,7 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
     n = nBytes < READ_BLOCK_SIZE ? nBytes : READ_BLOCK_SIZE;
     if ( !z->avail_in ) {
         size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, n, (FILE*)mat->fp, &nbytes);
+        err = Read(comp_buf, 1, n, (FILE*)mat->fp, &nbytes);
         if ( 0 == nbytes ) {
             return err;
         }
@@ -86,7 +86,7 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
     while ( cnt < nBytes ) {
         if ( !z->avail_in ) {
             size_t nbytes = 0;
-            err = SafeRead(comp_buf, 1, n, (FILE*)mat->fp, &nbytes);
+            err = Read(comp_buf, 1, n, (FILE*)mat->fp, &nbytes);
             if ( 0 == nbytes ) {
                 break;
             }
@@ -238,7 +238,7 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
 
     if ( !z->avail_in ) {
         size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+        err = Read(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
         if ( 0 == nbytes ) {
             return err;
         }
@@ -257,7 +257,7 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
     }
     while ( z->avail_out && !z->avail_in ) {
         size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+        err = Read(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
         if ( 0 == nbytes ) {
             break;
         }
@@ -319,7 +319,7 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     n = nBytes < READ_BLOCK_SIZE ? nBytes : READ_BLOCK_SIZE;
     if ( !z->avail_in ) {
         size_t nbytes = 0;
-        err = SafeRead(comp_buf, 1, n, (FILE*)mat->fp, &nbytes);
+        err = Read(comp_buf, 1, n, (FILE*)mat->fp, &nbytes);
         if ( 0 == nbytes ) {
             return err;
         }
@@ -339,11 +339,11 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     while ( z->avail_out && !z->avail_in ) {
         size_t nbytes = 0;
         if ( nBytes > READ_BLOCK_SIZE + bytesread ) {
-            err = SafeRead(comp_buf, 1, READ_BLOCK_SIZE, (FILE*)mat->fp, &nbytes);
+            err = Read(comp_buf, 1, READ_BLOCK_SIZE, (FILE*)mat->fp, &nbytes);
         } else if ( nBytes < 1 + bytesread ) { /* Read a byte at a time */
-            err = SafeRead(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
+            err = Read(comp_buf, 1, 1, (FILE*)mat->fp, &nbytes);
         } else {
-            err = SafeRead(comp_buf, 1, nBytes - bytesread, (FILE*)mat->fp, &nbytes);
+            err = Read(comp_buf, 1, nBytes - bytesread, (FILE*)mat->fp, &nbytes);
         }
         if ( 0 == nbytes ) {
             break;
