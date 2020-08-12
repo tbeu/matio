@@ -126,7 +126,7 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
     if ( matvar == NULL || fieldname == NULL )
         return -1;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err )
         return -1;
 
@@ -227,7 +227,7 @@ Mat_VarGetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index)
         matvar->data_size == 0 )
         return NULL;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err )
         return NULL;
 
@@ -267,7 +267,7 @@ Mat_VarGetStructFieldByName(matvar_t *matvar,const char *field_name,
         matvar->data_size == 0 )
         return NULL;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err )
         return NULL;
 
@@ -309,7 +309,7 @@ Mat_VarGetStructField(matvar_t *matvar,void *name_or_index,int opt,int index)
     matvar_t *field = NULL;
     size_t nelems = 1;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     nfields = matvar->internal->num_fields;
     if ( index < 0 || (nelems > 0 && (size_t)index >= nelems ))
         err = 1;
@@ -513,7 +513,7 @@ Mat_VarSetStructFieldByIndex(matvar_t *matvar,size_t field_index,size_t index,
         matvar->data == NULL )
         return NULL;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err )
         return NULL;
 
@@ -555,7 +555,7 @@ Mat_VarSetStructFieldByName(matvar_t *matvar,const char *field_name,
          matvar->data == NULL )
         return NULL;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err )
         return NULL;
 

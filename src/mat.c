@@ -250,7 +250,7 @@ ClassType2DataType(enum matio_classes class_type)
  * @param nelems Number of elements
  * @retval 0 on success
  */
-int MulDims(const matvar_t *matvar, size_t* nelems)
+int Mat_MulDims(const matvar_t *matvar, size_t* nelems)
 {
     int i;
 
@@ -1160,7 +1160,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
  * @retval 0 on success
  */
 static int
-mat_copy(const char* src, const char* dst)
+CopyFile(const char* src, const char* dst)
 {
     size_t len;
     char buf[BUFSIZ] = {'\0'};
@@ -1284,7 +1284,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     mat->fp = NULL;
                 }
 
-                if ( (err = mat_copy(path_buf,new_name)) == -1 ) {
+                if ( (err = CopyFile(path_buf,new_name)) == -1 ) {
                     if ( NULL != dir ) {
                         size_t i;
                         for ( i = 0; i < n; i++ ) {
@@ -1592,7 +1592,7 @@ Mat_VarFree(matvar_t *matvar)
         return;
     if ( NULL != matvar->dims ) {
         nelems = 1;
-        MulDims(matvar, &nelems);
+        Mat_MulDims(matvar, &nelems);
         free(matvar->dims);
     }
     if ( NULL != matvar->data ) {
@@ -1932,7 +1932,7 @@ Mat_VarGetSize(matvar_t *matvar)
         size_t field_name_length;
         if ( NULL != fields ) {
             size_t nelems_x_nfields = matvar->internal->num_fields;
-            err = MulDims(matvar, &nelems_x_nfields);
+            err = Mat_MulDims(matvar, &nelems_x_nfields);
             err |= Mul(&bytes, nelems_x_nfields, overhead);
             if ( err )
                 return 0;
@@ -2009,7 +2009,7 @@ Mat_VarGetSize(matvar_t *matvar)
     } else {
         if ( matvar->rank > 0 ) {
             bytes = Mat_SizeOfClass(matvar->class_type);
-            err = MulDims(matvar, &bytes);
+            err = Mat_MulDims(matvar, &bytes);
             if ( err )
                 return 0;
 
@@ -2053,7 +2053,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     if ( NULL != matvar->dims ) {
         int k;
         nelems = 1;
-        MulDims(matvar, &nelems);
+        Mat_MulDims(matvar, &nelems);
         printf("Dimensions: %" SIZE_T_FMTSTR,matvar->dims[0]);
         for ( k = 1; k < matvar->rank; k++ ) {
             printf(" x %" SIZE_T_FMTSTR,matvar->dims[k]);

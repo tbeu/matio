@@ -225,7 +225,7 @@ EXTERN void ComplexFree(mat_complex_split_t* complex_data);
 EXTERN enum matio_types ClassType2DataType(enum matio_classes class_type);
 EXTERN int Add(size_t* res, size_t a, size_t b);
 EXTERN int Mul(size_t* res, size_t a, size_t b);
-EXTERN int MulDims(const matvar_t *matvar, size_t* nelems);
+EXTERN int Mat_MulDims(const matvar_t *matvar, size_t* nelems);
 EXTERN int Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread);
 
 /* io.c */

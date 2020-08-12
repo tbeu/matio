@@ -673,7 +673,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             H5Dread(dset_id,SizeType2H5T(),H5S_ALL,H5S_ALL,H5P_DEFAULT,matvar->dims);
             {
                 size_t tmp = 1;
-                err = MulDims(matvar, &tmp);
+                err = Mat_MulDims(matvar, &tmp);
                 nelems = (hsize_t)tmp;
             }
         }
@@ -1057,7 +1057,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
     if ( MAT_C_CELL == matvar->class_type ) {
         size_t i;
         matvar_t **cells = (matvar_t**)matvar->data;
-        MulDims(matvar, &nelems);
+        Mat_MulDims(matvar, &nelems);
         for ( i = 0; i < nelems; i++ )
             Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
         return;
@@ -1080,7 +1080,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
                 data_type_id      = ClassType2H5T(matvar->class_type);
             }
 
-            err = MulDims(matvar, &nelems);
+            err = Mat_MulDims(matvar, &nelems);
             err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err || matvar->nbytes < 1 ) {
                 H5Dclose(ref_id);
@@ -1862,7 +1862,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
 
     {
         size_t tmp = 1;
-        err = MulDims(matvar, &tmp);
+        err = Mat_MulDims(matvar, &tmp);
         nelems = (hsize_t)tmp;
     }
 
@@ -2347,7 +2347,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         {
             size_t nelems = 1;
             matvar->data_size = Mat_SizeOfClass(matvar->class_type);
-            err = MulDims(matvar, &nelems);
+            err = Mat_MulDims(matvar, &nelems);
             err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
@@ -2387,7 +2387,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
         {
             size_t nelems = 1;
             matvar->data_size = Mat_SizeOf(matvar->data_type);
-            err = MulDims(matvar, &nelems);
+            err = Mat_MulDims(matvar, &nelems);
             err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
@@ -2418,7 +2418,7 @@ Mat_VarRead73(mat_t *mat,matvar_t *matvar)
             if ( !matvar->internal->num_fields || NULL == matvar->data )
                 break;
 
-            err = MulDims(matvar, &nelems);
+            err = Mat_MulDims(matvar, &nelems);
             err |= Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");

@@ -184,7 +184,7 @@ Mat_VarWrite4(mat_t *mat,matvar_t *matvar)
         case MAT_C_UINT8:
         {
             size_t nelems = 1;
-            int err = MulDims(matvar, &nelems);
+            int err = Mat_MulDims(matvar, &nelems);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return -1;
@@ -300,7 +300,7 @@ Mat_VarRead4(mat_t *mat,matvar_t *matvar)
     int err;
     size_t nelems = 1;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return err;
@@ -804,7 +804,7 @@ Mat_VarReadData4(mat_t *mat,matvar_t *matvar,void *data,
         if ( matvar->isComplex ) {
             mat_complex_split_t *cdata = (mat_complex_split_t*)data;
             size_t nbytes = Mat_SizeOf(matvar->data_type);
-            err = MulDims(matvar, &nbytes);
+            err = Mat_MulDims(matvar, &nbytes);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
                 return err;
@@ -822,7 +822,7 @@ Mat_VarReadData4(mat_t *mat,matvar_t *matvar,void *data,
     } else if ( matvar->isComplex ) {
         mat_complex_split_t *cdata = (mat_complex_split_t*)data;
         size_t nbytes = Mat_SizeOf(matvar->data_type);
-        err = MulDims(matvar, &nbytes);
+        err = Mat_MulDims(matvar, &nbytes);
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             return err;
@@ -861,7 +861,7 @@ Mat_VarReadDataLinear4(mat_t *mat,matvar_t *matvar,void *data,int start,
     int err;
     size_t nelems = 1;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return err;
@@ -1067,7 +1067,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         size_t tmp2 = Mat_SizeOf(matvar->data_type);
         if ( matvar->isComplex )
             tmp2 *= 2;
-        err = MulDims(matvar, &tmp2);
+        err = Mat_MulDims(matvar, &tmp2);
         if ( err ) {
             Mat_VarFree(matvar);
             Mat_Critical("Integer multiplication overflow");

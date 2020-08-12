@@ -114,7 +114,7 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
 
     *size = 0;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err )
         return 1;
 
@@ -901,7 +901,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
     matvar_t **cells = NULL;
     size_t nelems = 1;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return bytesread;
@@ -1288,7 +1288,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
     matvar_t **fields = NULL;
     size_t nelems = 1, nelems_x_nfields;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return bytesread;
@@ -1773,7 +1773,7 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
     int err;
     size_t nelems = 1;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     matvar->data_size = sizeof(matvar_t *);
     err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
     if ( err )
@@ -1874,7 +1874,7 @@ WriteType(mat_t *mat,matvar_t *matvar)
     int nBytes, j;
     size_t nelems = 1;
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err )
         return err;
 
@@ -2231,7 +2231,7 @@ WriteCompressedType(mat_t *mat,matvar_t *matvar,z_streamp z)
         return byteswritten;
     }
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return byteswritten;
@@ -2984,7 +2984,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
         Mat_Critical("Couldn't determine file position");
         return 1;
     }
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return err;
@@ -4678,7 +4678,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
     if ( real_bytes % 8 )
         real_bytes += (8-(real_bytes % 8));
 
-    err = MulDims(matvar, &nelems);
+    err = Mat_MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
         return -1;
