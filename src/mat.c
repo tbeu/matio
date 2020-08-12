@@ -1160,7 +1160,7 @@ Mat_VarCreate(const char *name,enum matio_classes class_type,
  * @retval 0 on success
  */
 static int
-CopyFile(const char* src, const char* dst)
+Mat_CopyFile(const char* src, const char* dst)
 {
     size_t len;
     char buf[BUFSIZ] = {'\0'};
@@ -1284,7 +1284,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     mat->fp = NULL;
                 }
 
-                if ( (err = CopyFile(path_buf,new_name)) == -1 ) {
+                if ( (err = Mat_CopyFile(path_buf,new_name)) == -1 ) {
                     if ( NULL != dir ) {
                         size_t i;
                         for ( i = 0; i < n; i++ ) {
