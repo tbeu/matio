@@ -1425,8 +1425,16 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         }
 
 #if HAVE_ZLIB
-        if ( (in->internal->z != NULL) && (NULL != (out->internal->z = (z_streamp)malloc(sizeof(z_stream)))) )
-            inflateCopy(out->internal->z,in->internal->z);
+        if ( in->internal->z != NULL ) {
+            out->internal->z = (z_streamp)malloc(sizeof(z_stream));
+            if ( NULL != out->internal->z ) {
+                int err = inflateCopy(out->internal->z, in->internal->z);
+                if ( err != Z_OK ) {
+                    free(out->internal->z);
+                    out->internal->z = NULL;
+                }
+            }
+        }
         if ( in->internal->data != NULL ) {
             if ( in->class_type == MAT_C_SPARSE ) {
                 out->internal->data = malloc(sizeof(mat_sparse_t));
