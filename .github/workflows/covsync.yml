@@ -1,0 +1,17 @@
+name: "Synchronize Coverity Scan branch on a weekly basis"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 3 * * 0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: |
+          git checkout -b coverity_scan origin/master
+          git push --force origin coverity_scan
