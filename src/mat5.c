@@ -3116,7 +3116,11 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             if ( matvar->isComplex ) {
                 break;
             }
-            matvar->data = calloc(matvar->nbytes+1, 1);
+            if ( 0 == matvar->nbytes ) {
+                matvar->data = calloc(1, 1);
+            } else {
+                matvar->data = calloc(matvar->nbytes, 1);
+            }
             if ( NULL == matvar->data ) {
                 Mat_Critical("Couldn't allocate memory for the data");
                 err = 1;
