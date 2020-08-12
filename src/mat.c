@@ -1415,10 +1415,12 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         if ( NULL != in->internal->fieldnames && in->internal->num_fields > 0 ) {
             out->internal->fieldnames = (char**)calloc(in->internal->num_fields,
                                                sizeof(*in->internal->fieldnames));
-            for ( i = 0; i < in->internal->num_fields; i++ ) {
-                if ( NULL != in->internal->fieldnames[i] )
-                    out->internal->fieldnames[i] =
-                        strdup(in->internal->fieldnames[i]);
+            if ( NULL != out->internal->fieldnames ) {
+                for ( i = 0; i < in->internal->num_fields; i++ ) {
+                    if ( NULL != in->internal->fieldnames[i] )
+                        out->internal->fieldnames[i] =
+                            strdup(in->internal->fieldnames[i]);
+                }
             }
         }
 
