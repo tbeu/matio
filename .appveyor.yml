@@ -1,5 +1,9 @@
 clone_depth: 5
 
+branches:
+  except:
+  - coverity_scan
+
 version: 1.5.17+build.{build}
 
 cache:
