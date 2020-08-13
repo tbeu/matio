@@ -7,15 +7,15 @@ cache:
   - C:\cygwin64-setup-cache
 
 platform:
-  - Win32
   - x64
+  - Win32
 
 environment:
   matrix:
-    - compiler: Cygwin
+    - compiler: MinGW
       configuration: Release
       build_with: autoconf
-    - compiler: MinGW
+    - compiler: Cygwin
       configuration: Release
       build_with: autoconf
     - compiler: MSVC
@@ -109,12 +109,16 @@ for:
       - compiler: MinGW
 
   install:
+    - ps: Invoke-WebRequest http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz -OutFile C:\msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
+    - ps: Invoke-WebRequest http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig -OutFile C:\msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig
     # Win32
     - if "%platform%"=="Win32" set PATH=C:\MinGW\bin;C:\MinGW\msys\1.0\bin;%PATH%
     - if "%platform%"=="Win32" mingw-get update
     - if "%platform%"=="Win32" mingw-get install libminizip
     # x64
     - if "%platform%"=="x64" set PATH=C:\msys64\usr\bin;C:\msys64\mingw64\bin;%PATH%
+    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman-key --verify C:/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig"
+    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U C:/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
     - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
     - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
     - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S autoconf automake"
