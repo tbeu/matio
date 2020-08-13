@@ -1057,7 +1057,10 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
     if ( MAT_C_CELL == matvar->class_type ) {
         size_t i;
         matvar_t **cells = (matvar_t**)matvar->data;
-        Mat_MulDims(matvar, &nelems);
+        int err = Mat_MulDims(matvar, &nelems);
+        if ( err )
+            return;
+
         for ( i = 0; i < nelems; i++ )
             Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
         return;

@@ -1587,34 +1587,39 @@ void
 Mat_VarFree(matvar_t *matvar)
 {
     size_t nelems = 0;
+    int err;
 
     if ( NULL == matvar )
         return;
     if ( NULL != matvar->dims ) {
         nelems = 1;
-        Mat_MulDims(matvar, &nelems);
+        err = Mat_MulDims(matvar, &nelems);
         free(matvar->dims);
+    } else {
+        err = 1;
     }
     if ( NULL != matvar->data ) {
         switch (matvar->class_type ) {
             case MAT_C_STRUCT:
                 if ( !matvar->mem_conserve ) {
-                    matvar_t **fields = (matvar_t**)matvar->data;
-                    size_t nelems_x_nfields, i;
-                    Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
-                    for ( i = 0; i < nelems_x_nfields; i++ )
-                        Mat_VarFree(fields[i]);
-
+                    if ( 0 == err ) {
+                        matvar_t **fields = (matvar_t**)matvar->data;
+                        size_t nelems_x_nfields, i;
+                        Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
+                        for ( i = 0; i < nelems_x_nfields; i++ )
+                            Mat_VarFree(fields[i]);
+                    }
                     free(matvar->data);
                 }
                 break;
             case MAT_C_CELL:
                 if ( !matvar->mem_conserve ) {
-                    matvar_t **cells = (matvar_t**)matvar->data;
-                    size_t i;
-                    for ( i = 0; i < nelems; i++ )
-                        Mat_VarFree(cells[i]);
-
+                    if ( 0 == err ) {
+                        matvar_t **cells = (matvar_t**)matvar->data;
+                        size_t i;
+                        for ( i = 0; i < nelems; i++ )
+                            Mat_VarFree(cells[i]);
+                    }
                     free(matvar->data);
                 }
                 break;
@@ -2034,6 +2039,7 @@ Mat_VarGetSize(matvar_t *matvar)
 void
 Mat_VarPrint( matvar_t *matvar, int printdata )
 {
+    int err;
     size_t nelems = 0, i, j;
     const char *class_type_desc[18] = {"Undefined","Cell Array","Structure",
        "Object","Character Array","Sparse Array","Double Precision Array",
@@ -2053,12 +2059,14 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     if ( NULL != matvar->dims ) {
         int k;
         nelems = 1;
-        Mat_MulDims(matvar, &nelems);
+        err = Mat_MulDims(matvar, &nelems);
         printf("Dimensions: %" SIZE_T_FMTSTR,matvar->dims[0]);
         for ( k = 1; k < matvar->rank; k++ ) {
             printf(" x %" SIZE_T_FMTSTR,matvar->dims[k]);
         }
         printf("\n");
+    } else {
+        err = 1;
     }
     printf("Class Type: %s",class_type_desc[matvar->class_type]);
     if ( matvar->isComplex )
@@ -2085,7 +2093,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         size_t nfields = matvar->internal->num_fields;
         size_t nelems_x_nfields = 1;
         Mul(&nelems_x_nfields, nelems, nfields);
-        if ( nelems_x_nfields > 0 ) {
+        if ( 0 == err && nelems_x_nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
             for ( i = 0; i < nelems_x_nfields; i++ ) {
                 if ( NULL == fields[i] ) {
