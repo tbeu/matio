@@ -3493,6 +3493,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     /* Complex Data Tag */
                     err = Inflate(mat, matvar->internal->z, tag, 4, NULL);
                     if ( 0 != err ) {
+                        ComplexFree(complex_data);
                         break;
                     }
                     if ( byteswap )
@@ -3506,6 +3507,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         data_in_tag = 0;
                         err = Inflate(mat, matvar->internal->z, tag+1, 4, NULL);
                         if ( 0 != err ) {
+                            ComplexFree(complex_data);
                             break;
                         }
                         if ( byteswap )
