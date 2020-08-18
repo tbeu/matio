@@ -78,7 +78,10 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
     }
     if ( !z->avail_out ) {
         cnt += n;
-        n = nBytes - cnt < READ_BLOCK_SIZE ? nBytes - cnt : READ_BLOCK_SIZE;
+        n = nBytes - cnt;
+        if ( n > READ_BLOCK_SIZE ) {
+            n = READ_BLOCK_SIZE;
+        }
         z->avail_out = n;
         z->next_out  = uncomp_buf;
     }
@@ -103,7 +106,10 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
         }
         if ( !z->avail_out ) {
             cnt += n;
-            n = nBytes - cnt < READ_BLOCK_SIZE ? nBytes - cnt : READ_BLOCK_SIZE;
+            n = nBytes - cnt;
+            if ( n > READ_BLOCK_SIZE ) {
+                n = READ_BLOCK_SIZE;
+            }
             z->avail_out = n;
             z->next_out  = uncomp_buf;
         }
