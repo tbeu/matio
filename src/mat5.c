@@ -450,7 +450,7 @@ ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
         }
     }
     *n = N / 4;
-    *v = (mat_uint32_t*)malloc(N);
+    *v = (mat_uint32_t*)calloc(N, 1);
     if ( NULL != *v ) {
         int nBytes;
         if ( matvar->compression == MAT_COMPRESSION_NONE ) {
