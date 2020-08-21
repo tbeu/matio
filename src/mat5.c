@@ -3733,6 +3733,9 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             matvar->data_type = MAT_T_FUNCTION;
             break;
         }
+        case MAT_C_OBJECT:
+            Mat_Warning("Mat_VarRead5: %d is not a supported class", matvar->class_type);
+            break;
         default:
             Mat_Critical("Mat_VarRead5: %d is not a supported class", matvar->class_type);
             err = 1;
