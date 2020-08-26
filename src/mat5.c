@@ -5282,7 +5282,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
             }
 
             /* Array flags */
-            if ( buf[0] == MAT_T_UINT32 ) {
+            if ( buf[0] == MAT_T_UINT32 || buf[0] == MAT_T_INT32 ) { /* Also allow INT32 for SWAN */
                array_flags = buf[2];
                matvar->class_type = CLASS_FROM_ARRAY_FLAGS(array_flags);
                matvar->isComplex  = (array_flags & MAT_F_COMPLEX);
