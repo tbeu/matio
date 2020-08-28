@@ -167,64 +167,15 @@ matrix:
         - HOMEBREW_DEPLOY=yes
         - HOMEBREW_NO_ANALYTICS=1
 
-before_install:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]]; then pip install --upgrade pip; pip install --user cpp-coveralls; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then curl https://bitbucket.org/Swyter/bitbucket-curl-upload-to-repo-downloads/raw/default/upload-to-bitbucket.sh -O -J && chmod +x ./upload-to-bitbucket.sh; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ "$HOMEBREW_DEPLOY" == "yes" ]]; then brew update; brew install zlib; brew install libtool; brew install automake; brew upgrade hdf5; fi
+before_install: ./.ci/travis_before_install.sh
 
-install:
-  - if [[ "$ENABLE_MAT73" == "yes" ]]; then ./.travis_install.sh; fi
-  - cd $TRAVIS_BUILD_DIR
-  - mkdir MSL
-  - cd MSL
-  - git init
-  - git remote add -f origin https://github.com/modelica/ModelicaStandardLibrary
-  - git config core.sparseCheckout true
-  - echo "Modelica/Resources/Data/Tables/" >> .git/info/sparse-checkout
-  - git pull origin master
-  - cd $TRAVIS_BUILD_DIR
-  - mkdir matfilerw
-  - cd matfilerw
-  - git init
-  - git remote add -f origin https://github.com/diffplug/matfilerw
-  - git config core.sparseCheckout true
-  - echo "src/test/resources/" >> .git/info/sparse-checkout
-  - git pull origin master
-  - rm ./src/test/resources/simulink_tet_out.mat
-  - rm ./src/test/resources/object.mat
-  - rm ./src/test/resources/SPM.mat
-  - cd $TRAVIS_BUILD_DIR
+install: ./.ci/travis_install.sh
 
-before_script:
-  - ./autogen.sh
-  - if [[ "$HDF5_VERSION_DIR" == "foo" ]]; then ./configure --quiet --enable-shared --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic; CC=foo; fi
-  - if [[ "$CC" == "gcc-4.8" ]]; then ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5; fi
-  - if [[ "$CC" == "clang" ]]; then ./configure --quiet --enable-shared --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/$HDF5_VERSION_DIR/hdf5; fi
-  - if [[ "$HDF5_VERSION_DIR" == "foo" ]]; then CC=$(which clang); fi
+before_script: ./.ci/travis_before_script.sh
 
-script:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make "CPPFLAGS=-DMAX_RANK=$MAX_RANK"; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then make check; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_snprintf; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -H; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -L; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./test/test_mat -V; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -v -H; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -V; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v6.mat s; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.mat s; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/*.mat; do ./tools/matdump -v $f; done; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/*.mat; do ./tools/matdump -v -d -f whos -h $f; done; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/mcos/*.mat; do ./tools/matdump -v $f; done; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$WITH_ZLIB" != "no" ]]; then for f in ./matfilerw/src/test/resources/mcos/*.mat; do ./tools/matdump -v -f whos $f; done; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$ENABLE_MAT73" == "yes" ]]; then ./tools/matdump -d ./MSL/Modelica/Resources/Data/Tables/test_v7.3.mat s; fi
+script: ./.ci/travis_script.sh
 
-after_success:
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]]; then coveralls -e coverity_model.c -e getopt -e matfilerw -e MSL -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e ossfuzz -e patches -e share -e $HDF5_VERSION_DIR -e visual_studio -e zlib --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then make pdf; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]]; then make dist-gzip; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && [[ "$TRAVIS_BRANCH" == "master" ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.pdf; fi
-  - if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]] && [[ "$HDF5_VERSION_DIR" == "hdf5_1_8_21" ]] && [[ "$ENABLE_MAT73" == "yes" ]] && [[ "$ENABLE_EXTENDED_SPARSE" == "yes" ]] && [[ "$WITH_ZLIB" == "yes" ]] && [[ "$MAX_RANK" == 3 ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && [[ "$TRAVIS_BRANCH" == "master" ]]; then sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./matio-1.5.17.tar.gz; fi
+after_success: ./.ci/travis_after_success.sh
 
 notifications:
   email: false
