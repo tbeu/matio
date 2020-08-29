@@ -16,6 +16,9 @@ platform:
 
 environment:
   matrix:
+    - compiler: MSVC
+      configuration: Release
+      build_with: cmake
     - compiler: MinGW
       configuration: Release
       build_with: autoconf
@@ -34,13 +37,17 @@ matrix:
     - compiler: Cygwin
       build_with: msbuild
     - compiler: Cygwin
+      build_with: cmake
+    - compiler: Cygwin
       configuration: Release Lib
     - compiler: MinGW
       build_with: msbuild
     - compiler: MinGW
+      build_with: cmake
+    - compiler: MinGW
       configuration: Release Lib
     - compiler: MSVC
-      configuration: autoconf
+      build_with: autoconf
 
 for:
 -
@@ -48,7 +55,7 @@ for:
     only:
       - compiler: MSVC
 
-  before_build:
+  install:
     - ps: >-
         If ($env:Platform -Match "Win32") {
           $env:HDF5_DIR="C:\projects\HDF5-1.8.13-win32"
@@ -77,9 +84,24 @@ for:
     - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /%sdk_platform_env%
     - ps: $env:configuration=$env:CONFIGURATION_OLD
 
-  build:
-    project: visual_studio/matio.sln
-    verbosity: normal
+  before_build:
+    - ps: >-
+        If ($env:APPVEYOR_JOB_NAME -like "*build_with=cmake*") {
+          If ($env:Platform -Match "Win32") {
+            cmake -G "Visual Studio 10 2010" . -DCMAKE_PREFIX_PATH="$env:HDF5_DIR" -DZLIB_ROOT="$env:HDF5_DIR"
+          } Else {
+            cmake -G "Visual Studio 10 2010 Win64" . -DCMAKE_PREFIX_PATH="$env:HDF5_DIR" -DZLIB_ROOT="$env:HDF5_DIR"
+          }
+        }
+
+  build_script:
+    - ps: >-
+        If ($env:APPVEYOR_JOB_NAME -like "*build_with=cmake*") {
+          cmake --build . --config $env:configuration -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+        }
+        If ($env:APPVEYOR_JOB_NAME -like "*build_with=msbuild*") {
+          msbuild visual_studio\matio.sln /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+        }
 
 -
   matrix:
@@ -143,18 +165,8 @@ for:
 test: off
 
 artifacts:
-  - path: visual_studio\Release\libmatio.lib
-    name: libmatio.lib
-  - path: visual_studio\Release\libmatio.dll
-    name: libmatio.dll
-  - path: visual_studio\x64\Release\libmatio.lib
-    name: libmatio.lib
-  - path: visual_studio\x64\Release\libmatio.dll
-    name: libmatio.dll
-  - path: visual_studio\Release Lib\libmatio.lib
-    name: libmatio.lib
-  - path: visual_studio\x64\Release Lib\libmatio.lib
-    name: libmatio.lib
+  - path: '**\libmatio.lib'
+  - path: '**\libmatio.dll'
   - path: src\.libs\*.a
   - path: src\.libs\*.def
   - path: src\.libs\*.dll

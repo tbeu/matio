@@ -36,6 +36,14 @@ matrix:
     - os: linux
       compiler: gcc-4.8
       env:
+        - USE_CMAKE=yes
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=yes
+        - WITH_ZLIB=yes
+        - HDF5_VERSION=1.10.6
+    - os: linux
+      compiler: gcc-4.8
+      env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib

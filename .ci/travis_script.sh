@@ -6,8 +6,22 @@ if [[ "$COVERITY_SCAN_BRANCH" == 1 ]]; then
     exit 0
 fi
 
-make "CPPFLAGS=-DMAX_RANK=$MAX_RANK"
-make check
+if [[ "${USE_CMAKE:-no}" == "no" ]]; then
+    make "CPPFLAGS=-DMAX_RANK=$MAX_RANK"
+    make check
+else
+    BUILD_DIR=$HOME/matio_cmake
+    pushd $BUILD_DIR
+    cmake --build . -- -j8
+    popd
+
+    mkdir -p test
+    cp $BUILD_DIR/test_snprintf ./test
+    cp $BUILD_DIR/test_mat ./test
+    mkdir -p tools
+    cp $BUILD_DIR/matdump ./tools
+fi
+
 ./test/test_snprintf
 ./test/test_mat -H
 ./test/test_mat -L

@@ -2,7 +2,7 @@
 
 set -x #echo on
 
-if [[ "$COVERITY_SCAN_BRANCH" == 1 ]] || [[ "$TRAVIS_OS_NAME" != "linux" ]] || [[ "$TRAVIS_CPU_ARCH" != "amd64" ]] || [[ "$CC" != "gcc-4.8" ]]; then
+if [[ "$COVERITY_SCAN_BRANCH" == 1 ]] || [[ "$TRAVIS_OS_NAME" != "linux" ]] || [[ "$TRAVIS_CPU_ARCH" != "amd64" ]] || [[ "$CC" != "gcc-4.8" ]] || [[ "${USE_CMAKE:-no}" == "yes" ]]; then
     exit 0
 fi
 
