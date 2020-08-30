@@ -31,9 +31,6 @@
 #include <math.h>
 #include <getopt.h>
 #include "matio.h"
-#if !defined(HAVE_STRCASECMP)
-#   define strcasecmp(a,b) strcmp(a,b)
-#endif
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define SIZE_T_FMTSTR "Iu"
 #else

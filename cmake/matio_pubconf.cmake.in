@@ -1,97 +1,118 @@
 /*
- * Copyright (C) 2010-2012   Christopher C. Hulbert
- *
+ * Copyright (c) 2010-2020, Christopher C. Hulbert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *    1. Redistributions of source code must retain the above copyright notice,
- *       this list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
  *
- *    2. Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY CHRISTOPHER C. HULBERT ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL CHRISTOPHER C. HULBERT OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef MATIO_PUBCONF_H
+#define MATIO_PUBCONF_H 1
 
-#include "matio_export.h"
-
-#define MATIO_PLATFORM "@MATIO_PLATFORM@"
-#define PACKAGE_VERSION "@matio_VERSION_MAJOR@.@matio_VERSION_MINOR@.@matio_VERSION_PATCH@"
-#define MATIO_VERSION_STR "@matio_VERSION_MAJOR@.@matio_VERSION_MINOR@.@matio_VERSION_PATCH@"
-
+/* Matio major version number */
 #define MATIO_MAJOR_VERSION @matio_VERSION_MAJOR@
+
+/* Matio minor version number */
 #define MATIO_MINOR_VERSION @matio_VERSION_MINOR@
+
+/* Matio release level number */
 #define MATIO_RELEASE_LEVEL @matio_VERSION_PATCH@
+
+/* Matio version number */
+#define MATIO_VERSION @matio_VERSION_MAJOR@@matio_VERSION_MINOR@@matio_VERSION_PATCH@
+
+/* Matio version string */
+#define MATIO_VERSION_STR "@matio_VERSION@"
 
 /* Default file format */
 #cmakedefine MAT_FT_DEFAULT @MAT_FT_DEFAULT@
 
-#cmakedefine HAVE_INTTYPES_H 1
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
+/* Define to 1 if you have the <stdint.h> header file. */
+#cmakedefine01 MATIO_HAVE_STDINT_H
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#cmakedefine01 MATIO_HAVE_INTTYPES_H
+
+#if !MATIO_HAVE_STDINT_H && defined(_MSC_VER)
+#include "stdint_msvc.h"
 #endif
 
-#cmakedefine HAVE_STDINT_H
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
+/* int16 type */
+#cmakedefine _mat_int16_t @_mat_int16_t@
+
+/* int32 type */
+#cmakedefine _mat_int32_t @_mat_int32_t@
+
+/* int64 type */
+#cmakedefine _mat_int64_t @_mat_int64_t@
+
+/* int8 type */
+#cmakedefine _mat_int8_t @_mat_int8_t@
+
+/* uint16 type */
+#cmakedefine _mat_uint16_t @_mat_uint16_t@
+
+/* uint32 type */
+#cmakedefine _mat_uint32_t @_mat_uint32_t@
+
+/* uint64 type */
+#cmakedefine _mat_uint64_t @_mat_uint64_t@
+
+/* uint8 type */
+#cmakedefine _mat_uint8_t @_mat_uint8_t@
+
+#if MATIO_HAVE_INTTYPES_H
+#   include <inttypes.h>
 #endif
 
-#cmakedefine HAVE_MAT_INT64_T
-#ifdef HAVE_MAT_INT64_T
-typedef int64_t  mat_int64_t;
+#if MATIO_HAVE_STDINT_H
+#   include <stdint.h>
 #endif
 
-#cmakedefine HAVE_MAT_UINT64_T
-#ifdef HAVE_MAT_UINT64_T
-typedef uint64_t mat_uint64_t;
+#ifdef _mat_int64_t
+    typedef _mat_int64_t mat_int64_t;
+#endif
+#ifdef _mat_uint64_t
+    typedef _mat_uint64_t mat_uint64_t;
+#endif
+#ifdef _mat_int32_t
+    typedef _mat_int32_t mat_int32_t;
+#endif
+#ifdef _mat_uint32_t
+    typedef _mat_uint32_t mat_uint32_t;
+#endif
+#ifdef _mat_int16_t
+    typedef _mat_int16_t mat_int16_t;
+#endif
+#ifdef _mat_uint16_t
+    typedef _mat_uint16_t mat_uint16_t;
+#endif
+#ifdef _mat_int8_t
+    typedef _mat_int8_t mat_int8_t;
+#endif
+#ifdef _mat_uint8_t
+    typedef _mat_uint8_t mat_uint8_t;
 #endif
 
-#cmakedefine HAVE_MAT_INT32_T
-#ifdef HAVE_MAT_INT32_T
-typedef int32_t  mat_int32_t;
-#endif
-
-#cmakedefine HAVE_MAT_UINT32_T
-#ifdef HAVE_MAT_UINT32_T
-typedef uint32_t mat_uint32_t;
-#endif
-
-#cmakedefine HAVE_MAT_INT16_T
-#ifdef HAVE_MAT_INT16_T
-typedef int16_t  mat_int16_t;
-#endif
-
-#cmakedefine HAVE_MAT_UINT16_T
-#ifdef HAVE_MAT_UINT16_T
-typedef uint16_t mat_uint16_t;
-#endif
-
-#cmakedefine HAVE_MAT_INT8_T
-#ifdef HAVE_MAT_INT8_T
-typedef int8_t   mat_int8_t;
-#endif
-
-#cmakedefine HAVE_MAT_UINT8_T
-#ifdef HAVE_MAT_UINT8_T
-typedef uint8_t  mat_uint8_t;
-#endif
-
-/*
+/* 
   The following macros handle noreturn attributes according to the latest
   C11/C++11 standard with fallback to GNU, Clang or MSVC extensions if using
   an older compiler.
@@ -161,3 +182,5 @@ typedef uint8_t  mat_uint8_t;
 #define MATIO_FORMATATTR_PRINTF2
 #define MATIO_FORMATATTR_VPRINTF
 #endif
+
+#endif /* MATIO_PUBCONF_H */
