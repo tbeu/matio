@@ -4366,7 +4366,6 @@ Mat_VarReadData5(mat_t *mat,matvar_t *matvar,void *data,
 #if HAVE_ZLIB
     z_stream z;
 #endif
-    size_t bytesread = 0;
 
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
@@ -4613,7 +4612,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
 #if HAVE_ZLIB
     z_stream z;
 #endif
-    size_t bytesread = 0, nelems = 1;
+    size_t nelems = 1;
 
     if ( mat->version == MAT_FT_MAT4 )
         return -1;
