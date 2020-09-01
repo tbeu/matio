@@ -2172,7 +2172,7 @@ test_write_cell_complex_2d_numeric(enum matio_classes matvar_class,
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t ui64_real[50], ui64_imag[50];
 #endif
-    mat_complex_split_t data[4] = {NULL,NULL};
+    mat_complex_split_t data[4] = {{NULL,NULL}, };
     mat_t *mat;
     matvar_t *matvar[5], *cell_matvar;
     enum matio_types data_type;
