@@ -169,8 +169,11 @@
 
 #if defined(__GNUC__) && ((__GNUC__ >= 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && defined(__SIZEOF_INT128__) && !defined(__ibmxl__)
 #define PSNIP_SAFE_HAVE_128
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 typedef __int128  psnip_safe_int128_t;
 typedef unsigned __int128 psnip_safe_uint128_t;
+#pragma GCC diagnostic pop
 #endif /* defined(__GNUC__) */
 
 #if !defined(PSNIP_SAFE_NO_FIXED)
