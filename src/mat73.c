@@ -907,7 +907,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     fields = (matvar_t**)malloc(matvar->nbytes);
     matvar->data = fields;
     if ( NULL != fields ) {
-        int k;
+        hsize_t k;
         for ( k = 0; k < nfields; k++ ) {
             H5O_INFO_T object_info;
             fields[k] = NULL;
@@ -916,7 +916,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                 field_id = H5Dopen(dset_id,matvar->internal->fieldnames[k],
                                    H5P_DEFAULT);
                 if ( !fields_are_variables ) {
-                    int l;
+                    hsize_t l;
                     hobj_ref_t *ref_ids = (hobj_ref_t*)malloc((size_t)nelems*sizeof(*ref_ids));
                     H5Dread(field_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,
                             H5P_DEFAULT,ref_ids);
@@ -1334,7 +1334,7 @@ static int
 Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims)
 {
     int        k;
-    hsize_t    nelems = 1;
+    hsize_t    nelems = 1, l;
     matvar_t **cells;
     int        err = 0;
 
@@ -1362,9 +1362,9 @@ Mat_VarWriteCell73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsi
             dset_id = H5Dcreate(id,name,H5T_STD_REF_OBJ,mspace_id,
                                 H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
 
-            for ( k = 0; k < nelems; k++ ) {
-                err += Mat_VarWriteRef(id, cells[k], matvar->compression,
-                                       refs_id, refs+k);
+            for ( l = 0; l < nelems; l++ ) {
+                err += Mat_VarWriteRef(id, cells[l], matvar->compression,
+                                       refs_id, refs+l);
             }
             err += Mat_H5WriteData(dset_id, H5T_STD_REF_OBJ, H5S_ALL, H5S_ALL,
                                    0, refs);
@@ -1938,7 +1938,7 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
                 }
                 if ( *refs_id > -1 ) {
                     hobj_ref_t **refs;
-                    int l;
+                    hsize_t l;
                     hid_t plist,mspace_id,dset_id;
 
                     refs = (hobj_ref_t**)malloc((size_t)nfields*sizeof(*refs));
@@ -2002,18 +2002,21 @@ Mat_VarWriteStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,h
 static int
 Mat_VarWriteAppendStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *refs_id,hsize_t *dims,int dim)
 {
-    int err = 0, k;
+    int err = 0;
     hsize_t nelems = 1;
 
-    for ( k = 0; k < matvar->rank; k++ ) {
-        nelems *= dims[k];
+    {
+        int k;
+        for ( k = 0; k < matvar->rank; k++ ) {
+            nelems *= dims[k];
+        }
     }
 
     if ( 0 != nelems && NULL != matvar->data ) {
         if ( H5Lexists(id, name, H5P_DEFAULT) ) {
             hid_t struct_id;
             hobj_ref_t **refs;
-            int l;
+            hsize_t l, k;
             hsize_t nfields = matvar->internal->num_fields;
             matvar_t** fields = (matvar_t**)matvar->data;
 
@@ -2043,6 +2046,7 @@ Mat_VarWriteAppendStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *ref
             /* Create with unlimited number of dimensions */
             if ( MAX_RANK >= matvar->rank ) {
                 hsize_t max_dims[MAX_RANK];
+                int k;
                 for ( k = 0; k < matvar->rank; k++ ) {
                     max_dims[k] = H5S_UNLIMITED;
                 }
@@ -2050,6 +2054,7 @@ Mat_VarWriteAppendStruct73(hid_t id,matvar_t *matvar,const char *name,hid_t *ref
             } else {
                 hsize_t* max_dims = (hsize_t*)malloc(matvar->rank*sizeof(hsize_t));
                 if ( NULL != max_dims ) {
+                    int k;
                     for ( k = 0; k < matvar->rank; k++ ) {
                         max_dims[k] = H5S_UNLIMITED;
                     }

@@ -410,7 +410,7 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
         cnt[1]++;
         idx[1] += stride[1];
         for ( j = 1; j < matvar->rank; j++ ) {
-            if ( cnt[j] == edge[j] ) {
+            if ( cnt[j] == (size_t)edge[j] ) {
                 cnt[j] = 0;
                 idx[j] = start[j];
                 if ( j < matvar->rank - 1 ) {

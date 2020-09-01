@@ -867,7 +867,7 @@ ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
     do { \
         /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */ \
         /* data so get rid of the loops. */ \
-        if ( (stride[0] == 1 && edge[0] == dims[0]) && \
+        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && \
              (stride[1] == 1) ) { \
             ReadDataFunc(mat,ptr,data_type,(ptrdiff_t)edge[0]*edge[1]); \
         } else { \
@@ -1131,7 +1131,7 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
         /* data so get rid of the loops.  If stride[0] is 1 and stride[1] */ \
         /* is not 0, we are reading whole columns, so get rid of inner loop */ \
         /* to speed up the code */ \
-        if ( (stride[0] == 1 && edge[0] == dims[0]) && \
+        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && \
              (stride[1] == 1) ) { \
             ReadDataFunc(mat,&z_copy,ptr,data_type,(ptrdiff_t)edge[0]*edge[1]); \
         } else if ( stride[0] == 1 ) { \
