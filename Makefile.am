@@ -45,10 +45,22 @@ VS_FILES = visual_studio/libmatio/libmatio.vcproj \
            visual_studio/matio.rc \
            visual_studio/stdint_msvc.h
 
+CMAKE_FILES = CMakeLists.txt \
+              cmake/compilerOptions.cmake \
+              cmake/getopt.cmake \
+              cmake/options.cmake \
+              cmake/src.cmake \
+              cmake/test.cmake \
+              cmake/thirdParties.cmake \
+              cmake/tools.cmake \
+              cmake/matio_pubconf.cmake.in \
+              cmake/matioConfig.cmake.in
+
 EXTRA_DIST = matio.pc.in autogen.sh patches/inflate.patch \
              share/test_file.mat \
              share/test_file_v6.mat \
              share/test_file_hdf5.mat \
+             $(CMAKE_FILES) \
              $(VS_FILES)
 
 pkgconfigdir = $(libdir)/pkgconfig
