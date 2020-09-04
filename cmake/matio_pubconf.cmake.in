@@ -28,52 +28,56 @@
 #define MATIO_PUBCONF_H 1
 
 /* Matio major version number */
-#undef MATIO_MAJOR_VERSION
+#define MATIO_MAJOR_VERSION @matio_VERSION_MAJOR@
 
 /* Matio minor version number */
-#undef MATIO_MINOR_VERSION
+#define MATIO_MINOR_VERSION @matio_VERSION_MINOR@
 
 /* Matio release level number */
-#undef MATIO_RELEASE_LEVEL
+#define MATIO_RELEASE_LEVEL @matio_VERSION_PATCH@
 
 /* Matio version number */
-#undef MATIO_VERSION
+#define MATIO_VERSION @matio_VERSION_MAJOR@@matio_VERSION_MINOR@@matio_VERSION_PATCH@
 
 /* Matio version string */
-#undef MATIO_VERSION_STR
+#define MATIO_VERSION_STR "@matio_VERSION@"
 
 /* Default file format */
-#undef MAT_FT_DEFAULT
+#cmakedefine MAT_FT_DEFAULT @MAT_FT_DEFAULT@
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#undef MATIO_HAVE_STDINT_H
+#cmakedefine01 MATIO_HAVE_STDINT_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#undef MATIO_HAVE_INTTYPES_H
+#cmakedefine01 MATIO_HAVE_INTTYPES_H
+
+#if !MATIO_HAVE_STDINT_H && defined(_MSC_VER)
+#include "stdint_msvc.h"
+#endif
 
 /* int16 type */
-#undef _mat_int16_t
+#cmakedefine _mat_int16_t @_mat_int16_t@
 
 /* int32 type */
-#undef _mat_int32_t
+#cmakedefine _mat_int32_t @_mat_int32_t@
 
 /* int64 type */
-#undef _mat_int64_t
+#cmakedefine _mat_int64_t @_mat_int64_t@
 
 /* int8 type */
-#undef _mat_int8_t
+#cmakedefine _mat_int8_t @_mat_int8_t@
 
 /* uint16 type */
-#undef _mat_uint16_t
+#cmakedefine _mat_uint16_t @_mat_uint16_t@
 
 /* uint32 type */
-#undef _mat_uint32_t
+#cmakedefine _mat_uint32_t @_mat_uint32_t@
 
 /* uint64 type */
-#undef _mat_uint64_t
+#cmakedefine _mat_uint64_t @_mat_uint64_t@
 
 /* uint8 type */
-#undef _mat_uint8_t
+#cmakedefine _mat_uint8_t @_mat_uint8_t@
 
 #if MATIO_HAVE_INTTYPES_H
 #   include <inttypes.h>
