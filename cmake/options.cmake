@@ -12,7 +12,7 @@ set(MAT73 ${MATIO_MAT73})
 option(MATIO_SHARED "Build shared matio library, disable for static library" ON)
 
 # Option to enable position-independent code (PIC)
-option(MATIO_PIC "Enable position-independent code (PIC) for shared library" ON)
+option(MATIO_PIC "Enable position-independent code (PIC), i.e., compilation with the -fPIC flag" ON)
 
 # Build with hdf5 support
 option(MATIO_WITH_HDF5 "Check for HDF5 library" ON)
