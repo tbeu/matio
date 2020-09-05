@@ -16,7 +16,12 @@ if(MATIO_WITH_HDF5)
     endif()
 endif()
 
-if(MATIO_WITH_ZLIB)
+set(HAVE_HDF5_ZLIB FALSE)
+if(HDF5_FOUND AND (TARGET zlib OR TARGET zlib-static OR TARGET zlib-shared OR TARGET hdf5::zlib-static OR TARGET hdf5::zlib-shared))
+    set(HAVE_HDF5_ZLIB TRUE)
+endif()
+
+if(MATIO_WITH_ZLIB AND NOT HAVE_HDF5_ZLIB)
     find_package(ZLIB 1.2.3)
 
     # try to find a static zlib version
