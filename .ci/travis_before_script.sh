@@ -24,7 +24,7 @@ else
 
     pushd $BUILD_DIR
     cmake $SRC_DIR -DCMAKE_BUILD_TYPE=Release \
-                   -DCMAKE_PREFIX_PATH=$HDF5_DIR \
+                   -DCMAKE_PREFIX_PATH=$HDF5_DIR/share/cmake \
                    -DMATIO_EXTENDED_SPARSE=$ENABLE_EXTENDED_SPARSE \
                    -DMATIO_MAT73=$ENABLE_MAT73 \
                    -DMATIO_WITH_HDF5=$ENABLE_MAT73 \

@@ -88,9 +88,9 @@ for:
     - ps: >-
         If ($env:APPVEYOR_JOB_NAME -like "*build_with=cmake*") {
           If ($env:Platform -Match "Win32") {
-            cmake -G "Visual Studio 10 2010" . -DCMAKE_PREFIX_PATH="$env:HDF5_DIR" -DZLIB_ROOT="$env:HDF5_DIR"
+            cmake -G "Visual Studio 10 2010" . -DCMAKE_PREFIX_PATH="$env:HDF5_DIR"/cmake
           } Else {
-            cmake -G "Visual Studio 10 2010 Win64" . -DCMAKE_PREFIX_PATH="$env:HDF5_DIR" -DZLIB_ROOT="$env:HDF5_DIR"
+            cmake -G "Visual Studio 10 2010 Win64" . -DCMAKE_PREFIX_PATH="$env:HDF5_DIR"/cmake
           }
         }
 
