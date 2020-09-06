@@ -73,8 +73,10 @@ if(HDF5_FOUND)
         endif()
     else()
         # results from CMake FindHDF5
-        target_include_directories(HDF5::HDF5 INTERFACE "${HDF5_INCLUDE_DIRS}")
-        target_link_libraries(HDF5::HDF5 INTERFACE "${HDF5_LIBRARIES}")
+        set_target_properties(HDF5::HDF5 PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIRS}"
+            INTERFACE_LINK_LIBRARIES "${HDF5_LIBRARIES}"
+        )
         target_compile_definitions(HDF5::HDF5 INTERFACE "${HDF5_DEFINITIONS}")
     endif()
 endif()
