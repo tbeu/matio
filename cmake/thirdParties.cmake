@@ -13,8 +13,9 @@ if(MATIO_WITH_HDF5)
 
     find_package(HDF5)
     if(HDF5_FOUND)
-        if(HDF5_VERSION VERSION_LESS 1.8)
-            message(FATAL_ERROR "HDF5 version ${HDF5_VERSION} is unsupported, minimum of 1.8 is required")
+        set(HDF_MIN_VER 1.8)
+        if(HDF5_VERSION VERSION_LESS ${HDF_MIN_VER})
+            message(FATAL_ERROR "Could NOT find HDF5: Found unsuitable version ${HDF5_VERSION}, but required is at least ${HDF_MIN_VER} (found ${HDF5_LIBRARIES})")
         endif()
         set(HAVE_HDF5 1)
     endif()
@@ -73,7 +74,9 @@ if(HDF5_FOUND)
         # target from hdf5 1.8 config
         target_link_libraries(HDF5::HDF5 INTERFACE hdf5)
         if(NOT HDF5_USE_STATIC_LIBRARIES)
-            target_compile_definitions(HDF5::HDF5 INTERFACE "H5_BUILT_AS_DYNAMIC_LIB")
+            set_target_properties(HDF5::HDF5 PROPERTIES
+                INTERFACE_COMPILE_DEFINITIONS "H5_BUILT_AS_DYNAMIC_LIB"
+            )
         endif()
     else()
         # results from CMake FindHDF5
@@ -81,7 +84,6 @@ if(HDF5_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIRS}"
             INTERFACE_LINK_LIBRARIES "${HDF5_LIBRARIES}"
         )
-        target_compile_definitions(HDF5::HDF5 INTERFACE "${HDF5_DEFINITIONS}")
     endif()
 endif()
 
