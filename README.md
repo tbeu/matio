@@ -131,6 +131,8 @@ This option enables CMake to check for availability of the HDF5 library (see sec
 * `MATIO_WITH_ZLIB:BOOL=ON`
 This option enables CMake to check for availability of the zlib library (see section [2.1.1](#211-zlib) for information about zlib).
 
+To help CMake find the HDF5 libraries (on Windows), set environment variable `HDF5_DIR` to the cmake directory in the HDF5 build or installation directory, or call cmake with `-DHDF5_DIR="dir/to/hdf5/cmake"`. See the [HDF5 instructions](https://support.hdfgroup.org/HDF5/release/cmakebuild.html#compile) for more information.
+
 #### 2.2.4 Visual Studio
 Visual Studio solutions are provided as [matio_vs2008.sln](visual_studio/matio_vs2008.sln) for VS2008 and as [matio.sln](visual_studio/matio.sln) for VS2010 (and newer). The Debug and Release configurations of both solutions are set up to build a DLL of the matio library (libmatio.dll) and the matdump tool and assume HDF5 is available in the directory specified by the HDF5_DIR environment variable. It is assumed that the **shared** libraries of HDF5 (and zlib) are available. If the **static** libraries of HDF5 (and zlib) are installed/built the macro `H5_BUILT_AS_STATIC_LIB` needs to be defined (instead of `H5_BUILT_AS_DYNAMIC_LIB`). Furthermore, the Release Lib configuration of the VS2010 solution is set up to build a static LIB of the matio library (libmatio.lib) and assumes that the **static** libraries of HDF5 (and zlib) are installed/built.
 
