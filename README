@@ -191,7 +191,8 @@ Table of Contents
             installation directory, or call cmake with 
             -DHDF5_DIR="dir/to/hdf5/cmake" . See
             https://support.hdfgroup.org/HDF5/release/cmakebuild.html#compile for
-            more information.
+            more information. Using hdf5-config is recommended over using CMake's
+            built-in FindHDF5, and for the latter CMake 3.11 or later is recommended.
 
         2.2.4 Visual Studio
             Visual Studio solutions are provided as visual_studio/matio_vs2008.sln
