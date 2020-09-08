@@ -29,7 +29,6 @@ else
                    -DMATIO_MAT73=$ENABLE_MAT73 \
                    -DMATIO_WITH_HDF5=$ENABLE_MAT73 \
                    -DMATIO_WITH_ZLIB=$WITH_ZLIB \
-                   -DMATIO_SHARED=TRUE \
-                   -DZLIB_ROOT=$HDF5_DIR
+                   -DMATIO_SHARED=TRUE
     popd
 fi

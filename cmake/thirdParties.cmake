@@ -9,38 +9,11 @@ if(MATIO_WITH_HDF5)
 
     find_package(HDF5)
     if(HDF5_FOUND)
-        if(HDF5_VERSION VERSION_LESS 1.8)
-            message(FATAL_ERROR "HDF5 version ${HDF5_VERSION} is unsupported, minimum of 1.8 is required")
+        set(HDF_MIN_VER 1.8)
+        if(HDF5_VERSION VERSION_LESS ${HDF_MIN_VER})
+            message(FATAL_ERROR "Could NOT find HDF5: Found unsuitable version ${HDF5_VERSION}, but required is at least ${HDF_MIN_VER} (found ${HDF5_LIBRARIES})")
         endif()
         set(HAVE_HDF5 1)
-    endif()
-endif()
-
-set(HAVE_HDF5_ZLIB FALSE)
-if(HDF5_FOUND AND (TARGET zlib OR TARGET zlib-static OR TARGET zlib-shared OR TARGET hdf5::zlib-static OR TARGET hdf5::zlib-shared))
-    set(HAVE_HDF5_ZLIB TRUE)
-endif()
-
-if(MATIO_WITH_ZLIB AND NOT HAVE_HDF5_ZLIB)
-    find_package(ZLIB 1.2.3)
-
-    # try to find a static zlib version
-    if((NOT ZLIB_FOUND OR NOT MATIO_SHARED) AND ZLIB_INCLUDE_DIRS AND NOT ZLIB_STATIC_LIBRARY)
-        get_filename_component(ZLIB_DIR ${ZLIB_LIBRARY} DIRECTORY)
-        find_library(ZLIB_STATIC_LIBRARY libzlib PATHS ${ZLIB_DIR} ${ZLIB_ROOT}/lib ${PROJECT_BINARY_DIR}/lib)
-        if(ZLIB_STATIC_LIBRARY)
-            if(NOT TARGET ZLIB::ZLIB)
-                set(ZLIB_FOUND TRUE)
-                add_library(ZLIB::ZLIB UNKNOWN IMPORTED)
-                set_target_properties(ZLIB::ZLIB PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${ZLIB_INCLUDE_DIRS}")
-            endif()
-            set_target_properties(ZLIB::ZLIB PROPERTIES IMPORTED_LOCATION "${ZLIB_STATIC_LIBRARY}")
-            message(STATUS "found ZLIB static library: ${ZLIB_STATIC_LIBRARY}")
-        endif()
-    endif()
-
-    if(ZLIB_FOUND)
-        set(HAVE_ZLIB 1)
     endif()
 endif()
 
@@ -55,17 +28,47 @@ if(HDF5_FOUND)
     elseif(TARGET hdf5)
         # target from hdf5 1.8 config
         target_link_libraries(HDF5::HDF5 INTERFACE hdf5)
-        if(NOT HDF5_USE_STATIC_LIBRARIES)
-            target_compile_definitions(HDF5::HDF5 INTERFACE "H5_BUILT_AS_DYNAMIC_LIB")
-        endif()
     else()
         # results from CMake FindHDF5
-        target_include_directories(HDF5::HDF5 INTERFACE "${HDF5_INCLUDE_DIRS}")
-        target_link_libraries(HDF5::HDF5 INTERFACE "${HDF5_LIBRARIES}")
-        target_compile_definitions(HDF5::HDF5 INTERFACE "${HDF5_DEFINITIONS}")
+        set_target_properties(HDF5::HDF5 PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIRS}"
+            INTERFACE_LINK_LIBRARIES "${HDF5_LIBRARIES}"
+        )
+    endif()
+    if(NOT HDF5_USE_STATIC_LIBRARIES)
+        set_target_properties(HDF5::HDF5 PROPERTIES
+            INTERFACE_COMPILE_DEFINITIONS "H5_BUILT_AS_DYNAMIC_LIB"
+        )
     endif()
 endif()
 
 if(NOT HAVE_HDF5 AND MATIO_MAT73)
     message(FATAL_ERROR "MAT73 requires HDF5")
+endif()
+
+
+macro(matio_create_zlib target)
+    add_library(ZLIB::ZLIB INTERFACE IMPORTED)
+    target_link_libraries(ZLIB::ZLIB INTERFACE ${target})
+    set(ZLIB_FOUND TRUE)
+endmacro()
+
+if(MATIO_WITH_ZLIB)
+    if(HDF5_USE_STATIC_LIBRARIES AND TARGET zlib-static)
+        matio_create_zlib(zlib-static)
+    elseif(HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::zlib-static)
+        matio_create_zlib(hdf5::zlib-static)
+    elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET zlib-shared)
+        matio_create_zlib(zlib-shared)
+    elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::zlib-shared)
+        matio_create_zlib(hdf5::zlib-shared)
+    elseif(TARGET zlib)
+        matio_create_zlib(zlib)
+    else()
+        find_package(ZLIB 1.2.3)
+    endif()
+
+    if(ZLIB_FOUND)
+        set(HAVE_ZLIB 1)
+    endif()
 endif()

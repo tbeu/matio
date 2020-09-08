@@ -186,6 +186,16 @@ Table of Contents
                 This option enables CMake to check for availability of the
                 zlib library (see section 2.1.1 for information about zlib).
 
+            To help CMake find the HDF5 libraries, set environment variable
+            HDF5_DIR to the 'cmake/hdf5' directory (containing 'hdf5-config.cmake')
+            inside the HDF5 build or installation directory, or call cmake with
+            -DHDF5_DIR="dir/to/hdf5/cmake/hdf5". Alternatively call CMake with
+            -DCMAKE_PREFIX_PATH="dir/to/hdf5/cmake". See the HDF5 instructions
+            (https://support.hdfgroup.org/HDF5/release/cmakebuild.html#compile)
+            for more information. Using 'hdf5-config.cmake' is recommended over
+            using CMake's built-in 'FindHDF5', especially for static builds.
+            CMake 3.10 or later is recommended.
+
         2.2.4 Visual Studio
             Visual Studio solutions are provided as visual_studio/matio_vs2008.sln
             for VS2008 and as visual_studio/matio.sln for VS2010 (and newer).
