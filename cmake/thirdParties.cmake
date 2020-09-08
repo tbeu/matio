@@ -28,16 +28,16 @@ if(HDF5_FOUND)
     elseif(TARGET hdf5)
         # target from hdf5 1.8 config
         target_link_libraries(HDF5::HDF5 INTERFACE hdf5)
-        if(NOT HDF5_USE_STATIC_LIBRARIES)
-            set_target_properties(HDF5::HDF5 PROPERTIES
-                INTERFACE_COMPILE_DEFINITIONS "H5_BUILT_AS_DYNAMIC_LIB"
-            )
-        endif()
     else()
         # results from CMake FindHDF5
         set_target_properties(HDF5::HDF5 PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIRS}"
             INTERFACE_LINK_LIBRARIES "${HDF5_LIBRARIES}"
+        )
+    endif()
+    if(NOT HDF5_USE_STATIC_LIBRARIES)
+        set_target_properties(HDF5::HDF5 PROPERTIES
+            INTERFACE_COMPILE_DEFINITIONS "H5_BUILT_AS_DYNAMIC_LIB"
         )
     endif()
 endif()
