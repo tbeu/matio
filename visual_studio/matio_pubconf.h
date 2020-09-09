@@ -153,7 +153,7 @@
     typedef _mat_uint8_t mat_uint8_t;
 #endif
 
-/* 
+/*
   The following macros handle noreturn attributes according to the latest
   C11/C++11 standard with fallback to the MSVC extension if using an older
   compiler.

@@ -59,6 +59,9 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine HAVE_INTTYPES_H 1
 
+/* Define to 1 if you have the <intsafe.h> header file. */
+#cmakedefine HAVE_INTSAFE_H 1
+
 /* Define to 1 if you have the `m' library (-lm). */
 #cmakedefine HAVE_LIBM 1
 

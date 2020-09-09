@@ -64,6 +64,13 @@
 #undef HAVE_INTTYPES_H
 #endif
 
+/* Define to 1 if you have the <intsafe.h> header file. */
+#if defined(_MSC_VER) && _MSC_VER >= 1600
+#define HAVE_INTSAFE_H 1
+#else
+#undef HAVE_INTSAFE_H
+#endif
+
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
