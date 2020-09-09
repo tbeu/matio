@@ -16,15 +16,15 @@ platform:
 
 environment:
   matrix:
-    - compiler: MSVC
-      configuration: Release
-      build_with: cmake
     - compiler: MinGW
       configuration: Release
       build_with: autoconf
     - compiler: Cygwin
       configuration: Release
       build_with: autoconf
+    - compiler: MSVC
+      configuration: Release
+      build_with: cmake
     - compiler: MSVC
       configuration: Release
       build_with: msbuild
