@@ -29,6 +29,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "matio_private.h"
 
 #if HAVE_ZLIB
@@ -285,8 +286,9 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
     }
 
     if ( z->avail_out && feof((FILE*)mat->fp) ) {
-        Mat_DebugMessage(1, "Inflate: Read beyond EOF error: Read %u bytes, expected %u bytes",
+        Mat_DebugMessage(1, "Inflate: Read beyond EOF error: Processed %u bytes, expected %u bytes",
             nBytes - z->avail_out, nBytes);
+        memset(buf, 0, nBytes);
     }
 
     return err;
@@ -369,8 +371,9 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     }
 
     if ( z->avail_out && feof((FILE*)mat->fp) ) {
-        Mat_DebugMessage(1, "InflateData: Read beyond EOF error: Read %u bytes, expected %u bytes",
+        Mat_DebugMessage(1, "InflateData: Read beyond EOF error: Processed %u bytes, expected %u bytes",
             nBytes - z->avail_out, nBytes);
+        memset(buf, 0, nBytes);
     }
 
     return err;
