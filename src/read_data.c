@@ -29,16 +29,16 @@
  */
 
 /* FIXME: Implement Unicode support */
+#include "matio_private.h"
+#if HAVE_ZLIB
+#   include <zlib.h>
+#endif
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include "matio_private.h"
-#if HAVE_ZLIB
-#   include <zlib.h>
-#endif
 
 #define READ_DATA_NOSWAP(T) \
     do { \

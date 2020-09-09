@@ -29,6 +29,8 @@
  */
 
 /* FIXME: Implement Unicode support */
+#include "matio_private.h"
+#include "mat5.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,8 +43,6 @@
 #else
 #   define SIZE_T_FMTSTR "zu"
 #endif
-#include "matio_private.h"
-#include "mat5.h"
 
 /** Get type from tag */
 #define TYPE_FROM_TAG(a)          ( ((a) & 0x000000ff) <= MAT_T_FUNCTION ) ? (enum matio_types)((a) & 0x000000ff) : MAT_T_UNKNOWN

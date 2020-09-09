@@ -28,9 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "matio_private.h"
 #include <stdlib.h>
 #include <string.h>
-#include "matio_private.h"
 
 #if HAVE_ZLIB
 

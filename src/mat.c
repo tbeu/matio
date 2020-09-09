@@ -29,6 +29,12 @@
  */
 
 /* FIXME: Implement Unicode support */
+#include "matio_private.h"
+#include "mat5.h"
+#include "mat4.h"
+#if defined(MAT73) && MAT73
+#   include "mat73.h"
+#endif
 #include "safe-math.h"
 #include <stdlib.h>
 #include <string.h>
@@ -47,12 +53,6 @@
 #   define strdup _strdup
 #else
 #   define SIZE_T_FMTSTR "zu"
-#endif
-#include "matio_private.h"
-#include "mat5.h"
-#include "mat4.h"
-#if defined(MAT73) && MAT73
-#   include "mat73.h"
 #endif
 
 /*

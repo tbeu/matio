@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "matio_private.h"
+#if defined(MAT73) && MAT73
+#   include "mat73.h"
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -36,12 +40,9 @@
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define strdup _strdup
 #endif
-#include "matio_private.h"
 
 #if defined(MAT73) && MAT73
 #if HAVE_HDF5
-
-#include "mat73.h"
 
 static const char *ClassNames[] = {
     "",

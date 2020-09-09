@@ -31,10 +31,9 @@
 #ifndef MATIO_H
 #define MATIO_H
 
+#include "matio_pubconf.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "matio_pubconf.h"
-
 #include <stdarg.h>
 
 #ifdef __cplusplus

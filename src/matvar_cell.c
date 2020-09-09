@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "matio_private.h"
 #include <stdlib.h>
 #include <string.h>
-#include "matio_private.h"
 
 /** @brief Returns a pointer to the Cell array at a specific index
  *

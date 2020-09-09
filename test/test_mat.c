@@ -24,13 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "matio_private.h"
+#include <getopt.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <getopt.h>
-#include "matio_private.h"
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif

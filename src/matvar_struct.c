@@ -24,12 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "matio_private.h"
 #include <stdlib.h>
 #include <string.h>
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define strdup _strdup
 #endif
-#include "matio_private.h"
 
 /** @brief Creates a structure MATLAB variable with the given name and fields
  *
@@ -130,8 +130,8 @@ Mat_VarAddStructField(matvar_t *matvar,const char *fieldname)
     if ( err )
         return -1;
 
-    nfields = matvar->internal->num_fields+1;
-    matvar->internal->num_fields = nfields;
+    matvar->internal->num_fields++;
+    nfields = matvar->internal->num_fields;
     fieldnames = (char**)realloc(matvar->internal->fieldnames,
         nfields*sizeof(*matvar->internal->fieldnames));
     if ( NULL == fieldnames )

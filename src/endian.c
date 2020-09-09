@@ -27,8 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
 #include "matio_private.h"
+#include <stdlib.h>
 
 /** @brief swap the bytes @c a and @c b
  * @ingroup mat_internal

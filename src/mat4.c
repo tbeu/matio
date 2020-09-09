@@ -28,19 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "matio_private.h"
+#include "mat4.h"
+#if defined(__GLIBC__)
+#   include <endian.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 #include <limits.h>
-#if defined(__GLIBC__)
-#include <endian.h>
-#endif
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #   define strdup _strdup
 #endif
-#include "matio_private.h"
-#include "mat4.h"
 
 /** @if mat_devman
  * @brief Creates a new Matlab MAT version 4 file
