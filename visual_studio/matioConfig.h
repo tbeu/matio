@@ -225,6 +225,9 @@
 /* Debug disabled */
 #undef NODEBUG
 
+/* Fixed types in safe-math.h disabled */
+#define PSNIP_SAFE_NO_FIXED 1
+
 /* Name of package */
 #define PACKAGE "matio"
 

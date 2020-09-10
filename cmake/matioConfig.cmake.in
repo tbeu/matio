@@ -189,6 +189,9 @@
 /* Debug disabled */
 #cmakedefine NODEBUG 1
 
+/* Fixed types in safe-math.h disabled */
+#define PSNIP_SAFE_NO_FIXED 1
+
 /* Name of package */
 #define PACKAGE "@matio_PACKAGE@"
 

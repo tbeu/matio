@@ -290,7 +290,6 @@
     <ClCompile Include="..\..\src\snprintf.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\exact-int.h" />
     <ClInclude Include="..\..\src\mat4.h" />
     <ClInclude Include="..\..\src\mat5.h" />
     <ClInclude Include="..\..\src\mat73.h" />
