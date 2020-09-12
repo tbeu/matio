@@ -323,7 +323,7 @@ Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread) {
         err = 0;
     }
     if ( err ) {
-        Mat_DebugMessage(1, "Read beyond EOF error: Read %"
+        Mat_Warning("Unexpected end-of-file: Read %"
             SIZE_T_FMTSTR " bytes, expected %"
             SIZE_T_FMTSTR " bytes", readcount*size, count*size);
         memset(buf, 0, count*size);

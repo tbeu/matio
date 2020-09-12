@@ -286,7 +286,8 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
     }
 
     if ( z->avail_out && feof((FILE*)mat->fp) ) {
-        Mat_DebugMessage(1, "Inflate: Read beyond EOF error: Processed %u bytes, expected %u bytes",
+        Mat_Warning("Unexpected end-of-file: "
+            "Processed %u bytes, expected %u bytes",
             nBytes - z->avail_out, nBytes);
         memset(buf, 0, nBytes);
     }
@@ -371,7 +372,7 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     }
 
     if ( z->avail_out && feof((FILE*)mat->fp) ) {
-        Mat_DebugMessage(1, "InflateData: Read beyond EOF error: Processed %u bytes, expected %u bytes",
+        Mat_Warning("InflateData: Read beyond EOF error: Processed %u bytes, expected %u bytes",
             nBytes - z->avail_out, nBytes);
         memset(buf, 0, nBytes);
     }
