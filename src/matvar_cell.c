@@ -83,8 +83,7 @@ Mat_VarGetCells(matvar_t *matvar,int *start,int *stride,int *edge)
     size_t idx[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
     matvar_t **cells;
 
-    if ( (matvar == NULL) || (start == NULL) || (stride == NULL) ||
-        (edge == NULL) ) {
+    if ( matvar == NULL || start == NULL || stride == NULL || edge == NULL ) {
         return NULL;
     } else if ( matvar->rank > 9 ) {
         return NULL;

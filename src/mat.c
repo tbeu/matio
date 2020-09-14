@@ -100,7 +100,7 @@ static int
 ReadData(mat_t *mat, matvar_t *matvar)
 {
     if ( mat == NULL || matvar == NULL || mat->fp == NULL )
-        return 1;
+        return MATIO_E_BAD_ARGUMENT;
     else if ( mat->version == MAT_FT_MAT5 )
         return Mat_VarRead5(mat,matvar);
 #if defined(MAT73) && MAT73
@@ -109,7 +109,7 @@ ReadData(mat_t *mat, matvar_t *matvar)
 #endif
     else if ( mat->version == MAT_FT_MAT4 )
         return Mat_VarRead4(mat,matvar);
-    return 1;
+    return MATIO_E_FAIL_TO_IDENTIFY;
 }
 
 static void
@@ -256,17 +256,17 @@ int Mat_MulDims(const matvar_t *matvar, size_t* nelems)
 
     if ( matvar->rank == 0 ) {
         *nelems = 0;
-        return 0;
+        return MATIO_E_NO_ERROR;
     }
 
     for ( i = 0; i < matvar->rank; i++ ) {
         if ( !psnip_safe_size_mul(nelems, *nelems, matvar->dims[i]) ) {
             *nelems = 0;
-            return 1;
+            return MATIO_E_INDEX_TOO_BIG;
         }
     }
 
-    return 0;
+    return MATIO_E_NO_ERROR;
 }
 
 /** @brief Multiplies two unsigned integers
@@ -280,10 +280,10 @@ int Mul(size_t* res, size_t a, size_t b)
 {
     if ( !psnip_safe_size_mul(res, a, b) ) {
         *res = 0;
-        return 1;
+        return MATIO_E_INDEX_TOO_BIG;
     }
 
-    return 0;
+    return MATIO_E_NO_ERROR;
 }
 
 /** @brief Adds two unsigned integers
@@ -297,10 +297,10 @@ int Add(size_t* res, size_t a, size_t b)
 {
     if ( !psnip_safe_size_add(res, a, b) ) {
         *res = 0;
-        return 1;
+        return MATIO_E_INDEX_TOO_BIG;
     }
 
-    return 0;
+    return MATIO_E_NO_ERROR;
 }
 
 /** @brief Read from file and check success
@@ -320,7 +320,7 @@ Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread) {
         *bytesread += readcount*size;
     }
     if ( err && feof(fp) && 0 == readcount) {
-        err = 0;
+        err = MATIO_E_NO_ERROR;
     }
     if ( err ) {
         Mat_Warning("Unexpected end-of-file: Read %"
@@ -565,6 +565,10 @@ Mat_Open(const char *matname,int mode)
 #endif
             *(hid_t*)mat->fp=H5Fopen(matname,H5F_ACC_RDWR,plist_ap);
             H5Pclose(plist_ap);
+        } else {
+            mat->fp = NULL;
+            Mat_Close(mat);
+            mat = NULL;
         }
 
         if ( -1 < *(hid_t*)mat->fp ) {
@@ -596,21 +600,22 @@ Mat_Open(const char *matname,int mode)
 int
 Mat_Close( mat_t *mat )
 {
-    int err = 0;
+    int err = MATIO_E_NO_ERROR;
 
     if ( NULL != mat ) {
 #if defined(MAT73) && MAT73
         if ( mat->version == 0x0200 ) {
-            if ( mat->refs_id > -1 )
-                H5Gclose(mat->refs_id);
-            if ( 0 > H5Fclose(*(hid_t*)mat->fp) )
-                err = 1;
-            free(mat->fp);
-            mat->fp = NULL;
+            err = Mat_Close73(mat);
         }
 #endif
-        if ( NULL != mat->fp )
-            fclose((FILE*)mat->fp);
+        if ( NULL != mat->fp ) {
+            err = fclose((FILE*)mat->fp);
+            if ( 0 == err ) {
+                err = MATIO_E_NO_ERROR;
+            } else {
+                err = MATIO_E_FILESYSTEM_ERROR_ON_CLOSE;
+            }
+        }
         if ( NULL != mat->header )
             free(mat->header);
         if ( NULL != mat->subsys_offset )
@@ -626,6 +631,8 @@ Mat_Close( mat_t *mat )
             free(mat->dir);
         }
         free(mat);
+    } else {
+        err = MATIO_E_BAD_ARGUMENT;
     }
 
     return err;
@@ -791,7 +798,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
 int
 Mat_Rewind( mat_t *mat )
 {
-    int err = 0;
+    int err = MATIO_E_NO_ERROR;
 
     switch ( mat->version ) {
         case MAT_FT_MAT5:
@@ -804,7 +811,7 @@ Mat_Rewind( mat_t *mat )
             (void)fseek((FILE*)mat->fp,0L,SEEK_SET);
             break;
         default:
-            err = -1;
+            err = MATIO_E_FAIL_TO_IDENTIFY;
             break;
     }
 
@@ -1181,7 +1188,7 @@ Mat_CopyFile(const char* src, const char* dst)
 #endif
     if ( in == NULL ) {
         Mat_Critical("Cannot open file \"%s\" for reading.", src);
-        return -1;
+        return MATIO_E_FILESYSTEM_COULD_NOT_OPEN;
     }
 
 #if defined(_WIN32) && defined(_MSC_VER)
@@ -1198,7 +1205,7 @@ Mat_CopyFile(const char* src, const char* dst)
     if ( out == NULL ) {
         fclose(in);
         Mat_Critical("Cannot open file \"%s\" for writing.", dst);
-        return -1;
+        return MATIO_E_FILESYSTEM_COULD_NOT_OPEN;
     }
 
     while ( (len = fread(buf, sizeof(char), BUFSIZ, in)) > 0 ) {
@@ -1206,12 +1213,12 @@ Mat_CopyFile(const char* src, const char* dst)
             fclose(in);
             fclose(out);
             Mat_Critical("Error writing to file \"%s\".", dst);
-            return -1;
+            return MATIO_E_GENERIC_WRITE_ERROR;
         }
     }
     fclose(in);
     fclose(out);
-    return 0;
+    return MATIO_E_NO_ERROR;
 }
 
 /** @brief Deletes a variable from a file
@@ -1224,7 +1231,7 @@ Mat_CopyFile(const char* src, const char* dst)
 int
 Mat_VarDelete(mat_t *mat, const char *name)
 {
-    int err = 1;
+    int err = MATIO_E_BAD_ARGUMENT;
     char path_buf[MAT_MKTEMP_BUF_SIZE];
     char dir_buf[MAT_MKTEMP_BUF_SIZE];
 
@@ -1259,9 +1266,9 @@ Mat_VarDelete(mat_t *mat, const char *name)
             Mat_Rewind(mat);
             while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
                 if ( 0 != strcmp(matvar->name,name) )
-                    Mat_VarWrite(tmp,matvar,matvar->compression);
+                    err = Mat_VarWrite(tmp,matvar,matvar->compression);
                 else
-                    err = 0;
+                    err = MATIO_E_NO_ERROR;
                 Mat_VarFree(matvar);
             }
             dir = tmp->dir; /* Keep directory for later assignment */
@@ -1269,15 +1276,11 @@ Mat_VarDelete(mat_t *mat, const char *name)
             n = tmp->num_datasets;
             Mat_Close(tmp);
 
-            if ( 0 == err ) {
+            if ( MATIO_E_NO_ERROR == err ) {
                 char *new_name = strdup(mat->filename);
 #if defined(MAT73) && MAT73
                 if ( mat_file_ver == MAT_FT_MAT73 ) {
-                    if ( mat->refs_id > -1 )
-                        H5Gclose(mat->refs_id);
-                    H5Fclose(*(hid_t*)mat->fp);
-                    free(mat->fp);
-                    mat->fp = NULL;
+                    err = Mat_Close73(mat);
                 }
 #endif
                 if ( mat->fp != NULL ) {
@@ -1285,7 +1288,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     mat->fp = NULL;
                 }
 
-                if ( (err = Mat_CopyFile(path_buf,new_name)) == -1 ) {
+                if ( (err = Mat_CopyFile(path_buf,new_name)) != MATIO_E_NO_ERROR ) {
                     if ( NULL != dir ) {
                         size_t i;
                         for ( i = 0; i < n; i++ ) {
@@ -1296,7 +1299,8 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     }
                     Mat_Critical("Cannot copy file from \"%s\" to \"%s\".",
                         path_buf, new_name);
-                } else if ( (err = remove(path_buf)) == -1 ) {
+                } else if ( (err = remove(path_buf)) != 0 ) {
+                    err = MATIO_E_UNKNOWN_ERROR;
                     if ( NULL != dir ) {
                         size_t i;
                         for ( i = 0; i < n; i++ ) {
@@ -1306,7 +1310,8 @@ Mat_VarDelete(mat_t *mat, const char *name)
                         free(dir);
                     }
                     Mat_Critical("Cannot remove file \"%s\".",path_buf);
-                } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) == -1 ) {
+                } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) != 0 ) {
+                    err = MATIO_E_UNKNOWN_ERROR;
                     if ( NULL != dir ) {
                         size_t i;
                         for ( i = 0; i < n; i++ ) {
@@ -1339,17 +1344,23 @@ Mat_VarDelete(mat_t *mat, const char *name)
                         mat->dir = dir;
                     } else {
                         Mat_Critical("Cannot open file \"%s\".",new_name);
+                        err = MATIO_E_FILESYSTEM_COULD_NOT_OPEN;
                     }
                 }
                 free(new_name);
-            } else if ( (err = remove(path_buf)) == -1 ) {
+            } else if ( (err = remove(path_buf)) != 0 ) {
+                err = MATIO_E_UNKNOWN_ERROR;
                 Mat_Critical("Cannot remove file \"%s\".",path_buf);
-            } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) == -1 ) {
+            } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) != 0 ) {
+                err = MATIO_E_UNKNOWN_ERROR;
                 Mat_Critical("Cannot remove directory \"%s\".",dir_buf);
             }
+        } else {
+            err = MATIO_E_UNKNOWN_ERROR;
         }
     } else {
         Mat_Critical("Cannot create a unique file name.");
+        err = MATIO_E_FILESYSTEM_COULD_NOT_OPEN_TEMPORARY;
     }
 
     return err;
@@ -1597,13 +1608,13 @@ Mat_VarFree(matvar_t *matvar)
         err = Mat_MulDims(matvar, &nelems);
         free(matvar->dims);
     } else {
-        err = 1;
+        err = MATIO_E_BAD_ARGUMENT;
     }
     if ( NULL != matvar->data ) {
         switch (matvar->class_type ) {
             case MAT_C_STRUCT:
                 if ( !matvar->mem_conserve ) {
-                    if ( 0 == err ) {
+                    if ( MATIO_E_NO_ERROR == err ) {
                         matvar_t **fields = (matvar_t**)matvar->data;
                         size_t nelems_x_nfields, i;
                         Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
@@ -1615,7 +1626,7 @@ Mat_VarFree(matvar_t *matvar)
                 break;
             case MAT_C_CELL:
                 if ( !matvar->mem_conserve ) {
-                    if ( 0 == err ) {
+                    if ( MATIO_E_NO_ERROR == err ) {
                         matvar_t **cells = (matvar_t**)matvar->data;
                         size_t i;
                         for ( i = 0; i < nelems; i++ )
@@ -1767,16 +1778,16 @@ Mat_VarFree(matvar_t *matvar)
 int
 Mat_CalcSingleSubscript(int rank,int *dims,int *subs)
 {
-    int index = 0, i, j, err = 0;
+    int index = 0, i, j, err = MATIO_E_NO_ERROR;
 
     for ( i = 0; i < rank; i++ ) {
         int k = subs[i];
         if ( k > dims[i] ) {
-            err = 1;
+            err = MATIO_E_BAD_ARGUMENT;
             Mat_Critical("Mat_CalcSingleSubscript: index out of bounds");
             break;
         } else if ( k < 1 ) {
-            err = 1;
+            err = MATIO_E_BAD_ARGUMENT;
             break;
         }
         k--;
@@ -1810,17 +1821,17 @@ Mat_CalcSingleSubscript(int rank,int *dims,int *subs)
 int
 Mat_CalcSingleSubscript2(int rank,size_t *dims,size_t *subs,size_t *index)
 {
-    int i, err = 0;
+    int i, err = MATIO_E_NO_ERROR;
 
     for ( i = 0; i < rank; i++ ) {
         int j;
         size_t k = subs[i];
         if ( k > dims[i] ) {
-            err = 1;
+            err = MATIO_E_BAD_ARGUMENT;
             Mat_Critical("Mat_CalcSingleSubscript2: index out of bounds");
             break;
         } else if ( k < 1 ) {
-            err = 1;
+            err = MATIO_E_BAD_ARGUMENT;
             break;
         }
         k--;
@@ -1857,6 +1868,10 @@ Mat_CalcSubscripts(int rank,int *dims,int index)
     double l;
 
     subs = (int*)malloc(rank*sizeof(int));
+    if ( NULL == subs) {
+        return subs;
+    }
+
     l = index;
     for ( i = rank; i--; ) {
         int k = 1;
@@ -1896,6 +1911,10 @@ Mat_CalcSubscripts2(int rank,size_t *dims,size_t index)
     double l;
 
     subs = (size_t*)malloc(rank*sizeof(size_t));
+    if ( NULL == subs) {
+        return subs;
+    }
+
     l = (double)index;
     for ( i = rank; i--; ) {
         int j;
@@ -2067,7 +2086,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         }
         printf("\n");
     } else {
-        err = 1;
+        err = MATIO_E_BAD_ARGUMENT;
     }
     printf("Class Type: %s",class_type_desc[matvar->class_type]);
     if ( matvar->isComplex )
@@ -2094,7 +2113,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         size_t nfields = matvar->internal->num_fields;
         size_t nelems_x_nfields = 1;
         Mul(&nelems_x_nfields, nelems, nfields);
-        if ( 0 == err && nelems_x_nfields > 0 ) {
+        if ( MATIO_E_NO_ERROR == err && nelems_x_nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
             for ( i = 0; i < nelems_x_nfields; i++ ) {
                 if ( NULL == fields[i] ) {
@@ -2297,7 +2316,7 @@ int
 Mat_VarReadData(mat_t *mat,matvar_t *matvar,void *data,
       int *start,int *stride,int *edge)
 {
-    int err = 0;
+    int err = MATIO_E_NO_ERROR;
 
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
@@ -2312,7 +2331,7 @@ Mat_VarReadData(mat_t *mat,matvar_t *matvar,void *data,
         case MAT_C_UINT8:
             break;
         default:
-            return -1;
+            return MATIO_E_OPERATION_NOT_SUPPORTED;
     }
 
     switch ( mat->version ) {
@@ -2323,14 +2342,14 @@ Mat_VarReadData(mat_t *mat,matvar_t *matvar,void *data,
 #if defined(MAT73) && MAT73
             err = Mat_VarReadData73(mat,matvar,data,start,stride,edge);
 #else
-            err = 1;
+            err = MATIO_E_OPERATION_NOT_SUPPORTED;
 #endif
             break;
         case MAT_FT_MAT4:
             err = Mat_VarReadData4(mat,matvar,data,start,stride,edge);
             break;
         default:
-            err = 2;
+            err = MATIO_E_FAIL_TO_IDENTIFY;
             break;
     }
 
@@ -2348,10 +2367,10 @@ Mat_VarReadData(mat_t *mat,matvar_t *matvar,void *data,
 int
 Mat_VarReadDataAll(mat_t *mat,matvar_t *matvar)
 {
-    int err = 0;
+    int err = MATIO_E_NO_ERROR;
 
     if ( mat == NULL || matvar == NULL )
-        err = 1;
+        err = MATIO_E_BAD_ARGUMENT;
     else
         err = ReadData(mat,matvar);
 
@@ -2375,7 +2394,7 @@ int
 Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
     int stride,int edge)
 {
-    int err = 0;
+    int err = MATIO_E_NO_ERROR;
 
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
@@ -2390,7 +2409,7 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
         case MAT_C_UINT8:
             break;
         default:
-            return -1;
+            return MATIO_E_OPERATION_NOT_SUPPORTED;
     }
 
     switch ( mat->version ) {
@@ -2401,14 +2420,14 @@ Mat_VarReadDataLinear(mat_t *mat,matvar_t *matvar,void *data,int start,
 #if defined(MAT73) && MAT73
             err = Mat_VarReadDataLinear73(mat,matvar,data,start,stride,edge);
 #else
-            err = 1;
+            err = MATIO_E_OPERATION_NOT_SUPPORTED;
 #endif
             break;
         case MAT_FT_MAT4:
             err = Mat_VarReadDataLinear4(mat,matvar,data,start,stride,edge);
             break;
         default:
-            err = 2;
+            err = MATIO_E_FAIL_TO_IDENTIFY;
             break;
     }
 
@@ -2470,7 +2489,7 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
 {
     matvar_t *matvar = NULL;
 
-    if ( (mat == NULL) || (name == NULL) )
+    if ( mat == NULL || name == NULL )
         return NULL;
 
     if ( mat->version == MAT_FT_MAT73 ) {
@@ -2528,7 +2547,7 @@ Mat_VarRead( mat_t *mat, const char *name )
 {
     matvar_t *matvar = NULL;
 
-    if ( (mat == NULL) || (name == NULL) )
+    if ( mat == NULL || name == NULL )
         return NULL;
 
     if ( MAT_FT_MAT73 != mat->version ) {
@@ -2618,7 +2637,7 @@ Mat_VarWriteInfo(mat_t *mat, matvar_t *matvar )
     Mat_Critical("Mat_VarWriteInfo/Mat_VarWriteData is not supported. "
         "Use %s instead!", mat->version == MAT_FT_MAT73 ?
         "Mat_VarWrite/Mat_VarWriteAppend" : "Mat_VarWrite");
-    return 1;
+    return MATIO_E_OPERATION_NOT_SUPPORTED;
 }
 
 /** @brief Writes the given data to the MAT variable
@@ -2643,7 +2662,7 @@ Mat_VarWriteData(mat_t *mat,matvar_t *matvar,void *data,
     Mat_Critical("Mat_VarWriteInfo/Mat_VarWriteData is not supported. "
         "Use %s instead!", mat->version == MAT_FT_MAT73 ?
         "Mat_VarWrite/Mat_VarWriteAppend" : "Mat_VarWrite");
-    return 1;
+    return MATIO_E_OPERATION_NOT_SUPPORTED;
 }
 
 /** @brief Writes the given MAT variable to a MAT file
@@ -2664,7 +2683,7 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
     int err;
 
     if ( NULL == mat || NULL == matvar )
-        return -1;
+        return MATIO_E_BAD_ARGUMENT;
 
     if ( NULL == mat->dir ) {
         size_t n = 0;
@@ -2678,7 +2697,7 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
             if ( NULL != mat->dir[i] &&
                 0 == strcmp(mat->dir[i], matvar->name) ) {
                 Mat_Critical("Variable %s already exists.", matvar->name);
-                return 1;
+                return MATIO_E_OUTPUT_BAD_DATA;
             }
         }
     }
@@ -2689,14 +2708,14 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
 #if defined(MAT73) && MAT73
         err = Mat_VarWrite73(mat,matvar,compress);
 #else
-        err = 1;
+        err = MATIO_E_OPERATION_NOT_SUPPORTED;
 #endif
     else if ( mat->version == MAT_FT_MAT4 )
         err = Mat_VarWrite4(mat,matvar);
     else
-        err = 2;
+        err = MATIO_E_FAIL_TO_IDENTIFY;
 
-    if ( err == 0 ) {
+    if ( err == MATIO_E_NO_ERROR ) {
         /* Update directory */
         char **dir;
         if ( NULL == mat->dir ) {
@@ -2713,7 +2732,7 @@ Mat_VarWrite(mat_t *mat,matvar_t *matvar,enum matio_compression compress)
                 mat->dir[mat->num_datasets++] = NULL;
             }
         } else {
-            err = 3;
+            err = MATIO_E_OUT_OF_MEMORY;
             Mat_Critical("Couldn't allocate memory for the directory");
         }
     }
@@ -2741,7 +2760,7 @@ Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,i
     int err;
 
     if ( NULL == mat || NULL == matvar )
-        return -1;
+        return MATIO_E_BAD_ARGUMENT;
 
     if ( NULL == mat->dir ) {
         size_t n = 0;
@@ -2763,7 +2782,7 @@ Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,i
             }
         }
         err = Mat_VarWriteAppend73(mat,matvar,compress,dim);
-        if ( err == 0 && 0 == append ) {
+        if ( err == MATIO_E_NO_ERROR && 0 == append ) {
             /* Update directory */
             char **dir;
             if ( NULL == mat->dir ) {
@@ -2780,16 +2799,19 @@ Mat_VarWriteAppend(mat_t *mat,matvar_t *matvar,enum matio_compression compress,i
                     mat->dir[mat->num_datasets++] = NULL;
                 }
             } else {
-                err = 3;
+                err = MATIO_E_OUT_OF_MEMORY;
                 Mat_Critical("Couldn't allocate memory for the directory");
             }
         }
 #else
-        err = 1;
+        err = MATIO_E_OPERATION_NOT_SUPPORTED;
 #endif
     }
-    else
-        err = 2;
+    else if ( mat->version == MAT_FT_MAT4 || mat->version == MAT_FT_MAT5 ) {
+        err = MATIO_E_OPERATION_NOT_SUPPORTED;
+    } else {
+        err = MATIO_E_FAIL_TO_IDENTIFY;
+    }
 
     return err;
 }

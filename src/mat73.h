@@ -34,7 +34,7 @@
 #endif
 
 EXTERN mat_t    *Mat_Create73(const char *matname,const char *hdr_str);
-
+EXTERN int       Mat_Close73(mat_t *mat);
 EXTERN int       Mat_VarRead73(mat_t *mat,matvar_t *matvar);
 EXTERN int       Mat_VarReadData73(mat_t *mat,matvar_t *matvar,void *data,
                      int *start,int *stride,int *edge);

@@ -102,7 +102,7 @@
                         } \
                     } else { \
                         err = 1; \
-                        break;\
+                        break; \
                     } \
                 } \
                 if ( 0 == err && len > i ) { \

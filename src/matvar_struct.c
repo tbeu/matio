@@ -357,8 +357,7 @@ Mat_VarGetStructs(matvar_t *matvar,int *start,int *stride,int *edge,
     matvar_t **fields, *struct_slab;
     int j;
 
-    if ( (matvar == NULL) || (start == NULL) || (stride == NULL) ||
-         (edge == NULL) ) {
+    if ( matvar == NULL || start == NULL || stride == NULL || edge == NULL ) {
         return NULL;
     } else if ( matvar->rank > 9 ) {
         return NULL;
