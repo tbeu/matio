@@ -12,12 +12,13 @@ if [[ "$HDF5_VERSION_DIR" != "hdf5_1_8_21" ]] || [[ "$ENABLE_MAT73" != "yes" ]] 
     exit 0
 fi
 
-make pdf
+make -C documentation pdf html MAKEINFOFLAGS=--no-split
 make dist-gzip
 
 if [[ "$TRAVIS_PULL_REQUEST" != "false" ]] || [[ "$TRAVIS_BRANCH" != "master" ]]; then
     exit 0
 fi
 
+sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.html
 sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.pdf
 sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./matio-1.5.18.tar.gz
