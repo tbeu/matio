@@ -26,7 +26,8 @@
 @section Quick Build Guide
 The primary method for building the software is using @code{configure} followed
 by @code{make}. After building, the testsuite can be executed to test the
-software using @code{make check} (See @ref{Testsuite}. The software can be installed using 'make install'. For example,
+software using @code{make check} (See @ref{Testsuite}. The software can be
+installed using 'make install'. For example,
 
 @verbatim
                 $ tar zxf matio-X.Y.Z.tar.gz
@@ -66,6 +67,55 @@ and looking for dependent libraries (i.e. HDF5 and zlib). For example, some
 multi-arch Linux distributions install 64-bit libraries into lib64 and 32-bit
 libraries into lib.
 @end table
+
+@section CMake build system
+The CMake build system is supported as an alternative build system,
+which usually consists of three steps for configuration, build and
+installation, for example,
+
+@verbatim
+                $ tar zxf matio-X.Y.Z.tar.gz
+                $ cd matio-X.Y.Z
+                $ cmake .
+                $ cmake --build .
+                $ cmake --install .
+@end verbatim
+
+The following matio specific options for building with CMake are
+available.
+@table @code
+@item MATIO_DEFAULT_FILE_VERSION:STRING=5
+This option sets the default MAT file version (4,5,7.3) that
+will be used when writing.
+@item MATIO_EXTENDED_SPARSE:BOOL=ON
+This option enables extended sparse matrix data types not
+supported in MATLAB.
+@item MATIO_MAT73:BOOL=ON
+This flag enables the support for version 7.3 MAT files.
+@item MATIO_PIC:BOOL=ON
+This option enables position-independent code (PIC),
+i.e., compilation with the @code{-fPIC} flag. It is ignored for
+Visual Studio builds.
+@item MATIO_SHARED:BOOL=ON
+This option builds the matio library as shared object
+(i.e., a dynamic link library on Windows).
+@item MATIO_WITH_HDF5:BOOL=ON
+This option enables CMake to check for availability of the
+HDF5 library (see section 2.1.2 for information about HDF5).
+@item MATIO_WITH_ZLIB:BOOL=ON
+This option enables CMake to check for availability of the
+zlib library (see section 2.1.1 for information about zlib).
+@end table
+
+To help CMake find the HDF5 libraries, set environment variable
+HDF5_DIR to the @emph{cmake/hdf5} directory (containing
+@emph{hdf5-config.cmake}) inside the HDF5 build or installation directory, or
+call cmake with
+@code{-DHDF5_DIR="dir/to/hdf5/cmake/hdf5}. Alternatively call CMake with
+@code{-DCMAKE_PREFIX_PATH="dir/to/hdf5/cmake"}. See the HDF5 instructions
+for more information. Using @emph{hdf5-config.cmake} is recommended over
+using CMake's built-in @emph{FindHDF5}, especially for static builds.
+CMake 3.10 or later is recommended.
 
 @section Visual Studio
 A visual studio solution is provided as visual_studio/matio.sln. The solution is
