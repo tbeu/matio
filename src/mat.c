@@ -1616,10 +1616,13 @@ Mat_VarFree(matvar_t *matvar)
                 if ( !matvar->mem_conserve ) {
                     if ( MATIO_E_NO_ERROR == err ) {
                         matvar_t **fields = (matvar_t**)matvar->data;
-                        size_t nelems_x_nfields, i;
-                        Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
-                        for ( i = 0; i < nelems_x_nfields; i++ )
-                            Mat_VarFree(fields[i]);
+                        size_t nelems_x_nfields;
+                        err = Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
+                        if ( MATIO_E_NO_ERROR == err && nelems_x_nfields > 0 ) {
+                            size_t i;
+                            for ( i = 0; i < nelems_x_nfields; i++ )
+                                Mat_VarFree(fields[i]);
+                        }
                     }
                     free(matvar->data);
                 }
@@ -2059,7 +2062,6 @@ Mat_VarGetSize(matvar_t *matvar)
 void
 Mat_VarPrint( matvar_t *matvar, int printdata )
 {
-    int err;
     size_t nelems = 0, i, j;
     const char *class_type_desc[18] = {"Undefined","Cell Array","Structure",
        "Object","Character Array","Sparse Array","Double Precision Array",
@@ -2077,16 +2079,16 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     if ( matvar->rank <= 0 )
         return;
     if ( NULL != matvar->dims ) {
-        int k;
+        int k, err;
         nelems = 1;
         err = Mat_MulDims(matvar, &nelems);
         printf("Dimensions: %" SIZE_T_FMTSTR,matvar->dims[0]);
-        for ( k = 1; k < matvar->rank; k++ ) {
-            printf(" x %" SIZE_T_FMTSTR,matvar->dims[k]);
+        if ( MATIO_E_NO_ERROR == err ) {
+            for ( k = 1; k < matvar->rank; k++ ) {
+                printf(" x %" SIZE_T_FMTSTR,matvar->dims[k]);
+            }
         }
         printf("\n");
-    } else {
-        err = MATIO_E_BAD_ARGUMENT;
     }
     printf("Class Type: %s",class_type_desc[matvar->class_type]);
     if ( matvar->isComplex )
@@ -2112,7 +2114,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
         matvar_t **fields = (matvar_t **)matvar->data;
         size_t nfields = matvar->internal->num_fields;
         size_t nelems_x_nfields = 1;
-        Mul(&nelems_x_nfields, nelems, nfields);
+        int err = Mul(&nelems_x_nfields, nelems, nfields);
         if ( MATIO_E_NO_ERROR == err && nelems_x_nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
             for ( i = 0; i < nelems_x_nfields; i++ ) {

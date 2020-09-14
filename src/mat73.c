@@ -2298,6 +2298,8 @@ Mat_VarWriteAppendNextType73(hid_t id,matvar_t *matvar,const char *name,hid_t *r
                 err = MATIO_E_OUTPUT_BAD_DATA;
                 break;
         }
+    } else {
+        err = MATIO_E_OPERATION_NOT_SUPPORTED;
     }
 
     return err;

@@ -105,8 +105,9 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
             err = MATIO_E_NO_ERROR;
             break;
         } else if ( err != Z_OK ) {
+            const char* errMsg = zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err);
             err = MATIO_E_FILE_FORMAT_VIOLATION;
-            Mat_Critical("InflateSkip: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
+            Mat_Critical("InflateSkip: inflate returned %s", errMsg);
             break;
         } else {
             err = MATIO_E_NO_ERROR;
@@ -262,9 +263,8 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
     z->next_out = ZLIB_BYTE_PTR(buf);
     err = inflate(z,Z_NO_FLUSH);
     if ( err != Z_OK ) {
-        err = MATIO_E_FILE_FORMAT_VIOLATION;
         Mat_Critical("Inflate: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
-        return err;
+        return MATIO_E_FILE_FORMAT_VIOLATION;
     } else {
         err = MATIO_E_NO_ERROR;
     }
@@ -280,9 +280,8 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
         z->next_in = comp_buf;
         err = inflate(z,Z_NO_FLUSH);
         if ( err != Z_OK ) {
-            err = MATIO_E_FILE_FORMAT_VIOLATION;
             Mat_Critical("Inflate: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
-            return err;
+            return MATIO_E_FILE_FORMAT_VIOLATION;
         } else {
             err = MATIO_E_NO_ERROR;
         }
@@ -349,9 +348,8 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     if ( err == Z_STREAM_END ) {
         return MATIO_E_NO_ERROR;
     } else if ( err != Z_OK ) {
-        err = MATIO_E_FAIL_TO_IDENTIFY;
         Mat_Critical("InflateData: inflate returned %s",zError( err == Z_NEED_DICT ? Z_DATA_ERROR : err ));
-        return err;
+        return MATIO_E_FAIL_TO_IDENTIFY;
     } else {
         err = MATIO_E_NO_ERROR;
     }
@@ -375,8 +373,9 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
             err = MATIO_E_NO_ERROR;
             break;
         } else if ( err != Z_OK ) {
+            const char* errMsg = zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err);
             err = MATIO_E_FAIL_TO_IDENTIFY;
-            Mat_Critical("InflateData: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
+            Mat_Critical("InflateData: inflate returned %s", errMsg);
             break;
         } else {
             err = MATIO_E_NO_ERROR;

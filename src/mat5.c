@@ -3868,26 +3868,36 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 }
 
                 err = Mat_VarReadNumeric5(mat,matvar,complex_data->Re,nelems);
-                if ( err )
+                if ( err ) {
+                    ComplexFree(complex_data);
                     break;
+                }
                 err = Mat_VarReadNumeric5(mat,matvar,complex_data->Im,nelems);
-                if ( err )
+                if ( err ) {
+                    ComplexFree(complex_data);
                     break;
+                }
                 matvar->data = complex_data;
             } else {
+                void * data;
                 err = Mul(&matvar->nbytes, nelems, matvar->data_size);
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
                     break;
                 }
 
-                matvar->data = malloc(matvar->nbytes);
-                if ( NULL == matvar->data ) {
+                data = malloc(matvar->nbytes);
+                if ( NULL == data ) {
                     err = MATIO_E_OUT_OF_MEMORY;
                     Mat_Critical("Couldn't allocate memory for the data");
                     break;
                 }
-                err = Mat_VarReadNumeric5(mat,matvar,matvar->data,nelems);
+                err = Mat_VarReadNumeric5(mat,matvar,data,nelems);
+                if ( err ) {
+                    free(data);
+                    break;
+                }
+                matvar->data = data;
             }
         default:
             break;
@@ -5088,6 +5098,7 @@ Mat_VarWrite5(mat_t *mat,matvar_t *matvar,int compress)
         if ( NULL != matvar->internal ) {
             matvar->internal->datapos = ftell((FILE*)mat->fp);
             if ( matvar->internal->datapos == -1L ) {
+                free(z);
                 Mat_Critical("Couldn't determine file position");
                 return MATIO_E_GENERIC_READ_ERROR;
             }
