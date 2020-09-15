@@ -5,8 +5,8 @@ if(POLICY CMP0074)
 endif()
 
 project(matio
-        VERSION 1.5.18
-        LANGUAGES C CXX
+    VERSION 1.5.18
+    LANGUAGES C CXX
 )
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
@@ -17,6 +17,7 @@ set(matio_PACKAGE_BUGREPORT "t-beu@users.sourceforge.net")
 set(matio_PACKAGE_STRING "${PROJECT_NAME_UPPER} ${matio_VERSION}")
 set(matio_PACKAGE_TARNAME "${PROJECT_NAME}")
 set(matio_PACKAGE_URL "https://sourceforge.net/projects/matio")
+set(matio_LIB_VERSIONINFO "11:0:0")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
