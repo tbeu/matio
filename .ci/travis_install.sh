@@ -27,13 +27,14 @@ if [[ "$ENABLE_MAT73" == "yes" ]]; then
 
         make install -C src
         popd
-    else
+    fi
+    if [[ "${USE_CMAKE:-no}" == "yes" ]] &&  [[ "${USE_CONAN:-no}" == "no" ]]; then
         pushd $HOME
         HDF5_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_VERSION%.*}/hdf5-${HDF5_VERSION}/src/CMake-hdf5-${HDF5_VERSION}.tar.gz"
         wget --no-check-certificate -nv $HDF5_URL
         tar -xzf CMake-hdf5-$HDF5_VERSION.tar.gz
         cd CMake-hdf5-$HDF5_VERSION
-        ctest -S HDF5config.cmake,BUILD_GENERATOR=Unix,LOCAL_SKIP_TEST=true -C Release
+        ctest -S HDF5config.cmake,BUILD_GENERATOR=Unix,LOCAL_SKIP_TEST=true -C Debug
         tar -xzf HDF5-$HDF5_VERSION-Linux.tar.gz
         popd
     fi

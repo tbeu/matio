@@ -47,6 +47,7 @@ VS_FILES = visual_studio/libmatio/libmatio.vcproj \
 
 CMAKE_FILES = CMakeLists.txt \
               cmake/compilerOptions.cmake \
+              cmake/conan.cmake \
               cmake/getopt.cmake \
               cmake/options.cmake \
               cmake/src.cmake \

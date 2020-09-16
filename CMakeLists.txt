@@ -25,6 +25,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 include(GNUInstallDirs)
 
 include(cmake/options.cmake)
+include(cmake/conan.cmake)
 include(cmake/thirdParties.cmake)
 include(cmake/compilerOptions.cmake)
 include(cmake/getopt.cmake)

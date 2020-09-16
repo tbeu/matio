@@ -16,18 +16,33 @@ if [[ "${USE_CMAKE:-no}" == "no" ]]; then
     if [[ "$HDF5_VERSION" == "foo" ]]; then
         CC=$(which clang)
     fi
-else
+fi
+if [[ "${USE_CMAKE:-no}" == "yes" ]] &&  [[ "${USE_CONAN:-no}" == "no" ]]; then
     SRC_DIR=$TRAVIS_BUILD_DIR
     BUILD_DIR=$HOME/matio_cmake
     HDF5_DIR=$HOME/CMake-hdf5-$HDF5_VERSION/HDF5-$HDF5_VERSION-Linux/HDF_Group/HDF5/$HDF5_VERSION
     mkdir -p $BUILD_DIR
     pushd $BUILD_DIR
-    cmake $SRC_DIR -DCMAKE_BUILD_TYPE=Release \
+    cmake $SRC_DIR -DCMAKE_BUILD_TYPE=Debug \
                    -DCMAKE_PREFIX_PATH=$HDF5_DIR/share/cmake \
                    -DMATIO_EXTENDED_SPARSE=$ENABLE_EXTENDED_SPARSE \
                    -DMATIO_MAT73=$ENABLE_MAT73 \
                    -DMATIO_WITH_HDF5=$ENABLE_MAT73 \
                    -DMATIO_WITH_ZLIB=$WITH_ZLIB \
                    -DMATIO_SHARED=TRUE
+    popd
+fi
+if [[ "${USE_CMAKE:-no}" == "yes" ]] &&  [[ "${USE_CONAN:-no}" == "yes" ]]; then
+    SRC_DIR=$TRAVIS_BUILD_DIR
+    BUILD_DIR=$HOME/matio_cmake
+    mkdir -p $BUILD_DIR
+    pushd $BUILD_DIR
+    cmake $SRC_DIR -DCMAKE_BUILD_TYPE=Debug \
+                   -DMATIO_EXTENDED_SPARSE=$ENABLE_EXTENDED_SPARSE \
+                   -DMATIO_MAT73=$ENABLE_MAT73 \
+                   -DMATIO_WITH_HDF5=$ENABLE_MAT73 \
+                   -DMATIO_WITH_ZLIB=$WITH_ZLIB \
+                   -DMATIO_SHARED=TRUE \
+                   -DMATIO_USE_CONAN=TRUE
     popd
 fi

@@ -116,6 +116,8 @@ cmake --install .
 ```
 The following matio specific options for building with CMake are available.
 
+* `MATIO_USE_CONAN:BOOL=OFF`
+This option enables the Conan package manager to resolve the library dependencies.
 * `MATIO_DEFAULT_FILE_VERSION:STRING=5`
 This option sets the default MAT file version (4,5,7.3) that will be used when writing.
 * `MATIO_EXTENDED_SPARSE:BOOL=ON`

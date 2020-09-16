@@ -148,6 +148,14 @@ matrix:
         - WITH_ZLIB=yes
         - HDF5_VERSION=1.10.7
     - os: linux
+      compiler: gcc-4.8
+      env:
+        - USE_CMAKE=yes
+        - USE_CONAN=yes
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=yes
+        - WITH_ZLIB=yes
+    - os: linux
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes

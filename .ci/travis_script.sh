@@ -16,10 +16,16 @@ else
     popd
 
     mkdir -p test
-    cp $BUILD_DIR/test_snprintf ./test
-    cp $BUILD_DIR/test_mat ./test
     mkdir -p tools
-    cp $BUILD_DIR/matdump ./tools
+    if [[ "${USE_CONAN:-no}" == "no" ]]; then
+        ln -s $BUILD_DIR/test_snprintf ./test/test_snprintf
+        ln -s $BUILD_DIR/test_mat ./test/test_mat
+        ln -s $BUILD_DIR/matdump ./tools/matdump
+    else
+        ln -s $BUILD_DIR/bin/test_snprintf ./test/test_snprintf
+        ln -s $BUILD_DIR/bin/test_mat ./test/test_mat
+        ln -s $BUILD_DIR/bin/matdump ./tools/matdump
+    fi
 fi
 
 ./test/test_snprintf

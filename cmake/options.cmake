@@ -1,5 +1,8 @@
 # Options
 
+# Option to utilize Conan
+option(MATIO_USE_CONAN "Use Conan to resolve library dependencies" OFF)
+
 # Option to enable extended sparse matrix data types not supported in MATLAB
 option(MATIO_EXTENDED_SPARSE "Enable extended sparse matrix data types not supported in MATLAB" ON)
 set(EXTENDED_SPARSE ${MATIO_EXTENDED_SPARSE})
@@ -24,7 +27,7 @@ option(MATIO_WITH_ZLIB "Check for zlib library" ON)
 set(MATIO_DEFAULT_FILE_VERSION "5" CACHE STRING "Default MAT file version")
 set_property(CACHE MATIO_DEFAULT_FILE_VERSION PROPERTY STRINGS 4 5 7.3)
 
-if (MATIO_DEFAULT_FILE_VERSION STREQUAL "4")
+if(MATIO_DEFAULT_FILE_VERSION STREQUAL "4")
     set(MAT_FT_DEFAULT MAT_FT_MAT4)
 elseif (MATIO_DEFAULT_FILE_VERSION STREQUAL "5")
     set(MAT_FT_DEFAULT MAT_FT_MAT5)
