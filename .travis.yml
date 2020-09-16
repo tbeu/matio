@@ -39,7 +39,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION_DIR=hdf5_1_12_0
+        - HDF5_VERSION=1.12.0
         - MAX_RANK=3
     - os: linux
       arch: arm64
@@ -48,7 +48,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION_DIR=hdf5_1_12_0
+        - HDF5_VERSION=1.12.0
         - MAX_RANK=3
     - os: linux
       arch: s390x
@@ -57,7 +57,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION_DIR=hdf5_1_12_0
+        - HDF5_VERSION=1.12.0
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -65,7 +65,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION_DIR=hdf5_1_10_6
+        - HDF5_VERSION=1.10.7
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -73,7 +73,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -81,7 +81,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=1
     - os: linux
       compiler: gcc-4.8
@@ -89,7 +89,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -97,7 +97,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -105,7 +105,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -113,7 +113,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -121,7 +121,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -129,7 +129,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -137,7 +137,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -146,14 +146,14 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION=1.10.6
+        - HDF5_VERSION=1.10.7
     - os: linux
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: osx
       compiler: clang
@@ -161,7 +161,7 @@ matrix:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION_DIR=hdf5_1_8_21
+        - HDF5_VERSION=1.8.21
         - MAX_RANK=3
     - os: osx
       osx_image: xcode9.4
@@ -171,7 +171,7 @@ matrix:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
         - MAX_RANK=3
-        - HDF5_VERSION_DIR=foo
+        - HDF5_VERSION=foo
         - HOMEBREW_DEPLOY=yes
         - HOMEBREW_NO_ANALYTICS=1
 
