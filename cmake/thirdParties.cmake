@@ -17,44 +17,37 @@ if(MATIO_WITH_HDF5)
         else()
             conan_cmake_run(REQUIRES "hdf5/[>=1.8 <1.13]" "zlib/[>=1.2.3]" BASIC_SETUP CMAKE_TARGETS OPTIONS hdf5:shared=True zlib:shared=True BUILD missing)
         endif()
-        set(HDF5_FOUND TRUE)
     else()
-        find_package(HDF5)
-        if(HDF5_FOUND)
-            set(HDF_MIN_VER 1.8)
-            if(HDF5_VERSION VERSION_LESS ${HDF_MIN_VER})
-                message(FATAL_ERROR "Could NOT find HDF5: Found unsuitable version ${HDF5_VERSION}, but required is at least ${HDF_MIN_VER} (found ${HDF5_LIBRARIES})")
-            endif()
-        endif()
+        find_package(HDF5 1.8 REQUIRED)
     endif()
-endif()
 
-if(HDF5_FOUND)
     set(HAVE_HDF5 1)
-    add_library(HDF5::HDF5 INTERFACE IMPORTED)
-    if(MATIO_USE_CONAN AND TARGET CONAN_PKG::hdf5)
-        # target from Conan
-        target_link_libraries(HDF5::HDF5 INTERFACE CONAN_PKG::hdf5)
-    elseif(HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::hdf5-static)
-        # static target from hdf5 1.10 or 1.12 config
-        target_link_libraries(HDF5::HDF5 INTERFACE hdf5::hdf5-static)
-    elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::hdf5-shared)
-        # shared target from hdf5 1.10 or 1.12 config
-        target_link_libraries(HDF5::HDF5 INTERFACE hdf5::hdf5-shared)
-    elseif(TARGET hdf5)
-        # target from hdf5 1.8 config
-        target_link_libraries(HDF5::HDF5 INTERFACE hdf5)
-    else()
-        # results from CMake FindHDF5
-        set_target_properties(HDF5::HDF5 PROPERTIES
-            INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIRS}"
-            INTERFACE_LINK_LIBRARIES "${HDF5_LIBRARIES}"
-        )
-    endif()
-    if(NOT HDF5_USE_STATIC_LIBRARIES)
-        set_target_properties(HDF5::HDF5 PROPERTIES
-            INTERFACE_COMPILE_DEFINITIONS "H5_BUILT_AS_DYNAMIC_LIB"
-        )
+    if(NOT TARGET HDF5::HDF5)
+        add_library(HDF5::HDF5 INTERFACE IMPORTED)
+        if(MATIO_USE_CONAN AND TARGET CONAN_PKG::hdf5)
+            # target from Conan
+            target_link_libraries(HDF5::HDF5 INTERFACE CONAN_PKG::hdf5)
+        elseif(HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::hdf5-static)
+            # static target from hdf5 1.10 or 1.12 config
+            target_link_libraries(HDF5::HDF5 INTERFACE hdf5::hdf5-static)
+        elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::hdf5-shared)
+            # shared target from hdf5 1.10 or 1.12 config
+            target_link_libraries(HDF5::HDF5 INTERFACE hdf5::hdf5-shared)
+        elseif(TARGET hdf5)
+            # target from hdf5 1.8 config
+            target_link_libraries(HDF5::HDF5 INTERFACE hdf5)
+        else()
+            # results from CMake FindHDF5
+            set_target_properties(HDF5::HDF5 PROPERTIES
+                INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIRS}"
+                INTERFACE_LINK_LIBRARIES "${HDF5_LIBRARIES}"
+            )
+        endif()
+        if(NOT HDF5_USE_STATIC_LIBRARIES)
+            set_target_properties(HDF5::HDF5 PROPERTIES
+                INTERFACE_COMPILE_DEFINITIONS "H5_BUILT_AS_DYNAMIC_LIB"
+            )
+        endif()
     endif()
 endif()
 
@@ -66,7 +59,6 @@ endif()
 macro(matio_create_zlib target)
     add_library(ZLIB::ZLIB INTERFACE IMPORTED)
     target_link_libraries(ZLIB::ZLIB INTERFACE ${target})
-    set(ZLIB_FOUND TRUE)
 endmacro()
 
 if(MATIO_WITH_ZLIB)
@@ -87,10 +79,8 @@ if(MATIO_WITH_ZLIB)
     elseif(TARGET zlib)
         matio_create_zlib(zlib)
     else()
-        find_package(ZLIB 1.2.3)
+        find_package(ZLIB 1.2.3 REQUIRED)
     endif()
 
-    if(ZLIB_FOUND)
-        set(HAVE_ZLIB 1)
-    endif()
+    set(HAVE_ZLIB 1)
 endif()

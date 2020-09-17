@@ -64,11 +64,11 @@ if(WIN32)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 endif()
 
-if(HDF5_FOUND)
+if(MATIO_WITH_HDF5)
     target_link_libraries(${PROJECT_NAME} PUBLIC HDF5::HDF5)
 endif()
 
-if(ZLIB_FOUND)
+if(MATIO_WITH_ZLIB)
     target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 endif()
 
