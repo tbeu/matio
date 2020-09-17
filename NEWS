@@ -1,4 +1,4 @@
-Changes in 1.5.18 (14 September 2020)
+Changes in 1.5.18 (17 September 2020)
 * Added support of HDF5 v1.12.x
 * Added support for UTF-8 encoded file name on Windows (MSVC)
   (requires HDF5 >= v1.11.6 for HDF5 MAT file)
