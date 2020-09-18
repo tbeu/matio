@@ -24,7 +24,7 @@ if [[ "${USE_CMAKE:-no}" == "yes" ]] &&  [[ "${USE_CONAN:-no}" == "no" ]]; then
     mkdir -p $BUILD_DIR
     pushd $BUILD_DIR
     cmake $SRC_DIR -DCMAKE_BUILD_TYPE=Debug \
-                   -DCMAKE_PREFIX_PATH=$HDF5_DIR/share/cmake \
+                   -DHDF5_ROOT=$TRAVIS_BUILD_DIR/hdf5-$HDF5_VERSION/hdf5  \
                    -DMATIO_EXTENDED_SPARSE=$ENABLE_EXTENDED_SPARSE \
                    -DMATIO_MAT73=$ENABLE_MAT73 \
                    -DMATIO_WITH_HDF5=$ENABLE_MAT73 \
