@@ -2079,11 +2079,12 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
     if ( matvar->rank <= 0 )
         return;
     if ( NULL != matvar->dims ) {
-        int k, err;
+        int err;
         nelems = 1;
         err = Mat_MulDims(matvar, &nelems);
         printf("Dimensions: %" SIZE_T_FMTSTR,matvar->dims[0]);
         if ( MATIO_E_NO_ERROR == err ) {
+            int k;
             for ( k = 1; k < matvar->rank; k++ ) {
                 printf(" x %" SIZE_T_FMTSTR,matvar->dims[k]);
             }
@@ -2271,7 +2272,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                     for ( i = 0; i < (size_t)sparse->njc-1; i++ ) {
                         for ( j = sparse->jc[i];
                               j < (size_t)sparse->jc[i+1] && j < (size_t)sparse->ndata; j++ ) {
-                            printf("    (%d,%" SIZE_T_FMTSTR ")  ",sparse->ir[j]+1,i+1);
+                            printf("    (%u,%" SIZE_T_FMTSTR ")  ",sparse->ir[j]+1,i+1);
                             Mat_PrintNumber(matvar->data_type,re+j*stride);
                             printf(" + ");
                             Mat_PrintNumber(matvar->data_type,im+j*stride);
@@ -2283,7 +2284,7 @@ Mat_VarPrint( matvar_t *matvar, int printdata )
                     for ( i = 0; i < (size_t)sparse->njc-1; i++ ) {
                         for ( j = sparse->jc[i];
                               j < (size_t)sparse->jc[i+1] && j < (size_t)sparse->ndata; j++ ) {
-                            printf("    (%d,%" SIZE_T_FMTSTR ")  ",sparse->ir[j]+1,i+1);
+                            printf("    (%u,%" SIZE_T_FMTSTR ")  ",sparse->ir[j]+1,i+1);
                             Mat_PrintNumber(matvar->data_type,data+j*stride);
                             printf("\n");
                         }

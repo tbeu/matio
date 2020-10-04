@@ -462,11 +462,11 @@ GetEmptyMatrixMaxBufSize(const char *name, int rank, size_t *size)
 static void
 SetFieldNames(matvar_t *matvar, char *buf, size_t nfields, mat_uint32_t fieldname_length)
 {
-    size_t i;
     matvar->internal->num_fields = nfields;
     matvar->internal->fieldnames =
         (char**)calloc(nfields,sizeof(*matvar->internal->fieldnames));
     if ( NULL != matvar->internal->fieldnames ) {
+        size_t i;
         for ( i = 0; i < nfields; i++ ) {
             matvar->internal->fieldnames[i] = (char*)malloc(fieldname_length);
             if ( NULL != matvar->internal->fieldnames[i] ) {
@@ -523,6 +523,8 @@ ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
                 (void)Mat_uint32Swap(&N);
         }
     }
+    if ( 0 == N )
+        return bytesread;
     *n = N / 4;
     *v = (mat_uint32_t*)calloc(N, 1);
     if ( NULL != *v ) {
@@ -1294,16 +1296,14 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                }
             }
             /* Rank and dimension */
-            {
-                size_t nbytes = 0;
-                err = ReadRankDims(mat, cells[i], (enum matio_types)buf[4], buf[5], &nbytes);
-                bytesread += nbytes;
-                nBytes -= nbytes;
-                if ( err ) {
-                    Mat_VarFree(cells[i]);
-                    cells[i] = NULL;
-                    break;
-                }
+            nbytes = 0;
+            err = ReadRankDims(mat, cells[i], (enum matio_types)buf[4], buf[5], &nbytes);
+            bytesread += nbytes;
+            nBytes -= nbytes;
+            if ( err ) {
+                Mat_VarFree(cells[i]);
+                cells[i] = NULL;
+                break;
             }
             /* Variable name tag */
             if ( 0 != Read(buf, 1, 8, (FILE*)mat->fp, &bytesread) ) {
