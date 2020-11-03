@@ -65,11 +65,11 @@ if(WIN32)
 endif()
 
 if(HDF5_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC HDF5::HDF5)
+    target_link_libraries(${PROJECT_NAME} PUBLIC MATIO::HDF5)
 endif()
 
 if(ZLIB_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
+    target_link_libraries(${PROJECT_NAME} PUBLIC MATIO::ZLIB)
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ${MATIO_PIC})
