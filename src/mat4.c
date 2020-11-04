@@ -919,12 +919,12 @@ Mat_VarReadNextInfo4(mat_t *mat)
 
     if ( mat == NULL || mat->fp == NULL )
         return NULL;
-    else if ( NULL == (matvar = Mat_VarCalloc()) )
-        return NULL;
 
-    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
-        Mat_VarFree(matvar);
-        return NULL;
+    {
+        size_t nbytes = 0;
+        int err = Read(&tmp, sizeof(mat_int32_t), 1, (FILE*)mat->fp, &nbytes);
+        if ( err || 0 == nbytes )
+            return NULL;
     }
 
     endian.u = 0x01020304;
@@ -932,7 +932,6 @@ Mat_VarReadNextInfo4(mat_t *mat)
     /* See if MOPT may need byteswapping */
     if ( tmp < 0 || tmp > 4052 ) {
         if ( Mat_int32Swap(&tmp) > 4052 ) {
-            Mat_VarFree(matvar);
             return NULL;
         }
     }
@@ -949,7 +948,6 @@ Mat_VarReadNextInfo4(mat_t *mat)
             break;
         default:
             /* VAX, Cray, or bogus */
-            Mat_VarFree(matvar);
             return NULL;
     }
 
@@ -957,9 +955,11 @@ Mat_VarReadNextInfo4(mat_t *mat)
     O = (int)floor(tmp / 100.0);
     /* O must be zero */
     if ( 0 != O ) {
-        Mat_VarFree(matvar);
         return NULL;
     }
+
+    if ( NULL == (matvar = Mat_VarCalloc()) )
+        return NULL;
 
     tmp -= O*100;
     data_type = (int)floor(tmp / 10.0);

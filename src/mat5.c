@@ -5155,7 +5155,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
     matvar_t *matvar = NULL;
     mat_uint32_t array_flags;
 
-    if ( mat == NULL )
+    if ( mat == NULL || mat->fp == NULL )
         return NULL;
 
     fpos = ftell((FILE*)mat->fp);
@@ -5165,7 +5165,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
     }
     {
         size_t nbytes = 0;
-        err = Read(&data_type, 4, 1, (FILE*)mat->fp, &nbytes);
+        err = Read(&data_type, sizeof(mat_int32_t), 1, (FILE*)mat->fp, &nbytes);
         if ( err || 0 == nbytes )
             return NULL;
     }
