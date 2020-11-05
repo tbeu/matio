@@ -1,8 +1,8 @@
 #include <windows.h>
 
 VS_VERSION_INFO		VERSIONINFO
-  FILEVERSION		1,5,18,0
-  PRODUCTVERSION	1,5,18,0
+  FILEVERSION		1,5,19,0
+  PRODUCTVERSION	1,5,19,0
   FILEFLAGSMASK		VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
   FILEFLAGS		1
@@ -19,12 +19,12 @@ BEGIN
     //language ID = U.S. English, char set = Windows, Multilingual
     BEGIN
       VALUE "FileDescription",	"MATLAB MAT file I/O library\0"
-      VALUE "FileVersion",	"1.5.18\0"
+      VALUE "FileVersion",	"1.5.19\0"
       VALUE "InternalName",	"libmatio.dll\0"
       VALUE "LegalCopyright",	"(C) 2005-2020, Christopher Hulbert\0"
       VALUE "OriginalFilename",	"libmatio.dll\0"
       VALUE "ProductName",	"libmatio\0"
-      VALUE "ProductVersion",	"1.5.18\0"
+      VALUE "ProductVersion",	"1.5.19\0"
       VALUE "Comments","\0"
     END
   END

@@ -1,3 +1,7 @@
+Changes in 1.5.19 (6 November 2020)
+* Fixed support for CMake (>= v3.19.0) build system
+* Fixed bug reading variable from v4 MAT file (regression of v1.5.18)
+
 Changes in 1.5.18 (17 September 2020)
 * Added support of HDF5 v1.12.x
 * Added support for UTF-8 encoded file name on Windows (MSVC)
