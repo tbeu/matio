@@ -60,7 +60,7 @@ if(HAVE_LIBM)
     target_link_libraries(${PROJECT_NAME} PUBLIC m)
 endif()
 
-if(WIN32)
+if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 endif()
 
