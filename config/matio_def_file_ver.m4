@@ -1,4 +1,4 @@
-dnl Copyright (c) 2008-2020, Christopher C. Hulbert
+dnl Copyright (c) 2008-2021, Christopher C. Hulbert
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
