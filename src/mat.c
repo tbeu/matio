@@ -323,9 +323,9 @@ Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread) {
         err = MATIO_E_NO_ERROR;
     }
     if ( err ) {
-        Mat_Warning("Unexpected end-of-file: Read %"
-            SIZE_T_FMTSTR " bytes, expected %"
-            SIZE_T_FMTSTR " bytes", readcount*size, count*size);
+        Mat_Warning("Unexpected end-of-file: Read %zu"
+            " bytes, expected %zu"
+            " bytes", readcount*size, count*size);
         memset(buf, 0, count*size);
     }
     return err;

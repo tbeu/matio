@@ -38,10 +38,7 @@
 #include <math.h>
 #include <time.h>
 #if defined(_MSC_VER) || defined(__MINGW32__)
-#   define SIZE_T_FMTSTR "Iu"
 #   define strdup _strdup
-#else
-#   define SIZE_T_FMTSTR "zu"
 #endif
 
 /** Get type from tag */
@@ -1012,7 +1009,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
         for ( i = 0; i < nelems; i++ ) {
             cells[i] = Mat_VarCalloc();
             if ( NULL == cells[i] ) {
-                Mat_Critical("Couldn't allocate memory for cell %" SIZE_T_FMTSTR, i);
+                Mat_Critical("Couldn't allocate memory for cell %zu", i);
                 continue;
             }
 
@@ -1038,7 +1035,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             } else if ( uncomp_buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
-                Mat_Critical("cells[%" SIZE_T_FMTSTR "], Uncompressed type not MAT_T_MATRIX", i);
+                Mat_Critical("cells[%zu], Uncompressed type not MAT_T_MATRIX", i);
                 break;
             }
             cells[i]->compression = MAT_COMPRESSION_ZLIB;
@@ -1233,7 +1230,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             mat_uint32_t name_len;
             cells[i] = Mat_VarCalloc();
             if ( NULL == cells[i] ) {
-                Mat_Critical("Couldn't allocate memory for cell %" SIZE_T_FMTSTR, i);
+                Mat_Critical("Couldn't allocate memory for cell %zu", i);
                 continue;
             }
 
@@ -1262,7 +1259,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             } else if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
-                Mat_Critical("cells[%" SIZE_T_FMTSTR "] not MAT_T_MATRIX, fpos = %ld", i,
+                Mat_Critical("cells[%zu] not MAT_T_MATRIX, fpos = %ld", i,
                     ftell((FILE*)mat->fp));
                 break;
             }
@@ -1498,7 +1495,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
-                Mat_Critical("fields[%" SIZE_T_FMTSTR "], Uncompressed type not MAT_T_MATRIX", i);
+                Mat_Critical("fields[%zu], Uncompressed type not MAT_T_MATRIX", i);
                 break;
             } else if ( 0 == nBytes ) {
                 /* Empty field: Memory optimization */
@@ -1736,7 +1733,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
 
             fields[i] = Mat_VarCalloc();
             if ( NULL == fields[i] ) {
-                Mat_Critical("Couldn't allocate memory for field %" SIZE_T_FMTSTR, i);
+                Mat_Critical("Couldn't allocate memory for field %zu", i);
                 continue;
             }
 
@@ -1755,7 +1752,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
-                Mat_Critical("fields[%" SIZE_T_FMTSTR "] not MAT_T_MATRIX, fpos = %ld", i,
+                Mat_Critical("fields[%zu] not MAT_T_MATRIX, fpos = %ld", i,
                     ftell((FILE*)mat->fp));
                 break;
             } else if ( 0 == nBytes ) {

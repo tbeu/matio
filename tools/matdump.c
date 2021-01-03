@@ -687,7 +687,7 @@ print_default_numeric_3d(matvar_t *matvar)
         char *rp = (char*)complex_data->Re;
         char *ip = (char*)complex_data->Im;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
-            Mat_Message("%s(:,:,%" SIZE_T_FMTSTR ") = ",matvar->name,k);
+            Mat_Message("%s(:,:,%zu) = ",matvar->name,k);
             indent++;
             for ( i = 0; i < matvar->dims[0]; i++ ) {
                 for ( l = 0; l < indent; l++ )
@@ -707,7 +707,7 @@ print_default_numeric_3d(matvar_t *matvar)
     } else {
         char *data = (char*)matvar->data;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
-            Mat_Message("%s(:,:,%" SIZE_T_FMTSTR ") = ",matvar->name,k);
+            Mat_Message("%s(:,:,%zu) = ",matvar->name,k);
             indent++;
             for ( i = 0; i < matvar->dims[0]; i++ ) {
                 for ( l = 0; l < indent; l++ )

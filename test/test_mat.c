@@ -34,11 +34,6 @@
 #if !defined(HAVE_STRCASECMP)
 #   define strcasecmp(a,b) strcmp(a,b)
 #endif
-#if defined(__MINGW32__)
-#   define SIZE_T_FMTSTR "Iu"
-#else
-#   define SIZE_T_FMTSTR "zu"
-#endif
 
 static const char *optstring = "a:c:o:v:HLT:Vz";
 static struct option options[] = {
@@ -4100,7 +4095,7 @@ int main (int argc, char *argv[])
             size_t *subs, dims[3] = {256,256,124};
             redirect_output(output_name);
             subs = Mat_CalcSubscripts2(3,dims,18921-1);
-            Mat_Message("(%" SIZE_T_FMTSTR ",%" SIZE_T_FMTSTR ",%" SIZE_T_FMTSTR ")",subs[0],subs[1],subs[2]);
+            Mat_Message("(%zu,%zu,%zu)",subs[0],subs[1],subs[2]);
             free(subs);
             k++;
             ntests++;
@@ -4109,7 +4104,7 @@ int main (int argc, char *argv[])
             size_t linear_index = 0;
             redirect_output(output_name);
             err += Mat_CalcSingleSubscript2(3,dims,index,&linear_index);
-            Mat_Message("%" SIZE_T_FMTSTR,linear_index);
+            Mat_Message("%zu",linear_index);
             k++;
             ntests++;
         } else if ( !strcasecmp(argv[k],"reshape32x32x32") ) {
