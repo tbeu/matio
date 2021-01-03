@@ -922,7 +922,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
 
     {
         size_t nbytes = 0;
-        int err = Read(&tmp, sizeof(mat_int32_t), 1, (FILE*)mat->fp, &nbytes);
+        int err = Read(&tmp, sizeof(mat_int32_t), 1, (FILE*)mat->fp, &nbytes, READ_ACCEPT_EOF);
         if ( err || 0 == nbytes )
             return NULL;
     }
@@ -1011,7 +1011,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
+    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL, READ_STRICT) ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -1019,7 +1019,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_int32Swap(&tmp);
     matvar->dims[0] = tmp;
 
-    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
+    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL, READ_STRICT) ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -1027,7 +1027,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_int32Swap(&tmp);
     matvar->dims[1] = tmp;
 
-    if ( 0 != Read(&(matvar->isComplex), sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
+    if ( 0 != Read(&(matvar->isComplex), sizeof(int), 1, (FILE*)mat->fp, NULL, READ_STRICT) ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -1035,7 +1035,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL) ) {
+    if ( 0 != Read(&tmp, sizeof(int), 1, (FILE*)mat->fp, NULL, READ_STRICT) ) {
         Mat_VarFree(matvar);
         return NULL;
     }
@@ -1051,7 +1051,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         Mat_VarFree(matvar);
         return NULL;
     }
-    if ( 0 != Read(matvar->name, sizeof(char), tmp, (FILE*)mat->fp, NULL) ) {
+    if ( 0 != Read(matvar->name, sizeof(char), tmp, (FILE*)mat->fp, NULL, READ_STRICT) ) {
         Mat_VarFree(matvar);
         return NULL;
     } else {

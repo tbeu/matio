@@ -310,16 +310,17 @@ int Add(size_t* res, size_t a, size_t b)
  * @param count Element count
  * @param fp File pointer
  * @param[out] bytesread Number of bytes read from the file
+ * @param acceptEOF Flag for valid read beyond EOF
  * @retval 0 on success
  */
 int
-Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread) {
+Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread, int acceptEOF) {
     const size_t readcount = fread(buf, size, count, fp);
     int err = readcount != count;
     if ( NULL != bytesread ) {
         *bytesread += readcount*size;
     }
-    if ( err && feof(fp) && 0 == readcount) {
+    if ( acceptEOF && err && feof(fp) && 0 == readcount) {
         err = MATIO_E_NO_ERROR;
     }
     if ( err ) {
