@@ -5150,10 +5150,9 @@ matvar_t *
 Mat_VarReadNextInfo5( mat_t *mat )
 {
     int err;
-    mat_int32_t data_type, nBytes;
+    mat_uint32_t data_type, array_flags, nBytes;
     long fpos;
     matvar_t *matvar = NULL;
-    mat_uint32_t array_flags;
 
     if ( mat == NULL || mat->fp == NULL )
         return NULL;
@@ -5165,18 +5164,18 @@ Mat_VarReadNextInfo5( mat_t *mat )
     }
     {
         size_t nbytes = 0;
-        err = Read(&data_type, sizeof(mat_int32_t), 1, (FILE*)mat->fp, &nbytes);
+        err = Read(&data_type, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, &nbytes);
         if ( err || 0 == nbytes )
             return NULL;
     }
-    err = Read(&nBytes, 4, 1, (FILE*)mat->fp, NULL);
+    err = Read(&nBytes, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, NULL);
     if ( err )
         return NULL;
     if ( mat->byteswap ) {
-        (void)Mat_int32Swap(&data_type);
-        (void)Mat_int32Swap(&nBytes);
+        (void)Mat_uint32Swap(&data_type);
+        (void)Mat_uint32Swap(&nBytes);
     }
-    if ( nBytes > INT32_MAX - 8 - fpos )
+    if ( nBytes > INT32_MAX - 8 - (mat_uint32_t)fpos )
         return NULL;
     switch ( data_type ) {
         case MAT_T_COMPRESSED:
@@ -5210,7 +5209,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
             }
             nbytes = uncomp_buf[1];
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
-                (void)fseek((FILE*)mat->fp,nBytes-bytesread,SEEK_CUR);
+                (void)fseek((FILE*)mat->fp,(long)(nBytes-bytesread),SEEK_CUR);
                 Mat_VarFree(matvar);
                 matvar = NULL;
                 Mat_Critical("Uncompressed type not MAT_T_MATRIX");
@@ -5278,7 +5277,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                         if ( do_clean ) {
                             free(dims);
                         }
-                        (void)fseek((FILE*)mat->fp,nBytes-bytesread,SEEK_CUR);
+                        (void)fseek((FILE*)mat->fp,(long)(nBytes-bytesread),SEEK_CUR);
                         Mat_VarFree(matvar);
                         matvar = NULL;
                         Mat_Critical("Integer multiplication overflow");
@@ -5288,7 +5287,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                     if ( NULL == matvar->dims ) {
                         if ( do_clean )
                             free(dims);
-                        (void)fseek((FILE*)mat->fp,nBytes-bytesread,SEEK_CUR);
+                        (void)fseek((FILE*)mat->fp,(long)(nBytes-bytesread),SEEK_CUR);
                         Mat_VarFree(matvar);
                         matvar = NULL;
                         Mat_Critical("Couldn't allocate memory");
