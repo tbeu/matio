@@ -28,31 +28,31 @@ Matio is an open-source C library for reading and writing binary MATLAB MAT file
 This library is designed for use by programs/libraries that do not have access or do not want to rely on MATLAB's shared libraries.
 
 ### 1.1 Contact
-You can contact Thomas Beutlich through email at t-beu@users.sourceforge.net.
+You can contact the maintainer through email at t-beu@users.sourceforge.net.
 
 ### 1.2 Acknowledgements
 The following people/organizations have helped in the development of matio through patches, bug reports, and/or testing:
 
-* Greg Sjaardema ([https://github.com/gsjaardema](https://github.com/gsjaardema))
-* Jacco van Beek ([https://sourceforge.net/u/jabe](https://sourceforge.net/u/jabe))
-* John Filo ([https://github.com/jfilo](https://github.com/jfilo))
-* Maarten Bent ([https://github.com/MaartenBent](https://github.com/MaartenBent))
-* Modelica Association ([https://modelica.org/association](https://modelica.org/association))
-* Nelson ([https://nelson-numerical-software.github.io/nelson-website/](https://nelson-numerical-software.github.io/nelson-website/))
-* Nils Jannasch ([https://github.com/NJannasch](https://github.com/NJannasch))
-* OpenMEEG ([http://openmeeg.github.io/](http://openmeeg.github.io/))
-* Scilab ([http://www.scilab.org/](http://www.scilab.org/))
-* Sébastien Villemot ([https://github.com/svillemot](https://github.com/svillemot))
+* [Greg Sjaardema](https://github.com/gsjaardema)
+* [Jacco van Beek](https://sourceforge.net/u/jabe)
+* [John Filo](https://github.com/jfilo)
+* [Maarten Bent](https://github.com/MaartenBent)
+* [Modelica Association](https://modelica.org/association)
+* [Nelson](https://nelson-numerical-software.github.io/nelson-website/)
+* [Nils Jannasch](https://github.com/NJannasch)
+* [OpenMEEG](http://openmeeg.github.io/)
+* [Scilab](http://www.scilab.org/)
+* [Sébastien Villemot](https://github.com/svillemot)
 * SGI in support of Interactive Supercomputing, Inc.
-* Steven Leibman <sleibman@alum.mit.edu>
+* [Steven Leibman](mailto:sleibman@alum.mit.edu)
 
 ### 1.3 Contributing
 If you are interested in collaborations, contact me via email (see section [1.1](#11-contact)).
 
 ### 1.4 Questions and Reporting Bugs
-Questions can be asked using the forums on the sourceforge site hosting matio ([https://sourceforge.net/p/matio/discussion](https://sourceforge.net/p/matio/discussion)).
+Questions can be asked using the [forums](https://sourceforge.net/p/matio/discussion) on the sourceforge site hosting matio.
 
-Bugs, enhancements, etc. should be submitted using one of the trackers on the sourceforge page ([https://sourceforge.net/p/matio/_list/tickets](https://sourceforge.net/p/matio/_list/tickets)).
+Bugs, enhancements, etc. should be submitted using one of the [trackers]((https://sourceforge.net/p/matio/_list/tickets)) on the sourceforge page.
 
 ## 2.0 Building
 This section describes how to build matio. Section [2.1](#21-dependencies) describes the dependencies, section [2.2](#22-building-matio) how to build/test matio, and section [2.3](#23-platforms) documents the platforms matio has been tested on.
