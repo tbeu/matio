@@ -3442,6 +3442,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     /* Complex Data Tag */
                     err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT);
                     if ( err ) {
+                        ComplexFree(complex_data);
                         break;
                     }
                     if ( byteswap )
@@ -3454,6 +3455,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         data_in_tag = 0;
                         err = Read(tag+1, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT);
                         if ( err ) {
+                            ComplexFree(complex_data);
                             break;
                         }
                         if ( byteswap )
