@@ -183,15 +183,15 @@ matrix:
         - HOMEBREW_DEPLOY=yes
         - HOMEBREW_NO_ANALYTICS=1
 
-before_install: ./.ci/travis_before_install.sh
+before_install: bash ./.ci/travis_before_install.sh || travis_terminate 1;
 
-install: ./.ci/travis_install.sh
+install: bash ./.ci/travis_install.sh || travis_terminate 1;
 
-before_script: ./.ci/travis_before_script.sh
+before_script: bash ./.ci/travis_before_script.sh || travis_terminate 1;
 
-script: ./.ci/travis_script.sh
+script: bash ./.ci/travis_script.sh || travis_terminate 1;
 
-after_success: ./.ci/travis_after_success.sh
+after_success: bash ./.ci/travis_after_success.sh || travis_terminate 1;
 
 notifications:
   email: false
