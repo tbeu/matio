@@ -52,7 +52,7 @@ static const char *helpstr[] = {
 "",
 "Usage: matdump [OPTIONS] mat_file [var1 var2 ...]",
 "",
-"Runs various test on the Matlab I/O library libmatio",
+"Dumps the variables of the MAT file using libmatio",
 "",
 "OPTIONS",
 "-d,--data         Print data with header information",

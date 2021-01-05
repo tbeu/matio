@@ -56,7 +56,7 @@ static const char *helpstr[] = {
     "",
     "Usage: test_mat [OPTIONS] test [TEST_OPTS]",
     "",
-    "Runs various test on the Matlab I/O library libmatio",
+    "Runs various tests on the MAT file I/O library libmatio",
     "",
     "OPTIONS",
     "-a,--append d        Append variable in dimension d",
