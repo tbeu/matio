@@ -47,12 +47,12 @@ The following people/organizations have helped in the development of matio throu
 * [Steven Leibman](mailto:sleibman@alum.mit.edu)
 
 ### 1.3 Contributing
-If you are interested in collaborations, contact me via email (see section [1.1](#11-contact)).
+If you are interested in collaborations, contact the maintainer via email (see section [1.1](#11-contact)).
 
 ### 1.4 Questions and Reporting Bugs
 Questions can be asked using the [forums](https://sourceforge.net/p/matio/discussion) on the sourceforge site hosting matio.
 
-Bugs, enhancements, etc. should be submitted using one of the [trackers]((https://sourceforge.net/p/matio/_list/tickets)) on the sourceforge page.
+Bugs, enhancements, etc. should be submitted using one of the [trackers](https://sourceforge.net/p/matio/_list/tickets) on the sourceforge page.
 
 ## 2.0 Building
 This section describes how to build matio. Section [2.1](#21-dependencies) describes the dependencies, section [2.2](#22-building-matio) how to build/test matio, and section [2.3](#23-platforms) documents the platforms matio has been tested on.
