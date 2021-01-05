@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Adapter utility from fuzzer input to a temporary file, for fuzzing APIs that
-// require a file instead of an input buffer.
+#ifndef MATIO_WRAP_H_
+#define MATIO_WRAP_H_
 
 #include <cstddef>
 #include <cstdint>
@@ -42,3 +42,5 @@ int MatioRead(const char* file_name) {
 
   return 0;
 }
+
+#endif
