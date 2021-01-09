@@ -502,7 +502,7 @@ ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
         }
 #endif
     } else {
-        if ( 0 != Read(tag, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT) ) {
+        if ( 0 != Read(tag, 4, 1, (FILE*)mat->fp, &bytesread) ) {
             return bytesread;
         }
         if ( mat->byteswap )
@@ -513,7 +513,7 @@ ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
             N = (tag[0] & 0xffff0000) >> 16;
         } else {
             data_in_tag = 0;
-            if ( 0 != Read(&N, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT) ) {
+            if ( 0 != Read(&N, 4, 1, (FILE*)mat->fp, &bytesread) ) {
                 return bytesread;
             }
             if ( mat->byteswap )
@@ -1235,7 +1235,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read variable tag for cell */
-            err = Read(buf, 4, 2, (FILE*)mat->fp, &nbytes, READ_STRICT);
+            err = Read(buf, 4, 2, (FILE*)mat->fp, &nbytes);
 
             /* Empty cells at the end of a file may cause an EOF */
             if ( 0 == err && 0 == nbytes )
@@ -1265,7 +1265,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read array flags and the dimensions tag */
-            err = Read(buf, 4, 6, (FILE*)mat->fp, &bytesread, READ_STRICT);
+            err = Read(buf, 4, 6, (FILE*)mat->fp, &bytesread);
             if ( err ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
@@ -1303,7 +1303,7 @@ ReadNextCell( mat_t *mat, matvar_t *matvar )
                 break;
             }
             /* Variable name tag */
-            if ( 0 != Read(buf, 1, 8, (FILE*)mat->fp, &bytesread, READ_STRICT) ) {
+            if ( 0 != Read(buf, 1, 8, (FILE*)mat->fp, &bytesread) ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
                 break;
@@ -1645,7 +1645,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         mat_uint32_t buf[6] = {0,};
         mat_uint32_t array_flags, len;
 
-        err = Read(buf, 4, 2, (FILE*)mat->fp, &bytesread, READ_STRICT);
+        err = Read(buf, 4, 2, (FILE*)mat->fp, &bytesread);
         if ( err ) {
             return bytesread;
         }
@@ -1661,7 +1661,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
         }
 
         /* Field name tag */
-        err = Read(buf, 4, 2, (FILE*)mat->fp, &bytesread, READ_STRICT);
+        err = Read(buf, 4, 2, (FILE*)mat->fp, &bytesread);
         if ( err ) {
             return bytesread;
         }
@@ -1677,7 +1677,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             if ( nfields ) {
                 char *ptr = (char*)malloc(nfields*fieldname_size);
                 if ( NULL != ptr ) {
-                    err = Read(ptr, 1, nfields*fieldname_size, (FILE*)mat->fp, &bytesread, READ_STRICT);
+                    err = Read(ptr, 1, nfields*fieldname_size, (FILE*)mat->fp, &bytesread);
                     if ( 0 == err ) {
                         SetFieldNames(matvar, ptr, nfields, fieldname_size);
                     } else {
@@ -1738,7 +1738,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read variable tag for struct field */
-            err = Read(buf, 4, 2, (FILE*)mat->fp, &bytesread, READ_STRICT);
+            err = Read(buf, 4, 2, (FILE*)mat->fp, &bytesread);
             if ( err ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
@@ -1763,7 +1763,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             }
 
             /* Read array flags and the dimensions tag */
-            err = Read(buf, 4, 6, (FILE*)mat->fp, &bytesread, READ_STRICT);
+            err = Read(buf, 4, 6, (FILE*)mat->fp, &bytesread);
             if ( err ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
@@ -1803,7 +1803,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                 }
             }
             /* Variable name tag */
-            err = Read(buf, 1, 8, (FILE*)mat->fp, &bytesread, READ_STRICT);
+            err = Read(buf, 1, 8, (FILE*)mat->fp, &bytesread);
             if ( err ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
@@ -1903,7 +1903,7 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
             mat_uint32_t buf;
 
             for ( i = 0; i < matvar->rank; i++) {
-                err = Read(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, read_bytes, READ_STRICT);
+                err = Read(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, read_bytes);
                 if ( MATIO_E_NO_ERROR == err ) {
                     if ( mat->byteswap ) {
                         matvar->dims[i] = Mat_uint32Swap(&buf);
@@ -1919,7 +1919,7 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
             }
 
             if ( matvar->rank % 2 != 0 ) {
-                err = Read(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, read_bytes, READ_STRICT);
+                err = Read(&buf, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, read_bytes);
                 if ( err ) {
                     free(matvar->dims);
                     matvar->dims = NULL;
@@ -2897,7 +2897,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
         }
 #endif
     } else {
-        err = Read(tag, 4, 1, (FILE*)mat->fp, NULL, READ_STRICT);
+        err = Read(tag, 4, 1, (FILE*)mat->fp, NULL);
         if ( err ) {
             return err;
         }
@@ -2909,7 +2909,7 @@ Mat_VarReadNumeric5(mat_t *mat,matvar_t *matvar,void *data,size_t N)
             nBytes = (tag[0] & 0xffff0000) >> 16;
         } else {
             data_in_tag = 0;
-            err = Read(tag+1, 4, 1, (FILE*)mat->fp, NULL, READ_STRICT);
+            err = Read(tag+1, 4, 1, (FILE*)mat->fp, NULL);
             if ( err ) {
                 return err;
             }
@@ -3171,7 +3171,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 matvar->data_size = Mat_SizeOf(matvar->data_type);
                 matvar->nbytes = nBytes;
             } else {
-                err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT);
+                err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread);
                 if ( err ) {
                     break;
                 }
@@ -3183,7 +3183,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     /* nBytes = (tag[0] & 0xffff0000) >> 16; */
                 } else {
                     data_in_tag = 0;
-                    err = Read(tag+1, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT);
+                    err = Read(tag+1, 4, 1, (FILE*)mat->fp, &bytesread);
                     if ( err ) {
                         break;
                     }
@@ -3328,7 +3328,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 }
 #endif
             } else {
-                err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT);
+                err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread);
                 if ( err ) {
                     break;
                 }
@@ -3340,7 +3340,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     N = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    err = Read(&N, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT);
+                    err = Read(&N, 4, 1, (FILE*)mat->fp, &bytesread);
                     if ( err ) {
                         break;
                     }
@@ -3440,7 +3440,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         (void)fseek((FILE*)mat->fp,8-(nBytes % 8),SEEK_CUR);
 
                     /* Complex Data Tag */
-                    err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT);
+                    err = Read(tag, 4, 1, (FILE*)mat->fp, &bytesread);
                     if ( err ) {
                         ComplexFree(complex_data);
                         break;
@@ -3453,7 +3453,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         nBytes = (tag[0] & 0xffff0000) >> 16;
                     } else {
                         data_in_tag = 0;
-                        err = Read(tag+1, 4, 1, (FILE*)mat->fp, &bytesread, READ_STRICT);
+                        err = Read(tag+1, 4, 1, (FILE*)mat->fp, &bytesread);
                         if ( err ) {
                             ComplexFree(complex_data);
                             break;
@@ -4478,7 +4478,7 @@ Mat_VarReadData5(mat_t *mat,matvar_t *matvar,void *data,
 
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-        err = Read(tag, 4, 2, (FILE*)mat->fp, NULL, READ_STRICT);
+        err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
         if ( err ) {
             return err;
         }
@@ -4560,7 +4560,7 @@ Mat_VarReadData5(mat_t *mat,matvar_t *matvar,void *data,
                 ReadDataSlab2(mat,complex_data->Re,matvar->class_type,
                     matvar->data_type,matvar->dims,start,stride,edge);
                 (void)fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
-                err = Read(tag, 4, 2, (FILE*)mat->fp, NULL, READ_STRICT);
+                err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
                 if ( err ) {
                     return err;
                 }
@@ -4630,7 +4630,7 @@ Mat_VarReadData5(mat_t *mat,matvar_t *matvar,void *data,
                     start,stride,edge);
 
                 (void)fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
-                err = Read(tag, 4, 2, (FILE*)mat->fp, NULL, READ_STRICT);
+                err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
                 if ( err ) {
                     return err;
                 }
@@ -4727,7 +4727,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
         return -1;
     (void)fseek((FILE*)mat->fp,matvar->internal->datapos,SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-        err = Read(tag, 4, 2, (FILE*)mat->fp, NULL, READ_STRICT);
+        err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
         if ( err ) {
             return err;
         }
@@ -4810,7 +4810,7 @@ Mat_VarReadDataLinear5(mat_t *mat,matvar_t *matvar,void *data,int start,
             ReadDataSlab1(mat,complex_data->Re,matvar->class_type,
                           matvar->data_type,start,stride,edge);
             (void)fseek((FILE*)mat->fp,matvar->internal->datapos+real_bytes,SEEK_SET);
-            err = Read(tag, 4, 2, (FILE*)mat->fp, NULL, READ_STRICT);
+            err = Read(tag, 4, 2, (FILE*)mat->fp, NULL);
             if ( err ) {
                 return err;
             }
@@ -5156,18 +5156,19 @@ Mat_VarReadNextInfo5( mat_t *mat )
     if ( mat == NULL || mat->fp == NULL )
         return NULL;
 
-    fpos = ftell((FILE*)mat->fp);
-    if ( fpos == -1L ) {
-        Mat_Critical("Couldn't determine file position");
+    if ( IsEndOfFile((FILE*)mat->fp, &fpos) )
         return NULL;
-    }
+
+    if ( fpos == -1L )
+        return NULL;
+
     {
         size_t nbytes = 0;
-        err = Read(&data_type, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, &nbytes, READ_ACCEPT_EOF);
+        err = Read(&data_type, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, &nbytes);
         if ( err || 0 == nbytes )
             return NULL;
     }
-    err = Read(&nBytes, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, NULL, READ_STRICT);
+    err = Read(&nBytes, sizeof(mat_uint32_t), 1, (FILE*)mat->fp, NULL);
     if ( err )
         return NULL;
     if ( mat->byteswap ) {
@@ -5375,7 +5376,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
             mat_uint32_t buf[6];
 
             /* Read array flags and the dimensions tag */
-            err = Read(buf, 4, 6, (FILE*)mat->fp, NULL, READ_STRICT);
+            err = Read(buf, 4, 6, (FILE*)mat->fp, NULL);
             if ( err ) {
                 (void)fseek((FILE*)mat->fp, fpos, SEEK_SET);
                 break;
@@ -5419,7 +5420,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 }
             }
             /* Variable name tag */
-            err = Read(buf, 4, 2, (FILE*)mat->fp, NULL, READ_STRICT);
+            err = Read(buf, 4, 2, (FILE*)mat->fp, NULL);
             if ( err ) {
                 Mat_VarFree(matvar);
                 matvar = NULL;
@@ -5447,7 +5448,7 @@ Mat_VarReadNextInfo5( mat_t *mat )
                 }
                 matvar->name = (char*)malloc(len_pad + 1);
                 if ( NULL != matvar->name ) {
-                    err = Read(matvar->name, 1, len_pad, (FILE*)mat->fp, NULL, READ_STRICT);
+                    err = Read(matvar->name, 1, len_pad, (FILE*)mat->fp, NULL);
                     if ( MATIO_E_NO_ERROR == err ) {
                         matvar->name[len] = '\0';
                     } else {

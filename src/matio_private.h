@@ -55,9 +55,6 @@
 #define _CAT(X, Y) X ## Y
 #define CAT(X, Y) _CAT(X, Y)
 
-#define READ_STRICT (0)
-#define READ_ACCEPT_EOF (1)
-
 /** @if mat_devman
  * @brief Matlab MAT File information
  *
@@ -229,7 +226,8 @@ EXTERN enum matio_types ClassType2DataType(enum matio_classes class_type);
 EXTERN int Add(size_t* res, size_t a, size_t b);
 EXTERN int Mul(size_t* res, size_t a, size_t b);
 EXTERN int Mat_MulDims(const matvar_t *matvar, size_t* nelems);
-EXTERN int Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread, int checkEOF);
+EXTERN int Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread);
+EXTERN int IsEndOfFile(FILE* fp, long* fpos);
 
 /* io.c */
 #if defined(_WIN32) && defined(_MSC_VER)

@@ -310,18 +310,14 @@ int Add(size_t* res, size_t a, size_t b)
  * @param count Element count
  * @param fp File pointer
  * @param[out] bytesread Number of bytes read from the file
- * @param acceptEOF Flag for valid read beyond EOF
  * @retval 0 on success
  */
 int
-Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread, int acceptEOF) {
+Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread) {
     const size_t readcount = fread(buf, size, count, fp);
     int err = readcount != count;
     if ( NULL != bytesread ) {
         *bytesread += readcount*size;
-    }
-    if ( acceptEOF && err && feof(fp) && 0 == readcount) {
-        err = MATIO_E_NO_ERROR;
     }
     if ( err ) {
         Mat_Warning("Unexpected end-of-file: Read %zu"
@@ -330,6 +326,33 @@ Read(void* buf, size_t size, size_t count, FILE* fp, size_t* bytesread, int acce
         memset(buf, 0, count*size);
     }
     return err;
+}
+
+/** @brief Check for End of file
+ *
+ * @param fp File pointer
+ * @param[out] fpos Current file position
+ * @retval 0 on success
+ */
+int
+IsEndOfFile(FILE* fp, long* fpos) {
+    int isEOF = feof(fp);
+    long fPos = ftell(fp);
+    if ( !isEOF ) {
+        if ( fPos == -1L ) {
+            Mat_Critical("Couldn't determine file position");
+        } else {
+            (void)fseek(fp, 0, SEEK_END);
+            isEOF = fPos == ftell(fp);
+            if ( !isEOF ) {
+                (void)fseek(fp, fPos, SEEK_SET);
+            }
+        }
+    }
+    if ( NULL != fpos ) {
+        *fpos = fPos;
+    }
+    return isEOF;
 }
 
 /*
@@ -767,11 +790,11 @@ Mat_GetDir(mat_t *mat, size_t *n)
                         }
                     }
                     Mat_VarFree(matvar);
-                } else if ( !feof((FILE *)mat->fp) ) {
+                } else if ( !IsEndOfFile((FILE *)mat->fp, NULL) ) {
                     Mat_Critical("An error occurred in reading the MAT file");
                     break;
                 }
-            } while ( !feof((FILE *)mat->fp) );
+            } while ( !IsEndOfFile((FILE *)mat->fp, NULL) );
             (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
             *n = mat->num_datasets;
         }
@@ -2523,11 +2546,11 @@ Mat_VarReadInfo( mat_t *mat, const char *name )
                         Mat_VarFree(matvar);
                         matvar = NULL;
                     }
-                } else if ( !feof((FILE *)mat->fp) ) {
+                } else if ( !IsEndOfFile((FILE *)mat->fp, NULL) ) {
                     Mat_Critical("An error occurred in reading the MAT file");
                     break;
                 }
-            } while ( NULL == matvar && !feof((FILE *)mat->fp) );
+            } while ( NULL == matvar && !IsEndOfFile((FILE *)mat->fp, NULL) );
             (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
         } else {
             Mat_Critical("Couldn't determine file position");
@@ -2597,16 +2620,13 @@ Mat_VarRead( mat_t *mat, const char *name )
 matvar_t *
 Mat_VarReadNext( mat_t *mat )
 {
-    long fpos = 0;
-    matvar_t *matvar = NULL;
+    long fpos;
+    matvar_t *matvar;
 
     if ( mat->version != MAT_FT_MAT73 ) {
-        if ( feof((FILE *)mat->fp) )
+        if ( IsEndOfFile((FILE *)mat->fp, &fpos) )
             return NULL;
-        /* Read position so we can reset the file position if an error occurs */
-        fpos = ftell((FILE*)mat->fp);
         if ( fpos == -1L ) {
-            Mat_Critical("Couldn't determine file position");
             return NULL;
         }
     }
@@ -2618,6 +2638,7 @@ Mat_VarReadNext( mat_t *mat )
             matvar = NULL;
         }
     } else if ( mat->version != MAT_FT_MAT73 ) {
+        /* Reset the file position */
         (void)fseek((FILE*)mat->fp,fpos,SEEK_SET);
     }
 
