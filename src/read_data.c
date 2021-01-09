@@ -365,7 +365,7 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,size_t len)
         case MAT_T_UINT8:
         case MAT_T_UTF8:
         {
-            size_t readcount = fread(data,Mat_SizeOf(data_type),len,(FILE*)mat->fp);
+            size_t readcount = fread(data,data_size,len,(FILE*)mat->fp);
             return readcount*data_size;
         }
         case MAT_T_UINT16:
@@ -373,7 +373,7 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,size_t len)
         {
             size_t i, readcount;
             mat_uint16_t v[READ_BLOCK_SIZE/sizeof(mat_uint16_t)];
-            READ_DATA(mat_uint16_t, Mat_uint16Swap);
+            READ_DATA(char, Mat_uint16Swap);
             return readcount*data_size;
         }
         default:
