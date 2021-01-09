@@ -15,26 +15,37 @@
 #
 ################################################################################
 
-# build szip
-tar -xvf szip.tar.gz
-cd szip-2.1.1
-./configure --disable-shared CFLAGS="-w"
-make -C src
-cd ..
+# build zlib
+pushd "$SRC/zlib"
+./configure --static --prefix="$WORK"
+make -j$(nproc) CFLAGS="$CFLAGS -fPIC"
+make install
+popd
 
-# build project
-./autogen.sh
-./configure --with-hdf5=$HDF5_DIR
+#build hdf5
+pushd "$SRC"
+tar -xvf hdf5-1.12.0.tar.gz
+cd hdf5-1.12.0
+./configure --disable-shared --disable-deprecated-symbols --disable-hl --disable-parallel --disable-trace --disable-internal-debug --disable-asserts --disable-tests --disable-tools --with-pic --with-zlib="$WORK" --prefix="$WORK"
 make -j$(nproc)
 make install
+popd
+
+# build matio
+./autogen.sh
+./configure --prefix="$WORK" --disable-shared --with-hdf5="$WORK" --with-zlib="$WORK"
+make -j$(nproc)
+make install
+
+MATIO_INCLUDE="$WORK/include"
+MATIO_LIBS_NO_FUZZ="$WORK/lib/libmatio.a $WORK/lib/libhdf5.a $WORK/lib/libz.a"
+MATIO_LIBS="$LIB_FUZZING_ENGINE $MATIO_LIBS_NO_FUZZ"
 
 # build fuzzers
 cd ./ossfuzz
 for fuzzers in $(find . -name '*_fuzzer.cpp'); do
   base=$(basename -s .cpp $fuzzers)
-  $CXX $CXXFLAGS -std=c++11 -I../include \
-    $fuzzers ../getopt/.libs/libgetopt.a \
-    ../src/.libs/libmatio.a -o $OUT/$base $LIB_FUZZING_ENGINE $HDF5_DIR/libhdf5.a ../szip-2.1.1/src/.libs/libsz.a -lz
+  $CXX $CXXFLAGS -std=c++11 -I$MATIO_INCLUDE $fuzzers -o $OUT/$base $MATIO_LIBS
   zip -q -r ${base}_seed_corpus.zip ../share
 done
 
