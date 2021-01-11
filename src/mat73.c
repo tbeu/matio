@@ -822,6 +822,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
 
     if ( nfields > 0 ) {
         H5O_INFO_T object_info;
+        object_info.type = H5O_TYPE_UNKNOWN;
         H5OGET_INFO_BY_NAME(dset_id, matvar->internal->fieldnames[0], &object_info, H5P_DEFAULT);
         obj_type = object_info.type;
     } else {
@@ -912,6 +913,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         for ( k = 0; k < nfields; k++ ) {
             H5O_INFO_T object_info;
             fields[k] = NULL;
+            object_info.type = H5O_TYPE_UNKNOWN;
             H5OGET_INFO_BY_NAME(dset_id, matvar->internal->fieldnames[k], &object_info, H5P_DEFAULT);
             if ( object_info.type == H5O_TYPE_DATASET ) {
                 field_id = H5Dopen(dset_id,matvar->internal->fieldnames[k],
@@ -962,6 +964,7 @@ Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *in
 
     /* FIXME: follow symlinks, datatypes? */
 
+    object_info.type = H5O_TYPE_UNKNOWN;
     H5OGET_INFO_BY_NAME(dset_id, name, &object_info, H5P_DEFAULT);
     if ( H5O_TYPE_DATASET != object_info.type && H5O_TYPE_GROUP != object_info.type )
         return 0;
@@ -2942,6 +2945,7 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
     if ( 0 == strcmp(name, "#refs#") || 0 == strcmp(name, "#subsystem#") )
         return 0;
 
+    object_info.type = H5O_TYPE_UNKNOWN;
     H5OGET_INFO_BY_NAME(id, name, &object_info, H5P_DEFAULT);
     if ( H5O_TYPE_DATASET != object_info.type && H5O_TYPE_GROUP != object_info.type )
         return 0;
