@@ -906,7 +906,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             return;
         }
     }
-    fields = (matvar_t**)malloc(matvar->nbytes);
+    fields = (matvar_t**)calloc(matvar->nbytes, 1);
     matvar->data = fields;
     if ( NULL != fields ) {
         hsize_t k;
