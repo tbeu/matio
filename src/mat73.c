@@ -628,11 +628,15 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
     matvar->internal->num_fields = (unsigned int)*nfields;
     matvar->internal->fieldnames =
         (char**)malloc((size_t)(*nfields)*sizeof(*matvar->internal->fieldnames));
-    for ( i = 0; i < *nfields; i++ ) {
-        matvar->internal->fieldnames[i] =
-            (char*)calloc(fieldnames_vl[i].len+1,1);
-        memcpy(matvar->internal->fieldnames[i],fieldnames_vl[i].p,
-            fieldnames_vl[i].len);
+    if ( matvar->internal->fieldnames != NULL ) {
+        for ( i = 0; i < *nfields; i++ ) {
+            matvar->internal->fieldnames[i] =
+                (char*)calloc(fieldnames_vl[i].len+1,1);
+            if ( matvar->internal->fieldnames[i] != NULL ) {
+                memcpy(matvar->internal->fieldnames[i],fieldnames_vl[i].p,
+                    fieldnames_vl[i].len);
+            }
+        }
     }
 
 #if H5_VERSION_GE(1,12,0)
@@ -916,8 +920,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             object_info.type = H5O_TYPE_UNKNOWN;
             H5OGET_INFO_BY_NAME(dset_id, matvar->internal->fieldnames[k], &object_info, H5P_DEFAULT);
             if ( object_info.type == H5O_TYPE_DATASET ) {
-                field_id = H5Dopen(dset_id,matvar->internal->fieldnames[k],
-                                   H5P_DEFAULT);
+                field_id = H5Dopen(dset_id,matvar->internal->fieldnames[k], H5P_DEFAULT);
                 if ( !fields_are_variables ) {
                     hsize_t l;
                     hobj_ref_t *ref_ids = (hobj_ref_t*)malloc((size_t)nelems*sizeof(*ref_ids));
@@ -1060,13 +1063,22 @@ Mat_H5ReadNextReferenceData(hid_t ref_id,matvar_t *matvar,mat_t *mat)
      */
     if ( MAT_C_CELL == matvar->class_type ) {
         size_t i;
-        matvar_t **cells = (matvar_t**)matvar->data;
-        int err = Mat_MulDims(matvar, &nelems);
-        if ( err )
-            return;
+        matvar_t **cells;
+        int err;
 
-        for ( i = 0; i < nelems; i++ )
-            Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
+        if ( NULL == matvar->data ) {
+            return;
+        }
+        err = Mat_MulDims(matvar, &nelems);
+        if ( err ) {
+            return;
+        }
+        cells = (matvar_t**)matvar->data;
+        for ( i = 0; i < nelems; i++ ) {
+            if ( NULL != cells[i] ) {
+                Mat_H5ReadNextReferenceData(cells[i]->internal->id,cells[i],mat);
+            }
+        }
         return;
     }
 
