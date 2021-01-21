@@ -622,18 +622,17 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
     space_id = H5Aget_space(attr_id);
     (void)H5Sget_simple_extent_dims(space_id,nfields,NULL);
     field_id = H5Aget_type(attr_id);
-    fieldnames_vl = (hvl_t*)malloc((size_t)(*nfields)*sizeof(*fieldnames_vl));
+    fieldnames_vl = (hvl_t*)calloc((size_t)(*nfields), sizeof(*fieldnames_vl));
     H5Aread(attr_id,field_id,fieldnames_vl);
 
     matvar->internal->num_fields = (unsigned int)*nfields;
     matvar->internal->fieldnames =
-        (char**)malloc((size_t)(*nfields)*sizeof(*matvar->internal->fieldnames));
+        (char**)calloc((size_t)(*nfields), sizeof(*matvar->internal->fieldnames));
     if ( matvar->internal->fieldnames != NULL ) {
         for ( i = 0; i < *nfields; i++ ) {
-            matvar->internal->fieldnames[i] =
-                (char*)calloc(fieldnames_vl[i].len+1,1);
-            if ( matvar->internal->fieldnames[i] != NULL ) {
-                memcpy(matvar->internal->fieldnames[i],fieldnames_vl[i].p,
+            matvar->internal->fieldnames[i] = (char*)calloc(fieldnames_vl[i].len+1,1);
+            if ( matvar->internal->fieldnames[i] != NULL && fieldnames_vl[i].p != NULL ) {
+                memcpy(matvar->internal->fieldnames[i], fieldnames_vl[i].p,
                     fieldnames_vl[i].len);
             }
         }
@@ -798,6 +797,7 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     } else {
         H5G_info_t group_info;
         matvar->internal->num_fields = 0;
+        group_info.nlinks = 0;
         H5Gget_info(dset_id, &group_info);
         if ( group_info.nlinks > 0 ) {
             struct ReadGroupInfoIterData group_data = {0, NULL};
@@ -1238,6 +1238,7 @@ Mat_VarWriteRef(hid_t id, matvar_t* matvar, enum matio_compression compression, 
     char obj_name[64];
     H5G_info_t group_info;
 
+    group_info.nlinks = 0;
     H5Gget_info(*refs_id, &group_info);
     sprintf(obj_name,"%llu", group_info.nlinks);
     if ( NULL != matvar )
