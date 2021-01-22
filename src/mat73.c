@@ -694,7 +694,6 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
     /* If the dataset is a cell array read the info of the cells */
     if ( MAT_C_CELL == matvar->class_type ) {
         matvar_t **cells;
-        hobj_ref_t *ref_ids;
 
         matvar->data_size = sizeof(matvar_t**);
         err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
@@ -710,19 +709,21 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         cells = (matvar_t**)matvar->data;
 
         if ( nelems ) {
-            size_t i;
-            ref_ids = (hobj_ref_t*)malloc(nelems*sizeof(*ref_ids));
-            H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,ref_ids);
-            for ( i = 0; i < nelems; i++ ) {
-                hid_t ref_id;
-                cells[i] = Mat_VarCalloc();
-                cells[i]->internal->hdf5_ref = ref_ids[i];
-                /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
-                ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids+i);
-                cells[i]->internal->id = ref_id;
-                Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
+            hobj_ref_t *ref_ids = (hobj_ref_t*)calloc(nelems, sizeof(*ref_ids));
+            if ( ref_ids != NULL ) {
+                size_t i;
+                H5Dread(dset_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,H5P_DEFAULT,ref_ids);
+                for ( i = 0; i < nelems; i++ ) {
+                    hid_t ref_id;
+                    cells[i] = Mat_VarCalloc();
+                    cells[i]->internal->hdf5_ref = ref_ids[i];
+                    /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
+                    ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids+i);
+                    cells[i]->internal->id = ref_id;
+                    Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
+                }
+                free(ref_ids);
             }
-            free(ref_ids);
         }
     } else if ( MAT_C_STRUCT == matvar->class_type ) {
         /* Empty structures can be a dataset */
@@ -922,22 +923,24 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             if ( object_info.type == H5O_TYPE_DATASET ) {
                 field_id = H5Dopen(dset_id,matvar->internal->fieldnames[k], H5P_DEFAULT);
                 if ( !fields_are_variables ) {
-                    hsize_t l;
-                    hobj_ref_t *ref_ids = (hobj_ref_t*)malloc((size_t)nelems*sizeof(*ref_ids));
-                    H5Dread(field_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,
-                            H5P_DEFAULT,ref_ids);
-                    for ( l = 0; l < nelems; l++ ) {
-                        hid_t ref_id;
-                        fields[l*nfields+k] = Mat_VarCalloc();
-                        fields[l*nfields+k]->name =
-                            strdup(matvar->internal->fieldnames[k]);
-                        fields[l*nfields+k]->internal->hdf5_ref=ref_ids[l];
-                        /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
-                        ref_id = H5RDEREFERENCE(field_id,H5R_OBJECT,ref_ids+l);
-                        fields[l*nfields+k]->internal->id = ref_id;
-                        Mat_H5ReadNextReferenceInfo(ref_id,fields[l*nfields+k],mat);
+                    hobj_ref_t *ref_ids = (hobj_ref_t*)calloc((size_t)nelems, sizeof(*ref_ids));
+                    if ( ref_ids != NULL ) {
+                        hsize_t l;
+                        H5Dread(field_id,H5T_STD_REF_OBJ,H5S_ALL,H5S_ALL,
+                                H5P_DEFAULT,ref_ids);
+                        for ( l = 0; l < nelems; l++ ) {
+                            hid_t ref_id;
+                            fields[l*nfields+k] = Mat_VarCalloc();
+                            fields[l*nfields+k]->name =
+                                strdup(matvar->internal->fieldnames[k]);
+                            fields[l*nfields+k]->internal->hdf5_ref=ref_ids[l];
+                            /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
+                            ref_id = H5RDEREFERENCE(field_id,H5R_OBJECT,ref_ids+l);
+                            fields[l*nfields+k]->internal->id = ref_id;
+                            Mat_H5ReadNextReferenceInfo(ref_id,fields[l*nfields+k],mat);
+                        }
+                        free(ref_ids);
                     }
-                    free(ref_ids);
                 } else {
                     fields[k] = Mat_VarCalloc();
                     fields[k]->name = strdup(matvar->internal->fieldnames[k]);
