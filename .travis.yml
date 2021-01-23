@@ -3,6 +3,14 @@ language: c
 git:
   depth: 5
 
+cache:
+  directories:
+  - $HOME/.cache/pip
+  - $HOME/.conan
+
+before_cache:
+  - rm -f $HOME/.cache/pip/log/debug.log
+
 addons:
   apt:
     sources:
@@ -31,7 +39,7 @@ env:
     # BBPASS
     - secure: "URJPdQ3u2iqPjyurd9ooGxlAMYBbVaQILl1x0VlL830gxNHcPy4sKbs6CgPnZymJ3xV6afQFOKZW0b2Yg6Vi/alcun1FG/L2YO+otClQJjhQAhl2ZxzicEzoTqQ2UwoA+IbCAUWBThPq8lg6AsYu17rpIdeUji6yV1UkD4ipz3Md0vOqt1tY90uKz9Q8PVIpkrnYcZL3SB1xXc1i4Msijo2vB/bQAYl+v5yXgMRLDOstrRxe4U7T9GZoRcQdyrzm0PK0nKCpy7JM3g4agvgvmfIGjwtCCweof3RoMZ/8DLpzJ8E/nt7jE97fGqMTNrfX4Of9+NrexivWWv44U2zXOaTI9tGodWx5BfGrbSf5y8Y+RiW2DDmyCdczm7cpCzTCiS9RQcIWXphoiAdiYcDxwv83K9N/t5NV36Q3oFB05Qu19DFB9vy8AsgKx5NVTN9WXoFo1fp/3dguJr/R7mrTY9M9llTxEwoaifyxpEUMWJws3/ZZpBZf+HfhO8k98Shw/CEIqw492Y5DVqVkX+ZtIKq02ZVw5cdnHXSEt5ZUfaZqADvMFiTHuFL1f/P5Sf8ZFTxmYbNtrQLzq8aj8r3QSEc0Kcp+LIH4oMhgVBfYUXdDJJNzJMzVmcr8PigUhl0mSR+fzMyYLQ53hRcJlf38AH9CfKzn6WDoF6jkJZYN4Aw="
 
-matrix:
+jobs:
   include:
     - os: linux
       compiler: gcc-4.8
@@ -195,5 +203,3 @@ after_success: bash ./.ci/travis_after_success.sh || travis_terminate 1;
 
 notifications:
   email: false
-
-sudo: required
