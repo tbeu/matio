@@ -2951,7 +2951,6 @@ static herr_t
 Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, void *op_data)
 {
     mat_t *mat;
-    matvar_t *matvar;
     H5O_INFO_T object_info;
     struct ReadNextIterData *mat_data;
 
@@ -2971,20 +2970,19 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
         return -1;
     mat = mat_data->mat;
 
-    matvar = Mat_VarCalloc();
-    if ( NULL == matvar )
-        return -1;
-
-    matvar->name = strdup(name);
-    if ( NULL == matvar->name ) {
-        Mat_VarFree(matvar);
-        return -1;
-    }
-
     switch ( object_info.type ) {
         case H5O_TYPE_DATASET:
         {
-            hid_t dset_id = H5Dopen(id,matvar->name,H5P_DEFAULT);
+            hid_t dset_id = H5Dopen(id,name,H5P_DEFAULT);
+            matvar_t *matvar = Mat_VarCalloc();
+            if ( NULL == matvar )
+                return -1;
+
+            matvar->name = strdup(name);
+            if ( NULL == matvar->name ) {
+                Mat_VarFree(matvar);
+                return -1;
+            }
 
             Mat_H5ReadDatasetInfo(mat,matvar,dset_id);
             if ( matvar->internal->id != dset_id ) {
@@ -2996,7 +2994,16 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
         }
         case H5O_TYPE_GROUP:
         {
-            hid_t dset_id = H5Gopen(id,matvar->name,H5P_DEFAULT);
+            hid_t dset_id = H5Gopen(id,name,H5P_DEFAULT);
+            matvar_t *matvar = Mat_VarCalloc();
+            if ( NULL == matvar )
+                return -1;
+
+            matvar->name = strdup(name);
+            if ( NULL == matvar->name ) {
+                Mat_VarFree(matvar);
+                return -1;
+            }
 
             Mat_H5ReadGroupInfo(mat,matvar,dset_id);
             H5Gclose(dset_id);
