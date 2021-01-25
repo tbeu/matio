@@ -769,7 +769,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             Mat_Critical("Integer multiplication overflow");
             return err;
         }
-        matvar->data = malloc(matvar->nbytes);
+        matvar->data = calloc(matvar->nbytes, 1);
         if ( NULL == matvar->data ) {
             Mat_Critical("Couldn't allocate memory for the data");
             return MATIO_E_OUT_OF_MEMORY;
