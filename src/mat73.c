@@ -3138,7 +3138,7 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
         case H5O_TYPE_DATASET:
         {
             int err;
-            hid_t dset_id = H5Dopen(id,name,H5P_DEFAULT);
+            hid_t dset_id;
             matvar_t *matvar = Mat_VarCalloc();
             if ( NULL == matvar )
                 return -1;
@@ -3149,6 +3149,7 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
                 return -1;
             }
 
+            dset_id = H5Dopen(id,name,H5P_DEFAULT);
             err = Mat_H5ReadDatasetInfo(mat,matvar,dset_id);
             if ( matvar->internal->id != dset_id ) {
                 /* Close dataset and increment count */
@@ -3164,7 +3165,7 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
         case H5O_TYPE_GROUP:
         {
             int err;
-            hid_t dset_id = H5Gopen(id,name,H5P_DEFAULT);
+            hid_t dset_id;
             matvar_t *matvar = Mat_VarCalloc();
             if ( NULL == matvar )
                 return -1;
@@ -3175,6 +3176,7 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
                 return -1;
             }
 
+            dset_id = H5Gopen(id,name,H5P_DEFAULT);
             err = Mat_H5ReadGroupInfo(mat,matvar,dset_id);
             H5Gclose(dset_id);
             if ( err ) {
