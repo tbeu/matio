@@ -883,6 +883,10 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
         return MATIO_E_NO_ERROR;
     }
 
+    if (MAT_C_STRUCT != matvar->class_type ) {
+        return MATIO_E_GENERIC_READ_ERROR;
+    }
+
     /* Check if the structure defines its fields in MATLAB_fields */
     if ( H5Aexists_by_name(dset_id,".","MATLAB_fields",H5P_DEFAULT) ) {
         err = Mat_H5ReadFieldNames(matvar, dset_id, &nfields);
