@@ -791,8 +791,12 @@ Mat_H5ReadDatasetInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                     cells[i]->internal->hdf5_ref = ref_ids[i];
                     /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
                     ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids+i);
-                    cells[i]->internal->id = ref_id;
-                    err = Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
+                    if ( ref_id < 0 ) {
+                        err = MATIO_E_GENERIC_READ_ERROR;
+                    } else {
+                        cells[i]->internal->id = ref_id;
+                        err = Mat_H5ReadNextReferenceInfo(ref_id,cells[i],mat);
+                    }
                     if ( err ) {
                         break;
                     }
@@ -1028,8 +1032,12 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
                                 fields[l*nfields+k]->internal->hdf5_ref=ref_ids[l];
                                 /* Closing of ref_id is done in Mat_H5ReadNextReferenceInfo */
                                 ref_id = H5RDEREFERENCE(field_id,H5R_OBJECT,ref_ids+l);
-                                fields[l*nfields+k]->internal->id = ref_id;
-                                err = Mat_H5ReadNextReferenceInfo(ref_id,fields[l*nfields+k],mat);
+                                if ( ref_id < 0 ) {
+                                    err = MATIO_E_GENERIC_READ_ERROR;
+                                } else {
+                                    fields[l*nfields+k]->internal->id = ref_id;
+                                    err = Mat_H5ReadNextReferenceInfo(ref_id,fields[l*nfields+k],mat);
+                                }
                                 if ( err ) {
                                     break;
                                 }
