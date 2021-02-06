@@ -894,13 +894,13 @@ Mat_H5ReadGroupInfo(mat_t *mat,matvar_t *matvar,hid_t dset_id)
             return err;
         }
     } else {
+        herr_t herr;
         H5G_info_t group_info;
         matvar->internal->num_fields = 0;
         group_info.nlinks = 0;
-        H5Gget_info(dset_id, &group_info);
-        if ( group_info.nlinks > 0 ) {
+        herr = H5Gget_info(dset_id, &group_info);
+        if ( herr >= 0 && group_info.nlinks > 0 ) {
             struct ReadGroupInfoIterData group_data = {0, NULL};
-            herr_t herr;
 
             /* First iteration to retrieve number of relevant links */
             herr = H5Literate_by_name(dset_id, matvar->internal->hdf5_name, H5_INDEX_NAME,
@@ -1375,18 +1375,22 @@ static int
 Mat_VarWriteRef(hid_t id, matvar_t* matvar, enum matio_compression compression, hid_t *refs_id, hobj_ref_t* ref)
 {
     int err;
+    herr_t herr;
     char obj_name[64];
     H5G_info_t group_info;
 
     group_info.nlinks = 0;
-    H5Gget_info(*refs_id, &group_info);
-    sprintf(obj_name,"%llu", group_info.nlinks);
-    if ( NULL != matvar )
-        matvar->compression = compression;
-    err = Mat_VarWriteNext73(*refs_id, matvar, obj_name, refs_id);
-    sprintf(obj_name, "/#refs#/%llu", group_info.nlinks);
-    H5Rcreate(ref, id, obj_name, H5R_OBJECT, -1);
-
+    herr = H5Gget_info(*refs_id, &group_info);
+    if ( herr < 0) {
+        err = MATIO_E_BAD_ARGUMENT;
+    } else {
+        sprintf(obj_name,"%llu", group_info.nlinks);
+        if ( NULL != matvar )
+            matvar->compression = compression;
+        err = Mat_VarWriteNext73(*refs_id, matvar, obj_name, refs_id);
+        sprintf(obj_name, "/#refs#/%llu", group_info.nlinks);
+        H5Rcreate(ref, id, obj_name, H5R_OBJECT, -1);
+    }
     return err;
 }
 

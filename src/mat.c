@@ -597,10 +597,16 @@ Mat_Open(const char *matname,int mode)
 
         if ( -1 < *(hid_t*)mat->fp ) {
             H5G_info_t group_info;
+            herr_t herr;
             memset(&group_info, 0, sizeof(group_info));
-            H5Gget_info(*(hid_t*)mat->fp, &group_info);
-            mat->num_datasets = (size_t)group_info.nlinks;
-            mat->refs_id      = -1;
+            herr = H5Gget_info(*(hid_t*)mat->fp, &group_info);
+            if ( herr < 0 ) {
+                Mat_Close(mat);
+                mat = NULL;
+            } else {
+                mat->num_datasets = (size_t)group_info.nlinks;
+                mat->refs_id = -1;
+            }
         }
 #else
         mat->fp = NULL;
