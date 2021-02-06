@@ -81,7 +81,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -89,7 +89,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=1
     - os: linux
       compiler: gcc-4.8
@@ -97,7 +97,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -105,7 +105,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -113,7 +113,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -121,7 +121,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -129,7 +129,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=yes
         - WITH_ZLIB=no
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -137,7 +137,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=yes
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -145,7 +145,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=no
         - ENABLE_MAT73=no
         - WITH_ZLIB=no
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -169,7 +169,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: osx
       compiler: clang
@@ -177,7 +177,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION=1.8.21
+        - HDF5_VERSION=1.8.22
         - MAX_RANK=3
     - os: osx
       osx_image: xcode12

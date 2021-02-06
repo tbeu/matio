@@ -8,7 +8,7 @@ fi
 
 coveralls -e coverity_model.c -e getopt -e matfilerw -e MSL -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e ossfuzz -e patches -e share -e hdf5-$HDF5_VERSION -e visual_studio -e zlib --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'
 
-if [[ "$HDF5_VERSION" != "1.8.21" ]] || [[ "$ENABLE_MAT73" != "yes" ]] || [[ "$ENABLE_EXTENDED_SPARSE" != "yes" ]] || [[ "$WITH_ZLIB" != "yes" ]] || [[ "$MAX_RANK" != 3 ]]; then
+if [[ "$HDF5_VERSION" != "1.8.22" ]] || [[ "$ENABLE_MAT73" != "yes" ]] || [[ "$ENABLE_EXTENDED_SPARSE" != "yes" ]] || [[ "$WITH_ZLIB" != "yes" ]] || [[ "$MAX_RANK" != 3 ]]; then
     exit 0
 fi
 
