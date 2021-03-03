@@ -31,16 +31,14 @@ if test -n "$MATLAB_DIR" -a -d "$MATLAB_DIR"; then
     MATLAB_PATH="$PATH_SEPARATOR$MATLAB_DIR"
 fi
 # Do not use MATLAB as the program name because it can cause the matlab
-# script to faile
+# script to fail
 AC_PATH_PROG([MATLABEXE], [matlab], [], [$PATH$MATLAB_PATH])
 
 AC_SUBST([MATLABEXE])
 if test -n "$MATLABEXE"
 then
-    AC_MSG_RESULT([$MATLABEXE])
     matio_cv_have_matlab=yes
 else
-    AC_MSG_RESULT([no])
     matio_cv_have_matlab=no
 fi
 ])
