@@ -1416,6 +1416,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                     if ( 0 == err ) {
                         SetFieldNames(matvar, ptr, nfields, fieldname_size);
                     } else {
+                        matvar->internal->num_fields = nfields;
                         matvar->internal->fieldnames = NULL;
                     }
                     free(ptr);
@@ -1681,6 +1682,7 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
                     if ( 0 == err ) {
                         SetFieldNames(matvar, ptr, nfields, fieldname_size);
                     } else {
+                        matvar->internal->num_fields = nfields;
                         matvar->internal->fieldnames = NULL;
                     }
                     free(ptr);
@@ -1724,8 +1726,10 @@ ReadNextStructField( mat_t *mat, matvar_t *matvar )
             return bytesread;
 
         matvar->data = calloc(nelems_x_nfields, matvar->data_size);
-        if ( NULL == matvar->data )
+        if ( NULL == matvar->data ) {
+            Mat_Critical("Couldn't allocate memory for the data");
             return bytesread;
+        }
 
         fields = (matvar_t**)matvar->data;
         for ( i = 0; i < nelems_x_nfields; i++ ) {
