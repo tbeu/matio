@@ -26,15 +26,14 @@ dnl CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY
 dnl OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([MATIO],[1.5.19],[t-beu@users.sourceforge.net],[],
-        [https://sourceforge.net/projects/matio])
+AC_INIT([MATIO],[1.5.19],[t-beu@users.sourceforge.net],[],[https://sourceforge.net/projects/matio])
 AC_CONFIG_SRCDIR([src/matio.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([config])
 AM_INIT_AUTOMAKE([foreign 1.8 no-dependencies])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 AM_MAINTAINER_MODE
-AC_PREREQ(2.60)
+AC_PREREQ([2.69])
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([MATIO_PLATFORM],"${host}",[Platform])
 AC_DEFINE_UNQUOTED([MATIO_MAJOR_VERSION],1,[Matio major version number])
@@ -125,7 +124,7 @@ fi
 
 AC_ENABLE_SHARED
 AC_ENABLE_STATIC
-AC_PROG_LIBTOOL
+LT_INIT
 
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
@@ -143,7 +142,7 @@ dnl  Headers
 dnl
 
 AC_CONFIG_HEADERS([src/matioConfig.h src/matio_pubconf.h])
-AC_STDC_HEADERS
+AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE([stdarg.h])
 AC_CHECK_HEADERS_ONCE([varargs.h])
 AC_CHECK_HEADER([inttypes.h],[AC_DEFINE_UNQUOTED([MATIO_HAVE_INTTYPES_H],[1],[Matio has access to inttypes.h])])
