@@ -76,36 +76,36 @@
 #undef _mat_uint8_t
 
 #if MATIO_HAVE_INTTYPES_H
-#   include <inttypes.h>
+#include <inttypes.h>
 #endif
 
 #if MATIO_HAVE_STDINT_H
-#   include <stdint.h>
+#include <stdint.h>
 #endif
 
 #ifdef _mat_int64_t
-    typedef _mat_int64_t mat_int64_t;
+typedef _mat_int64_t mat_int64_t;
 #endif
 #ifdef _mat_uint64_t
-    typedef _mat_uint64_t mat_uint64_t;
+typedef _mat_uint64_t mat_uint64_t;
 #endif
 #ifdef _mat_int32_t
-    typedef _mat_int32_t mat_int32_t;
+typedef _mat_int32_t mat_int32_t;
 #endif
 #ifdef _mat_uint32_t
-    typedef _mat_uint32_t mat_uint32_t;
+typedef _mat_uint32_t mat_uint32_t;
 #endif
 #ifdef _mat_int16_t
-    typedef _mat_int16_t mat_int16_t;
+typedef _mat_int16_t mat_int16_t;
 #endif
 #ifdef _mat_uint16_t
-    typedef _mat_uint16_t mat_uint16_t;
+typedef _mat_uint16_t mat_uint16_t;
 #endif
 #ifdef _mat_int8_t
-    typedef _mat_int8_t mat_int8_t;
+typedef _mat_int8_t mat_int8_t;
 #endif
 #ifdef _mat_uint8_t
-    typedef _mat_uint8_t mat_uint8_t;
+typedef _mat_uint8_t mat_uint8_t;
 #endif
 
 /*
@@ -122,7 +122,7 @@
 #define MATIO_NORETURN [[noreturn]]
 #define MATIO_NORETURNATTR
 #elif (defined(__GNUC__) && __GNUC__ >= 3) || \
-      (defined(__GNUC__) && defined(__GNUC_MINOR__) && __GNUC__ == 2 && __GNUC_MINOR__ >= 8)
+    (defined(__GNUC__) && defined(__GNUC_MINOR__) && __GNUC__ == 2 && __GNUC_MINOR__ >= 8)
 #define MATIO_NORETURN
 #define MATIO_NORETURNATTR __attribute__((noreturn))
 #elif defined(__GNUC__)
@@ -140,13 +140,12 @@
 #define MATIO_NORETURN
 #define MATIO_NORETURNATTR
 #endif
-#elif (defined(__GNUC__) && __GNUC__ >= 3) || \
-      (defined(__GNUC__) && defined(__GNUC_MINOR__) && __GNUC__ == 2 && __GNUC_MINOR__ >= 8) || \
-      (defined(__SUNPRO_C) && __SUNPRO_C >= 0x5110)
+#elif (defined(__GNUC__) && __GNUC__ >= 3) ||                                                 \
+    (defined(__GNUC__) && defined(__GNUC_MINOR__) && __GNUC__ == 2 && __GNUC_MINOR__ >= 8) || \
+    (defined(__SUNPRO_C) && __SUNPRO_C >= 0x5110)
 #define MATIO_NORETURN
 #define MATIO_NORETURNATTR __attribute__((noreturn))
-#elif (defined(_MSC_VER) && _MSC_VER >= 1200) || \
-       defined(__BORLANDC__)
+#elif (defined(_MSC_VER) && _MSC_VER >= 1200) || defined(__BORLANDC__)
 #define MATIO_NORETURN __declspec(noreturn)
 #define MATIO_NORETURNATTR
 #else

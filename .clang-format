@@ -1,0 +1,38 @@
+---
+BasedOnStyle: Google
+Language: Cpp
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+NamespaceIndentation: All
+
+AccessModifierOffset: -4
+ContinuationIndentWidth: 4
+IndentWidth: 4
+DerivePointerAlignment: false
+PointerAlignment: Right
+AllowAllArgumentsOnNextLine: false
+
+AlwaysBreakAfterDefinitionReturnType: All
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterStruct: true
+    AfterClass: true
+    AfterFunction: true
+    AfterControlStatement: false
+    AfterEnum: true
+    AfterNamespace: true
+
+AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+AlignTrailingComments: true
+ReflowComments: false
+SortIncludes: false
+SpaceBeforeParens: ControlStatements 
+SpacesInConditionalStatement: true
+
+...

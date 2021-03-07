@@ -31,7 +31,7 @@
 /* FIXME: Implement Unicode support */
 #include "matio_private.h"
 #if HAVE_ZLIB
-#   include <zlib.h>
+#include <zlib.h>
 #endif
 #include <stddef.h>
 #include <stdlib.h>
@@ -40,140 +40,140 @@
 #include <math.h>
 #include <time.h>
 
-#define READ_DATA_NOSWAP(T) \
-    do { \
-        const size_t block_size = READ_BLOCK_SIZE/data_size; \
-        if ( len <= block_size ) { \
-            readcount = fread(v, data_size, len, (FILE*)mat->fp); \
-            if ( readcount == len ) { \
-                for ( i = 0; i < len; i++ ) { \
-                    data[i] = (T)v[i]; \
-                } \
-            } \
-        } else { \
-            size_t j; \
-            int err = 0 ; \
-            readcount = 0; \
-            for ( i = 0; i < len - block_size; i += block_size ) { \
-                j = fread(v, data_size, block_size, (FILE*)mat->fp); \
-                readcount += j; \
-                if ( j == block_size ) { \
-                    for ( j = 0; j < block_size; j++ ) { \
-                        data[i + j] = (T)v[j]; \
-                    } \
-                } else { \
-                    err = 1; \
-                    break;\
-                } \
-            } \
-            if ( 0 == err && len > i ) { \
-                j = fread(v, data_size, len - i, (FILE*)mat->fp); \
-                readcount += j; \
-                if ( j == len - i ) { \
-                    for ( j = 0; j < len - i; j++ ) { \
-                        data[i + j] = (T)v[j]; \
-                    } \
-                } \
-            } \
-        } \
-    } while (0)
+#define READ_DATA_NOSWAP(T)                                           \
+    do {                                                              \
+        const size_t block_size = READ_BLOCK_SIZE / data_size;        \
+        if ( len <= block_size ) {                                    \
+            readcount = fread(v, data_size, len, (FILE *)mat->fp);    \
+            if ( readcount == len ) {                                 \
+                for ( i = 0; i < len; i++ ) {                         \
+                    data[i] = (T)v[i];                                \
+                }                                                     \
+            }                                                         \
+        } else {                                                      \
+            size_t j;                                                 \
+            int err = 0;                                              \
+            readcount = 0;                                            \
+            for ( i = 0; i < len - block_size; i += block_size ) {    \
+                j = fread(v, data_size, block_size, (FILE *)mat->fp); \
+                readcount += j;                                       \
+                if ( j == block_size ) {                              \
+                    for ( j = 0; j < block_size; j++ ) {              \
+                        data[i + j] = (T)v[j];                        \
+                    }                                                 \
+                } else {                                              \
+                    err = 1;                                          \
+                    break;                                            \
+                }                                                     \
+            }                                                         \
+            if ( 0 == err && len > i ) {                              \
+                j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
+                readcount += j;                                       \
+                if ( j == len - i ) {                                 \
+                    for ( j = 0; j < len - i; j++ ) {                 \
+                        data[i + j] = (T)v[j];                        \
+                    }                                                 \
+                }                                                     \
+            }                                                         \
+        }                                                             \
+    } while ( 0 )
 
-#define READ_DATA(T, SwapFunc) \
-    do { \
-        if ( mat->byteswap ) { \
-            const size_t block_size = READ_BLOCK_SIZE/data_size; \
-            if ( len <= block_size ) { \
-                readcount = fread(v, data_size, len, (FILE*)mat->fp); \
-                if ( readcount == len ) { \
-                    for ( i = 0; i < len; i++ ) { \
-                        data[i] = (T)SwapFunc(&v[i]); \
-                    } \
-                } \
-            } else { \
-                size_t j; \
-                int err = 0 ; \
-                readcount = 0; \
-                for ( i = 0; i < len - block_size; i += block_size ) { \
-                    j = fread(v, data_size, block_size, (FILE*)mat->fp); \
-                    readcount += j; \
-                    if ( j == block_size ) { \
-                        for ( j = 0; j < block_size; j++ ) { \
-                            data[i + j] = (T)SwapFunc(&v[j]); \
-                        } \
-                    } else { \
-                        err = 1; \
-                        break; \
-                    } \
-                } \
-                if ( 0 == err && len > i ) { \
-                    j = fread(v, data_size, len - i, (FILE*)mat->fp); \
-                    readcount += j; \
-                    if ( j == len - i ) { \
-                        for ( j = 0; j < len-i; j++ ) { \
-                            data[i + j] = (T)SwapFunc(&v[j]); \
-                        } \
-                    } \
-                } \
-            } \
-        } else { \
-            READ_DATA_NOSWAP(T); \
-        } \
-    } while (0)
+#define READ_DATA(T, SwapFunc)                                            \
+    do {                                                                  \
+        if ( mat->byteswap ) {                                            \
+            const size_t block_size = READ_BLOCK_SIZE / data_size;        \
+            if ( len <= block_size ) {                                    \
+                readcount = fread(v, data_size, len, (FILE *)mat->fp);    \
+                if ( readcount == len ) {                                 \
+                    for ( i = 0; i < len; i++ ) {                         \
+                        data[i] = (T)SwapFunc(&v[i]);                     \
+                    }                                                     \
+                }                                                         \
+            } else {                                                      \
+                size_t j;                                                 \
+                int err = 0;                                              \
+                readcount = 0;                                            \
+                for ( i = 0; i < len - block_size; i += block_size ) {    \
+                    j = fread(v, data_size, block_size, (FILE *)mat->fp); \
+                    readcount += j;                                       \
+                    if ( j == block_size ) {                              \
+                        for ( j = 0; j < block_size; j++ ) {              \
+                            data[i + j] = (T)SwapFunc(&v[j]);             \
+                        }                                                 \
+                    } else {                                              \
+                        err = 1;                                          \
+                        break;                                            \
+                    }                                                     \
+                }                                                         \
+                if ( 0 == err && len > i ) {                              \
+                    j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
+                    readcount += j;                                       \
+                    if ( j == len - i ) {                                 \
+                        for ( j = 0; j < len - i; j++ ) {                 \
+                            data[i + j] = (T)SwapFunc(&v[j]);             \
+                        }                                                 \
+                    }                                                     \
+                }                                                         \
+            }                                                             \
+        } else {                                                          \
+            READ_DATA_NOSWAP(T);                                          \
+        }                                                                 \
+    } while ( 0 )
 
 #if HAVE_ZLIB
-#define READ_COMPRESSED_DATA_NOSWAP(T) \
-    do { \
-        const size_t block_size = READ_BLOCK_SIZE/data_size; \
-        if ( len <= block_size ) { \
-            InflateData(mat, z, v, len*data_size); \
-            for ( i = 0; i < len; i++ ) { \
-                data[i] = (T)v[i]; \
-            } \
-        } else { \
-            mat_uint32_t j; \
-            len -= block_size; \
-            for ( i = 0; i < len; i += block_size ) { \
-                InflateData(mat, z, v, block_size*data_size); \
-                for ( j = 0; j < block_size; j++ ) { \
-                    data[i + j] = (T)v[j]; \
-                } \
-            } \
-            len -= (i - block_size); \
-            InflateData(mat, z, v, len*data_size); \
-            for ( j = 0; j < len; j++ ) { \
-                data[i + j] = (T)v[j]; \
-            } \
-        } \
-    } while (0)
+#define READ_COMPRESSED_DATA_NOSWAP(T)                         \
+    do {                                                       \
+        const size_t block_size = READ_BLOCK_SIZE / data_size; \
+        if ( len <= block_size ) {                             \
+            InflateData(mat, z, v, len *data_size);            \
+            for ( i = 0; i < len; i++ ) {                      \
+                data[i] = (T)v[i];                             \
+            }                                                  \
+        } else {                                               \
+            mat_uint32_t j;                                    \
+            len -= block_size;                                 \
+            for ( i = 0; i < len; i += block_size ) {          \
+                InflateData(mat, z, v, block_size *data_size); \
+                for ( j = 0; j < block_size; j++ ) {           \
+                    data[i + j] = (T)v[j];                     \
+                }                                              \
+            }                                                  \
+            len -= (i - block_size);                           \
+            InflateData(mat, z, v, len *data_size);            \
+            for ( j = 0; j < len; j++ ) {                      \
+                data[i + j] = (T)v[j];                         \
+            }                                                  \
+        }                                                      \
+    } while ( 0 )
 
-#define READ_COMPRESSED_DATA(T, SwapFunc) \
-    do { \
-        if ( mat->byteswap ) { \
-            const size_t block_size = READ_BLOCK_SIZE/data_size; \
-            if ( len <= block_size ) { \
-                InflateData(mat, z, v, len*data_size); \
-                for ( i = 0; i < len; i++ ) { \
-                    data[i] = (T)SwapFunc(&v[i]); \
-                } \
-            } else { \
-                mat_uint32_t j; \
-                len -= block_size; \
-                for ( i = 0; i < len; i += block_size ) { \
-                    InflateData(mat, z, v, block_size*data_size); \
-                    for ( j = 0; j < block_size; j++ ) { \
-                        data[i + j] = (T)SwapFunc(&v[j]); \
-                    } \
-                } \
-                len -= (i - block_size); \
-                InflateData(mat, z, v, len*data_size); \
-                for ( j = 0; j < len; j++ ) { \
-                    data[i + j] = (T)SwapFunc(&v[j]); \
-                } \
-            } \
-        } else { \
-            READ_COMPRESSED_DATA_NOSWAP(T); \
-        } \
-    } while (0)
+#define READ_COMPRESSED_DATA(T, SwapFunc)                          \
+    do {                                                           \
+        if ( mat->byteswap ) {                                     \
+            const size_t block_size = READ_BLOCK_SIZE / data_size; \
+            if ( len <= block_size ) {                             \
+                InflateData(mat, z, v, len *data_size);            \
+                for ( i = 0; i < len; i++ ) {                      \
+                    data[i] = (T)SwapFunc(&v[i]);                  \
+                }                                                  \
+            } else {                                               \
+                mat_uint32_t j;                                    \
+                len -= block_size;                                 \
+                for ( i = 0; i < len; i += block_size ) {          \
+                    InflateData(mat, z, v, block_size *data_size); \
+                    for ( j = 0; j < block_size; j++ ) {           \
+                        data[i + j] = (T)SwapFunc(&v[j]);          \
+                    }                                              \
+                }                                                  \
+                len -= (i - block_size);                           \
+                InflateData(mat, z, v, len *data_size);            \
+                for ( j = 0; j < len; j++ ) {                      \
+                    data[i + j] = (T)SwapFunc(&v[j]);              \
+                }                                                  \
+            }                                                      \
+        } else {                                                   \
+            READ_COMPRESSED_DATA_NOSWAP(T);                        \
+        }                                                          \
+    } while ( 0 )
 
 #endif
 
@@ -187,13 +187,13 @@
 
 #define READ_TYPE_DOUBLE 1
 #define READ_TYPE_SINGLE 2
-#define READ_TYPE_INT64  3
+#define READ_TYPE_INT64 3
 #define READ_TYPE_UINT64 4
-#define READ_TYPE_INT32  5
+#define READ_TYPE_INT32 5
 #define READ_TYPE_UINT32 6
-#define READ_TYPE_INT16  7
+#define READ_TYPE_INT16 7
 #define READ_TYPE_UINT16 8
-#define READ_TYPE_INT8   9
+#define READ_TYPE_INT8 9
 #define READ_TYPE_UINT8 10
 
 #define READ_TYPE double
@@ -315,8 +315,7 @@
  * @retval Number of bytes read from the file
  */
 int
-ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
-    enum matio_types data_type,int len)
+ReadCompressedCharData(mat_t *mat, z_streamp z, char *data, enum matio_types data_type, int len)
 {
     int nBytes = 0;
     unsigned int data_size;
@@ -329,30 +328,32 @@ ReadCompressedCharData(mat_t *mat,z_streamp z,char *data,
     switch ( data_type ) {
         case MAT_T_UINT8:
         case MAT_T_UTF8:
-            InflateData(mat,z,data,len*data_size);
+            InflateData(mat, z, data, len * data_size);
             break;
         case MAT_T_UINT16:
         case MAT_T_UTF16:
-            InflateData(mat,z,data,len*data_size);
+            InflateData(mat, z, data, len * data_size);
             if ( mat->byteswap ) {
                 int i;
                 for ( i = 0; i < len; i++ ) {
-                    Mat_uint16Swap((mat_uint16_t*)&data[2*i]);
+                    Mat_uint16Swap((mat_uint16_t *)&data[2 * i]);
                 }
             }
             break;
         default:
-            Mat_Warning("ReadCompressedCharData: %d is not a supported data "
-                "type for character data", data_type);
+            Mat_Warning(
+                "ReadCompressedCharData: %d is not a supported data "
+                "type for character data",
+                data_type);
             break;
     }
-    nBytes = len*data_size;
+    nBytes = len * data_size;
     return nBytes;
 }
 #endif
 
 size_t
-ReadCharData(mat_t *mat,char *data,enum matio_types data_type,size_t len)
+ReadCharData(mat_t *mat, char *data, enum matio_types data_type, size_t len)
 {
     size_t data_size;
 
@@ -363,22 +364,22 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,size_t len)
 
     switch ( data_type ) {
         case MAT_T_UINT8:
-        case MAT_T_UTF8:
-        {
-            size_t readcount = fread(data,data_size,len,(FILE*)mat->fp);
-            return readcount*data_size;
+        case MAT_T_UTF8: {
+            size_t readcount = fread(data, data_size, len, (FILE *)mat->fp);
+            return readcount * data_size;
         }
         case MAT_T_UINT16:
-        case MAT_T_UTF16:
-        {
+        case MAT_T_UTF16: {
             size_t i, readcount;
-            mat_uint16_t v[READ_BLOCK_SIZE/sizeof(mat_uint16_t)];
+            mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
             READ_DATA(char, Mat_uint16Swap);
-            return readcount*data_size;
+            return readcount * data_size;
         }
         default:
-            Mat_Warning("ReadCharData: %d is not a supported data type for "
-                "character data", data_type);
+            Mat_Warning(
+                "ReadCharData: %d is not a supported data type for "
+                "character data",
+                data_type);
             break;
     }
     return 0;
@@ -393,74 +394,76 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,size_t len)
  *-------------------------------------------------------------------
  */
 
-#define READ_DATA_SLABN_RANK_LOOP \
-    do { \
-        for ( j = 1; j < rank; j++ ) { \
-            cnt[j]++; \
-            if ( (cnt[j] % edge[j]) == 0 ) { \
-                cnt[j] = 0; \
-                if ( (I % dimp[j]) != 0 ) { \
-                    (void)fseek((FILE*)mat->fp,data_size*(dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]),SEEK_CUR); \
-                    I += dimp[j]-(I % dimp[j]) + (ptrdiff_t)dimp[j-1]*start[j]; \
-                } else if ( start[j] ) { \
-                    (void)fseek((FILE*)mat->fp,data_size*(dimp[j-1]*start[j]),SEEK_CUR); \
-                    I += (ptrdiff_t)dimp[j-1]*start[j]; \
-                } \
-            } else { \
-                I += inc[j]; \
-                (void)fseek((FILE*)mat->fp,data_size*inc[j],SEEK_CUR); \
-                break; \
-            } \
-        } \
-    } while (0)
+#define READ_DATA_SLABN_RANK_LOOP                                                                \
+    do {                                                                                         \
+        for ( j = 1; j < rank; j++ ) {                                                           \
+            cnt[j]++;                                                                            \
+            if ( (cnt[j] % edge[j]) == 0 ) {                                                     \
+                cnt[j] = 0;                                                                      \
+                if ( (I % dimp[j]) != 0 ) {                                                      \
+                    (void)fseek((FILE *)mat->fp,                                                 \
+                                data_size *(dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]),   \
+                                SEEK_CUR);                                                       \
+                    I += dimp[j] - (I % dimp[j]) + (ptrdiff_t)dimp[j - 1] * start[j];            \
+                } else if ( start[j] ) {                                                         \
+                    (void)fseek((FILE *)mat->fp, data_size *(dimp[j - 1] * start[j]), SEEK_CUR); \
+                    I += (ptrdiff_t)dimp[j - 1] * start[j];                                      \
+                }                                                                                \
+            } else {                                                                             \
+                I += inc[j];                                                                     \
+                (void)fseek((FILE *)mat->fp, data_size *inc[j], SEEK_CUR);                       \
+                break;                                                                           \
+            }                                                                                    \
+        }                                                                                        \
+    } while ( 0 )
 
-#define READ_DATA_SLABN(ReadDataFunc) \
-    do { \
-        inc[0]  = stride[0]-1; \
-        dimp[0] = dims[0]; \
-        N       = edge[0]; \
-        I       = 0; /* start[0]; */ \
-        for ( i = 1; i < rank; i++ ) { \
-            inc[i]  = stride[i]-1; \
-            dimp[i] = dims[i-1]; \
-            for ( j = i; j--; ) { \
-                inc[i]  *= dims[j]; \
-                dimp[i] *= dims[j+1]; \
-            } \
-            N *= edge[i]; \
-            I += (ptrdiff_t)dimp[i-1]*start[i]; \
-        } \
-        (void)fseek((FILE*)mat->fp,I*data_size,SEEK_CUR); \
-        if ( stride[0] == 1 ) { \
-            for ( i = 0; i < N; i+=edge[0] ) { \
-                if ( start[0] ) { \
-                    (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR); \
-                    I += start[0]; \
-                } \
-                ReadDataFunc(mat,ptr+i,data_type,edge[0]); \
-                I += dims[0]-start[0]; \
-                (void)fseek((FILE*)mat->fp,data_size*(dims[0]-edge[0]-start[0]), \
-                    SEEK_CUR); \
-                READ_DATA_SLABN_RANK_LOOP; \
-            } \
-        } else { \
-            for ( i = 0; i < N; i+=edge[0] ) { \
-                if ( start[0] ) { \
-                    (void)fseek((FILE*)mat->fp,start[0]*data_size,SEEK_CUR); \
-                    I += start[0]; \
-                } \
-                for ( j = 0; j < edge[0]; j++ ) { \
-                    ReadDataFunc(mat,ptr+i+j,data_type,1); \
-                    (void)fseek((FILE*)mat->fp,data_size*(stride[0]-1),SEEK_CUR); \
-                    I += stride[0]; \
-                } \
-                I += dims[0]-(ptrdiff_t)edge[0]*stride[0]-start[0]; \
-                (void)fseek((FILE*)mat->fp,data_size* \
-                    (dims[0]-(ptrdiff_t)edge[0]*stride[0]-start[0]),SEEK_CUR); \
-                READ_DATA_SLABN_RANK_LOOP; \
-            } \
-        } \
-    } while (0)
+#define READ_DATA_SLABN(ReadDataFunc)                                                              \
+    do {                                                                                           \
+        inc[0] = stride[0] - 1;                                                                    \
+        dimp[0] = dims[0];                                                                         \
+        N = edge[0];                                                                               \
+        I = 0; /* start[0]; */                                                                     \
+        for ( i = 1; i < rank; i++ ) {                                                             \
+            inc[i] = stride[i] - 1;                                                                \
+            dimp[i] = dims[i - 1];                                                                 \
+            for ( j = i; j--; ) {                                                                  \
+                inc[i] *= dims[j];                                                                 \
+                dimp[i] *= dims[j + 1];                                                            \
+            }                                                                                      \
+            N *= edge[i];                                                                          \
+            I += (ptrdiff_t)dimp[i - 1] * start[i];                                                \
+        }                                                                                          \
+        (void)fseek((FILE *)mat->fp, I *data_size, SEEK_CUR);                                      \
+        if ( stride[0] == 1 ) {                                                                    \
+            for ( i = 0; i < N; i += edge[0] ) {                                                   \
+                if ( start[0] ) {                                                                  \
+                    (void)fseek((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);                  \
+                    I += start[0];                                                                 \
+                }                                                                                  \
+                ReadDataFunc(mat, ptr + i, data_type, edge[0]);                                    \
+                I += dims[0] - start[0];                                                           \
+                (void)fseek((FILE *)mat->fp, data_size *(dims[0] - edge[0] - start[0]), SEEK_CUR); \
+                READ_DATA_SLABN_RANK_LOOP;                                                         \
+            }                                                                                      \
+        } else {                                                                                   \
+            for ( i = 0; i < N; i += edge[0] ) {                                                   \
+                if ( start[0] ) {                                                                  \
+                    (void)fseek((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);                  \
+                    I += start[0];                                                                 \
+                }                                                                                  \
+                for ( j = 0; j < edge[0]; j++ ) {                                                  \
+                    ReadDataFunc(mat, ptr + i + j, data_type, 1);                                  \
+                    (void)fseek((FILE *)mat->fp, data_size *(stride[0] - 1), SEEK_CUR);            \
+                    I += stride[0];                                                                \
+                }                                                                                  \
+                I += dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0];                          \
+                (void)fseek((FILE *)mat->fp,                                                       \
+                            data_size *(dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0]),      \
+                            SEEK_CUR);                                                             \
+                READ_DATA_SLABN_RANK_LOOP;                                                         \
+            }                                                                                      \
+        }                                                                                          \
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions
  *
@@ -477,16 +480,25 @@ ReadCharData(mat_t *mat,char *data,enum matio_types data_type,size_t len)
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
-    enum matio_types data_type,int rank,size_t *dims,int *start,int *stride,
-    int *edge)
+ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_types data_type,
+              int rank, size_t *dims, int *start, int *stride, int *edge)
 {
     int nBytes = 0, i, j, N, I = 0;
-    int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
+    int inc[10] =
+        {
+            0,
+        },
+        cnt[10] =
+            {
+                0,
+            },
+        dimp[10] = {
+            0,
+        };
     size_t data_size;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
-         (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) || (start == NULL) ||
+         (stride == NULL) || (edge == NULL) ) {
         return -1;
     } else if ( rank > 10 ) {
         return -1;
@@ -495,67 +507,57 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
     data_size = Mat_SizeOf(data_type);
 
     switch ( class_type ) {
-        case MAT_C_DOUBLE:
-        {
-            double *ptr = (double*)data;
+        case MAT_C_DOUBLE: {
+            double *ptr = (double *)data;
             READ_DATA_SLABN(ReadDoubleData);
             break;
         }
-        case MAT_C_SINGLE:
-        {
-            float *ptr = (float*)data;
+        case MAT_C_SINGLE: {
+            float *ptr = (float *)data;
             READ_DATA_SLABN(ReadSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
-        case MAT_C_INT64:
-        {
-            mat_int64_t *ptr = (mat_int64_t*)data;
+        case MAT_C_INT64: {
+            mat_int64_t *ptr = (mat_int64_t *)data;
             READ_DATA_SLABN(ReadInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-        case MAT_C_UINT64:
-        {
-            mat_uint64_t *ptr = (mat_uint64_t*)data;
+        case MAT_C_UINT64: {
+            mat_uint64_t *ptr = (mat_uint64_t *)data;
             READ_DATA_SLABN(ReadUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
-        case MAT_C_INT32:
-        {
-            mat_int32_t *ptr = (mat_int32_t*)data;
+        case MAT_C_INT32: {
+            mat_int32_t *ptr = (mat_int32_t *)data;
             READ_DATA_SLABN(ReadInt32Data);
             break;
         }
-        case MAT_C_UINT32:
-        {
-            mat_uint32_t *ptr = (mat_uint32_t*)data;
+        case MAT_C_UINT32: {
+            mat_uint32_t *ptr = (mat_uint32_t *)data;
             READ_DATA_SLABN(ReadUInt32Data);
             break;
         }
-        case MAT_C_INT16:
-        {
-            mat_int16_t *ptr = (mat_int16_t*)data;
+        case MAT_C_INT16: {
+            mat_int16_t *ptr = (mat_int16_t *)data;
             READ_DATA_SLABN(ReadInt16Data);
             break;
         }
-        case MAT_C_UINT16:
-        {
-            mat_uint16_t *ptr = (mat_uint16_t*)data;
+        case MAT_C_UINT16: {
+            mat_uint16_t *ptr = (mat_uint16_t *)data;
             READ_DATA_SLABN(ReadUInt16Data);
             break;
         }
-        case MAT_C_INT8:
-        {
-            mat_int8_t *ptr = (mat_int8_t*)data;
+        case MAT_C_INT8: {
+            mat_int8_t *ptr = (mat_int8_t *)data;
             READ_DATA_SLABN(ReadInt8Data);
             break;
         }
-        case MAT_C_UINT8:
-        {
-            mat_uint8_t *ptr = (mat_uint8_t*)data;
+        case MAT_C_UINT8: {
+            mat_uint8_t *ptr = (mat_uint8_t *)data;
             READ_DATA_SLABN(ReadUInt8Data);
             break;
         }
@@ -569,76 +571,78 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
 #undef READ_DATA_SLABN_RANK_LOOP
 
 #if HAVE_ZLIB
-#define READ_COMPRESSED_DATA_SLABN_RANK_LOOP \
-    do { \
-        for ( j = 1; j < rank; j++ ) { \
-            cnt[j]++; \
-            if ( (cnt[j] % edge[j]) == 0 ) { \
-                cnt[j] = 0; \
-                if ( (I % dimp[j]) != 0 ) { \
-                    InflateSkipData(mat,&z_copy,data_type, dimp[j]-(I % dimp[j]) + dimp[j-1]*start[j]); \
-                    I += dimp[j]-(I % dimp[j]) + (ptrdiff_t)dimp[j-1]*start[j]; \
-                } else if ( start[j] ) { \
-                    InflateSkipData(mat,&z_copy,data_type, dimp[j-1]*start[j]); \
-                    I += (ptrdiff_t)dimp[j-1]*start[j]; \
-                } \
-            } else { \
-                if ( inc[j] ) { \
-                    I += inc[j]; \
-                    InflateSkipData(mat,&z_copy,data_type,inc[j]); \
-                } \
-                break; \
-            } \
-        } \
-    } while (0)
+#define READ_COMPRESSED_DATA_SLABN_RANK_LOOP                                           \
+    do {                                                                               \
+        for ( j = 1; j < rank; j++ ) {                                                 \
+            cnt[j]++;                                                                  \
+            if ( (cnt[j] % edge[j]) == 0 ) {                                           \
+                cnt[j] = 0;                                                            \
+                if ( (I % dimp[j]) != 0 ) {                                            \
+                    InflateSkipData(mat, &z_copy, data_type,                           \
+                                    dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]); \
+                    I += dimp[j] - (I % dimp[j]) + (ptrdiff_t)dimp[j - 1] * start[j];  \
+                } else if ( start[j] ) {                                               \
+                    InflateSkipData(mat, &z_copy, data_type, dimp[j - 1] * start[j]);  \
+                    I += (ptrdiff_t)dimp[j - 1] * start[j];                            \
+                }                                                                      \
+            } else {                                                                   \
+                if ( inc[j] ) {                                                        \
+                    I += inc[j];                                                       \
+                    InflateSkipData(mat, &z_copy, data_type, inc[j]);                  \
+                }                                                                      \
+                break;                                                                 \
+            }                                                                          \
+        }                                                                              \
+    } while ( 0 )
 
-#define READ_COMPRESSED_DATA_SLABN(ReadDataFunc) \
-    do { \
-        inc[0]  = stride[0]-1; \
-        dimp[0] = dims[0]; \
-        N       = edge[0]; \
-        I       = 0; \
-        for ( i = 1; i < rank; i++ ) { \
-            inc[i]  = stride[i]-1; \
-            dimp[i] = dims[i-1]; \
-            for ( j = i; j--; ) { \
-                inc[i]  *= dims[j]; \
-                dimp[i] *= dims[j+1]; \
-            } \
-            N *= edge[i]; \
-            I += (ptrdiff_t)dimp[i-1]*start[i]; \
-        } \
-        /* Skip all data to the starting indices */ \
-        InflateSkipData(mat,&z_copy,data_type,I); \
-        if ( stride[0] == 1 ) { \
-            for ( i = 0; i < N; i+=edge[0] ) { \
-                if ( start[0] ) { \
-                    InflateSkipData(mat,&z_copy,data_type,start[0]); \
-                    I += start[0]; \
-                } \
-                ReadDataFunc(mat,&z_copy,ptr+i,data_type,edge[0]); \
-                InflateSkipData(mat,&z_copy,data_type,dims[0]-start[0]-edge[0]); \
-                I += dims[0]-start[0]; \
-                READ_COMPRESSED_DATA_SLABN_RANK_LOOP; \
-            } \
-        } else { \
-            for ( i = 0; i < N; i+=edge[0] ) { \
-                if ( start[0] ) { \
-                    InflateSkipData(mat,&z_copy,data_type,start[0]); \
-                    I += start[0]; \
-                } \
-                for ( j = 0; j < edge[0]-1; j++ ) { \
-                    ReadDataFunc(mat,&z_copy,ptr+i+j,data_type,1); \
-                    InflateSkipData(mat,&z_copy,data_type,(stride[0]-1)); \
-                    I += stride[0]; \
-                } \
-                ReadDataFunc(mat,&z_copy,ptr+i+j,data_type,1); \
-                I += dims[0]-(ptrdiff_t)(edge[0]-1)*stride[0]-start[0]; \
-                InflateSkipData(mat,&z_copy,data_type,dims[0]-(ptrdiff_t)(edge[0]-1)*stride[0]-start[0]-1); \
-                READ_COMPRESSED_DATA_SLABN_RANK_LOOP; \
-            } \
-        } \
-    } while (0)
+#define READ_COMPRESSED_DATA_SLABN(ReadDataFunc)                                                \
+    do {                                                                                        \
+        inc[0] = stride[0] - 1;                                                                 \
+        dimp[0] = dims[0];                                                                      \
+        N = edge[0];                                                                            \
+        I = 0;                                                                                  \
+        for ( i = 1; i < rank; i++ ) {                                                          \
+            inc[i] = stride[i] - 1;                                                             \
+            dimp[i] = dims[i - 1];                                                              \
+            for ( j = i; j--; ) {                                                               \
+                inc[i] *= dims[j];                                                              \
+                dimp[i] *= dims[j + 1];                                                         \
+            }                                                                                   \
+            N *= edge[i];                                                                       \
+            I += (ptrdiff_t)dimp[i - 1] * start[i];                                             \
+        }                                                                                       \
+        /* Skip all data to the starting indices */                                             \
+        InflateSkipData(mat, &z_copy, data_type, I);                                            \
+        if ( stride[0] == 1 ) {                                                                 \
+            for ( i = 0; i < N; i += edge[0] ) {                                                \
+                if ( start[0] ) {                                                               \
+                    InflateSkipData(mat, &z_copy, data_type, start[0]);                         \
+                    I += start[0];                                                              \
+                }                                                                               \
+                ReadDataFunc(mat, &z_copy, ptr + i, data_type, edge[0]);                        \
+                InflateSkipData(mat, &z_copy, data_type, dims[0] - start[0] - edge[0]);         \
+                I += dims[0] - start[0];                                                        \
+                READ_COMPRESSED_DATA_SLABN_RANK_LOOP;                                           \
+            }                                                                                   \
+        } else {                                                                                \
+            for ( i = 0; i < N; i += edge[0] ) {                                                \
+                if ( start[0] ) {                                                               \
+                    InflateSkipData(mat, &z_copy, data_type, start[0]);                         \
+                    I += start[0];                                                              \
+                }                                                                               \
+                for ( j = 0; j < edge[0] - 1; j++ ) {                                           \
+                    ReadDataFunc(mat, &z_copy, ptr + i + j, data_type, 1);                      \
+                    InflateSkipData(mat, &z_copy, data_type, (stride[0] - 1));                  \
+                    I += stride[0];                                                             \
+                }                                                                               \
+                ReadDataFunc(mat, &z_copy, ptr + i + j, data_type, 1);                          \
+                I += dims[0] - (ptrdiff_t)(edge[0] - 1) * stride[0] - start[0];                 \
+                InflateSkipData(mat, &z_copy, data_type,                                        \
+                                dims[0] - (ptrdiff_t)(edge[0] - 1) * stride[0] - start[0] - 1); \
+                READ_COMPRESSED_DATA_SLABN_RANK_LOOP;                                           \
+            }                                                                                   \
+        }                                                                                       \
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions
  *
@@ -656,88 +660,90 @@ ReadDataSlabN(mat_t *mat,void *data,enum matio_classes class_type,
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
-    enum matio_classes class_type,enum matio_types data_type,int rank,
-    size_t *dims,int *start,int *stride,int *edge)
+ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes class_type,
+                        enum matio_types data_type, int rank, size_t *dims, int *start, int *stride,
+                        int *edge)
 {
     int nBytes = 0, i, j, N, I = 0, err;
-    int inc[10] = {0,}, cnt[10] = {0,}, dimp[10] = {0,};
-    z_stream z_copy = {0,};
+    int inc[10] =
+        {
+            0,
+        },
+        cnt[10] =
+            {
+                0,
+            },
+        dimp[10] = {
+            0,
+        };
+    z_stream z_copy = {
+        0,
+    };
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
-         (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) || (start == NULL) ||
+         (stride == NULL) || (edge == NULL) ) {
         return 0;
     } else if ( rank > 10 ) {
         return 0;
     }
 
-    err = inflateCopy(&z_copy,z);
+    err = inflateCopy(&z_copy, z);
     if ( err != Z_OK ) {
-        Mat_Critical("inflateCopy returned error %s",zError(err));
+        Mat_Critical("inflateCopy returned error %s", zError(err));
         return -1;
     }
     switch ( class_type ) {
-        case MAT_C_DOUBLE:
-        {
-            double *ptr = (double*)data;
+        case MAT_C_DOUBLE: {
+            double *ptr = (double *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedDoubleData);
             break;
         }
-        case MAT_C_SINGLE:
-        {
-            float *ptr = (float*)data;
+        case MAT_C_SINGLE: {
+            float *ptr = (float *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
-        case MAT_C_INT64:
-        {
-            mat_int64_t *ptr = (mat_int64_t*)data;
+        case MAT_C_INT64: {
+            mat_int64_t *ptr = (mat_int64_t *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-        case MAT_C_UINT64:
-        {
-            mat_uint64_t *ptr = (mat_uint64_t*)data;
+        case MAT_C_UINT64: {
+            mat_uint64_t *ptr = (mat_uint64_t *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
-        case MAT_C_INT32:
-        {
-            mat_int32_t *ptr = (mat_int32_t*)data;
+        case MAT_C_INT32: {
+            mat_int32_t *ptr = (mat_int32_t *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedInt32Data);
             break;
         }
-        case MAT_C_UINT32:
-        {
-            mat_uint32_t *ptr = (mat_uint32_t*)data;
+        case MAT_C_UINT32: {
+            mat_uint32_t *ptr = (mat_uint32_t *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedUInt32Data);
             break;
         }
-        case MAT_C_INT16:
-        {
-            mat_int16_t *ptr = (mat_int16_t*)data;
+        case MAT_C_INT16: {
+            mat_int16_t *ptr = (mat_int16_t *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedInt16Data);
             break;
         }
-        case MAT_C_UINT16:
-        {
-            mat_uint16_t *ptr = (mat_uint16_t*)data;
+        case MAT_C_UINT16: {
+            mat_uint16_t *ptr = (mat_uint16_t *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedUInt16Data);
             break;
         }
-        case MAT_C_INT8:
-        {
-            mat_int8_t *ptr = (mat_int8_t*)data;
+        case MAT_C_INT8: {
+            mat_int8_t *ptr = (mat_int8_t *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedInt8Data);
             break;
         }
-        case MAT_C_UINT8:
-        {
-            mat_uint8_t *ptr = (mat_uint8_t*)data;
+        case MAT_C_UINT8: {
+            mat_uint8_t *ptr = (mat_uint8_t *)data;
             READ_COMPRESSED_DATA_SLABN(ReadCompressedUInt8Data);
             break;
         }
@@ -752,17 +758,17 @@ ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
 #undef READ_COMPRESSED_DATA_SLABN_RANK_LOOP
 #endif
 
-#define READ_DATA_SLAB1(ReadDataFunc) \
-    do { \
-        if ( !stride ) { \
-            bytesread+=ReadDataFunc(mat,ptr,data_type,edge); \
-        } else { \
-            for ( i = 0; i < edge; i++ ) { \
-                bytesread+=ReadDataFunc(mat,ptr+i,data_type,1); \
-                (void)fseek((FILE*)mat->fp,stride,SEEK_CUR); \
-            } \
-        } \
-    } while (0)
+#define READ_DATA_SLAB1(ReadDataFunc)                                  \
+    do {                                                               \
+        if ( !stride ) {                                               \
+            bytesread += ReadDataFunc(mat, ptr, data_type, edge);      \
+        } else {                                                       \
+            for ( i = 0; i < edge; i++ ) {                             \
+                bytesread += ReadDataFunc(mat, ptr + i, data_type, 1); \
+                (void)fseek((FILE *)mat->fp, stride, SEEK_CUR);        \
+            }                                                          \
+        }                                                              \
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 1-D
  *         data
@@ -778,79 +784,69 @@ ReadCompressedDataSlabN(mat_t *mat,z_streamp z,void *data,
  * @return Number of bytes read from the file, or -1 on error
  */
 int
-ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
-    enum matio_types data_type,int start,int stride,int edge)
+ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_types data_type,
+              int start, int stride, int edge)
 {
     int i;
     size_t data_size;
-    int    bytesread = 0;
+    int bytesread = 0;
 
     data_size = Mat_SizeOf(data_type);
-    (void)fseek((FILE*)mat->fp,start*data_size,SEEK_CUR);
-    stride = data_size*(stride-1);
+    (void)fseek((FILE *)mat->fp, start * data_size, SEEK_CUR);
+    stride = data_size * (stride - 1);
 
     switch ( class_type ) {
-        case MAT_C_DOUBLE:
-        {
-            double *ptr = (double*)data;
+        case MAT_C_DOUBLE: {
+            double *ptr = (double *)data;
             READ_DATA_SLAB1(ReadDoubleData);
             break;
         }
-        case MAT_C_SINGLE:
-        {
-            float *ptr = (float*)data;
+        case MAT_C_SINGLE: {
+            float *ptr = (float *)data;
             READ_DATA_SLAB1(ReadSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
-        case MAT_C_INT64:
-        {
-            mat_int64_t *ptr = (mat_int64_t*)data;
+        case MAT_C_INT64: {
+            mat_int64_t *ptr = (mat_int64_t *)data;
             READ_DATA_SLAB1(ReadInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-        case MAT_C_UINT64:
-        {
-            mat_uint64_t *ptr = (mat_uint64_t*)data;
+        case MAT_C_UINT64: {
+            mat_uint64_t *ptr = (mat_uint64_t *)data;
             READ_DATA_SLAB1(ReadUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
-        case MAT_C_INT32:
-        {
-            mat_int32_t *ptr = (mat_int32_t*)data;
+        case MAT_C_INT32: {
+            mat_int32_t *ptr = (mat_int32_t *)data;
             READ_DATA_SLAB1(ReadInt32Data);
             break;
         }
-        case MAT_C_UINT32:
-        {
-            mat_uint32_t *ptr = (mat_uint32_t*)data;
+        case MAT_C_UINT32: {
+            mat_uint32_t *ptr = (mat_uint32_t *)data;
             READ_DATA_SLAB1(ReadUInt32Data);
             break;
         }
-        case MAT_C_INT16:
-        {
-            mat_int16_t *ptr = (mat_int16_t*)data;
+        case MAT_C_INT16: {
+            mat_int16_t *ptr = (mat_int16_t *)data;
             READ_DATA_SLAB1(ReadInt16Data);
             break;
         }
-        case MAT_C_UINT16:
-        {
-            mat_uint16_t *ptr = (mat_uint16_t*)data;
+        case MAT_C_UINT16: {
+            mat_uint16_t *ptr = (mat_uint16_t *)data;
             READ_DATA_SLAB1(ReadUInt16Data);
             break;
         }
-        case MAT_C_INT8:
-        {
-            mat_int8_t *ptr = (mat_int8_t*)data;
+        case MAT_C_INT8: {
+            mat_int8_t *ptr = (mat_int8_t *)data;
             READ_DATA_SLAB1(ReadInt8Data);
             break;
         }
-        case MAT_C_UINT8:
-        {
-            mat_uint8_t *ptr = (mat_uint8_t*)data;
+        case MAT_C_UINT8: {
+            mat_uint8_t *ptr = (mat_uint8_t *)data;
             READ_DATA_SLAB1(ReadUInt8Data);
             break;
         }
@@ -863,43 +859,42 @@ ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
 
 #undef READ_DATA_SLAB1
 
-#define READ_DATA_SLAB2(ReadDataFunc) \
-    do { \
-        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */ \
-        /* data so get rid of the loops. */ \
-        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && \
-             (stride[1] == 1) ) { \
-            ReadDataFunc(mat,ptr,data_type,(ptrdiff_t)edge[0]*edge[1]); \
-        } else { \
-            row_stride = (long)(stride[0]-1)*data_size; \
-            col_stride = (long)stride[1]*dims[0]*data_size; \
-            pos = ftell((FILE*)mat->fp); \
-            if ( pos == -1L ) { \
-                Mat_Critical("Couldn't determine file position"); \
-                return -1; \
-            } \
-            (void)fseek((FILE*)mat->fp,(long)start[1]*dims[0]*data_size,SEEK_CUR); \
-            for ( i = 0; i < edge[1]; i++ ) { \
-                pos = ftell((FILE*)mat->fp); \
-                if ( pos == -1L ) { \
-                    Mat_Critical("Couldn't determine file position"); \
-                    return -1; \
-                } \
-                (void)fseek((FILE*)mat->fp,(long)start[0]*data_size,SEEK_CUR); \
-                for ( j = 0; j < edge[0]; j++ ) { \
-                    ReadDataFunc(mat,ptr++,data_type,1); \
-                    (void)fseek((FILE*)mat->fp,row_stride,SEEK_CUR); \
-                } \
-                pos2 = ftell((FILE*)mat->fp); \
-                if ( pos2 == -1L ) { \
-                    Mat_Critical("Couldn't determine file position"); \
-                    return -1; \
-                } \
-                pos +=col_stride-pos2; \
-                (void)fseek((FILE*)mat->fp,pos,SEEK_CUR); \
-            } \
-        } \
-    } while (0)
+#define READ_DATA_SLAB2(ReadDataFunc)                                                     \
+    do {                                                                                  \
+        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */             \
+        /* data so get rid of the loops. */                                               \
+        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) ) {       \
+            ReadDataFunc(mat, ptr, data_type, (ptrdiff_t)edge[0] * edge[1]);              \
+        } else {                                                                          \
+            row_stride = (long)(stride[0] - 1) * data_size;                               \
+            col_stride = (long)stride[1] * dims[0] * data_size;                           \
+            pos = ftell((FILE *)mat->fp);                                                 \
+            if ( pos == -1L ) {                                                           \
+                Mat_Critical("Couldn't determine file position");                         \
+                return -1;                                                                \
+            }                                                                             \
+            (void)fseek((FILE *)mat->fp, (long)start[1] * dims[0] * data_size, SEEK_CUR); \
+            for ( i = 0; i < edge[1]; i++ ) {                                             \
+                pos = ftell((FILE *)mat->fp);                                             \
+                if ( pos == -1L ) {                                                       \
+                    Mat_Critical("Couldn't determine file position");                     \
+                    return -1;                                                            \
+                }                                                                         \
+                (void)fseek((FILE *)mat->fp, (long)start[0] * data_size, SEEK_CUR);       \
+                for ( j = 0; j < edge[0]; j++ ) {                                         \
+                    ReadDataFunc(mat, ptr++, data_type, 1);                               \
+                    (void)fseek((FILE *)mat->fp, row_stride, SEEK_CUR);                   \
+                }                                                                         \
+                pos2 = ftell((FILE *)mat->fp);                                            \
+                if ( pos2 == -1L ) {                                                      \
+                    Mat_Critical("Couldn't determine file position");                     \
+                    return -1;                                                            \
+                }                                                                         \
+                pos += col_stride - pos2;                                                 \
+                (void)fseek((FILE *)mat->fp, pos, SEEK_CUR);                              \
+            }                                                                             \
+        }                                                                                 \
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
  *         data
@@ -916,81 +911,71 @@ ReadDataSlab1(mat_t *mat,void *data,enum matio_classes class_type,
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
-    enum matio_types data_type,size_t *dims,int *start,int *stride,int *edge)
+ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type, enum matio_types data_type,
+              size_t *dims, int *start, int *stride, int *edge)
 {
     int nBytes = 0, data_size, i, j;
     long pos, row_stride, col_stride, pos2;
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
-         (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) || (start == NULL) ||
+         (stride == NULL) || (edge == NULL) ) {
         return 0;
     }
 
     data_size = Mat_SizeOf(data_type);
 
     switch ( class_type ) {
-        case MAT_C_DOUBLE:
-        {
-            double *ptr = (double*)data;
+        case MAT_C_DOUBLE: {
+            double *ptr = (double *)data;
             READ_DATA_SLAB2(ReadDoubleData);
             break;
         }
-        case MAT_C_SINGLE:
-        {
-            float *ptr = (float*)data;
+        case MAT_C_SINGLE: {
+            float *ptr = (float *)data;
             READ_DATA_SLAB2(ReadSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
-        case MAT_C_INT64:
-        {
-            mat_int64_t *ptr = (mat_int64_t*)data;
+        case MAT_C_INT64: {
+            mat_int64_t *ptr = (mat_int64_t *)data;
             READ_DATA_SLAB2(ReadInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-        case MAT_C_UINT64:
-        {
-            mat_uint64_t *ptr = (mat_uint64_t*)data;
+        case MAT_C_UINT64: {
+            mat_uint64_t *ptr = (mat_uint64_t *)data;
             READ_DATA_SLAB2(ReadUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
-        case MAT_C_INT32:
-        {
-            mat_int32_t *ptr = (mat_int32_t*)data;
+        case MAT_C_INT32: {
+            mat_int32_t *ptr = (mat_int32_t *)data;
             READ_DATA_SLAB2(ReadInt32Data);
             break;
         }
-        case MAT_C_UINT32:
-        {
-            mat_uint32_t *ptr = (mat_uint32_t*)data;
+        case MAT_C_UINT32: {
+            mat_uint32_t *ptr = (mat_uint32_t *)data;
             READ_DATA_SLAB2(ReadUInt32Data);
             break;
         }
-        case MAT_C_INT16:
-        {
-            mat_int16_t *ptr = (mat_int16_t*)data;
+        case MAT_C_INT16: {
+            mat_int16_t *ptr = (mat_int16_t *)data;
             READ_DATA_SLAB2(ReadInt16Data);
             break;
         }
-        case MAT_C_UINT16:
-        {
-            mat_uint16_t *ptr = (mat_uint16_t*)data;
+        case MAT_C_UINT16: {
+            mat_uint16_t *ptr = (mat_uint16_t *)data;
             READ_DATA_SLAB2(ReadUInt16Data);
             break;
         }
-        case MAT_C_INT8:
-        {
-            mat_int8_t *ptr = (mat_int8_t*)data;
+        case MAT_C_INT8: {
+            mat_int8_t *ptr = (mat_int8_t *)data;
             READ_DATA_SLAB2(ReadInt8Data);
             break;
         }
-        case MAT_C_UINT8:
-        {
-            mat_uint8_t *ptr = (mat_uint8_t*)data;
+        case MAT_C_UINT8: {
+            mat_uint8_t *ptr = (mat_uint8_t *)data;
             READ_DATA_SLAB2(ReadUInt8Data);
             break;
         }
@@ -1003,17 +988,17 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
 #undef READ_DATA_SLAB2
 
 #if HAVE_ZLIB
-#define READ_COMPRESSED_DATA_SLAB1(ReadDataFunc) \
-    do { \
-        if ( !stride ) { \
-            nBytes+=ReadDataFunc(mat,&z_copy,ptr,data_type,edge); \
-        } else { \
-            for ( i = 0; i < edge; i++ ) { \
-                nBytes+=ReadDataFunc(mat,&z_copy,ptr+i,data_type,1); \
-                InflateSkipData(mat,&z_copy,data_type,stride); \
-            } \
-        } \
-    } while (0)
+#define READ_COMPRESSED_DATA_SLAB1(ReadDataFunc)                             \
+    do {                                                                     \
+        if ( !stride ) {                                                     \
+            nBytes += ReadDataFunc(mat, &z_copy, ptr, data_type, edge);      \
+        } else {                                                             \
+            for ( i = 0; i < edge; i++ ) {                                   \
+                nBytes += ReadDataFunc(mat, &z_copy, ptr + i, data_type, 1); \
+                InflateSkipData(mat, &z_copy, data_type, stride);            \
+            }                                                                \
+        }                                                                    \
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 1-D
  *         data
@@ -1031,85 +1016,76 @@ ReadDataSlab2(mat_t *mat,void *data,enum matio_classes class_type,
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
-    enum matio_classes class_type,enum matio_types data_type,int start,
-    int stride,int edge)
+ReadCompressedDataSlab1(mat_t *mat, z_streamp z, void *data, enum matio_classes class_type,
+                        enum matio_types data_type, int start, int stride, int edge)
 {
     int nBytes = 0, i, err;
-    z_stream z_copy = {0,};
+    z_stream z_copy = {
+        0,
+    };
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
 
     stride--;
-    err = inflateCopy(&z_copy,z);
+    err = inflateCopy(&z_copy, z);
     if ( err != Z_OK ) {
-        Mat_Critical("inflateCopy returned error %s",zError(err));
+        Mat_Critical("inflateCopy returned error %s", zError(err));
         return -1;
     }
     InflateSkipData(mat, &z_copy, data_type, start);
     switch ( class_type ) {
-        case MAT_C_DOUBLE:
-        {
-            double *ptr = (double*)data;
+        case MAT_C_DOUBLE: {
+            double *ptr = (double *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedDoubleData);
             break;
         }
-        case MAT_C_SINGLE:
-        {
-            float *ptr = (float*)data;
+        case MAT_C_SINGLE: {
+            float *ptr = (float *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
-        case MAT_C_INT64:
-        {
-            mat_int64_t *ptr = (mat_int64_t*)data;
+        case MAT_C_INT64: {
+            mat_int64_t *ptr = (mat_int64_t *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-        case MAT_C_UINT64:
-        {
-            mat_uint64_t *ptr = (mat_uint64_t*)data;
+        case MAT_C_UINT64: {
+            mat_uint64_t *ptr = (mat_uint64_t *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
-        case MAT_C_INT32:
-        {
-            mat_int32_t *ptr = (mat_int32_t*)data;
+        case MAT_C_INT32: {
+            mat_int32_t *ptr = (mat_int32_t *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedInt32Data);
             break;
         }
-        case MAT_C_UINT32:
-        {
-            mat_uint32_t *ptr = (mat_uint32_t*)data;
+        case MAT_C_UINT32: {
+            mat_uint32_t *ptr = (mat_uint32_t *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedUInt32Data);
             break;
         }
-        case MAT_C_INT16:
-        {
-            mat_int16_t *ptr = (mat_int16_t*)data;
+        case MAT_C_INT16: {
+            mat_int16_t *ptr = (mat_int16_t *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedInt16Data);
             break;
         }
-        case MAT_C_UINT16:
-        {
-            mat_uint16_t *ptr = (mat_uint16_t*)data;
+        case MAT_C_UINT16: {
+            mat_uint16_t *ptr = (mat_uint16_t *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedUInt16Data);
             break;
         }
-        case MAT_C_INT8:
-        {
-            mat_int8_t *ptr = (mat_int8_t*)data;
+        case MAT_C_INT8: {
+            mat_int8_t *ptr = (mat_int8_t *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedInt8Data);
             break;
         }
-        case MAT_C_UINT8:
-        {
-            mat_uint8_t *ptr = (mat_uint8_t*)data;
+        case MAT_C_UINT8: {
+            mat_uint8_t *ptr = (mat_uint8_t *)data;
             READ_COMPRESSED_DATA_SLAB1(ReadCompressedUInt8Data);
             break;
         }
@@ -1122,39 +1098,38 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
 
 #undef READ_COMPRESSED_DATA_SLAB1
 
-#define READ_COMPRESSED_DATA_SLAB2(ReadDataFunc) \
-    do {\
-        row_stride = (stride[0]-1); \
-        col_stride = (stride[1]-1)*dims[0]; \
-        InflateSkipData(mat,&z_copy,data_type,start[1]*dims[0]); \
-        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */ \
-        /* data so get rid of the loops.  If stride[0] is 1 and stride[1] */ \
-        /* is not 0, we are reading whole columns, so get rid of inner loop */ \
-        /* to speed up the code */ \
-        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && \
-             (stride[1] == 1) ) { \
-            ReadDataFunc(mat,&z_copy,ptr,data_type,(ptrdiff_t)edge[0]*edge[1]); \
-        } else if ( stride[0] == 1 ) { \
-            for ( i = 0; i < edge[1]; i++ ) { \
-                InflateSkipData(mat,&z_copy,data_type,start[0]); \
-                ReadDataFunc(mat,&z_copy,ptr,data_type,edge[0]); \
-                ptr += edge[0]; \
-                pos = dims[0]-(ptrdiff_t)(edge[0]-1)*stride[0]-1-start[0] + col_stride; \
-                InflateSkipData(mat,&z_copy,data_type,pos); \
-            } \
-        } else { \
-            for ( i = 0; i < edge[1]; i++ ) { \
-                InflateSkipData(mat,&z_copy,data_type,start[0]); \
-                for ( j = 0; j < edge[0]-1; j++ ) { \
-                    ReadDataFunc(mat,&z_copy,ptr++,data_type,1); \
-                    InflateSkipData(mat,&z_copy,data_type,row_stride); \
-                } \
-                ReadDataFunc(mat,&z_copy,ptr++,data_type,1); \
-                pos = dims[0]-(ptrdiff_t)(edge[0]-1)*stride[0]-1-start[0] + col_stride; \
-                InflateSkipData(mat,&z_copy,data_type,pos); \
-            } \
-        } \
-    } while (0)
+#define READ_COMPRESSED_DATA_SLAB2(ReadDataFunc)                                                  \
+    do {                                                                                          \
+        row_stride = (stride[0] - 1);                                                             \
+        col_stride = (stride[1] - 1) * dims[0];                                                   \
+        InflateSkipData(mat, &z_copy, data_type, start[1] * dims[0]);                             \
+        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */                     \
+        /* data so get rid of the loops.  If stride[0] is 1 and stride[1] */                      \
+        /* is not 0, we are reading whole columns, so get rid of inner loop */                    \
+        /* to speed up the code */                                                                \
+        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) ) {               \
+            ReadDataFunc(mat, &z_copy, ptr, data_type, (ptrdiff_t)edge[0] * edge[1]);             \
+        } else if ( stride[0] == 1 ) {                                                            \
+            for ( i = 0; i < edge[1]; i++ ) {                                                     \
+                InflateSkipData(mat, &z_copy, data_type, start[0]);                               \
+                ReadDataFunc(mat, &z_copy, ptr, data_type, edge[0]);                              \
+                ptr += edge[0];                                                                   \
+                pos = dims[0] - (ptrdiff_t)(edge[0] - 1) * stride[0] - 1 - start[0] + col_stride; \
+                InflateSkipData(mat, &z_copy, data_type, pos);                                    \
+            }                                                                                     \
+        } else {                                                                                  \
+            for ( i = 0; i < edge[1]; i++ ) {                                                     \
+                InflateSkipData(mat, &z_copy, data_type, start[0]);                               \
+                for ( j = 0; j < edge[0] - 1; j++ ) {                                             \
+                    ReadDataFunc(mat, &z_copy, ptr++, data_type, 1);                              \
+                    InflateSkipData(mat, &z_copy, data_type, row_stride);                         \
+                }                                                                                 \
+                ReadDataFunc(mat, &z_copy, ptr++, data_type, 1);                                  \
+                pos = dims[0] - (ptrdiff_t)(edge[0] - 1) * stride[0] - 1 - start[0] + col_stride; \
+                InflateSkipData(mat, &z_copy, data_type, pos);                                    \
+            }                                                                                     \
+        }                                                                                         \
+    } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
  *         data
@@ -1172,86 +1147,78 @@ ReadCompressedDataSlab1(mat_t *mat,z_streamp z,void *data,
  * @retval Number of bytes read from the file, or -1 on error
  */
 int
-ReadCompressedDataSlab2(mat_t *mat,z_streamp z,void *data,
-    enum matio_classes class_type,enum matio_types data_type,size_t *dims,
-    int *start,int *stride,int *edge)
+ReadCompressedDataSlab2(mat_t *mat, z_streamp z, void *data, enum matio_classes class_type,
+                        enum matio_types data_type, size_t *dims, int *start, int *stride,
+                        int *edge)
 {
     int nBytes = 0, i, j, err;
     int pos, row_stride, col_stride;
-    z_stream z_copy = {0,};
+    z_stream z_copy = {
+        0,
+    };
 
-    if ( (mat   == NULL) || (data   == NULL) || (mat->fp == NULL) ||
-         (start == NULL) || (stride == NULL) || (edge    == NULL) ) {
+    if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) || (start == NULL) ||
+         (stride == NULL) || (edge == NULL) ) {
         return 0;
     }
 
-    err = inflateCopy(&z_copy,z);
+    err = inflateCopy(&z_copy, z);
     if ( err != Z_OK ) {
-        Mat_Critical("inflateCopy returned error %s",zError(err));
+        Mat_Critical("inflateCopy returned error %s", zError(err));
         return -1;
     }
     switch ( class_type ) {
-        case MAT_C_DOUBLE:
-        {
-            double *ptr = (double*)data;
+        case MAT_C_DOUBLE: {
+            double *ptr = (double *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedDoubleData);
             break;
         }
-        case MAT_C_SINGLE:
-        {
-            float *ptr = (float*)data;
+        case MAT_C_SINGLE: {
+            float *ptr = (float *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedSingleData);
             break;
         }
 #ifdef HAVE_MAT_INT64_T
-        case MAT_C_INT64:
-        {
-            mat_int64_t *ptr = (mat_int64_t*)data;
+        case MAT_C_INT64: {
+            mat_int64_t *ptr = (mat_int64_t *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedInt64Data);
             break;
         }
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-        case MAT_C_UINT64:
-        {
-            mat_uint64_t *ptr = (mat_uint64_t*)data;
+        case MAT_C_UINT64: {
+            mat_uint64_t *ptr = (mat_uint64_t *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedUInt64Data);
             break;
         }
 #endif /* HAVE_MAT_UINT64_T */
-        case MAT_C_INT32:
-        {
-            mat_int32_t *ptr = (mat_int32_t*)data;
+        case MAT_C_INT32: {
+            mat_int32_t *ptr = (mat_int32_t *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedInt32Data);
             break;
         }
-        case MAT_C_UINT32:
-        {
-            mat_uint32_t *ptr = (mat_uint32_t*)data;
+        case MAT_C_UINT32: {
+            mat_uint32_t *ptr = (mat_uint32_t *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedUInt32Data);
             break;
         }
-        case MAT_C_INT16:
-        {
-            mat_int16_t *ptr = (mat_int16_t*)data;
+        case MAT_C_INT16: {
+            mat_int16_t *ptr = (mat_int16_t *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedInt16Data);
             break;
         }
-        case MAT_C_UINT16:
-        {
-            mat_uint16_t *ptr = (mat_uint16_t*)data;
+        case MAT_C_UINT16: {
+            mat_uint16_t *ptr = (mat_uint16_t *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedUInt16Data);
             break;
         }
-        case MAT_C_INT8:
-        {
-            mat_int8_t *ptr = (mat_int8_t*)data;
+        case MAT_C_INT8: {
+            mat_int8_t *ptr = (mat_int8_t *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedInt8Data);
             break;
         }
-        case MAT_C_UINT8:
-        {
-            mat_uint8_t *ptr = (mat_uint8_t*)data;
+        case MAT_C_UINT8: {
+            mat_uint8_t *ptr = (mat_uint8_t *)data;
             READ_COMPRESSED_DATA_SLAB2(ReadCompressedUInt8Data);
             break;
         }

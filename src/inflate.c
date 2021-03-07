@@ -48,7 +48,7 @@
 
  */
 int
-InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
+InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread)
 {
     mat_uint8_t comp_buf[READ_BLOCK_SIZE], uncomp_buf[READ_BLOCK_SIZE];
     int n, err = MATIO_E_NO_ERROR, cnt = 0;
@@ -58,7 +58,7 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
 
     n = nBytes < READ_BLOCK_SIZE ? nBytes : READ_BLOCK_SIZE;
     if ( !z->avail_in ) {
-        size_t nbytes = fread(comp_buf, 1, n, (FILE*)mat->fp);
+        size_t nbytes = fread(comp_buf, 1, n, (FILE *)mat->fp);
         if ( 0 == nbytes ) {
             return err;
         }
@@ -69,12 +69,13 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
         z->next_in = comp_buf;
     }
     z->avail_out = n;
-    z->next_out  = uncomp_buf;
-    err = inflate(z,Z_FULL_FLUSH);
+    z->next_out = uncomp_buf;
+    err = inflate(z, Z_FULL_FLUSH);
     if ( err == Z_STREAM_END ) {
         return MATIO_E_NO_ERROR;
     } else if ( err != Z_OK ) {
-        Mat_Critical("InflateSkip: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
+        Mat_Critical("InflateSkip: inflate returned %s",
+                     zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
         return MATIO_E_FILE_FORMAT_VIOLATION;
     } else {
         err = MATIO_E_NO_ERROR;
@@ -86,11 +87,11 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
             n = READ_BLOCK_SIZE;
         }
         z->avail_out = n;
-        z->next_out  = uncomp_buf;
+        z->next_out = uncomp_buf;
     }
     while ( cnt < nBytes ) {
         if ( !z->avail_in ) {
-            size_t nbytes = fread(comp_buf, 1, n, (FILE*)mat->fp);
+            size_t nbytes = fread(comp_buf, 1, n, (FILE *)mat->fp);
             if ( 0 == nbytes ) {
                 break;
             }
@@ -100,12 +101,12 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
             z->avail_in = (uInt)nbytes;
             z->next_in = comp_buf;
         }
-        err = inflate(z,Z_FULL_FLUSH);
+        err = inflate(z, Z_FULL_FLUSH);
         if ( err == Z_STREAM_END ) {
             err = MATIO_E_NO_ERROR;
             break;
         } else if ( err != Z_OK ) {
-            const char* errMsg = zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err);
+            const char *errMsg = zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err);
             err = MATIO_E_FILE_FORMAT_VIOLATION;
             Mat_Critical("InflateSkip: inflate returned %s", errMsg);
             break;
@@ -119,13 +120,13 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t* bytesread)
                 n = READ_BLOCK_SIZE;
             }
             z->avail_out = n;
-            z->next_out  = uncomp_buf;
+            z->next_out = uncomp_buf;
         }
     }
 
     if ( z->avail_in ) {
         const long offset = -(long)z->avail_in;
-        (void)fseek((FILE*)mat->fp, offset, SEEK_CUR);
+        (void)fseek((FILE *)mat->fp, offset, SEEK_CUR);
         if ( NULL != bytesread ) {
             *bytesread -= z->avail_in;
         }
@@ -162,7 +163,7 @@ InflateSkipData(mat_t *mat, z_streamp z, enum matio_types data_type, int len)
             break;
     }
 
-    return InflateSkip(mat, z, (unsigned int)Mat_SizeOf(data_type)*len, NULL);
+    return InflateSkip(mat, z, (unsigned int)Mat_SizeOf(data_type) * len, NULL);
 }
 
 /** @brief Inflates the dimensions tag and the dimensions data
@@ -181,7 +182,8 @@ InflateSkipData(mat_t *mat, z_streamp z, enum matio_types data_type, int len)
 
  */
 int
-InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t** dims, size_t* bytesread)
+InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t **dims,
+                size_t *bytesread)
 {
     mat_int32_t tag[2];
     int rank, i, err;
@@ -194,10 +196,10 @@ InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t*
         return err;
     }
     tag[0] = *(int *)buf;
-    tag[1] = *((int *)buf+1);
+    tag[1] = *((int *)buf + 1);
     if ( mat->byteswap ) {
         Mat_int32Swap(tag);
-        Mat_int32Swap(tag+1);
+        Mat_int32Swap(tag + 1);
     }
     if ( (tag[0] & 0x0000ffff) != MAT_T_INT32 ) {
         Mat_Critical("InflateRankDims: Reading dimensions expected type MAT_T_INT32");
@@ -205,20 +207,20 @@ InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t*
     }
     rank = tag[1];
     if ( rank % 8 != 0 )
-        i = 8-(rank %8);
+        i = 8 - (rank % 8);
     else
         i = 0;
     rank += i;
 
-    if ( sizeof(mat_uint32_t)*(rank + 2) <= nBytes ) {
-        err = Inflate(mat, z, (mat_int32_t *)buf+2, (unsigned int)rank, bytesread);
+    if ( sizeof(mat_uint32_t) * (rank + 2) <= nBytes ) {
+        err = Inflate(mat, z, (mat_int32_t *)buf + 2, (unsigned int)rank, bytesread);
     } else {
         /* Cannot use too small buf, but can allocate output buffer dims */
-        *dims = (mat_uint32_t*)calloc(rank, sizeof(mat_uint32_t));
+        *dims = (mat_uint32_t *)calloc(rank, sizeof(mat_uint32_t));
         if ( NULL != *dims ) {
             err = Inflate(mat, z, *dims, (unsigned int)rank, bytesread);
         } else {
-            *((mat_int32_t *)buf+1) = 0;
+            *((mat_int32_t *)buf + 1) = 0;
             Mat_Critical("Error allocating memory for dims");
             return MATIO_E_OUT_OF_MEMORY;
         }
@@ -240,7 +242,7 @@ InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t*
 
  */
 int
-Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesread)
+Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesread)
 {
     mat_uint8_t comp_buf[4];
     int err = MATIO_E_NO_ERROR;
@@ -249,7 +251,7 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
         return MATIO_E_BAD_ARGUMENT;
 
     if ( !z->avail_in ) {
-        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE *)mat->fp);
         if ( 0 == nbytes ) {
             return err;
         }
@@ -261,15 +263,16 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
     }
     z->avail_out = nBytes;
     z->next_out = ZLIB_BYTE_PTR(buf);
-    err = inflate(z,Z_NO_FLUSH);
+    err = inflate(z, Z_NO_FLUSH);
     if ( err != Z_OK ) {
-        Mat_Critical("Inflate: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
+        Mat_Critical("Inflate: inflate returned %s",
+                     zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
         return MATIO_E_FILE_FORMAT_VIOLATION;
     } else {
         err = MATIO_E_NO_ERROR;
     }
     while ( z->avail_out && !z->avail_in ) {
-        size_t nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+        size_t nbytes = fread(comp_buf, 1, 1, (FILE *)mat->fp);
         if ( 0 == nbytes ) {
             break;
         }
@@ -278,9 +281,10 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
         }
         z->avail_in = (uInt)nbytes;
         z->next_in = comp_buf;
-        err = inflate(z,Z_NO_FLUSH);
+        err = inflate(z, Z_NO_FLUSH);
         if ( err != Z_OK ) {
-            Mat_Critical("Inflate: inflate returned %s",zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
+            Mat_Critical("Inflate: inflate returned %s",
+                         zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
             return MATIO_E_FILE_FORMAT_VIOLATION;
         } else {
             err = MATIO_E_NO_ERROR;
@@ -289,15 +293,16 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t* bytesre
 
     if ( z->avail_in ) {
         const long offset = -(long)z->avail_in;
-        (void)fseek((FILE*)mat->fp, offset, SEEK_CUR);
+        (void)fseek((FILE *)mat->fp, offset, SEEK_CUR);
         if ( NULL != bytesread ) {
             *bytesread -= z->avail_in;
         }
         z->avail_in = 0;
     }
 
-    if ( z->avail_out && feof((FILE*)mat->fp) ) {
-        Mat_Warning("Unexpected end-of-file: "
+    if ( z->avail_out && feof((FILE *)mat->fp) ) {
+        Mat_Warning(
+            "Unexpected end-of-file: "
             "Processed %u bytes, expected %u bytes",
             nBytes - z->avail_out, nBytes);
         memset(buf, 0, nBytes);
@@ -334,7 +339,7 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
 
     n = nBytes < READ_BLOCK_SIZE ? nBytes : READ_BLOCK_SIZE;
     if ( !z->avail_in ) {
-        size_t nbytes = fread(comp_buf, 1, n, (FILE*)mat->fp);
+        size_t nbytes = fread(comp_buf, 1, n, (FILE *)mat->fp);
         if ( 0 == nbytes ) {
             return err;
         }
@@ -344,11 +349,12 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     }
     z->avail_out = nBytes;
     z->next_out = ZLIB_BYTE_PTR(buf);
-    err = inflate(z,Z_FULL_FLUSH);
+    err = inflate(z, Z_FULL_FLUSH);
     if ( err == Z_STREAM_END ) {
         return MATIO_E_NO_ERROR;
     } else if ( err != Z_OK ) {
-        Mat_Critical("InflateData: inflate returned %s",zError( err == Z_NEED_DICT ? Z_DATA_ERROR : err ));
+        Mat_Critical("InflateData: inflate returned %s",
+                     zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
         return MATIO_E_FAIL_TO_IDENTIFY;
     } else {
         err = MATIO_E_NO_ERROR;
@@ -356,11 +362,11 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     while ( z->avail_out && !z->avail_in ) {
         size_t nbytes;
         if ( nBytes > READ_BLOCK_SIZE + bytesread ) {
-            nbytes = fread(comp_buf, 1, READ_BLOCK_SIZE, (FILE*)mat->fp);
+            nbytes = fread(comp_buf, 1, READ_BLOCK_SIZE, (FILE *)mat->fp);
         } else if ( nBytes < 1 + bytesread ) { /* Read a byte at a time */
-            nbytes = fread(comp_buf, 1, 1, (FILE*)mat->fp);
+            nbytes = fread(comp_buf, 1, 1, (FILE *)mat->fp);
         } else {
-            nbytes = fread(comp_buf, 1, nBytes - bytesread, (FILE*)mat->fp);
+            nbytes = fread(comp_buf, 1, nBytes - bytesread, (FILE *)mat->fp);
         }
         if ( 0 == nbytes ) {
             break;
@@ -368,12 +374,12 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
         bytesread += nbytes;
         z->avail_in = (uInt)nbytes;
         z->next_in = comp_buf;
-        err = inflate(z,Z_FULL_FLUSH);
+        err = inflate(z, Z_FULL_FLUSH);
         if ( err == Z_STREAM_END ) {
             err = MATIO_E_NO_ERROR;
             break;
         } else if ( err != Z_OK ) {
-            const char* errMsg = zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err);
+            const char *errMsg = zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err);
             err = MATIO_E_FAIL_TO_IDENTIFY;
             Mat_Critical("InflateData: inflate returned %s", errMsg);
             break;
@@ -384,14 +390,14 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
 
     if ( z->avail_in ) {
         const long offset = -(long)z->avail_in;
-        (void)fseek((FILE*)mat->fp, offset, SEEK_CUR);
+        (void)fseek((FILE *)mat->fp, offset, SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }
 
-    if ( z->avail_out && feof((FILE*)mat->fp) ) {
+    if ( z->avail_out && feof((FILE *)mat->fp) ) {
         Mat_Warning("InflateData: Read beyond EOF error: Processed %u bytes, expected %u bytes",
-            nBytes - z->avail_out, nBytes);
+                    nBytes - z->avail_out, nBytes);
         memset(buf, 0, nBytes);
     }
 

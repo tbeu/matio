@@ -22,8 +22,10 @@
 #include "fuzzer_temp_file.h"
 #include "matio_wrap.h"
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  FuzzerTemporaryFile temp_file(data, size);
+extern "C" int
+LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+{
+    FuzzerTemporaryFile temp_file(data, size);
 
-  return MatioRead(temp_file.filename());
+    return MatioRead(temp_file.filename());
 }

@@ -217,9 +217,9 @@
 
 /* Platform */
 #if defined(_WIN64)
-#   define MATIO_PLATFORM "x86_64-pc-windows"
+#define MATIO_PLATFORM "x86_64-pc-windows"
 #elif defined(_WIN32)
-#   define MATIO_PLATFORM "i686-pc-windows"
+#define MATIO_PLATFORM "i686-pc-windows"
 #endif
 
 /* Debug disabled */
@@ -271,15 +271,15 @@
 #define SIZEOF_SHORT 2
 
 #if defined(_WIN64)
-    /* The size of `void *', as computed by sizeof. */
-#   define SIZEOF_VOID_P 8
-    /* The size of `size_t', as computed by sizeof. */
-#    define SIZEOF_SIZE_T 8
+/* The size of `void *', as computed by sizeof. */
+#define SIZEOF_VOID_P 8
+/* The size of `size_t', as computed by sizeof. */
+#define SIZEOF_SIZE_T 8
 #elif defined(_WIN32)
-    /* The size of `void *', as computed by sizeof. */
-#   define SIZEOF_VOID_P 4
-    /* The size of `size_t', as computed by sizeof. */
-#    define SIZEOF_SIZE_T 4
+/* The size of `void *', as computed by sizeof. */
+#define SIZEOF_VOID_P 4
+/* The size of `size_t', as computed by sizeof. */
+#define SIZEOF_SIZE_T 4
 #endif
 
 /* Define to 1 if you have the ANSI C header files. */
