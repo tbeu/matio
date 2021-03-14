@@ -273,11 +273,33 @@ AT_CLEANUP
 
 AT_SETUP([Write character array])
 AT_CHECK([$builddir/test_mat -v 5 write_char],[0],[],[])
-AT_CHECK([cp $srcdir/results/readvar-write_char-a.out expout
+AT_CHECK([cp $srcdir/results/readvar-write_char-a-5.out expout
           $builddir/test_mat readvar test_write_char.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_char.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_char" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write Unicode character array])
+AT_KEYWORDS([unicode])
+AT_CHECK([$builddir/test_mat -v 5 write_char_unicode],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_char_unicode-a-5.out expout
+          $builddir/test_mat readvar test_write_char_unicode.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_char_unicode.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_char_unicode" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write UTF-8 character array])
+AT_KEYWORDS([utf8])
+AT_CHECK([$builddir/test_mat -v 5 write_char_utf8],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_char_utf8-a-5.out expout
+          $builddir/test_mat readvar test_write_char_utf8.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_char_utf8.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_char_utf8" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
 
@@ -290,7 +312,7 @@ AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var2.out expout
           $builddir/test_mat readvar test_write_empty_struct.mat var2],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var3.out expout
           $builddir/test_mat readvar test_write_empty_struct.mat var3],[0],[expout],[])
-AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var4.out expout
+AT_CHECK([cp $srcdir/results/readvar-write_empty_struct-var4-5.out expout
           $builddir/test_mat readvar test_write_empty_struct.mat var4],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_empty_struct.m .
@@ -515,7 +537,7 @@ AT_CLEANUP
 AT_SETUP([Write struct with character fields])
 AT_KEYWORDS([bug30])
 AT_CHECK([$builddir/test_mat -v 5 write_struct_char],[0],[],[])
-AT_CHECK([cp $srcdir/results/write_struct_char.out expout
+AT_CHECK([cp $srcdir/results/write_struct_char-5.out expout
           $builddir/test_mat readvar test_write_struct_char.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_struct_char.m .

@@ -159,7 +159,7 @@ EXTERN size_t ReadUInt16Data(mat_t *mat, mat_uint16_t *data, enum matio_types da
                              size_t len);
 EXTERN size_t ReadInt8Data(mat_t *mat, mat_int8_t *data, enum matio_types data_type, size_t len);
 EXTERN size_t ReadUInt8Data(mat_t *mat, mat_uint8_t *data, enum matio_types data_type, size_t len);
-EXTERN size_t ReadCharData(mat_t *mat, char *data, enum matio_types data_type, size_t len);
+EXTERN size_t ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len);
 EXTERN int ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type,
                          enum matio_types data_type, int start, int stride, int edge);
 EXTERN int ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type,
@@ -193,8 +193,8 @@ EXTERN int ReadCompressedInt8Data(mat_t *mat, z_streamp z, mat_int8_t *data,
                                   enum matio_types data_type, int len);
 EXTERN int ReadCompressedUInt8Data(mat_t *mat, z_streamp z, mat_uint8_t *data,
                                    enum matio_types data_type, int len);
-EXTERN int ReadCompressedCharData(mat_t *mat, z_streamp z, char *data, enum matio_types data_type,
-                                  int len);
+EXTERN int ReadCompressedCharData(mat_t *mat, z_streamp z, void *data, enum matio_types data_type,
+                                  size_t len);
 EXTERN int ReadCompressedDataSlab1(mat_t *mat, z_streamp z, void *data,
                                    enum matio_classes class_type, enum matio_types data_type,
                                    int start, int stride, int edge);

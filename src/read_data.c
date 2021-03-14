@@ -315,28 +315,32 @@
  * @retval Number of bytes read from the file
  */
 int
-ReadCompressedCharData(mat_t *mat, z_streamp z, char *data, enum matio_types data_type, int len)
+ReadCompressedCharData(mat_t *mat, z_streamp z, void *data, enum matio_types data_type, size_t len)
 {
-    int nBytes = 0;
-    unsigned int data_size;
+    size_t nBytes = 0;
+    int err;
 
     if ( mat == NULL || data == NULL || mat->fp == NULL )
         return 0;
 
-    data_size = (unsigned int)Mat_SizeOf(data_type);
+    err = Mul(&nBytes, len, Mat_SizeOf(data_type));
+    if ( err ) {
+        return 0;
+    }
 
     switch ( data_type ) {
         case MAT_T_UINT8:
         case MAT_T_UTF8:
-            InflateData(mat, z, data, len * data_size);
+            err = InflateData(mat, z, data, (mat_uint32_t)nBytes);
             break;
         case MAT_T_UINT16:
         case MAT_T_UTF16:
-            InflateData(mat, z, data, len * data_size);
+            err = InflateData(mat, z, data, (mat_uint32_t)nBytes);
             if ( mat->byteswap ) {
+                mat_uint16_t *ptr = (mat_uint16_t *)data;
                 int i;
                 for ( i = 0; i < len; i++ ) {
-                    Mat_uint16Swap((mat_uint16_t *)&data[2 * i]);
+                    Mat_uint16Swap((mat_uint16_t *)&ptr[i]);
                 }
             }
             break;
@@ -347,17 +351,22 @@ ReadCompressedCharData(mat_t *mat, z_streamp z, char *data, enum matio_types dat
                 data_type);
             break;
     }
-    nBytes = len * data_size;
-    return nBytes;
+
+    if ( err ) {
+        nBytes = 0;
+    }
+    return (int)nBytes;
 }
 #endif
 
 size_t
-ReadCharData(mat_t *mat, char *data, enum matio_types data_type, size_t len)
+ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
 {
+    size_t nBytes = 0;
+    int err;
     size_t data_size;
 
-    if ( mat == NULL || data == NULL || mat->fp == NULL )
+    if ( mat == NULL || _data == NULL || mat->fp == NULL )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
@@ -365,15 +374,17 @@ ReadCharData(mat_t *mat, char *data, enum matio_types data_type, size_t len)
     switch ( data_type ) {
         case MAT_T_UINT8:
         case MAT_T_UTF8: {
-            size_t readcount = fread(data, data_size, len, (FILE *)mat->fp);
-            return readcount * data_size;
+            err = Read(_data, data_size, len, (FILE *)mat->fp, &nBytes);
+            break;
         }
         case MAT_T_UINT16:
         case MAT_T_UTF16: {
             size_t i, readcount;
+            mat_uint16_t *data = (mat_uint16_t *)_data;
             mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
-            READ_DATA(char, Mat_uint16Swap);
-            return readcount * data_size;
+            READ_DATA(mat_uint16_t, Mat_uint16Swap);
+            err = Mul(&nBytes, readcount, data_size);
+            break;
         }
         default:
             Mat_Warning(
@@ -382,7 +393,10 @@ ReadCharData(mat_t *mat, char *data, enum matio_types data_type, size_t len)
                 data_type);
             break;
     }
-    return 0;
+    if ( err ) {
+        nBytes = 0;
+    }
+    return nBytes;
 }
 
 #undef READ_DATA

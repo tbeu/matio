@@ -148,7 +148,7 @@ AT_CHECK([cp $srcdir/results/read-var23.out expout
 AT_CLEANUP
 
 AT_SETUP([Read 2D character array])
-AT_CHECK([cp $srcdir/results/read-var24.out expout
+AT_CHECK([cp $srcdir/results/read-var24-73.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_le.mat var24],[0],[expout],[])
 AT_CLEANUP
 

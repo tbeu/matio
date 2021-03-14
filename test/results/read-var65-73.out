@@ -7,28 +7,28 @@ Class Type: Cell Array
       Rank: 2
 Dimensions: 1 x 26
 Class Type: Character Array
- Data Type: 16-bit, unsigned integer
+ Data Type: 8-bit, unsigned integer
 {
 abcdefghijklmnopqrstuvwxyz
 }
       Rank: 2
 Dimensions: 1 x 26
 Class Type: Character Array
- Data Type: 16-bit, unsigned integer
+ Data Type: 8-bit, unsigned integer
 {
 ABCDEFGHIJKLMNOPQRSTUVWXYZ
 }
       Rank: 2
 Dimensions: 1 x 26
 Class Type: Character Array
- Data Type: 16-bit, unsigned integer
+ Data Type: 8-bit, unsigned integer
 {
 1234567890!@#$%^&*()-_=+`~
 }
       Rank: 2
 Dimensions: 1 x 26
 Class Type: Character Array
- Data Type: 16-bit, unsigned integer
+ Data Type: 8-bit, unsigned integer
 {
 [{]}\|;:'",<.>/?          
 }

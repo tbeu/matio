@@ -8,7 +8,7 @@ Fields[4] {
       Rank: 2
 Dimensions: 1 x 26
 Class Type: Character Array
- Data Type: 8-bit, unsigned integer
+ Data Type: 16-bit, unsigned integer
 {
 abcdefghijklmnopqrstuvwxyz
 }
@@ -16,7 +16,7 @@ abcdefghijklmnopqrstuvwxyz
       Rank: 2
 Dimensions: 1 x 26
 Class Type: Character Array
- Data Type: 8-bit, unsigned integer
+ Data Type: 16-bit, unsigned integer
 {
 ABCDEFGHIJKLMNOPQRSTUVWXYZ
 }
@@ -24,7 +24,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
       Rank: 2
 Dimensions: 1 x 26
 Class Type: Character Array
- Data Type: 8-bit, unsigned integer
+ Data Type: 16-bit, unsigned integer
 {
 1234567890!@#$%^&*()-_=+`~
 }
@@ -32,7 +32,7 @@ Class Type: Character Array
       Rank: 2
 Dimensions: 1 x 26
 Class Type: Character Array
- Data Type: 8-bit, unsigned integer
+ Data Type: 16-bit, unsigned integer
 {
 [{]}\|;:'",<.>/?          
 }

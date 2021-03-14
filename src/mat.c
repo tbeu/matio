@@ -1113,6 +1113,8 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
     if ( matvar->class_type == MAT_C_SPARSE ) {
         matvar->data_size = sizeof(mat_sparse_t);
         matvar->nbytes = matvar->data_size;
+    } else if ( matvar->class_type == MAT_C_CHAR && matvar->data_type == MAT_T_UTF8 ) {
+        matvar->nbytes = strlen((const char *)data);
     } else {
         matvar->data_size = data_size;
         err = Mul(&matvar->nbytes, nelems, matvar->data_size);
@@ -2300,6 +2302,56 @@ Mat_VarPrint(matvar_t *matvar, int printdata)
                             }
                             printf("\n");
                         }
+                        break;
+                    }
+                    case MAT_T_UTF8: {
+                        const mat_uint8_t *data = (const mat_uint8_t *)matvar->data;
+                        size_t k = 0;
+                        size_t *idxOffset;
+                        if ( matvar->nbytes == 0 ) {
+                            break;
+                        }
+                        idxOffset = (size_t *)calloc(nelems, sizeof(size_t));
+                        if ( idxOffset == NULL ) {
+                            break;
+                        }
+                        for ( i = 0; i < matvar->dims[0]; i++ ) {
+                            for ( j = 0; j < matvar->dims[1]; j++ ) {
+                                mat_uint8_t c;
+                                if ( k >= matvar->nbytes ) {
+                                    break;
+                                }
+                                idxOffset[i * matvar->dims[1] + j] = k;
+                                c = data[k];
+                                if ( c <= 0x7F ) {
+                                } else if ( (c & 0xE0) == 0xC0 && k + 1 < matvar->nbytes ) {
+                                    k = k + 1;
+                                } else if ( (c & 0xF0) == 0xE0 && k + 2 < matvar->nbytes ) {
+                                    k = k + 2;
+                                } else if ( (c & 0xF8) == 0xF0 && k + 3 < matvar->nbytes ) {
+                                    k = k + 3;
+                                }
+                                ++k;
+                            }
+                        }
+                        for ( i = 0; i < matvar->dims[0]; i++ ) {
+                            for ( j = 0; j < matvar->dims[1]; j++ ) {
+                                mat_uint8_t c;
+                                k = idxOffset[j * matvar->dims[0] + i];
+                                c = data[k];
+                                if ( c <= 0x7F ) {
+                                    printf("%c", c);
+                                } else if ( (c & 0xE0) == 0xC0 ) {
+                                    printf("%c%c", c, data[k + 1]);
+                                } else if ( (c & 0xF0) == 0xE0 ) {
+                                    printf("%c%c%c", c, data[k + 1], data[k + 2]);
+                                } else if ( (c & 0xF8) == 0xF0 ) {
+                                    printf("%c%c%c%c", c, data[k + 1], data[k + 2], data[k + 3]);
+                                }
+                            }
+                            printf("\n");
+                        }
+                        free(idxOffset);
                         break;
                     }
                     default: {

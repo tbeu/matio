@@ -97,6 +97,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(matlab_dir)/test_write_cell_complex_2d_numeric.m \
                  $(matlab_dir)/test_write_cell_empty_struct.m \
                  $(matlab_dir)/test_write_char_unicode.m \
+                 $(matlab_dir)/test_write_char_utf8.m \
                  $(matlab_dir)/test_write_char.m \
                  $(matlab_dir)/test_write_complex_2d_numeric.m \
                  $(matlab_dir)/test_write_empty.m \
@@ -228,6 +229,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var26.out \
                  $(results_dir)/read-var27.out \
                  $(results_dir)/read-var27-5.out \
+                 $(results_dir)/read-var27-73.out \
                  $(results_dir)/read-var28.out \
                  $(results_dir)/read-var29.out \
                  $(results_dir)/read-var30.out \
@@ -252,6 +254,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var49.out \
                  $(results_dir)/read-var50.out \
                  $(results_dir)/read-var50-5.out \
+                 $(results_dir)/read-var50-73.out \
                  $(results_dir)/read-var51.out \
                  $(results_dir)/read-var52.out \
                  $(results_dir)/read-var53.out \
@@ -268,8 +271,10 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var64.out \
                  $(results_dir)/read-var65.out \
                  $(results_dir)/read-var65-5.out \
+                 $(results_dir)/read-var65-73.out \
                  $(results_dir)/read-var66.out \
                  $(results_dir)/read-var66-5.out \
+                 $(results_dir)/read-var66-73.out \
                  $(results_dir)/read-var67.out \
                  $(results_dir)/read-var68.out \
                  $(results_dir)/read-var69.out \
@@ -284,6 +289,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/readvar-write_cell_empty_struct-var1.out \
                  $(results_dir)/readvar-write_char_unicode-a-5.out \
                  $(results_dir)/readvar-write_char_unicode-a-73.out \
+                 $(results_dir)/readvar-write_char_utf8-a-5.out \
                  $(results_dir)/readvar-write_char-a.out \
                  $(results_dir)/readvar-write_char-a-5.out \
                  $(results_dir)/readvar-write_char-a-73.out \
