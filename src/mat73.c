@@ -1567,6 +1567,8 @@ Mat_VarWriteChar73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims)
 {
     int err = MATIO_E_NO_ERROR, k;
     hsize_t nelems = 1;
+    mat_uint16_t *u16 = NULL;
+    hid_t h5type;
 
     for ( k = 0; k < matvar->rank; k++ ) {
         nelems *= dims[k];
@@ -1621,11 +1623,48 @@ Mat_VarWriteChar73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims)
         }
         H5Sclose(aspace_id);
 
+        h5type = DataType2H5T(matvar->data_type);
+        if ( MATIO_E_NO_ERROR == err && matvar->data_type == MAT_T_UTF8 ) {
+            /* Convert to UTF-16 */
+            h5type = H5T_NATIVE_UINT16;
+            u16 = (mat_uint16_t *)calloc(nelems, sizeof(mat_uint16_t));
+            if ( u16 != NULL ) {
+                mat_uint8_t *data = (mat_uint8_t *)matvar->data;
+                size_t i, j = 0;
+                for ( i = 0; i < matvar->nbytes; i++ ) {
+                    const mat_uint8_t c = data[i];
+                    if ( c <= 0x7F ) { /* ASCII */
+                        u16[j] = (mat_uint16_t)c;
+                    } else if ( c < 0xE0 && i + 1 < matvar->nbytes ) { /* Extended ASCII */
+                        const mat_uint16_t _a = (mat_uint16_t)(c & 0x1F);
+                        const mat_uint16_t _b = (mat_uint16_t)(data[i + 1] & 0x3F);
+                        u16[j] = (_a << 6) | _b;
+                        i = i + 1;
+                    } else if ( (c & 0xF0) == 0xE0 && i + 2 < matvar->nbytes ) { /* BMP */
+                        const mat_uint16_t _a = (mat_uint16_t)(c & 0xF);
+                        const mat_uint16_t _b = (mat_uint16_t)(data[i + 1] & 0x3C) >> 2;
+                        const mat_uint16_t _c = (mat_uint16_t)(data[i + 1] & 0x3);
+                        const mat_uint16_t _d = (mat_uint16_t)(data[i + 2] & 0x30) >> 4;
+                        const mat_uint16_t _e = (mat_uint16_t)(data[i + 2] & 0xF);
+                        u16[j] = (_a << 12) | (_b << 8) | (_c << 6) | (_d << 4) | _e;
+                        i = i + 2;
+                    } else { /* Full UTF-8 */
+                        err = MATIO_E_OPERATION_NOT_SUPPORTED;
+                        break;
+                    }
+                    j++;
+                }
+            } else {
+                err = MATIO_E_OUT_OF_MEMORY;
+            }
+        }
+
         if ( MATIO_E_NO_ERROR == err ) {
-            if ( 0 > H5Dwrite(dset_id, DataType2H5T(matvar->data_type), H5S_ALL, H5S_ALL,
-                              H5P_DEFAULT, matvar->data) )
+            void *data = matvar->data_type == MAT_T_UTF8 ? u16 : matvar->data;
+            if ( 0 > H5Dwrite(dset_id, h5type, H5S_ALL, H5S_ALL, H5P_DEFAULT, (void *)data) )
                 err = MATIO_E_GENERIC_WRITE_ERROR;
         }
+        free(u16);
         H5Dclose(dset_id);
         H5Sclose(mspace_id);
     }
