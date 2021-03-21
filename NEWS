@@ -1,3 +1,13 @@
+Changes in 1.5.20 (21 March 2021)
+* Added support for writing MAT_T_UTF8 encoded character array to HDF5 MAT file
+  (by conversion to UTF-16 if in BMP)
+* Updated cmake-conan to version 0.16.1
+* Fixed bug with size_t arguments of logging function calls
+* Fixed bug reading past EOF from (crafted) MAT file
+* Fixed bug writing MAT_T_UTF8 encoded character array to v5 MAT file
+* Fixed printing of MAT_T_UTF8 encoded character array
+* Several other fixes, for example for memory leaks
+
 Changes in 1.5.19 (6 November 2020)
 * Fixed support for CMake (>= v3.19.0) build system
 * Fixed bug reading variable from v4 MAT file (regression of v1.5.18)
