@@ -1113,7 +1113,8 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
     if ( matvar->class_type == MAT_C_SPARSE ) {
         matvar->data_size = sizeof(mat_sparse_t);
         matvar->nbytes = matvar->data_size;
-    } else if ( matvar->class_type == MAT_C_CHAR && matvar->data_type == MAT_T_UTF8 ) {
+    } else if ( data != NULL && matvar->class_type == MAT_C_CHAR &&
+                matvar->data_type == MAT_T_UTF8 ) {
         matvar->nbytes = strlen((const char *)data);
     } else {
         matvar->data_size = data_size;
