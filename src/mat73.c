@@ -749,6 +749,24 @@ Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
         H5Tclose(type_id);
     }
 
+    /* Test if dataset is deflated */
+    {
+        hid_t plist_id = H5Dget_create_plist(dset_id);
+        if ( plist_id > 0 ) {
+            const int nFilters = H5Pget_nfilters(plist_id);
+            int i;
+            for ( i = 0; i < nFilters; i++ ) {
+                const H5Z_filter_t filterType =
+                    H5Pget_filter2(plist_id, i, NULL, NULL, 0, 0, NULL, NULL);
+                if ( H5Z_FILTER_DEFLATE == filterType ) {
+                    matvar->compression = MAT_COMPRESSION_ZLIB;
+                    break;
+                }
+            }
+            H5Pclose(plist_id);
+        }
+    }
+
     /* If the dataset is a cell array read the info of the cells */
     if ( MAT_C_CELL == matvar->class_type ) {
         matvar_t **cells;
