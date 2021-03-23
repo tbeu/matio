@@ -363,7 +363,7 @@ size_t
 ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
 {
     size_t nBytes = 0;
-    int err;
+    int err = 0;
     size_t data_size;
 
     if ( mat == NULL || _data == NULL || mat->fp == NULL )
