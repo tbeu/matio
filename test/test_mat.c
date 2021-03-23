@@ -1300,7 +1300,7 @@ static int
 test_write_char_utf8(const char *output_name)
 {
     const mat_uint8_t str[] = {216, 168, 196, 145, 216, 172, 105, 217,
-                               132, 225, 187, 135, 219, 140, 110, 0};
+                               132, 225, 187, 135, 219, 140, 110};
     int err = 0;
     size_t dims[2];
     mat_t *mat;
