@@ -338,7 +338,7 @@ ReadCompressedCharData(mat_t *mat, z_streamp z, void *data, enum matio_types dat
             err = InflateData(mat, z, data, (mat_uint32_t)nBytes);
             if ( mat->byteswap ) {
                 mat_uint16_t *ptr = (mat_uint16_t *)data;
-                int i;
+                size_t i;
                 for ( i = 0; i < len; i++ ) {
                     Mat_uint16Swap((mat_uint16_t *)&ptr[i]);
                 }
