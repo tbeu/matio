@@ -1,3 +1,8 @@
+Changes in 1.5.21 (25 March 2021)
+* Fixed: Avoid usage of strlen when creating MAT_T_UTF8 encoded character array
+  (regression of v1.5.20)
+* Fixed reading of compression flag from HDF5 MAT file 
+
 Changes in 1.5.20 (21 March 2021)
 * Added support for writing MAT_T_UTF8 encoded character array to HDF5 MAT file
   (by conversion to UTF-16 if in BMP)
