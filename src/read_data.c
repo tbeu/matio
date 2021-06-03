@@ -340,7 +340,7 @@ ReadCompressedCharData(mat_t *mat, z_streamp z, void *data, enum matio_types dat
                 mat_uint16_t *ptr = (mat_uint16_t *)data;
                 size_t i;
                 for ( i = 0; i < len; i++ ) {
-                    Mat_uint16Swap((mat_uint16_t *)&ptr[i]);
+                    Mat_uint16Swap(&ptr[i]);
                 }
             }
             break;

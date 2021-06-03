@@ -682,7 +682,7 @@ Mat_Create5(const char *matname, const char *hdr_str)
     if ( err >= 116 )
         mat->header[115] = '\0'; /* Just to make sure it's NULL terminated */
     memset(mat->subsys_offset, ' ', 8);
-    mat->version = (int)0x0100;
+    mat->version = 0x0100;
     endian = 0x4d49;
 
     version = 0x0100;
