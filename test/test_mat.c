@@ -3440,7 +3440,7 @@ test_write_sparse(enum matio_classes matvar_class, const char *output_name)
     mat_sparse_t sparse = {
         0,
     };
-    enum matio_types data_type;
+    enum matio_types data_type = MAT_T_UNKNOWN;
     double d[25] = {1,  5,  7,  8,  9,  11, 15, 17, 18, 19, 21, 25, 27,
                     28, 29, 31, 35, 37, 38, 39, 41, 45, 47, 48, 49};
     float f[25] = {1,  5,  7,  8,  9,  11, 15, 17, 18, 19, 21, 25, 27,
@@ -3571,7 +3571,7 @@ test_write_complex_sparse(enum matio_classes matvar_class, const char *output_na
         0,
     };
     mat_complex_split_t z = {NULL, NULL};
-    enum matio_types data_type;
+    enum matio_types data_type = MAT_T_UNKNOWN;
     double d_real[25] = {1,  5,  7,  8,  9,  11, 15, 17, 18, 19, 21, 25, 27,
                          28, 29, 31, 35, 37, 38, 39, 41, 45, 47, 48, 49},
            d_imag[25] = {51, 55, 57, 58, 59, 61, 65, 67, 68, 69, 71, 75, 77,

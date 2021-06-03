@@ -307,7 +307,7 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
 {
     char *next_tok_pos, next_tok = 0;
     char *open = NULL, *close = NULL;
-    int err, i = 0, j, done = 0;
+    int err = 1, i = 0, j, done = 0;
     matvar_t *matvar = *_matvar;
 
     next_tok_pos = get_next_token(index_str);

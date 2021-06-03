@@ -2719,7 +2719,7 @@ Mat_VarRead(mat_t *mat, const char *name)
 matvar_t *
 Mat_VarReadNext(mat_t *mat)
 {
-    long fpos;
+    long fpos = 0;
     matvar_t *matvar;
 
     if ( mat->version != MAT_FT_MAT73 ) {
