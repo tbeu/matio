@@ -4162,17 +4162,17 @@ main(int argc, char *argv[])
                 if ( matvar ) {
                     if ( matvar->rank == 3 && matvar->dims[0] == 32 && matvar->dims[1] == 32 &&
                          matvar->dims[2] == 32 ) {
-                        mat_t *mat2;
+                        mat_t *mat3;
                         matvar->rank = 2;
                         matvar->dims[0] = 128;
                         matvar->dims[1] = 256;
                         matvar->dims[2] = 1;
                         if ( NULL == output_name )
                             output_name = "test_write_reshape32x32x32.mat";
-                        mat2 = Mat_CreateVer(output_name, NULL, mat_file_ver);
-                        if ( NULL != mat2 ) {
-                            Mat_VarWrite(mat2, matvar, compression);
-                            Mat_Close(mat2);
+                        mat3 = Mat_CreateVer(output_name, NULL, mat_file_ver);
+                        if ( NULL != mat3 ) {
+                            Mat_VarWrite(mat3, matvar, compression);
+                            Mat_Close(mat3);
                         }
                     }
                     Mat_VarFree(matvar);
