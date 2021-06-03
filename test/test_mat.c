@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 #if !defined(HAVE_STRCASECMP)
 #define strcasecmp(a, b) strcmp(a, b)
 #endif
@@ -2876,7 +2877,7 @@ test_get_struct_field(const char *file, const char *structname, const char *fiel
                 case '7':
                 case '8':
                 case '9':
-                    index = atoi(fieldname);
+                    index = (int)strtol(fieldname, NULL, 10);
                     field = Mat_VarGetStructField(matvar, &index, MAT_BY_INDEX, 0);
                     err = (field == NULL) ? 1 : 0;
                     if ( !err )
@@ -3817,7 +3818,8 @@ main(int argc, char *argv[])
     while ( (c = getopt_long(argc, argv, optstring, options, NULL)) != EOF ) {
         switch ( c ) {
             case 'a':
-                if ( 1 != sscanf(optarg, "%d", &dim_append) )
+                dim_append = (int)strtol(optarg, NULL, 10);
+                if ( errno != 0 )
                     exit(EXIT_FAILURE);
                 break;
             case 'c':

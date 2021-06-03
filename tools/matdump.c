@@ -133,7 +133,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 if ( !strcmp(valptr, "end") ) {
                     edge[dim] = -1;
                 } else {
-                    i = atoi(valptr);
+                    i = (int)strtol(valptr, NULL, 10);
                     edge[dim] = i;
                 }
             } else if ( nvals == 1 ) {
@@ -141,7 +141,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 if ( !strcmp(valptr, "end") ) {
                     edge[dim] = -1;
                 } else {
-                    i = atoi(valptr);
+                    i = (int)strtol(valptr, NULL, 10);
                     edge[dim] = i;
                 }
             } else if ( nvals == 0 ) {
@@ -150,7 +150,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                     start[dim] = -1;
                     edge[dim] = -1;
                 } else {
-                    i = atoi(valptr);
+                    i = (int)strtol(valptr, NULL, 10);
                     start[dim] = i - 1;
                     edge[dim] = i;
                 }
@@ -170,7 +170,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 else
                     fprintf(stderr, "Too many inputs to dim %d", dim + 1);
             } else {
-                i = atoi(valptr);
+                i = (int)strtol(valptr, NULL, 10);
                 if ( nvals == 0 )
                     start[dim] = i - 1;
                 else if ( nvals == 1 )
@@ -195,7 +195,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 else
                     fprintf(stderr, "Too many inputs to dim %d", dim + 1);
             } else {
-                i = atoi(valptr);
+                i = (int)strtol(valptr, NULL, 10);
                 if ( nvals == 0 ) {
                     start[dim] = i - 1;
                     edge[dim] = i;
