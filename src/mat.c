@@ -1082,7 +1082,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         case MAT_T_STRUCT: {
             data_size = sizeof(matvar_t **);
             if ( data != NULL ) {
-                matvar_t **fields = (matvar_t **)data;
+                matvar_t * const * const fields = (matvar_t * const * const)data;
                 size_t nfields = 0;
                 while ( fields[nfields] != NULL )
                     nfields++;
@@ -1117,7 +1117,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         size_t k = 0;
         if ( data != NULL ) {
             size_t i;
-            mat_uint8_t *ptr = (mat_uint8_t *)data;
+            const mat_uint8_t *ptr = (const mat_uint8_t *)data;
             for ( i = 0; i < nelems; i++ ) {
                 const mat_uint8_t c = ptr[k];
                 if ( c <= 0x7F ) {
@@ -1149,9 +1149,10 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         matvar->data = data;
         matvar->mem_conserve = 1;
     } else if ( MAT_C_SPARSE == matvar->class_type ) {
-        mat_sparse_t *sparse_data, *sparse_data_in;
+        mat_sparse_t *sparse_data;
+        const mat_sparse_t *sparse_data_in;
 
-        sparse_data_in = (mat_sparse_t *)data;
+        sparse_data_in = (const mat_sparse_t *)data;
         sparse_data = (mat_sparse_t *)malloc(sizeof(mat_sparse_t));
         if ( NULL != sparse_data ) {
             sparse_data->nzmax = sparse_data_in->nzmax;
@@ -1193,7 +1194,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
             matvar->data = malloc(sizeof(mat_complex_split_t));
             if ( NULL != matvar->data && matvar->nbytes > 0 ) {
                 mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
-                mat_complex_split_t *complex_data_in = (mat_complex_split_t *)data;
+                const mat_complex_split_t *complex_data_in = (const mat_complex_split_t *)data;
 
                 complex_data->Re = malloc(matvar->nbytes);
                 complex_data->Im = malloc(matvar->nbytes);
