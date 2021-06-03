@@ -558,8 +558,6 @@ print_whos(matvar_t *matvar)
         printf("  %10" SIZE_T_FMTSTR, nbytes);
     }
     printf("  %-18s\n", mxclass[matvar->class_type]);
-
-    return;
 }
 
 static size_t indent = 0;

@@ -2424,8 +2424,6 @@ Mat_VarPrint(matvar_t *matvar, int printdata)
     }
 
     printf("}\n");
-
-    return;
 }
 
 /** @brief Reads MAT variable data from a file
