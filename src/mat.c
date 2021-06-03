@@ -1979,7 +1979,7 @@ Mat_CalcSubscripts2(int rank, size_t *dims, size_t index)
         for ( j = i; j--; )
             k *= dims[j];
         subs[i] = (size_t)floor(l / (double)k);
-        l -= subs[i] * k;
+        l -= (double)(subs[i] * k);
         subs[i]++;
     }
 
