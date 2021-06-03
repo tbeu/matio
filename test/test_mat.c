@@ -211,7 +211,7 @@ static const char *helptest_write_complex_2d_numeric[] = {
     "of the variable is double, or set by the -c option. The MAT file is the ",
     "default file version, or set by the -v option. If the MAT file is ",
     "version 5, compression can be enabled using the -z option if built with",
-    "zlib library. If the MAT file is version 7.3 and the -a option is set, "
+    "zlib library. If the MAT file is version 7.3 and the -a option is set, ",
     "the MAT file is created by appending the data in a loop.",
     "",
     "MATLAB code to generate expected data",
