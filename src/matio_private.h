@@ -52,8 +52,8 @@
 #define READ_BLOCK_SIZE (8192)
 #endif
 
-#define _CAT(X, Y) X##Y
-#define CAT(X, Y) _CAT(X, Y)
+#define CAT_(X, Y) X##Y
+#define CAT(X, Y) CAT_(X, Y)
 
 /** @if mat_devman
  * @brief Matlab MAT File information
