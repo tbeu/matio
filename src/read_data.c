@@ -1023,7 +1023,6 @@ ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
  * @param data Pointer to store the output data
  * @param class_type Type of data class (matio_classes enumerations)
  * @param data_type Datatype of the stored data (matio_types enumerations)
- * @param dims Dimensions of the data
  * @param start Index to start reading data in each dimension
  * @param stride Read every @c stride elements in each dimension
  * @param edge Number of elements to read in each dimension

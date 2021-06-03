@@ -391,7 +391,7 @@ GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size)
 /** @brief determines the number of bytes needed to store the given variable
  *
  * @ingroup mat_internal
- * @param matvar MAT variable
+ * @param name MAT variable
  * @param rank rank of the variable
  * @param size the number of bytes needed to store the variable
  * @return 0 on success
