@@ -77,7 +77,8 @@ Mat_mktemp(char *path_buf, char *dir_buf)
     *dir_buf = '\0';
 
 #if ( defined(_WIN64) || defined(_WIN32) ) && !defined(__CYGWIN__)
-    strcpy(path_buf, MAT_MKTEMP_TPL);
+    strncpy(path_buf, MAT_MKTEMP_TPL, MAT_MKTEMP_BUF_SIZE - 1);
+    path_buf[MAT_MKTEMP_BUF_SIZE - 1] = '\0';
     if ( NULL != _mktemp(path_buf) )
         ret = path_buf;
 #else
@@ -85,10 +86,12 @@ Mat_mktemp(char *path_buf, char *dir_buf)
        suppressed. So, create a temporary directory with mkdtemp() instead,
        and then just always use the same hardcoded filename inside that temp dir.
      */
-    strcpy(dir_buf, MAT_MKTEMP_DIR MAT_MKTEMP_TPL);
+    strncpy(dir_buf, MAT_MKTEMP_DIR MAT_MKTEMP_TPL, MAT_MKTEMP_BUF_SIZE - 1);
+    dir_buf[MAT_MKTEMP_BUF_SIZE - 1] = '\0';
     if ( NULL != mkdtemp(dir_buf) ) {
-        strcpy(path_buf, dir_buf);
-        strcat(path_buf, MAT_MKTEMP_FILE);
+        strncpy(path_buf, dir_buf, MAT_MKTEMP_BUF_SIZE - 1);
+        path_buf[MAT_MKTEMP_BUF_SIZE - 1] = '\0';
+        strncat(path_buf, MAT_MKTEMP_FILE, MAT_MKTEMP_BUF_SIZE - strlen(path_buf) - 1);
         ret = path_buf;
     }
 #endif
