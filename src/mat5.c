@@ -2103,6 +2103,7 @@ WriteType(mat_t *mat, matvar_t *matvar)
                     for ( j = nBytes % 8; j < 8; j++ )
                         fwrite(&pad1, 1, 1, (FILE *)mat->fp);
             }
+            break;
         }
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
