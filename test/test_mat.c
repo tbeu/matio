@@ -649,7 +649,7 @@ static const char *helptest_ind2sub[] = {
     "",
     NULL};
 
-static void
+static MATIO_NORETURN void
 help_test(const char *test)
 {
     if ( !strcmp(test, "copy") )
@@ -3863,13 +3863,13 @@ main(int argc, char *argv[])
                 break;
             case 'H':
                 Mat_Help(helpstr);
-                exit(EXIT_SUCCESS);
+                /* Note: Mat_Help() calls exit() */
             case 'L':
                 Mat_Help(helptestsstr);
-                exit(EXIT_SUCCESS);
+                /* Note: Mat_Help() calls exit() */
             case 'T':
                 help_test(optarg);
-                exit(EXIT_SUCCESS);
+                /* Note: help_test() calls exit() */
             case 'V':
                 printf(
                     "%s %s\nWritten by Christopher Hulbert\n\n"

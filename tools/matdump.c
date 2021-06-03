@@ -861,7 +861,7 @@ main(int argc, char *argv[])
                 break;
             case 'H':
                 Mat_Help(helpstr);
-                exit(EXIT_SUCCESS);
+                /* Note: Mat_Help() calls exit() */
             case 'V':
                 printf(
                     "%s %s\nWritten by Christopher Hulbert\n\n"

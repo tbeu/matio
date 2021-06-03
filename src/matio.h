@@ -269,7 +269,7 @@ EXTERN int Mat_SetDebug(int d);
 EXTERN void Mat_Critical(const char *format, ...) MATIO_FORMATATTR_PRINTF1;
 EXTERN MATIO_NORETURN void Mat_Error(const char *format,
                                      ...) MATIO_NORETURNATTR MATIO_FORMATATTR_PRINTF1;
-EXTERN void Mat_Help(const char *helpstr[]);
+EXTERN MATIO_NORETURN void Mat_Help(const char *helpstr[]);
 EXTERN int Mat_LogInit(const char *prog_name);
 EXTERN int Mat_LogClose(void);
 EXTERN int Mat_LogInitFunc(const char *prog_name, void (*log_func)(int log_level, char *message));
