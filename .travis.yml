@@ -7,6 +7,7 @@ cache:
   directories:
   - $HOME/.cache/pip
   - $HOME/.conan
+  - /usr/local/Homebrew
 
 before_cache:
   - rm -f $HOME/.cache/pip/log/debug.log
@@ -190,6 +191,14 @@ jobs:
         - HDF5_VERSION=foo
         - HOMEBREW_DEPLOY=yes
         - HOMEBREW_NO_ANALYTICS=1
+    - os: osx
+      osx_image: xcode12
+      compiler: clang
+      env:
+        - USE_CMAKE=yes
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=yes
+        - WITH_ZLIB=yes
 
 before_install: bash ./.ci/travis_before_install.sh || travis_terminate 1;
 
