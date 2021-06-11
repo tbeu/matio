@@ -28,7 +28,7 @@ if [[ "$ENABLE_MAT73" == "yes" ]]; then
         make install -C src
         popd
     fi
-    if [[ "${USE_CMAKE:-no}" == "yes" ]] &&  [[ "${USE_CONAN:-no}" == "no" ]]; then
+    if [[ "${USE_CMAKE:-no}" == "yes" ]] &&  [[ "${USE_CONAN:-no}" == "no" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         pushd $HOME
         HDF5_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_VERSION%.*}/hdf5-${HDF5_VERSION}/src/CMake-hdf5-${HDF5_VERSION}.tar.gz"
         wget --no-check-certificate -nv $HDF5_URL
