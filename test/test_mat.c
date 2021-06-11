@@ -3799,7 +3799,7 @@ main(int argc, char *argv[])
 {
     const char *prog_name = "test_mat";
     int c, k, err = 0, ntests = 0, dim_append = 0;
-    mat_t *mat, *mat2;
+    mat_t *mat;
     matvar_t *matvar;
     enum matio_classes matvar_class = MAT_C_DOUBLE;
     const char *output_name = NULL;
@@ -3891,6 +3891,7 @@ main(int argc, char *argv[])
 
     for ( k = optind; k < argc; ) {
         if ( !strcasecmp(argv[k], "copy") ) {
+            mat_t *mat2;
             k++;
             if ( NULL == output_name )
                 output_name = "test_mat_copy.mat";
@@ -4164,17 +4165,17 @@ main(int argc, char *argv[])
                 if ( matvar ) {
                     if ( matvar->rank == 3 && matvar->dims[0] == 32 && matvar->dims[1] == 32 &&
                          matvar->dims[2] == 32 ) {
-                        mat_t *mat3;
+                        mat_t *mat2;
                         matvar->rank = 2;
                         matvar->dims[0] = 128;
                         matvar->dims[1] = 256;
                         matvar->dims[2] = 1;
                         if ( NULL == output_name )
                             output_name = "test_write_reshape32x32x32.mat";
-                        mat3 = Mat_CreateVer(output_name, NULL, mat_file_ver);
-                        if ( NULL != mat3 ) {
-                            Mat_VarWrite(mat3, matvar, compression);
-                            Mat_Close(mat3);
+                        mat2 = Mat_CreateVer(output_name, NULL, mat_file_ver);
+                        if ( NULL != mat2 ) {
+                            Mat_VarWrite(mat2, matvar, compression);
+                            Mat_Close(mat2);
                         }
                     }
                     Mat_VarFree(matvar);
