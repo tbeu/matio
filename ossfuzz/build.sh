@@ -24,8 +24,8 @@ popd
 
 #build hdf5
 pushd "$SRC"
-tar -xvf hdf5-1.12.0.tar.gz
-cd hdf5-1.12.0
+tar -xvf hdf5-1.12.1.tar.gz
+cd hdf5-1.12.1
 ./configure --disable-shared --disable-deprecated-symbols --disable-hl --disable-parallel --disable-trace --disable-internal-debug --disable-asserts --disable-tests --disable-tools --with-pic --with-zlib="$WORK" --prefix="$WORK"
 make -j$(nproc)
 make install
