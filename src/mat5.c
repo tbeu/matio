@@ -391,7 +391,7 @@ GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size)
 /** @brief determines the number of bytes needed to store the given variable
  *
  * @ingroup mat_internal
- * @param matvar MAT variable
+ * @param name MAT variable
  * @param rank rank of the variable
  * @param size the number of bytes needed to store the variable
  * @return 0 on success
@@ -682,7 +682,7 @@ Mat_Create5(const char *matname, const char *hdr_str)
     if ( err >= 116 )
         mat->header[115] = '\0'; /* Just to make sure it's NULL terminated */
     memset(mat->subsys_offset, ' ', 8);
-    mat->version = (int)0x0100;
+    mat->version = 0x0100;
     endian = 0x4d49;
 
     version = 0x0100;
@@ -2103,6 +2103,7 @@ WriteType(mat_t *mat, matvar_t *matvar)
                     for ( j = nBytes % 8; j < 8; j++ )
                         fwrite(&pad1, 1, 1, (FILE *)mat->fp);
             }
+            break;
         }
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:

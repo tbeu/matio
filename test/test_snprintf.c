@@ -75,7 +75,7 @@ int main(int argc, char **argv)
                         int l1 = mat_snprintf(NULL, 0, fp_fmt[x], fp_nums[y]);
                         int l2 = mat_snprintf(buf1, sizeof(buf1), fp_fmt[x], fp_nums[y]);
                         sprintf (buf2, fp_fmt[x], fp_nums[y]);
-                        if (strcmp (buf1, buf2)) {
+                        if (strcmp (buf1, buf2) != 0) {
                                 printf("snprintf doesn't match Format: %s\n\tsnprintf = [%s]\n\t sprintf = [%s]\n",
                                        fp_fmt[x], buf1, buf2);
                                 fail++;
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
                         int l1 = mat_snprintf(NULL, 0, int_fmt[x], int_nums[y]);
                         int l2 = mat_snprintf(buf1, sizeof(buf1), int_fmt[x], int_nums[y]);
                         sprintf (buf2, int_fmt[x], int_nums[y]);
-                        if (strcmp (buf1, buf2)) {
+                        if (strcmp (buf1, buf2) != 0) {
                                 printf("snprintf doesn't match Format: %s\n\tsnprintf = [%s]\n\t sprintf = [%s]\n",
                                        int_fmt[x], buf1, buf2);
                                 fail++;
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
                         int l1 = mat_snprintf(NULL, 0, str_fmt[x], str_vals[y]);
                         int l2 = mat_snprintf(buf1, sizeof(buf1), str_fmt[x], str_vals[y]);
                         sprintf (buf2, str_fmt[x], str_vals[y]);
-                        if (strcmp (buf1, buf2)) {
+                        if (strcmp (buf1, buf2) != 0) {
                                 printf("snprintf doesn't match Format: %s\n\tsnprintf = [%s]\n\t sprintf = [%s]\n",
                                        str_fmt[x], buf1, buf2);
                                 fail++;
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
                          double r = v0*p;
                          mat_snprintf(buf1, sizeof(buf1), "%1.1f", r);
                          sprintf(buf2,                "%1.1f", r);
-                         if (strcmp(buf1, buf2)) {
+                         if (strcmp(buf1, buf2) != 0) {
                                  printf("we seem to support %d digits\n", x-1);
                                  break;
                          }

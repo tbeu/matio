@@ -182,7 +182,6 @@ mat_log(int loglevel, const char *format, va_list ap)
     buffer = strdup_vprintf(format, ap);
     (*logfunc)(loglevel, buffer);
     free(buffer);
-    return;
 }
 
 #if defined(MAT73) && MAT73

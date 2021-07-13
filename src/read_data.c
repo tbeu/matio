@@ -52,7 +52,7 @@
             }                                                         \
         } else {                                                      \
             size_t j;                                                 \
-            int err = 0;                                              \
+            int err_ = 0;                                              \
             readcount = 0;                                            \
             for ( i = 0; i < len - block_size; i += block_size ) {    \
                 j = fread(v, data_size, block_size, (FILE *)mat->fp); \
@@ -62,11 +62,11 @@
                         data[i + j] = (T)v[j];                        \
                     }                                                 \
                 } else {                                              \
-                    err = 1;                                          \
+                    err_ = 1;                                          \
                     break;                                            \
                 }                                                     \
             }                                                         \
-            if ( 0 == err && len > i ) {                              \
+            if ( 0 == err_ && len > i ) {                              \
                 j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
                 readcount += j;                                       \
                 if ( j == len - i ) {                                 \
@@ -91,7 +91,7 @@
                 }                                                         \
             } else {                                                      \
                 size_t j;                                                 \
-                int err = 0;                                              \
+                int err_ = 0;                                              \
                 readcount = 0;                                            \
                 for ( i = 0; i < len - block_size; i += block_size ) {    \
                     j = fread(v, data_size, block_size, (FILE *)mat->fp); \
@@ -101,11 +101,11 @@
                             data[i + j] = (T)SwapFunc(&v[j]);             \
                         }                                                 \
                     } else {                                              \
-                        err = 1;                                          \
+                        err_ = 1;                                          \
                         break;                                            \
                     }                                                     \
                 }                                                         \
-                if ( 0 == err && len > i ) {                              \
+                if ( 0 == err_ && len > i ) {                              \
                     j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
                     readcount += j;                                       \
                     if ( j == len - i ) {                                 \
@@ -340,7 +340,7 @@ ReadCompressedCharData(mat_t *mat, z_streamp z, void *data, enum matio_types dat
                 mat_uint16_t *ptr = (mat_uint16_t *)data;
                 size_t i;
                 for ( i = 0; i < len; i++ ) {
-                    Mat_uint16Swap((mat_uint16_t *)&ptr[i]);
+                    Mat_uint16Swap(&ptr[i]);
                 }
             }
             break;
@@ -1023,7 +1023,6 @@ ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
  * @param data Pointer to store the output data
  * @param class_type Type of data class (matio_classes enumerations)
  * @param data_type Datatype of the stored data (matio_types enumerations)
- * @param dims Dimensions of the data
  * @param start Index to start reading data in each dimension
  * @param stride Read every @c stride elements in each dimension
  * @param edge Number of elements to read in each dimension
