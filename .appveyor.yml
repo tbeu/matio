@@ -150,7 +150,7 @@ for:
     - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/msys/x86_64/pacman-5.2.1-6-x86_64.pkg.tar.xz"
     - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
     - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
-    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S autoconf automake"
+    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S automake"
     - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S zlib-devel"
 
   before_build:
