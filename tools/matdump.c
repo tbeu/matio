@@ -133,7 +133,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 if ( !strcmp(valptr, "end") ) {
                     edge[dim] = -1;
                 } else {
-                    i = atoi(valptr);
+                    i = (int)strtol(valptr, NULL, 10);
                     edge[dim] = i;
                 }
             } else if ( nvals == 1 ) {
@@ -141,7 +141,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 if ( !strcmp(valptr, "end") ) {
                     edge[dim] = -1;
                 } else {
-                    i = atoi(valptr);
+                    i = (int)strtol(valptr, NULL, 10);
                     edge[dim] = i;
                 }
             } else if ( nvals == 0 ) {
@@ -150,7 +150,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                     start[dim] = -1;
                     edge[dim] = -1;
                 } else {
-                    i = atoi(valptr);
+                    i = (int)strtol(valptr, NULL, 10);
                     start[dim] = i - 1;
                     edge[dim] = i;
                 }
@@ -170,7 +170,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 else
                     fprintf(stderr, "Too many inputs to dim %d", dim + 1);
             } else {
-                i = atoi(valptr);
+                i = (int)strtol(valptr, NULL, 10);
                 if ( nvals == 0 )
                     start[dim] = i - 1;
                 else if ( nvals == 1 )
@@ -195,7 +195,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 else
                     fprintf(stderr, "Too many inputs to dim %d", dim + 1);
             } else {
-                i = atoi(valptr);
+                i = (int)strtol(valptr, NULL, 10);
                 if ( nvals == 0 ) {
                     start[dim] = i - 1;
                     edge[dim] = i;
@@ -307,7 +307,7 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
 {
     char *next_tok_pos, next_tok = 0;
     char *open = NULL, *close = NULL;
-    int err, i = 0, j, done = 0;
+    int err = 1, i = 0, j, done = 0;
     matvar_t *matvar = *_matvar;
 
     next_tok_pos = get_next_token(index_str);
@@ -558,8 +558,6 @@ print_whos(matvar_t *matvar)
         printf("  %10" SIZE_T_FMTSTR, nbytes);
     }
     printf("  %-18s\n", mxclass[matvar->class_type]);
-
-    return;
 }
 
 static size_t indent = 0;
@@ -861,7 +859,7 @@ main(int argc, char *argv[])
                 break;
             case 'H':
                 Mat_Help(helpstr);
-                exit(EXIT_SUCCESS);
+                /* Note: Mat_Help() calls exit() */
             case 'V':
                 printf(
                     "%s %s\nWritten by Christopher Hulbert\n\n"

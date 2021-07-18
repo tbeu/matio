@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 #if !defined(HAVE_STRCASECMP)
 #define strcasecmp(a, b) strcmp(a, b)
 #endif
@@ -211,7 +212,7 @@ static const char *helptest_write_complex_2d_numeric[] = {
     "of the variable is double, or set by the -c option. The MAT file is the ",
     "default file version, or set by the -v option. If the MAT file is ",
     "version 5, compression can be enabled using the -z option if built with",
-    "zlib library. If the MAT file is version 7.3 and the -a option is set, "
+    "zlib library. If the MAT file is version 7.3 and the -a option is set, ",
     "the MAT file is created by appending the data in a loop.",
     "",
     "MATLAB code to generate expected data",
@@ -649,7 +650,7 @@ static const char *helptest_ind2sub[] = {
     "",
     NULL};
 
-static void
+static MATIO_NORETURN void
 help_test(const char *test)
 {
     if ( !strcmp(test, "copy") )
@@ -2876,7 +2877,7 @@ test_get_struct_field(const char *file, const char *structname, const char *fiel
                 case '7':
                 case '8':
                 case '9':
-                    index = atoi(fieldname);
+                    index = (int)strtol(fieldname, NULL, 10);
                     field = Mat_VarGetStructField(matvar, &index, MAT_BY_INDEX, 0);
                     err = (field == NULL) ? 1 : 0;
                     if ( !err )
@@ -3440,7 +3441,7 @@ test_write_sparse(enum matio_classes matvar_class, const char *output_name)
     mat_sparse_t sparse = {
         0,
     };
-    enum matio_types data_type;
+    enum matio_types data_type = MAT_T_UNKNOWN;
     double d[25] = {1,  5,  7,  8,  9,  11, 15, 17, 18, 19, 21, 25, 27,
                     28, 29, 31, 35, 37, 38, 39, 41, 45, 47, 48, 49};
     float f[25] = {1,  5,  7,  8,  9,  11, 15, 17, 18, 19, 21, 25, 27,
@@ -3571,7 +3572,7 @@ test_write_complex_sparse(enum matio_classes matvar_class, const char *output_na
         0,
     };
     mat_complex_split_t z = {NULL, NULL};
-    enum matio_types data_type;
+    enum matio_types data_type = MAT_T_UNKNOWN;
     double d_real[25] = {1,  5,  7,  8,  9,  11, 15, 17, 18, 19, 21, 25, 27,
                          28, 29, 31, 35, 37, 38, 39, 41, 45, 47, 48, 49},
            d_imag[25] = {51, 55, 57, 58, 59, 61, 65, 67, 68, 69, 71, 75, 77,
@@ -3798,7 +3799,7 @@ main(int argc, char *argv[])
 {
     const char *prog_name = "test_mat";
     int c, k, err = 0, ntests = 0, dim_append = 0;
-    mat_t *mat, *mat2;
+    mat_t *mat;
     matvar_t *matvar;
     enum matio_classes matvar_class = MAT_C_DOUBLE;
     const char *output_name = NULL;
@@ -3817,7 +3818,8 @@ main(int argc, char *argv[])
     while ( (c = getopt_long(argc, argv, optstring, options, NULL)) != EOF ) {
         switch ( c ) {
             case 'a':
-                if ( 1 != sscanf(optarg, "%d", &dim_append) )
+                dim_append = (int)strtol(optarg, NULL, 10);
+                if ( errno != 0 )
                     exit(EXIT_FAILURE);
                 break;
             case 'c':
@@ -3863,13 +3865,13 @@ main(int argc, char *argv[])
                 break;
             case 'H':
                 Mat_Help(helpstr);
-                exit(EXIT_SUCCESS);
+                /* Note: Mat_Help() calls exit() */
             case 'L':
                 Mat_Help(helptestsstr);
-                exit(EXIT_SUCCESS);
+                /* Note: Mat_Help() calls exit() */
             case 'T':
                 help_test(optarg);
-                exit(EXIT_SUCCESS);
+                /* Note: help_test() calls exit() */
             case 'V':
                 printf(
                     "%s %s\nWritten by Christopher Hulbert\n\n"
@@ -3889,6 +3891,7 @@ main(int argc, char *argv[])
 
     for ( k = optind; k < argc; ) {
         if ( !strcasecmp(argv[k], "copy") ) {
+            mat_t *mat2;
             k++;
             if ( NULL == output_name )
                 output_name = "test_mat_copy.mat";

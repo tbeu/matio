@@ -144,7 +144,6 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread)
  * @param z zlib compression stream
  * @param data_type Data type (matio_types enumerations)
  * @param len Number of elements of datatype @c data_type to skip
- * @param[out] bytesread Number of bytes read from the file
  * @retval 0 on success
 
  */
@@ -319,7 +318,6 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesre
  * @param z zlib compression stream
  * @param buf Pointer to store the uncompressed data
  * @param nBytes Number of uncompressed bytes to inflate
- * @param[out] bytesread Number of bytes read from the file
  * @retval 0 on success
 
  */

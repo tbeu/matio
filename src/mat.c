@@ -77,7 +77,8 @@ Mat_mktemp(char *path_buf, char *dir_buf)
     *dir_buf = '\0';
 
 #if ( defined(_WIN64) || defined(_WIN32) ) && !defined(__CYGWIN__)
-    strcpy(path_buf, MAT_MKTEMP_TPL);
+    strncpy(path_buf, MAT_MKTEMP_TPL, MAT_MKTEMP_BUF_SIZE - 1);
+    path_buf[MAT_MKTEMP_BUF_SIZE - 1] = '\0';
     if ( NULL != _mktemp(path_buf) )
         ret = path_buf;
 #else
@@ -85,10 +86,12 @@ Mat_mktemp(char *path_buf, char *dir_buf)
        suppressed. So, create a temporary directory with mkdtemp() instead,
        and then just always use the same hardcoded filename inside that temp dir.
      */
-    strcpy(dir_buf, MAT_MKTEMP_DIR MAT_MKTEMP_TPL);
+    strncpy(dir_buf, MAT_MKTEMP_DIR MAT_MKTEMP_TPL, MAT_MKTEMP_BUF_SIZE - 1);
+    dir_buf[MAT_MKTEMP_BUF_SIZE - 1] = '\0';
     if ( NULL != mkdtemp(dir_buf) ) {
-        strcpy(path_buf, dir_buf);
-        strcat(path_buf, MAT_MKTEMP_FILE);
+        strncpy(path_buf, dir_buf, MAT_MKTEMP_BUF_SIZE - 1);
+        path_buf[MAT_MKTEMP_BUF_SIZE - 1] = '\0';
+        strncat(path_buf, MAT_MKTEMP_FILE, MAT_MKTEMP_BUF_SIZE - strlen(path_buf) - 1);
         ret = path_buf;
     }
 #endif
@@ -1082,7 +1085,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         case MAT_T_STRUCT: {
             data_size = sizeof(matvar_t **);
             if ( data != NULL ) {
-                matvar_t **fields = (matvar_t **)data;
+                matvar_t * const * const fields = (matvar_t * const * const)data;
                 size_t nfields = 0;
                 while ( fields[nfields] != NULL )
                     nfields++;
@@ -1117,7 +1120,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         size_t k = 0;
         if ( data != NULL ) {
             size_t i;
-            mat_uint8_t *ptr = (mat_uint8_t *)data;
+            const mat_uint8_t *ptr = (const mat_uint8_t *)data;
             for ( i = 0; i < nelems; i++ ) {
                 const mat_uint8_t c = ptr[k];
                 if ( c <= 0x7F ) {
@@ -1149,9 +1152,10 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         matvar->data = data;
         matvar->mem_conserve = 1;
     } else if ( MAT_C_SPARSE == matvar->class_type ) {
-        mat_sparse_t *sparse_data, *sparse_data_in;
+        mat_sparse_t *sparse_data;
+        const mat_sparse_t *sparse_data_in;
 
-        sparse_data_in = (mat_sparse_t *)data;
+        sparse_data_in = (const mat_sparse_t *)data;
         sparse_data = (mat_sparse_t *)malloc(sizeof(mat_sparse_t));
         if ( NULL != sparse_data ) {
             sparse_data->nzmax = sparse_data_in->nzmax;
@@ -1193,7 +1197,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
             matvar->data = malloc(sizeof(mat_complex_split_t));
             if ( NULL != matvar->data && matvar->nbytes > 0 ) {
                 mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
-                mat_complex_split_t *complex_data_in = (mat_complex_split_t *)data;
+                const mat_complex_split_t *complex_data_in = (const mat_complex_split_t *)data;
 
                 complex_data->Re = malloc(matvar->nbytes);
                 complex_data->Im = malloc(matvar->nbytes);
@@ -1978,7 +1982,7 @@ Mat_CalcSubscripts2(int rank, size_t *dims, size_t index)
         for ( j = i; j--; )
             k *= dims[j];
         subs[i] = (size_t)floor(l / (double)k);
-        l -= subs[i] * k;
+        l -= (double)(subs[i] * k);
         subs[i]++;
     }
 
@@ -2423,8 +2427,6 @@ Mat_VarPrint(matvar_t *matvar, int printdata)
     }
 
     printf("}\n");
-
-    return;
 }
 
 /** @brief Reads MAT variable data from a file
@@ -2719,7 +2721,7 @@ Mat_VarRead(mat_t *mat, const char *name)
 matvar_t *
 Mat_VarReadNext(mat_t *mat)
 {
-    long fpos;
+    long fpos = 0;
     matvar_t *matvar;
 
     if ( mat->version != MAT_FT_MAT73 ) {
