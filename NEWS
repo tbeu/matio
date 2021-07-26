@@ -31,6 +31,8 @@ Changes in 1.5.18 (17 September 2020)
   architecture (regression of v1.5.10)
 * Fixed bug writing cell array to uncompressed v5 MAT file on big endian architecture
 * Fixed bug reading variable name from v4 MAT file (CVE-2019-17533)
+* Fixed bug reading variable name from (crafted) compressed v5 MAT file
+  (CVE-2020-19497)
 * Fixed bug reading dimensions from (crafted) compressed v5 MAT file (CVE-2019-20017,
   CVE-2019-20018, CVE-2019-20020, CVE-2019-20052)
 
