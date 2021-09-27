@@ -29,6 +29,9 @@
  */
 
 /* FIXME: Implement Unicode support */
+#if defined(__APPLE__)
+#define _DARWIN_C_SOURCE
+#endif
 #include "matio_private.h"
 #include "mat5.h"
 #include "mat4.h"
@@ -41,6 +44,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#if defined(__APPLE__)
+#include <unistd.h>
+#endif
 #if HAVE_INTTYPES_H
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
