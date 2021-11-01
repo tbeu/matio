@@ -74,7 +74,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION=1.10.7
+        - HDF5_VERSION=1.10.8
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
@@ -155,7 +155,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
-        - HDF5_VERSION=1.10.7
+        - HDF5_VERSION=1.10.8
     - os: linux
       compiler: gcc-4.8
       env:
