@@ -631,7 +631,20 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_2d_logical.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_struct_2d_logical" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
-dnf write_struct_char missing TODO
+
+AT_SETUP([Write struct with character fields])
+AT_KEYWORDS([bug30])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_char],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_struct_char.out expout
+          $builddir/test_mat readvar test_write_struct_char.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_struct_char.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_struct_char" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
 AT_SETUP([Write empty cell array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $MAT73 -ne 1])
