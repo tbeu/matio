@@ -1,5 +1,5 @@
 if(MATIO_USE_CONAN AND (MATIO_WITH_HDF5 OR MATIO_WITH_ZLIB))
-    conan_add_remote(NAME conan-center URL https://conan.bintray.com)
+    conan_add_remote(NAME conan-center URL https://center.conan.io VERIFY_SSL False)
 endif()
 
 if(MATIO_WITH_HDF5)
