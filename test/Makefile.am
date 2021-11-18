@@ -229,7 +229,6 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var26.out \
                  $(results_dir)/read-var27.out \
                  $(results_dir)/read-var27-5.out \
-                 $(results_dir)/read-var27-73.out \
                  $(results_dir)/read-var28.out \
                  $(results_dir)/read-var29.out \
                  $(results_dir)/read-var30.out \
@@ -254,7 +253,6 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var49.out \
                  $(results_dir)/read-var50.out \
                  $(results_dir)/read-var50-5.out \
-                 $(results_dir)/read-var50-73.out \
                  $(results_dir)/read-var51.out \
                  $(results_dir)/read-var52.out \
                  $(results_dir)/read-var53.out \
@@ -271,10 +269,8 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var64.out \
                  $(results_dir)/read-var65.out \
                  $(results_dir)/read-var65-5.out \
-                 $(results_dir)/read-var65-73.out \
                  $(results_dir)/read-var66.out \
                  $(results_dir)/read-var66-5.out \
-                 $(results_dir)/read-var66-73.out \
                  $(results_dir)/read-var67.out \
                  $(results_dir)/read-var68.out \
                  $(results_dir)/read-var69.out \

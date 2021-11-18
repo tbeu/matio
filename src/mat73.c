@@ -1233,9 +1233,8 @@ Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat)
         case H5I_DATASET: {
             hid_t data_type_id, dset_id;
             if ( MAT_C_CHAR == matvar->class_type ) {
-                matvar->data_type = MAT_T_UINT8;
-                matvar->data_size = (int)Mat_SizeOf(MAT_T_UINT8);
-                data_type_id = DataType2H5T(MAT_T_UINT8);
+                matvar->data_size = (int)Mat_SizeOf(matvar->data_type);
+                data_type_id = DataType2H5T(matvar->data_type);
             } else if ( MAT_C_STRUCT == matvar->class_type ) {
                 /* Empty structure array */
                 break;

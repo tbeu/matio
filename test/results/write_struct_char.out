@@ -29,7 +29,7 @@ Class Type: Double Precision Array
       Rank: 2
 Dimensions: 4 x 26
 Class Type: Character Array
- Data Type: 8-bit, unsigned integer
+ Data Type: 16-bit, unsigned integer
 {
 abcdefghijklmnopqrstuvwxyz
 ABCDEFGHIJKLMNOPQRSTUVWXYZ
