@@ -3056,7 +3056,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
     size_t nelems = 1;
     enum matio_types packed_type = MAT_T_UNKNOWN;
     long fpos;
-    mat_uint32_t tag[2];
+    mat_uint32_t tag[2] = {0, 0};
     size_t bytesread = 0;
 
     if ( matvar == NULL )
@@ -3512,7 +3512,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         default:
                             break;
                     }
-#else /* EXTENDED_SPARSE */
+#else  /* EXTENDED_SPARSE */
                     nBytes =
                         ReadDoubleData(mat, (double *)complex_data->Im, packed_type, sparse->ndata);
 #endif /* EXTENDED_SPARSE */
@@ -3582,7 +3582,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         default:
                             break;
                     }
-#else /* EXTENDED_SPARSE */
+#else  /* EXTENDED_SPARSE */
                     nBytes = ReadCompressedDoubleData(mat, matvar->internal->z,
                                                       (double *)complex_data->Re, packed_type,
                                                       sparse->ndata);
@@ -3675,7 +3675,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         default:
                             break;
                     }
-#else /* EXTENDED_SPARSE */
+#else  /* EXTENDED_SPARSE */
                     nBytes = ReadCompressedDoubleData(mat, matvar->internal->z,
                                                       (double *)complex_data->Im, packed_type,
                                                       sparse->ndata);
@@ -3820,7 +3820,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         default:
                             break;
                     }
-#else /* EXTENDED_SPARSE */
+#else  /* EXTENDED_SPARSE */
                     nBytes =
                         ReadCompressedDoubleData(mat, matvar->internal->z, (double *)sparse->data,
                                                  packed_type, sparse->ndata);
