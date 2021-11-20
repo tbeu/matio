@@ -1,6 +1,6 @@
 exclude:
-- /.install_hdf5_1_10.sh
-- /.install_hdf5_1_8.sh
+- /.ci/.*
+- /.github/.*
 - /coverity_model.c
 - /getopt/.*
 - /ossfuzz/.*
