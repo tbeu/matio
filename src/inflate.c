@@ -31,6 +31,7 @@
 #include "matio_private.h"
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #if HAVE_ZLIB
 
@@ -184,8 +185,10 @@ int
 InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t **dims,
                 size_t *bytesread)
 {
-    mat_int32_t tag[2];
-    int rank, i, err;
+    mat_uint32_t tag[2];
+    mat_uint32_t rank, i;
+    int err;
+    size_t nbytes = 0;
 
     if ( buf == NULL )
         return MATIO_E_BAD_ARGUMENT;
@@ -194,11 +197,11 @@ InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t 
     if ( err ) {
         return err;
     }
-    tag[0] = *(int *)buf;
-    tag[1] = *((int *)buf + 1);
+    tag[0] = *(mat_uint32_t *)buf;
+    tag[1] = *((mat_uint32_t *)buf + 1);
     if ( mat->byteswap ) {
-        Mat_int32Swap(tag);
-        Mat_int32Swap(tag + 1);
+        Mat_uint32Swap(tag);
+        Mat_uint32Swap(tag + 1);
     }
     if ( (tag[0] & 0x0000ffff) != MAT_T_INT32 ) {
         Mat_Critical("InflateRankDims: Reading dimensions expected type MAT_T_INT32");
@@ -209,17 +212,28 @@ InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t 
         i = 8 - (rank % 8);
     else
         i = 0;
+
+    if ( rank > INT_MAX - i - 2 ) {
+        Mat_Critical("InflateRankDims: Reading dimensions expected rank in integer range");
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
     rank += i;
 
-    if ( sizeof(mat_uint32_t) * (rank + 2) <= nBytes ) {
-        err = Inflate(mat, z, (mat_int32_t *)buf + 2, (unsigned int)rank, bytesread);
+    err = Mul(&nbytes, rank + 2, sizeof(mat_uint32_t));
+    if ( err ) {
+        Mat_Critical("Integer multiplication overflow");
+        return err;
+    }
+
+    if ( nbytes <= nBytes ) {
+        err = Inflate(mat, z, (mat_uint32_t *)buf + 2, rank, bytesread);
     } else {
         /* Cannot use too small buf, but can allocate output buffer dims */
         *dims = (mat_uint32_t *)calloc(rank, sizeof(mat_uint32_t));
         if ( NULL != *dims ) {
-            err = Inflate(mat, z, *dims, (unsigned int)rank, bytesread);
+            err = Inflate(mat, z, *dims, rank, bytesread);
         } else {
-            *((mat_int32_t *)buf + 1) = 0;
+            *((mat_uint32_t *)buf + 1) = 0;
             Mat_Critical("Error allocating memory for dims");
             return MATIO_E_OUT_OF_MEMORY;
         }
