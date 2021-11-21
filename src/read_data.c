@@ -344,6 +344,17 @@ ReadCompressedCharData(mat_t *mat, z_streamp z, void *data, enum matio_types dat
                 }
             }
             break;
+        case MAT_T_UINT32:
+        case MAT_T_UTF32:
+            err = InflateData(mat, z, data, (mat_uint32_t)nBytes);
+            if ( mat->byteswap ) {
+                mat_uint32_t *ptr = (mat_uint32_t *)data;
+                size_t i;
+                for ( i = 0; i < len; i++ ) {
+                    Mat_uint32Swap(&ptr[i]);
+                }
+            }
+            break;
         default:
             Mat_Warning(
                 "ReadCompressedCharData: %d is not a supported data "
@@ -383,6 +394,15 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
             mat_uint16_t *data = (mat_uint16_t *)_data;
             mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
             READ_DATA(mat_uint16_t, Mat_uint16Swap);
+            err = Mul(&nBytes, readcount, data_size);
+            break;
+        }
+        case MAT_T_UINT32:
+        case MAT_T_UTF32: {
+            size_t i, readcount;
+            mat_uint32_t *data = (mat_uint32_t *)_data;
+            mat_uint32_t v[READ_BLOCK_SIZE / sizeof(mat_uint32_t)];
+            READ_DATA(mat_uint32_t, Mat_uint32Swap);
             err = Mul(&nBytes, readcount, data_size);
             break;
         }

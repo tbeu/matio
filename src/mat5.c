@@ -723,8 +723,10 @@ WriteCharData(mat_t *mat, void *data, size_t N, enum matio_types data_type)
     switch ( data_type ) {
         case MAT_T_UINT8:
         case MAT_T_UINT16:
+        case MAT_T_UINT32:
         case MAT_T_UTF8:
-        case MAT_T_UTF16: {
+        case MAT_T_UTF16:
+        case MAT_T_UTF32: {
             data_type = MAT_T_UINT8 == data_type ? MAT_T_UTF8 : data_type;
             err = Mul(&nbytes, N, Mat_SizeOf(data_type));
             if ( err ) {
@@ -831,8 +833,10 @@ WriteCompressedCharData(mat_t *mat, z_streamp z, void *data, size_t N, enum mati
     switch ( data_type ) {
         case MAT_T_UINT8:
         case MAT_T_UINT16:
+        case MAT_T_UINT32:
         case MAT_T_UTF8:
         case MAT_T_UTF16:
+        case MAT_T_UTF32:
             data_tag[0] = MAT_T_UINT8 == data_type ? MAT_T_UTF8 : data_type;
             data_tag[1] = (mat_uint32_t)nbytes;
             z->next_in = ZLIB_BYTE_PTR(data_tag);
