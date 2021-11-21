@@ -271,7 +271,7 @@ main(int argc,char **argv)
 @subsection Writing Cell Arrays
 Cell arrays are multidimensional arrays whose elements can be any class of
 variables (e.g. numeric, structure, cell arrays, etc.). To create a cell array,
-pass an array of @code{matvar_t *}. Detailed information on the MATLAB variable
+pass an array of @code{matvar_t@tie{}*}. Detailed information on the MATLAB variable
 structure for cell-arrays is given in @ref{Cell Variables}.
 The following example shows how to create a 3x1 cell array.
 

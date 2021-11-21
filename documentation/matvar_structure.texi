@@ -57,9 +57,10 @@ variable structure is a pointer to the sparse matrix structure
 the matrix in compressed column format.
 
 @subsection Structure Variables
+@allowcodebreaks false
 If the MATLAB variable structure's @code{class_type} is @code{MAT_C_STRUCT}, the
 @code{data_type} field should be @code{MAT_T_STRUCT}. The @code{data} field of
-the variable structure is a pointer to an array of @code{matvar_t *}. The
+the variable structure is a pointer to an array of @code{matvar_t@tie{}*}. The
 length of the array is @math{numel \times nfields} where @code{numel} is the
 number of elements in the structure array (product of dimensions array), and
 @math{nfields} is the number of fields in the structure. The order of the
@@ -79,8 +80,9 @@ is ordered as:
 
 @node Cell Variables
 @subsection Cell Variables
+@allowcodebreaks false
 If the MATLAB variable structure's @code{class_type} is @code{MAT_C_CELL}, the
 @code{data_type} field should be @code{MAT_T_CELL}. The @code{data} field of
-the variable structure is a pointer to an array of @code{matvar_t *}. The
+the variable structure is a pointer to an array of @code{matvar_t@tie{}*}. The
 length of the array is the product of the dimensions array. Each element of the
 cell array can be a different type.

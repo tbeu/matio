@@ -64,7 +64,7 @@ This version has changes that break compatibility with the 1.3 versions of the
 @emph{matio} software. This section lists these changes and how existing code
 should be modified to handle these changes.
 @enumerate
-@item dims field of matvar_t structure changed to size_t *
+@item dims field of matvar_t structure changed to size_t@tie{}*
 @item MEM_CONSERVE preprocessor definition removed
 @item BY_NAME and BY_INDEX renamed
 @item Added @code{MAT_} prefix to enumerations of @code{matio_compression}
@@ -79,9 +79,9 @@ include recommendations to upgrade existing code for compatibility with this
 version.
 
 @subsection Type Change for Dimensions Array
-The existing dims field of the @code{matvar_t} structure was an @code{int *}
+The existing dims field of the @code{matvar_t} structure was an @code{int@tie{}*}
 which limited the maximum size of a dimension to @math{2^{31}}. In version 1.5,
-the type was changed to @code{size_t *} which allows a variable of length
+the type was changed to @code{size_t@tie{}*} which allows a variable of length
 @math{2^{31}} on 32-bit systems, but @math{2^{64} - 1} on 64-bit system. To
 upgrade to version 1.5, all existing code should ensure the use of @code{dims}
 allows for @code{size_t}, and that any use of the @code{Mat_VarCreate} function
