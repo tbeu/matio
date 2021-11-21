@@ -2330,6 +2330,7 @@ Mat_VarPrint(matvar_t *matvar, int printdata)
                         }
                         break;
                     }
+                    case MAT_T_UINT8:
                     case MAT_T_UTF8: {
                         const mat_uint8_t *data = (const mat_uint8_t *)matvar->data;
                         size_t k = 0;
@@ -2378,6 +2379,18 @@ Mat_VarPrint(matvar_t *matvar, int printdata)
                             printf("\n");
                         }
                         free(idxOffset);
+                        break;
+                    }
+                    case MAT_T_UINT32:
+                    case MAT_T_UTF32: {
+                        const mat_uint32_t *data = (const mat_uint32_t *)matvar->data;
+                        for ( i = 0; i < matvar->dims[0]; i++ ) {
+                            for ( j = 0; j < matvar->dims[1]; j++ ) {
+                                const mat_uint32_t c = data[j * matvar->dims[0] + i];
+                                printf("%lc", c);
+                            }
+                            printf("\n");
+                        }
                         break;
                     }
                     default: {
