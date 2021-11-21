@@ -336,6 +336,7 @@ DataType2H5T(enum matio_types data_type)
             return H5T_NATIVE_LLONG;
 #endif
         case MAT_T_UINT32:
+        case MAT_T_UTF32:
 #if CHAR_BIT == 32
             return H5T_NATIVE_UCHAR;
 #elif CHAR_BIT * SIZEOF_SHORT == 32
@@ -1602,6 +1603,7 @@ Mat_VarWriteChar73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims)
             case MAT_T_INT32:
             case MAT_T_UINT32:
                 /* Not sure matlab will actually handle this */
+                matlab_int_decode = 4;
                 dset_id = H5Dcreate(id, name, ClassType2H5T(MAT_C_UINT32), mspace_id, H5P_DEFAULT,
                                     H5P_DEFAULT, H5P_DEFAULT);
                 break;
