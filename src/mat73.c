@@ -2899,7 +2899,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id, "data", H5P_DEFAULT);
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
-                    size_t ndata_bytes;
+                    size_t ndata_bytes = 0;
                     sparse_data->nzmax = (mat_uint32_t)dims[0];
                     sparse_data->ndata = (mat_uint32_t)dims[0];
                     free(dims);
