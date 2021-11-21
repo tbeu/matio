@@ -2846,6 +2846,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 H5Dclose(sparse_dset_id);
                 if ( err ) {
                     H5Gclose(dset_id);
+                    if ( sparse_data->ir != NULL )
+                        free(sparse_data->ir);
                     free(sparse_data);
                     return err;
                 }
@@ -2886,6 +2888,10 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 H5Dclose(sparse_dset_id);
                 if ( err ) {
                     H5Gclose(dset_id);
+                    if ( sparse_data->jc != NULL )
+                        free(sparse_data->jc);
+                    if ( sparse_data->ir != NULL )
+                        free(sparse_data->ir);
                     free(sparse_data);
                     return err;
                 }
