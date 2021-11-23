@@ -2819,7 +2819,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id, "ir", H5P_DEFAULT);
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
-                    size_t nbytes;
+                    size_t nbytes = 0;
                     sparse_data->nir = (mat_uint32_t)dims[0];
                     free(dims);
                     err = Mul(&nbytes, sparse_data->nir, sizeof(mat_uint32_t));
@@ -2861,7 +2861,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id, "jc", H5P_DEFAULT);
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
-                    size_t nbytes;
+                    size_t nbytes = 0;
                     sparse_data->njc = (mat_uint32_t)dims[0];
                     free(dims);
                     err = Mul(&nbytes, sparse_data->njc, sizeof(mat_uint32_t));

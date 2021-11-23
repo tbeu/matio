@@ -715,7 +715,7 @@ static size_t
 WriteCharData(mat_t *mat, void *data, size_t N, enum matio_types data_type)
 {
     mat_uint32_t nBytes = 0;
-    size_t nbytes, i;
+    size_t nbytes = 0, i;
     size_t byteswritten = 0;
     const mat_uint8_t pad1 = 0;
     int err;
@@ -808,7 +808,7 @@ WriteCharData(mat_t *mat, void *data, size_t N, enum matio_types data_type)
 static size_t
 WriteCompressedCharData(mat_t *mat, z_streamp z, void *data, size_t N, enum matio_types data_type)
 {
-    size_t data_size, byteswritten = 0, nbytes;
+    size_t data_size, byteswritten = 0, nbytes = 0;
     mat_uint32_t data_tag[2];
     int buf_size = 1024;
     int err;
@@ -3218,7 +3218,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 break;
             }
             {
-                size_t nbytes;
+                size_t nbytes = 0;
                 err = Mul(&nbytes, nelems, matvar->data_size);
                 if ( err || nbytes > matvar->nbytes ) {
                     break;
@@ -3368,7 +3368,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             }
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
-                size_t nbytes;
+                size_t nbytes = 0;
                 err = Mul(&nbytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
@@ -3688,7 +3688,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 }
                 sparse->data = complex_data;
             } else { /* isComplex */
-                size_t nbytes;
+                size_t nbytes = 0;
                 err = Mul(&nbytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
                 if ( err ) {
                     Mat_Critical("Integer multiplication overflow");
