@@ -473,7 +473,7 @@ ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
 {
     int data_in_tag = 0;
     enum matio_types packed_type;
-    mat_uint32_t tag[2];
+    mat_uint32_t tag[2] = {0, 0};
     size_t bytesread = 0;
     mat_uint32_t N = 0;
 
