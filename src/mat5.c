@@ -809,7 +809,7 @@ static size_t
 WriteCompressedCharData(mat_t *mat, z_streamp z, void *data, size_t N, enum matio_types data_type)
 {
     size_t data_size, byteswritten = 0, nbytes = 0;
-    mat_uint32_t data_tag[2];
+    mat_uint32_t data_tag[2] = {0, 0};
     int buf_size = 1024;
     int err;
     mat_uint8_t buf[1024], pad[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -2875,7 +2875,7 @@ Mat_VarReadNumeric5(mat_t *mat, matvar_t *matvar, void *data, size_t N)
 {
     int nBytes = 0, data_in_tag = 0, err = MATIO_E_NO_ERROR;
     enum matio_types packed_type = MAT_T_UNKNOWN;
-    mat_uint32_t tag[2];
+    mat_uint32_t tag[2] = {0, 0};
 
     if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if HAVE_ZLIB
@@ -4453,7 +4453,7 @@ int
 Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stride, int *edge)
 {
     int err = MATIO_E_NO_ERROR, real_bytes = 0;
-    mat_int32_t tag[2];
+    mat_uint32_t tag[2] = {0, 0};
 #if HAVE_ZLIB
     z_stream z;
 #endif
@@ -4465,8 +4465,8 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
             return err;
         }
         if ( mat->byteswap ) {
-            (void)Mat_int32Swap(tag);
-            (void)Mat_int32Swap(tag + 1);
+            (void)Mat_uint32Swap(tag);
+            (void)Mat_uint32Swap(tag + 1);
         }
         matvar->data_type = TYPE_FROM_TAG(tag[0]);
         if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
@@ -4509,7 +4509,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
             return err;
         }
         if ( mat->byteswap ) {
-            (void)Mat_int32Swap(tag);
+            (void)Mat_uint32Swap(tag);
         }
         matvar->data_type = TYPE_FROM_TAG(tag[0]);
         if ( !(tag[0] & 0xffff0000) ) { /* Data is NOT packed in the tag */
@@ -4518,7 +4518,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
                 return err;
             }
             if ( mat->byteswap ) {
-                (void)Mat_int32Swap(tag + 1);
+                (void)Mat_uint32Swap(tag + 1);
             }
             real_bytes = 8 + tag[1];
         } else {
@@ -4546,8 +4546,8 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
                     return err;
                 }
                 if ( mat->byteswap ) {
-                    (void)Mat_int32Swap(tag);
-                    (void)Mat_int32Swap(tag + 1);
+                    (void)Mat_uint32Swap(tag);
+                    (void)Mat_uint32Swap(tag + 1);
                 }
                 matvar->data_type = TYPE_FROM_TAG(tag[0]);
                 if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
@@ -4584,7 +4584,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
                     return err;
                 }
                 if ( mat->byteswap ) {
-                    (void)Mat_int32Swap(tag);
+                    (void)Mat_uint32Swap(tag);
                 }
                 matvar->data_type = TYPE_FROM_TAG(tag[0]);
                 if ( !(tag[0] & 0xffff0000) ) { /*Data is NOT packed in the tag*/
@@ -4613,8 +4613,8 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
                     return err;
                 }
                 if ( mat->byteswap ) {
-                    (void)Mat_int32Swap(tag);
-                    (void)Mat_int32Swap(tag + 1);
+                    (void)Mat_uint32Swap(tag);
+                    (void)Mat_uint32Swap(tag + 1);
                 }
                 matvar->data_type = TYPE_FROM_TAG(tag[0]);
                 if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
@@ -4651,7 +4651,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
                     return err;
                 }
                 if ( mat->byteswap ) {
-                    (void)Mat_int32Swap(tag);
+                    (void)Mat_uint32Swap(tag);
                 }
                 matvar->data_type = TYPE_FROM_TAG(tag[0]);
                 if ( !(tag[0] & 0xffff0000) ) { /*Data is NOT packed in the tag*/
@@ -4692,7 +4692,7 @@ int
 Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int stride, int edge)
 {
     int err = MATIO_E_NO_ERROR, real_bytes = 0;
-    mat_int32_t tag[2];
+    mat_uint32_t tag[2] = {0, 0};
 #if HAVE_ZLIB
     z_stream z;
 #endif
@@ -4707,8 +4707,8 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
             return err;
         }
         if ( mat->byteswap ) {
-            (void)Mat_int32Swap(tag);
-            (void)Mat_int32Swap(tag + 1);
+            (void)Mat_uint32Swap(tag);
+            (void)Mat_uint32Swap(tag + 1);
         }
         matvar->data_type = (enum matio_types)(tag[0] & 0x000000ff);
         if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
@@ -4749,8 +4749,8 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
             return err;
         }
         if ( mat->byteswap ) {
-            (void)Mat_int32Swap(tag);
-            (void)Mat_int32Swap(tag + 1);
+            (void)Mat_uint32Swap(tag);
+            (void)Mat_uint32Swap(tag + 1);
         }
         matvar->data_type = (enum matio_types)(tag[0] & 0x000000ff);
         if ( !(tag[0] & 0xffff0000) ) { /* Data is NOT packed in the tag */
@@ -4759,7 +4759,7 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
                 return err;
             }
             if ( mat->byteswap ) {
-                (void)Mat_int32Swap(tag + 1);
+                (void)Mat_uint32Swap(tag + 1);
             }
             real_bytes = 8 + tag[1];
         } else {
@@ -4790,8 +4790,8 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
                 return err;
             }
             if ( mat->byteswap ) {
-                (void)Mat_int32Swap(tag);
-                (void)Mat_int32Swap(tag + 1);
+                (void)Mat_uint32Swap(tag);
+                (void)Mat_uint32Swap(tag + 1);
             }
             matvar->data_type = (enum matio_types)(tag[0] & 0x000000ff);
             if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
@@ -4826,7 +4826,7 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
                 return err;
             }
             if ( mat->byteswap ) {
-                (void)Mat_int32Swap(tag);
+                (void)Mat_uint32Swap(tag);
             }
             matvar->data_type = (enum matio_types)(tag[0] & 0x000000ff);
             if ( !(tag[0] & 0xffff0000) ) { /*Data is NOT packed in the tag*/
