@@ -30,6 +30,30 @@
 
 #include "matioConfig.h"
 #include "matio.h"
+
+#if defined(_MSC_VER) && defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64
+typedef __int64 foff_t;
+#define FOFF_T_FMTSTR "%I64d"
+#define ftello _ftelli64
+#define fseeko _fseeki64
+#define MATIO_LFS /* fseeko and ftello are defined here */
+#else
+#if defined(__USE_LARGEFILE) || defined(__USE_XOPEN2K) || _POSIX_C_SOURCE >= 200112L || \
+    _XOPEN_SOURCE >= 500 || (defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64)
+typedef off_t foff_t;
+#define FOFF_T_FMTSTR "%zd"
+#define MATIO_LFS /* fseeko and ftello are likely defined */
+#endif
+#endif
+
+/* fseeko and ftello are not likely defined */
+#ifndef MATIO_LFS
+typedef long foff_t;
+#define FOFF_T_FMTSTR "%ld"
+#define ftello ftell
+#define fseeko fseek
+#endif
+
 #if HAVE_ZLIB
 #include <zlib.h>
 #endif
@@ -72,7 +96,7 @@ struct _mat_t
     int version;         /**< MAT file version */
     int byteswap;        /**< 1 if byte swapping is required, 0 otherwise */
     int mode;            /**< Access mode */
-    long bof;            /**< Beginning of file not including any header */
+    foff_t bof;          /**< Beginning of file not including any header */
     size_t next_index;   /**< Index/File position of next variable to read */
     size_t num_datasets; /**< Number of datasets in the file */
 #if defined(MAT73) && MAT73
@@ -93,7 +117,7 @@ struct matvar_internal
     hobj_ref_t hdf5_ref; /**< Reference */
     hid_t id;            /**< Id */
 #endif
-    long datapos;        /**< Offset from the beginning of the MAT file to the data */
+    foff_t datapos;      /**< Offset from the beginning of the MAT file to the data */
     unsigned num_fields; /**< Number of fields */
     char **fieldnames;   /**< Pointer to fieldnames */
 #if HAVE_ZLIB
@@ -223,7 +247,7 @@ EXTERN int Add(size_t *res, size_t a, size_t b);
 EXTERN int Mul(size_t *res, size_t a, size_t b);
 EXTERN int Mat_MulDims(const matvar_t *matvar, size_t *nelems);
 EXTERN int Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread);
-EXTERN int IsEndOfFile(FILE *fp, long *fpos);
+EXTERN int IsEndOfFile(FILE *fp, foff_t *fpos);
 
 /* io.c */
 #if defined(_WIN32) && defined(_MSC_VER)

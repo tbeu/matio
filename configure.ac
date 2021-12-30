@@ -133,6 +133,12 @@ AC_PROG_INSTALL
 AC_PROG_GREP
 
 dnl
+dnl  Large file support
+dnl
+AC_SYS_LARGEFILE
+AC_FUNC_FSEEKO
+
+dnl
 dnl  Libraries
 dnl
 

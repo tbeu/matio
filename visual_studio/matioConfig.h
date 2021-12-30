@@ -45,6 +45,27 @@
 /* As FC_FUNC, but for C identifiers containing underscores. */
 #undef FC_FUNC_
 
+/* Define to 1 if you have the `_ftelli64' function. */
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+#define HAVE_FTELLI64 1
+#else
+#undef HAVE_FTELLI64
+#endif
+
+/* Define to 1 if you have the `_fseeki64' function. */
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+#define HAVE_FSEEKI64 1
+#else
+#undef HAVE_FSEEKI64
+#endif
+
+/* Define file offset bits */
+#if defined(HAVE_FTELLI64) && defined(HAVE_FSEEKI64)
+#define _FILE_OFFSET_BITS 64
+#else
+#undef _FILE_OFFSET_BITS
+#endif
+
 /* Define to 1 if you have the `asprintf' function. */
 #undef HAVE_ASPRINTF
 

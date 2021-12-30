@@ -33,6 +33,7 @@ You can contact the maintainer through email at t-beu@users.sourceforge.net.
 ### 1.2 Acknowledgements
 The following people/organizations have helped in the development of matio through patches, bug reports, and/or testing:
 
+* [Don Zimmer](https://github.com/dpzimmer)
 * [Greg Sjaardema](https://github.com/gsjaardema)
 * [Jacco van Beek](https://sourceforge.net/u/jabe)
 * [John Filo](https://github.com/jfilo)

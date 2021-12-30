@@ -1,5 +1,9 @@
 # Check functions
 include(CheckSymbolExists)
+if (WIN32)
+    check_symbol_exists(_fseeki64 stdio.h HAVE_FSEEKI64)
+    check_symbol_exists(_ftelli64 stdio.h HAVE_FTELLI64)
+endif()
 check_symbol_exists(vsnprintf  stdio.h    HAVE_VSNPRINTF)
 check_symbol_exists(snprintf   stdio.h    HAVE_SNPRINTF)
 check_symbol_exists(vasprintf  stdio.h    HAVE_VASPRINTF)

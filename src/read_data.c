@@ -53,7 +53,7 @@
             }                                                         \
         } else {                                                      \
             size_t j;                                                 \
-            int err_ = 0;                                              \
+            int err_ = 0;                                             \
             readcount = 0;                                            \
             for ( i = 0; i < len - block_size; i += block_size ) {    \
                 j = fread(v, data_size, block_size, (FILE *)mat->fp); \
@@ -63,11 +63,11 @@
                         data[i + j] = (T)v[j];                        \
                     }                                                 \
                 } else {                                              \
-                    err_ = 1;                                          \
+                    err_ = 1;                                         \
                     break;                                            \
                 }                                                     \
             }                                                         \
-            if ( 0 == err_ && len > i ) {                              \
+            if ( 0 == err_ && len > i ) {                             \
                 j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
                 readcount += j;                                       \
                 if ( j == len - i ) {                                 \
@@ -92,7 +92,7 @@
                 }                                                         \
             } else {                                                      \
                 size_t j;                                                 \
-                int err_ = 0;                                              \
+                int err_ = 0;                                             \
                 readcount = 0;                                            \
                 for ( i = 0; i < len - block_size; i += block_size ) {    \
                     j = fread(v, data_size, block_size, (FILE *)mat->fp); \
@@ -102,11 +102,11 @@
                             data[i + j] = (T)SwapFunc(&v[j]);             \
                         }                                                 \
                     } else {                                              \
-                        err_ = 1;                                          \
+                        err_ = 1;                                         \
                         break;                                            \
                     }                                                     \
                 }                                                         \
-                if ( 0 == err_ && len > i ) {                              \
+                if ( 0 == err_ && len > i ) {                             \
                     j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
                     readcount += j;                                       \
                     if ( j == len - i ) {                                 \
@@ -409,75 +409,76 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
  *-------------------------------------------------------------------
  */
 
-#define READ_DATA_SLABN_RANK_LOOP                                                                \
-    do {                                                                                         \
-        for ( j = 1; j < rank; j++ ) {                                                           \
-            cnt[j]++;                                                                            \
-            if ( (cnt[j] % edge[j]) == 0 ) {                                                     \
-                cnt[j] = 0;                                                                      \
-                if ( (I % dimp[j]) != 0 ) {                                                      \
-                    (void)fseek((FILE *)mat->fp,                                                 \
-                                data_size *(dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]),   \
-                                SEEK_CUR);                                                       \
-                    I += dimp[j] - (I % dimp[j]) + (ptrdiff_t)dimp[j - 1] * start[j];            \
-                } else if ( start[j] ) {                                                         \
-                    (void)fseek((FILE *)mat->fp, data_size *(dimp[j - 1] * start[j]), SEEK_CUR); \
-                    I += (ptrdiff_t)dimp[j - 1] * start[j];                                      \
-                }                                                                                \
-            } else {                                                                             \
-                I += inc[j];                                                                     \
-                (void)fseek((FILE *)mat->fp, data_size *inc[j], SEEK_CUR);                       \
-                break;                                                                           \
-            }                                                                                    \
-        }                                                                                        \
+#define READ_DATA_SLABN_RANK_LOOP                                                                 \
+    do {                                                                                          \
+        for ( j = 1; j < rank; j++ ) {                                                            \
+            cnt[j]++;                                                                             \
+            if ( (cnt[j] % edge[j]) == 0 ) {                                                      \
+                cnt[j] = 0;                                                                       \
+                if ( (I % dimp[j]) != 0 ) {                                                       \
+                    (void)fseeko((FILE *)mat->fp,                                                 \
+                                 data_size *(dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]),   \
+                                 SEEK_CUR);                                                       \
+                    I += dimp[j] - (I % dimp[j]) + (ptrdiff_t)dimp[j - 1] * start[j];             \
+                } else if ( start[j] ) {                                                          \
+                    (void)fseeko((FILE *)mat->fp, data_size *(dimp[j - 1] * start[j]), SEEK_CUR); \
+                    I += (ptrdiff_t)dimp[j - 1] * start[j];                                       \
+                }                                                                                 \
+            } else {                                                                              \
+                I += inc[j];                                                                      \
+                (void)fseeko((FILE *)mat->fp, data_size *inc[j], SEEK_CUR);                       \
+                break;                                                                            \
+            }                                                                                     \
+        }                                                                                         \
     } while ( 0 )
 
-#define READ_DATA_SLABN(ReadDataFunc)                                                              \
-    do {                                                                                           \
-        inc[0] = stride[0] - 1;                                                                    \
-        dimp[0] = dims[0];                                                                         \
-        N = edge[0];                                                                               \
-        I = 0; /* start[0]; */                                                                     \
-        for ( i = 1; i < rank; i++ ) {                                                             \
-            inc[i] = stride[i] - 1;                                                                \
-            dimp[i] = dims[i - 1];                                                                 \
-            for ( j = i; j--; ) {                                                                  \
-                inc[i] *= dims[j];                                                                 \
-                dimp[i] *= dims[j + 1];                                                            \
-            }                                                                                      \
-            N *= edge[i];                                                                          \
-            I += (ptrdiff_t)dimp[i - 1] * start[i];                                                \
-        }                                                                                          \
-        (void)fseek((FILE *)mat->fp, I *data_size, SEEK_CUR);                                      \
-        if ( stride[0] == 1 ) {                                                                    \
-            for ( i = 0; i < N; i += edge[0] ) {                                                   \
-                if ( start[0] ) {                                                                  \
-                    (void)fseek((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);                  \
-                    I += start[0];                                                                 \
-                }                                                                                  \
-                ReadDataFunc(mat, ptr + i, data_type, edge[0]);                                    \
-                I += dims[0] - start[0];                                                           \
-                (void)fseek((FILE *)mat->fp, data_size *(dims[0] - edge[0] - start[0]), SEEK_CUR); \
-                READ_DATA_SLABN_RANK_LOOP;                                                         \
-            }                                                                                      \
-        } else {                                                                                   \
-            for ( i = 0; i < N; i += edge[0] ) {                                                   \
-                if ( start[0] ) {                                                                  \
-                    (void)fseek((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);                  \
-                    I += start[0];                                                                 \
-                }                                                                                  \
-                for ( j = 0; j < edge[0]; j++ ) {                                                  \
-                    ReadDataFunc(mat, ptr + i + j, data_type, 1);                                  \
-                    (void)fseek((FILE *)mat->fp, data_size *(stride[0] - 1), SEEK_CUR);            \
-                    I += stride[0];                                                                \
-                }                                                                                  \
-                I += dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0];                          \
-                (void)fseek((FILE *)mat->fp,                                                       \
-                            data_size *(dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0]),      \
-                            SEEK_CUR);                                                             \
-                READ_DATA_SLABN_RANK_LOOP;                                                         \
-            }                                                                                      \
-        }                                                                                          \
+#define READ_DATA_SLABN(ReadDataFunc)                                                          \
+    do {                                                                                       \
+        inc[0] = stride[0] - 1;                                                                \
+        dimp[0] = dims[0];                                                                     \
+        N = edge[0];                                                                           \
+        I = 0; /* start[0]; */                                                                 \
+        for ( i = 1; i < rank; i++ ) {                                                         \
+            inc[i] = stride[i] - 1;                                                            \
+            dimp[i] = dims[i - 1];                                                             \
+            for ( j = i; j--; ) {                                                              \
+                inc[i] *= dims[j];                                                             \
+                dimp[i] *= dims[j + 1];                                                        \
+            }                                                                                  \
+            N *= edge[i];                                                                      \
+            I += (ptrdiff_t)dimp[i - 1] * start[i];                                            \
+        }                                                                                      \
+        (void)fseeko((FILE *)mat->fp, I *data_size, SEEK_CUR);                                 \
+        if ( stride[0] == 1 ) {                                                                \
+            for ( i = 0; i < N; i += edge[0] ) {                                               \
+                if ( start[0] ) {                                                              \
+                    (void)fseeko((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);             \
+                    I += start[0];                                                             \
+                }                                                                              \
+                ReadDataFunc(mat, ptr + i, data_type, edge[0]);                                \
+                I += dims[0] - start[0];                                                       \
+                (void)fseeko((FILE *)mat->fp, data_size *(dims[0] - edge[0] - start[0]),       \
+                             SEEK_CUR);                                                        \
+                READ_DATA_SLABN_RANK_LOOP;                                                     \
+            }                                                                                  \
+        } else {                                                                               \
+            for ( i = 0; i < N; i += edge[0] ) {                                               \
+                if ( start[0] ) {                                                              \
+                    (void)fseeko((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);             \
+                    I += start[0];                                                             \
+                }                                                                              \
+                for ( j = 0; j < edge[0]; j++ ) {                                              \
+                    ReadDataFunc(mat, ptr + i + j, data_type, 1);                              \
+                    (void)fseeko((FILE *)mat->fp, data_size *(stride[0] - 1), SEEK_CUR);       \
+                    I += stride[0];                                                            \
+                }                                                                              \
+                I += dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0];                      \
+                (void)fseeko((FILE *)mat->fp,                                                  \
+                             data_size *(dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0]), \
+                             SEEK_CUR);                                                        \
+                READ_DATA_SLABN_RANK_LOOP;                                                     \
+            }                                                                                  \
+        }                                                                                      \
     } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions
@@ -780,7 +781,7 @@ ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes 
         } else {                                                       \
             for ( i = 0; i < edge; i++ ) {                             \
                 bytesread += ReadDataFunc(mat, ptr + i, data_type, 1); \
-                (void)fseek((FILE *)mat->fp, stride, SEEK_CUR);        \
+                (void)fseeko((FILE *)mat->fp, stride, SEEK_CUR);       \
             }                                                          \
         }                                                              \
     } while ( 0 )
@@ -807,7 +808,7 @@ ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
     int bytesread = 0;
 
     data_size = Mat_SizeOf(data_type);
-    (void)fseek((FILE *)mat->fp, start * data_size, SEEK_CUR);
+    (void)fseeko((FILE *)mat->fp, (foff_t)start * data_size, SEEK_CUR);
     stride = data_size * (stride - 1);
 
     switch ( class_type ) {
@@ -874,41 +875,41 @@ ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
 
 #undef READ_DATA_SLAB1
 
-#define READ_DATA_SLAB2(ReadDataFunc)                                                     \
-    do {                                                                                  \
-        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */             \
-        /* data so get rid of the loops. */                                               \
-        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) ) {       \
-            ReadDataFunc(mat, ptr, data_type, (ptrdiff_t)edge[0] * edge[1]);              \
-        } else {                                                                          \
-            row_stride = (long)(stride[0] - 1) * data_size;                               \
-            col_stride = (long)stride[1] * dims[0] * data_size;                           \
-            pos = ftell((FILE *)mat->fp);                                                 \
-            if ( pos == -1L ) {                                                           \
-                Mat_Critical("Couldn't determine file position");                         \
-                return -1;                                                                \
-            }                                                                             \
-            (void)fseek((FILE *)mat->fp, (long)start[1] * dims[0] * data_size, SEEK_CUR); \
-            for ( i = 0; i < edge[1]; i++ ) {                                             \
-                pos = ftell((FILE *)mat->fp);                                             \
-                if ( pos == -1L ) {                                                       \
-                    Mat_Critical("Couldn't determine file position");                     \
-                    return -1;                                                            \
-                }                                                                         \
-                (void)fseek((FILE *)mat->fp, (long)start[0] * data_size, SEEK_CUR);       \
-                for ( j = 0; j < edge[0]; j++ ) {                                         \
-                    ReadDataFunc(mat, ptr++, data_type, 1);                               \
-                    (void)fseek((FILE *)mat->fp, row_stride, SEEK_CUR);                   \
-                }                                                                         \
-                pos2 = ftell((FILE *)mat->fp);                                            \
-                if ( pos2 == -1L ) {                                                      \
-                    Mat_Critical("Couldn't determine file position");                     \
-                    return -1;                                                            \
-                }                                                                         \
-                pos += col_stride - pos2;                                                 \
-                (void)fseek((FILE *)mat->fp, pos, SEEK_CUR);                              \
-            }                                                                             \
-        }                                                                                 \
+#define READ_DATA_SLAB2(ReadDataFunc)                                                        \
+    do {                                                                                     \
+        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */                \
+        /* data so get rid of the loops. */                                                  \
+        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) ) {          \
+            ReadDataFunc(mat, ptr, data_type, (ptrdiff_t)edge[0] * edge[1]);                 \
+        } else {                                                                             \
+            row_stride = (foff_t)(stride[0] - 1) * data_size;                                \
+            col_stride = (foff_t)stride[1] * dims[0] * data_size;                            \
+            pos = ftello((FILE *)mat->fp);                                                   \
+            if ( pos == -1L ) {                                                              \
+                Mat_Critical("Couldn't determine file position");                            \
+                return -1;                                                                   \
+            }                                                                                \
+            (void)fseeko((FILE *)mat->fp, (foff_t)start[1] * dims[0] * data_size, SEEK_CUR); \
+            for ( i = 0; i < edge[1]; i++ ) {                                                \
+                pos = ftello((FILE *)mat->fp);                                               \
+                if ( pos == -1L ) {                                                          \
+                    Mat_Critical("Couldn't determine file position");                        \
+                    return -1;                                                               \
+                }                                                                            \
+                (void)fseeko((FILE *)mat->fp, (foff_t)start[0] * data_size, SEEK_CUR);       \
+                for ( j = 0; j < edge[0]; j++ ) {                                            \
+                    ReadDataFunc(mat, ptr++, data_type, 1);                                  \
+                    (void)fseeko((FILE *)mat->fp, row_stride, SEEK_CUR);                     \
+                }                                                                            \
+                pos2 = ftello((FILE *)mat->fp);                                              \
+                if ( pos2 == -1L ) {                                                         \
+                    Mat_Critical("Couldn't determine file position");                        \
+                    return -1;                                                               \
+                }                                                                            \
+                pos += col_stride - pos2;                                                    \
+                (void)fseeko((FILE *)mat->fp, pos, SEEK_CUR);                                \
+            }                                                                                \
+        }                                                                                    \
     } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
@@ -930,7 +931,7 @@ ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
               size_t *dims, int *start, int *stride, int *edge)
 {
     int nBytes = 0, data_size, i, j;
-    long pos, row_stride, col_stride, pos2;
+    foff_t pos, row_stride, col_stride, pos2;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) || (start == NULL) ||
          (stride == NULL) || (edge == NULL) ) {
