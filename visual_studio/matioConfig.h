@@ -45,25 +45,23 @@
 /* As FC_FUNC, but for C identifiers containing underscores. */
 #undef FC_FUNC_
 
-/* Define to 1 if you have the `_ftelli64' function. */
+/* Define to 1 if the system has the type `off64_t'. */
+#undef HAVE_OFF64_T
+
+/* Make use of 64-bit file offset */
 #if defined(_MSC_VER) && _MSC_VER >= 1400
-#define HAVE_FTELLI64 1
-#else
-#undef HAVE_FTELLI64
+#define foff_t __int64
+#define FOFF_T_FMTSTR "%I64d"
+#define ftello _ftelli64
+#define fseeko _fseeki64
+#define MATIO_LFS /* fseeko and ftello are defined here */
 #endif
 
-/* Define to 1 if you have the `_fseeki64' function. */
-#if defined(_MSC_VER) && _MSC_VER >= 1400
-#define HAVE_FSEEKI64 1
-#else
-#undef HAVE_FSEEKI64
-#endif
-
-/* Define file offset bits */
-#if defined(HAVE_FTELLI64) && defined(HAVE_FSEEKI64)
-#define _FILE_OFFSET_BITS 64
-#else
-#undef _FILE_OFFSET_BITS
+#ifndef MATIO_LFS /* fseeko and ftello are not likely defined */
+#define foff_t long
+#define FOFF_T_FMTSTR "%ld"
+#define ftello ftell
+#define fseeko fseek
 #endif
 
 /* Define to 1 if you have the `asprintf' function. */

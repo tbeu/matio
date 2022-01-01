@@ -31,29 +31,6 @@
 #include "matioConfig.h"
 #include "matio.h"
 
-#if defined(_MSC_VER) && defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64
-typedef __int64 foff_t;
-#define FOFF_T_FMTSTR "%I64d"
-#define ftello _ftelli64
-#define fseeko _fseeki64
-#define MATIO_LFS /* fseeko and ftello are defined here */
-#else
-#if defined(__USE_LARGEFILE) || defined(__USE_XOPEN2K) || _POSIX_C_SOURCE >= 200112L || \
-    _XOPEN_SOURCE >= 500 || (defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64)
-typedef off_t foff_t;
-#define FOFF_T_FMTSTR "%zd"
-#define MATIO_LFS /* fseeko and ftello are likely defined */
-#endif
-#endif
-
-/* fseeko and ftello are not likely defined */
-#ifndef MATIO_LFS
-typedef long foff_t;
-#define FOFF_T_FMTSTR "%ld"
-#define ftello ftell
-#define fseeko fseek
-#endif
-
 #if HAVE_ZLIB
 #include <zlib.h>
 #endif

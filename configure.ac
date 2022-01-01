@@ -149,7 +149,6 @@ dnl  Headers
 dnl
 
 AC_CONFIG_HEADERS([src/matioConfig.h src/matio_pubconf.h])
-AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE([stdarg.h])
 AC_CHECK_HEADERS_ONCE([varargs.h])
 AC_CHECK_HEADER([inttypes.h],[AC_DEFINE_UNQUOTED([MATIO_HAVE_INTTYPES_H],[1],[Matio has access to inttypes.h])])
@@ -173,6 +172,7 @@ AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([short])
 AC_CHECK_SIZEOF([char])
 AC_CHECK_SIZEOF([void *])
+AC_CHECK_SIZEOF([off_t])
 AC_CHECK_SIZEOF([size_t])
 
 dnl
@@ -206,6 +206,7 @@ fi
 AC_SUBST([HAVE_UINT64],[$HAVE_UINT64])
 AC_SUBST([HAVE_INT64], [$HAVE_INT64])
 
+AC_TYPE_OFF64_T
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT
 AC_TYPE_UNSIGNED_LONG_LONG_INT
