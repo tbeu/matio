@@ -31,6 +31,7 @@
 #include "matioConfig.h"
 #include "matio.h"
 
+#include <stdio.h>
 #if HAVE_ZLIB
 #include <zlib.h>
 #endif
