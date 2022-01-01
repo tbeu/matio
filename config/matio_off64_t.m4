@@ -26,7 +26,7 @@ AC_DEFUN([AC_TYPE_OFF64_T],
     AC_MSG_CHECKING([for off64_t])
 
     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-        #define _LARGEFILE64_SOURCE
+        #define _FILE_OFFSET_BITS 64
         #include <sys/types.h>
     ]], [[off64_t off = 42;]])],[ac_cv_type_off64_t=yes],[ac_cv_type_off64_t=no])
     if test $ac_cv_type_off64_t = yes;
