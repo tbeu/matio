@@ -33,10 +33,9 @@ AC_DEFUN([MATIO_CHECK_HDF5_V18],
     LDFLAGS="$saved_LDFLAGS"
     LIBS="$HDF5_LIBS $ZLIB_LIBS $saved_LIBS"
 
-    AC_TRY_LINK([#include<stdio.h>
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include<stdio.h>
                  #include <stdlib.h>
-                 #include <hdf5.h>],
-                 [#if defined(H5Rdereference)
+                 #include <hdf5.h>]], [[#if defined(H5Rdereference)
                   /* HDF5 1.10.0 */
                   #define H5RDEREFERENCE(obj_id, ref_type, _ref) H5Rdereference2((obj_id), H5P_DATASET_ACCESS_DEFAULT, (ref_type), (_ref))
                   #else
@@ -45,9 +44,7 @@ AC_DEFUN([MATIO_CHECK_HDF5_V18],
                   #endif
                   hid_t dset_id = H5Dcreate(0,NULL,0,0,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
                   hobj_ref_t ref_ids[1];
-                  hid_t ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids);],
-                 [matio_hdf5_is_v18=yes],
-                 [matio_hdf5_is_v18=no])
+                  hid_t ref_id = H5RDEREFERENCE(dset_id,H5R_OBJECT,ref_ids);]])],[matio_hdf5_is_v18=yes],[matio_hdf5_is_v18=no])
 
     CFLAGS="$saved_CFLAGS"
     LDFLAGS="$saved_LDFLAGS"
@@ -88,12 +85,9 @@ then
     LDFLAGS="$saved_LDFLAGS"
     LIBS="$HDF5_LIBS $ZLIB_LIBS $saved_LIBS"
 
-    AC_TRY_LINK([#include<stdio.h>
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include<stdio.h>
                  #include <stdlib.h>
-                 #include <hdf5.h>],
-                 [H5open()],
-                 [ac_have_hdf5=yes],
-                 [ac_have_hdf5=no])
+                 #include <hdf5.h>]], [[H5open()]])],[ac_have_hdf5=yes],[ac_have_hdf5=no])
 
     CFLAGS="$saved_CFLAGS"
     LDFLAGS="$saved_LDFLAGS"

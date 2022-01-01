@@ -26,8 +26,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
 [
     AC_MSG_CHECKING([for mat_int16_t])
 
-    AC_TRY_LINK(
-    [
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
         #include <stdlib.h>
         #ifdef HAVE_INTTYPES_H
         #   include <inttypes.h>
@@ -35,9 +34,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
         #ifdef HAVE_STDINT_H
         #   include <stdint.h>
         #endif
-    ],
-    [int16_t i = 0;],
-    ac_have_mat_int16_t=yes,ac_have_mat_int16_t=no)
+    ]], [[int16_t i = 0;]])],[ac_have_mat_int16_t=yes],[ac_have_mat_int16_t=no])
 
     if test "x$ac_have_mat_int16_t" = "xyes"
     then
@@ -48,8 +45,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
     fi
     if test "x$ac_have_mat_int16_t" != "xyes"
     then
-        AC_TRY_LINK(
-        [
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[
             #include <stdlib.h>
             #ifdef HAVE_INTTYPES_H
             #   include <inttypes.h>
@@ -61,9 +57,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
             #if CHAR_BIT != 16
             #matio sizeof(signed char) not 16 bits
             #endif
-        ],
-        [signed char i = 0;],
-        ac_have_mat_int16_t=yes,ac_have_mat_int16_t=no)
+        ]], [[signed char i = 0;]])],[ac_have_mat_int16_t=yes],[ac_have_mat_int16_t=no])
 
         if test "x$ac_have_mat_int16_t" = "xyes"
         then
@@ -74,8 +68,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
     fi
     if test "x$ac_have_mat_int16_t" != "xyes"
     then
-        AC_TRY_LINK(
-        [
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[
             #include <stdlib.h>
             #ifdef HAVE_INTTYPES_H
             #   include <inttypes.h>
@@ -87,9 +80,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
             #if CHAR_BIT*SIZEOF_SHORT != 16
             #matio sizeof(short) not 16 bits
             #endif
-        ],
-        [short i = 0;],
-        ac_have_mat_int16_t=yes,ac_have_mat_int16_t=no)
+        ]], [[short i = 0;]])],[ac_have_mat_int16_t=yes],[ac_have_mat_int16_t=no])
 
         if test "x$ac_have_mat_int16_t" = "xyes"
         then
@@ -100,8 +91,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
     fi
     if test "x$ac_have_mat_int16_t" != "xyes"
     then
-        AC_TRY_LINK(
-        [
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[
             #include <stdlib.h>
             #ifdef HAVE_INTTYPES_H
             #   include <inttypes.h>
@@ -113,9 +103,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
             #if CHAR_BIT*SIZEOF_INT != 16
             #matio sizeof(int) not 16 bits
             #endif
-        ],
-        [int i = 0;],
-        ac_have_mat_int16_t=yes,ac_have_mat_int16_t=no)
+        ]], [[int i = 0;]])],[ac_have_mat_int16_t=yes],[ac_have_mat_int16_t=no])
 
         if test "x$ac_have_mat_int16_t" = "xyes"
         then
@@ -126,8 +114,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
     fi
     if test "x$ac_have_mat_int16_t" != "xyes"
     then
-        AC_TRY_LINK(
-        [
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[
             #include <stdlib.h>
             #ifdef HAVE_INTTYPES_H
             #   include <inttypes.h>
@@ -139,9 +126,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
             #if CHAR_BIT*SIZEOF_LONG != 16
             #matio sizeof(long) not 16 bits
             #endif
-        ],
-        [long i = 0;],
-        ac_have_mat_int16_t=yes,ac_have_mat_int16_t=no)
+        ]], [[long i = 0;]])],[ac_have_mat_int16_t=yes],[ac_have_mat_int16_t=no])
 
         if test "x$ac_have_mat_int16_t" = "xyes"
         then
@@ -152,8 +137,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
     fi
     if test "x$ac_have_mat_int16_t" != "xyes"
     then
-        AC_TRY_LINK(
-        [
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[
             #include <stdlib.h>
             #ifdef HAVE_INTTYPES_H
             #   include <inttypes.h>
@@ -165,9 +149,7 @@ AC_DEFUN([CHECK_MATIO_INT16_T],
             #if CHAR_BIT*SIZEOF_LONG_LONG != 16
             #matio sizeof(long long) not 16 bits
             #endif
-        ],
-        [long long i = 0;],
-        ac_have_mat_int16_t=yes,ac_have_mat_int16_t=no)
+        ]], [[long long i = 0;]])],[ac_have_mat_int16_t=yes],[ac_have_mat_int16_t=no])
 
         if test "x$ac_have_mat_int16_t" = "xyes"
         then
