@@ -49,7 +49,9 @@
 #undef HAVE_OFF64_T
 
 /* Set 64-bit file offset */
+#if defined(HAVE_OFF64_T)
 #define _FILE_OFFSET_BITS 64
+#endif
 
 /* Make use of 64-bit file offset */
 #if defined(_MSC_VER) && _MSC_VER >= 1400
@@ -58,7 +60,11 @@
 #define ftello _ftelli64
 #define fseeko _fseeki64
 #define MATIO_LFS /* fseeko and ftello are defined here */
-#elif defined(__CYGWIN__) || (defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64)
+#elif defined(HAVE_OFF64_T) && defined(__CYGWIN__)
+#define foff_t off64_t
+#define FOFF_T_FMTSTR "%zd"
+#define MATIO_LFS /* fseeko and ftello are likely defined */
+#elif defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64
 #define foff_t off_t
 #define FOFF_T_FMTSTR "%zd"
 #define MATIO_LFS /* fseeko and ftello are likely defined */
