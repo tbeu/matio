@@ -206,6 +206,7 @@ fi
 AC_SUBST([HAVE_UINT64],[$HAVE_UINT64])
 AC_SUBST([HAVE_INT64], [$HAVE_INT64])
 
+AC_TYPE_OFF_T
 AC_TYPE_OFF64_T
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT
@@ -286,6 +287,8 @@ if test "$matio_cv_have_asprintf" = "yes"
 then
     AC_DEFINE_UNQUOTED([HAVE_ASPRINTF],[1],[Define to 1 if you have the `asprintf' function.])
 fi
+
+AC_DEFINE(_GNU_SOURCE)
 
 MATIO_CHECK_MATLAB
 
