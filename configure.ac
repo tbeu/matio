@@ -288,8 +288,6 @@ then
     AC_DEFINE_UNQUOTED([HAVE_ASPRINTF],[1],[Define to 1 if you have the `asprintf' function.])
 fi
 
-AC_DEFINE(_GNU_SOURCE)
-
 MATIO_CHECK_MATLAB
 
 MATIO_CHECK_ZLIB
