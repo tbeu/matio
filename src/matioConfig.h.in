@@ -49,9 +49,7 @@
 #undef HAVE_OFF64_T
 
 /* Set 64-bit file offset */
-#if defined(HAVE_OFF64_T)
-#define _FILE_OFFSET_BITS 64
-#endif
+_LARGEFILE64_SOURCE
 
 /* Make use of 64-bit file offset */
 #if defined(_MSC_VER) && _MSC_VER >= 1400
