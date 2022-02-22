@@ -1879,6 +1879,10 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
                 break;
         }
         if ( err ) {
+            size_t j;
+            for ( j = 0; j < i; j++ ) {
+                free(functions[j]);
+            }
             free(matvar->data);
             matvar->data = NULL;
             matvar->data_size = 0;
