@@ -69,6 +69,7 @@ Support for MAT file version 7.3 requires the HDF5 library. This library can be 
 * Building matio with HDF5 1.8.x requires configuration of HDF5 with default API version 1.8 (i.e. `--with-default-api-version=v18`).
 * Building matio with HDF5 1.10.x requires configuration of HDF5 with either default API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
 * Building matio with HDF5 1.12.x requires configuration of HDF5 with either default API version 1.12 (i.e. `--with-default-api-version=v112`), or with deprecated API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
+* Building matio with HDF5 1.13.x requires configuration of HDF5 with either default API version 1.14 (i.e. `--with-default-api-version=v114`), or with deprecated API version 1.12 (i.e. `--with-default-api-version=v112`), or with deprecated API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
 
 For Windows, the pre-compiled binaries can be used which also include a DLL of zlib to satisfy the zlib dependency.
 
