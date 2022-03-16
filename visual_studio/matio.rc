@@ -15,17 +15,17 @@ VS_VERSION_INFO		VERSIONINFO
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
-    BLOCK "082405E4"
+    BLOCK "040904b0"
     //language ID = U.S. English, char set = Windows, Multilingual
     BEGIN
       VALUE "FileDescription",	"MATLAB MAT file I/O library\0"
       VALUE "FileVersion",	"1.5.21\0"
       VALUE "InternalName",	"libmatio.dll\0"
-      VALUE "LegalCopyright",	"(C) 2005-2021, Christopher Hulbert\0"
+      VALUE "LegalCopyright",	"(C) 2005-2022, Christopher C. Hulbert and the matio contributors\0"
       VALUE "OriginalFilename",	"libmatio.dll\0"
       VALUE "ProductName",	"libmatio\0"
       VALUE "ProductVersion",	"1.5.21\0"
-      VALUE "Comments","\0"
+      VALUE "Comments",	"\0"
     END
   END
   BLOCK "VarFileInfo"

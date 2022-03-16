@@ -2,7 +2,8 @@
  * @brief Functions to handle endian specifics
  */
 /*
- * Copyright (c) 2005-2021, Christopher C. Hulbert
+ * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2005-2014, Christopher C. Hulbert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
