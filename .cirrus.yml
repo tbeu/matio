@@ -1,0 +1,24 @@
+freebsd_instance:
+  image_family: freebsd-13-0
+task:
+  install_script: |
+    # Update all packages
+    pkg update -f
+    pkg upgrade -f -y
+    # Use bash for the CI scripts
+    pkg install -y devel/readline bash cmake autoconf automake libtool devel/pkgconf
+  configure_script:
+    - mkdir matio_cmake
+    - cmake -DMATIO_WITH_HDF5:BOOL=OFF -DMATIO_MAT73:BOOL=OFF -S . -B matio_cmake
+  build_script:
+    - cmake --build matio_cmake -- -j8
+  test_script:
+    - ./matio_cmake/test_snprintf
+    - ./matio_cmake/test_mat -H
+    - ./matio_cmake/test_mat -L
+    - ./matio_cmake/test_mat -V
+    - ./matio_cmake/matdump -v -H
+    - ./matio_cmake/matdump -V
+    - ./matio_cmake/matdump -d ./share/test_file.mat structure
+    - ./matio_cmake/matdump -v ./share/test_file.mat
+    - ./matio_cmake/matdump -v -f whos ./share/test_file.mat
