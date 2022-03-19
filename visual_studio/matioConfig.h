@@ -45,24 +45,37 @@
 /* As FC_FUNC, but for C identifiers containing underscores. */
 #undef FC_FUNC_
 
-/* Define to 1 if the system has the type `off64_t'. */
-#undef HAVE_OFF64_T
+/* Define to 1 if you have the `fseeko' function. */
+#undef HAVE_FSEEKO
 
-/* Make use of 64-bit file offset */
+/* Define to 1 if you have the `ftello' function. */
+#undef HAVE_FTELLO
+
+/* Define to 1 if you have the `fseeko64' function. */
+#undef HAVE_FSEEKO64
+
+/* Define to 1 if you have the `ftello64' function. */
+#undef HAVE_FTELLO64
+
+/* Define to 1 if you have the `_fseeki64' function. */
 #if defined(_MSC_VER) && _MSC_VER >= 1400
-#define foff_t __int64
-#define FOFF_T_FMTSTR "%I64d"
-#define ftello _ftelli64
-#define fseeko _fseeki64
-#define MATIO_LFS /* fseeko and ftello are defined here */
+#define HAVE__FSEEKI64 1
+#else
+#undef HAVE__FSEEKI64
 #endif
 
-#ifndef MATIO_LFS /* fseeko and ftello are not likely defined */
-#define foff_t long
-#define FOFF_T_FMTSTR "%ld"
-#define ftello ftell
-#define fseeko fseek
+/* Define to 1 if you have the `_ftelli64' function. */
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+#define HAVE__FTELLI64 1
+#else
+#undef HAVE__FTELLI64
 #endif
+
+/* Define if 64-bit file address support in 32-bit OS. */
+#undef _FILE_OFFSET_BITS
+
+/* Define if 64-bit file address support in 32-bit OS. */
+#undef _LARGEFILE64_SOURCE
 
 /* Define to 1 if you have the `asprintf' function. */
 #undef HAVE_ASPRINTF

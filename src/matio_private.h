@@ -40,6 +40,38 @@
 #include <unistd.h>
 #endif
 
+#if defined(__BORLANDC__) || defined(__MINGW32__) || defined(_MSC_VER)
+#include <sys/types.h> /* for off_t */
+#define foff_t __int64
+#if defined(_MSC_VER) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
+#define MATIO_LFS
+#define FOFF_T_FMTSTR "%I64d"
+#define fseeko _fseeki64
+#define ftello _ftelli64
+#elif defined(__BORLANDC__) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
+#define MATIO_LFS
+#define FOFF_T_FMTSTR "%zd"
+#define fseeko _fseeki64
+#define ftello _ftelli64
+#elif !defined(HAVE_FSEEKO) && !defined(HAVE_FTELLO) && defined(HAVE_FSEEKO64) && defined(HAVE_FTELLO64)
+#define MATIO_LFS
+#define FOFF_T_FMTSTR "%zd"
+#define fseeko fseeko64
+#define ftello ftello64
+#endif
+#elif defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64 && defined(HAVE_FSEEKO) && defined(HAVE_FTELLO)
+#define MATIO_LFS
+#define foff_t off_t
+#define FOFF_T_FMTSTR "%zd"
+#endif
+
+#if !defined(MATIO_LFS) && !defined(HAVE_FSEEKO) && !defined(HAVE_FTELLO)
+#define foff_t long
+#define FOFF_T_FMTSTR "%ld"
+#define ftello ftell
+#define fseeko fseek
+#endif
+
 #if HAVE_ZLIB
 #include <zlib.h>
 #endif

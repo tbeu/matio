@@ -11,16 +11,16 @@ cache:
   - C:\cygwin64-setup-cache
 
 platform:
-  - x64
   - Win32
+  - x64
 
 environment:
   matrix:
+    - compiler: Cygwin
+      configuration: Release
     - compiler: MinGW
       configuration: Release
       build_with: autoconf
-    - compiler: Cygwin
-      configuration: Release
       build_with: autoconf
     - compiler: MSVC
       configuration: Release
@@ -181,3 +181,5 @@ artifacts:
     name: matio_pubconf.h
   - path: src\matioConfig.h
     name: matioConfig.h
+  - path: test\testsuite.log
+    name: testsuite.log

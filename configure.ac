@@ -147,6 +147,8 @@ else
 fi
 AC_CHECK_FUNCS([fseeko])
 AC_CHECK_FUNCS([ftello])
+AC_CHECK_FUNCS([fseeko64])
+AC_CHECK_FUNCS([ftello64])
 AC_CHECK_FUNCS([_fseeki64])
 AC_CHECK_FUNCS([_ftelli64])
 
