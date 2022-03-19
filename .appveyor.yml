@@ -18,9 +18,9 @@ environment:
   matrix:
     - compiler: Cygwin
       configuration: Release
+      build_with: autoconf
     - compiler: MinGW
       configuration: Release
-      build_with: autoconf
       build_with: autoconf
     - compiler: MSVC
       configuration: Release
