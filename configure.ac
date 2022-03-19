@@ -145,8 +145,7 @@ if test "$ac_cv_sys_file_offset_bits" != no \
 else
     AC_MSG_RESULT(no)
 fi
-
-AC_FUNC_FSEEKO
+AC_CHECK_FUNCS([fseeko])
 
 dnl
 dnl  Libraries

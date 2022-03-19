@@ -45,8 +45,8 @@
 /* As FC_FUNC, but for C identifiers containing underscores. */
 #undef FC_FUNC_
 
-/* Define to 1 if the system has the type `off64_t'. */
-#undef HAVE_OFF64_T
+/* Define to 1 if you have the `fseeko' function. */
+#undef HAVE_FSEEKO
 
 /* Define if 64-bit file address support in 32-bit OS. */
 #undef _FILE_OFFSET_BITS
