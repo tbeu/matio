@@ -132,6 +132,9 @@ for:
   test_script:
     - make check
 
+  after_test:
+    - ps: Push-AppveyorArtifact test\testsuite.log
+
 -
   matrix:
     only:
@@ -181,5 +184,3 @@ artifacts:
     name: matio_pubconf.h
   - path: src\matioConfig.h
     name: matioConfig.h
-  - path: test\testsuite.log
-    name: testsuite.log
