@@ -61,10 +61,6 @@
 #define ftello _ftelli64
 #define fseeko _fseeki64
 #define MATIO_LFS /* fseeko and ftello are defined here */
-#elif defined(HAVE_OFF64_T) || defined(__CYGWIN__)
-#define foff_t off64_t
-#define FOFF_T_FMTSTR "%zd"
-#define MATIO_LFS /* fseeko and ftello are likely defined */
 #elif defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64
 #define foff_t off_t
 #define FOFF_T_FMTSTR "%zd"

@@ -28,10 +28,6 @@
 #ifndef MATIO_PRIVATE_H
 #define MATIO_PRIVATE_H
 
-#if defined(__MINGW32__)
-#define _POSIX_C_SOURCE 200808L
-#endif
-
 #include "matioConfig.h"
 #include "matio.h"
 
