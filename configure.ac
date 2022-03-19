@@ -136,6 +136,15 @@ dnl
 dnl  Large file support
 dnl
 AC_SYS_LARGEFILE
+AC_MSG_CHECKING(whether _LARGEFILE64_SOURCE is needed)
+if test "$ac_cv_sys_file_offset_bits" != no \
+     -o "$ac_cv_sys_large_files" != no ; then
+    AC_DEFINE_UNQUOTED([_LARGEFILE64_SOURCE],[1],[Define if 64-bit file address support in 32-bit OS.])
+    AC_MSG_RESULT(yes)
+else
+    AC_MSG_RESULT(no)
+fi
+
 AC_FUNC_FSEEKO
 
 dnl
