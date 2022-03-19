@@ -41,6 +41,8 @@ matrix:
     - compiler: Cygwin
       configuration: Release Lib
     - compiler: MinGW
+      platform: x64
+    - compiler: MinGW
       build_with: msbuild
     - compiler: MinGW
       build_with: cmake
