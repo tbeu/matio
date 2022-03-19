@@ -28,6 +28,10 @@
 #ifndef MATIO_PRIVATE_H
 #define MATIO_PRIVATE_H
 
+#if defined(__MINGW32__) && !defined(__USE_MINGW_ANSI_STDIO)
+#define __USE_MINGW_ANSI_STDIO 1
+#endif
+
 #include "matioConfig.h"
 #include "matio.h"
 
