@@ -160,6 +160,7 @@ for:
     - git submodule update --init
     - bash autogen.sh
     - bash configure
+    - which stdio.h
     - cat src/matioConfig.h
 
   build_script:
