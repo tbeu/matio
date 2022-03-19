@@ -52,10 +52,10 @@
 #undef HAVE_FTELLO
 
 /* Define to 1 if you have the `_fseeki64' function. */
-#undef HAVE_FSEEKI64
+#undef HAVE__FSEEKI64
 
 /* Define to 1 if you have the `_ftelli64' function. */
-#undef HAVE_FTELLI64
+#undef HAVE__FTELLI64
 
 /* Define if 64-bit file address support in 32-bit OS. */
 #undef _FILE_OFFSET_BITS
@@ -66,12 +66,12 @@
 #if defined(__BORLANDC__) || defined(__MINGW32__) || defined(_MSC_VER)
 #include <sys/types.h> /* for off_t */
 #define foff_t __int64
-#if defined(_MSC_VER) && defined(HAVE_FSEEKI64) && defined(HAVE_FTELLI64)
+#if defined(_MSC_VER) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
 #define MATIO_LFS
 #define FOFF_T_FMTSTR "%I64d"
 #define fseeko _fseeki64
 #define ftello _ftelli64
-#elif defined(__BORLANDC__) && defined(HAVE_FSEEKI64) && defined(HAVE_FTELLI64)
+#elif defined(__BORLANDC__) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
 #define MATIO_LFS
 #define FOFF_T_FMTSTR "%zd"
 #define fseeko _fseeki64
