@@ -48,7 +48,7 @@
 /* Define to 1 if the system has the type `off64_t'. */
 #undef HAVE_OFF64_T
 
-/* Number of bits in a file offset, on hosts where this is settable. */
+/* Define if 64-bit file address support in 32-bit OS. */
 #undef _FILE_OFFSET_BITS
 
 /* Define if 64-bit file address support in 32-bit OS. */
