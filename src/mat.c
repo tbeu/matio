@@ -30,9 +30,6 @@
  */
 
 /* FIXME: Implement Unicode support */
-#if defined(__APPLE__)
-#define _DARWIN_C_SOURCE
-#endif
 #include "matio_private.h"
 #include "mat5.h"
 #include "mat4.h"
