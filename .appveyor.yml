@@ -124,6 +124,7 @@ for:
     - git submodule update --init
     - sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null" autogen.sh
     - sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./configure < /dev/null" configure
+    - cat src/matioConfig.h
 
   build_script:
     - make
@@ -159,6 +160,7 @@ for:
     - git submodule update --init
     - bash autogen.sh
     - bash configure
+    - cat src/matioConfig.h
 
   build_script:
     - if "%platform%"=="Win32" mingw32-make
