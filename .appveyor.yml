@@ -130,7 +130,7 @@ for:
     - make -j8
 
   test_script:
-    - .\tools\matdump -d .\test\datasets\matio_test_cases_uncompressed_le.mat var70(2:3:end,4:5:end,8:16:end)
+    - make check
 
   after_test:
     - ps: Push-AppveyorArtifact .\test\testsuite.log
