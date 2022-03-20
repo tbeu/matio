@@ -163,6 +163,7 @@ READ_TYPE_UINT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
     READ_DATA(READ_TYPE, Mat_uint16Swap);
 #endif
+	Mat_Warning("readcount = %d", readcount);
     return readcount;
 }
 

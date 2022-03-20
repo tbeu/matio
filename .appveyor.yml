@@ -127,7 +127,7 @@ for:
     - cat src/matioConfig.h
 
   build_script:
-    - make
+    - make -j8
 
   test_script:
     - .\tools\matdump -d .\test\datasets\matio_test_cases_uncompressed_le.mat var70(2:3:end,4:5:end,8:16:end)
