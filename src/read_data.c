@@ -428,6 +428,7 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
                 }                                                                                 \
             } else {                                                                              \
                 I += inc[j];                                                                      \
+				Mat_Warning("o3 = %zd", data_size *inc[j]); \
                 (void)fseeko((FILE *)mat->fp, data_size *inc[j], SEEK_CUR);                       \
                 break;                                                                            \
             }                                                                                     \
@@ -450,15 +451,18 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
             N *= edge[i];                                                                      \
             I += dimp[i - 1] * start[i];                                            \
         }                                                                                      \
+		Mat_Warning("o4 = %zd", I * data_size); \
         (void)fseeko((FILE *)mat->fp, I * data_size, SEEK_CUR);                                 \
         if ( stride[0] == 1 ) {                                                                \
             for ( i = 0; i < N; i += edge[0] ) {                                               \
                 if ( start[0] ) {                                                              \
+					Mat_Warning("o5 = %zd", start[0] * data_size); \
                     (void)fseeko((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);             \
                     I += start[0];                                                             \
                 }                                                                              \
                 ReadDataFunc(mat, ptr + i, data_type, edge[0]);                                \
                 I += dims[0] - start[0];                                                       \
+				Mat_Warning("o6 = %zd", data_size * (dims[0] - edge[0] - start[0])); \
                 (void)fseeko((FILE *)mat->fp, data_size * (dims[0] - edge[0] - start[0]),       \
                              SEEK_CUR);                                                        \
                 READ_DATA_SLABN_RANK_LOOP;                                                     \
@@ -466,15 +470,18 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
         } else {                                                                               \
             for ( i = 0; i < N; i += edge[0] ) {                                               \
                 if ( start[0] ) {                                                              \
+					Mat_Warning("o7 = %zd", start[0] * data_size); \
                     (void)fseeko((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);             \
                     I += start[0];                                                             \
                 }                                                                              \
                 for ( j = 0; j < edge[0]; j++ ) {                                              \
                     ReadDataFunc(mat, ptr + i + j, data_type, 1);                              \
+					Mat_Warning("o8 = %zd", data_size * (stride[0] - 1)); \
                     (void)fseeko((FILE *)mat->fp, data_size * (stride[0] - 1), SEEK_CUR);       \
                     I += stride[0];                                                            \
                 }                                                                              \
                 I += dims[0] - edge[0] * stride[0] - start[0];                      \
+				Mat_Warning("o9 = %zd", data_size *(dims[0] - edge[0] * stride[0] - start[0])); \
                 (void)fseeko((FILE *)mat->fp,                                                  \
                              data_size *(dims[0] - edge[0] * stride[0] - start[0]), \
                              SEEK_CUR);                                                        \
