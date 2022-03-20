@@ -1,4 +1,4 @@
-﻿/** @file mat73.c
+/** @file mat73.c
  * Matlab MAT version 7.3 file functions
  * @ingroup MAT
  */
