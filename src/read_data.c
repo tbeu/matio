@@ -416,13 +416,15 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
             if ( (cnt[j] % edge[j]) == 0 ) {                                                      \
                 cnt[j] = 0;                                                                       \
                 if ( (I % dimp[j]) != 0 ) {                                                       \
+					Mat_Warning("o1 = %zd", data_size *(dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j])); \
                     (void)fseeko((FILE *)mat->fp,                                                 \
                                  data_size *(dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]),   \
                                  SEEK_CUR);                                                       \
-                    I += dimp[j] - (I % dimp[j]) + (ptrdiff_t)dimp[j - 1] * start[j];             \
+                    I += dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j];             \
                 } else if ( start[j] ) {                                                          \
+					Mat_Warning("o2 = %zd", data_size *(dimp[j - 1] * start[j])); \
                     (void)fseeko((FILE *)mat->fp, data_size *(dimp[j - 1] * start[j]), SEEK_CUR); \
-                    I += (ptrdiff_t)dimp[j - 1] * start[j];                                       \
+                    I += dimp[j - 1] * start[j];                                       \
                 }                                                                                 \
             } else {                                                                              \
                 I += inc[j];                                                                      \
