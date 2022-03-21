@@ -344,10 +344,10 @@ Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread)
  * @retval 0 on success
  */
 int
-IsEndOfFile(FILE *fp, foff_t *fpos)
+IsEndOfFile(FILE *fp, mat_off_t *fpos)
 {
     int isEOF = feof(fp);
-    foff_t fPos = ftello(fp);
+    mat_off_t fPos = ftello(fp);
     if ( !isEOF ) {
         if ( fPos == -1L ) {
             Mat_Critical("Couldn't determine file position");
@@ -779,7 +779,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
             mat->next_index = fpos;
             *n = i;
         } else {
-            foff_t fpos = ftello((FILE *)mat->fp);
+            mat_off_t fpos = ftello((FILE *)mat->fp);
             if ( fpos == -1L ) {
                 *n = 0;
                 Mat_Critical("Couldn't determine file position");
@@ -2638,7 +2638,7 @@ Mat_VarReadInfo(mat_t *mat, const char *name)
         }
         mat->next_index = fpos;
     } else {
-        foff_t fpos = ftello((FILE *)mat->fp);
+        mat_off_t fpos = ftello((FILE *)mat->fp);
         if ( fpos != -1L ) {
             (void)fseeko((FILE *)mat->fp, mat->bof, SEEK_SET);
             do {
@@ -2680,7 +2680,7 @@ Mat_VarRead(mat_t *mat, const char *name)
         return NULL;
 
     if ( MAT_FT_MAT73 != mat->version ) {
-        foff_t fpos = ftello((FILE *)mat->fp);
+        mat_off_t fpos = ftello((FILE *)mat->fp);
         if ( fpos == -1L ) {
             Mat_Critical("Couldn't determine file position");
             return NULL;
@@ -2722,7 +2722,7 @@ Mat_VarRead(mat_t *mat, const char *name)
 matvar_t *
 Mat_VarReadNext(mat_t *mat)
 {
-    foff_t fpos = 0;
+    mat_off_t fpos = 0;
     matvar_t *matvar;
 
     if ( mat->version != MAT_FT_MAT73 ) {

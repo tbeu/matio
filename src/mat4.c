@@ -377,7 +377,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                 double tmp;
                 mat_uint32_t i;
                 mat_sparse_t *sparse;
-                foff_t fpos;
+                mat_off_t fpos;
                 enum matio_types data_type = MAT_T_DOUBLE;
                 size_t readcount;
 
@@ -896,7 +896,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
 {
     int M, O, data_type, class_type;
     mat_int32_t tmp;
-    foff_t nBytes, fpos;
+    mat_off_t nBytes, fpos;
     matvar_t *matvar = NULL;
     union {
         mat_uint32_t u;
@@ -1068,7 +1068,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
             return NULL;
         }
 
-        nBytes = (foff_t)tmp2;
+        nBytes = (mat_off_t)tmp2;
     }
     (void)fseeko((FILE *)mat->fp, nBytes, SEEK_CUR);
 

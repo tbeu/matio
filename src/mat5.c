@@ -1266,7 +1266,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
             } else if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
-                Mat_Critical("cells[%zu] not MAT_T_MATRIX, fpos = " FOFF_T_FMTSTR, i,
+                Mat_Critical("cells[%zu] not MAT_T_MATRIX, fpos = " MAT_OFF_T_FMTSTR, i,
                              ftello((FILE *)mat->fp));
                 break;
             }
@@ -1766,7 +1766,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
             if ( buf[0] != MAT_T_MATRIX ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
-                Mat_Critical("fields[%zu] not MAT_T_MATRIX, fpos = " FOFF_T_FMTSTR, i,
+                Mat_Critical("fields[%zu] not MAT_T_MATRIX, fpos = " MAT_OFF_T_FMTSTR, i,
                              ftello((FILE *)mat->fp));
                 break;
             } else if ( 0 == nBytes ) {
@@ -2141,7 +2141,7 @@ WriteCellArrayField(mat_t *mat, matvar_t *matvar)
     const mat_uint32_t pad4 = 0;
     const mat_uint8_t pad1 = 0;
     int nBytes, i;
-    foff_t start = 0, end = 0;
+    mat_off_t start = 0, end = 0;
 
     if ( matvar == NULL || mat == NULL )
         return MATIO_E_BAD_ARGUMENT;
@@ -2210,7 +2210,7 @@ WriteCellArrayField(mat_t *mat, matvar_t *matvar)
     end = ftello((FILE *)mat->fp);
     if ( start != -1L && end != -1L ) {
         nBytes = (int)(end - start);
-        (void)fseeko((FILE *)mat->fp, (foff_t) - (nBytes + 4), SEEK_CUR);
+        (void)fseeko((FILE *)mat->fp, (mat_off_t) - (nBytes + 4), SEEK_CUR);
         fwrite(&nBytes, 4, 1, (FILE *)mat->fp);
         (void)fseeko((FILE *)mat->fp, end, SEEK_SET);
     } else {
@@ -2549,7 +2549,7 @@ WriteStructField(mat_t *mat, matvar_t *matvar)
     int array_flags_size = 8, matrix_type = MAT_T_MATRIX;
     const mat_uint32_t pad4 = 0;
     int nBytes, i, nzmax = 0;
-    foff_t start = 0, end = 0;
+    mat_off_t start = 0, end = 0;
 
     if ( mat == NULL )
         return MATIO_E_BAD_ARGUMENT;
@@ -2605,7 +2605,7 @@ WriteStructField(mat_t *mat, matvar_t *matvar)
     end = ftello((FILE *)mat->fp);
     if ( start != -1L && end != -1L ) {
         nBytes = (int)(end - start);
-        (void)fseeko((FILE *)mat->fp, (foff_t) - (nBytes + 4), SEEK_CUR);
+        (void)fseeko((FILE *)mat->fp, (mat_off_t) - (nBytes + 4), SEEK_CUR);
         fwrite(&nBytes, 4, 1, (FILE *)mat->fp);
         (void)fseeko((FILE *)mat->fp, end, SEEK_SET);
     } else {
@@ -2677,7 +2677,7 @@ Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, size_t *dims)
     const mat_uint32_t pad4 = 0;
     const mat_uint8_t pad1 = 0;
     size_t byteswritten = 0;
-    foff_t start = 0, end = 0;
+    mat_off_t start = 0, end = 0;
 
     fwrite(&matrix_type, 4, 1, (FILE *)mat->fp);
     fwrite(&pad4, 4, 1, (FILE *)mat->fp);
@@ -2736,7 +2736,7 @@ Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, size_t *dims)
     end = ftello((FILE *)mat->fp);
     if ( start != -1L && end != -1L ) {
         nBytes = (int)(end - start);
-        (void)fseeko((FILE *)mat->fp, (foff_t) - (nBytes + 4), SEEK_CUR);
+        (void)fseeko((FILE *)mat->fp, (mat_off_t) - (nBytes + 4), SEEK_CUR);
         fwrite(&nBytes, 4, 1, (FILE *)mat->fp);
         (void)fseeko((FILE *)mat->fp, end, SEEK_SET);
     } else {
@@ -3062,7 +3062,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
     int nBytes = 0, byteswap, data_in_tag = 0, err;
     size_t nelems = 1;
     enum matio_types packed_type = MAT_T_UNKNOWN;
-    foff_t fpos;
+    mat_off_t fpos;
     mat_uint32_t tag[2] = {0, 0};
     size_t bytesread = 0;
 
@@ -4874,7 +4874,7 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
     int array_flags_size = 8, matrix_type = MAT_T_MATRIX;
     const mat_uint32_t pad4 = 0;
     int nBytes, i, nzmax = 0;
-    foff_t start = 0, end = 0;
+    mat_off_t start = 0, end = 0;
 
     if ( NULL == mat )
         return MATIO_E_BAD_ARGUMENT;
@@ -5109,7 +5109,7 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
     end = ftello((FILE *)mat->fp);
     if ( start != -1L && end != -1L ) {
         nBytes = (int)(end - start);
-        (void)fseeko((FILE *)mat->fp, (foff_t) - (nBytes + 4), SEEK_CUR);
+        (void)fseeko((FILE *)mat->fp, (mat_off_t) - (nBytes + 4), SEEK_CUR);
         fwrite(&nBytes, 4, 1, (FILE *)mat->fp);
         (void)fseeko((FILE *)mat->fp, end, SEEK_SET);
     } else {
@@ -5132,7 +5132,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
 {
     int err;
     mat_uint32_t data_type, array_flags, nBytes;
-    foff_t fpos;
+    mat_off_t fpos;
     matvar_t *matvar = NULL;
 
     if ( mat == NULL || mat->fp == NULL )
@@ -5191,7 +5191,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
             }
             nbytes = uncomp_buf[1];
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
-                (void)fseeko((FILE *)mat->fp, (foff_t)(nBytes - bytesread), SEEK_CUR);
+                (void)fseeko((FILE *)mat->fp, (mat_off_t)(nBytes - bytesread), SEEK_CUR);
                 Mat_VarFree(matvar);
                 matvar = NULL;
                 Mat_Critical("Uncompressed type not MAT_T_MATRIX");
@@ -5260,7 +5260,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                         if ( do_clean ) {
                             free(dims);
                         }
-                        (void)fseeko((FILE *)mat->fp, (foff_t)(nBytes - bytesread), SEEK_CUR);
+                        (void)fseeko((FILE *)mat->fp, (mat_off_t)(nBytes - bytesread), SEEK_CUR);
                         Mat_VarFree(matvar);
                         matvar = NULL;
                         Mat_Critical("Integer multiplication overflow");
@@ -5270,7 +5270,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     if ( NULL == matvar->dims ) {
                         if ( do_clean )
                             free(dims);
-                        (void)fseeko((FILE *)mat->fp, (foff_t)(nBytes - bytesread), SEEK_CUR);
+                        (void)fseeko((FILE *)mat->fp, (mat_off_t)(nBytes - bytesread), SEEK_CUR);
                         Mat_VarFree(matvar);
                         matvar = NULL;
                         Mat_Critical("Couldn't allocate memory");
@@ -5339,7 +5339,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     (void)ReadNextStructField(mat, matvar);
                 else if ( matvar->class_type == MAT_C_CELL )
                     (void)ReadNextCell(mat, matvar);
-                (void)fseeko((FILE *)mat->fp, -(foff_t)matvar->internal->z->avail_in, SEEK_CUR);
+                (void)fseeko((FILE *)mat->fp, -(mat_off_t)matvar->internal->z->avail_in, SEEK_CUR);
                 matvar->internal->datapos = ftello((FILE *)mat->fp);
                 if ( matvar->internal->datapos == -1L ) {
                     Mat_Critical("Couldn't determine file position");

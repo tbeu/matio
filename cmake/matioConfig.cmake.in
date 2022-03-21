@@ -67,7 +67,7 @@
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
 
 /* Define if 64-bit file address support in 32-bit OS. */
-#cmakedefine _LARGEFILE64_SOURCE
+#cmakedefine _LARGEFILE64_SOURCE 1
 
 /* Define to 1 if you have the `asprintf' function. */
 #cmakedefine HAVE_ASPRINTF 1
