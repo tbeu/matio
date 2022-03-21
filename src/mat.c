@@ -42,9 +42,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#if defined(__APPLE__)
-#include <unistd.h>
-#endif
 #if HAVE_INTTYPES_H
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
