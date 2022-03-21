@@ -41,7 +41,6 @@
 #endif
 
 #if defined(__BORLANDC__) || defined(__MINGW32__) || defined(_MSC_VER)
-#include <sys/types.h> /* for off_t */
 #define foff_t __int64
 #if defined(_MSC_VER) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
 #define MATIO_LFS
