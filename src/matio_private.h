@@ -52,13 +52,15 @@
 #define FOFF_T_FMTSTR "%zd"
 #define fseeko _fseeki64
 #define ftello _ftelli64
-#elif !defined(HAVE_FSEEKO) && !defined(HAVE_FTELLO) && defined(HAVE_FSEEKO64) && defined(HAVE_FTELLO64)
+#elif !defined(HAVE_FSEEKO) && !defined(HAVE_FTELLO) && defined(HAVE_FSEEKO64) && \
+    defined(HAVE_FTELLO64)
 #define MATIO_LFS
 #define FOFF_T_FMTSTR "%zd"
 #define fseeko fseeko64
 #define ftello ftello64
 #endif
-#elif defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64 && defined(HAVE_FSEEKO) && defined(HAVE_FTELLO)
+#elif defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64 && defined(HAVE_FSEEKO) && \
+    defined(HAVE_FTELLO)
 #define MATIO_LFS
 #define foff_t off_t
 #define FOFF_T_FMTSTR "%zd"

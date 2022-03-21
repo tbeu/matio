@@ -387,7 +387,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                     return MATIO_E_FILE_FORMAT_VIOLATION;
                 }
                 sparse = (mat_sparse_t *)matvar->data;
-				sparse->nir = (mat_uint32_t)(matvar->dims[0] - 1);
+                sparse->nir = (mat_uint32_t)(matvar->dims[0] - 1);
                 sparse->nzmax = sparse->nir;
                 err = Mul(&readcount, sparse->nir, sizeof(mat_uint32_t));
                 if ( err ) {
