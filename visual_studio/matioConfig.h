@@ -45,6 +45,38 @@
 /* As FC_FUNC, but for C identifiers containing underscores. */
 #undef FC_FUNC_
 
+/* Define to 1 if you have the `fseeko' function. */
+#undef HAVE_FSEEKO
+
+/* Define to 1 if you have the `ftello' function. */
+#undef HAVE_FTELLO
+
+/* Define to 1 if you have the `fseeko64' function. */
+#undef HAVE_FSEEKO64
+
+/* Define to 1 if you have the `ftello64' function. */
+#undef HAVE_FTELLO64
+
+/* Define to 1 if you have the `_fseeki64' function. */
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+#define HAVE__FSEEKI64 1
+#else
+#undef HAVE__FSEEKI64
+#endif
+
+/* Define to 1 if you have the `_ftelli64' function. */
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+#define HAVE__FTELLI64 1
+#else
+#undef HAVE__FTELLI64
+#endif
+
+/* Define if 64-bit file address support in 32-bit OS. */
+#undef _FILE_OFFSET_BITS
+
+/* Define if 64-bit file address support in 32-bit OS. */
+#undef _LARGEFILE64_SOURCE
+
 /* Define to 1 if you have the `asprintf' function. */
 #undef HAVE_ASPRINTF
 

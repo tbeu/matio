@@ -11,15 +11,15 @@ cache:
   - C:\cygwin64-setup-cache
 
 platform:
-  - x64
   - Win32
+  - x64
 
 environment:
   matrix:
-    - compiler: MinGW
+    - compiler: Cygwin
       configuration: Release
       build_with: autoconf
-    - compiler: Cygwin
+    - compiler: MinGW
       configuration: Release
       build_with: autoconf
     - compiler: MSVC
@@ -40,6 +40,8 @@ matrix:
       build_with: cmake
     - compiler: Cygwin
       configuration: Release Lib
+    - compiler: MinGW
+      platform: x64
     - compiler: MinGW
       build_with: msbuild
     - compiler: MinGW
@@ -122,12 +124,16 @@ for:
     - git submodule update --init
     - sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null" autogen.sh
     - sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./configure < /dev/null" configure
+    - cat ./src/matioConfig.h
 
   build_script:
-    - make
+    - make -j8
 
   test_script:
     - make check
+
+  after_test:
+    - ps: Push-AppveyorArtifact .\test\testsuite.log
 
 -
   matrix:

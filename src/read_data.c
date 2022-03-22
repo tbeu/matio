@@ -53,7 +53,7 @@
             }                                                         \
         } else {                                                      \
             size_t j;                                                 \
-            int err_ = 0;                                              \
+            int err_ = 0;                                             \
             readcount = 0;                                            \
             for ( i = 0; i < len - block_size; i += block_size ) {    \
                 j = fread(v, data_size, block_size, (FILE *)mat->fp); \
@@ -63,11 +63,11 @@
                         data[i + j] = (T)v[j];                        \
                     }                                                 \
                 } else {                                              \
-                    err_ = 1;                                          \
+                    err_ = 1;                                         \
                     break;                                            \
                 }                                                     \
             }                                                         \
-            if ( 0 == err_ && len > i ) {                              \
+            if ( 0 == err_ && len > i ) {                             \
                 j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
                 readcount += j;                                       \
                 if ( j == len - i ) {                                 \
@@ -92,7 +92,7 @@
                 }                                                         \
             } else {                                                      \
                 size_t j;                                                 \
-                int err_ = 0;                                              \
+                int err_ = 0;                                             \
                 readcount = 0;                                            \
                 for ( i = 0; i < len - block_size; i += block_size ) {    \
                     j = fread(v, data_size, block_size, (FILE *)mat->fp); \
@@ -102,11 +102,11 @@
                             data[i + j] = (T)SwapFunc(&v[j]);             \
                         }                                                 \
                     } else {                                              \
-                        err_ = 1;                                          \
+                        err_ = 1;                                         \
                         break;                                            \
                     }                                                     \
                 }                                                         \
-                if ( 0 == err_ && len > i ) {                              \
+                if ( 0 == err_ && len > i ) {                             \
                     j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
                     readcount += j;                                       \
                     if ( j == len - i ) {                                 \

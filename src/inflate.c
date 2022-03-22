@@ -127,8 +127,8 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread)
     }
 
     if ( z->avail_in ) {
-        const long offset = -(long)z->avail_in;
-        (void)fseek((FILE *)mat->fp, offset, SEEK_CUR);
+        const mat_off_t offset = -(mat_off_t)z->avail_in;
+        (void)fseeko((FILE *)mat->fp, offset, SEEK_CUR);
         if ( NULL != bytesread ) {
             *bytesread -= z->avail_in;
         }
@@ -306,8 +306,8 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesre
     }
 
     if ( z->avail_in ) {
-        const long offset = -(long)z->avail_in;
-        (void)fseek((FILE *)mat->fp, offset, SEEK_CUR);
+        const mat_off_t offset = -(mat_off_t)z->avail_in;
+        (void)fseeko((FILE *)mat->fp, offset, SEEK_CUR);
         if ( NULL != bytesread ) {
             *bytesread -= z->avail_in;
         }
@@ -402,8 +402,8 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     }
 
     if ( z->avail_in ) {
-        const long offset = -(long)z->avail_in;
-        (void)fseek((FILE *)mat->fp, offset, SEEK_CUR);
+        const mat_off_t offset = -(mat_off_t)z->avail_in;
+        (void)fseeko((FILE *)mat->fp, offset, SEEK_CUR);
         bytesread -= z->avail_in;
         z->avail_in = 0;
     }

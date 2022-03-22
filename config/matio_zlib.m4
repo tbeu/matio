@@ -22,20 +22,19 @@ then
     CFLAGS="$saved_CFLAGS $ZLIB_CFLAGS"
 
     Z_PREFIX=0
-    AC_TRY_LINK( [
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <stdlib.h>
 #include <zlib.h>
-                  ],
-[inflateCopy(NULL,NULL);], ac_have_zlib=yes, ac_have_zlib=no)
+                  ]], [[inflateCopy(NULL,NULL);]])],[ac_have_zlib=yes],[ac_have_zlib=no])
 
     if test "$ac_have_zlib" = "no"
     then
         # Try again with Z_PREFIX
-        AC_TRY_LINK( [
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[
             #include <stdlib.h>
             #define Z_PREFIX
             #include <zlib.h>
-        ],[inflateCopy(NULL,NULL);],ac_have_zlib=yes,ac_have_zlib=no)
+        ]], [[inflateCopy(NULL,NULL);]])],[ac_have_zlib=yes],[ac_have_zlib=no])
         Z_PREFIX=1
     fi
 

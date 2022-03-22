@@ -133,6 +133,26 @@ AC_PROG_INSTALL
 AC_PROG_GREP
 
 dnl
+dnl  Large file support
+dnl
+AC_SYS_LARGEFILE
+AC_MSG_CHECKING(for large file support in 32-bit OS)
+if test "$ac_cv_sys_file_offset_bits" != no \
+     -o "$ac_cv_sys_large_files" != no ; then
+    AC_DEFINE_UNQUOTED([_LARGEFILE64_SOURCE],[1],[Define if 64-bit file address support in 32-bit OS.])
+    AC_DEFINE_UNQUOTED([_FILE_OFFSET_BITS],[64],[Define if 64-bit file address support in 32-bit OS.])
+    AC_MSG_RESULT(yes)
+else
+    AC_MSG_RESULT(no)
+fi
+AC_CHECK_FUNCS([fseeko])
+AC_CHECK_FUNCS([ftello])
+AC_CHECK_FUNCS([fseeko64])
+AC_CHECK_FUNCS([ftello64])
+AC_CHECK_FUNCS([_fseeki64])
+AC_CHECK_FUNCS([_ftelli64])
+
+dnl
 dnl  Libraries
 dnl
 
@@ -143,7 +163,6 @@ dnl  Headers
 dnl
 
 AC_CONFIG_HEADERS([src/matioConfig.h src/matio_pubconf.h])
-AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE([stdarg.h])
 AC_CHECK_HEADERS_ONCE([varargs.h])
 AC_CHECK_HEADER([inttypes.h],[AC_DEFINE_UNQUOTED([MATIO_HAVE_INTTYPES_H],[1],[Matio has access to inttypes.h])])
@@ -167,6 +186,7 @@ AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([short])
 AC_CHECK_SIZEOF([char])
 AC_CHECK_SIZEOF([void *])
+AC_CHECK_SIZEOF([off_t])
 AC_CHECK_SIZEOF([size_t])
 
 dnl
@@ -200,6 +220,8 @@ fi
 AC_SUBST([HAVE_UINT64],[$HAVE_UINT64])
 AC_SUBST([HAVE_INT64], [$HAVE_INT64])
 
+AC_TYPE_OFF_T
+AC_TYPE_OFF64_T
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT
 AC_TYPE_UNSIGNED_LONG_LONG_INT

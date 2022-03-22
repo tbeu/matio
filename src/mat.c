@@ -42,9 +42,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#if defined(__APPLE__)
-#include <unistd.h>
-#endif
 #if HAVE_INTTYPES_H
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
@@ -347,18 +344,18 @@ Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread)
  * @retval 0 on success
  */
 int
-IsEndOfFile(FILE *fp, long *fpos)
+IsEndOfFile(FILE *fp, mat_off_t *fpos)
 {
     int isEOF = feof(fp);
-    long fPos = ftell(fp);
+    mat_off_t fPos = ftello(fp);
     if ( !isEOF ) {
         if ( fPos == -1L ) {
             Mat_Critical("Couldn't determine file position");
         } else {
-            (void)fseek(fp, 0, SEEK_END);
-            isEOF = fPos == ftell(fp);
+            (void)fseeko(fp, 0, SEEK_END);
+            isEOF = fPos == ftello(fp);
             if ( !isEOF ) {
-                (void)fseek(fp, fPos, SEEK_SET);
+                (void)fseeko(fp, fPos, SEEK_SET);
             }
         }
     }
@@ -532,7 +529,7 @@ Mat_Open(const char *matname, int mode)
 
         mat->version = (int)tmp2;
         if ( (mat->version == 0x0100 || mat->version == 0x0200) && -1 != mat->byteswap ) {
-            mat->bof = ftell((FILE *)mat->fp);
+            mat->bof = ftello((FILE *)mat->fp);
             if ( mat->bof == -1L ) {
                 free(mat->header);
                 free(mat->subsys_offset);
@@ -782,13 +779,13 @@ Mat_GetDir(mat_t *mat, size_t *n)
             mat->next_index = fpos;
             *n = i;
         } else {
-            long fpos = ftell((FILE *)mat->fp);
+            mat_off_t fpos = ftello((FILE *)mat->fp);
             if ( fpos == -1L ) {
                 *n = 0;
                 Mat_Critical("Couldn't determine file position");
                 return dir;
             }
-            (void)fseek((FILE *)mat->fp, mat->bof, SEEK_SET);
+            (void)fseeko((FILE *)mat->fp, mat->bof, SEEK_SET);
             mat->num_datasets = 0;
             do {
                 matvar = Mat_VarReadNextInfo(mat);
@@ -814,7 +811,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
                     break;
                 }
             } while ( !IsEndOfFile((FILE *)mat->fp, NULL) );
-            (void)fseek((FILE *)mat->fp, fpos, SEEK_SET);
+            (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
             *n = mat->num_datasets;
         }
     } else {
@@ -845,13 +842,13 @@ Mat_Rewind(mat_t *mat)
 
     switch ( mat->version ) {
         case MAT_FT_MAT5:
-            (void)fseek((FILE *)mat->fp, 128L, SEEK_SET);
+            (void)fseeko((FILE *)mat->fp, 128L, SEEK_SET);
             break;
         case MAT_FT_MAT73:
             mat->next_index = 0;
             break;
         case MAT_FT_MAT4:
-            (void)fseek((FILE *)mat->fp, 0L, SEEK_SET);
+            (void)fseeko((FILE *)mat->fp, 0L, SEEK_SET);
             break;
         default:
             err = MATIO_E_FAIL_TO_IDENTIFY;
@@ -1089,7 +1086,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         case MAT_T_STRUCT: {
             data_size = sizeof(matvar_t **);
             if ( data != NULL ) {
-                matvar_t * const * const fields = (matvar_t * const * const)data;
+                matvar_t *const *const fields = (matvar_t *const *const)data;
                 size_t nfields = 0;
                 while ( fields[nfields] != NULL )
                     nfields++;
@@ -2641,9 +2638,9 @@ Mat_VarReadInfo(mat_t *mat, const char *name)
         }
         mat->next_index = fpos;
     } else {
-        long fpos = ftell((FILE *)mat->fp);
+        mat_off_t fpos = ftello((FILE *)mat->fp);
         if ( fpos != -1L ) {
-            (void)fseek((FILE *)mat->fp, mat->bof, SEEK_SET);
+            (void)fseeko((FILE *)mat->fp, mat->bof, SEEK_SET);
             do {
                 matvar = Mat_VarReadNextInfo(mat);
                 if ( matvar != NULL ) {
@@ -2656,7 +2653,7 @@ Mat_VarReadInfo(mat_t *mat, const char *name)
                     break;
                 }
             } while ( NULL == matvar && !IsEndOfFile((FILE *)mat->fp, NULL) );
-            (void)fseek((FILE *)mat->fp, fpos, SEEK_SET);
+            (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
         } else {
             Mat_Critical("Couldn't determine file position");
         }
@@ -2683,7 +2680,7 @@ Mat_VarRead(mat_t *mat, const char *name)
         return NULL;
 
     if ( MAT_FT_MAT73 != mat->version ) {
-        long fpos = ftell((FILE *)mat->fp);
+        mat_off_t fpos = ftello((FILE *)mat->fp);
         if ( fpos == -1L ) {
             Mat_Critical("Couldn't determine file position");
             return NULL;
@@ -2696,7 +2693,7 @@ Mat_VarRead(mat_t *mat, const char *name)
                 matvar = NULL;
             }
         }
-        (void)fseek((FILE *)mat->fp, fpos, SEEK_SET);
+        (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
     } else {
         size_t fpos = mat->next_index;
         mat->next_index = 0;
@@ -2725,7 +2722,7 @@ Mat_VarRead(mat_t *mat, const char *name)
 matvar_t *
 Mat_VarReadNext(mat_t *mat)
 {
-    long fpos = 0;
+    mat_off_t fpos = 0;
     matvar_t *matvar;
 
     if ( mat->version != MAT_FT_MAT73 ) {
@@ -2744,7 +2741,7 @@ Mat_VarReadNext(mat_t *mat)
         }
     } else if ( mat->version != MAT_FT_MAT73 ) {
         /* Reset the file position */
-        (void)fseek((FILE *)mat->fp, fpos, SEEK_SET);
+        (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
     }
 
     return matvar;

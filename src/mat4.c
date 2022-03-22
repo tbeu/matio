@@ -175,7 +175,7 @@ Mat_VarWrite4(mat_t *mat, matvar_t *matvar)
     x.namelen = (mat_int32_t)strlen(matvar->name) + 1;
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
-    (void)fseek((FILE *)mat->fp, 0, SEEK_END); /* Always write at end of file */
+    (void)fseeko((FILE *)mat->fp, 0, SEEK_END); /* Always write at end of file */
 
     switch ( matvar->class_type ) {
         case MAT_C_CHAR:
@@ -303,7 +303,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
         return err;
     }
 
-    (void)fseek((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+    (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
 
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
@@ -377,7 +377,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                 double tmp;
                 mat_uint32_t i;
                 mat_sparse_t *sparse;
-                long fpos;
+                mat_off_t fpos;
                 enum matio_types data_type = MAT_T_DOUBLE;
                 size_t readcount;
 
@@ -387,7 +387,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                     return MATIO_E_FILE_FORMAT_VIOLATION;
                 }
                 sparse = (mat_sparse_t *)matvar->data;
-                sparse->nir = matvar->dims[0] - 1;
+                sparse->nir = (mat_uint32_t)(matvar->dims[0] - 1);
                 sparse->nzmax = sparse->nir;
                 err = Mul(&readcount, sparse->nir, sizeof(mat_uint32_t));
                 if ( err ) {
@@ -432,7 +432,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                 }
                 matvar->dims[0] = (size_t)tmp;
 
-                fpos = ftell((FILE *)mat->fp);
+                fpos = ftello((FILE *)mat->fp);
                 if ( fpos == -1L ) {
                     free(sparse->ir);
                     free(matvar->data);
@@ -440,7 +440,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Couldn't determine file position");
                     return MATIO_E_FILE_FORMAT_VIOLATION;
                 }
-                (void)fseek((FILE *)mat->fp, sparse->nir * Mat_SizeOf(data_type), SEEK_CUR);
+                (void)fseeko((FILE *)mat->fp, sparse->nir * Mat_SizeOf(data_type), SEEK_CUR);
                 readcount = ReadDoubleData(mat, &tmp, data_type, 1);
                 if ( readcount != 1 || tmp > UINT_MAX - 1 || tmp < 0 ) {
                     free(sparse->ir);
@@ -450,7 +450,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                     return MATIO_E_FILE_FORMAT_VIOLATION;
                 }
                 matvar->dims[1] = (size_t)tmp;
-                (void)fseek((FILE *)mat->fp, fpos, SEEK_SET);
+                (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
                 if ( matvar->dims[1] > UINT_MAX - 1 ) {
                     free(sparse->ir);
                     free(matvar->data);
@@ -772,7 +772,7 @@ Mat_VarReadData4(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
 {
     int err = MATIO_E_NO_ERROR;
 
-    (void)fseek((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+    (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
 
     switch ( matvar->data_type ) {
         case MAT_T_DOUBLE:
@@ -802,7 +802,7 @@ Mat_VarReadData4(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
 
             ReadDataSlab2(mat, cdata->Re, matvar->class_type, matvar->data_type, matvar->dims,
                           start, stride, edge);
-            (void)fseek((FILE *)mat->fp, matvar->internal->datapos + nbytes, SEEK_SET);
+            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos + nbytes, SEEK_SET);
             ReadDataSlab2(mat, cdata->Im, matvar->class_type, matvar->data_type, matvar->dims,
                           start, stride, edge);
         } else {
@@ -820,7 +820,7 @@ Mat_VarReadData4(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stri
 
         ReadDataSlabN(mat, cdata->Re, matvar->class_type, matvar->data_type, matvar->rank,
                       matvar->dims, start, stride, edge);
-        (void)fseek((FILE *)mat->fp, matvar->internal->datapos + nbytes, SEEK_SET);
+        (void)fseeko((FILE *)mat->fp, matvar->internal->datapos + nbytes, SEEK_SET);
         ReadDataSlabN(mat, cdata->Im, matvar->class_type, matvar->data_type, matvar->rank,
                       matvar->dims, start, stride, edge);
     } else {
@@ -856,9 +856,9 @@ Mat_VarReadDataLinear4(mat_t *mat, matvar_t *matvar, void *data, int start, int 
         return err;
     }
 
-    (void)fseek((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+    (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
 
-    matvar->data_size = Mat_SizeOf(matvar->data_type);
+    matvar->data_size = (int)Mat_SizeOf(matvar->data_type);
 
     if ( (size_t)stride * (edge - 1) + start + 1 > nelems ) {
         return MATIO_E_BAD_ARGUMENT;
@@ -873,7 +873,7 @@ Mat_VarReadDataLinear4(mat_t *mat, matvar_t *matvar, void *data, int start, int 
 
         ReadDataSlab1(mat, complex_data->Re, matvar->class_type, matvar->data_type, start, stride,
                       edge);
-        (void)fseek((FILE *)mat->fp, matvar->internal->datapos + nelems, SEEK_SET);
+        (void)fseeko((FILE *)mat->fp, matvar->internal->datapos + nelems, SEEK_SET);
         ReadDataSlab1(mat, complex_data->Im, matvar->class_type, matvar->data_type, start, stride,
                       edge);
     } else {
@@ -896,7 +896,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
 {
     int M, O, data_type, class_type;
     mat_int32_t tmp;
-    long nBytes, fpos;
+    mat_off_t nBytes, fpos;
     matvar_t *matvar = NULL;
     union {
         mat_uint32_t u;
@@ -1050,7 +1050,7 @@ Mat_VarReadNextInfo4(mat_t *mat)
         matvar->name[tmp - 1] = '\0';
     }
 
-    matvar->internal->datapos = ftell((FILE *)mat->fp);
+    matvar->internal->datapos = ftello((FILE *)mat->fp);
     if ( matvar->internal->datapos == -1L ) {
         Mat_VarFree(matvar);
         Mat_Critical("Couldn't determine file position");
@@ -1068,9 +1068,9 @@ Mat_VarReadNextInfo4(mat_t *mat)
             return NULL;
         }
 
-        nBytes = (long)tmp2;
+        nBytes = (mat_off_t)tmp2;
     }
-    (void)fseek((FILE *)mat->fp, nBytes, SEEK_CUR);
+    (void)fseeko((FILE *)mat->fp, nBytes, SEEK_CUR);
 
     return matvar;
 }

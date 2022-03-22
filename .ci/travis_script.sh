@@ -7,7 +7,7 @@ if [[ "$COVERITY_SCAN_BRANCH" == 1 ]]; then
 fi
 
 if [[ "${USE_CMAKE:-no}" == "no" ]]; then
-    make "CPPFLAGS=-DMAX_RANK=$MAX_RANK"
+    make "CPPFLAGS=-DMAX_RANK=$MAX_RANK" -j8
     make check
 else
     BUILD_DIR=$HOME/matio_cmake

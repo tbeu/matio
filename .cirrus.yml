@@ -9,7 +9,8 @@ task:
     pkg install -y devel/readline bash cmake autoconf automake libtool devel/pkgconf
   configure_script:
     - mkdir matio_cmake
-    - cmake -DMATIO_WITH_HDF5:BOOL=OFF -DMATIO_MAT73:BOOL=OFF -S . -B matio_cmake
+    - cmake -DMATIO_WITH_HDF5:BOOL=OFF -DMATIO_MAT73:BOOL=OFF -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 -S . -B matio_cmake
+
   build_script:
     - cmake --build matio_cmake -- -j8
   test_script:

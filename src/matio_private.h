@@ -28,8 +28,46 @@
 #ifndef MATIO_PRIVATE_H
 #define MATIO_PRIVATE_H
 
+#if defined(__MINGW32__) && !defined(__USE_MINGW_ANSI_STDIO)
+#define __USE_MINGW_ANSI_STDIO 1
+#endif
+
 #include "matioConfig.h"
 #include "matio.h"
+
+#include <stdio.h>
+#if defined(HAVE_UNISTD_H)
+#include <unistd.h>
+#endif
+
+#if defined(__BORLANDC__) || defined(__MINGW32__) || defined(_MSC_VER)
+#define mat_off_t __int64
+#if defined(_MSC_VER) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
+#define MATIO_LFS
+#define fseeko _fseeki64
+#define ftello _ftelli64
+#elif defined(__BORLANDC__) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
+#define MATIO_LFS
+#define fseeko _fseeki64
+#define ftello _ftelli64
+#elif !defined(HAVE_FSEEKO) && !defined(HAVE_FTELLO) && defined(HAVE_FSEEKO64) && \
+    defined(HAVE_FTELLO64)
+#define MATIO_LFS
+#define fseeko fseeko64
+#define ftello ftello64
+#endif
+#elif defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64 && defined(HAVE_FSEEKO) && \
+    defined(HAVE_FTELLO)
+#define MATIO_LFS
+#define mat_off_t off_t
+#endif
+
+#if !defined(MATIO_LFS)
+#define mat_off_t long
+#define ftello ftell
+#define fseeko fseek
+#endif
+
 #if HAVE_ZLIB
 #include <zlib.h>
 #endif
@@ -72,7 +110,7 @@ struct _mat_t
     int version;         /**< MAT file version */
     int byteswap;        /**< 1 if byte swapping is required, 0 otherwise */
     int mode;            /**< Access mode */
-    long bof;            /**< Beginning of file not including any header */
+    mat_off_t bof;       /**< Beginning of file not including any header */
     size_t next_index;   /**< Index/File position of next variable to read */
     size_t num_datasets; /**< Number of datasets in the file */
 #if defined(MAT73) && MAT73
@@ -93,7 +131,7 @@ struct matvar_internal
     hobj_ref_t hdf5_ref; /**< Reference */
     hid_t id;            /**< Id */
 #endif
-    long datapos;        /**< Offset from the beginning of the MAT file to the data */
+    mat_off_t datapos;   /**< Offset from the beginning of the MAT file to the data */
     unsigned num_fields; /**< Number of fields */
     char **fieldnames;   /**< Pointer to fieldnames */
 #if HAVE_ZLIB
@@ -223,7 +261,7 @@ EXTERN int Add(size_t *res, size_t a, size_t b);
 EXTERN int Mul(size_t *res, size_t a, size_t b);
 EXTERN int Mat_MulDims(const matvar_t *matvar, size_t *nelems);
 EXTERN int Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread);
-EXTERN int IsEndOfFile(FILE *fp, long *fpos);
+EXTERN int IsEndOfFile(FILE *fp, mat_off_t *fpos);
 
 /* io.c */
 #if defined(_WIN32) && defined(_MSC_VER)

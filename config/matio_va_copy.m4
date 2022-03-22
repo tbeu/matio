@@ -54,7 +54,7 @@ m4_define(__va_copy_check, [
 [/* Predefined possible va_copy() implementation (id: $1) */
 #define __VA_COPY_USE_$1(d, s) $2])
     if test ".$ac_cv_va_copy" = .; then
-        AC_TRY_RUN(__va_copy_test($2), [ac_cv_va_copy="$1"])
+        AC_RUN_IFELSE([AC_LANG_SOURCE([__va_copy_test($2)])],[ac_cv_va_copy="$1"],[],[])
     fi
 ])
 
@@ -82,7 +82,7 @@ AC_DEFUN([AC_CHECK_VA_COPY],[
     dnl #   8. check for memory copying approach (assuming va_list is a pointer)
     __va_copy_check(CPP, [memcpy((void *)(d), (void *)(s)), sizeof(*(s))])
     if test ".$ac_cv_va_copy" = .; then
-        AC_ERROR([no working implementation found])
+        AC_MSG_ERROR(no working implementation found)
     fi
   ])
   dnl #   optionally activate the fallback implementation

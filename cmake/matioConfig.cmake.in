@@ -45,6 +45,30 @@
 /* As FC_FUNC, but for C identifiers containing underscores. */
 #cmakedefine FC_FUNC_
 
+/* Define to 1 if you have the `fseeko' function. */
+#cmakedefine HAVE_FSEEKO 1
+
+/* Define to 1 if you have the `ftello' function. */
+#cmakedefine HAVE_FTELLO 1
+
+/* Define to 1 if you have the `fseeko64' function. */
+#cmakedefine HAVE_FSEEKO64 1
+
+/* Define to 1 if you have the `ftello64' function. */
+#cmakedefine HAVE_FTELLO64 1
+
+/* Define to 1 if you have the `_fseeki64' function. */
+#cmakedefine HAVE__FSEEKI64 1
+
+/* Define to 1 if you have the `_ftelli64' function. */
+#cmakedefine HAVE__FTELLI64 1
+
+/* Define if 64-bit file address support in 32-bit OS. */
+#cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
+
+/* Define if 64-bit file address support in 32-bit OS. */
+#cmakedefine _LARGEFILE64_SOURCE 1
+
 /* Define to 1 if you have the `asprintf' function. */
 #cmakedefine HAVE_ASPRINTF 1
 
