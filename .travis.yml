@@ -208,6 +208,14 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=yes
+    - os: freebsd
+      compiler: clang
+      env:
+        - ENABLE_EXTENDED_SPARSE=yes
+        - ENABLE_MAT73=no
+        - WITH_ZLIB=no
+        - HDF5_VERSION=1.8.22
+        - MAX_RANK=3
 
 before_install: bash ./.ci/travis_before_install.sh || travis_terminate 1;
 
