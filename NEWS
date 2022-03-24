@@ -1,3 +1,13 @@
+Changes in 1.5.22 (25 March 2022)
+* Added support for reading large MAT file
+* Updated cmake-conan to version 0.17.0
+* Fixed CMake build with Conan (MATIO_USE_CONAN:BOOL=ON)
+* Fixed data type when reading 16-bit character data from HDF5 MAT file
+* Fixed heap-based buffer overflows when reading (crafted) MAT file
+  (CVE-2020-36428, CVE-2021-36977)
+* Confirmed compatibility with HDF5 v1.13.0 and v1.13.1
+* Several other fixes, for example for memory leaks
+
 Changes in 1.5.21 (25 March 2021)
 * Fixed: Avoid usage of strlen when creating MAT_T_UTF8 encoded character array
   (regression of v1.5.20)
