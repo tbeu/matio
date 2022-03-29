@@ -33,7 +33,7 @@
 # but it is only necessary on the end-user side. It is not necessary to create conan
 # packages, in fact it shouldn't be use for that. Check the project documentation.
 
-# version: 0.17.0
+# version: 0.18.0
 
 include(CMakeParseArguments)
 
@@ -170,7 +170,10 @@ macro(_conan_detect_compiler)
             conan_cmake_detect_unix_libcxx(_LIBCXX)
             set(_CONAN_SETTING_COMPILER_LIBCXX ${_LIBCXX})
         endif ()
-    elseif (${CMAKE_${LANGUAGE}_COMPILER_ID} STREQUAL Clang)
+    elseif (${CMAKE_${LANGUAGE}_COMPILER_ID} STREQUAL Clang
+                AND NOT "${CMAKE_${LANGUAGE}_COMPILER_FRONTEND_VARIANT}" STREQUAL "MSVC" 
+                AND NOT "${CMAKE_${LANGUAGE}_SIMULATE_ID}" STREQUAL "MSVC")
+
         string(REPLACE "." ";" VERSION_LIST ${CMAKE_${LANGUAGE}_COMPILER_VERSION})
         list(GET VERSION_LIST 0 MAJOR)
         list(GET VERSION_LIST 1 MINOR)
@@ -190,7 +193,11 @@ macro(_conan_detect_compiler)
             conan_cmake_detect_unix_libcxx(_LIBCXX)
             set(_CONAN_SETTING_COMPILER_LIBCXX ${_LIBCXX})
         endif ()
-    elseif(${CMAKE_${LANGUAGE}_COMPILER_ID} STREQUAL MSVC)
+    elseif(${CMAKE_${LANGUAGE}_COMPILER_ID} STREQUAL MSVC
+                OR (${CMAKE_${LANGUAGE}_COMPILER_ID} STREQUAL Clang 
+                    AND "${CMAKE_${LANGUAGE}_COMPILER_FRONTEND_VARIANT}" STREQUAL "MSVC" 
+                    AND "${CMAKE_${LANGUAGE}_SIMULATE_ID}" STREQUAL "MSVC"))
+
         set(_VISUAL "Visual Studio")
         _get_msvc_ide_version(_VISUAL_VERSION)
         if("${_VISUAL_VERSION}" STREQUAL "")
@@ -444,7 +451,7 @@ endfunction()
 
 macro(conan_parse_arguments)
   set(options BASIC_SETUP CMAKE_TARGETS UPDATE KEEP_RPATHS NO_LOAD NO_OUTPUT_DIRS OUTPUT_QUIET NO_IMPORTS SKIP_STD)
-  set(oneValueArgs CONANFILE  ARCH BUILD_TYPE INSTALL_FOLDER CONAN_COMMAND)
+  set(oneValueArgs CONANFILE  ARCH BUILD_TYPE INSTALL_FOLDER OUTPUT_FOLDER CONAN_COMMAND)
   set(multiValueArgs DEBUG_PROFILE RELEASE_PROFILE RELWITHDEBINFO_PROFILE MINSIZEREL_PROFILE
                      PROFILE REQUIRES OPTIONS IMPORTS SETTINGS BUILD ENV GENERATORS PROFILE_AUTO
                      INSTALL_ARGS CONFIGURATION_TYPES PROFILE_BUILD BUILD_REQUIRES)
@@ -502,6 +509,10 @@ function(old_conan_cmake_install)
     if(ARGUMENTS_INSTALL_FOLDER)
       set(CONAN_INSTALL_FOLDER -if=${ARGUMENTS_INSTALL_FOLDER})
     endif()
+    set(CONAN_OUTPUT_FOLDER "")
+    if(ARGUMENTS_OUTPUT_FOLDER)
+      set(CONAN_OUTPUT_FOLDER -of=${ARGUMENTS_OUTPUT_FOLDER})
+    endif()
     foreach(ARG ${ARGUMENTS_GENERATORS})
         set(CONAN_GENERATORS ${CONAN_GENERATORS} -g=${ARG})
     endforeach()
@@ -539,7 +550,7 @@ function(conan_cmake_install)
     endif()
 
     set(installOptions UPDATE NO_IMPORTS OUTPUT_QUIET ERROR_QUIET)
-    set(installOneValueArgs PATH_OR_REFERENCE REFERENCE REMOTE LOCKFILE LOCKFILE_OUT LOCKFILE_NODE_ID INSTALL_FOLDER)
+    set(installOneValueArgs PATH_OR_REFERENCE REFERENCE REMOTE LOCKFILE LOCKFILE_OUT LOCKFILE_NODE_ID INSTALL_FOLDER OUTPUT_FOLDER)
     set(installMultiValueArgs GENERATOR BUILD ENV ENV_HOST ENV_BUILD OPTIONS_HOST OPTIONS OPTIONS_BUILD PROFILE
                               PROFILE_HOST PROFILE_BUILD SETTINGS SETTINGS_HOST SETTINGS_BUILD)
     cmake_parse_arguments(ARGS "${installOptions}" "${installOneValueArgs}" "${installMultiValueArgs}" ${ARGN})
@@ -560,6 +571,8 @@ function(conan_cmake_install)
                 set(flag "--lockfile-node-id")
             elseif("${arg}" STREQUAL "INSTALL_FOLDER")
                 set(flag "--install-folder")
+            elseif("${arg}" STREQUAL "OUTPUT_FOLDER")
+                set(flag "--output-folder")
             endif()
             set(${arg} ${${arg}} ${flag} ${ARGS_${arg}})
         endif()
@@ -611,7 +624,7 @@ function(conan_cmake_install)
     if(DEFINED NO_IMPORTS)
         set(NO_IMPORTS --no-imports)
     endif()
-    set(install_args install ${PATH_OR_REFERENCE} ${REFERENCE} ${UPDATE} ${NO_IMPORTS} ${REMOTE} ${LOCKFILE} ${LOCKFILE_OUT} ${LOCKFILE_NODE_ID} ${INSTALL_FOLDER}
+    set(install_args install ${PATH_OR_REFERENCE} ${REFERENCE} ${UPDATE} ${NO_IMPORTS} ${REMOTE} ${LOCKFILE} ${LOCKFILE_OUT} ${LOCKFILE_NODE_ID} ${INSTALL_FOLDER} ${OUTPUT_FOLDER}
                                 ${GENERATOR} ${BUILD} ${ENV} ${ENV_HOST} ${ENV_BUILD} ${OPTIONS} ${OPTIONS_HOST} ${OPTIONS_BUILD}
                                 ${PROFILE} ${PROFILE_HOST} ${PROFILE_BUILD} ${SETTINGS} ${SETTINGS_HOST} ${SETTINGS_BUILD})
 
@@ -639,6 +652,109 @@ function(conan_cmake_install)
         endif()
     endif()
 
+endfunction()
+
+function(conan_cmake_lock_create)
+    if(DEFINED CONAN_COMMAND)
+        set(CONAN_CMD ${CONAN_COMMAND})
+    else()
+        conan_check(REQUIRED)
+    endif()
+
+    set(lockCreateOptions UPDATE BASE OUTPUT_QUIET ERROR_QUIET)
+    set(lockCreateOneValueArgs PATH REFERENCE REMOTE LOCKFILE LOCKFILE_OUT)
+    set(lockCreateMultiValueArgs BUILD ENV ENV_HOST ENV_BUILD OPTIONS_HOST OPTIONS OPTIONS_BUILD PROFILE
+                              PROFILE_HOST PROFILE_BUILD SETTINGS SETTINGS_HOST SETTINGS_BUILD)
+    cmake_parse_arguments(ARGS "${lockCreateOptions}" "${lockCreateOneValueArgs}" "${lockCreateMultiValueArgs}" ${ARGN})
+    foreach(arg ${lockCreateOptions})
+        if(ARGS_${arg})
+            set(${arg} ${${arg}} ${ARGS_${arg}})
+        endif()
+    endforeach()
+    foreach(arg ${lockCreateOneValueArgs})
+        if(DEFINED ARGS_${arg})
+            if("${arg}" STREQUAL "REMOTE")
+                set(flag "--remote")
+            elseif("${arg}" STREQUAL "LOCKFILE")
+                set(flag "--lockfile")
+            elseif("${arg}" STREQUAL "LOCKFILE_OUT")
+                set(flag "--lockfile-out")
+            endif()
+            set(${arg} ${${arg}} ${flag} ${ARGS_${arg}})
+        endif()
+    endforeach()
+    foreach(arg ${lockCreateMultiValueArgs})
+        if(DEFINED ARGS_${arg})
+            if("${arg}" STREQUAL "BUILD")
+                set(flag "--build")
+            elseif("${arg}" STREQUAL "ENV")
+                set(flag "--env")
+            elseif("${arg}" STREQUAL "ENV_HOST")
+                set(flag "--env:host")
+            elseif("${arg}" STREQUAL "ENV_BUILD")
+                set(flag "--env:build")
+            elseif("${arg}" STREQUAL "OPTIONS")
+                set(flag "--options")
+            elseif("${arg}" STREQUAL "OPTIONS_HOST")
+                set(flag "--options:host")
+            elseif("${arg}" STREQUAL "OPTIONS_BUILD")
+                set(flag "--options:build")
+            elseif("${arg}" STREQUAL "PROFILE")
+                set(flag "--profile")
+            elseif("${arg}" STREQUAL "PROFILE_HOST")
+                set(flag "--profile:host")
+            elseif("${arg}" STREQUAL "PROFILE_BUILD")
+                set(flag "--profile:build")
+            elseif("${arg}" STREQUAL "SETTINGS")
+                set(flag "--settings")
+            elseif("${arg}" STREQUAL "SETTINGS_HOST")
+                set(flag "--settings:host")
+            elseif("${arg}" STREQUAL "SETTINGS_BUILD")
+                set(flag "--settings:build")
+            endif()
+            list(LENGTH ARGS_${arg} numargs)
+            foreach(item ${ARGS_${arg}})
+                if(${item} STREQUAL "all" AND ${arg} STREQUAL "BUILD")
+                    set(${arg} "--build")
+                    break()
+                endif()
+                set(${arg} ${${arg}} ${flag} ${item})
+            endforeach()
+        endif()
+    endforeach()
+    if(DEFINED UPDATE)
+        set(UPDATE --update)
+    endif()
+    if(DEFINED BASE)
+        set(BASE --base)
+    endif()
+    set(lock_create_Args lock create ${PATH} ${REFERENCE} ${UPDATE} ${BASE} ${REMOTE} ${LOCKFILE} ${LOCKFILE_OUT} ${LOCKFILE_NODE_ID} ${INSTALL_FOLDER}
+                                ${GENERATOR} ${BUILD} ${ENV} ${ENV_HOST} ${ENV_BUILD} ${OPTIONS} ${OPTIONS_HOST} ${OPTIONS_BUILD} 
+                                ${PROFILE} ${PROFILE_HOST} ${PROFILE_BUILD} ${SETTINGS} ${SETTINGS_HOST} ${SETTINGS_BUILD})
+
+    string(REPLACE ";" " " _lock_create_Args "${lock_create_Args}")
+    message(STATUS "Conan executing: ${CONAN_CMD} ${_lock_create_Args}")
+    
+    if(ARGS_OUTPUT_QUIET)
+      set(OUTPUT_OPT OUTPUT_QUIET)
+    endif()
+    if(ARGS_ERROR_QUIET)
+      set(ERROR_OPT ERROR_QUIET)
+    endif()
+
+    execute_process(COMMAND ${CONAN_CMD} ${lock_create_Args}
+                    RESULT_VARIABLE return_code
+                    ${OUTPUT_OPT}
+                    ${ERROR_OPT}
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+    if(NOT "${return_code}" STREQUAL "0")
+        if (ARGS_ERROR_QUIET)
+            message(WARNING "Conan lock create failed='${return_code}'")
+        else()
+            message(FATAL_ERROR "Conan lock create failed='${return_code}'")
+        endif()
+    endif()
 endfunction()
 
 function(conan_cmake_setup_conanfile)
@@ -869,9 +985,10 @@ macro(conan_config_install)
     set(multiValueArgs ARGS)
     cmake_parse_arguments(CONAN "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    find_program(CONAN_CMD conan)
-    if(NOT CONAN_CMD AND CONAN_REQUIRED)
-        message(FATAL_ERROR "Conan executable not found!")
+    if(DEFINED CONAN_COMMAND)
+        set(CONAN_CMD ${CONAN_COMMAND})
+    else()
+        conan_check(REQUIRED)
     endif()
 
     if(DEFINED CONAN_VERIFY_SSL)
