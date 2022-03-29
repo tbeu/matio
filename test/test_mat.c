@@ -3820,8 +3820,6 @@ main(int argc, char *argv[])
         switch ( c ) {
             case 'a':
                 dim_append = (int)strtol(optarg, NULL, 10);
-                if ( errno != 0 )
-                    exit(EXIT_FAILURE);
                 break;
             case 'c':
                 if ( !strcmp(optarg, "double") )
