@@ -21,4 +21,4 @@ fi
 
 sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.html
 sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.pdf
-sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./matio-1.5.22.tar.gz
+sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./matio-1.5.23.tar.gz

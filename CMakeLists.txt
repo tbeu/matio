@@ -5,7 +5,7 @@ if(POLICY CMP0074)
 endif()
 
 project(matio
-    VERSION 1.5.22
+    VERSION 1.5.23
     LANGUAGES C CXX
 )
 

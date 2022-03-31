@@ -1,3 +1,7 @@
+Changes in 1.5.23 (31 March 2022)
+* Updated cmake-conan to version 0.18.0
+* Fixed testsuite (regression of v1.5.22)
+
 Changes in 1.5.22 (25 March 2022)
 * Added support for reading large MAT file
 * Updated cmake-conan to version 0.17.0
