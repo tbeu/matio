@@ -10,7 +10,7 @@ Changes in 1.5.22 (25 March 2022)
 * Fixed heap-based buffer overflows when reading (crafted) MAT file
   (CVE-2020-36428, CVE-2021-36977)
 * Confirmed compatibility with HDF5 v1.13.0 and v1.13.1
-* Several other fixes, for example for memory leaks
+* Several other fixes, for example for memory leaks (CVE-2022-1515)
 
 Changes in 1.5.21 (25 March 2021)
 * Fixed: Avoid usage of strlen when creating MAT_T_UTF8 encoded character array
