@@ -56,7 +56,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION=1.12.1
+        - HDF5_VERSION=1.12.2
         - MAX_RANK=3
     - os: linux
       arch: arm64
@@ -65,7 +65,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION=1.12.1
+        - HDF5_VERSION=1.12.2
         - MAX_RANK=3
     - os: linux
       arch: s390x
@@ -74,7 +74,7 @@ jobs:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
-        - HDF5_VERSION=1.12.1
+        - HDF5_VERSION=1.12.2
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
