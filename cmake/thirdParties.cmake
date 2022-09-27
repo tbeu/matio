@@ -68,7 +68,7 @@ endif()
 
 macro(matio_create_zlib target)
     add_library(MATIO::ZLIB INTERFACE IMPORTED)
-    target_link_libraries(MATIO::ZLIB INTERFACE ${target})
+    set_target_properties(MATIO::ZLIB PROPERTIES INTERFACE_LINK_LIBRARIES ${target})
     set(ZLIB_FOUND TRUE)
 endmacro()
 
