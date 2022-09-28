@@ -23,7 +23,7 @@ fi
 if [[ "${USE_CMAKE:-no}" == "yes" ]]; then
     if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "${USE_CONAN:-no}" == "no" ]]; then
         HDF5_DIR=$HOME/CMake-hdf5-$HDF5_VERSION/HDF5-$HDF5_VERSION-Linux/HDF_Group/HDF5/$HDF5_VERSION
-        CMAKE_PREFIX_PATH=-DCMAKE_PREFIX_PATH=$HDF5_DIR/share/cmake
+        CMAKE_PREFIX_PATH=-DCMAKE_PREFIX_PATH=$HDF5_DIR/cmake
     fi
 
     if [[ "${USE_CONAN:-no}" == "yes" ]]; then
