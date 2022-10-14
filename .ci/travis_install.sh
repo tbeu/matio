@@ -4,7 +4,7 @@ set -x #echo on
 
 if [[ "$ENABLE_MAT73" == "yes" ]]; then
     if [[ "${USE_CMAKE:-no}" == "no" ]]; then
-        git clone --branch v1.2.11 --depth 1 https://github.com/madler/zlib
+        git clone --branch v1.2.13 --depth 1 https://github.com/madler/zlib
         pushd zlib
         ./configure --prefix="$TRAVIS_BUILD_DIR"/zlib --eprefix="$TRAVIS_BUILD_DIR"/zlib
         make install
