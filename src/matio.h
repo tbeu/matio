@@ -261,6 +261,12 @@ typedef struct mat_sparse_t
 #define MATIO_E_FILESYSTEM_ERROR_ON_CLOSE 24
 /** @endcond */
 
+/**
+ * User callback for iteration functions.
+ * returns 1 to read, 0 to skip
+ */
+typedef int (*mat_iter_pred_t)(const char *name, const void *user_data);
+
 /* Library function */
 EXTERN void Mat_GetLibraryVersion(int *major, int *minor, int *release);
 
@@ -327,7 +333,9 @@ EXTERN int Mat_VarReadDataLinear(mat_t *mat, matvar_t *matvar, void *data, int s
                                  int edge);
 EXTERN matvar_t *Mat_VarReadInfo(mat_t *mat, const char *name);
 EXTERN matvar_t *Mat_VarReadNext(mat_t *mat);
+EXTERN matvar_t *Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data);
 EXTERN matvar_t *Mat_VarReadNextInfo(mat_t *mat);
+EXTERN matvar_t *Mat_VarReadNextInfoPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data);
 EXTERN matvar_t *Mat_VarSetCell(matvar_t *matvar, int index, matvar_t *cell);
 EXTERN matvar_t *Mat_VarSetStructFieldByIndex(matvar_t *matvar, size_t field_index, size_t index,
                                               matvar_t *field);

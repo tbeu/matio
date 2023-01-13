@@ -41,7 +41,7 @@ EXTERN int Mat_VarReadData73(mat_t *mat, matvar_t *matvar, void *data, int *star
                              int *edge);
 EXTERN int Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int stride,
                                    int edge);
-EXTERN matvar_t *Mat_VarReadNextInfo73(mat_t *mat);
+EXTERN matvar_t *Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data);
 EXTERN int Mat_VarWrite73(mat_t *mat, matvar_t *matvar, int compress);
 EXTERN int Mat_VarWriteAppend73(mat_t *mat, matvar_t *matvar, int compress, int dim);
 

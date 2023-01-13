@@ -2576,6 +2576,24 @@ Mat_VarReadDataLinear(mat_t *mat, matvar_t *matvar, void *data, int start, int s
 matvar_t *
 Mat_VarReadNextInfo(mat_t *mat)
 {
+    return Mat_VarReadNextInfoPredicate(mat, NULL, NULL);
+}
+
+/** @brief Reads the information of the next variable in a filtered MAT file
+ *
+ * Reads the next variable's information (class,flags-complex/global/logical,
+ * rank,dimensions, name, etc) from the Matlab MAT file. Calls a user callback
+ * to check where the variable has to be fully read of skipped.
+ * If skipped tries to read next till accepted or EOF.
+ * After reading, the MAT file is positioned past the current variable.
+ * @ingroup MAT
+ * @param mat Pointer to the MAT file
+ * @return Pointer to the @ref matvar_t structure containing the MAT
+ * variable information
+ */
+matvar_t *
+Mat_VarReadNextInfoPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data)
+{
     matvar_t *matvar;
     if ( mat == NULL )
         return NULL;
@@ -2586,7 +2604,7 @@ Mat_VarReadNextInfo(mat_t *mat)
             break;
         case MAT_FT_MAT73:
 #if defined(MAT73) && MAT73
-            matvar = Mat_VarReadNextInfo73(mat);
+            matvar = Mat_VarReadNextInfo73(mat, pred, user_data);
 #else
             matvar = NULL;
 #endif
@@ -2600,6 +2618,13 @@ Mat_VarReadNextInfo(mat_t *mat)
     }
 
     return matvar;
+}
+
+static int
+Mat_IteratorNameAcceptor(const char *name, const void *user_data)
+{
+    const char *required_name = user_data;
+    return name && required_name && strcmp(name, required_name) == 0;
 }
 
 /** @brief Reads the information of a variable with the given name from a MAT file
@@ -2625,6 +2650,9 @@ Mat_VarReadInfo(mat_t *mat, const char *name)
         size_t fpos = mat->next_index;
         mat->next_index = 0;
         while ( NULL == matvar && mat->next_index < mat->num_datasets ) {
+#if defined(MAT73) && MAT73
+            matvar = Mat_VarReadNextInfoPredicate(mat, Mat_IteratorNameAcceptor, name);
+#else
             matvar = Mat_VarReadNextInfo(mat);
             if ( matvar != NULL ) {
                 if ( matvar->name == NULL || 0 != strcmp(matvar->name, name) ) {
@@ -2635,6 +2663,7 @@ Mat_VarReadInfo(mat_t *mat, const char *name)
                 Mat_Critical("An error occurred in reading the MAT file");
                 break;
             }
+#endif
         }
         mat->next_index = fpos;
     } else {
@@ -2722,27 +2751,50 @@ Mat_VarRead(mat_t *mat, const char *name)
 matvar_t *
 Mat_VarReadNext(mat_t *mat)
 {
-    mat_off_t fpos = 0;
-    matvar_t *matvar;
+    return Mat_VarReadNextPredicate(mat, NULL, NULL);
+}
 
-    if ( mat->version != MAT_FT_MAT73 ) {
-        if ( IsEndOfFile((FILE *)mat->fp, &fpos) )
-            return NULL;
-        if ( fpos == -1L ) {
-            return NULL;
+/** @brief Reads the next variable in a filtered MAT file
+ *
+ * Reads the next variable in the Matlab MAT file. Calls a user callback
+ * to check where the variable has to be fully read of skipped.
+ * If skipped tries to read next till accepted or EOF.
+ *
+ * @ingroup MAT
+ * @param mat Pointer to the MAT file
+ * @return Pointer to the @ref matvar_t structure containing the MAT
+ * variable information
+ */
+matvar_t *
+Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data) {
+    mat_off_t fpos = 0;
+    matvar_t *matvar = NULL;
+
+    do {
+        Mat_VarFree(matvar);
+        if ( mat->version != MAT_FT_MAT73 ) {
+            if ( IsEndOfFile((FILE *)mat->fp, &fpos) )
+                return NULL;
+            if ( fpos == -1L ) {
+                return NULL;
+            }
         }
-    }
-    matvar = Mat_VarReadNextInfo(mat);
-    if ( matvar ) {
-        const int err = ReadData(mat, matvar);
-        if ( err ) {
-            Mat_VarFree(matvar);
-            matvar = NULL;
+        matvar = Mat_VarReadNextInfoPredicate(mat, pred, user_data);
+        if ( matvar ) {
+            const int err = ReadData(mat, matvar);
+            if ( err ) {
+                Mat_VarFree(matvar);
+                matvar = NULL;
+                break;
+            }
+        } else {
+            if ( mat->version != MAT_FT_MAT73 ) {
+                /* Reset the file position */
+                (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+            }
+            break;
         }
-    } else if ( mat->version != MAT_FT_MAT73 ) {
-        /* Reset the file position */
-        (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
-    }
+    } while (pred && pred(matvar->name, user_data) == 0);  // for 7.3 the predicate will be called one extra time
 
     return matvar;
 }
