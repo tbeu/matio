@@ -2794,7 +2794,7 @@ Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data
             }
             break;
         }
-    } while (pred && pred(matvar->name, user_data) == 0);  // for 7.3 the predicate will be called one extra time
+    } while (pred && pred(matvar->name, user_data) == 0);  /* for 7.3 the predicate will be called one extra time */
 
     return matvar;
 }
