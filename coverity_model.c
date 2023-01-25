@@ -2,7 +2,7 @@
  * @brief Modeling file for Coverity Scan to find resource leaks using hdf5 and zlib
  */
 /*
- * Copyright (c) 2016-2022, The matio contributors
+ * Copyright (c) 2016-2023, The matio contributors
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

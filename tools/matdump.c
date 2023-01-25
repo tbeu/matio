@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2015-2023, The matio contributors
  * Copyright (c) 2005-2014, Christopher C. Hulbert
  * All rights reserved.
  *
@@ -864,7 +864,7 @@ main(int argc, char *argv[])
             case 'V':
                 printf(
                     "%s %s\nWritten by Christopher Hulbert\n\n"
-                    "Copyright(C) 2015-2022, The matio contributors\n"
+                    "Copyright(C) 2015-2023, The matio contributors\n"
                     "Copyright(C) 2006-2014, Christopher C. Hulbert\n",
                     prog_name, MATIO_VERSION_STR);
                 exit(EXIT_SUCCESS);
