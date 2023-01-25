@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x #echo on
+set -ex
 
 if [[ "${USE_CMAKE:-no}" == "no" ]]; then
     ./autogen.sh

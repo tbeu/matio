@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x #echo on
+set -ex
 
 if [[ "$ENABLE_MAT73" == "yes" ]]; then
     if [[ "${USE_CMAKE:-no}" == "no" ]]; then

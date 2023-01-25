@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x #echo on
+set -ex
 
 if [[ "$COVERITY_SCAN_BRANCH" == 1 ]]; then
     exit 0
