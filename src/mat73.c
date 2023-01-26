@@ -101,9 +101,12 @@ static void Mat_H5GetChunkSize(size_t rank, hsize_t *dims, hsize_t *chunk_dims);
 static int Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id, const char *parent_path);
 static size_t *Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank);
 static int Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields);
-static int Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id, const char *parent_path);
-static int Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id, const char *parent_path);
-static int Mat_H5ReadNextReferenceInfo(hid_t ref_id, matvar_t *matvar, mat_t *mat, const char *parent_path);
+static int Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id,
+                                 const char *parent_path);
+static int Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id,
+                               const char *parent_path);
+static int Mat_H5ReadNextReferenceInfo(hid_t ref_id, matvar_t *matvar, mat_t *mat,
+                                       const char *parent_path);
 static int Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat);
 static int Mat_VarWriteEmpty(hid_t id, matvar_t *matvar, const char *name, const char *class_name);
 static int Mat_VarWriteCell73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
@@ -456,7 +459,7 @@ Mat_H5GetChunkSize(size_t rank, hsize_t *dims, hsize_t *chunk_dims)
 static int
 Mat_path_add(char **dst, const char *parent, const char *child)
 {
-    if (!parent) {
+    if ( !parent ) {
         return mat_asprintf(dst, "/%s", child);
     }
     return mat_asprintf(dst, "%s/%s", parent, child);
@@ -788,13 +791,13 @@ Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id, const char *p
             hobj_ref_t *ref_ids = (hobj_ref_t *)calloc(nelems, sizeof(*ref_ids));
             if ( ref_ids != NULL ) {
                 size_t i;
+                char *new_parent_path;
                 herr_t herr =
                     H5Dread(dset_id, H5T_STD_REF_OBJ, H5S_ALL, H5S_ALL, H5P_DEFAULT, ref_ids);
                 if ( herr < 0 ) {
                     free(ref_ids);
                     return MATIO_E_GENERIC_READ_ERROR;
                 }
-                char *new_parent_path;
                 Mat_path_add(&new_parent_path, parent_path, matvar->name);
                 for ( i = 0; i < nelems; i++ ) {
                     hid_t ref_id;
@@ -1056,9 +1059,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id, const char *par
                                     err = MATIO_E_GENERIC_READ_ERROR;
                                 } else {
                                     fields[l * nfields + k]->internal->id = ref_id;
-                                    err = Mat_H5ReadNextReferenceInfo(ref_id,
-                                                                      fields[l * nfields + k], mat, new_parent_path);
-
+                                    err = Mat_H5ReadNextReferenceInfo(
+                                        ref_id, fields[l * nfields + k], mat, new_parent_path);
                                 }
                                 if ( err ) {
                                     break;
@@ -2695,7 +2697,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
 
             if ( NULL != matvar->internal->hdf5_name ) {
                 ref_id = H5Dopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if (ref_id == H5I_INVALID_HID) {
+                if ( ref_id == H5I_INVALID_HID ) {
                     Mat_Critical("Unexpected error from H5Dopen");
                 }
             } else {
@@ -2738,7 +2740,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
 
             if ( NULL != matvar->internal->hdf5_name ) {
                 dset_id = H5Dopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if (dset_id == H5I_INVALID_HID) {
+                if ( dset_id == H5I_INVALID_HID ) {
                     Mat_Critical("Unexpected error from H5Dopen");
                 }
             } else {
@@ -2820,7 +2822,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
 
             if ( NULL != matvar->internal->hdf5_name ) {
                 dset_id = H5Gopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if (dset_id == H5I_INVALID_HID) {
+                if ( dset_id == H5I_INVALID_HID ) {
                     Mat_Critical("Unexpected error from H5Dopen");
                 }
             } else {
@@ -3025,7 +3027,7 @@ Mat_VarReadData73(mat_t *mat, matvar_t *matvar, void *data, int *start, int *str
         case MAT_C_UINT8:
             if ( NULL != matvar->internal->hdf5_name ) {
                 ref_id = H5Dopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if (ref_id == H5I_INVALID_HID) {
+                if ( ref_id == H5I_INVALID_HID ) {
                     Mat_Critical("Unexpected error from H5Dopen");
                 }
             } else {
@@ -3129,7 +3131,7 @@ Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int
 
             if ( NULL != matvar->internal->hdf5_name ) {
                 dset_id = H5Dopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if (dset_id == H5I_INVALID_HID) {
+                if ( dset_id == H5I_INVALID_HID ) {
                     Mat_Critical("Unexpected error from H5Dopen");
                 }
             } else {
