@@ -459,6 +459,9 @@ Mat_H5GetChunkSize(size_t rank, hsize_t *dims, hsize_t *chunk_dims)
 static int
 Mat_path_add(char **dst, const char *parent, const char *child)
 {
+    if ( !child ) {
+        return 0;
+    }
     if ( !parent ) {
         return mat_asprintf(dst, "/%s", child);
     }
