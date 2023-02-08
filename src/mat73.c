@@ -794,7 +794,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id, const char *p
             hobj_ref_t *ref_ids = (hobj_ref_t *)calloc(nelems, sizeof(*ref_ids));
             if ( ref_ids != NULL ) {
                 size_t i;
-                char *new_parent_path;
+                char *new_parent_path = NULL;
                 herr_t herr =
                     H5Dread(dset_id, H5T_STD_REF_OBJ, H5S_ALL, H5S_ALL, H5P_DEFAULT, ref_ids);
                 if ( herr < 0 ) {
@@ -1030,7 +1030,7 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id, const char *par
     matvar->data = fields;
     if ( NULL != fields ) {
         hsize_t k;
-        char *new_parent_path;
+        char *new_parent_path = NULL;
         Mat_path_add(&new_parent_path, parent_path, matvar->name);
 
         for ( k = 0; k < nfields; k++ ) {
