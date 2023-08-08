@@ -646,8 +646,9 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
     } else {
         err = MATIO_E_NO_ERROR;
     }
-    if (*nfields == 0)
+    if ( *nfields == 0 ) {
         *nfields = 1;
+    }
     fieldnames_vl = (hvl_t *)calloc((size_t)(*nfields), sizeof(*fieldnames_vl));
     if ( fieldnames_vl == NULL ) {
         H5Sclose(space_id);
