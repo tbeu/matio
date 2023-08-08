@@ -103,6 +103,7 @@ Table of Contents
 
             For Windows, the pre-compiled binaries can be used which also
             include a DLL of zlib to satisfy the zlib dependency.
+            For Ubuntu, 'sudo apt install libhdf5-dev' should work fine.
 
     2.2 Building matio
         2.2.1 Quick Build Guide
