@@ -22,10 +22,18 @@ make -j$(nproc) CFLAGS="$CFLAGS -fPIC"
 make install
 popd
 
+wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+tar xvfvz autoconf-2.71.tar.gz
+pushd autoconf-2.71
+./configure
+make
+make install
+popd
+
 #build hdf5
 pushd "$SRC"
-tar -xvf hdf5-1.12.1.tar.gz
-cd hdf5-1.12.1
+cd hdf5
+./autogen.sh
 ./configure --disable-shared --disable-deprecated-symbols --disable-hl --disable-parallel --disable-trace --disable-internal-debug --disable-asserts --disable-tests --disable-tools --with-pic --with-zlib="$WORK" --prefix="$WORK"
 make -j$(nproc)
 make install
