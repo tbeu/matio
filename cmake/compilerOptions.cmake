@@ -94,11 +94,10 @@ if (NOT MSVC)
         check_linker_flag(C "-Wl,--no-undefined" HAVE_LINK_NO_UNDEFINED)
         check_linker_flag(C "-Wl,--retain-symbols-file,${PROJECT_SOURCE_DIR}/src/matio.sym" HAVE_LINK_RETAIN_SYMBOLS_FILE)
         check_linker_flag(C "-Wl,-undefined,error" HAVE_LINK_UNDEFINED_ERROR)
-        check_linker_flag(C "-Wl,-exported_symbols_list,${PROJECT_SOURCE_DIR}/src/matio.sym" HAVE_LINK_EXPORTED_SYMBOLS_LIST)
-        
+
         if(HAVE_LINK_NO_UNDEFINED AND HAVE_LINK_RETAIN_SYMBOLS_FILE)
             set(USE_GNU_LINK_FLAGS 1)
-        elseif(HAVE_LINK_UNDEFINED_ERROR AND HAVE_LINK_EXPORTED_SYMBOLS_LIST)
+        elseif(APPLE AND HAVE_LINK_UNDEFINED_ERROR)
             set(USE_LLVM_MACOS_LINK_FLAGS 1)
         endif()
     else()
