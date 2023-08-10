@@ -6,9 +6,9 @@ if [[ "$COVERITY_SCAN_BRANCH" == 1 ]] || [[ "$TRAVIS_OS_NAME" != "linux" ]] || [
     exit 0
 fi
 
-coveralls -e coverity_model.c -e getopt -e matfilerw -e MSL -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e ossfuzz -e patches -e share -e hdf5-$HDF5_VERSION -e visual_studio -e zlib --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'
+coveralls -e coverity_model.c -e getopt -e matfilerw -e MSL -e test/datasets/matio_test_cases.m -e test/matlab -e test/results -e ossfuzz -e patches -e share -e hdf5-$HDF5_VERSION.$HDF5_PATCH_VERSION -e visual_studio -e zlib --gcov /usr/bin/gcov-4.8 --gcov-options '\-lp'
 
-if [[ "$HDF5_VERSION" != "1.8.22" ]] || [[ "$ENABLE_MAT73" != "yes" ]] || [[ "$ENABLE_EXTENDED_SPARSE" != "yes" ]] || [[ "$WITH_ZLIB" != "yes" ]] || [[ "$MAX_RANK" != 3 ]]; then
+if [[ "$HDF5_VERSION" != "1.8" ]] || [[ "$ENABLE_MAT73" != "yes" ]] || [[ "$ENABLE_EXTENDED_SPARSE" != "yes" ]] || [[ "$WITH_ZLIB" != "yes" ]] || [[ "$MAX_RANK" != 3 ]]; then
     exit 0
 fi
 
@@ -19,6 +19,4 @@ if [[ "$TRAVIS_PULL_REQUEST" != "false" ]] || [[ "$TRAVIS_BRANCH" != "master" ]]
     exit 0
 fi
 
-sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.html
-sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./documentation/matio_user_guide.pdf
-sh ./upload-to-bitbucket.sh tbeu $BBPASS /tbeu/downloads/downloads ./matio-1.5.23.tar.gz
+curl -X POST -H "Authorization: Bearer $BBTOKEN" https://api.bitbucket.org/2.0/repositories/tbeu/downloads/downloads -F files=@./documentation/matio_user_guide.html -F files=@./documentation/matio_user_guide.pdf -F files=@./matio-1.5.23.tar.gz

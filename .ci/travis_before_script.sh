@@ -9,11 +9,11 @@ if [[ "${USE_CMAKE:-no}" == "no" ]]; then
         cat ./src/matioConfig.h
     fi
     if [[ "$CC" == "gcc-4.8" ]]; then
-        ./configure --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/hdf5-$HDF5_VERSION/hdf5
+        ./configure --enable-shared --enable-coverage --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/hdf5-$HDF5_VERSION.$HDF5_PATCH_VERSION/hdf5
         cat ./src/matioConfig.h
     fi
     if [[ "$CC" == "clang" ]]; then
-        ./configure --enable-shared --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/hdf5-$HDF5_VERSION/hdf5
+        ./configure --enable-shared --enable-debug --enable-mat73=$ENABLE_MAT73 --enable-extended-sparse=$ENABLE_EXTENDED_SPARSE --with-zlib=$WITH_ZLIB --with-pic --with-hdf5=$TRAVIS_BUILD_DIR/hdf5-$HDF5_VERSION.$HDF5_PATCH_VERSION/hdf5
         cat ./src/matioConfig.h
     fi
     if [[ "$HDF5_VERSION" == "foo" ]]; then
@@ -22,7 +22,7 @@ if [[ "${USE_CMAKE:-no}" == "no" ]]; then
 fi
 if [[ "${USE_CMAKE:-no}" == "yes" ]]; then
     if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "${USE_CONAN:-no}" == "no" ]]; then
-        HDF5_DIR=$HOME/CMake-hdf5-$HDF5_VERSION/HDF5-$HDF5_VERSION-Linux/HDF_Group/HDF5/$HDF5_VERSION
+        HDF5_DIR=$HOME/CMake-hdf5-$HDF5_VERSION.$HDF5_PATCH_VERSION/HDF5-$HDF5_VERSION.$HDF5_PATCH_VERSION-Linux/HDF_Group/HDF5/$HDF5_VERSION.$HDF5_PATCH_VERSION
         CMAKE_PREFIX_PATH=-DCMAKE_PREFIX_PATH=$HDF5_DIR/cmake
     fi
 
