@@ -4,7 +4,7 @@ set -ex
 
 if [[ "$COVERITY_SCAN_BRANCH" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_CPU_ARCH" == "amd64" ]] && [[ "$CC" == "gcc-4.8" ]]; then
     pip install --upgrade pip
-    pip install --user cpp-coveralls
+    pip install --user urllib3==1.26.16 cpp-coveralls
 fi
 
 if [[ "${USE_CONAN:-no}" == "yes" ]]; then
