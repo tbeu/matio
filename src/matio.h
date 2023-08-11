@@ -335,7 +335,8 @@ EXTERN matvar_t *Mat_VarReadInfo(mat_t *mat, const char *name);
 EXTERN matvar_t *Mat_VarReadNext(mat_t *mat);
 EXTERN matvar_t *Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data);
 EXTERN matvar_t *Mat_VarReadNextInfo(mat_t *mat);
-EXTERN matvar_t *Mat_VarReadNextInfoPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data);
+EXTERN matvar_t *Mat_VarReadNextInfoPredicate(mat_t *mat, mat_iter_pred_t pred,
+                                              const void *user_data);
 EXTERN matvar_t *Mat_VarSetCell(matvar_t *matvar, int index, matvar_t *cell);
 EXTERN matvar_t *Mat_VarSetStructFieldByIndex(matvar_t *matvar, size_t field_index, size_t index,
                                               matvar_t *field);

@@ -2766,7 +2766,8 @@ Mat_VarReadNext(mat_t *mat)
  * variable information
  */
 matvar_t *
-Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data) {
+Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data)
+{
     mat_off_t fpos = 0;
     matvar_t *matvar = NULL;
 
@@ -2794,7 +2795,8 @@ Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data
             }
             break;
         }
-    } while (pred && pred(matvar->name, user_data) == 0);  /* for 7.3 the predicate will be called one extra time */
+    } while ( pred && pred(matvar->name, user_data) ==
+                          0 ); /* for 7.3 the predicate will be called one extra time */
 
     return matvar;
 }

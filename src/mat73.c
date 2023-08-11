@@ -3201,7 +3201,8 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
     /* Check that this is not the /#refs# or /"#subsystem#" group */
     if ( 0 == strcmp(name, "#refs#") || 0 == strcmp(name, "#subsystem#") )
         return 0;
-    if (mat_data && mat_data->pred && mat_data->pred(name, mat_data->pred_user_data) == 0)  /* do we need to skip it? */
+    if ( mat_data && mat_data->pred &&
+         mat_data->pred(name, mat_data->pred_user_data) == 0 ) /* do we need to skip it? */
         return 0;
 
     object_info.type = H5O_TYPE_UNKNOWN;
