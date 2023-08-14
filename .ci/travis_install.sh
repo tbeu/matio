@@ -3,7 +3,7 @@
 set -ex
 
 if [[ "$ENABLE_MAT73" == "yes" ]]; then
-    if [[ "${USE_CMAKE:-no}" == "no" ]]; then
+    if [[ "${USE_CMAKE:-no}" == "no" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         git clone --branch v1.2.13 --depth 1 https://github.com/madler/zlib
         pushd zlib
         ./configure --prefix="$TRAVIS_BUILD_DIR"/zlib --eprefix="$TRAVIS_BUILD_DIR"/zlib
@@ -31,7 +31,7 @@ if [[ "$ENABLE_MAT73" == "yes" ]]; then
         make install -C src
         popd
     fi
-    if [[ "${USE_CMAKE:-no}" == "yes" ]] &&  [[ "${USE_CONAN:-no}" == "no" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    if [[ "${USE_CMAKE:-no}" == "yes" ]] && [[ "${USE_CONAN:-no}" == "no" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         pushd $HOME
         HDF5_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_VERSION}/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION%-*}/src/CMake-hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION}.tar.gz"
         wget --no-check-certificate -nv $HDF5_URL

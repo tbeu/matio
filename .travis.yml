@@ -207,19 +207,19 @@ jobs:
         - HDF5_PATCH_VERSION=23
         - MAX_RANK=3
     - os: osx
-      osx_image: xcode12
+      osx_image: xcode12.5
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes
         - ENABLE_MAT73=yes
-        - WITH_ZLIB=yes
+        - WITH_ZLIB=/usr/local/opt/zlib
         - MAX_RANK=3
         - HDF5_VERSION=foo
         - HDF5_PATCH_VERSION=bar
         - HOMEBREW_DEPLOY=yes
         - HOMEBREW_NO_ANALYTICS=1
     - os: osx
-      osx_image: xcode12
+      osx_image: xcode12.5
       compiler: clang
       env:
         - USE_CMAKE=yes
