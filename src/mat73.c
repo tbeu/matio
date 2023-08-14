@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <errno.h>
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #define strdup _strdup
 #endif
@@ -53,6 +54,8 @@ struct ReadNextIterData
 {
     mat_t *mat;
     matvar_t *matvar;
+    mat_iter_pred_t pred;
+    const void *pred_user_data;
 };
 
 struct ReadGroupInfoIterData
@@ -3158,7 +3161,7 @@ Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int
  * @endif
  */
 matvar_t *
-Mat_VarReadNextInfo73(mat_t *mat)
+Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data)
 {
     hid_t id;
     hsize_t idx;
@@ -3175,6 +3178,8 @@ Mat_VarReadNextInfo73(mat_t *mat)
     idx = (hsize_t)mat->next_index;
     mat_data.mat = mat;
     mat_data.matvar = NULL;
+    mat_data.pred = pred;
+    mat_data.pred_user_data = user_data;
     herr = H5Literate(id, H5_INDEX_NAME, H5_ITER_NATIVE, &idx, Mat_VarReadNextInfoIterate,
                       (void *)&mat_data);
     if ( herr > 0 )
@@ -3191,8 +3196,13 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
 
     /* FIXME: follow symlinks, datatypes? */
 
+    mat_data = (struct ReadNextIterData *)op_data;
+
     /* Check that this is not the /#refs# or /"#subsystem#" group */
     if ( 0 == strcmp(name, "#refs#") || 0 == strcmp(name, "#subsystem#") )
+        return 0;
+    if ( mat_data && mat_data->pred &&
+         mat_data->pred(name, mat_data->pred_user_data) == 0 ) /* do we need to skip it? */
         return 0;
 
     object_info.type = H5O_TYPE_UNKNOWN;
@@ -3200,7 +3210,6 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
     if ( H5O_TYPE_DATASET != object_info.type && H5O_TYPE_GROUP != object_info.type )
         return 0;
 
-    mat_data = (struct ReadNextIterData *)op_data;
     if ( NULL == mat_data )
         return -1;
     mat = mat_data->mat;
