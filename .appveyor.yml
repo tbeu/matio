@@ -40,6 +40,8 @@ matrix:
       build_with: cmake
     - compiler: Cygwin
       configuration: Release Lib
+    - compiler: Cygwin
+      platform: Win32
     - compiler: MinGW
       platform: x64
     - compiler: MinGW
@@ -121,6 +123,7 @@ for:
     - if "%platform%"=="x64" C:\cygwin-setup-x86_x64.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com/ --root C:\cygwin64 --local-package-dir C:\cygwin64-setup-cache --packages libhdf5-devel,zlib-devel
 
   before_build:
+    - git config --global --add safe.directory '*'
     - git submodule update --init
     - sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null" autogen.sh
     - sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./configure < /dev/null" configure
