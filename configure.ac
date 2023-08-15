@@ -53,6 +53,7 @@ dnl
 dnl  Build programs, C compiler, F77 compiler, make, install, etc.
 dnl
 AC_PROG_CC([pgcc icc gcc cc])
+AC_USE_SYSTEM_EXTENSIONS
 
 AC_ARG_ENABLE(coverage,
 [  --enable-coverage       Enable coverage testing],
