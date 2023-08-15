@@ -1334,7 +1334,7 @@ test_readvar(const char *inputfile, const char *var, const char *output)
 
     mat = Mat_Open(inputfile, MAT_ACC_RDONLY);
     if ( mat ) {
-        matvar = Mat_VarRead(mat, (char *)var);
+        matvar = Mat_VarRead(mat, var);
         if ( matvar == NULL ) {
             err = 1;
         } else {
