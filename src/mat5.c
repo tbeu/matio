@@ -1696,7 +1696,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                     if ( 0 == err ) {
                         SetFieldNames(matvar, ptr, nfields, fieldname_size);
                     } else {
-                        matvar->internal->num_fields = nfields;
+                        matvar->internal->num_fields = 0;
                         matvar->internal->fieldnames = NULL;
                     }
                     free(ptr);
