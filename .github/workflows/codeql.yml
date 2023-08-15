@@ -43,7 +43,7 @@ jobs:
 
     - run: |
         ./autogen.sh
-        ./configure --disable-tests
+        ./configure --disable-tests --with-zlib --enable-mat73=yes --with-hdf5
         make
         sudo make install
 
