@@ -41,7 +41,8 @@ jobs:
         # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         # queries: security-extended,security-and-quality
 
-    - run: |
+    - name: Build matio
+      run: |
         ./autogen.sh
         ./configure --disable-tests --with-zlib --enable-mat73=yes --with-hdf5
         make
