@@ -87,7 +87,7 @@ then
     CFLAGS="$HDF5_CFLAGS $saved_CFLAGS"
     LDFLAGS="$saved_LDFLAGS"
     LIBS="$HDF5_LIBS $ZLIB_LIBS $saved_LIBS"
-    HDF5_REQUIRES_PRIVATE="hdf5>=1.8"
+    HDF5_REQUIRES_PRIVATE="hdf5 >= 1.8"
 
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[
         #include<stdio.h>

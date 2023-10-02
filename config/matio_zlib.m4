@@ -45,7 +45,7 @@ then
     then
         ZLIB_LIBS="$ZLIB_LDOPTS"
         AC_DEFINE_UNQUOTED([HAVE_ZLIB],[1],[Have zlib])
-        ZLIB_REQUIRES_PRIVATE="zlib>=1.2.3"
+        ZLIB_REQUIRES_PRIVATE="zlib >= 1.2.3"
         AC_SUBST(ZLIB_LIBS)
         AC_SUBST(ZLIB_CFLAGS)
         if test "$Z_PREFIX" = "1"

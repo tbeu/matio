@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: MATIO
 Description: MATIO Library
 Version: @VERSION@
-Libs: -L${libdir} -lmatio @HDF5_LIBS@ @ZLIB_LIBS@
-Cflags: -I${includedir} @HDF5_CFLAGS@ @ZLIB_CFLAGS@
+Libs: -L${libdir} -lmatio
+Cflags: -I${includedir}
 Requires.private: @HDF5_REQUIRES_PRIVATE@ @ZLIB_REQUIRES_PRIVATE@
