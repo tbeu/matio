@@ -47,20 +47,22 @@ pushd $TRAVIS_BUILD_DIR
 mkdir MSL
 cd MSL
 git init
-git remote add -f -t master --no-tags origin https://github.com/modelica/ModelicaStandardLibrary
 git config core.sparseCheckout true
+git remote add origin https://github.com/modelica/ModelicaStandardLibrary
 echo "Modelica/Resources/Data/Tables/" >> .git/info/sparse-checkout
-git pull origin master
+git fetch --depth 1 origin master
+git checkout master
 popd
 
 pushd $TRAVIS_BUILD_DIR
 mkdir matfilerw
 cd matfilerw
 git init
-git remote add -f -t master --no-tags origin https://github.com/diffplug/matfilerw
 git config core.sparseCheckout true
+git remote add origin https://github.com/diffplug/matfilerw
 echo "src/test/resources/" >> .git/info/sparse-checkout
-git pull origin master
+git fetch --depth 1 origin master
+git checkout master
 rm ./src/test/resources/simulink_tet_out.mat
 rm ./src/test/resources/object.mat
 rm ./src/test/resources/SPM.mat
