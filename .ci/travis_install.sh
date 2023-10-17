@@ -7,7 +7,7 @@ if [[ "$ENABLE_MAT73" == "yes" ]]; then
         git clone --branch v1.3 --depth 1 https://github.com/madler/zlib
         pushd zlib
         ./configure --prefix="$TRAVIS_BUILD_DIR"/zlib --eprefix="$TRAVIS_BUILD_DIR"/zlib
-        make install
+        make install -j8
         popd
 
         HDF5_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_VERSION}/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION%-*}/src/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION}.tar.gz"
@@ -28,7 +28,7 @@ if [[ "$ENABLE_MAT73" == "yes" ]]; then
             ./configure --quiet --enable-shared --disable-production --enable-debug=all --with-pic --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-clear-file-buffers --disable-instrument --disable-parallel --disable-trace --with-default-api-version=v18 --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
         fi
 
-        make install -C src
+        make install -C src -j8
         popd
     fi
     if [[ "${USE_CMAKE:-no}" == "yes" ]] && [[ "${USE_CONAN:-no}" == "no" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
@@ -37,7 +37,7 @@ if [[ "$ENABLE_MAT73" == "yes" ]]; then
         wget --no-check-certificate -nv $HDF5_URL
         tar -xzf CMake-hdf5-$HDF5_VERSION.$HDF5_PATCH_VERSION.tar.gz
         cd CMake-hdf5-$HDF5_VERSION.$HDF5_PATCH_VERSION
-        ctest -S HDF5config.cmake,BUILD_GENERATOR=Unix,LOCAL_SKIP_TEST=true -C Debug
+        ctest -S HDF5config.cmake,BUILD_GENERATOR=Unix,LOCAL_SKIP_TEST=true -C Debug -j8
         tar -xzf HDF5-$HDF5_VERSION.$HDF5_PATCH_VERSION-Linux.tar.gz
         popd
     fi
