@@ -65,7 +65,7 @@ if(STDINT_MSVC)
 endif()
 
 if(HAVE_LIBM)
-    target_link_libraries(${PROJECT_NAME} PUBLIC m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC m c)
 endif()
 
 if(MSVC)
