@@ -293,6 +293,7 @@ EXTERN size_t Mat_SizeOfClass(int class_type);
 EXTERN mat_t *Mat_CreateVer(const char *matname, const char *hdr_str, enum mat_ft mat_file_ver);
 EXTERN int Mat_Close(mat_t *mat);
 EXTERN mat_t *Mat_Open(const char *matname, int mode);
+EXTERN enum mat_acc Mat_GetFileAccessMode(mat_t *mat);
 EXTERN const char *Mat_GetFilename(mat_t *mat);
 EXTERN const char *Mat_GetHeader(mat_t *mat);
 EXTERN enum mat_ft Mat_GetVersion(mat_t *mat);

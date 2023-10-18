@@ -23,39 +23,35 @@
 .\" OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 .\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd September 12, 2019
-.Dt MAT_GETVERSION 3
+.Dd October 18, 2023
+.Dt MAT_GETFILEACCESSMODE 3
 .Os
 .Sh NAME
-.Nm Mat_GetVersion
-.Nd Returns the version of a MATLAB MAT file given a MAT file structure.
+.Nm Mat_GetFileAccessMode
+.Nd Returns the file access mode of a MATLAB MAT file given a MAT file structure.
 .Sh SYNOPSIS
 .Fd #include <matio.h>
-.Ft enum mat_ft
-.Fo Mat_GetVersion
+.Ft enum mat_acc
+.Fo Mat_GetFileAccessMode
 .Fa "mat_t *matfp"
 .Fc
 .Sh DESCRIPTION
 The
-.Fn Mat_GetVersion
-function returns the version of the MATLAB MAT file given by the MAT file
+.Fn Mat_GetFileAccessMode
+function returns the file access mode of the MATLAB MAT file given by the MAT file
 structure.
 .Sh RETURN VALUES
 The return value is one of the following:
 .Bl -bullet
 .It
-.Cm MAT_FT_MAT4
-if the file is a version 4 MAT file.
+.Cm MAT_ACC_RDONLY
+if the file is opened with read-only access or not opened at all.
 .It
-.Cm MAT_FT_MAT5
-if the file is a version 5 MAT file.
-.It
-.Cm MAT_FT_MAT73
-if the file is an HDF5 MAT file.
+.Cm MAT_ACC_RDWR
+if the file is opened with read/write access.
 .El
 .Sh SEE ALSO
 .Xr Mat_CreateVer 3 ,
 .Xr Mat_Open 3 ,
-.Xr Mat_GetFileAccessMode 3 ,
 .Xr Mat_GetFilename 3 ,
 .Xr Mat_GetHeader 3

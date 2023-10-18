@@ -18,6 +18,7 @@ EXPORTS
     Mat_Close
     Mat_Open
     Mat_GetDir
+    Mat_GetFileAccessMode
     Mat_GetFilename
     Mat_GetHeader
     Mat_GetVersion

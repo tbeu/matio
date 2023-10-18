@@ -803,6 +803,9 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, 
     if ( !mat ) {
         return 1;
     }
+    if ( MAT_ACC_RDWR != Mat_GetFileAccessMode(mat) ) {
+        return 1;
+    }
 
     for ( i = 0; i < 50; i++ ) {
         d[i] = i + 1;
@@ -3757,7 +3760,7 @@ test_directory(char *file)
     int err = 0;
     mat_t *mat;
 
-    mat = Mat_Open(file, MAT_ACC_RDWR);
+    mat = Mat_Open(file, MAT_ACC_RDONLY);
     if ( NULL != mat ) {
         size_t n1;
         char **dir = Mat_GetDir(mat, &n1);
@@ -3776,6 +3779,9 @@ test_directory(char *file)
             err = 1;
         }
         if ( 0 != strcmp(file, Mat_GetFilename(mat)) ) {
+            err++;
+        }
+        if ( MAT_ACC_RDONLY != Mat_GetFileAccessMode(mat) ) {
             err++;
         }
         if ( MAT_FT_UNDEFINED == Mat_GetVersion(mat) ) {

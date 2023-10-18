@@ -34,6 +34,7 @@ dist_man3_MANS  = \
     Mat_Close.3 \
     Mat_CreateVer.3 \
     Mat_GetDir.3 \
+    Mat_GetFileAccessMode.3 \
     Mat_GetFilename.3 \
     Mat_GetHeader.3 \
     Mat_GetLibraryVersion.3 \

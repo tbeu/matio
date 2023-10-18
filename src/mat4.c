@@ -82,9 +82,9 @@ Mat_Create4(const char *matname)
     mat->header = NULL;
     mat->subsys_offset = NULL;
     mat->filename = strdup(matname);
-    mat->version = MAT_FT_MAT4;
+    mat->version = 0x0010;
     mat->byteswap = 0;
-    mat->mode = 0;
+    mat->mode = MAT_ACC_RDWR;
     mat->bof = 0;
     mat->next_index = 0;
     mat->num_datasets = 0;

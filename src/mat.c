@@ -458,8 +458,10 @@ Mat_Open(const char *matname, int mode)
 #else
         fp = fopen(matname, "rb");
 #endif
-        if ( !fp )
+        if ( !fp ) {
+            Mat_Warning("Cannot open file \"%s\" in read-only mode", matname);
             return NULL;
+        }
     } else if ( (mode & 0x01) == MAT_ACC_RDWR ) {
 #if defined(_WIN32) && defined(_MSC_VER)
         wchar_t *wname = utf82u(matname);
@@ -676,6 +678,22 @@ Mat_Close(mat_t *mat)
     }
 
     return err;
+}
+
+/** @brief Gets the file access mode of the given MAT file
+ *
+ * Gets the file access mode of the given MAT file
+ * @ingroup MAT
+ * @param mat Pointer to the MAT file
+ * @return MAT file access mode
+ */
+enum mat_acc
+Mat_GetFileAccessMode(mat_t *mat)
+{
+    enum mat_acc mode = MAT_ACC_RDONLY;
+    if ( NULL != mat && (mat->mode & 0x01) == MAT_ACC_RDWR )
+        mode = MAT_ACC_RDWR;
+    return mode;
 }
 
 /** @brief Gets the filename for the given MAT file
@@ -1244,7 +1262,7 @@ Mat_CopyFile(const char *src, const char *dst)
     in = fopen(src, "rb");
 #endif
     if ( in == NULL ) {
-        Mat_Critical("Cannot open file \"%s\" for reading.", src);
+        Mat_Critical("Cannot open file \"%s\" for reading", src);
         return MATIO_E_FILESYSTEM_COULD_NOT_OPEN;
     }
 
@@ -1261,7 +1279,7 @@ Mat_CopyFile(const char *src, const char *dst)
 #endif
     if ( out == NULL ) {
         fclose(in);
-        Mat_Critical("Cannot open file \"%s\" for writing.", dst);
+        Mat_Critical("Cannot open file \"%s\" for writing", dst);
         return MATIO_E_FILESYSTEM_COULD_NOT_OPEN;
     }
 
@@ -1269,7 +1287,7 @@ Mat_CopyFile(const char *src, const char *dst)
         if ( len != fwrite(buf, sizeof(char), len, out) ) {
             fclose(in);
             fclose(out);
-            Mat_Critical("Error writing to file \"%s\".", dst);
+            Mat_Critical("Error writing to file \"%s\"", dst);
             return MATIO_E_GENERIC_WRITE_ERROR;
         }
     }
@@ -1294,6 +1312,9 @@ Mat_VarDelete(mat_t *mat, const char *name)
 
     if ( NULL == mat || NULL == name )
         return err;
+
+    if ( (mat->mode & 0x01) == MAT_ACC_RDONLY )
+        return MATIO_E_OPERATION_PROHIBITED_IN_READ_MODE;
 
     if ( NULL != Mat_mktemp(path_buf, dir_buf) ) {
         enum mat_ft mat_file_ver;
@@ -1354,7 +1375,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                         }
                         free(dir);
                     }
-                    Mat_Critical("Cannot copy file from \"%s\" to \"%s\".", path_buf, new_name);
+                    Mat_Critical("Cannot copy file from \"%s\" to \"%s\"", path_buf, new_name);
                 } else if ( (err = remove(path_buf)) != 0 ) {
                     err = MATIO_E_UNKNOWN_ERROR;
                     if ( NULL != dir ) {
@@ -1365,7 +1386,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                         }
                         free(dir);
                     }
-                    Mat_Critical("Cannot remove file \"%s\".", path_buf);
+                    Mat_Critical("Cannot remove file \"%s\"", path_buf);
                 } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) != 0 ) {
                     err = MATIO_E_UNKNOWN_ERROR;
                     if ( NULL != dir ) {
@@ -1376,7 +1397,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                         }
                         free(dir);
                     }
-                    Mat_Critical("Cannot remove directory \"%s\".", dir_buf);
+                    Mat_Critical("Cannot remove directory \"%s\"", dir_buf);
                 } else {
                     tmp = Mat_Open(new_name, mat->mode);
                     if ( NULL != tmp ) {
@@ -1399,23 +1420,23 @@ Mat_VarDelete(mat_t *mat, const char *name)
                         mat->num_datasets = n;
                         mat->dir = dir;
                     } else {
-                        Mat_Critical("Cannot open file \"%s\".", new_name);
+                        Mat_Critical("Cannot open file \"%s\"", new_name);
                         err = MATIO_E_FILESYSTEM_COULD_NOT_OPEN;
                     }
                 }
                 free(new_name);
             } else if ( (err = remove(path_buf)) != 0 ) {
                 err = MATIO_E_UNKNOWN_ERROR;
-                Mat_Critical("Cannot remove file \"%s\".", path_buf);
+                Mat_Critical("Cannot remove file \"%s\"", path_buf);
             } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) != 0 ) {
                 err = MATIO_E_UNKNOWN_ERROR;
-                Mat_Critical("Cannot remove directory \"%s\".", dir_buf);
+                Mat_Critical("Cannot remove directory \"%s\"", dir_buf);
             }
         } else {
             err = MATIO_E_UNKNOWN_ERROR;
         }
     } else {
-        Mat_Critical("Cannot create a unique file name.");
+        Mat_Critical("Cannot create a unique file name");
         err = MATIO_E_FILESYSTEM_COULD_NOT_OPEN_TEMPORARY;
     }
 
@@ -2877,7 +2898,7 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
         size_t i;
         for ( i = 0; i < mat->num_datasets; i++ ) {
             if ( NULL != mat->dir[i] && 0 == strcmp(mat->dir[i], matvar->name) ) {
-                Mat_Critical("Variable %s already exists.", matvar->name);
+                Mat_Critical("Variable %s already exists", matvar->name);
                 return MATIO_E_OUTPUT_BAD_DATA;
             }
         }
