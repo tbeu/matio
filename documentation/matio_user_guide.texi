@@ -37,14 +37,14 @@
 @sp 0
 @title
 @subtitle User Manual
-@subtitle for version 1.5.23
-@subtitle March 2022
+@subtitle for version 1.5.24
+@subtitle October 2023
 @author Christopher C. Hulbert
 @page
 @vskip 0pt plus 1filll
 @smallexample
 @group
-  Copyright (c) @var{2015-2022}, @var{The matio contributors}.
+  Copyright (c) @var{2015-2023}, @var{The matio contributors}.
   Copyright (c) @var{2011-2014}, @var{Christopher C. Hulbert}.
   All rights reserved.
 

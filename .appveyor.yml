@@ -4,7 +4,7 @@ branches:
   except:
   - coverity_scan
 
-version: 1.5.23+build.{build}
+version: 1.5.24+build.{build}
 
 cache:
   - C:\cygwin-setup-cache
