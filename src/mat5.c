@@ -3985,15 +3985,15 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 #define GET_DATA_SLABN(T)                                                      \
     do {                                                                       \
         inc[0] = stride[0] - 1;                                                \
-        dimp[0] = dims[0];                                                     \
+        dimp[0] = (int)dims[0];                                                \
         N = edge[0];                                                           \
         I = 0; /* start[0]; */                                                 \
         for ( i = 1; i < rank; i++ ) {                                         \
             inc[i] = stride[i] - 1;                                            \
-            dimp[i] = dims[i - 1];                                             \
+            dimp[i] = (int)dims[i - 1];                                        \
             for ( j = i; j--; ) {                                              \
-                inc[i] *= dims[j];                                             \
-                dimp[i] *= dims[j + 1];                                        \
+                inc[i] *= (int)dims[j];                                        \
+                dimp[i] *= (int)dims[j + 1];                                   \
             }                                                                  \
             N *= edge[i];                                                      \
             I += dimp[i - 1] * start[i];                                       \
@@ -4009,7 +4009,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 for ( k = 0; k < edge[0]; k++ ) {                              \
                     *(ptr + i + k) = (T)(*(ptr_in + k));                       \
                 }                                                              \
-                I += dims[0] - start[0];                                       \
+                I += (int)dims[0] - start[0];                                  \
                 ptr_in += dims[0] - start[0];                                  \
                 GET_DATA_SLABN_RANK_LOOP;                                      \
             }                                                                  \
@@ -4024,7 +4024,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     ptr_in += stride[0];                                       \
                     I += stride[0];                                            \
                 }                                                              \
-                I += dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0];      \
+                I += (int)dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0]; \
                 ptr_in += dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0]; \
                 GET_DATA_SLABN_RANK_LOOP;                                      \
             }                                                                  \
