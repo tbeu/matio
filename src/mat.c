@@ -770,6 +770,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
 
         if ( mat->version == MAT_FT_MAT73 ) {
             size_t i = 0;
+#if defined(MAT73) && MAT73
             size_t fpos = mat->next_index;
             if ( mat->num_datasets == 0 ) {
                 *n = 0;
@@ -783,7 +784,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
             }
             mat->next_index = 0;
             while ( mat->next_index < mat->num_datasets ) {
-                matvar = Mat_VarReadNextInfo(mat);
+                matvar = Mat_VarReadNextInfo73(mat, NULL, NULL, 1);
                 if ( NULL != matvar ) {
                     if ( NULL != matvar->name ) {
                         mat->dir[i++] = strdup(matvar->name);
@@ -795,6 +796,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
                 }
             }
             mat->next_index = fpos;
+#endif
             *n = i;
         } else {
             mat_off_t fpos = ftello((FILE *)mat->fp);
@@ -2587,7 +2589,7 @@ Mat_VarReadDataLinear(mat_t *mat, matvar_t *matvar, void *data, int start, int s
 /** @brief Reads the information of the next variable in a MAT file
  *
  * Reads the next variable's information (class,flags-complex/global/logical,
- * rank,dimensions, name, etc) from the Matlab MAT file.  After reading, the MAT
+ * rank,dimensions, name, etc) from the Matlab MAT file. After reading, the MAT
  * file is positioned past the current variable.
  * @ingroup MAT
  * @param mat Pointer to the MAT file
@@ -2604,11 +2606,13 @@ Mat_VarReadNextInfo(mat_t *mat)
  *
  * Reads the next variable's information (class,flags-complex/global/logical,
  * rank,dimensions, name, etc) from the Matlab MAT file. Calls a user callback
- * to check where the variable has to be fully read of skipped.
+ * to check where the variable has to be fully read or skipped.
  * If skipped tries to read next till accepted or EOF.
  * After reading, the MAT file is positioned past the current variable.
  * @ingroup MAT
  * @param mat Pointer to the MAT file
+ * @param pred User callback function
+ * @param user_data User data to be passed to the callback function
  * @return Pointer to the @ref matvar_t structure containing the MAT
  * variable information
  */
@@ -2625,7 +2629,7 @@ Mat_VarReadNextInfoPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_
             break;
         case MAT_FT_MAT73:
 #if defined(MAT73) && MAT73
-            matvar = Mat_VarReadNextInfo73(mat, pred, user_data);
+            matvar = Mat_VarReadNextInfo73(mat, pred, user_data, 0);
 #else
             matvar = NULL;
 #endif
@@ -2644,8 +2648,8 @@ Mat_VarReadNextInfoPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_
 static int
 Mat_IteratorNameAcceptor(const char *name, const void *user_data)
 {
-    const char *required_name = user_data;
-    return name && required_name && strcmp(name, required_name) == 0;
+    const char *required_name = (const char *)user_data;
+    return (NULL != name) && (NULL != required_name) && 0 == strcmp(name, required_name);
 }
 
 /** @brief Reads the information of a variable with the given name from a MAT file
@@ -2816,8 +2820,8 @@ Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data
             }
             break;
         }
-    } while ( pred && pred(matvar->name, user_data) ==
-                          0 ); /* for 7.3 the predicate will be called one extra time */
+    } while ( (NULL != pred) && 0 == pred(matvar->name, user_data) );
+    /* for 7.3 the predicate will be called one extra time */
 
     return matvar;
 }

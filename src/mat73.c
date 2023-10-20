@@ -56,6 +56,7 @@ struct ReadNextIterData
     matvar_t *matvar;
     mat_iter_pred_t pred;
     const void *pred_user_data;
+    int only_root_name;
 };
 
 struct ReadGroupInfoIterData
@@ -3157,16 +3158,19 @@ Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int
  *
  * @ingroup mat_internal
  * @param mat MAT file pointer
+ * @param pred User callback function
+ * @param user_data User data to be passed to the callback function
+ * @param only_root_name Flag to only iterate on root level
  * @return pointer to the MAT variable or NULL
  * @endif
  */
 matvar_t *
-Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data)
+Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data, int only_root_name)
 {
     hid_t id;
     hsize_t idx;
     herr_t herr;
-    struct ReadNextIterData mat_data;
+    struct ReadNextIterData iter_data;
 
     if ( mat == NULL )
         return NULL;
@@ -3176,15 +3180,16 @@ Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data)
 
     id = *(hid_t *)mat->fp;
     idx = (hsize_t)mat->next_index;
-    mat_data.mat = mat;
-    mat_data.matvar = NULL;
-    mat_data.pred = pred;
-    mat_data.pred_user_data = user_data;
+    iter_data.mat = mat;
+    iter_data.matvar = NULL;
+    iter_data.pred = pred;
+    iter_data.pred_user_data = user_data;
+    iter_data.only_root_name = only_root_name;
     herr = H5Literate(id, H5_INDEX_NAME, H5_ITER_NATIVE, &idx, Mat_VarReadNextInfoIterate,
-                      (void *)&mat_data);
+                      (void *)&iter_data);
     if ( herr > 0 )
         mat->next_index = (size_t)idx;
-    return mat_data.matvar;
+    return iter_data.matvar;
 }
 
 static herr_t
@@ -3192,17 +3197,17 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
 {
     mat_t *mat;
     H5O_INFO_T object_info;
-    struct ReadNextIterData *mat_data;
+    struct ReadNextIterData *iter_data;
 
     /* FIXME: follow symlinks, datatypes? */
 
-    mat_data = (struct ReadNextIterData *)op_data;
+    iter_data = (struct ReadNextIterData *)op_data;
 
     /* Check that this is not the /#refs# or /"#subsystem#" group */
     if ( 0 == strcmp(name, "#refs#") || 0 == strcmp(name, "#subsystem#") )
         return 0;
-    if ( mat_data && mat_data->pred &&
-         mat_data->pred(name, mat_data->pred_user_data) == 0 ) /* do we need to skip it? */
+    if ( (NULL != iter_data) && (NULL != iter_data->pred) &&
+         0 == iter_data->pred(name, iter_data->pred_user_data) ) /* do we need to skip it? */
         return 0;
 
     object_info.type = H5O_TYPE_UNKNOWN;
@@ -3210,9 +3215,9 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
     if ( H5O_TYPE_DATASET != object_info.type && H5O_TYPE_GROUP != object_info.type )
         return 0;
 
-    if ( NULL == mat_data )
+    if ( NULL == iter_data )
         return -1;
-    mat = mat_data->mat;
+    mat = iter_data->mat;
 
     switch ( object_info.type ) {
         case H5O_TYPE_DATASET: {
@@ -3228,17 +3233,19 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
                 return -1;
             }
 
-            dset_id = H5Dopen(id, name, H5P_DEFAULT);
-            err = Mat_H5ReadDatasetInfo(mat, matvar, dset_id);
-            if ( matvar->internal->id != dset_id ) {
-                /* Close dataset and increment count */
-                H5Dclose(dset_id);
+            if ( !iter_data->only_root_name ) {
+                dset_id = H5Dopen(id, name, H5P_DEFAULT);
+                err = Mat_H5ReadDatasetInfo(mat, matvar, dset_id);
+                if ( matvar->internal->id != dset_id ) {
+                    /* Close dataset and increment count */
+                    H5Dclose(dset_id);
+                }
+                if ( err ) {
+                    Mat_VarFree(matvar);
+                    return -1;
+                }
             }
-            if ( err ) {
-                Mat_VarFree(matvar);
-                return -1;
-            }
-            mat_data->matvar = matvar;
+            iter_data->matvar = matvar;
             break;
         }
         case H5O_TYPE_GROUP: {
@@ -3254,14 +3261,16 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
                 return -1;
             }
 
-            dset_id = H5Gopen(id, name, H5P_DEFAULT);
-            err = Mat_H5ReadGroupInfo(mat, matvar, dset_id);
-            H5Gclose(dset_id);
-            if ( err ) {
-                Mat_VarFree(matvar);
-                return -1;
+            if ( !iter_data->only_root_name ) {
+                dset_id = H5Gopen(id, name, H5P_DEFAULT);
+                err = Mat_H5ReadGroupInfo(mat, matvar, dset_id);
+                H5Gclose(dset_id);
+                if ( err ) {
+                    Mat_VarFree(matvar);
+                    return -1;
+                }
             }
-            mat_data->matvar = matvar;
+            iter_data->matvar = matvar;
             break;
         }
         default:
