@@ -861,14 +861,12 @@ Mat_Rewind(mat_t *mat)
     int err = MATIO_E_NO_ERROR;
 
     switch ( mat->version ) {
-        case MAT_FT_MAT5:
-            (void)fseeko((FILE *)mat->fp, 128L, SEEK_SET);
-            break;
         case MAT_FT_MAT73:
             mat->next_index = 0;
             break;
         case MAT_FT_MAT4:
-            (void)fseeko((FILE *)mat->fp, 0L, SEEK_SET);
+        case MAT_FT_MAT5:
+            (void)fseeko((FILE *)mat->fp, mat->bof, SEEK_SET);
             break;
         default:
             err = MATIO_E_FAIL_TO_IDENTIFY;
