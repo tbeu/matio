@@ -1205,7 +1205,7 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
     int err = MATIO_E_NO_ERROR;
     size_t nelems = 1;
 
-    if ( matvar->internal->id < 0 || matvar == NULL )
+    if ( NULL == matvar || NULL == matvar->internal || matvar->internal->id < 0 )
         return err;
 
     /* If the datatype with references is a cell, we've already read info into
@@ -3337,11 +3337,10 @@ Mat_CalcDir73(mat_t *mat, size_t *n)
 {
     hsize_t i;
 
-    *n = 0;
-
     if ( NULL == mat || NULL == n )
         return MATIO_E_BAD_ARGUMENT;
 
+    *n = 0;
     mat->dir = (char **)calloc(mat->num_datasets, sizeof(char *));
     if ( NULL == mat->dir ) {
         Mat_Critical("Couldn't allocate memory for the directory");
