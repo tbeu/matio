@@ -1785,20 +1785,6 @@ Mat_VarFree(matvar_t *matvar)
                     break;
             }
         }
-        if ( 0 < matvar->internal->hdf5_ref ) {
-            switch ( H5Iget_type(matvar->internal->id) ) {
-                case H5I_GROUP:
-                    H5Gclose(matvar->internal->id);
-                    matvar->internal->hdf5_ref = -1;
-                    break;
-                case H5I_DATASET:
-                    H5Dclose(matvar->internal->id);
-                    matvar->internal->hdf5_ref = -1;
-                    break;
-                default:
-                    break;
-            }
-        }
         if ( NULL != matvar->internal->hdf5_name ) {
             free(matvar->internal->hdf5_name);
             matvar->internal->hdf5_name = NULL;

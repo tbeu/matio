@@ -107,7 +107,7 @@ static int Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfield
 static int Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id);
 static int Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id);
 static int Mat_H5ReadNextReferenceInfo(hid_t ref_id, matvar_t *matvar, mat_t *mat);
-static int Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat);
+static int Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat);
 static int Mat_VarWriteEmpty(hid_t id, matvar_t *matvar, const char *name, const char *class_name);
 static int Mat_VarWriteCell73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
                               hsize_t *dims);
@@ -1201,12 +1201,12 @@ Mat_H5ReadData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space, 
 }
 
 static int
-Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat)
+Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
 {
     int err = MATIO_E_NO_ERROR;
     size_t nelems = 1;
 
-    if ( ref_id < 0 || matvar == NULL )
+    if ( matvar->internal->id < 0 || matvar == NULL )
         return err;
 
     /* If the datatype with references is a cell, we've already read info into
@@ -1227,7 +1227,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat)
         cells = (matvar_t **)matvar->data;
         for ( i = 0; i < nelems; i++ ) {
             if ( NULL != cells[i] ) {
-                err = Mat_H5ReadNextReferenceData(cells[i]->internal->id, cells[i], mat);
+                err = Mat_H5ReadNextReferenceData(cells[i], mat);
             }
             if ( err ) {
                 break;
@@ -1236,9 +1236,9 @@ Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat)
         return err;
     }
 
-    switch ( H5Iget_type(ref_id) ) {
+    switch ( H5Iget_type(matvar->internal->id) ) {
         case H5I_DATASET: {
-            hid_t data_type_id, dset_id;
+            hid_t data_type_id;
             if ( MAT_C_CHAR == matvar->class_type ) {
                 matvar->data_size = (int)Mat_SizeOf(matvar->data_type);
                 data_type_id = DataType2H5T(matvar->data_type);
@@ -1253,11 +1253,10 @@ Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat)
             err = Mat_MulDims(matvar, &nelems);
             err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err || matvar->nbytes < 1 ) {
-                H5Dclose(ref_id);
+                H5Dclose(matvar->internal->id);
+                matvar->internal->id = -1;
                 break;
             }
-
-            dset_id = ref_id;
 
             if ( !matvar->isComplex ) {
                 matvar->data = malloc(matvar->nbytes);
@@ -1265,10 +1264,11 @@ Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat)
                 matvar->data = ComplexMalloc(matvar->nbytes);
             }
             if ( NULL != matvar->data ) {
-                err = Mat_H5ReadData(dset_id, data_type_id, H5S_ALL, H5S_ALL, matvar->isComplex,
-                                     matvar->data);
+                err = Mat_H5ReadData(matvar->internal->id, data_type_id, H5S_ALL, H5S_ALL,
+                                     matvar->isComplex, matvar->data);
             }
-            H5Dclose(dset_id);
+            H5Dclose(matvar->internal->id);
+            matvar->internal->id = -1;
             break;
         }
         case H5I_GROUP: {
@@ -1286,7 +1286,7 @@ Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat)
                     if ( NULL != fields[i] && 0 < fields[i]->internal->hdf5_ref &&
                          -1 < fields[i]->internal->id ) {
                         /* Dataset of references */
-                        err = Mat_H5ReadNextReferenceData(fields[i]->internal->id, fields[i], mat);
+                        err = Mat_H5ReadNextReferenceData(fields[i], mat);
                     } else {
                         err = Mat_VarRead73(mat, fields[i]);
                     }
@@ -2782,7 +2782,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 if ( NULL != fields[i] && 0 < fields[i]->internal->hdf5_ref &&
                      -1 < fields[i]->internal->id ) {
                     /* Dataset of references */
-                    err = Mat_H5ReadNextReferenceData(fields[i]->internal->id, fields[i], mat);
+                    err = Mat_H5ReadNextReferenceData(fields[i], mat);
                 } else {
                     err = Mat_VarRead73(mat, fields[i]);
                 }
@@ -2805,7 +2805,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             cells = (matvar_t **)matvar->data;
             for ( i = 0; i < nelems; i++ ) {
                 if ( NULL != cells[i] ) {
-                    err = Mat_H5ReadNextReferenceData(cells[i]->internal->id, cells[i], mat);
+                    err = Mat_H5ReadNextReferenceData(cells[i], mat);
                 }
                 if ( err ) {
                     break;
