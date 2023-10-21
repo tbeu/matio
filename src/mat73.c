@@ -462,6 +462,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
     hid_t attr_id, type_id;
     ssize_t name_len;
     int err = MATIO_E_NO_ERROR;
+    char *class_str;
 
     /* Get the HDF5 name of the variable */
     name_len = H5Iget_name(dset_id, NULL, 0);
@@ -475,66 +476,64 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
 
     attr_id = H5Aopen_by_name(dset_id, ".", "MATLAB_class", H5P_DEFAULT, H5P_DEFAULT);
     type_id = H5Aget_type(attr_id);
-    if ( H5T_STRING == H5Tget_class(type_id) ) {
-        char *class_str = (char *)calloc(H5Tget_size(type_id) + 1, 1);
-        if ( NULL != class_str ) {
-            herr_t herr;
-            hid_t class_id = H5Tcopy(H5T_C_S1);
-            H5Tset_size(class_id, H5Tget_size(type_id));
-            herr = H5Aread(attr_id, class_id, class_str);
-            H5Tclose(class_id);
-            if ( herr < 0 ) {
-                free(class_str);
-                H5Tclose(type_id);
-                H5Aclose(attr_id);
-                return MATIO_E_GENERIC_READ_ERROR;
-            }
-            matvar->class_type = ClassStr2ClassType(class_str);
-            if ( MAT_C_EMPTY == matvar->class_type || MAT_C_CHAR == matvar->class_type ) {
-                int int_decode = 0;
-                if ( H5Aexists_by_name(dset_id, ".", "MATLAB_int_decode", H5P_DEFAULT) ) {
-                    hid_t attr_id2 = H5Aopen_by_name(dset_id, ".", "MATLAB_int_decode", H5P_DEFAULT,
-                                                     H5P_DEFAULT);
-                    /* FIXME: Check that dataspace is scalar */
-                    herr = H5Aread(attr_id2, H5T_NATIVE_INT, &int_decode);
-                    H5Aclose(attr_id2);
-                    if ( herr < 0 ) {
-                        free(class_str);
-                        H5Tclose(type_id);
-                        H5Aclose(attr_id);
-                        return MATIO_E_GENERIC_READ_ERROR;
-                    }
-                }
-                switch ( int_decode ) {
-                    case 2:
-                        matvar->data_type = MAT_T_UINT16;
-                        break;
-                    case 1:
-                        matvar->data_type = MAT_T_UINT8;
-                        break;
-                    case 4:
-                        matvar->data_type = MAT_T_UINT32;
-                        break;
-                    default:
-                        matvar->data_type = MAT_T_UNKNOWN;
-                        break;
-                }
-                if ( MAT_C_EMPTY == matvar->class_type ) {
-                    /* Check if this is a logical variable */
-                    if ( 0 == strcmp(class_str, "logical") ) {
-                        matvar->isLogical = MAT_F_LOGICAL;
-                    }
-                    matvar->class_type = DataType2ClassType(matvar->data_type);
-                } else if ( MAT_T_UNKNOWN == matvar->data_type ) {
-                    matvar->data_type = MAT_T_UINT16;
-                }
-            } else {
-                matvar->data_type = ClassType2DataType(matvar->class_type);
-            }
+    class_str = (char *)calloc(H5Tget_size(type_id) + 1, 1);
+    if ( NULL != class_str ) {
+        herr_t herr;
+        hid_t class_id = H5Tcopy(H5T_C_S1);
+        H5Tset_size(class_id, H5Tget_size(type_id));
+        herr = H5Aread(attr_id, class_id, class_str);
+        H5Tclose(class_id);
+        if ( herr < 0 ) {
             free(class_str);
-        } else {
-            err = MATIO_E_OUT_OF_MEMORY;
+            H5Tclose(type_id);
+            H5Aclose(attr_id);
+            return MATIO_E_GENERIC_READ_ERROR;
         }
+        matvar->class_type = ClassStr2ClassType(class_str);
+        if ( MAT_C_EMPTY == matvar->class_type || MAT_C_CHAR == matvar->class_type ) {
+            int int_decode = 0;
+            if ( H5Aexists_by_name(dset_id, ".", "MATLAB_int_decode", H5P_DEFAULT) ) {
+                hid_t attr_id2 =
+                    H5Aopen_by_name(dset_id, ".", "MATLAB_int_decode", H5P_DEFAULT, H5P_DEFAULT);
+                /* FIXME: Check that dataspace is scalar */
+                herr = H5Aread(attr_id2, H5T_NATIVE_INT, &int_decode);
+                H5Aclose(attr_id2);
+                if ( herr < 0 ) {
+                    free(class_str);
+                    H5Tclose(type_id);
+                    H5Aclose(attr_id);
+                    return MATIO_E_GENERIC_READ_ERROR;
+                }
+            }
+            switch ( int_decode ) {
+                case 2:
+                    matvar->data_type = MAT_T_UINT16;
+                    break;
+                case 1:
+                    matvar->data_type = MAT_T_UINT8;
+                    break;
+                case 4:
+                    matvar->data_type = MAT_T_UINT32;
+                    break;
+                default:
+                    matvar->data_type = MAT_T_UNKNOWN;
+                    break;
+            }
+            if ( MAT_C_EMPTY == matvar->class_type ) {
+                /* Check if this is a logical variable */
+                if ( 0 == strcmp(class_str, "logical") ) {
+                    matvar->isLogical = MAT_F_LOGICAL;
+                }
+                matvar->class_type = DataType2ClassType(matvar->data_type);
+            } else if ( MAT_T_UNKNOWN == matvar->data_type ) {
+                matvar->data_type = MAT_T_UINT16;
+            }
+        } else {
+            matvar->data_type = ClassType2DataType(matvar->class_type);
+        }
+        free(class_str);
+    } else {
+        err = MATIO_E_OUT_OF_MEMORY;
     }
     H5Tclose(type_id);
     H5Aclose(attr_id);
@@ -3358,6 +3357,7 @@ Mat_CalcDir73(mat_t *mat, size_t *n)
         }
         name = (char *)malloc(name_len + 1);
         if ( NULL == name ) {
+            *n = 0;
             *n = 0;
             Mat_Critical("Couldn't allocate memory");
             return MATIO_E_OUT_OF_MEMORY;
