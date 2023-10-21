@@ -766,39 +766,18 @@ Mat_GetDir(mat_t *mat, size_t *n)
     }
 
     if ( NULL == mat->dir ) {
-        matvar_t *matvar = NULL;
-
         if ( mat->version == MAT_FT_MAT73 ) {
-            size_t i = 0;
 #if defined(MAT73) && MAT73
-            size_t fpos = mat->next_index;
-            if ( mat->num_datasets == 0 ) {
+            int err = Mat_CalcDir73(mat, n);
+            if ( err ) {
                 *n = 0;
                 return dir;
             }
-            mat->dir = (char **)calloc(mat->num_datasets, sizeof(char *));
-            if ( NULL == mat->dir ) {
-                *n = 0;
-                Mat_Critical("Couldn't allocate memory for the directory");
-                return dir;
-            }
-            mat->next_index = 0;
-            while ( mat->next_index < mat->num_datasets ) {
-                matvar = Mat_VarReadNextInfo73(mat, NULL, NULL, 1);
-                if ( NULL != matvar ) {
-                    if ( NULL != matvar->name ) {
-                        mat->dir[i++] = strdup(matvar->name);
-                    }
-                    Mat_VarFree(matvar);
-                } else {
-                    Mat_Critical("An error occurred in reading the MAT file");
-                    break;
-                }
-            }
-            mat->next_index = fpos;
+#else
+            *n = 0;
 #endif
-            *n = i;
         } else {
+            matvar_t *matvar = NULL;
             mat_off_t fpos = ftello((FILE *)mat->fp);
             if ( fpos == -1L ) {
                 *n = 0;
@@ -2627,7 +2606,7 @@ Mat_VarReadNextInfoPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_
             break;
         case MAT_FT_MAT73:
 #if defined(MAT73) && MAT73
-            matvar = Mat_VarReadNextInfo73(mat, pred, user_data, 0);
+            matvar = Mat_VarReadNextInfo73(mat, pred, user_data);
 #else
             matvar = NULL;
 #endif

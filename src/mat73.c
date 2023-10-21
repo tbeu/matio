@@ -56,7 +56,6 @@ struct ReadNextIterData
     matvar_t *matvar;
     mat_iter_pred_t pred;
     const void *pred_user_data;
-    int only_root_name;
 };
 
 struct ReadGroupInfoIterData
@@ -3160,12 +3159,11 @@ Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int
  * @param mat MAT file pointer
  * @param pred User callback function
  * @param user_data User data to be passed to the callback function
- * @param only_root_name Flag to only iterate on root level
  * @return pointer to the MAT variable or NULL
  * @endif
  */
 matvar_t *
-Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data, int only_root_name)
+Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data)
 {
     hid_t id;
     hsize_t idx;
@@ -3184,7 +3182,6 @@ Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data, i
     iter_data.matvar = NULL;
     iter_data.pred = pred;
     iter_data.pred_user_data = user_data;
-    iter_data.only_root_name = only_root_name;
     herr = H5Literate(id, H5_INDEX_NAME, H5_ITER_NATIVE, &idx, Mat_VarReadNextInfoIterate,
                       (void *)&iter_data);
     if ( herr > 0 )
@@ -3233,17 +3230,15 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
                 return -1;
             }
 
-            if ( !iter_data->only_root_name ) {
-                dset_id = H5Dopen(id, name, H5P_DEFAULT);
-                err = Mat_H5ReadDatasetInfo(mat, matvar, dset_id);
-                if ( matvar->internal->id != dset_id ) {
-                    /* Close dataset and increment count */
-                    H5Dclose(dset_id);
-                }
-                if ( err ) {
-                    Mat_VarFree(matvar);
-                    return -1;
-                }
+            dset_id = H5Dopen(id, name, H5P_DEFAULT);
+            err = Mat_H5ReadDatasetInfo(mat, matvar, dset_id);
+            if ( matvar->internal->id != dset_id ) {
+                /* Close dataset and increment count */
+                H5Dclose(dset_id);
+            }
+            if ( err ) {
+                Mat_VarFree(matvar);
+                return -1;
             }
             iter_data->matvar = matvar;
             break;
@@ -3261,14 +3256,12 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
                 return -1;
             }
 
-            if ( !iter_data->only_root_name ) {
-                dset_id = H5Gopen(id, name, H5P_DEFAULT);
-                err = Mat_H5ReadGroupInfo(mat, matvar, dset_id);
-                H5Gclose(dset_id);
-                if ( err ) {
-                    Mat_VarFree(matvar);
-                    return -1;
-                }
+            dset_id = H5Gopen(id, name, H5P_DEFAULT);
+            err = Mat_H5ReadGroupInfo(mat, matvar, dset_id);
+            H5Gclose(dset_id);
+            if ( err ) {
+                Mat_VarFree(matvar);
+                return -1;
             }
             iter_data->matvar = matvar;
             break;
@@ -3330,6 +3323,55 @@ Mat_VarWriteAppend73(mat_t *mat, matvar_t *matvar, int compress, int dim)
 
     id = *(hid_t *)mat->fp;
     return Mat_VarWriteAppendNext73(id, matvar, matvar->name, &(mat->refs_id), dim);
+}
+
+/** @brief Determines a list of the variables of version 7.3 matlab file
+ *
+ * Determines a list of the variables of a MAT file
+ * @ingroup MAT
+ * @param mat Pointer to the MAT file
+ * @param[out] n Number of variables in the given MAT file
+ * @retval 0 on success
+ */
+int
+Mat_CalcDir73(mat_t *mat, size_t *n)
+{
+    hsize_t i;
+
+    *n = 0;
+
+    if ( NULL == mat || NULL == n )
+        return MATIO_E_BAD_ARGUMENT;
+
+    mat->dir = (char **)calloc(mat->num_datasets, sizeof(char *));
+    if ( NULL == mat->dir ) {
+        Mat_Critical("Couldn't allocate memory for the directory");
+        return MATIO_E_OUT_OF_MEMORY;
+    }
+
+    for ( i = 0; i < (hsize_t)mat->num_datasets; i++ ) {
+        char *name;
+        ssize_t name_len = H5Lget_name_by_idx(*(hid_t *)mat->fp, "/", H5_INDEX_NAME, H5_ITER_INC, i,
+                                              NULL, 0, H5P_DEFAULT);
+        if ( name_len < 1 ) {
+            continue;
+        }
+        name = (char *)malloc(name_len + 1);
+        if ( NULL == name ) {
+            *n = 0;
+            Mat_Critical("Couldn't allocate memory");
+            return MATIO_E_OUT_OF_MEMORY;
+        }
+        H5Lget_name_by_idx(*(hid_t *)mat->fp, "/", H5_INDEX_NAME, H5_ITER_INC, i, name,
+                           name_len + 1, H5P_DEFAULT);
+        if ( 0 != strcmp(name, "#refs#") ) {
+            mat->dir[*n] = name;
+            (*n)++;
+        } else {
+            free(name);
+        }
+    }
+    return MATIO_E_NO_ERROR;
 }
 
 #endif
