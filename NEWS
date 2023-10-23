@@ -1,9 +1,12 @@
-Changes in 1.5.24 (20 October 2023)
-* Added predicated iteration functions to speed-up reading variables from
-  HDF5 MAT file
+Changes in 1.5.24 (23 October 2023)
+* Added predicated iteration API functions Mat_VarReadNextInfoPredicate and
+  Mat_VarReadNextPredicate to speed-up reading variables from HDF5 MAT file
 * Added new API function Mat_GetFileAccessMode to retrieve the file access mode
   of a MAT file
-* Changed: MAT_VarDelete returns error if MAT file is opened read-only
+* Changed: MAT_VarDelete returns error if MAT file is opened in read-only mode
+* Changed: Reduced memory foot-print of matvar_t.internal
+* Fixed read performance of cell/struct array from HDF5 MAT file
+* Fixed reference counting of HDF5 MAT file in Mat_VarDuplicate
 * Fixed file access mode of created v4 MAT file
 * Fixed read performance of Mat_GetDir for HDF5 MAT file
 * Fixed bug reading struct array from v5 MAT file
