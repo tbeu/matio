@@ -615,7 +615,7 @@ Mat_Open(const char *matname, int mode)
                 mat = NULL;
             } else {
                 mat->num_datasets = (size_t)group_info.nlinks;
-                mat->refs_id = -1;
+                mat->refs_id = H5I_INVALID_HID;
             }
         }
 #else

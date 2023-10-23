@@ -465,6 +465,8 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
 
     matvar->internal->id = dset_id;
     attr_id = H5Aopen_by_name(dset_id, ".", "MATLAB_class", H5P_DEFAULT, H5P_DEFAULT);
+    if ( attr_id < 1 )
+        return MATIO_E_FAIL_TO_IDENTIFY;
     type_id = H5Aget_type(attr_id);
     class_str = (char *)calloc(H5Tget_size(type_id) + 1, 1);
     if ( NULL != class_str ) {
@@ -839,7 +841,7 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
     int err;
 
     err = Mat_H5ReadVarInfo(matvar, dset_id);
-    if ( err < 0 ) {
+    if ( err ) {
         return err;
     }
 
@@ -2640,9 +2642,9 @@ int
 Mat_Close73(mat_t *mat)
 {
     int err = MATIO_E_NO_ERROR;
-    if ( mat->refs_id > -1 )
+    if ( mat->refs_id >= 0 )
         H5Gclose(mat->refs_id);
-    if ( 0 > H5Fclose(*(hid_t *)mat->fp) )
+    if ( H5Fclose(*(hid_t *)mat->fp) < 0 )
         err = MATIO_E_FILESYSTEM_ERROR_ON_CLOSE;
     free(mat->fp);
     mat->fp = NULL;
@@ -3330,7 +3332,7 @@ Mat_CalcDir73(mat_t *mat, size_t *n)
         ssize_t name_len = H5Lget_name_by_idx(*(hid_t *)mat->fp, "/", H5_INDEX_NAME, H5_ITER_INC, i,
                                               NULL, 0, H5P_DEFAULT);
         if ( name_len < 1 ) {
-            continue;
+            return MATIO_E_FAIL_TO_IDENTIFY;
         }
         name = (char *)malloc(name_len + 1);
         if ( NULL == name ) {
