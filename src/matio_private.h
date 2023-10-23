@@ -127,7 +127,6 @@ struct _mat_t
 struct matvar_internal
 {
 #if defined(MAT73) && MAT73
-    char *hdf5_name;     /**< Name */
     hobj_ref_t hdf5_ref; /**< Reference */
     hid_t id;            /**< Id */
 #endif

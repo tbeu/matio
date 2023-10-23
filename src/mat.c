@@ -935,9 +935,8 @@ Mat_VarCalloc(void)
             matvar = NULL;
         } else {
 #if defined(MAT73) && MAT73
-            matvar->internal->hdf5_name = NULL;
             matvar->internal->hdf5_ref = 0;
-            matvar->internal->id = -1;
+            matvar->internal->id = H5I_INVALID_HID;
 #endif
             matvar->internal->datapos = 0;
             matvar->internal->num_fields = 0;
@@ -1468,11 +1467,11 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 
     if ( NULL != in->internal ) {
 #if defined(MAT73) && MAT73
-        if ( NULL != in->internal->hdf5_name )
-            out->internal->hdf5_name = strdup(in->internal->hdf5_name);
-
         out->internal->hdf5_ref = in->internal->hdf5_ref;
         out->internal->id = in->internal->id;
+        if ( out->internal->id >= 0 ) {
+            H5Iinc_ref(out->internal->id);
+        }
 #endif
         out->internal->datapos = in->internal->datapos;
 #if HAVE_ZLIB
@@ -1771,23 +1770,19 @@ Mat_VarFree(matvar_t *matvar)
         }
 #endif
 #if defined(MAT73) && MAT73
-        if ( -1 < matvar->internal->id ) {
+        if ( H5I_INVALID_HID != matvar->internal->id ) {
             switch ( H5Iget_type(matvar->internal->id) ) {
                 case H5I_GROUP:
                     H5Gclose(matvar->internal->id);
-                    matvar->internal->id = -1;
+                    matvar->internal->id = H5I_INVALID_HID;
                     break;
                 case H5I_DATASET:
                     H5Dclose(matvar->internal->id);
-                    matvar->internal->id = -1;
+                    matvar->internal->id = H5I_INVALID_HID;
                     break;
                 default:
                     break;
             }
-        }
-        if ( NULL != matvar->internal->hdf5_name ) {
-            free(matvar->internal->hdf5_name);
-            matvar->internal->hdf5_name = NULL;
         }
 #endif
         if ( NULL != matvar->internal->fieldnames && matvar->internal->num_fields > 0 ) {

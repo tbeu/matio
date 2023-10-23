@@ -460,20 +460,10 @@ static int
 Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
 {
     hid_t attr_id, type_id;
-    ssize_t name_len;
     int err = MATIO_E_NO_ERROR;
     char *class_str;
 
-    /* Get the HDF5 name of the variable */
-    name_len = H5Iget_name(dset_id, NULL, 0);
-    if ( name_len > 0 ) {
-        matvar->internal->hdf5_name = (char *)malloc(name_len + 1);
-        (void)H5Iget_name(dset_id, matvar->internal->hdf5_name, name_len + 1);
-    } else {
-        /* Can not get an internal name, so leave the identifier open */
-        matvar->internal->id = dset_id;
-    }
-
+    matvar->internal->id = dset_id;
     attr_id = H5Aopen_by_name(dset_id, ".", "MATLAB_class", H5P_DEFAULT, H5P_DEFAULT);
     type_id = H5Aget_type(attr_id);
     class_str = (char *)calloc(H5Tget_size(type_id) + 1, 1);
@@ -922,9 +912,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
             struct ReadGroupInfoIterData group_data = {0, NULL};
 
             /* First iteration to retrieve number of relevant links */
-            herr = H5Literate_by_name(dset_id, matvar->internal->hdf5_name, H5_INDEX_NAME,
-                                      H5_ITER_NATIVE, NULL, Mat_H5ReadGroupInfoIterate,
-                                      (void *)&group_data, H5P_DEFAULT);
+            herr = H5Literate(dset_id, H5_INDEX_NAME, H5_ITER_NATIVE, NULL,
+                              Mat_H5ReadGroupInfoIterate, (void *)&group_data);
             if ( herr > 0 && group_data.nfields > 0 ) {
                 matvar->internal->fieldnames = (char **)calloc(
                     (size_t)(group_data.nfields), sizeof(*matvar->internal->fieldnames));
@@ -932,9 +921,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                 group_data.matvar = matvar;
                 if ( matvar->internal->fieldnames != NULL ) {
                     /* Second iteration to fill fieldnames */
-                    H5Literate_by_name(dset_id, matvar->internal->hdf5_name, H5_INDEX_NAME,
-                                       H5_ITER_NATIVE, NULL, Mat_H5ReadGroupInfoIterate,
-                                       (void *)&group_data, H5P_DEFAULT);
+                    H5Literate(dset_id, H5_INDEX_NAME, H5_ITER_NATIVE, NULL,
+                               Mat_H5ReadGroupInfoIterate, (void *)&group_data);
                 }
                 matvar->internal->num_fields = (unsigned)group_data.nfields;
                 nfields = group_data.nfields;
@@ -1085,19 +1073,18 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                     } else {
                         err = MATIO_E_OUT_OF_MEMORY;
                     }
+                    H5Dclose(field_id);
                 } else {
                     fields[k] = Mat_VarCalloc();
                     fields[k]->name = strdup(matvar->internal->fieldnames[k]);
                     err = Mat_H5ReadDatasetInfo(mat, fields[k], field_id);
                 }
-                H5Dclose(field_id);
             } else if ( object_info.type == H5O_TYPE_GROUP ) {
                 field_id = H5Gopen(dset_id, matvar->internal->fieldnames[k], H5P_DEFAULT);
                 if ( -1 < field_id ) {
                     fields[k] = Mat_VarCalloc();
                     fields[k]->name = strdup(matvar->internal->fieldnames[k]);
                     err = Mat_H5ReadGroupInfo(mat, fields[k], field_id);
-                    H5Gclose(field_id);
                 }
             }
             if ( err ) {
@@ -1225,8 +1212,10 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
     int err = MATIO_E_NO_ERROR;
     size_t nelems = 1;
 
-    if ( NULL == matvar || NULL == matvar->internal || matvar->internal->id < 0 )
-        return err;
+    if ( NULL == mat || NULL == matvar )
+        return MATIO_E_BAD_ARGUMENT;
+    if ( matvar->internal->id < 0 )
+        return MATIO_E_FAIL_TO_IDENTIFY;
 
     /* If the datatype with references is a cell, we've already read info into
      * the variable data, so just loop over each cell element and call
@@ -1273,7 +1262,7 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
             err |= Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err || matvar->nbytes < 1 ) {
                 H5Dclose(matvar->internal->id);
-                matvar->internal->id = -1;
+                matvar->internal->id = H5I_INVALID_HID;
                 break;
             }
 
@@ -1286,8 +1275,6 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
                 err = Mat_H5ReadData(matvar->internal->id, data_type_id, H5S_ALL, H5S_ALL,
                                      matvar->isComplex, matvar->data);
             }
-            H5Dclose(matvar->internal->id);
-            matvar->internal->id = -1;
             break;
         }
         case H5I_GROUP: {
@@ -1303,7 +1290,7 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
                 fields = (matvar_t **)matvar->data;
                 for ( i = 0; i < nelems; i++ ) {
                     if ( NULL != fields[i] && 0 < fields[i]->internal->hdf5_ref &&
-                         -1 < fields[i]->internal->id ) {
+                         fields[i]->internal->id >= 0 ) {
                         /* Dataset of references */
                         err = Mat_H5ReadNextReferenceData(fields[i], mat);
                     } else {
@@ -2679,8 +2666,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
 
     if ( NULL == mat || NULL == matvar )
         return MATIO_E_BAD_ARGUMENT;
-    else if ( NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id )
-        return MATIO_E_READ_VARIABLE_DOES_NOT_EXIST;
+    else if ( matvar->internal->id < 0 )
+        return MATIO_E_FAIL_TO_IDENTIFY;
 
     fid = *(hid_t *)mat->fp;
 
@@ -2711,15 +2698,9 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             if ( nelems < 1 )
                 break;
 
-            if ( NULL != matvar->internal->hdf5_name ) {
-                ref_id = H5Dopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if ( ref_id == H5I_INVALID_HID ) {
-                    Mat_Critical("Unexpected error from H5Dopen");
-                }
-            } else {
-                ref_id = matvar->internal->id;
-                H5Iinc_ref(ref_id);
-            }
+            ref_id = matvar->internal->id;
+            H5Iinc_ref(ref_id);
+
             if ( 0 < matvar->internal->hdf5_ref ) {
                 dset_id = H5RDEREFERENCE(ref_id, H5R_OBJECT, &matvar->internal->hdf5_ref);
             } else {
@@ -2754,15 +2735,9 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 return err;
             }
 
-            if ( NULL != matvar->internal->hdf5_name ) {
-                dset_id = H5Dopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if ( dset_id == H5I_INVALID_HID ) {
-                    Mat_Critical("Unexpected error from H5Dopen");
-                }
-            } else {
-                dset_id = matvar->internal->id;
-                H5Iinc_ref(dset_id);
-            }
+            dset_id = matvar->internal->id;
+            H5Iinc_ref(dset_id);
+
             if ( matvar->nbytes > 0 ) {
                 matvar->data = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
@@ -2799,7 +2774,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             fields = (matvar_t **)matvar->data;
             for ( i = 0; i < nelems_x_nfields; i++ ) {
                 if ( NULL != fields[i] && 0 < fields[i]->internal->hdf5_ref &&
-                     -1 < fields[i]->internal->id ) {
+                     fields[i]->internal->id >= 0 ) {
                     /* Dataset of references */
                     err = Mat_H5ReadNextReferenceData(fields[i], mat);
                 } else {
@@ -2836,15 +2811,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             hid_t sparse_dset_id;
             mat_sparse_t *sparse_data = (mat_sparse_t *)calloc(1, sizeof(*sparse_data));
 
-            if ( NULL != matvar->internal->hdf5_name ) {
-                dset_id = H5Gopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if ( dset_id == H5I_INVALID_HID ) {
-                    Mat_Critical("Unexpected error from H5Dopen");
-                }
-            } else {
-                dset_id = matvar->internal->id;
-                H5Iinc_ref(dset_id);
-            }
+            dset_id = matvar->internal->id;
+            H5Iinc_ref(dset_id);
 
             if ( H5Lexists(dset_id, "ir", H5P_DEFAULT) ) {
                 size_t *dims;
@@ -3010,7 +2978,7 @@ Mat_VarReadData73(mat_t *mat, matvar_t *matvar, void *data, int *start, int *str
     if ( NULL == mat || NULL == matvar || NULL == data || NULL == start || NULL == stride ||
          NULL == edge )
         return MATIO_E_BAD_ARGUMENT;
-    else if ( NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id )
+    else if ( matvar->internal->id < 0 )
         return MATIO_E_FAIL_TO_IDENTIFY;
 
     fid = *(hid_t *)mat->fp;
@@ -3041,15 +3009,9 @@ Mat_VarReadData73(mat_t *mat, matvar_t *matvar, void *data, int *start, int *str
         case MAT_C_UINT16:
         case MAT_C_INT8:
         case MAT_C_UINT8:
-            if ( NULL != matvar->internal->hdf5_name ) {
-                ref_id = H5Dopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if ( ref_id == H5I_INVALID_HID ) {
-                    Mat_Critical("Unexpected error from H5Dopen");
-                }
-            } else {
-                ref_id = matvar->internal->id;
-                H5Iinc_ref(ref_id);
-            }
+            ref_id = matvar->internal->id;
+            H5Iinc_ref(ref_id);
+
             if ( 0 < matvar->internal->hdf5_ref ) {
                 dset_id = H5RDEREFERENCE(ref_id, H5R_OBJECT, &matvar->internal->hdf5_ref);
             } else {
@@ -3101,7 +3063,7 @@ Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int
 
     if ( NULL == mat || NULL == matvar || NULL == data )
         return MATIO_E_BAD_ARGUMENT;
-    else if ( NULL == matvar->internal->hdf5_name && 0 > matvar->internal->id )
+    else if ( matvar->internal->id < 0 )
         return MATIO_E_FAIL_TO_IDENTIFY;
 
     fid = *(hid_t *)mat->fp;
@@ -3145,15 +3107,9 @@ Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int
             }
             free(dimp);
 
-            if ( NULL != matvar->internal->hdf5_name ) {
-                dset_id = H5Dopen(fid, matvar->internal->hdf5_name, H5P_DEFAULT);
-                if ( dset_id == H5I_INVALID_HID ) {
-                    Mat_Critical("Unexpected error from H5Dopen");
-                }
-            } else {
-                dset_id = matvar->internal->id;
-                H5Iinc_ref(dset_id);
-            }
+            dset_id = matvar->internal->id;
+            H5Iinc_ref(dset_id);
+
             dset_space = H5Dget_space(dset_id);
             H5Sselect_elements(dset_space, H5S_SELECT_SET, (size_t)dset_edge, points);
             free(points);
@@ -3280,7 +3236,6 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
 
             dset_id = H5Gopen(id, name, H5P_DEFAULT);
             err = Mat_H5ReadGroupInfo(mat, matvar, dset_id);
-            H5Gclose(dset_id);
             if ( err ) {
                 Mat_VarFree(matvar);
                 return -1;
