@@ -94,6 +94,7 @@ dlldata.c
 _Chutzpah*
 # Visual C++ cache files
 ipch/
+.vs/
 *.aps
 *.ncb
 *.opensdf
@@ -187,4 +188,5 @@ UpgradeLog*.htm
 *.bim_*.settings
 # Microsoft Fakes
 FakesAssemblies/
+*.bak
 *.exe
