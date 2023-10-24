@@ -122,58 +122,58 @@
     } while ( 0 )
 
 #if HAVE_ZLIB
-#define READ_COMPRESSED_DATA_NOSWAP(T)                         \
-    do {                                                       \
-        const size_t block_size = READ_BLOCK_SIZE / data_size; \
-        if ( len <= block_size ) {                             \
-            InflateData(mat, z, v, len *data_size);            \
-            for ( i = 0; i < len; i++ ) {                      \
-                data[i] = (T)v[i];                             \
-            }                                                  \
-        } else {                                               \
-            mat_uint32_t j;                                    \
-            len -= block_size;                                 \
-            for ( i = 0; i < len; i += block_size ) {          \
-                InflateData(mat, z, v, block_size *data_size); \
-                for ( j = 0; j < block_size; j++ ) {           \
-                    data[i + j] = (T)v[j];                     \
-                }                                              \
-            }                                                  \
-            len -= (i - block_size);                           \
-            InflateData(mat, z, v, len *data_size);            \
-            for ( j = 0; j < len; j++ ) {                      \
-                data[i + j] = (T)v[j];                         \
-            }                                                  \
-        }                                                      \
+#define READ_COMPRESSED_DATA_NOSWAP(T)                                          \
+    do {                                                                        \
+        const size_t block_size = READ_BLOCK_SIZE / data_size;                  \
+        if ( len <= block_size ) {                                              \
+            InflateData(mat, z, v, (mat_uint32_t)(len * data_size));            \
+            for ( i = 0; i < len; i++ ) {                                       \
+                data[i] = (T)v[i];                                              \
+            }                                                                   \
+        } else {                                                                \
+            mat_uint32_t j;                                                     \
+            len -= (mat_uint32_t)block_size;                                    \
+            for ( i = 0; i < len; i += (mat_uint32_t)block_size ) {             \
+                InflateData(mat, z, v, (mat_uint32_t)(block_size * data_size)); \
+                for ( j = 0; j < block_size; j++ ) {                            \
+                    data[i + j] = (T)v[j];                                      \
+                }                                                               \
+            }                                                                   \
+            len -= (mat_uint32_t)(i - block_size);                              \
+            InflateData(mat, z, v, (mat_uint32_t)(len * data_size));            \
+            for ( j = 0; j < len; j++ ) {                                       \
+                data[i + j] = (T)v[j];                                          \
+            }                                                                   \
+        }                                                                       \
     } while ( 0 )
 
-#define READ_COMPRESSED_DATA(T, SwapFunc)                          \
-    do {                                                           \
-        if ( mat->byteswap ) {                                     \
-            const size_t block_size = READ_BLOCK_SIZE / data_size; \
-            if ( len <= block_size ) {                             \
-                InflateData(mat, z, v, len *data_size);            \
-                for ( i = 0; i < len; i++ ) {                      \
-                    data[i] = (T)SwapFunc(&v[i]);                  \
-                }                                                  \
-            } else {                                               \
-                mat_uint32_t j;                                    \
-                len -= block_size;                                 \
-                for ( i = 0; i < len; i += block_size ) {          \
-                    InflateData(mat, z, v, block_size *data_size); \
-                    for ( j = 0; j < block_size; j++ ) {           \
-                        data[i + j] = (T)SwapFunc(&v[j]);          \
-                    }                                              \
-                }                                                  \
-                len -= (i - block_size);                           \
-                InflateData(mat, z, v, len *data_size);            \
-                for ( j = 0; j < len; j++ ) {                      \
-                    data[i + j] = (T)SwapFunc(&v[j]);              \
-                }                                                  \
-            }                                                      \
-        } else {                                                   \
-            READ_COMPRESSED_DATA_NOSWAP(T);                        \
-        }                                                          \
+#define READ_COMPRESSED_DATA(T, SwapFunc)                                           \
+    do {                                                                            \
+        if ( mat->byteswap ) {                                                      \
+            const size_t block_size = READ_BLOCK_SIZE / data_size;                  \
+            if ( len <= block_size ) {                                              \
+                InflateData(mat, z, v, (mat_uint32_t)(len * data_size));            \
+                for ( i = 0; i < len; i++ ) {                                       \
+                    data[i] = (T)SwapFunc(&v[i]);                                   \
+                }                                                                   \
+            } else {                                                                \
+                mat_uint32_t j;                                                     \
+                len -= (mat_uint32_t)block_size;                                    \
+                for ( i = 0; i < len; i += (mat_uint32_t)block_size ) {             \
+                    InflateData(mat, z, v, (mat_uint32_t)(block_size * data_size)); \
+                    for ( j = 0; j < block_size; j++ ) {                            \
+                        data[i + j] = (T)SwapFunc(&v[j]);                           \
+                    }                                                               \
+                }                                                                   \
+                len -= (mat_uint32_t)(i - block_size);                              \
+                InflateData(mat, z, v, (mat_uint32_t)(len * data_size));            \
+                for ( j = 0; j < len; j++ ) {                                       \
+                    data[i + j] = (T)SwapFunc(&v[j]);                               \
+                }                                                                   \
+            }                                                                       \
+        } else {                                                                    \
+            READ_COMPRESSED_DATA_NOSWAP(T);                                         \
+        }                                                                           \
     } while ( 0 )
 
 #endif

@@ -575,7 +575,7 @@ READ_TYPED_FUNC2(mat_t *mat, z_streamp z, READ_TYPE *data, enum matio_types data
         default:
             break;
     }
-    return len * Mat_SizeOf(data_type);
+    return (int)(len * Mat_SizeOf(data_type));
 }
 
 #undef READ_TYPE_DOUBLE_DATA
