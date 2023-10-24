@@ -2635,6 +2635,10 @@ Mat_VarReadInfo(mat_t *mat, const char *name)
         while ( NULL == matvar && mat->next_index < mat->num_datasets ) {
 #if defined(MAT73) && MAT73
             matvar = Mat_VarReadNextInfoPredicate(mat, Mat_IteratorNameAcceptor, name);
+            if ( NULL == matvar ) {
+                Mat_Critical("An error occurred in reading the MAT file");
+                break;
+            }
 #else
             matvar = Mat_VarReadNextInfo(mat);
             if ( matvar != NULL ) {
@@ -2698,7 +2702,7 @@ Mat_VarRead(mat_t *mat, const char *name)
             return NULL;
         }
         matvar = Mat_VarReadInfo(mat, name);
-        if ( matvar ) {
+        if ( matvar != NULL ) {
             const int err = ReadData(mat, matvar);
             if ( err ) {
                 Mat_VarFree(matvar);
@@ -2710,7 +2714,7 @@ Mat_VarRead(mat_t *mat, const char *name)
         size_t fpos = mat->next_index;
         mat->next_index = 0;
         matvar = Mat_VarReadInfo(mat, name);
-        if ( matvar ) {
+        if ( matvar != NULL ) {
             const int err = ReadData(mat, matvar);
             if ( err ) {
                 Mat_VarFree(matvar);
