@@ -1891,7 +1891,7 @@ ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
         }
         if ( err ) {
             size_t j;
-            for ( j = 0; j < i; j++ ) {
+            for ( j = 0; j <= i; j++ ) {
                 Mat_VarFree(functions[j]);
             }
             free(matvar->data);
