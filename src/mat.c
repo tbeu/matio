@@ -365,6 +365,40 @@ IsEndOfFile(FILE *fp, mat_off_t *fpos)
     return isEOF;
 }
 
+/** @brief Check for End of file
+ *
+ * @param fp File pointer
+ * @param[out] offset Desired offset from current file position
+ * @retval 0 on success
+ */
+int
+CheckSeekFile(FILE *fp, mat_off_t offset)
+{
+    int err;
+    mat_off_t fPos;
+    uint8_t c;
+
+    if ( offset <= 0 ) {
+        return MATIO_E_NO_ERROR;
+    }
+
+    fPos = ftello(fp);
+    if ( fPos == -1L ) {
+        Mat_Critical("Couldn't determine file position");
+        return MATIO_E_GENERIC_READ_ERROR;
+    }
+
+    (void)fseeko(fp, offset - 1, SEEK_CUR);
+    err = 1 != fread(&c, 1, 1, fp);
+    fseeko(fp, fPos, SEEK_SET);
+    if ( 0 == err ) {
+        return MATIO_E_NO_ERROR;
+    } else {
+        Mat_Critical("Couldn't set file position");
+        return MATIO_E_GENERIC_READ_ERROR;
+    }
+}
+
 /*
  *===================================================================
  *                 Public Functions

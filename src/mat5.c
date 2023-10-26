@@ -51,6 +51,11 @@
 /** Class type mask */
 #define CLASS_TYPE_MASK 0x000000ff
 
+#if !defined(MAX_READ_SIZE_WITHOUT_EOF_CHECK)
+/* Maximal number of bytes to read without EOF check */
+#define MAX_READ_SIZE_WITHOUT_EOF_CHECK (3)
+#endif
+
 static mat_complex_split_t null_complex_data = {NULL, NULL};
 
 /*===========================================================================
@@ -5437,6 +5442,15 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     matvar = NULL;
                     (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
                     break;
+                }
+                if ( len_pad > MAX_READ_SIZE_WITHOUT_EOF_CHECK ) {
+                    err = CheckSeekFile((FILE *)mat->fp, (mat_off_t)len_pad);
+                    if ( err ) {
+                        Mat_VarFree(matvar);
+                        matvar = NULL;
+                        (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+                        break;
+                    }
                 }
                 matvar->name = (char *)malloc(len_pad + 1);
                 if ( NULL != matvar->name ) {

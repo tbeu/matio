@@ -261,6 +261,7 @@ EXTERN int Mul(size_t *res, size_t a, size_t b);
 EXTERN int Mat_MulDims(const matvar_t *matvar, size_t *nelems);
 EXTERN int Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread);
 EXTERN int IsEndOfFile(FILE *fp, mat_off_t *fpos);
+EXTERN int CheckSeekFile(FILE *fp, mat_off_t offset);
 
 /* io.c */
 #if defined(_WIN32) && defined(_MSC_VER)
