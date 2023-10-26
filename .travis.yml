@@ -207,7 +207,7 @@ jobs:
         - HDF5_PATCH_VERSION=23
         - MAX_RANK=3
     - os: osx
-      osx_image: xcode12.5
+      osx_image: xcode13.4
       compiler: clang
       env:
         - ENABLE_EXTENDED_SPARSE=yes
