@@ -391,12 +391,12 @@ CheckSeekFile(FILE *fp, mat_off_t offset)
     (void)fseeko(fp, offset - 1, SEEK_CUR);
     err = 1 != fread(&c, 1, 1, fp);
     fseeko(fp, fPos, SEEK_SET);
-    if ( 0 == err ) {
-        return MATIO_E_NO_ERROR;
-    } else {
+    if ( err ) {
         Mat_Critical("Couldn't set file position");
         return MATIO_E_GENERIC_READ_ERROR;
     }
+
+    return MATIO_E_NO_ERROR;
 }
 
 /*
