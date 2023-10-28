@@ -29,9 +29,12 @@ set(MATIO_SOURCES
     ${PROJECT_SOURCE_DIR}/src/matio.h
     ${PROJECT_SOURCE_DIR}/visual_studio/matio.rc
     ${PROJECT_SOURCE_DIR}/visual_studio/matio.def
+    ${PROJECT_SOURCE_DIR}/src/read_data_impl.h
+    ${PROJECT_SOURCE_DIR}/src/safe-math.h
     ${PROJECT_BINARY_DIR}/src/matio_pubconf.h
     ${PROJECT_BINARY_DIR}/src/matioConfig.h
 )
+
 if(STDINT_MSVC)
     set(MATIO_SOURCES ${MATIO_SOURCES} ${PROJECT_SOURCE_DIR}/visual_studio/stdint_msvc.h)
 endif()
