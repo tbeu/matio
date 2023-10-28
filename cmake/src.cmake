@@ -69,6 +69,7 @@ if(HAVE_LIBM)
 endif()
 
 if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS /wd4267)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 endif()
 
