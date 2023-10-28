@@ -1768,6 +1768,11 @@ Mat_VarFree(matvar_t *matvar)
                 break;
             case MAT_C_FUNCTION:
                 if ( !matvar->mem_conserve ) {
+                    size_t i;
+                    matvar_t **functions = (matvar_t **)matvar->data;
+                    for ( i = 0; i < nelems; i++ ) {
+                        Mat_VarFree(functions[i]);
+                    }
                     free(matvar->data);
                 }
                 break;
