@@ -470,11 +470,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
     type_id = H5Aget_type(attr_id);
     class_str = (char *)calloc(H5Tget_size(type_id) + 1, 1);
     if ( NULL != class_str ) {
-        herr_t herr;
-        hid_t class_id = H5Tcopy(H5T_C_S1);
-        H5Tset_size(class_id, H5Tget_size(type_id));
-        herr = H5Aread(attr_id, class_id, class_str);
-        H5Tclose(class_id);
+        herr_t herr = H5Aread(attr_id, type_id, class_str);
         if ( herr < 0 ) {
             free(class_str);
             H5Tclose(type_id);
