@@ -58,7 +58,7 @@ jobs:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
         - HDF5_VERSION=1.12
-        - HDF5_PATCH_VERSION=2
+        - HDF5_PATCH_VERSION=3
         - MAX_RANK=3
     - os: linux
       arch: arm64
@@ -68,7 +68,7 @@ jobs:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
         - HDF5_VERSION=1.12
-        - HDF5_PATCH_VERSION=2
+        - HDF5_PATCH_VERSION=3
         - MAX_RANK=3
     - os: linux
       arch: s390x
@@ -78,7 +78,7 @@ jobs:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
         - HDF5_VERSION=1.12
-        - HDF5_PATCH_VERSION=2
+        - HDF5_PATCH_VERSION=3
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8
