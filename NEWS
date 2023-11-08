@@ -1,5 +1,5 @@
 Changes in 1.5.25 (8 November 2023)
-* Fixed reading struct array from HDF5 MAT file
+* Fixed reading struct array with null padded class name from HDF5 MAT file
 * Fixed memory leak in Mat_VarFree for function class
 * CMake: Silence MSVC compiler warnings
 

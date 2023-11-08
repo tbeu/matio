@@ -492,3 +492,10 @@ AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/dir_le.out expout
          $builddir/test_mat directory $srcdir/datasets/matio_test_cases_uncompressed_hdf_le.mat],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read struct with padded class name])
+AT_KEYWORDS([padded])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-nullpad_class_name.out expout
+         $builddir/../tools/matdump -d $srcdir/datasets/struct_nullpad_class_name_hdf_le.mat],[0],[expout],[])
+AT_CLEANUP
