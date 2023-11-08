@@ -205,3 +205,8 @@ FakesAssemblies/
 # Total Commander backup files
 #
 *.bak
+
+#
+# Python virtual environment
+#
+.venv
