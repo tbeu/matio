@@ -19,4 +19,4 @@ if [[ "$TRAVIS_PULL_REQUEST" != "false" ]] || [[ "$TRAVIS_BRANCH" != "master" ]]
     exit 0
 fi
 
-curl -X POST -H "Authorization: Bearer $BBTOKEN" https://api.bitbucket.org/2.0/repositories/tbeu/downloads/downloads -F files=@./documentation/matio_user_guide.html -F files=@./documentation/matio_user_guide.pdf -F files=@./matio-1.5.24.tar.gz
+curl -X POST -H "Authorization: Bearer $BBTOKEN" https://api.bitbucket.org/2.0/repositories/tbeu/downloads/downloads -F files=@./documentation/matio_user_guide.html -F files=@./documentation/matio_user_guide.pdf -F files=@./matio-1.5.25.tar.gz
