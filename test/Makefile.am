@@ -89,6 +89,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/matio_test_cases_v4_le.mat \
                  $(datasets_dir)/packed_field_name_compressed_le.mat \
                  $(datasets_dir)/packed_field_name_uncompressed_le.mat \
+                 $(datasets_dir)/struct_nullpad_class_name_hdf_le.mat \
                  $(datasets_dir)/small_v4_be.mat \
                  $(datasets_dir)/small_v4_le.mat \
                  $(matlab_dir)/test_write_2d_logical.m \
