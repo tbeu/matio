@@ -197,6 +197,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/getstructfield-large_struct_compressed.out \
                  $(results_dir)/ind2sub.out \
                  $(results_dir)/read-packed_field_name.out \
+                 $(results_dir)/read-nullpad_class_name.out \
                  $(results_dir)/readslab-var1.out \
                  $(results_dir)/readslab-var11.out \
                  $(results_dir)/readslab-var28.out \
