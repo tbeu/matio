@@ -1,3 +1,6 @@
+Changes in 1.5.26 (12 November 2023)
+* Fixed testsuite (regression of v1.5.25)
+
 Changes in 1.5.25 (10 November 2023)
 * Fixed reading struct array with null padded class name from HDF5 MAT file
 * Fixed memory leak in Mat_VarFree for function class

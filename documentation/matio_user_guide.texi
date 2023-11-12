@@ -37,7 +37,7 @@
 @sp 0
 @title
 @subtitle User Manual
-@subtitle for version 1.5.25
+@subtitle for version 1.5.26
 @subtitle November 2023
 @author Christopher C. Hulbert
 @page
