@@ -85,21 +85,16 @@ if(ZLIB_FOUND)
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ${MATIO_PIC})
-if(MATIO_SHARED)
-    # Convert matio_LIB_VERSIONINFO libtool version format into VERSION and SOVERSION
-    # Convert from ":" separated into CMake list format using ";"
-    string(REPLACE ":" ";" matio_LIB_VERSIONINFO ${matio_LIB_VERSIONINFO})
-    list(GET matio_LIB_VERSIONINFO 0 matio_LIB_VERSION_CURRENT)
-    list(GET matio_LIB_VERSIONINFO 1 matio_LIB_VERSION_REVISION)
-    list(GET matio_LIB_VERSIONINFO 2 matio_LIB_VERSION_AGE)
-    math(EXPR matio_LIB_VERSION_MAJOR "${matio_LIB_VERSION_CURRENT} - ${matio_LIB_VERSION_AGE}")
-    set(matio_LIB_VERSION_MINOR "${matio_LIB_VERSION_AGE}")
-    set(matio_LIB_VERSION_RELEASE "${matio_LIB_VERSION_REVISION}")
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        SOVERSION ${matio_LIB_VERSION_MAJOR}
-        VERSION "${matio_LIB_VERSION_MAJOR}.${matio_LIB_VERSION_MINOR}.${matio_LIB_VERSION_RELEASE}"
-    )
-endif()
+# Convert matio_LIB_VERSIONINFO libtool version format into SOVERSION
+# Convert from ":" separated into CMake list format using ";"
+string(REPLACE ":" ";" matio_LIB_VERSIONINFO ${matio_LIB_VERSIONINFO})
+list(GET matio_LIB_VERSIONINFO 0 matio_LIB_VERSION_CURRENT)
+list(GET matio_LIB_VERSIONINFO 2 matio_LIB_VERSION_AGE)
+math(EXPR matio_SOVERSION "${matio_LIB_VERSION_CURRENT} - ${matio_LIB_VERSION_AGE}")
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    SOVERSION ${matio_SOVERSION}
+    VERSION ${PROJECT_VERSION}
+)
 
 # specify the public headers
 set(MATIO_PUBLIC_HEADERS
