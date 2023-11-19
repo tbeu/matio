@@ -132,6 +132,8 @@ This flag enables the support for version 7.3 MAT files.
 This option enables position-independent code (PIC), i.e., compilation with the `-fPIC` flag. It is ignored for Visual Studio builds.
 * `MATIO_SHARED:BOOL=ON`
 This option builds the matio library as shared object (i.e., a dynamic link library on Windows).
+* `MATIO_STATIC_LINK_CRT:BOOL=OFF`
+This option links the MSVC runtime library statically.
 * `MATIO_WITH_HDF5:BOOL=ON`
 This option enables CMake to check for availability of the HDF5 library (see section [2.1.2](#212-hdf5) for information about HDF5).
 * `MATIO_WITH_ZLIB:BOOL=ON`

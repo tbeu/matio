@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.7)
 if(POLICY CMP0074)
     cmake_policy(SET CMP0074 NEW)
 endif()
+if(POLICY CMP0091)
+    cmake_policy(SET CMP0091 NEW)
+endif()
 
 project(matio
     VERSION 1.5.26
