@@ -108,7 +108,7 @@ Mat_Create4(const char *matname)
  * @endif
  */
 int
-Mat_VarWrite4(mat_t *mat, matvar_t *matvar)
+Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
 {
     typedef struct
     {
@@ -768,7 +768,8 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
  * @endif
  */
 int
-Mat_VarReadData4(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stride, int *edge)
+Mat_VarReadData4(mat_t *mat, matvar_t *matvar, void *data, const int *start, const int *stride,
+                 const int *edge)
 {
     int err = MATIO_E_NO_ERROR;
 

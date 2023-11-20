@@ -67,7 +67,7 @@ static int GetStructFieldBufSize(matvar_t *matvar, size_t *size);
 static int GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size);
 static void SetFieldNames(matvar_t *matvar, char *buf, size_t nfields,
                           mat_uint32_t fieldname_length);
-static size_t ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v);
+static size_t ReadSparse(mat_t *mat, const matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v);
 #if HAVE_ZLIB
 static int GetMatrixMaxBufSize(matvar_t *matvar, size_t *size);
 #endif
@@ -82,7 +82,7 @@ static int WriteType(mat_t *mat, matvar_t *matvar);
 static int WriteCellArrayField(mat_t *mat, matvar_t *matvar);
 static int WriteStructField(mat_t *mat, matvar_t *matvar);
 static int WriteData(mat_t *mat, void *data, size_t N, enum matio_types data_type);
-static size_t Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, size_t *dims);
+static size_t Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, const size_t *dims);
 static int Mat_VarReadNumeric5(mat_t *mat, matvar_t *matvar, void *data, size_t N);
 #if HAVE_ZLIB
 static size_t WriteCompressedCharData(mat_t *mat, z_streamp z, void *data, size_t N,
@@ -94,7 +94,7 @@ static size_t WriteCompressedType(mat_t *mat, matvar_t *matvar, z_streamp z);
 static size_t WriteCompressedCellArrayField(mat_t *mat, matvar_t *matvar, z_streamp z);
 static size_t WriteCompressedStructField(mat_t *mat, matvar_t *matvar, z_streamp z);
 static size_t Mat_WriteCompressedEmptyVariable5(mat_t *mat, const char *name, int rank,
-                                                size_t *dims, z_streamp z);
+                                                const size_t *dims, z_streamp z);
 #endif
 
 /** @brief determines the number of bytes for a given class type
@@ -140,7 +140,7 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
             size_t maxlen = 0, i, field_buf_size;
 
             for ( i = 0; i < nfields; i++ ) {
-                char *fieldname = matvar->internal->fieldnames[i];
+                const char *fieldname = matvar->internal->fieldnames[i];
                 if ( NULL != fieldname && strlen(fieldname) > maxlen )
                     maxlen = strlen(fieldname);
             }
@@ -203,7 +203,7 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
             break;
         }
         case MAT_C_SPARSE: {
-            mat_sparse_t *sparse = (mat_sparse_t *)matvar->data;
+            const mat_sparse_t *sparse = (const mat_sparse_t *)matvar->data;
 
             err = Mul(&data_bytes, sparse->nir, sizeof(mat_uint32_t));
             if ( err )
@@ -475,7 +475,7 @@ SetFieldNames(matvar_t *matvar, char *buf, size_t nfields, mat_uint32_t fieldnam
 }
 
 static size_t
-ReadSparse(mat_t *mat, matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
+ReadSparse(mat_t *mat, const matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v)
 {
     int data_in_tag = 0;
     enum matio_types packed_type;
@@ -904,7 +904,7 @@ WriteCompressedCharData(mat_t *mat, z_streamp z, void *data, size_t N, enum mati
  * @return number of bytes written
  */
 static int
-WriteData(mat_t *mat, void *data, size_t N, enum matio_types data_type)
+WriteData(mat_t *mat, const void *data, size_t N, enum matio_types data_type)
 {
     int nBytes = 0, data_size;
 
@@ -2108,7 +2108,7 @@ WriteType(mat_t *mat, matvar_t *matvar)
                 for ( j = nBytes % 8; j < 8; j++ )
                     fwrite(&pad1, 1, 1, (FILE *)mat->fp);
             if ( matvar->isComplex ) {
-                mat_complex_split_t *complex_data = (mat_complex_split_t *)sparse->data;
+                const mat_complex_split_t *complex_data = (const mat_complex_split_t *)sparse->data;
                 nBytes = WriteData(mat, complex_data->Re, sparse->ndata, matvar->data_type);
                 if ( nBytes % 8 )
                     for ( j = nBytes % 8; j < 8; j++ )
@@ -2568,7 +2568,7 @@ WriteStructField(mat_t *mat, matvar_t *matvar)
         return MATIO_E_BAD_ARGUMENT;
 
     if ( NULL == matvar ) {
-        size_t dims[2] = {0, 0};
+        const size_t dims[2] = {0, 0};
         Mat_WriteEmptyVariable5(mat, NULL, 2, dims);
         return MATIO_E_NO_ERROR;
     }
@@ -2649,7 +2649,7 @@ WriteCompressedStructField(mat_t *mat, matvar_t *matvar, z_streamp z)
         return 0;
 
     if ( NULL == matvar ) {
-        size_t dims[2] = {0, 0};
+        const size_t dims[2] = {0, 0};
         byteswritten = Mat_WriteCompressedEmptyVariable5(mat, NULL, 2, dims, z);
         return byteswritten;
     }
@@ -2680,7 +2680,7 @@ WriteCompressedStructField(mat_t *mat, matvar_t *matvar, z_streamp z)
 #endif
 
 static size_t
-Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, size_t *dims)
+Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, const size_t *dims)
 {
     mat_uint32_t array_flags;
     mat_uint32_t array_name_type = MAT_T_INT8;
@@ -2761,7 +2761,8 @@ Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, size_t *dims)
 
 #if HAVE_ZLIB
 static size_t
-Mat_WriteCompressedEmptyVariable5(mat_t *mat, const char *name, int rank, size_t *dims, z_streamp z)
+Mat_WriteCompressedEmptyVariable5(mat_t *mat, const char *name, int rank, const size_t *dims,
+                                  z_streamp z)
 {
     mat_uint32_t array_flags;
     int array_flags_type = MAT_T_UINT32, dims_array_type = MAT_T_INT32;
@@ -4192,8 +4193,8 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 
 static int
 GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
-            enum matio_types data_type, size_t *dims, int *start, int *stride, int *edge, int rank,
-            size_t nbytes)
+            enum matio_types data_type, const size_t *dims, const int *start, const int *stride,
+            const int *edge, int rank, size_t nbytes)
 {
     int err = MATIO_E_NO_ERROR;
     int same_type = 0;
@@ -4470,7 +4471,8 @@ GetDataLinear(void *data_in, void *data_out, enum matio_classes class_type,
  * @endif
  */
 int
-Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stride, int *edge)
+Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, const int *stride,
+                 const int *edge)
 {
     int err = MATIO_E_NO_ERROR, real_bytes = 0;
     mat_uint32_t tag[2] = {0, 0};

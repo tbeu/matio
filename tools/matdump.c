@@ -564,7 +564,7 @@ print_whos(matvar_t *matvar)
 static size_t indent = 0;
 
 static void
-default_printf_func(int log_level, char *message)
+default_printf_func(int log_level, const char *message)
 {
     size_t i;
 

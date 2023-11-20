@@ -23,7 +23,7 @@
 .\" OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 .\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd September 12, 2019
+.Dd November 20, 2023
 .Dt MAT_VARCREATE 3
 .Os
 .Sh NAME
@@ -37,8 +37,8 @@
 .Fa "enum matio_classes class_type"
 .Fa "enum matio_types data_type"
 .Fa "int rank"
-.Fa "size_t *dims"
-.Fa "void *data"
+.Fa "const size_t *dims"
+.Fa "const void *data"
 .Fa "int opt"
 .Fc
 .Sh DESCRIPTION

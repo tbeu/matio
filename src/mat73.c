@@ -100,7 +100,7 @@ static hid_t ClassType2H5T(enum matio_classes class_type);
 static hid_t DataType2H5T(enum matio_types data_type);
 static hid_t SizeType2H5T(void);
 static hid_t DataType(hid_t h5_type, int isComplex);
-static void Mat_H5GetChunkSize(size_t rank, hsize_t *dims, hsize_t *chunk_dims);
+static void Mat_H5GetChunkSize(size_t rank, const hsize_t *dims, hsize_t *chunk_dims);
 static int Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id);
 static size_t *Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank);
 static int Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields);
@@ -440,7 +440,7 @@ DataType(hid_t h5_type, int isComplex)
 }
 
 static void
-Mat_H5GetChunkSize(size_t rank, hsize_t *dims, hsize_t *chunk_dims)
+Mat_H5GetChunkSize(size_t rank, const hsize_t *dims, hsize_t *chunk_dims)
 {
     hsize_t i, j, chunk_size = 1;
 
@@ -542,7 +542,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
         }
     }
 
-    return err;
+    return MATIO_E_NO_ERROR;
 }
 
 static size_t *
@@ -1041,8 +1041,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                     hobj_ref_t *ref_ids = (hobj_ref_t *)calloc((size_t)nelems, sizeof(*ref_ids));
                     if ( ref_ids != NULL ) {
                         hsize_t l;
-                        herr_t herr = H5Dread(field_id, H5T_STD_REF_OBJ, H5S_ALL, H5S_ALL,
-                                              H5P_DEFAULT, ref_ids);
+                        herr = H5Dread(field_id, H5T_STD_REF_OBJ, H5S_ALL, H5S_ALL, H5P_DEFAULT,
+                                       ref_ids);
                         if ( herr < 0 ) {
                             err = MATIO_E_GENERIC_READ_ERROR;
                         } else {
@@ -1393,7 +1393,6 @@ Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression, 
 {
     int err;
     herr_t herr;
-    char obj_name[64];
     H5G_info_t group_info;
 
     group_info.nlinks = 0;
@@ -1401,6 +1400,7 @@ Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression, 
     if ( herr < 0 ) {
         err = MATIO_E_BAD_ARGUMENT;
     } else {
+        char obj_name[64];
         sprintf(obj_name, "%llu", (unsigned long long)group_info.nlinks);
         if ( NULL != matvar )
             matvar->compression = compression;
@@ -1656,7 +1656,7 @@ Mat_VarWriteChar73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims)
             h5type = H5T_NATIVE_UINT16;
             u16 = (mat_uint16_t *)calloc(nelems, sizeof(mat_uint16_t));
             if ( u16 != NULL ) {
-                mat_uint8_t *data = (mat_uint8_t *)matvar->data;
+                const mat_uint8_t *data = (const mat_uint8_t *)matvar->data;
                 size_t i, j = 0;
                 for ( i = 0; i < matvar->nbytes; i++ ) {
                     const mat_uint8_t c = data[i];
@@ -2965,7 +2965,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
  * @endif
  */
 int
-Mat_VarReadData73(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stride, int *edge)
+Mat_VarReadData73(mat_t *mat, matvar_t *matvar, void *data, const int *start, const int *stride,
+                  const int *edge)
 {
     int err = MATIO_E_NO_ERROR, k;
     hid_t fid, dset_id, ref_id, dset_space, mem_space;

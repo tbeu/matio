@@ -496,7 +496,7 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
  */
 int
 ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_types data_type,
-              int rank, size_t *dims, int *start, int *stride, int *edge)
+              int rank, const size_t *dims, const int *start, const int *stride, const int *edge)
 {
     int nBytes = 0, i, j, N, I = 0;
     int inc[10] =
@@ -676,8 +676,8 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
  */
 int
 ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes class_type,
-                        enum matio_types data_type, int rank, size_t *dims, int *start, int *stride,
-                        int *edge)
+                        enum matio_types data_type, int rank, const size_t *dims, const int *start,
+                        const int *stride, const int *edge)
 {
     int nBytes = 0, i, j, N, I = 0, err;
     int inc[10] =
@@ -927,7 +927,7 @@ ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
  */
 int
 ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type, enum matio_types data_type,
-              size_t *dims, int *start, int *stride, int *edge)
+              const size_t *dims, const int *start, const int *stride, const int *edge)
 {
     int nBytes = 0, data_size, i, j;
     long pos, row_stride, col_stride, pos2;
@@ -1162,8 +1162,8 @@ ReadCompressedDataSlab1(mat_t *mat, z_streamp z, void *data, enum matio_classes 
  */
 int
 ReadCompressedDataSlab2(mat_t *mat, z_streamp z, void *data, enum matio_classes class_type,
-                        enum matio_types data_type, size_t *dims, int *start, int *stride,
-                        int *edge)
+                        enum matio_types data_type, const size_t *dims, const int *start,
+                        const int *stride, const int *edge)
 {
     int nBytes = 0, i, j, err;
     int pos, row_stride, col_stride;

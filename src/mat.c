@@ -117,7 +117,7 @@ ReadData(mat_t *mat, matvar_t *matvar)
 }
 
 static void
-Mat_PrintNumber(enum matio_types type, void *data)
+Mat_PrintNumber(enum matio_types type, const void *data)
 {
     switch ( type ) {
         case MAT_T_DOUBLE:
@@ -722,7 +722,7 @@ Mat_Close(mat_t *mat)
  * @return MAT file access mode
  */
 enum mat_acc
-Mat_GetFileAccessMode(mat_t *mat)
+Mat_GetFileAccessMode(const mat_t *mat)
 {
     enum mat_acc mode = MAT_ACC_RDONLY;
     if ( NULL != mat && (mat->mode & 0x01) == MAT_ACC_RDWR )
@@ -738,7 +738,7 @@ Mat_GetFileAccessMode(mat_t *mat)
  * @return MAT filename
  */
 const char *
-Mat_GetFilename(mat_t *mat)
+Mat_GetFilename(const mat_t *mat)
 {
     const char *filename = NULL;
     if ( NULL != mat )
@@ -754,7 +754,7 @@ Mat_GetFilename(mat_t *mat)
  * @return MAT header
  */
 const char *
-Mat_GetHeader(mat_t *mat)
+Mat_GetHeader(const mat_t *mat)
 {
     const char *header = NULL;
     if ( NULL != mat )
@@ -770,7 +770,7 @@ Mat_GetHeader(mat_t *mat)
  * @return MAT file version
  */
 enum mat_ft
-Mat_GetVersion(mat_t *mat)
+Mat_GetVersion(const mat_t *mat)
 {
     enum mat_ft file_type = MAT_FT_UNDEFINED;
     if ( NULL != mat )
@@ -1043,7 +1043,7 @@ Mat_VarCalloc(void)
  */
 matvar_t *
 Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types data_type, int rank,
-              size_t *dims, void *data, int opt)
+              const size_t *dims, const void *data, int opt)
 {
     size_t nelems = 1, data_size;
     matvar_t *matvar = NULL;
@@ -1180,7 +1180,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         if ( MAT_C_CELL == matvar->class_type && nelems > 0 )
             matvar->data = calloc(nelems, sizeof(matvar_t *));
     } else if ( opt & MAT_F_DONT_COPY_DATA ) {
-        matvar->data = data;
+        matvar->data = (void *)data;
         matvar->mem_conserve = 1;
     } else if ( MAT_C_SPARSE == matvar->class_type ) {
         mat_sparse_t *sparse_data;
@@ -1639,7 +1639,8 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                 out_sparse->data = malloc(sizeof(mat_complex_split_t));
                 if ( out_sparse->data != NULL ) {
                     mat_complex_split_t *out_data = (mat_complex_split_t *)out_sparse->data;
-                    mat_complex_split_t *in_data = (mat_complex_split_t *)in_sparse->data;
+                    const mat_complex_split_t *in_data =
+                        (const mat_complex_split_t *)in_sparse->data;
                     out_data->Re = malloc(in_sparse->ndata * Mat_SizeOf(in->data_type));
                     if ( NULL != out_data->Re )
                         memcpy(out_data->Re, in_data->Re,
@@ -1663,7 +1664,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
             out->data = malloc(sizeof(mat_complex_split_t));
             if ( out->data != NULL ) {
                 mat_complex_split_t *out_data = (mat_complex_split_t *)out->data;
-                mat_complex_split_t *in_data = (mat_complex_split_t *)in->data;
+                const mat_complex_split_t *in_data = (const mat_complex_split_t *)in->data;
                 out_data->Re = malloc(out->nbytes);
                 if ( NULL != out_data->Re )
                     memcpy(out_data->Re, in_data->Re, out->nbytes);
@@ -1857,7 +1858,7 @@ Mat_VarFree(matvar_t *matvar)
  * @return Single (linear) subscript
  */
 int
-Mat_CalcSingleSubscript(int rank, int *dims, int *subs)
+Mat_CalcSingleSubscript(int rank, const int *dims, const int *subs)
 {
     int index = 0, i, j, err = MATIO_E_NO_ERROR;
 
@@ -1900,7 +1901,7 @@ Mat_CalcSingleSubscript(int rank, int *dims, int *subs)
  * @retval 0 on success
  */
 int
-Mat_CalcSingleSubscript2(int rank, size_t *dims, size_t *subs, size_t *index)
+Mat_CalcSingleSubscript2(int rank, const size_t *dims, const size_t *subs, size_t *index)
 {
     int i, err = MATIO_E_NO_ERROR;
 
@@ -1943,7 +1944,7 @@ Mat_CalcSingleSubscript2(int rank, size_t *dims, size_t *subs, size_t *index)
  * @return Array of dimension subscripts
  */
 int *
-Mat_CalcSubscripts(int rank, int *dims, int index)
+Mat_CalcSubscripts(int rank, const int *dims, int index)
 {
     int i, j, *subs;
     double l;
@@ -1985,7 +1986,7 @@ Mat_CalcSubscripts(int rank, int *dims, int index)
  * @return Array of dimension subscripts
  */
 size_t *
-Mat_CalcSubscripts2(int rank, size_t *dims, size_t index)
+Mat_CalcSubscripts2(int rank, const size_t *dims, size_t index)
 {
     int i;
     size_t *subs;
@@ -2017,7 +2018,7 @@ Mat_CalcSubscripts2(int rank, size_t *dims, size_t index)
  * @returns size of the variable in bytes, or 0 on error
  */
 size_t
-Mat_VarGetSize(matvar_t *matvar)
+Mat_VarGetSize(const matvar_t *matvar)
 {
     int err;
     size_t i;
@@ -2084,7 +2085,7 @@ Mat_VarGetSize(matvar_t *matvar)
             }
         }
     } else if ( matvar->class_type == MAT_C_SPARSE ) {
-        mat_sparse_t *sparse = (mat_sparse_t *)matvar->data;
+        const mat_sparse_t *sparse = (const mat_sparse_t *)matvar->data;
         if ( NULL != sparse ) {
             size_t sparse_size = 0;
             err = Mul(&bytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
@@ -2142,7 +2143,7 @@ Mat_VarGetSize(matvar_t *matvar)
  * @param printdata set to 1 if the Variables data should be printed, else 0
  */
 void
-Mat_VarPrint(matvar_t *matvar, int printdata)
+Mat_VarPrint(const matvar_t *matvar, int printdata)
 {
     size_t nelems = 0, i, j;
     const char *class_type_desc[18] = {"Undefined",
@@ -2283,8 +2284,8 @@ Mat_VarPrint(matvar_t *matvar, int printdata)
                 size_t stride = Mat_SizeOf(matvar->data_type);
                 if ( matvar->isComplex ) {
                     mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
-                    char *rp = (char *)complex_data->Re;
-                    char *ip = (char *)complex_data->Im;
+                    const char *rp = (const char *)complex_data->Re;
+                    const char *ip = (const char *)complex_data->Im;
                     for ( i = 0; i < matvar->dims[0] && i < 15; i++ ) {
                         for ( j = 0; j < matvar->dims[1] && j < 15; j++ ) {
                             size_t idx = matvar->dims[0] * j + i;
@@ -2300,7 +2301,7 @@ Mat_VarPrint(matvar_t *matvar, int printdata)
                     if ( i < matvar->dims[0] )
                         printf(".\n.\n.\n");
                 } else {
-                    char *data = (char *)matvar->data;
+                    const char *data = (const char *)matvar->data;
                     for ( i = 0; i < matvar->dims[0] && i < 15; i++ ) {
                         for ( j = 0; j < matvar->dims[1] && j < 15; j++ ) {
                             size_t idx = matvar->dims[0] * j + i;
@@ -2417,8 +2418,8 @@ Mat_VarPrint(matvar_t *matvar, int printdata)
                 sparse = (mat_sparse_t *)matvar->data;
                 if ( matvar->isComplex ) {
                     mat_complex_split_t *complex_data = (mat_complex_split_t *)sparse->data;
-                    char *re = (char *)complex_data->Re;
-                    char *im = (char *)complex_data->Im;
+                    const char *re = (const char *)complex_data->Re;
+                    const char *im = (const char *)complex_data->Im;
                     for ( i = 0; i < (size_t)sparse->njc - 1; i++ ) {
                         for ( j = sparse->jc[i];
                               j < (size_t)sparse->jc[i + 1] && j < (size_t)sparse->ndata; j++ ) {
@@ -2430,7 +2431,7 @@ Mat_VarPrint(matvar_t *matvar, int printdata)
                         }
                     }
                 } else {
-                    char *data = (char *)sparse->data;
+                    const char *data = (const char *)sparse->data;
                     for ( i = 0; i < (size_t)sparse->njc - 1; i++ ) {
                         for ( j = sparse->jc[i];
                               j < (size_t)sparse->jc[i + 1] && j < (size_t)sparse->ndata; j++ ) {
@@ -2864,7 +2865,8 @@ Mat_VarWriteInfo(mat_t *mat, matvar_t *matvar)
  * @see Mat_VarWrite/Mat_VarWriteAppend
  */
 int
-Mat_VarWriteData(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stride, int *edge)
+Mat_VarWriteData(mat_t *mat, matvar_t *matvar, void *data, const int *start, const int *stride,
+                 const int *edge)
 {
     Mat_Critical(
         "Mat_VarWriteInfo/Mat_VarWriteData is not supported. "

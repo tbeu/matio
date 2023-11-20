@@ -45,7 +45,7 @@
 #define va_copy(d, s) memcpy(&(d), &(s), sizeof(va_list))
 #endif
 
-static void (*logfunc)(int log_level, char *message) = NULL;
+static void (*logfunc)(int log_level, const char *message) = NULL;
 static const char *progname = NULL;
 static char *strdup_vprintf(const char *format, va_list ap) MATIO_FORMATATTR_VPRINTF;
 
@@ -122,7 +122,7 @@ utf82u(const char *src)
  * @param message logging message
  */
 static void
-mat_logfunc(int log_level, char *message)
+mat_logfunc(int log_level, const char *message)
 {
     if ( progname ) {
         if ( log_level & MATIO_LOG_LEVEL_CRITICAL ) {
@@ -463,7 +463,7 @@ Mat_LogInit(const char *prog_name)
  * @return 0 on success
  */
 int
-Mat_LogInitFunc(const char *prog_name, void (*log_func)(int log_level, char *message))
+Mat_LogInitFunc(const char *prog_name, void (*log_func)(int log_level, const char *message))
 {
     logfunc = log_func;
     progname = prog_name;

@@ -279,7 +279,8 @@ EXTERN MATIO_NORETURN void Mat_Error(const char *format,
 EXTERN MATIO_NORETURN void Mat_Help(const char *helpstr[]);
 EXTERN int Mat_LogInit(const char *prog_name);
 EXTERN int Mat_LogClose(void);
-EXTERN int Mat_LogInitFunc(const char *prog_name, void (*log_func)(int log_level, char *message));
+EXTERN int Mat_LogInitFunc(const char *prog_name,
+                           void (*log_func)(int log_level, const char *message));
 EXTERN int Mat_Message(const char *format, ...) MATIO_FORMATATTR_PRINTF1;
 EXTERN int Mat_DebugMessage(int level, const char *format, ...) MATIO_FORMATATTR_PRINTF2;
 EXTERN int Mat_VerbMessage(int level, const char *format, ...) MATIO_FORMATATTR_PRINTF2;
@@ -293,39 +294,42 @@ EXTERN size_t Mat_SizeOfClass(int class_type);
 EXTERN mat_t *Mat_CreateVer(const char *matname, const char *hdr_str, enum mat_ft mat_file_ver);
 EXTERN int Mat_Close(mat_t *mat);
 EXTERN mat_t *Mat_Open(const char *matname, int mode);
-EXTERN enum mat_acc Mat_GetFileAccessMode(mat_t *mat);
-EXTERN const char *Mat_GetFilename(mat_t *mat);
-EXTERN const char *Mat_GetHeader(mat_t *mat);
-EXTERN enum mat_ft Mat_GetVersion(mat_t *mat);
+EXTERN enum mat_acc Mat_GetFileAccessMode(const mat_t *mat);
+EXTERN const char *Mat_GetFilename(const mat_t *mat);
+EXTERN const char *Mat_GetHeader(const mat_t *mat);
+EXTERN enum mat_ft Mat_GetVersion(const mat_t *mat);
 EXTERN char **Mat_GetDir(mat_t *mat, size_t *n);
 EXTERN int Mat_Rewind(mat_t *mat);
 
 /* MAT variable functions */
 EXTERN matvar_t *Mat_VarCalloc(void);
 EXTERN matvar_t *Mat_VarCreate(const char *name, enum matio_classes class_type,
-                               enum matio_types data_type, int rank, size_t *dims, void *data,
-                               int opt);
-EXTERN matvar_t *Mat_VarCreateStruct(const char *name, int rank, size_t *dims, const char **fields,
-                                     unsigned nfields);
+                               enum matio_types data_type, int rank, const size_t *dims,
+                               const void *data, int opt);
+EXTERN matvar_t *Mat_VarCreateStruct(const char *name, int rank, const size_t *dims,
+                                     const char **fields, unsigned nfields);
 EXTERN int Mat_VarDelete(mat_t *mat, const char *name);
 EXTERN matvar_t *Mat_VarDuplicate(const matvar_t *in, int opt);
 EXTERN void Mat_VarFree(matvar_t *matvar);
-EXTERN matvar_t *Mat_VarGetCell(matvar_t *matvar, int index);
-EXTERN matvar_t **Mat_VarGetCells(matvar_t *matvar, int *start, int *stride, int *edge);
-EXTERN matvar_t **Mat_VarGetCellsLinear(matvar_t *matvar, int start, int stride, int edge);
-EXTERN size_t Mat_VarGetSize(matvar_t *matvar);
-EXTERN unsigned Mat_VarGetNumberOfFields(matvar_t *matvar);
+EXTERN matvar_t *Mat_VarGetCell(const matvar_t *matvar, int index);
+EXTERN matvar_t **Mat_VarGetCells(const matvar_t *matvar, const int *start, const int *stride,
+                                  const int *edge);
+EXTERN matvar_t **Mat_VarGetCellsLinear(const matvar_t *matvar, int start, int stride, int edge);
+EXTERN size_t Mat_VarGetSize(const matvar_t *matvar);
+EXTERN unsigned Mat_VarGetNumberOfFields(const matvar_t *matvar);
 EXTERN int Mat_VarAddStructField(matvar_t *matvar, const char *fieldname);
 EXTERN char *const *Mat_VarGetStructFieldnames(const matvar_t *matvar);
-EXTERN matvar_t *Mat_VarGetStructFieldByIndex(matvar_t *matvar, size_t field_index, size_t index);
-EXTERN matvar_t *Mat_VarGetStructFieldByName(matvar_t *matvar, const char *field_name,
+EXTERN matvar_t *Mat_VarGetStructFieldByIndex(const matvar_t *matvar, size_t field_index,
+                                              size_t index);
+EXTERN matvar_t *Mat_VarGetStructFieldByName(const matvar_t *matvar, const char *field_name,
                                              size_t index);
-EXTERN matvar_t *Mat_VarGetStructField(matvar_t *matvar, void *name_or_index, int opt, int index);
-EXTERN matvar_t *Mat_VarGetStructs(matvar_t *matvar, int *start, int *stride, int *edge,
-                                   int copy_fields);
-EXTERN matvar_t *Mat_VarGetStructsLinear(matvar_t *matvar, int start, int stride, int edge,
+EXTERN matvar_t *Mat_VarGetStructField(const matvar_t *matvar, void *name_or_index, int opt,
+                                       int index);
+EXTERN matvar_t *Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride,
+                                   const int *edge, int copy_fields);
+EXTERN matvar_t *Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int stride, int edge,
                                          int copy_fields);
-EXTERN void Mat_VarPrint(matvar_t *matvar, int printdata);
+EXTERN void Mat_VarPrint(const matvar_t *matvar, int printdata);
 EXTERN matvar_t *Mat_VarRead(mat_t *mat, const char *name);
 EXTERN int Mat_VarReadData(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stride,
                            int *edge);
@@ -347,13 +351,14 @@ EXTERN int Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression com
 EXTERN int Mat_VarWriteAppend(mat_t *mat, matvar_t *matvar, enum matio_compression compress,
                               int dim);
 EXTERN int Mat_VarWriteInfo(mat_t *mat, matvar_t *matvar);
-EXTERN int Mat_VarWriteData(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stride,
-                            int *edge);
+EXTERN int Mat_VarWriteData(mat_t *mat, matvar_t *matvar, void *data, const int *start,
+                            const int *stride, const int *edge);
 
 /* Other functions */
-EXTERN int Mat_CalcSingleSubscript(int rank, int *dims, int *subs);
-EXTERN int Mat_CalcSingleSubscript2(int rank, size_t *dims, size_t *subs, size_t *index);
-EXTERN int *Mat_CalcSubscripts(int rank, int *dims, int index);
-EXTERN size_t *Mat_CalcSubscripts2(int rank, size_t *dims, size_t index);
+EXTERN int Mat_CalcSingleSubscript(int rank, const int *dims, const int *subs);
+EXTERN int Mat_CalcSingleSubscript2(int rank, const size_t *dims, const size_t *subs,
+                                    size_t *index);
+EXTERN int *Mat_CalcSubscripts(int rank, const int *dims, int index);
+EXTERN size_t *Mat_CalcSubscripts2(int rank, const size_t *dims, size_t index);
 
 #endif
