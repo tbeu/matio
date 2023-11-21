@@ -35,6 +35,11 @@ set(MATIO_SOURCES
     ${PROJECT_BINARY_DIR}/src/matioConfig.h
 )
 
+if(MSVC)
+    set(MATIO_RESOURCE_FILE ${PROJECT_SOURCE_DIR}/visual_studio/matio.rc)
+    set_source_files_properties(${MATIO_RESOURCE_FILE} PROPERTIES LANGUAGE RC)
+endif()
+
 if(STDINT_MSVC)
     set(MATIO_SOURCES ${MATIO_SOURCES} ${PROJECT_SOURCE_DIR}/visual_studio/stdint_msvc.h)
 endif()
@@ -53,7 +58,11 @@ if(USE_GNU_LINK_FLAGS OR USE_LLVM_MACOS_LINK_FLAGS)
 endif()
 
 if(MATIO_SHARED)
-    add_library(${PROJECT_NAME} SHARED ${MATIO_SOURCES})
+    if(MSVC)
+        add_library(${PROJECT_NAME} SHARED ${MATIO_SOURCES} ${MATIO_RESOURCE_FILE})
+    else()
+        add_library(${PROJECT_NAME} SHARED ${MATIO_SOURCES})
+    endif()
 else()
     add_library(${PROJECT_NAME} STATIC ${MATIO_SOURCES})
 endif()
