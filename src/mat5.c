@@ -81,7 +81,7 @@ static int ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type
 static int WriteType(mat_t *mat, matvar_t *matvar);
 static int WriteCellArrayField(mat_t *mat, matvar_t *matvar);
 static int WriteStructField(mat_t *mat, matvar_t *matvar);
-static int WriteData(mat_t *mat, void *data, size_t N, enum matio_types data_type);
+static int WriteData(mat_t *mat, const void *data, size_t N, enum matio_types data_type);
 static size_t Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, const size_t *dims);
 static int Mat_VarReadNumeric5(mat_t *mat, matvar_t *matvar, void *data, size_t N);
 #if HAVE_ZLIB
