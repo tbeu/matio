@@ -158,7 +158,7 @@ enum matio_compression
  * @ingroup MAT
  * matio lookup type
  */
-enum
+enum matio_lookup
 {
     MAT_BY_NAME = 1, /**< Lookup by name */
     MAT_BY_INDEX = 2 /**< Lookup by index */
