@@ -538,8 +538,12 @@ print_whos(matvar_t *matvar)
         int cnt = 0;
         printf("%8" SIZE_T_FMTSTR, matvar->dims[0]);
         for ( i = 1; i < matvar->rank; i++ ) {
-            if ( ceil(log10((double)matvar->dims[i])) + 1 < 32 )
-                cnt += sprintf(size + cnt, "x%" SIZE_T_FMTSTR, matvar->dims[i]);
+            if ( ceil(log10((double)matvar->dims[i])) + 1 < 32 ) {
+                cnt += snprintf(size + cnt, sizeof(size) - cnt, "x%" SIZE_T_FMTSTR, matvar->dims[i]);
+                if (cnt >= sizeof(size)) {
+                    break;
+                }
+            }
         }
         printf("%-10s", size);
     } else {

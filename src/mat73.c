@@ -1401,11 +1401,11 @@ Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression, 
         err = MATIO_E_BAD_ARGUMENT;
     } else {
         char obj_name[64];
-        sprintf(obj_name, "%llu", (unsigned long long)group_info.nlinks);
+        snprintf(obj_name, sizeof(obj_name), "%llu", (unsigned long long)group_info.nlinks);
         if ( NULL != matvar )
             matvar->compression = compression;
         err = Mat_VarWriteNext73(*refs_id, matvar, obj_name, refs_id);
-        sprintf(obj_name, "/#refs#/%llu", (unsigned long long)group_info.nlinks);
+        snprintf(obj_name, sizeof(obj_name), "/#refs#/%llu", (unsigned long long)group_info.nlinks);
         H5Rcreate(ref, id, obj_name, H5R_OBJECT, -1);
     }
     return err;
