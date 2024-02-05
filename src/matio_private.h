@@ -41,18 +41,19 @@
 #endif
 
 #if defined(__BORLANDC__) || defined(__MINGW32__) || defined(_MSC_VER)
-#define mat_off_t __int64
 #if defined(_MSC_VER) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
 #define MATIO_LFS
+#define mat_off_t __int64
 #define fseeko _fseeki64
 #define ftello _ftelli64
 #elif defined(__BORLANDC__) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
 #define MATIO_LFS
+#define mat_off_t __int64
 #define fseeko _fseeki64
 #define ftello _ftelli64
-#elif !defined(HAVE_FSEEKO) && !defined(HAVE_FTELLO) && defined(HAVE_FSEEKO64) && \
-    defined(HAVE_FTELLO64)
+#elif defined(HAVE_FSEEKO64) && defined(HAVE_FTELLO64)
 #define MATIO_LFS
+#define mat_off_t __int64
 #define fseeko fseeko64
 #define ftello ftello64
 #endif
