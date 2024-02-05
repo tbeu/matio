@@ -635,7 +635,7 @@ Mat_Create5(const char *matname, const char *hdr_str)
     size_t err;
     time_t t;
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
     wchar_t *wname = utf82u(matname);
     if ( NULL != wname ) {
         fp = _wfopen(wname, L"w+b");

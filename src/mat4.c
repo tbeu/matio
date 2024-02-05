@@ -59,7 +59,7 @@ Mat_Create4(const char *matname)
     FILE *fp = NULL;
     mat_t *mat = NULL;
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
     wchar_t *wname = utf82u(matname);
     if ( NULL != wname ) {
         fp = _wfopen(wname, L"w+b");
