@@ -45,7 +45,7 @@
     <ClCompile Include="..\..\src\read_data.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\snprintf.c">
+    <ClCompile Include="..\..\snprintf\snprintf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

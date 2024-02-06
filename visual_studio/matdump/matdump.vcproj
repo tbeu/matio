@@ -340,6 +340,10 @@
 				RelativePath="..\..\tools\matdump.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\snprintf\snprintf.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

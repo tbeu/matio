@@ -21,6 +21,9 @@
     <ClCompile Include="..\..\tools\matdump.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\snprintf\snprintf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\getopt\getopt.h">

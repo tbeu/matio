@@ -383,7 +383,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\snprintf.c"
+				RelativePath="..\..\snprintf\snprintf.c"
 				>
 			</File>
 		</Filter>

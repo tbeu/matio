@@ -308,6 +308,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\getopt\getopt_long.c" />
     <ClCompile Include="..\..\tools\matdump.c" />
+    <ClCompile Include="..\..\snprintf\snprintf.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\getopt\getopt.h" />

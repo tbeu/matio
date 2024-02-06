@@ -385,6 +385,7 @@ AC_SUBST([AUTOTEST], ['$(AUTOM4TE) --language=Autotest'])
 
 AC_CONFIG_FILES([Makefile \
                  matio.pc \
+                 snprintf/Makefile \
                  src/Makefile \
                  getopt/Makefile \
                  tools/Makefile \
