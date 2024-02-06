@@ -70,10 +70,10 @@ pkgconfig_DATA = matio.pc
 $(pkgconfig_DATA): config.status
 
 if NEED_GETOPT
-GETOPT=getopt
+    GETOPT = getopt
 endif
 
-SUBDIRS = src $(GETOPT) tools test documentation
+SUBDIRS = snprintf src $(GETOPT) tools test documentation
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \

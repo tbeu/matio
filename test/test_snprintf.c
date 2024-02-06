@@ -1,8 +1,8 @@
+#include "matioConfig.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "snprintf.c"
 
 #if !HAVE_SNPRINTF
 int rpl_snprintf(char *, size_t, const char *, ...);

@@ -25,6 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "matioConfig.h"
 #include "matio.h"
 #include <getopt.h>
 #include <stdlib.h>
@@ -37,6 +38,14 @@
 #else
 #define SIZE_T_FMTSTR "zu"
 #endif
+
+/* snprintf.c */
+#if !HAVE_SNPRINTF
+int rpl_snprintf(char *, size_t, const char *, ...);
+#define mat_snprintf rpl_snprintf
+#else
+#define mat_snprintf snprintf
+#endif /* !HAVE_SNPRINTF */
 
 static const char *optstring = "df:hvHV";
 static struct option options[] = {{"data", no_argument, NULL, 'd'},
@@ -539,7 +548,7 @@ print_whos(matvar_t *matvar)
         printf("%8" SIZE_T_FMTSTR, matvar->dims[0]);
         for ( i = 1; i < matvar->rank; i++ ) {
             if ( ceil(log10((double)matvar->dims[i])) + 1 < 32 ) {
-                cnt += snprintf(size + cnt, sizeof(size) - cnt, "x%" SIZE_T_FMTSTR, matvar->dims[i]);
+                cnt += mat_snprintf(size + cnt, sizeof(size) - cnt, "x%" SIZE_T_FMTSTR, matvar->dims[i]);
                 if (cnt >= sizeof(size)) {
                     break;
                 }

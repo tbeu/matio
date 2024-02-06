@@ -405,27 +405,27 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/write_struct_complex_2d_numeric-uint32.out \
                  $(results_dir)/write_struct_complex_2d_numeric-uint64.out
 if MAT73
-MAT73 = 1
+    MAT73 = 1
 else
-MAT73 = 0
+    MAT73 = 0
 endif
 
 if HAVE_ZLIB
-COMPRESSION_ZLIB = 1
+    COMPRESSION_ZLIB = 1
 else
-COMPRESSION_ZLIB = 0
+    COMPRESSION_ZLIB = 0
 endif
 
 if EXTENDED_SPARSE
-EXTENDED_SPARSE = 1
+    EXTENDED_SPARSE = 1
 else
-EXTENDED_SPARSE = 0
+    EXTENDED_SPARSE = 0
 endif
 
 if IS_WIN32
-IS_WIN32 = 1
+    IS_WIN32 = 1
 else
-IS_WIN32 = 0
+    IS_WIN32 = 0
 endif
 
 CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
@@ -439,9 +439,11 @@ EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4 \
              $(TEST_DATAFILES)
 
 if NEED_GETOPT
-GETOPT_CFLAGS = -I$(top_builddir)/getopt
-GETOPT_LIBS   = $(top_builddir)/getopt/libgetopt.la
+    GETOPT_CFLAGS = -I$(top_builddir)/getopt
+    GETOPT_LIBS   = $(top_builddir)/getopt/libgetopt.la
 endif
+
+SNPRINTF_LIBS = $(top_builddir)/snprintf/libsnprintf.la
 
 AM_CFLAGS   = -I$(top_srcdir)/src $(GETOPT_CFLAGS) $(HDF5_CFLAGS) $(ZLIB_CFLAGS)
 AM_LDFLAGS  = $(FCLDFLAGS)
@@ -455,6 +457,8 @@ test_mat_LDADD   = $(TEST_LIBS)
 test_mat_LDFLAGS = $(TEST_LFLAGS)
 
 test_snprintf_SOURCES = test_snprintf.c
+test_snprintf_LDADD   = $(SNPRINTF_LIBS)
+test_snprintf_LDFLAGS = -L$(top_builddir)/snprintf
 
 atconfig: $(top_builddir)/config.status
 	cd $(top_builddir) && ./config.status tests/$@
