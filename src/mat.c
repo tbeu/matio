@@ -483,7 +483,7 @@ Mat_Open(const char *matname, int mode)
     size_t bytesread = 0;
 
     if ( (mode & 0x01) == MAT_ACC_RDONLY ) {
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
         wchar_t *wname = utf82u(matname);
         if ( NULL != wname ) {
             fp = _wfopen(wname, L"rb");
@@ -497,7 +497,7 @@ Mat_Open(const char *matname, int mode)
             return NULL;
         }
     } else if ( (mode & 0x01) == MAT_ACC_RDWR ) {
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
         wchar_t *wname = utf82u(matname);
         if ( NULL != wname ) {
             fp = _wfopen(wname, L"r+b");
@@ -1262,7 +1262,7 @@ Mat_CopyFile(const char *src, const char *dst)
     FILE *in = NULL;
     FILE *out = NULL;
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
     {
         wchar_t *wname = utf82u(src);
         if ( NULL != wname ) {
@@ -1278,7 +1278,7 @@ Mat_CopyFile(const char *src, const char *dst)
         return MATIO_E_FILESYSTEM_COULD_NOT_OPEN;
     }
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
     {
         wchar_t *wname = utf82u(dst);
         if ( NULL != wname ) {

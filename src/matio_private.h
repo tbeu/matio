@@ -267,7 +267,7 @@ EXTERN int IsEndOfFile(FILE *fp, mat_off_t *fpos);
 EXTERN int CheckSeekFile(FILE *fp, mat_off_t offset);
 
 /* io.c */
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
 EXTERN wchar_t *utf82u(const char *src);
 #endif
 

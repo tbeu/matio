@@ -29,7 +29,7 @@
  */
 
 #include "matio_private.h"
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #define NOGDI
 #include <Windows.h>
@@ -75,7 +75,7 @@ strdup_vprintf(const char *format, va_list ap)
     return buffer;
 }
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
 /** @brief Convert from narrow UTF-8 string to wide string
  *
  * @ingroup mat_util
