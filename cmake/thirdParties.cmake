@@ -13,9 +13,18 @@ if(MATIO_WITH_HDF5)
 
     if(MATIO_USE_CONAN)
         if(HDF5_USE_STATIC_LIBRARIES)
-            conan_cmake_run(REQUIRES "hdf5/[>=1.8 <1.15]" "zlib/[>=1.2.3]" BASIC_SETUP CMAKE_TARGETS OPTIONS hdf5:shared=False zlib:shared=False BUILD missing)
+            conan_cmake_run(
+                REQUIRES "hdf5/[>=1.8 <1.15]" "zlib/[>=1.2.3]"
+                BASIC_SETUP CMAKE_TARGETS
+                OPTIONS hdf5:shared=False zlib:shared=False
+                BUILD missing
+            )
         else()
-            conan_cmake_run(REQUIRES "hdf5/[>=1.8 <1.15]" "zlib/[>=1.2.3]" BASIC_SETUP CMAKE_TARGETS OPTIONS hdf5:shared=True zlib:shared=True BUILD missing)
+            conan_cmake_run(
+                REQUIRES "hdf5/[>=1.8 <1.15]" "zlib/[>=1.2.3]"
+                BASIC_SETUP CMAKE_TARGETS
+                OPTIONS hdf5:shared=True zlib:shared=True
+                BUILD missing)
         endif()
         set(HDF5_FOUND TRUE)
     else()
@@ -23,7 +32,10 @@ if(MATIO_WITH_HDF5)
         if(HDF5_FOUND)
             set(HDF_MIN_VER 1.8)
             if(HDF5_VERSION VERSION_LESS ${HDF_MIN_VER})
-                message(FATAL_ERROR "Could NOT find HDF5: Found unsuitable version ${HDF5_VERSION}, but required is at least ${HDF_MIN_VER} (found ${HDF5_LIBRARIES})")
+                message(FATAL_ERROR
+                    "Could NOT find HDF5: Found unsuitable version ${HDF5_VERSION}, "
+                    "but required is at least ${HDF_MIN_VER} (found ${HDF5_LIBRARIES})."
+                )
             endif()
         endif()
     endif()

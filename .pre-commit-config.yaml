@@ -15,3 +15,17 @@ repos:
     files: ^src\/.+\.[ch]$
   - id: fix-byte-order-marker
     files: ^src\/.+\.[ch]$
+
+- repo: https://github.com/cheshirekow/cmake-format-precommit
+  rev: v0.6.10
+  hooks:
+  - id: cmake-format
+    args:
+    - --line-width=120
+    - --tab-size=4
+    exclude: cmake/conan.cmake
+  - id: cmake-lint
+    args:
+    - --linelength=120
+    - --spaces=4
+    exclude: cmake/conan.cmake

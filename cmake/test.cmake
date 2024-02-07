@@ -5,7 +5,10 @@ if(NOT HAVE_GETOPT)
 endif()
 
 if(NOT HAVE_SNPRINTF OR UNIX)
-    add_executable(test_snprintf ${PROJECT_SOURCE_DIR}/test/test_snprintf.c ${PROJECT_SOURCE_DIR}/snprintf/snprintf.c)
+    add_executable(test_snprintf
+        ${PROJECT_SOURCE_DIR}/test/test_snprintf.c
+        ${PROJECT_SOURCE_DIR}/snprintf/snprintf.c
+    )
     if(HAVE_LIBM)
         target_link_libraries(test_snprintf m)
     endif()

@@ -88,11 +88,14 @@ check_c_source_compiles("${TEST_CODE_THOUSANDS_SEP}" HAVE_STRUCT_LCONV_THOUSANDS
 
 set(USE_GNU_LINK_FLAGS 0)
 set(USE_LLVM_MACOS_LINK_FLAGS 0)
-if (NOT MSVC)
+if(NOT MSVC)
     if(${CMAKE_VERSION} VERSION_GREATER "3.17")
         include(CheckLinkerFlag)
         check_linker_flag(C "-Wl,--no-undefined" HAVE_LINK_NO_UNDEFINED)
-        check_linker_flag(C "-Wl,--retain-symbols-file,${PROJECT_SOURCE_DIR}/src/matio.sym" HAVE_LINK_RETAIN_SYMBOLS_FILE)
+        check_linker_flag(
+            C "-Wl,--retain-symbols-file,${PROJECT_SOURCE_DIR}/src/matio.sym"
+            HAVE_LINK_RETAIN_SYMBOLS_FILE
+        )
         check_linker_flag(C "-Wl,-undefined,error" HAVE_LINK_UNDEFINED_ERROR)
 
         if(HAVE_LINK_NO_UNDEFINED AND HAVE_LINK_RETAIN_SYMBOLS_FILE)

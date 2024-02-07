@@ -3,7 +3,7 @@ if(NOT HAVE_GETOPT)
         ${PROJECT_SOURCE_DIR}/getopt/getopt_long.c
         ${PROJECT_SOURCE_DIR}/getopt/getopt.h
     )
-    add_library(getopt STATIC ${getopt_SOURCES} )
+    add_library(getopt STATIC ${getopt_SOURCES})
     target_include_directories(getopt PUBLIC ${PROJECT_SOURCE_DIR}/getopt)
 
     # FIXME this should be fixed in the sourcecode
