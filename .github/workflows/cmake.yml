@@ -1,0 +1,88 @@
+name: "Build with CMake"
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: ${{ matrix.toolchain }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - linux-gcc
+          - macos-clang
+          - windows-msvc
+          - windows-mingw
+        configuration:
+          - Release
+        python-version:
+          - 3.11
+        include:
+          - toolchain: linux-gcc
+            os: ubuntu-latest
+            compiler: gcc
+          - toolchain: macos-clang
+            os: macos-latest
+            compiler: clang
+          - toolchain: windows-msvc
+            os: windows-latest
+            compiler: msvc
+          - toolchain: windows-mingw
+            os: windows-latest
+            compiler: mingw
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+      - name: Setup python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install python packages
+        run: |
+          if [ "${{ matrix.os }}" == "macos-latest" ]; then
+            echo "/Users/runner/Library/Python/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
+          fi
+          pip install --disable-pip-version-check --user "conan>=1.62.0,<2"
+      - name: Configure (${{ matrix.configuration }})
+        run: |
+          if [ "${{ matrix.os }}" == "macos-latest" ]; then
+            echo "/Users/runner/Library/Python/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
+          fi
+          if [ "${{ matrix.compiler }}" == "msvc" ]; then
+            cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+          elif [ "${{ matrix.compiler }}" == "mingw" ]; then
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -G "MinGW Makefiles"
+          else
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+          fi
+      - name: Build libraries with ${{ matrix.compiler }}
+        run: |
+          if [ "${{ matrix.compiler }}" == "msvc" ]; then
+            cmake --build build --config ${{ matrix.configuration }}
+          else
+            cmake --build build -- -j8
+          fi
+      - name: Test
+        run: |
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            MATDUMP="./build/Release/matdump.exe"
+          else
+            MATDUMP="./build/bin/matdump"
+          fi
+          for file in ./share/*.mat; do
+            "$MATDUMP" -d "$file" d
+            "$MATDUMP" -v "$file"
+            "$MATDUMP" -v -f whos "$file"
+          done
+          "$MATDUMP" -v -H
+          "$MATDUMP" -V
