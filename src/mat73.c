@@ -2548,7 +2548,7 @@ Mat_Create73(const char *matname, const char *hdr_str)
     H5Fclose(fid);
     H5Pclose(plist_id);
 
-#if defined(_WIN32) && H5_VERSION_GE(1, 11, 6)
+#if defined(_WIN32) && H5_VERSION_GE(1, 10, 6)
     {
         wchar_t *wname = utf82u(matname);
         if ( NULL != wname ) {
