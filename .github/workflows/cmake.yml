@@ -91,9 +91,11 @@ jobs:
     runs-on: ubuntu-latest
     name: openbsd-clang
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
       - name: Test with clang
-        id: test
         uses: vmactions/openbsd-vm@v1
         with:
           usesh: true
