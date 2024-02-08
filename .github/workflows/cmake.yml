@@ -1,4 +1,4 @@
-name: "Build with CMake"
+name: "CMake build"
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
             os: windows-latest
             compiler: mingw
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 5
@@ -65,7 +65,7 @@ jobs:
           else
             cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
           fi
-      - name: Build libraries with ${{ matrix.compiler }}
+      - name: Build with ${{ matrix.compiler }}
         run: |
           if [ "${{ matrix.compiler }}" == "msvc" ]; then
             cmake --build build --config ${{ matrix.configuration }}
