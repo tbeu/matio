@@ -86,3 +86,31 @@ jobs:
           done
           "$MATDUMP" -v -H
           "$MATDUMP" -V
+
+  build-openbsd:
+    runs-on: ubuntu-latest
+    name: openbsd-clang
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test with clang
+        id: test
+        uses: vmactions/openbsd-vm@v1
+        with:
+          usesh: true
+          copyback: false
+          prepare: |
+            set -e
+            pkg_add cmake
+          run: |
+            set -e
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF
+            cmake --build build -- -j8
+            ./build/test_snprintf
+            ./build/test_mat -H
+            ./build/test_mat -L
+            ./build/test_mat -V
+            ./build/matdump -v -H
+            ./build/matdump -V
+            ./build/matdump -d ./share/test_file.mat structure
+            ./build/matdump -v ./share/test_file.mat
+            ./build/matdump -v -f whos ./share/test_file.mat
