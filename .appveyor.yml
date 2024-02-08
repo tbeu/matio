@@ -45,6 +45,8 @@ matrix:
     - compiler: MinGW
       build_with: msbuild
     - compiler: MinGW
+      platform: x64
+    - compiler: MinGW
       build_with: cmake
     - compiler: MinGW
       configuration: Release Lib
