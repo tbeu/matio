@@ -8,18 +8,16 @@ task:
     # Use bash for the CI scripts
     pkg install -y devel/readline bash cmake autoconf automake libtool devel/pkgconf
   configure_script:
-    - mkdir matio_cmake
-    - cmake -DMATIO_WITH_HDF5:BOOL=OFF -DMATIO_MAT73:BOOL=OFF -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 -S . -B matio_cmake
-
+    - cmake -S . -B build -DMATIO_WITH_HDF5=OFF -DMATIO_MAT73=OFF -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1
   build_script:
-    - cmake --build matio_cmake -- -j8
+    - cmake --build build -- -j8
   test_script:
-    - ./matio_cmake/test_snprintf
-    - ./matio_cmake/test_mat -H
-    - ./matio_cmake/test_mat -L
-    - ./matio_cmake/test_mat -V
-    - ./matio_cmake/matdump -v -H
-    - ./matio_cmake/matdump -V
-    - ./matio_cmake/matdump -d ./share/test_file.mat structure
-    - ./matio_cmake/matdump -v ./share/test_file.mat
-    - ./matio_cmake/matdump -v -f whos ./share/test_file.mat
+    - ./build/test_snprintf
+    - ./build/test_mat -H
+    - ./build/test_mat -L
+    - ./build/test_mat -V
+    - ./build/matdump -v -H
+    - ./build/matdump -V
+    - ./build/matdump -d ./share/test_file.mat structure
+    - ./build/matdump -v ./share/test_file.mat
+    - ./build/matdump -v -f whos ./share/test_file.mat
