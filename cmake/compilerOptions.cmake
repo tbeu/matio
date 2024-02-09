@@ -88,26 +88,49 @@ check_c_source_compiles("${TEST_CODE_THOUSANDS_SEP}" HAVE_STRUCT_LCONV_THOUSANDS
 
 set(USE_GNU_LINK_FLAGS 0)
 set(USE_LLVM_MACOS_LINK_FLAGS 0)
+set(REQUIRE_EXPLICIT_LIBC_LINK 0)
 if(NOT MSVC)
-    if(${CMAKE_VERSION} VERSION_GREATER "3.17")
-        include(CheckLinkerFlag)
-        check_linker_flag(C "-Wl,--no-undefined" HAVE_LINK_NO_UNDEFINED)
-        check_linker_flag(
-            C "-Wl,--retain-symbols-file,${PROJECT_SOURCE_DIR}/src/matio.sym"
-            HAVE_LINK_RETAIN_SYMBOLS_FILE
-        )
-        check_linker_flag(C "-Wl,-undefined,error" HAVE_LINK_UNDEFINED_ERROR)
+    # OpenBSD apparently requires an explicit -lc if -Wl,--no-undefined
+    # is used, but that is NOT required on other platforms, and on even
+    # other platforms (e.g. MinGW) -lc might not even exist at all.
+    # Therefore detect if -lc works and if it is required, and omit it
+    # if it doesn't.
+    # Just running check_linker_flag() doesn't help here, because we
+    # actually need to reference a symbol from libc to cause an error.
+    # Use -shared in CMAKE_REQUIRED_LINK_OPTIONS because how symbols
+    # (esp. undefined ones) are resolved during linking can differ
+    # between shared libraries and executables.
+    set(TEST_SRC_LINK_NO_UNDEFINED "
+#include <stdlib.h>
+int main() { int* foo = (int*) malloc(sizeof(int)); free(foo); return 0; }
+")
 
-        if(HAVE_LINK_NO_UNDEFINED AND HAVE_LINK_RETAIN_SYMBOLS_FILE)
-            set(USE_GNU_LINK_FLAGS 1)
-        elseif(APPLE AND HAVE_LINK_UNDEFINED_ERROR)
-            set(USE_LLVM_MACOS_LINK_FLAGS 1)
-        endif()
-    else()
-        if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-            set(USE_LLVM_MACOS_LINK_FLAGS 1)
-        else()
-            set(USE_GNU_LINK_FLAGS 1)
-        endif()
+    set(CMAKE_REQUIRED_FLAGS "-fPIC")
+    set(CMAKE_REQUIRED_LINK_OPTIONS "-shared;-Wl,--no-undefined")
+    check_c_source_compiles("${TEST_SRC_LINK_NO_UNDEFINED}" HAVE_LINK_NO_UNDEFINED_IMPLICIT_LIBC)
+    set(CMAKE_REQUIRED_LINK_OPTIONS "-shared;-Wl,--no-undefined;-lc")
+    check_c_source_compiles("${TEST_SRC_LINK_NO_UNDEFINED}" HAVE_LINK_NO_UNDEFINED_EXPLICIT_LIBC)
+    # Reuse the same source code for other linker flag tests (This was
+    # previously guarded by CMake version >= 3.17 using
+    # check_linker_flag, but this variant should work for even older
+    # CMake versions.)
+    set(CMAKE_REQUIRED_LINK_OPTIONS "-shared;-Wl,--retain-symbols-file,${PROJECT_SOURCE_DIR}/src/matio.sym")
+    check_c_source_compiles("${TEST_SRC_LINK_NO_UNDEFINED}" HAVE_LINK_RETAIN_SYMBOLS_FILE)
+    set(CMAKE_REQUIRED_LINK_OPTIONS "-shared;-Wl,-undefined,error")
+    check_c_source_compiles("${TEST_SRC_LINK_NO_UNDEFINED}" HAVE_LINK_UNDEFINED_ERROR)
+    set(CMAKE_REQUIRED_FLAGS "")
+    set(CMAKE_REQUIRED_LINK_OPTIONS "")
+
+    if((HAVE_LINK_NO_UNDEFINED_IMPLICIT_LIBC OR HAVE_LINK_NO_UNDEFINED_EXPLICIT_LIBC) AND HAVE_LINK_RETAIN_SYMBOLS_FILE)
+        message(VERBOSE "Using GNU-style linker flags")
+        set(USE_GNU_LINK_FLAGS 1)
+    elseif(APPLE AND HAVE_LINK_UNDEFINED_ERROR)
+        message(VERBOSE "Using Apple-clang-style linker flags")
+        set(USE_LLVM_MACOS_LINK_FLAGS 1)
+    endif()
+
+    if(NOT HAVE_LINK_NO_UNDEFINED_IMPLICIT_LIBC AND HAVE_LINK_NO_UNDEFINED_EXPLICIT_LIBC)
+        message(VERBOSE "The usage of -Wl,--no-undefined requires the explicit usage of -lc on this platform.")
+        set(REQUIRE_EXPLICIT_LIBC_LINK 1)
     endif()
 endif()

@@ -68,7 +68,7 @@ if(STDINT_MSVC)
 endif()
 
 if(HAVE_LIBM)
-    target_link_libraries(${PROJECT_NAME} PUBLIC m c)
+    target_link_libraries(${PROJECT_NAME} PUBLIC m)
 endif()
 
 if(MSVC)
@@ -82,6 +82,10 @@ endif()
 
 if(ZLIB_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC MATIO::ZLIB)
+endif()
+
+if(REQUIRE_EXPLICIT_LIBC_LINK)
+    target_link_libraries(${PROJECT_NAME} PUBLIC c)
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ${MATIO_PIC})
