@@ -40,7 +40,7 @@
 #ifndef _GETOPT_H_
 #define _GETOPT_H_
 
-#if !defined(_WIN32) && !defined(_WIN64)
+#if !(defined(_WIN32) || defined(_WIN64) || defined(__SVR4) || defined(__svr4__))
 #   include <sys/cdefs.h>
 #endif
 
