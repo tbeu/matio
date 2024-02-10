@@ -17,17 +17,16 @@ option(MATIO_SHARED "Build shared matio library, disable for static library" ON)
 # Option to enable position-independent code (PIC)
 option(MATIO_PIC "Enable position-independent code (PIC), i.e., compilation with the -fPIC flag" ON)
 
-# Option to link the MSVC runtime library statically
-option(MATIO_STATIC_LINK_CRT "Link the MSVC runtime library statically" OFF)
-
 if(POLICY CMP0091)
     # CMake >= 3.15 has CMAKE_MSVC_RUNTIME_LIBRARY to set the MSVCC runtime library
-    if(WIN32 AND CMAKE_GENERATOR MATCHES "Visual Studio .*|NMake .*")
-        if(MATIO_STATIC_LINK_CRT)
-            message(STATUS "Configuring to link the MSVC runtime library statically")
+    if(MSVC)
+        # Option to link the MSVC runtime library statically
+        option(MATIO_STATIC_LINK_MSVC_RT "Link the MSVC runtime library statically" OFF)
+        if(MATIO_STATIC_LINK_MSVC_RT)
+            message(VERBOSE "Configuring to link the MSVC runtime library statically")
             set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
         else()
-            message(STATUS "Configuring to link the MSVC runtime library dynamically")
+            message(VERBOSE "Configuring to link the MSVC runtime library dynamically")
             set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
         endif()
     endif()

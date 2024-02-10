@@ -59,11 +59,11 @@ jobs:
             echo "/Users/runner/Library/Python/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
           fi
           if [ "${{ matrix.compiler }}" == "msvc" ]; then
-            cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+            cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_STATIC_LINK_MSVC_RT=ON --loglevel VERBOSE
           elif [ "${{ matrix.compiler }}" == "mingw" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -G "MinGW Makefiles"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -G "MinGW Makefiles" --loglevel VERBOSE
           else
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF --loglevel VERBOSE
           fi
       - name: Build with ${{ matrix.compiler }}
         run: |
@@ -105,7 +105,7 @@ jobs:
             pkg_add cmake
           run: |
             set -e
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF --loglevel VERBOSE
             cmake --build build -- -j8
             ./build/test_snprintf
             ./build/test_mat -H
@@ -137,7 +137,7 @@ jobs:
           run: |
             set -e
             mkdir build
-            cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF
+            cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF --loglevel VERBOSE
             cmake --build build -- -j8
             ./build/test_snprintf
             ./build/test_mat -H
