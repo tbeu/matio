@@ -44,10 +44,10 @@
 
 /** Get type from tag */
 #define TYPE_FROM_TAG(a) \
-    (((a)&0x000000ff) <= MAT_T_FUNCTION) ? (enum matio_types)((a)&0x000000ff) : MAT_T_UNKNOWN
+    (((a) & 0x000000ff) <= MAT_T_FUNCTION) ? (enum matio_types)((a) & 0x000000ff) : MAT_T_UNKNOWN
 /** Get class from array flag */
 #define CLASS_FROM_ARRAY_FLAGS(a) \
-    (((a)&0x000000ff) <= MAT_C_OPAQUE) ? ((enum matio_classes)((a)&0x000000ff)) : MAT_C_EMPTY
+    (((a) & 0x000000ff) <= MAT_C_OPAQUE) ? ((enum matio_classes)((a) & 0x000000ff)) : MAT_C_EMPTY
 /** Class type mask */
 #define CLASS_TYPE_MASK 0x000000ff
 
