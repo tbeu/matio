@@ -21,7 +21,7 @@ BEGIN
       VALUE "FileDescription",	"MATLAB MAT file I/O library\0"
       VALUE "FileVersion",	"1.5.26\0"
       VALUE "InternalName",	"libmatio.dll\0"
-      VALUE "LegalCopyright",	"(C) 2005-2023, Christopher C. Hulbert and the matio contributors\0"
+      VALUE "LegalCopyright",	"(C) 2005-2024, Christopher C. Hulbert and the matio contributors\0"
       VALUE "OriginalFilename",	"libmatio.dll\0"
       VALUE "ProductName",	"libmatio\0"
       VALUE "ProductVersion",	"1.5.26\0"

@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2023, The matio contributors
+# Copyright (c) 2015-2024, The matio contributors
 # Copyright (c) 2010-2014, Christopher C. Hulbert
 # All rights reserved.
 #
@@ -25,7 +25,7 @@
 
 AT_INIT([matio testsuite])
 
-AT_COPYRIGHT(Copyright (C) 2010-2022 Christopher C. Hulbert and the matio contributors)
+AT_COPYRIGHT(Copyright (C) 2010-2024 Christopher C. Hulbert and the matio contributors)
 
 AT_COLOR_TESTS
 

@@ -1,4 +1,4 @@
-dnl Copyright (c) 2015-2023, The matio contributors
+dnl Copyright (c) 2015-2024, The matio contributors
 dnl Copyright (c) 2005-2014, Christopher C. Hulbert
 dnl All rights reserved.
 dnl
