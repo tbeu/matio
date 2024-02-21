@@ -2643,12 +2643,14 @@ Mat_VarReadNextInfoPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_
     return matvar;
 }
 
+#if defined(MAT73) && MAT73
 static int
 Mat_IteratorNameAcceptor(const char *name, const void *user_data)
 {
     const char *required_name = (const char *)user_data;
     return (NULL != name) && (NULL != required_name) && 0 == strcmp(name, required_name);
 }
+#endif
 
 /** @brief Reads the information of a variable with the given name from a MAT file
  *
