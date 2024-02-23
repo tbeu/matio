@@ -12,8 +12,8 @@ if(NOT HAVE_SNPRINTF OR UNIX)
     if(HAVE_LIBM)
         target_link_libraries(test_snprintf m)
     endif()
-    target_include_directories(test_snprintf
-        PUBLIC ${PROJECT_SOURCE_DIR}/src
-        PUBLIC ${PROJECT_BINARY_DIR}/src
+    target_include_directories(test_snprintf PUBLIC
+        ${PROJECT_SOURCE_DIR}/src
+        ${PROJECT_BINARY_DIR}/src
     )
 endif()

@@ -26,6 +26,7 @@ repos:
     exclude: cmake/conan.cmake
   - id: cmake-lint
     args:
-    - --linelength=120
-    - --spaces=4
+    - --line-width=120
+    - --tab-size=4
+    - --disabled-codes=C0103
     exclude: cmake/conan.cmake
