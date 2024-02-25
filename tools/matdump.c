@@ -548,8 +548,9 @@ print_whos(matvar_t *matvar)
         printf("%8" SIZE_T_FMTSTR, matvar->dims[0]);
         for ( i = 1; i < matvar->rank; i++ ) {
             if ( ceil(log10((double)matvar->dims[i])) + 1 < 32 ) {
-                cnt += mat_snprintf(size + cnt, sizeof(size) - cnt, "x%" SIZE_T_FMTSTR, matvar->dims[i]);
-                if (cnt >= sizeof(size)) {
+                cnt += mat_snprintf(size + cnt, sizeof(size) - cnt, "x%" SIZE_T_FMTSTR,
+                                    matvar->dims[i]);
+                if ( cnt >= sizeof(size) ) {
                     break;
                 }
             }

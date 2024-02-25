@@ -3,7 +3,7 @@ repos:
   rev: v17.0.6
   hooks:
   - id: clang-format
-    files: ^src\/.+\.[ch]$
+    files: ^(src\/.+\.[ch]|tools\/matdump.c|test\/test_mat.c)$
     exclude: ^(src\/fortran\/matio_internal.c|src\/snprintf.c|src\/safe-math.h)$
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
