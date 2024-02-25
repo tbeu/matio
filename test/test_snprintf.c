@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 {
         char buf1[1024];
         char buf2[1024];
-        char *fp_fmt[] = {
+        const char *fp_fmt[] = {
                 "%1.1f",
                 "%-1.5f",
                 "%1.5f",
@@ -33,10 +33,10 @@ int main(int argc, char **argv)
                 "-16.16f",
                 NULL
         };
-        double fp_nums[] = { 6442452944.1234, -1.5, 134.21, 91340.2, 341.1234, 203.9, 0.96, 0.996,
+        const double fp_nums[] = { 6442452944.1234, -1.5, 134.21, 91340.2, 341.1234, 203.9, 0.96, 0.996,
                              0.9996, 1.996, 4.136, 5.030201, 0.00205,
                              /* END LIST */ 0};
-        char *int_fmt[] = {
+        const char *int_fmt[] = {
                 "%-1.5d",
                 "%1.5d",
                 "%123.9d",
@@ -49,8 +49,8 @@ int main(int argc, char **argv)
                 "%d",
                 NULL
         };
-        long int_nums[] = { -1, 134, 91340, 341, 0203, 0};
-        char *str_fmt[] = {
+        const long int_nums[] = { -1, 134, 91340, 341, 0203, 0};
+        const char *str_fmt[] = {
                 "10.5s",
                 "5.10s",
                 "10.1s",
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
                 "%10s",
                 NULL
         };
-        char *str_vals[] = {"hello", "a", "", "a longer string", NULL};
+        const char *str_vals[] = {"hello", "a", "", "a longer string", NULL};
         int x, y;
         int fail = 0;
         int num = 0;

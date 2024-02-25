@@ -639,6 +639,9 @@ Mat_Open(const char *matname, int mode)
             mat = NULL;
         }
 
+        if ( NULL == mat )
+            return mat;
+
         if ( -1 < *(hid_t *)mat->fp ) {
             H5G_info_t group_info;
             herr_t herr;
@@ -1204,9 +1207,9 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
             if ( matvar->isComplex ) {
                 sparse_data->data = malloc(sizeof(mat_complex_split_t));
                 if ( NULL != sparse_data->data ) {
-                    mat_complex_split_t *complex_data, *complex_data_in;
-                    complex_data = (mat_complex_split_t *)sparse_data->data;
-                    complex_data_in = (mat_complex_split_t *)sparse_data_in->data;
+                    mat_complex_split_t *complex_data = (mat_complex_split_t *)sparse_data->data;
+                    const mat_complex_split_t *complex_data_in =
+                        (mat_complex_split_t *)sparse_data_in->data;
                     complex_data->Re = malloc(sparse_data->ndata * data_size);
                     complex_data->Im = malloc(sparse_data->ndata * data_size);
                     if ( NULL != complex_data->Re )
@@ -1259,7 +1262,7 @@ Mat_CopyFile(const char *src, const char *dst)
 {
     size_t len;
     char buf[BUFSIZ] = {'\0'};
-    FILE *in = NULL;
+    FILE *in;
     FILE *out = NULL;
 
 #if defined(_WIN32)
@@ -1268,6 +1271,8 @@ Mat_CopyFile(const char *src, const char *dst)
         if ( NULL != wname ) {
             in = _wfopen(wname, L"rb");
             free(wname);
+        } else {
+            in = NULL;
         }
     }
 #else
@@ -1370,7 +1375,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
                 char *new_name = strdup(mat->filename);
 #if defined(MAT73) && MAT73
                 if ( mat_file_ver == MAT_FT_MAT73 ) {
-                    err = Mat_Close73(mat);
+                    /* err = */ Mat_Close73(mat);
                 }
 #endif
                 if ( mat->fp != NULL ) {
@@ -1559,7 +1564,8 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                         out_sparse->data = malloc(sizeof(mat_complex_split_t));
                         if ( out_sparse->data != NULL ) {
                             mat_complex_split_t *out_data = (mat_complex_split_t *)out_sparse->data;
-                            mat_complex_split_t *in_data = (mat_complex_split_t *)in_sparse->data;
+                            const mat_complex_split_t *in_data =
+                                (mat_complex_split_t *)in_sparse->data;
                             out_data->Re = malloc(in_sparse->ndata * Mat_SizeOf(in->data_type));
                             if ( NULL != out_data->Re )
                                 memcpy(out_data->Re, in_data->Re,
@@ -1580,7 +1586,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                 out->internal->data = malloc(sizeof(mat_complex_split_t));
                 if ( out->internal->data != NULL ) {
                     mat_complex_split_t *out_data = (mat_complex_split_t *)out->internal->data;
-                    mat_complex_split_t *in_data = (mat_complex_split_t *)in->internal->data;
+                    const mat_complex_split_t *in_data = (mat_complex_split_t *)in->internal->data;
                     out_data->Re = malloc(out->nbytes);
                     if ( NULL != out_data->Re )
                         memcpy(out_data->Re, in_data->Re, out->nbytes);
@@ -2465,7 +2471,8 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
  * @retval 0 on success
  */
 int
-Mat_VarReadData(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stride, int *edge)
+Mat_VarReadData(mat_t *mat, matvar_t *matvar, void *data, const int *start, const int *stride,
+                const int *edge)
 {
     int err = MATIO_E_NO_ERROR;
 
@@ -2842,7 +2849,7 @@ Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data
  * @see Mat_VarWrite/Mat_VarWriteAppend
  */
 int
-Mat_VarWriteInfo(mat_t *mat, matvar_t *matvar)
+Mat_VarWriteInfo(const mat_t *mat, matvar_t *matvar)
 {
     Mat_Critical(
         "Mat_VarWriteInfo/Mat_VarWriteData is not supported. "
@@ -2867,8 +2874,8 @@ Mat_VarWriteInfo(mat_t *mat, matvar_t *matvar)
  * @see Mat_VarWrite/Mat_VarWriteAppend
  */
 int
-Mat_VarWriteData(mat_t *mat, matvar_t *matvar, void *data, const int *start, const int *stride,
-                 const int *edge)
+Mat_VarWriteData(const mat_t *mat, matvar_t *matvar, void *data, const int *start,
+                 const int *stride, const int *edge)
 {
     Mat_Critical(
         "Mat_VarWriteInfo/Mat_VarWriteData is not supported. "

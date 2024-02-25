@@ -56,7 +56,7 @@
 mat_t *
 Mat_Create4(const char *matname)
 {
-    FILE *fp = NULL;
+    FILE *fp;
     mat_t *mat = NULL;
 
 #if defined(_WIN32)
@@ -64,6 +64,8 @@ Mat_Create4(const char *matname)
     if ( NULL != wname ) {
         fp = _wfopen(wname, L"w+b");
         free(wname);
+    } else {
+        fp = NULL;
     }
 #else
     fp = fopen(matname, "w+b");
@@ -110,6 +112,7 @@ Mat_Create4(const char *matname)
 int
 Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
 {
+#if defined(MATIO_LE) || defined(MATIO_BE)
     typedef struct
     {
         mat_int32_t type;
@@ -119,7 +122,6 @@ Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
         mat_int32_t namelen;
     } Fmatrix;
 
-    mat_uint32_t i;
     Fmatrix x;
 
     if ( NULL == mat || NULL == matvar )
@@ -150,26 +152,8 @@ Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
             return MATIO_E_OUTPUT_BAD_DATA;
     }
 
-#if defined(__GLIBC__)
-#if ( __BYTE_ORDER == __LITTLE_ENDIAN )
-#elif (__BYTE_ORDER == __BIG_ENDIAN)
+#if defined(MATIO_BE)
     x.type += 1000;
-#else
-    return MATIO_E_OPERATION_NOT_SUPPORTED;
-#endif
-#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN)
-    x.type += 1000;
-#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN)
-#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || \
-    defined(__ppc__) || defined(__hpux) || defined(_MIPSEB) || defined(_POWER) ||          \
-    defined(__s390__)
-    x.type += 1000;
-#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) ||   \
-    defined(_M_IX86) || defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) ||       \
-    defined(__amd64__) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || \
-    defined(_M_X64) || defined(__bfin__) || defined(__loongarch64) || defined(__aarch64__)
-#else
-    return MATIO_E_OPERATION_NOT_SUPPORTED;
 #endif
 
     x.namelen = (mat_int32_t)strlen(matvar->name) + 1;
@@ -200,9 +184,7 @@ Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
             fwrite(&x, sizeof(Fmatrix), 1, (FILE *)mat->fp);
             fwrite(matvar->name, sizeof(char), x.namelen, (FILE *)mat->fp);
             if ( matvar->isComplex ) {
-                mat_complex_split_t *complex_data;
-
-                complex_data = (mat_complex_split_t *)matvar->data;
+                const mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
                 fwrite(complex_data->Re, matvar->data_size, nelems, (FILE *)mat->fp);
                 fwrite(complex_data->Im, matvar->data_size, nelems, (FILE *)mat->fp);
             } else {
@@ -213,7 +195,7 @@ Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
         case MAT_C_SPARSE: {
             mat_sparse_t *sparse;
             double tmp;
-            mat_uint32_t j;
+            mat_uint32_t i, j;
             size_t stride = Mat_SizeOf(matvar->data_type);
 #if !defined(EXTENDED_SPARSE)
             if ( MAT_T_DOUBLE != matvar->data_type )
@@ -247,12 +229,9 @@ Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
             fwrite(&tmp, sizeof(double), 1, (FILE *)mat->fp);
             tmp = 0.;
             if ( matvar->isComplex ) {
-                mat_complex_split_t *complex_data;
-                char *re, *im;
-
-                complex_data = (mat_complex_split_t *)sparse->data;
-                re = (char *)complex_data->Re;
-                im = (char *)complex_data->Im;
+                mat_complex_split_t *complex_data = (mat_complex_split_t *)sparse->data;
+                const char *re = (char *)complex_data->Re;
+                const char *im = (char *)complex_data->Im;
                 for ( i = 0; i < sparse->njc - 1; i++ ) {
                     for ( j = sparse->jc[i]; j < sparse->jc[i + 1] && j < sparse->ndata; j++ ) {
                         fwrite(re + j * stride, stride, 1, (FILE *)mat->fp);
@@ -265,7 +244,7 @@ Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
                     }
                 }
             } else {
-                char *data = (char *)sparse->data;
+                const char *data = (char *)sparse->data;
                 for ( i = 0; i < sparse->njc - 1; i++ ) {
                     for ( j = sparse->jc[i]; j < sparse->jc[i + 1] && j < sparse->ndata; j++ ) {
                         fwrite(data + j * stride, stride, 1, (FILE *)mat->fp);
@@ -280,6 +259,9 @@ Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
     }
 
     return MATIO_E_NO_ERROR;
+#else
+    return MATIO_E_OPERATION_NOT_SUPPORTED;
+#endif
 }
 
 /** @if mat_devman
@@ -768,8 +750,8 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
  * @endif
  */
 int
-Mat_VarReadData4(mat_t *mat, matvar_t *matvar, void *data, const int *start, const int *stride,
-                 const int *edge)
+Mat_VarReadData4(mat_t *mat, const matvar_t *matvar, void *data, const int *start,
+                 const int *stride, const int *edge)
 {
     int err = MATIO_E_NO_ERROR;
 

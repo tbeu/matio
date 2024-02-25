@@ -331,8 +331,8 @@ EXTERN matvar_t *Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int 
                                          int copy_fields);
 EXTERN void Mat_VarPrint(const matvar_t *matvar, int printdata);
 EXTERN matvar_t *Mat_VarRead(mat_t *mat, const char *name);
-EXTERN int Mat_VarReadData(mat_t *mat, matvar_t *matvar, void *data, int *start, int *stride,
-                           int *edge);
+EXTERN int Mat_VarReadData(mat_t *mat, matvar_t *matvar, void *data, const int *start,
+                           const int *stride, const int *edge);
 EXTERN int Mat_VarReadDataAll(mat_t *mat, matvar_t *matvar);
 EXTERN int Mat_VarReadDataLinear(mat_t *mat, matvar_t *matvar, void *data, int start, int stride,
                                  int edge);
@@ -350,8 +350,8 @@ EXTERN matvar_t *Mat_VarSetStructFieldByName(matvar_t *matvar, const char *field
 EXTERN int Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress);
 EXTERN int Mat_VarWriteAppend(mat_t *mat, matvar_t *matvar, enum matio_compression compress,
                               int dim);
-EXTERN int Mat_VarWriteInfo(mat_t *mat, matvar_t *matvar);
-EXTERN int Mat_VarWriteData(mat_t *mat, matvar_t *matvar, void *data, const int *start,
+EXTERN int Mat_VarWriteInfo(const mat_t *mat, matvar_t *matvar);
+EXTERN int Mat_VarWriteData(const mat_t *mat, matvar_t *matvar, void *data, const int *start,
                             const int *stride, const int *edge);
 
 /* Other functions */

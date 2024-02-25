@@ -85,10 +85,10 @@ static int human_readable = 0;
 static int print_whos_first = 1;
 
 /* Print Functions */
-static void print_whos(matvar_t *matvar);
-static void print_default(matvar_t *matvar);
+static void print_whos(const matvar_t *matvar);
+static void print_default(const matvar_t *matvar);
 
-static void (*printfunc)(matvar_t *matvar) = NULL;
+static void (*printfunc)(const matvar_t *matvar) = NULL;
 
 static char *
 get_next_token(char *str)
@@ -113,7 +113,7 @@ get_next_token(char *str)
 }
 
 static int
-slab_get_rank(char *open, char *close)
+slab_get_rank(char *open, const char *close)
 {
     int rank = 0;
     char *ptr = open + 1;
@@ -126,15 +126,12 @@ slab_get_rank(char *open, char *close)
 }
 
 static void
-slab_get_select(char *open, char *close, int rank, int *start, int *stride, int *edge)
+slab_get_select(char *open, const char *close, int rank, int *start, int *stride, int *edge)
 {
-    char *ptr, *valptr;
-    int nvals, dim, i;
-
-    ptr = open;
-    valptr = open + 1;
-    dim = 0;
-    nvals = 0;
+    char *ptr = open;
+    const char *valptr = open + 1;
+    int dim = 0;
+    int nvals = 0;
     do {
         ptr++;
         if ( *ptr == ',' ) {
@@ -143,16 +140,14 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 if ( !strcmp(valptr, "end") ) {
                     edge[dim] = -1;
                 } else {
-                    i = (int)strtol(valptr, NULL, 10);
-                    edge[dim] = i;
+                    edge[dim] = (int)strtol(valptr, NULL, 10);
                 }
             } else if ( nvals == 1 ) {
                 *ptr = '\0';
                 if ( !strcmp(valptr, "end") ) {
                     edge[dim] = -1;
                 } else {
-                    i = (int)strtol(valptr, NULL, 10);
-                    edge[dim] = i;
+                    edge[dim] = (int)strtol(valptr, NULL, 10);
                 }
             } else if ( nvals == 0 ) {
                 *ptr = '\0';
@@ -160,7 +155,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                     start[dim] = -1;
                     edge[dim] = -1;
                 } else {
-                    i = (int)strtol(valptr, NULL, 10);
+                    int i = (int)strtol(valptr, NULL, 10);
                     start[dim] = i - 1;
                     edge[dim] = i;
                 }
@@ -180,7 +175,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 else
                     fprintf(stderr, "Too many inputs to dim %d", dim + 1);
             } else {
-                i = (int)strtol(valptr, NULL, 10);
+                int i = (int)strtol(valptr, NULL, 10);
                 if ( nvals == 0 )
                     start[dim] = i - 1;
                 else if ( nvals == 1 )
@@ -205,7 +200,7 @@ slab_get_select(char *open, char *close, int rank, int *start, int *stride, int 
                 else
                     fprintf(stderr, "Too many inputs to dim %d", dim + 1);
             } else {
-                i = (int)strtol(valptr, NULL, 10);
+                int i = (int)strtol(valptr, NULL, 10);
                 if ( nvals == 0 ) {
                     start[dim] = i - 1;
                     edge[dim] = i;
@@ -317,7 +312,7 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
 {
     char *next_tok_pos, next_tok = 0;
     char *open = NULL, *close = NULL;
-    int err = 1, i = 0, j, done = 0;
+    int err = 1, j, done = 0;
     matvar_t *matvar = *_matvar;
 
     next_tok_pos = get_next_token(index_str);
@@ -385,6 +380,7 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
                         matvar->dims[1] = 1;
                     }
                 } else {
+                    int i;
                     err = Mat_VarReadData(mat, matvar, matvar->data, start, stride, edge);
                     for ( i = 0; i < rank; i++ )
                         matvar->dims[i] = (size_t)edge[i];
@@ -395,9 +391,7 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
             free(edge);
         } else if ( next_tok == '.' ) {
             matvar_t *field;
-            char *varname;
-
-            varname = next_tok_pos + 1;
+            const char *varname = next_tok_pos + 1;
             if ( matvar->class_type == MAT_C_STRUCT ) {
                 next_tok_pos = get_next_token(next_tok_pos + 1);
                 if ( next_tok_pos != varname ) {
@@ -421,7 +415,7 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
                 }
             } else if ( matvar->class_type == MAT_C_CELL ) {
                 int ncells;
-                matvar_t *cell, **cells;
+                matvar_t **cells;
 
                 ncells = matvar->nbytes / matvar->data_size;
                 cells = (matvar_t **)matvar->data;
@@ -433,7 +427,7 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
                     done = 1;
                 }
                 for ( j = 0; j < ncells; j++ ) {
-                    cell = Mat_VarGetCell(matvar, j);
+                    matvar_t *cell = Mat_VarGetCell(matvar, j);
                     if ( cell == NULL || cell->class_type != MAT_C_STRUCT ) {
                         fprintf(stderr, "cell index %d is not a structure", j);
                         break;
@@ -500,6 +494,7 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
                         matvar->dims[0] = *edge;
                     }
                 } else {
+                    int i;
                     cells = Mat_VarGetCells(matvar, start, stride, edge);
                     for ( i = 0; i < rank; i++ )
                         matvar->dims[i] = (size_t)edge[i];
@@ -530,13 +525,9 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
 }
 
 static void
-print_whos(matvar_t *matvar)
+print_whos(const matvar_t *matvar)
 {
-    int i;
     size_t nbytes;
-    char size[32] = {
-        '\0',
-    };
 
     if ( print_whos_first ) {
         printf("%-20s       %-10s     %-10s     %-18s\n\n", "Name", "Size", "Bytes", "Class");
@@ -544,7 +535,10 @@ print_whos(matvar_t *matvar)
     }
     printf("%-20s", matvar->name);
     if ( matvar->rank > 0 ) {
-        int cnt = 0;
+        int cnt = 0, i;
+        char size[32] = {
+            '\0',
+        };
         printf("%8" SIZE_T_FMTSTR, matvar->dims[0]);
         for ( i = 1; i < matvar->rank; i++ ) {
             if ( ceil(log10((double)matvar->dims[i])) + 1 < 32 ) {
@@ -588,7 +582,7 @@ default_printf_func(int log_level, const char *message)
 }
 
 static void
-print_default_number(enum matio_types type, void *data)
+print_default_number(enum matio_types type, const void *data)
 {
     switch ( type ) {
         case MAT_T_DOUBLE:
@@ -643,7 +637,7 @@ print_default_number(enum matio_types type, void *data)
 }
 
 static void
-print_default_numeric_2d(matvar_t *matvar)
+print_default_numeric_2d(const matvar_t *matvar)
 {
     size_t i, j, stride;
 
@@ -652,9 +646,9 @@ print_default_numeric_2d(matvar_t *matvar)
 
     stride = Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex ) {
-        mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
-        char *rp = (char *)complex_data->Re;
-        char *ip = (char *)complex_data->Im;
+        const mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
+        const char *rp = (char *)complex_data->Re;
+        const char *ip = (char *)complex_data->Im;
         for ( i = 0; i < matvar->dims[0]; i++ ) {
             for ( j = 0; j < matvar->dims[1]; j++ ) {
                 size_t idx = matvar->dims[0] * j + i;
@@ -666,7 +660,7 @@ print_default_numeric_2d(matvar_t *matvar)
             printf("\n");
         }
     } else {
-        char *data = (char *)matvar->data;
+        const char *data = (char *)matvar->data;
         for ( i = 0; i < matvar->dims[0]; i++ ) {
             for ( j = 0; j < matvar->dims[1]; j++ ) {
                 size_t idx = matvar->dims[0] * j + i;
@@ -679,7 +673,7 @@ print_default_numeric_2d(matvar_t *matvar)
 }
 
 static void
-print_default_numeric_3d(matvar_t *matvar)
+print_default_numeric_3d(const matvar_t *matvar)
 {
     size_t i, j, k, l, stride;
 
@@ -688,9 +682,9 @@ print_default_numeric_3d(matvar_t *matvar)
 
     stride = Mat_SizeOf(matvar->data_type);
     if ( matvar->isComplex ) {
-        mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
-        char *rp = (char *)complex_data->Re;
-        char *ip = (char *)complex_data->Im;
+        const mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
+        const char *rp = (char *)complex_data->Re;
+        const char *ip = (char *)complex_data->Im;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
             Mat_Message("%s(:,:,%zu) = ", matvar->name, k);
             indent++;
@@ -710,7 +704,7 @@ print_default_numeric_3d(matvar_t *matvar)
             printf("\n");
         }
     } else {
-        char *data = (char *)matvar->data;
+        const char *data = (char *)matvar->data;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
             Mat_Message("%s(:,:,%zu) = ", matvar->name, k);
             indent++;
@@ -731,7 +725,7 @@ print_default_numeric_3d(matvar_t *matvar)
 }
 
 static void
-print_default(matvar_t *matvar)
+print_default(const matvar_t *matvar)
 {
     if ( NULL == matvar )
         return;
@@ -786,11 +780,12 @@ print_default(matvar_t *matvar)
                 Mat_Message("Fields[%d] {", nfields);
                 indent++;
                 {
-                    size_t j;
                     matvar_t **fields = (matvar_t **)matvar->data;
-                    if ( NULL != fields )
+                    if ( NULL != fields ) {
+                        size_t j;
                         for ( j = 0; j < nfields * nmemb; j++ )
                             print_default(fields[j]);
+                    }
                 }
                 indent--;
                 Mat_Message("}");
@@ -813,11 +808,12 @@ print_default(matvar_t *matvar)
             Mat_Message("{");
             indent++;
             {
-                size_t j;
                 matvar_t **cells = (matvar_t **)matvar->data;
-                if ( NULL != cells )
+                if ( NULL != cells ) {
+                    size_t j;
                     for ( j = 0; j < ncells; j++ )
                         print_default(cells[j]);
+                }
             }
             indent--;
             Mat_Message("}");
@@ -832,7 +828,7 @@ int
 main(int argc, char *argv[])
 {
     const char *prog_name = "matdump";
-    int i, c, err = EXIT_SUCCESS;
+    int c, err = EXIT_SUCCESS;
     mat_t *mat;
     matvar_t *matvar;
     int version[3];
@@ -902,6 +898,7 @@ main(int argc, char *argv[])
     optind++;
 
     if ( optind < argc ) {
+        int i;
         /* variables specified on the command line */
         for ( i = optind; i < argc; i++ ) {
             char *next_tok_pos, next_tok = 0;
