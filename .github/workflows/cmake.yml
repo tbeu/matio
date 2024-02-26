@@ -61,7 +61,9 @@ jobs:
           if [ "${{ matrix.compiler }}" == "msvc" ]; then
             cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
           elif [ "${{ matrix.compiler }}" == "mingw" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -G "MinGW Makefiles"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -G "MinGW Makefiles"
+          elif [ "${{ matrix.compiler }}" == "gcc" ]; then
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON
           else
             cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
           fi

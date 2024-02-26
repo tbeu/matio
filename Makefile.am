@@ -52,6 +52,7 @@ CMAKE_FILES = CMakeLists.txt \
               cmake/getopt.cmake \
               cmake/options.cmake \
               cmake/src.cmake \
+              cmake/staticAnalyzers.cmake \
               cmake/test.cmake \
               cmake/thirdParties.cmake \
               cmake/tools.cmake \

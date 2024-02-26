@@ -36,3 +36,7 @@ elseif(MATIO_DEFAULT_FILE_VERSION STREQUAL "7.3")
 else()
     message(ERROR "Unrecognized MAT file version")
 endif()
+
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.10")
+    option(MATIO_ENABLE_CPPCHECK "Enable static analysis with Cppcheck." OFF)
+endif()

@@ -197,6 +197,9 @@ Table of Contents
               * 'MATIO_WITH_ZLIB:BOOL=ON'
                 This option enables CMake to check for availability of the
                 zlib library (see section 2.1.1 for information about zlib).
+              * 'MATIO_ENABLE_CPPCHECK:BOOL=ON'
+                This option enables CMake >= 3.10 to perform static analysis
+                with Cppcheck.
 
             To help CMake find the HDF5 libraries, set environment variable
             HDF5_DIR to the 'cmake/hdf5' directory (containing 'hdf5-config.cmake')

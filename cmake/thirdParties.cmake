@@ -12,16 +12,20 @@ if(MATIO_WITH_HDF5)
     endif()
 
     if(MATIO_USE_CONAN)
+        set(MATIO_CONAN_REQUIRES "hdf5/[>=1.8 <1.15]" "zlib/[>=1.2.3]")
+        if(MATIO_ENABLE_CPPCHECK)
+            list(APPEND MATIO_CONAN_REQUIRES "cppcheck/[>=2.13.3]")
+        endif()
         if(HDF5_USE_STATIC_LIBRARIES)
             conan_cmake_run(
-                REQUIRES "hdf5/[>=1.8 <1.15]" "zlib/[>=1.2.3]"
+                REQUIRES ${MATIO_CONAN_REQUIRES}
                 BASIC_SETUP CMAKE_TARGETS
                 OPTIONS hdf5:shared=False zlib:shared=False
                 BUILD missing
             )
         else()
             conan_cmake_run(
-                REQUIRES "hdf5/[>=1.8 <1.15]" "zlib/[>=1.2.3]"
+                REQUIRES ${MATIO_CONAN_REQUIRES}
                 BASIC_SETUP CMAKE_TARGETS
                 OPTIONS hdf5:shared=True zlib:shared=True
                 BUILD missing)

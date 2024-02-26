@@ -136,6 +136,8 @@ This option builds the matio library as shared object (i.e., a dynamic link libr
 This option enables CMake to check for availability of the HDF5 library (see section [2.1.2](#212-hdf5) for information about HDF5).
 * `MATIO_WITH_ZLIB:BOOL=ON`
 This option enables CMake to check for availability of the zlib library (see section [2.1.1](#211-zlib) for information about zlib).
+* `MATIO_ENABLE_CPPCHECK:BOOL=ON`
+This option enables CMake &GreaterEqual; 3.10 to perform static analysis with Cppcheck.
 
 To help CMake find the HDF5 libraries, set environment variable `HDF5_DIR` to the `cmake/hdf5` directory (containing `hdf5-config.cmake`) inside the HDF5 build or installation directory, or call cmake with `-DHDF5_DIR="dir/to/hdf5/cmake/hdf5"`. Alternatively call CMake with `-DCMAKE_PREFIX_PATH="dir/to/hdf5/cmake"`. See the [HDF5 instructions](https://support.hdfgroup.org/HDF5/release/cmakebuild.html#compile) for more information. Using `hdf5-config` is recommended over using CMake's built-in `FindHDF5`, especially for static builds. CMake 3.10 or later is recommended.
 
