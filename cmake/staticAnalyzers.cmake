@@ -8,6 +8,7 @@ if(MATIO_ENABLE_CPPCHECK)
             --suppress=checkersReport
             --suppress=unusedFunction
             --suppress=unmatchedSuppression
+            --suppress=missingInclude
             --suppress=missingIncludeSystem
             --enable=all
             --inline-suppr

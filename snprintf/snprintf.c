@@ -202,7 +202,7 @@
 #define VA_COPY(dest, src) (void)mymemcpy(&dest, &src, sizeof(va_list))
 #define VA_END_COPY(ap) /* No-op. */
 #define NEED_MYMEMCPY 1
-static void *mymemcpy(void *, void *, size_t);
+static void *mymemcpy(void *, const void *, size_t);
 #endif  /* HAVE_VA_COPY */
 #endif  /* !HAVE_VASPRINTF */
 
@@ -1361,7 +1361,7 @@ mypow10(int exponent)
 #if !HAVE_VASPRINTF
 #if NEED_MYMEMCPY
 static void *
-mymemcpy(void *dst, void *src, size_t len)
+mymemcpy(void *dst, const void *src, size_t len)
 {
     const char *from = (const char *)src;
     char *to = (char*)dst;

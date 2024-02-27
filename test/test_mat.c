@@ -1253,19 +1253,16 @@ test_write_empty_2d_numeric(enum matio_classes matvar_class, const char *output_
 static int
 test_write_char(const char *output_name)
 {
-    const char *str =
-        "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
-        "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
     int err = 0;
-    size_t dims[2];
     mat_t *mat;
 
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
     if ( mat ) {
-        matvar_t *matvar;
-        dims[0] = 4;
-        dims[1] = 26;
-        matvar =
+        const char *str =
+            "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
+            "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
+        const size_t dims[2] = {4, 26};
+        matvar_t *matvar =
             Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UINT8, 2, dims, (void *)str, MAT_F_DONT_COPY_DATA);
         err = Mat_VarWrite(mat, matvar, compression);
         Mat_VarFree(matvar);
@@ -1281,15 +1278,12 @@ test_write_char_unicode(const char *output_name)
 {
     const mat_uint16_t str[] = {1576, 273, 1580, 105, 1604, 7879, 1740, 110};
     int err = 0;
-    size_t dims[2];
     mat_t *mat;
 
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
     if ( mat ) {
-        matvar_t *matvar;
-        dims[0] = 2;
-        dims[1] = 4;
-        matvar =
+        const size_t dims[2] = {2, 4};
+        matvar_t *matvar =
             Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UTF16, 2, dims, (void *)str, MAT_F_DONT_COPY_DATA);
         err = Mat_VarWrite(mat, matvar, compression);
         Mat_VarFree(matvar);
@@ -1306,15 +1300,12 @@ test_write_char_utf8(const char *output_name)
     const mat_uint8_t str[] = {216, 168, 196, 145, 216, 172, 105, 217,
                                132, 225, 187, 135, 219, 140, 110};
     int err = 0;
-    size_t dims[2];
     mat_t *mat;
 
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
     if ( mat ) {
-        matvar_t *matvar;
-        dims[0] = 2;
-        dims[1] = 4;
-        matvar =
+        const size_t dims[2] = {2, 4};
+        matvar_t *matvar =
             Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UTF8, 2, dims, (void *)str, MAT_F_DONT_COPY_DATA);
         err = Mat_VarWrite(mat, matvar, compression);
         Mat_VarFree(matvar);
@@ -1353,18 +1344,16 @@ test_readvar(const char *inputfile, const char *var, const char *output)
 static int
 test_write_empty_struct(const char *output_name)
 {
-    size_t dims[2] = {0, 0};
     int err = 0;
     mat_t *mat;
     matvar_t *matvar[5];
 
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
     if ( mat ) {
+        size_t dims[2] = {0, 1};
         matvar_t *struct_matvar;
         /* Write an empty structure with no fields */
         matvar[0] = NULL;
-        dims[0] = 0;
-        dims[1] = 1;
         struct_matvar = Mat_VarCreate("var1", MAT_C_STRUCT, MAT_T_STRUCT, 2, dims, matvar, 0);
         Mat_VarWrite(mat, struct_matvar, compression);
         Mat_VarFree(struct_matvar);
@@ -1876,17 +1865,15 @@ test_write_struct_complex_2d_numeric(enum matio_classes matvar_class, const char
 static int
 test_write_empty_cell(const char *output_name)
 {
-    size_t dims[2] = {0, 0};
     int err = 0;
     mat_t *mat;
     matvar_t *matvar[5];
 
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
     if ( mat ) {
+        size_t dims[2] = {0, 1};
         matvar_t *cell_matvar;
         /* Write an empty cell */
-        dims[0] = 0;
-        dims[1] = 1;
         cell_matvar = Mat_VarCreate("var1", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
         Mat_VarWrite(mat, cell_matvar, compression);
         Mat_VarFree(cell_matvar);
@@ -1911,17 +1898,16 @@ test_write_empty_cell(const char *output_name)
 static int
 test_write_cell_empty_struct(const char *output_name)
 {
-    size_t dims[2] = {1, 3};
     int err = 0;
     mat_t *mat;
 
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
     if ( mat ) {
-        matvar_t *cell_matvar;
+        size_t dims[2] = {1, 3};
         int i;
         const double data[4] = {51., 53., 52., 54.};
         const char *fieldnames[3] = {"field1", "field2", "field3"};
-        cell_matvar = Mat_VarCreate("var1", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
+        matvar_t *cell_matvar = Mat_VarCreate("var1", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
 
         for ( i = 0; i < 3; ++i ) {
             matvar_t *matvar, *struct_matvar;
@@ -2349,10 +2335,10 @@ test_write_null(const char *output_name)
     int err = 0;
     mat_t *mat;
     matvar_t *struct_fields[5] = {NULL, NULL, NULL, NULL, NULL};
-    size_t dims[3] = {0, 1, 10};
 
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
     if ( mat != NULL ) {
+        size_t dims[3] = {0, 1, 10};
         matvar_t *struct_matvar, *cell_matvar;
         struct_fields[0] = Mat_VarCreate("d_null", MAT_C_DOUBLE, MAT_T_DOUBLE, 3, dims, NULL, 0);
         Mat_VarWrite(mat, struct_fields[0], compression);
@@ -2865,12 +2851,11 @@ static int
 test_get_struct_field(const char *file, const char *structname, const char *fieldname)
 {
     mat_t *mat;
-    matvar_t *matvar;
     int index = 1, err = 0;
 
     mat = Mat_Open(file, MAT_ACC_RDONLY);
     if ( mat ) {
-        matvar = Mat_VarRead(mat, (char *)structname);
+        matvar_t *matvar = Mat_VarRead(mat, (char *)structname);
         if ( matvar ) {
             const matvar_t *field;
             switch ( *fieldname ) {
