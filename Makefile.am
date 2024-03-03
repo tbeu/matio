@@ -59,7 +59,8 @@ CMAKE_FILES = CMakeLists.txt \
               cmake/matio_pubconf.cmake.in \
               cmake/matioConfig.cmake.in
 
-EXTRA_DIST = matio.pc.in autogen.sh patches/inflate.patch \
+EXTRA_DIST = matio.pc.in \
+             autogen.sh \
              share/test_file.mat \
              share/test_file_v6.mat \
              share/test_file_hdf5.mat \
