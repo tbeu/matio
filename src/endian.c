@@ -183,8 +183,8 @@ Mat_uint16Swap(mat_uint16_t *a)
 
 /** @brief swap the bytes of a 4 byte single-precision float
  * @ingroup mat_internal
- * @param a pointer to integer to swap
- * @return the swapped integer
+ * @param a pointer to integer? to swap
+ * @return the swapped integer?
  */
 float
 Mat_floatSwap(float *a)
@@ -205,8 +205,8 @@ Mat_floatSwap(float *a)
 
 /** @brief swap the bytes of a 4 or 8 byte double-precision float
  * @ingroup mat_internal
- * @param a pointer to integer to swap
- * @return the swapped integer
+ * @param a pointer to integer? to swap
+ * @return the swapped integer?
  */
 double
 Mat_doubleSwap(double *a)

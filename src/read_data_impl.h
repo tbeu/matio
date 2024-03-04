@@ -40,6 +40,18 @@
 #define READ_TYPE_UINT64_DATA CAT(READ_TYPED_FUNC1, UInt64)
 #endif /* HAVE_MAT_UINT64_T */
 
+static READ_TYPE
+CAT(Round, READ_TYPE)(READ_TYPE value)
+{
+#if READ_TYPE_TYPE == READ_TYPE_DOUBLE
+    return round(value);
+#elif READ_TYPE_TYPE == READ_TYPE_SINGLE
+	return roundf(value);
+#else
+    return value;
+#endif
+}
+
 static size_t
 READ_TYPE_DOUBLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
 {
@@ -56,7 +68,7 @@ READ_TYPE_DOUBLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(double);
     double v[READ_BLOCK_SIZE / sizeof(double)];
-    READ_DATA(READ_TYPE, Mat_doubleSwap);
+    READ_DATA(READ_TYPE, double, Mat_doubleSwap, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
@@ -77,7 +89,7 @@ READ_TYPE_SINGLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(float);
     float v[READ_BLOCK_SIZE / sizeof(float)];
-    READ_DATA(READ_TYPE, Mat_floatSwap);
+    READ_DATA(READ_TYPE, float, Mat_floatSwap, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
@@ -98,7 +110,7 @@ READ_TYPE_INT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_int32_t);
     mat_int32_t v[READ_BLOCK_SIZE / sizeof(mat_int32_t)];
-    READ_DATA(READ_TYPE, Mat_int32Swap);
+    READ_DATA(READ_TYPE, mat_int32_t, Mat_int32Swap, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
@@ -119,7 +131,7 @@ READ_TYPE_UINT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_uint32_t);
     mat_uint32_t v[READ_BLOCK_SIZE / sizeof(mat_uint32_t)];
-    READ_DATA(READ_TYPE, Mat_uint32Swap);
+    READ_DATA(READ_TYPE, mat_uint32_t, Mat_uint32Swap, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
@@ -140,7 +152,7 @@ READ_TYPE_INT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_int16_t);
     mat_int16_t v[READ_BLOCK_SIZE / sizeof(mat_int16_t)];
-    READ_DATA(READ_TYPE, Mat_int16Swap);
+    READ_DATA(READ_TYPE, mat_int16_t, Mat_int16Swap, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
@@ -161,7 +173,7 @@ READ_TYPE_UINT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_uint16_t);
     mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
-    READ_DATA(READ_TYPE, Mat_uint16Swap);
+    READ_DATA(READ_TYPE, mat_uint16_t, Mat_uint16Swap, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
@@ -176,7 +188,7 @@ READ_TYPE_INT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_int8_t);
     mat_int8_t v[READ_BLOCK_SIZE / sizeof(mat_int8_t)];
-    READ_DATA_NOSWAP(READ_TYPE);
+    READ_DATA_NOSWAP(READ_TYPE, mat_int8_t, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
@@ -191,7 +203,7 @@ READ_TYPE_UINT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_uint8_t);
     mat_uint8_t v[READ_BLOCK_SIZE / sizeof(mat_uint8_t)];
-    READ_DATA_NOSWAP(READ_TYPE);
+    READ_DATA_NOSWAP(READ_TYPE, mat_uint8_t, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
@@ -213,7 +225,7 @@ READ_TYPE_INT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_int64_t);
     mat_int64_t v[READ_BLOCK_SIZE / sizeof(mat_int64_t)];
-    READ_DATA(READ_TYPE, Mat_int64Swap);
+    READ_DATA(READ_TYPE, mat_int64_t, Mat_int64Swap, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
@@ -236,7 +248,7 @@ READ_TYPE_UINT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_uint64_t);
     mat_uint64_t v[READ_BLOCK_SIZE / sizeof(mat_uint64_t)];
-    READ_DATA(READ_TYPE, Mat_uint64Swap);
+    READ_DATA(READ_TYPE, mat_uint64_t, Mat_uint64Swap, CAT(Round, READ_TYPE));
 #endif
     return readcount;
 }
