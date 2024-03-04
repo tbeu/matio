@@ -34,21 +34,31 @@
 #if HAVE_ZLIB
 #include <zlib.h>
 #endif
+#include <float.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
 
-#define READ_DATA_NOSWAP(T)                                           \
+#define READ_DATA_NOSWAP(T, TT, RoundFunc)                            \
     do {                                                              \
+        TT min_ = (TT)READ_TYPE_MIN;                                  \
+        TT max_ = (TT)READ_TYPE_MAX;                                  \
         const size_t block_size = READ_BLOCK_SIZE / data_size;        \
         if ( len <= block_size ) {                                    \
             readcount = fread(v, data_size, len, (FILE *)mat->fp);    \
             if ( readcount == len ) {                                 \
                 for ( i = 0; i < len; i++ ) {                         \
-                    data[i] = (T)v[i];                                \
+                    TT val_ = v[i];                                   \
+                    val_ = RoundFunc(val_);                           \
+                    if (val_ >= min_ && val_ <= max_) {               \
+                        data[i] = (T)val_;                            \
+                    } else {                                          \
+                        break;                                        \
+                    }                                                 \
                 }                                                     \
             }                                                         \
         } else {                                                      \
@@ -60,7 +70,14 @@
                 readcount += j;                                       \
                 if ( j == block_size ) {                              \
                     for ( j = 0; j < block_size; j++ ) {              \
-                        data[i + j] = (T)v[j];                        \
+                        TT val_ = v[j];                               \
+                        val_ = RoundFunc(val_);                       \
+                        if (val_ >= min_ && val_ <= max_) {           \
+                            data[i + j] = (T)val_;                    \
+                        } else {                                      \
+                            err_ = 1;                                 \
+                            break;                                    \
+                        }                                             \
                     }                                                 \
                 } else {                                              \
                     err_ = 1;                                         \
@@ -72,22 +89,37 @@
                 readcount += j;                                       \
                 if ( j == len - i ) {                                 \
                     for ( j = 0; j < len - i; j++ ) {                 \
-                        data[i + j] = (T)v[j];                        \
+                        TT val_ = v[j];                               \
+                        val_ = RoundFunc(val_);                       \
+                        if (val_ >= min_ && val_ <= max_) {           \
+                            data[i + j] = (T)val_;                    \
+                        } else {                                      \
+                            err_ = 1;                                 \
+                            break;                                    \
+                        }                                             \
                     }                                                 \
                 }                                                     \
             }                                                         \
         }                                                             \
     } while ( 0 )
 
-#define READ_DATA(T, SwapFunc)                                            \
+#define READ_DATA(T, TT, SwapFunc, RoundFunc)                             \
     do {                                                                  \
+        TT min_ = (TT)READ_TYPE_MIN;                                      \
+        TT max_ = (TT)READ_TYPE_MAX;                                      \
         if ( mat->byteswap ) {                                            \
             const size_t block_size = READ_BLOCK_SIZE / data_size;        \
             if ( len <= block_size ) {                                    \
                 readcount = fread(v, data_size, len, (FILE *)mat->fp);    \
                 if ( readcount == len ) {                                 \
                     for ( i = 0; i < len; i++ ) {                         \
-                        data[i] = (T)SwapFunc(&v[i]);                     \
+                        TT swapped_ = SwapFunc(&v[i]);                    \
+                        swapped_ = RoundFunc(swapped_);                   \
+                        if (swapped_ >= min_ && swapped_ <= max_) {       \
+                            data[i] = (T)swapped_;                        \
+                        } else {                                          \
+                            break;                                        \
+                        }                                                 \
                     }                                                     \
                 }                                                         \
             } else {                                                      \
@@ -99,7 +131,14 @@
                     readcount += j;                                       \
                     if ( j == block_size ) {                              \
                         for ( j = 0; j < block_size; j++ ) {              \
-                            data[i + j] = (T)SwapFunc(&v[j]);             \
+                            TT swapped_ = SwapFunc(&v[j]);                \
+                            swapped_ = RoundFunc(swapped_);               \
+                            if (swapped_ >= min_ && swapped_ <= max_) {   \
+                                data[i + j] = (T)swapped_;                \
+                            } else {                                      \
+                                err_ = 1;                                 \
+                                break;                                    \
+                            }                                             \
                         }                                                 \
                     } else {                                              \
                         err_ = 1;                                         \
@@ -111,13 +150,19 @@
                     readcount += j;                                       \
                     if ( j == len - i ) {                                 \
                         for ( j = 0; j < len - i; j++ ) {                 \
-                            data[i + j] = (T)SwapFunc(&v[j]);             \
+                            TT swapped_ = SwapFunc(&v[j]);                \
+                            if (swapped_ >= min_ && swapped_ <= max_) {   \
+                                data[i + j] = (T)swapped_;                \
+                            } else {                                      \
+                                err_ = 1;                                 \
+                                break;                                    \
+                            }                                             \
                         }                                                 \
                     }                                                     \
                 }                                                         \
             }                                                             \
         } else {                                                          \
-            READ_DATA_NOSWAP(T);                                          \
+            READ_DATA_NOSWAP(T, TT, RoundFunc);                           \
         }                                                                 \
     } while ( 0 )
 
@@ -198,6 +243,8 @@
 #define READ_TYPE_UINT8 10
 
 #define READ_TYPE double
+#define READ_TYPE_MIN (-DBL_MAX)
+#define READ_TYPE_MAX DBL_MAX
 #define READ_TYPE_TYPE READ_TYPE_DOUBLE
 #define READ_TYPED_FUNC1 ReadDoubleData
 #define READ_TYPED_FUNC2 ReadCompressedDoubleData
@@ -208,6 +255,8 @@
 #undef READ_TYPED_FUNC2
 
 #define READ_TYPE float
+#define READ_TYPE_MIN (-FLT_MAX)
+#define READ_TYPE_MAX FLT_MAX
 #define READ_TYPE_TYPE READ_TYPE_SINGLE
 #define READ_TYPED_FUNC1 ReadSingleData
 #define READ_TYPED_FUNC2 ReadCompressedSingleData
@@ -219,6 +268,8 @@
 
 #ifdef HAVE_MAT_INT64_T
 #define READ_TYPE mat_int64_t
+#define READ_TYPE_MIN INT64_MIN
+#define READ_TYPE_MAX INT64_MAX
 #define READ_TYPE_TYPE READ_TYPE_INT64
 #define READ_TYPED_FUNC1 ReadInt64Data
 #define READ_TYPED_FUNC2 ReadCompressedInt64Data
@@ -231,6 +282,8 @@
 
 #ifdef HAVE_MAT_UINT64_T
 #define READ_TYPE mat_uint64_t
+#define READ_TYPE_MIN 0
+#define READ_TYPE_MAX UINT64_MAX
 #define READ_TYPE_TYPE READ_TYPE_UINT64
 #define READ_TYPED_FUNC1 ReadUInt64Data
 #define READ_TYPED_FUNC2 ReadCompressedUInt64Data
@@ -242,6 +295,8 @@
 #endif /* HAVE_MAT_UINT64_T */
 
 #define READ_TYPE mat_int32_t
+#define READ_TYPE_MIN INT32_MIN
+#define READ_TYPE_MAX INT32_MAX
 #define READ_TYPE_TYPE READ_TYPE_INT32
 #define READ_TYPED_FUNC1 ReadInt32Data
 #define READ_TYPED_FUNC2 ReadCompressedInt32Data
@@ -252,6 +307,8 @@
 #undef READ_TYPED_FUNC2
 
 #define READ_TYPE mat_uint32_t
+#define READ_TYPE_MIN 0
+#define READ_TYPE_MAX UINT32_MAX
 #define READ_TYPE_TYPE READ_TYPE_UINT32
 #define READ_TYPED_FUNC1 ReadUInt32Data
 #define READ_TYPED_FUNC2 ReadCompressedUInt32Data
@@ -262,6 +319,8 @@
 #undef READ_TYPED_FUNC2
 
 #define READ_TYPE mat_int16_t
+#define READ_TYPE_MIN INT16_MIN
+#define READ_TYPE_MAX INT16_MAX
 #define READ_TYPE_TYPE READ_TYPE_INT16
 #define READ_TYPED_FUNC1 ReadInt16Data
 #define READ_TYPED_FUNC2 ReadCompressedInt16Data
@@ -272,6 +331,8 @@
 #undef READ_TYPED_FUNC2
 
 #define READ_TYPE mat_uint16_t
+#define READ_TYPE_MIN 0
+#define READ_TYPE_MAX UINT16_MAX
 #define READ_TYPE_TYPE READ_TYPE_UINT16
 #define READ_TYPED_FUNC1 ReadUInt16Data
 #define READ_TYPED_FUNC2 ReadCompressedUInt16Data
@@ -282,6 +343,8 @@
 #undef READ_TYPED_FUNC2
 
 #define READ_TYPE mat_int8_t
+#define READ_TYPE_MIN INT8_MIN
+#define READ_TYPE_MAX INT8_MAX
 #define READ_TYPE_TYPE READ_TYPE_INT8
 #define READ_TYPED_FUNC1 ReadInt8Data
 #define READ_TYPED_FUNC2 ReadCompressedInt8Data
@@ -292,6 +355,8 @@
 #undef READ_TYPED_FUNC2
 
 #define READ_TYPE mat_uint8_t
+#define READ_TYPE_MIN 0
+#define READ_TYPE_MAX UINT8_MAX
 #define READ_TYPE_TYPE READ_TYPE_UINT8
 #define READ_TYPED_FUNC1 ReadUInt8Data
 #define READ_TYPED_FUNC2 ReadCompressedUInt8Data
@@ -360,6 +425,12 @@ ReadCompressedCharData(mat_t *mat, z_streamp z, void *data, enum matio_types dat
 }
 #endif
 
+static mat_uint16_t
+NOP_UINT16(mat_uint16_t value)
+{
+    return value;
+}
+
 size_t
 ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
 {
@@ -383,7 +454,7 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
             size_t i, readcount;
             mat_uint16_t *data = (mat_uint16_t *)_data;
             mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
-            READ_DATA(mat_uint16_t, Mat_uint16Swap);
+            READ_DATA(mat_uint16_t, mat_uint16_t, Mat_uint16Swap, NOP_UINT16);
             err = Mul(&nBytes, readcount, data_size);
             break;
         }
