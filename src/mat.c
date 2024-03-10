@@ -2909,7 +2909,7 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
         (void)Mat_GetDir(mat, &n);
     }
 
-    {
+    if ( NULL != mat->dir ) {
         /* Error if MAT variable already exists in MAT file */
         size_t i;
         for ( i = 0; i < mat->num_datasets; i++ ) {
