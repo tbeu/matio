@@ -24,6 +24,7 @@
 int
 MatioRead(const char *file_name)
 {
+    Mat_LogInit("ossfuzz");
     mat_t *matfd = Mat_Open(file_name, MAT_ACC_RDONLY);
     if ( matfd == nullptr ) {
         return 0;
