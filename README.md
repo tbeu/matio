@@ -6,7 +6,7 @@ MATLAB MAT file I/O library
 
 ## Table of Contents
 1. [Introduction](#10-introduction)
-  * 1.1[Contact](#11-contact)
+  * 1.1 [Contact](#11-contact)
   * 1.2 [Acknowledgements](#12-acknowledgements)
   * 1.3 [Contributing](#13-contributing)
   * 1.4 [Questions and Reporting Bugs](#14-questions-and-reporting-bugs)
