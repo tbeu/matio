@@ -90,8 +90,8 @@ jobs:
           "$MATDUMP" -V
 
   build-openbsd:
-    runs-on: ubuntu-latest
     name: openbsd-clang
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -120,8 +120,8 @@ jobs:
             ./build/matdump -v -f whos ./share/test_file.mat
 
   build-solaris:
-    runs-on: ubuntu-latest
     name: solaris-gcc
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -151,3 +151,46 @@ jobs:
             ./build/matdump -v ./share/test_file.mat
             ./build/matdump -v -f whos ./share/test_file.mat
 
+  build-cygwin:
+    name: windows-cygwin
+    runs-on: windows-latest
+    steps:
+      - name: Set git to use LF
+        run: git config --global core.autocrlf input
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+      - name: Setup cygwin
+        uses: cygwin/cygwin-install-action@master
+        with:
+          packages: >-
+            cmake
+            gcc-core
+            gcc-g++
+            libhdf5-devel
+            make
+            ninja
+            zlib-devel
+      - name: Configure
+        run: |
+          export PATH=/usr/bin:$PATH
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
+        shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+        env:
+          CYGWIN_NOWINPATH: 1
+      - name: Build with gcc
+        run: |
+          export PATH=/usr/bin:$PATH
+          cmake --build build -- -j8
+        shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+      - name: Test
+        run: |
+          for file in ./share/*.mat; do
+            ./build/matdump -d "$file" d
+            ./build/matdump -v "$file"
+            ./build/matdump -v -f whos "$file"
+          done
+          ./build/matdump -v -H
+          ./build/matdump -V
+        shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
