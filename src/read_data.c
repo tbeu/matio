@@ -54,7 +54,7 @@
                 for ( i = 0; i < len; i++ ) {                         \
                     TT val_ = v[i];                                   \
                     val_ = RoundFunc(val_);                           \
-                    if (val_ >= min_ && val_ <= max_) {               \
+                    if ( val_ >= min_ && val_ <= max_ ) {             \
                         data[i] = (T)val_;                            \
                     } else {                                          \
                         break;                                        \
@@ -72,7 +72,7 @@
                     for ( j = 0; j < block_size; j++ ) {              \
                         TT val_ = v[j];                               \
                         val_ = RoundFunc(val_);                       \
-                        if (val_ >= min_ && val_ <= max_) {           \
+                        if ( val_ >= min_ && val_ <= max_ ) {         \
                             data[i + j] = (T)val_;                    \
                         } else {                                      \
                             err_ = 1;                                 \
@@ -91,7 +91,7 @@
                     for ( j = 0; j < len - i; j++ ) {                 \
                         TT val_ = v[j];                               \
                         val_ = RoundFunc(val_);                       \
-                        if (val_ >= min_ && val_ <= max_) {           \
+                        if ( val_ >= min_ && val_ <= max_ ) {         \
                             data[i + j] = (T)val_;                    \
                         } else {                                      \
                             err_ = 1;                                 \
@@ -115,7 +115,7 @@
                     for ( i = 0; i < len; i++ ) {                         \
                         TT swapped_ = SwapFunc(&v[i]);                    \
                         swapped_ = RoundFunc(swapped_);                   \
-                        if (swapped_ >= min_ && swapped_ <= max_) {       \
+                        if ( swapped_ >= min_ && swapped_ <= max_ ) {     \
                             data[i] = (T)swapped_;                        \
                         } else {                                          \
                             break;                                        \
@@ -133,7 +133,7 @@
                         for ( j = 0; j < block_size; j++ ) {              \
                             TT swapped_ = SwapFunc(&v[j]);                \
                             swapped_ = RoundFunc(swapped_);               \
-                            if (swapped_ >= min_ && swapped_ <= max_) {   \
+                            if ( swapped_ >= min_ && swapped_ <= max_ ) { \
                                 data[i + j] = (T)swapped_;                \
                             } else {                                      \
                                 err_ = 1;                                 \
@@ -151,7 +151,7 @@
                     if ( j == len - i ) {                                 \
                         for ( j = 0; j < len - i; j++ ) {                 \
                             TT swapped_ = SwapFunc(&v[j]);                \
-                            if (swapped_ >= min_ && swapped_ <= max_) {   \
+                            if ( swapped_ >= min_ && swapped_ <= max_ ) { \
                                 data[i + j] = (T)swapped_;                \
                             } else {                                      \
                                 err_ = 1;                                 \
