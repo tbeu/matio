@@ -28,11 +28,15 @@ if(MATIO_WITH_HDF5)
                 REQUIRES ${MATIO_CONAN_REQUIRES}
                 BASIC_SETUP CMAKE_TARGETS
                 OPTIONS hdf5:shared=True zlib:shared=True
-                BUILD missing)
+                BUILD missing
+            )
         endif()
         set(HDF5_FOUND TRUE)
     else()
-        find_package(HDF5 CONFIG REQUIRED)
+        find_package(HDF5 CONFIG)
+        if(NOT HDF5_FOUND)
+            find_package(HDF5)
+        endif()
         if(HDF5_FOUND)
             set(HDF_MIN_VER 1.8)
             if(HDF5_VERSION VERSION_LESS ${HDF_MIN_VER})
@@ -60,12 +64,9 @@ if(HDF5_FOUND)
     elseif(TARGET hdf5)
         # target from hdf5 1.8 config
         target_link_libraries(MATIO::HDF5 INTERFACE hdf5)
-    elseif(TARGET hdf5::hdf5-shared)
+    elseif(TARGET HDF5::HDF5)
         # target defined in CMake FindHDF5 (since 3.19)
-        target_link_libraries(MATIO::HDF5 INTERFACE hdf5::hdf5-shared)
-    elseif(TARGET hdf5::hdf5-static)
-        # target defined in CMake FindHDF5 (since 3.19)
-        target_link_libraries(MATIO::HDF5 INTERFACE hdf5-static)
+        target_link_libraries(MATIO::HDF5 INTERFACE HDF5::HDF5)
     else()
         # results from CMake FindHDF5
         set_target_properties(MATIO::HDF5 PROPERTIES
