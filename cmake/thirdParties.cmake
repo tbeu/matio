@@ -28,7 +28,8 @@ if(MATIO_WITH_HDF5)
                 REQUIRES ${MATIO_CONAN_REQUIRES}
                 BASIC_SETUP CMAKE_TARGETS
                 OPTIONS hdf5:shared=True zlib:shared=True
-                BUILD missing)
+                BUILD missing
+            )
         endif()
         set(HDF5_FOUND TRUE)
     else()
