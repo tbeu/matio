@@ -1,13 +1,13 @@
 repos:
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v18.1.2
+  rev: v18.1.3
   hooks:
   - id: clang-format
     files: ^(src\/.+\.[ch]|tools\/matdump.c|test\/test_mat.c)$
     exclude: ^(src\/fortran\/matio_internal.c|src\/snprintf.c|src\/safe-math.h)$
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
+  rev: v4.6.0
   hooks:
   - id: trailing-whitespace
     files: ^src\/.+\.[ch]$
