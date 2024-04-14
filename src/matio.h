@@ -298,7 +298,7 @@ EXTERN enum mat_acc Mat_GetFileAccessMode(const mat_t *mat);
 EXTERN const char *Mat_GetFilename(const mat_t *mat);
 EXTERN const char *Mat_GetHeader(const mat_t *mat);
 EXTERN enum mat_ft Mat_GetVersion(const mat_t *mat);
-EXTERN char **Mat_GetDir(mat_t *mat, size_t *n);
+EXTERN char *const *Mat_GetDir(mat_t *mat, size_t *n);
 EXTERN int Mat_Rewind(mat_t *mat);
 
 /* MAT variable functions */

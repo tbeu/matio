@@ -31,7 +31,7 @@ MatioRead(const char *file_name)
     }
 
     size_t n = 0;
-    char** dir = Mat_GetDir(matfd, &n);
+    char *const *dir = Mat_GetDir(matfd, &n);
 
     matvar_t *matvar = nullptr;
     while ( (matvar = Mat_VarReadNextInfo(matfd)) != nullptr ) {
@@ -46,7 +46,7 @@ MatioRead(const char *file_name)
     }
 
     Mat_Rewind(matfd);
-    for (size_t i = 0; i < n; i++) {
+    for ( size_t i = 0; i < n; i++ ) {
         matvar = Mat_VarRead(matfd, dir[i]);
         Mat_VarFree(matvar);
     }

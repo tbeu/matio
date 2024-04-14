@@ -3751,7 +3751,7 @@ test_directory(char *file)
     mat = Mat_Open(file, MAT_ACC_RDONLY);
     if ( NULL != mat ) {
         size_t n1;
-        char **dir = Mat_GetDir(mat, &n1);
+        char *const *dir = Mat_GetDir(mat, &n1);
         if ( NULL != dir ) {
             size_t i, n2 = n1 + 1;
             for ( i = 0; i < n1; ++i ) {

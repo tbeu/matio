@@ -789,7 +789,7 @@ Mat_GetVersion(const mat_t *mat)
  * @param[out] n Number of variables in the given MAT file
  * @return Array of variable names
  */
-char **
+char *const *
 Mat_GetDir(mat_t *mat, size_t *n)
 {
     char **dir = NULL;
