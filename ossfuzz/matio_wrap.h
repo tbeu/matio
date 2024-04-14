@@ -30,6 +30,11 @@ MatioRead(const char *file_name)
         return 0;
     }
 
+    enum mat_acc mat_acess_mode = Mat_GetFileAccessMode(matfd);
+    const char *mat_file_name = Mat_GetFilename(matfd);
+    const char *mat_header = Mat_GetHeader(matfd);
+    enum mat_ft mat_version = Mat_GetVersion(matfd);
+
     size_t n = 0;
     char *const *dir = Mat_GetDir(matfd, &n);
 
@@ -37,7 +42,15 @@ MatioRead(const char *file_name)
     while ( (matvar = Mat_VarReadNextInfo(matfd)) != nullptr ) {
         Mat_VarReadDataAll(matfd, matvar);
         Mat_VarGetSize(matvar);
+        unsigned nfields = Mat_VarGetNumberOfFields(matvar);
+        char *const *field_names = Mat_VarGetStructFieldnames(matvar);
+        Mat_VarPrint(matvar, 0);
+        Mat_VarPrint(matvar, 1);
+        matvar_t *matvar_deep_copy = Mat_VarDuplicate(matvar, 1);
         Mat_VarFree(matvar);
+        if ( matvar_deep_copy != nullptr ) {
+            Mat_VarFree(matvar_deep_copy);
+        }
     }
 
     Mat_Rewind(matfd);
