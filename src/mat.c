@@ -2422,6 +2422,10 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
                     break;
 #endif
                 sparse = (mat_sparse_t *)matvar->data;
+                if ( sparse == NULL || sparse->ndata == 0 || sparse->nir == 0 ||
+                     sparse->njc == 0 ) {
+                    break;
+                }
                 if ( matvar->isComplex ) {
                     mat_complex_split_t *complex_data = (mat_complex_split_t *)sparse->data;
                     const char *re = (const char *)complex_data->Re;
