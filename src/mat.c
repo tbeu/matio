@@ -1606,7 +1606,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 
     if ( !opt ) {
         out->data = in->data;
-    } else if ( (in->data != NULL) && (in->class_type == MAT_C_STRUCT) ) {
+    } else if ( in->data != NULL && in->class_type == MAT_C_STRUCT ) {
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
             size_t nfields = in->nbytes / in->data_size;
@@ -1616,7 +1616,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                 outfields[i] = Mat_VarDuplicate(infields[i], opt);
             }
         }
-    } else if ( (in->data != NULL) && (in->class_type == MAT_C_CELL) ) {
+    } else if ( in->data != NULL && in->class_type == MAT_C_CELL ) {
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
             size_t nelems = in->nbytes / in->data_size;
@@ -1626,7 +1626,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                 outcells[i] = Mat_VarDuplicate(incells[i], opt);
             }
         }
-    } else if ( (in->data != NULL) && (in->class_type == MAT_C_SPARSE) ) {
+    } else if ( in->data != NULL && in->class_type == MAT_C_SPARSE ) {
         out->data = malloc(sizeof(mat_sparse_t));
         if ( out->data != NULL ) {
             mat_sparse_t *out_sparse = (mat_sparse_t *)out->data;
@@ -1665,7 +1665,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                 out_sparse->data = NULL;
             }
         }
-    } else if ( in->data != NULL ) {
+    } else if ( in->data != NULL && in->nbytes != 0 ) {
         if ( out->isComplex ) {
             out->data = malloc(sizeof(mat_complex_split_t));
             if ( out->data != NULL ) {
