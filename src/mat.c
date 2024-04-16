@@ -1478,6 +1478,9 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     matvar_t *out;
     size_t i;
 
+    if ( in == NULL )
+        return NULL;
+
     out = Mat_VarCalloc();
     if ( out == NULL )
         return NULL;
@@ -1606,31 +1609,23 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 
     if ( !opt ) {
         out->data = in->data;
-    } else if ( in->data != NULL && in->class_type == MAT_C_STRUCT ) {
+    } else if ( in->data != NULL &&
+                (in->class_type == MAT_C_STRUCT || in->class_type == MAT_C_CELL ||
+                 in->class_type == MAT_C_FUNCTION) ) {
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
-            size_t nfields = in->nbytes / in->data_size;
-            matvar_t **infields = (matvar_t **)in->data;
-            matvar_t **outfields = (matvar_t **)out->data;
-            for ( i = 0; i < nfields; i++ ) {
-                outfields[i] = Mat_VarDuplicate(infields[i], opt);
-            }
-        }
-    } else if ( in->data != NULL && in->class_type == MAT_C_CELL ) {
-        out->data = malloc(in->nbytes);
-        if ( out->data != NULL && in->data_size > 0 ) {
-            size_t nelems = in->nbytes / in->data_size;
-            matvar_t **incells = (matvar_t **)in->data;
-            matvar_t **outcells = (matvar_t **)out->data;
-            for ( i = 0; i < nelems; i++ ) {
-                outcells[i] = Mat_VarDuplicate(incells[i], opt);
+            const size_t ndata = in->nbytes / in->data_size;
+            const matvar_t *const *indata = (const matvar_t *const *)in->data;
+            const matvar_t **outdata = (const matvar_t **)out->data;
+            for ( i = 0; i < ndata; i++ ) {
+                outdata[i] = Mat_VarDuplicate(indata[i], opt);
             }
         }
     } else if ( in->data != NULL && in->class_type == MAT_C_SPARSE ) {
         out->data = malloc(sizeof(mat_sparse_t));
         if ( out->data != NULL ) {
             mat_sparse_t *out_sparse = (mat_sparse_t *)out->data;
-            mat_sparse_t *in_sparse = (mat_sparse_t *)in->data;
+            const mat_sparse_t *in_sparse = (mat_sparse_t *)in->data;
             out_sparse->nzmax = in_sparse->nzmax;
             out_sparse->nir = in_sparse->nir;
             out_sparse->ir = (mat_uint32_t *)malloc(in_sparse->nir * sizeof(*out_sparse->ir));
