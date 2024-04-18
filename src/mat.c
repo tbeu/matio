@@ -2417,8 +2417,8 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
                     break;
 #endif
                 sparse = (mat_sparse_t *)matvar->data;
-                if ( sparse == NULL || sparse->ndata == 0 || sparse->nir == 0 ||
-                     sparse->njc == 0 ) {
+                if ( sparse == NULL || sparse->ndata == 0 || sparse->nir == 0 || sparse->njc == 0 ||
+                     sparse->data == NULL ) {
                     break;
                 }
                 if ( matvar->isComplex ) {
