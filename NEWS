@@ -1,3 +1,17 @@
+Changes in 1.5.27 (20 April 2024)
+* Fixed const-correctness of input arguments of API functions
+* Fixed const-correctness of return type of Mat_GetDir
+* Fixed bug duplicating function class (with deep copy) in Mat_VarDuplicate
+* Fixed little endian detection for __aarch64__
+* Fixed LFS support on MinGW 64-bit builds
+* Fixed support of Unicode filenames on Windows
+* Fixed detection of HDF5 version for UTF-8 based file name of HDF5 MAT file
+* Fixed stack-based buffer overflow when reading (crafted) HDF5 MAT file
+* Fixed build on Solaris
+* Fixed build with Rust bindings and LLVM >= 16
+* CMake: Fixed MinGW linker error with libc (regression of v1.5.24)
+* CMake: Enabled static analysis with Cppcheck
+
 Changes in 1.5.26 (12 November 2023)
 * Fixed testsuite (regression of v1.5.25)
 
