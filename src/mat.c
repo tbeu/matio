@@ -1583,6 +1583,8 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                         if ( NULL != out_sparse->data )
                             memcpy(out_sparse->data, in_sparse->data,
                                    in_sparse->ndata * Mat_SizeOf(in->data_type));
+                    } else {
+                        out_sparse->data = NULL;
                     }
                 }
             } else if ( out->isComplex ) {
