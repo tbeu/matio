@@ -197,7 +197,7 @@ Table of Contents
               * 'MATIO_WITH_ZLIB:BOOL=ON'
                 This option enables CMake to check for availability of the
                 zlib library (see section 2.1.1 for information about zlib).
-              * 'MATIO_ENABLE_CPPCHECK:BOOL=ON'
+              * 'MATIO_ENABLE_CPPCHECK:BOOL=OFF'
                 This option enables CMake >= 3.10 to perform static analysis
                 with Cppcheck.
 
