@@ -1216,7 +1216,8 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                         }
                         if ( cells[i]->internal->data != NULL ||
                              cells[i]->class_type == MAT_C_STRUCT ||
-                             cells[i]->class_type == MAT_C_CELL ) {
+                             cells[i]->class_type == MAT_C_CELL ||
+                             (nBytes <= (1 << MAX_WBITS) && cells[i]->class_type == MAT_C_CHAR) ) {
                             /* Memory optimization: Free inflate state */
                             inflateEnd(cells[i]->internal->z);
                             free(cells[i]->internal->z);
@@ -1645,7 +1646,8 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                         }
                         if ( fields[i]->internal->data != NULL ||
                              fields[i]->class_type == MAT_C_STRUCT ||
-                             fields[i]->class_type == MAT_C_CELL ) {
+                             fields[i]->class_type == MAT_C_CELL ||
+                             (nBytes <= (1 << MAX_WBITS) && fields[i]->class_type == MAT_C_CHAR) ) {
                             /* Memory optimization: Free inflate state */
                             inflateEnd(fields[i]->internal->z);
                             free(fields[i]->internal->z);
@@ -3085,10 +3087,10 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 
     if ( matvar == NULL )
         return MATIO_E_BAD_ARGUMENT;
-    else if ( matvar->rank == 0 ) /* An empty data set */
+    if ( matvar->rank == 0 ) /* An empty data set */
         return MATIO_E_NO_ERROR;
 #if HAVE_ZLIB
-    else if ( NULL != matvar->internal->data ) {
+    if ( NULL != matvar->internal->data ) {
         /* Data already read in ReadNextStructField or ReadNextCell */
         matvar->data = matvar->internal->data;
         matvar->internal->data = NULL;
@@ -3175,6 +3177,9 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
             if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if HAVE_ZLIB
+                if ( matvar->internal->z == NULL ) {
+                    break;
+                }
                 matvar->internal->z->avail_in = 0;
                 err = Inflate(mat, matvar->internal->z, tag, 4, &bytesread);
                 if ( err ) {
@@ -3229,16 +3234,12 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 break;
             }
             if ( 0 == matvar->nbytes ) {
-                matvar->data = calloc(1, 1);
-            } else {
-                matvar->data = calloc(matvar->nbytes, 1);
+                break;
             }
+            matvar->data = calloc(matvar->nbytes, 1);
             if ( NULL == matvar->data ) {
                 err = MATIO_E_OUT_OF_MEMORY;
                 Mat_Critical("Couldn't allocate memory for the data");
-                break;
-            }
-            if ( 0 == matvar->nbytes ) {
                 break;
             }
             {
