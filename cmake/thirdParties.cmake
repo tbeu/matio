@@ -14,7 +14,7 @@ if(MATIO_WITH_HDF5)
     if(MATIO_USE_CONAN)
         set(MATIO_CONAN_REQUIRES "hdf5/[>=1.8 <1.15]" "zlib/[>=1.2.3]")
         if(MATIO_ENABLE_CPPCHECK)
-            list(APPEND MATIO_CONAN_REQUIRES "cppcheck/[>=2.14]")
+            list(APPEND MATIO_CONAN_REQUIRES "cppcheck/[>=2.14.1]")
         endif()
         if(HDF5_USE_STATIC_LIBRARIES)
             conan_cmake_run(
