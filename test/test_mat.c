@@ -2673,7 +2673,7 @@ static int
 test_cell_api_set()
 {
     size_t dims[2];
-    double data[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    const double data[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     matvar_t *cells[10], *matvar, *prev_cell;
 
     dims[0] = 2;
