@@ -2049,7 +2049,7 @@ Mat_VarWriteSparse73(hid_t id, matvar_t *matvar, const char *name)
             H5Aclose(attr_id);
         }
 
-        if ( MATIO_E_NO_ERROR == err ) {
+        if ( MATIO_E_NO_ERROR == err && sparse->ndata > 0 ) {
             ndata = sparse->ndata;
             h5_type = DataType2H5T(matvar->data_type);
             h5_dtype = DataType(h5_type, matvar->isComplex);
@@ -2063,7 +2063,7 @@ Mat_VarWriteSparse73(hid_t id, matvar_t *matvar, const char *name)
             H5Sclose(mspace_id);
         }
 
-        if ( MATIO_E_NO_ERROR == err ) {
+        if ( MATIO_E_NO_ERROR == err && sparse->nir > 0 ) {
             nir = sparse->nir;
             mspace_id = H5Screate_simple(1, &nir, NULL);
             dset_id = H5Dcreate(sparse_id, "ir", size_type_id, mspace_id, H5P_DEFAULT, H5P_DEFAULT,
