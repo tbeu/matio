@@ -365,44 +365,46 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
 
                 /* matvar->dims[1] either is 3 for real or 4 for complex sparse */
                 matvar->isComplex = matvar->dims[1] == 4 ? 1 : 0;
-                if ( matvar->dims[0] < 2 ) {
+                if ( 0 == matvar->dims[0] ) {
                     return MATIO_E_FILE_FORMAT_VIOLATION;
                 }
                 sparse = (mat_sparse_t *)matvar->data;
                 sparse->nir = (mat_uint32_t)(matvar->dims[0] - 1);
                 sparse->nzmax = sparse->nir;
-                err = Mul(&readcount, sparse->nir, sizeof(mat_uint32_t));
-                if ( err ) {
-                    Mat_Critical("Integer multiplication overflow");
-                    return err;
-                }
-                sparse->ir = (mat_uint32_t *)malloc(readcount);
-                if ( sparse->ir != NULL ) {
-                    readcount = ReadUInt32Data(mat, sparse->ir, data_type, sparse->nir);
-                    if ( readcount != sparse->nir ) {
-                        free(sparse->ir);
-                        free(matvar->data);
-                        matvar->data = NULL;
-                        return MATIO_E_FILE_FORMAT_VIOLATION;
-                    }
-                    for ( i = 0; i < sparse->nir; i++ ) {
-                        if ( 0 == sparse->ir[i] ) {
-                            err = MATIO_E_FILE_FORMAT_VIOLATION;
-                            break;
-                        }
-                        sparse->ir[i] = sparse->ir[i] - 1;
-                    }
+                if ( sparse->nir > 0 ) {
+                    err = Mul(&readcount, sparse->nir, sizeof(mat_uint32_t));
                     if ( err ) {
-                        free(sparse->ir);
-                        free(matvar->data);
-                        matvar->data = NULL;
+                        Mat_Critical("Integer multiplication overflow");
                         return err;
                     }
-                } else {
-                    free(matvar->data);
-                    matvar->data = NULL;
-                    Mat_Critical("Couldn't allocate memory for the sparse row array");
-                    return MATIO_E_OUT_OF_MEMORY;
+                    sparse->ir = (mat_uint32_t *)malloc(readcount);
+                    if ( sparse->ir != NULL ) {
+                        readcount = ReadUInt32Data(mat, sparse->ir, data_type, sparse->nir);
+                        if ( readcount != sparse->nir ) {
+                            free(sparse->ir);
+                            free(matvar->data);
+                            matvar->data = NULL;
+                            return MATIO_E_FILE_FORMAT_VIOLATION;
+                        }
+                        for ( i = 0; i < sparse->nir; i++ ) {
+                            if ( 0 == sparse->ir[i] ) {
+                                err = MATIO_E_FILE_FORMAT_VIOLATION;
+                                break;
+                            }
+                            sparse->ir[i] = sparse->ir[i] - 1;
+                        }
+                        if ( err ) {
+                            free(sparse->ir);
+                            free(matvar->data);
+                            matvar->data = NULL;
+                            return err;
+                        }
+                    } else {
+                        free(matvar->data);
+                        matvar->data = NULL;
+                        Mat_Critical("Couldn't allocate memory for the sparse row array");
+                        return MATIO_E_OUT_OF_MEMORY;
+                    }
                 }
                 readcount = ReadDoubleData(mat, &tmp, data_type, 1);
                 if ( readcount != 1 || tmp > UINT_MAX - 1 || tmp < 0 ) {
@@ -446,37 +448,45 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Integer multiplication overflow");
                     return err;
                 }
-                sparse->jc = (mat_uint32_t *)malloc(readcount);
-                if ( sparse->jc != NULL ) {
-                    mat_uint32_t *jc;
-                    err = Mul(&readcount, sparse->nir, sizeof(mat_uint32_t));
-                    if ( err ) {
-                        Mat_Critical("Integer multiplication overflow");
-                        return err;
-                    }
-                    jc = (mat_uint32_t *)malloc(readcount);
-                    if ( jc != NULL ) {
-                        mat_uint32_t j = 0;
-                        sparse->jc[0] = 0;
-                        readcount = ReadUInt32Data(mat, jc, data_type, sparse->nir);
-                        if ( readcount != sparse->nir ) {
+                if ( sparse->nir > 0 ) {
+                    sparse->jc = (mat_uint32_t *)malloc(readcount);
+                    if ( sparse->jc != NULL ) {
+                        mat_uint32_t *jc;
+                        err = Mul(&readcount, sparse->nir, sizeof(mat_uint32_t));
+                        if ( err ) {
+                            Mat_Critical("Integer multiplication overflow");
+                            return err;
+                        }
+                        jc = (mat_uint32_t *)malloc(readcount);
+                        if ( jc != NULL ) {
+                            mat_uint32_t j = 0;
+                            sparse->jc[0] = 0;
+                            readcount = ReadUInt32Data(mat, jc, data_type, sparse->nir);
+                            if ( readcount != sparse->nir ) {
+                                free(jc);
+                                free(sparse->jc);
+                                free(sparse->ir);
+                                free(matvar->data);
+                                matvar->data = NULL;
+                                return MATIO_E_FILE_FORMAT_VIOLATION;
+                            }
+                            for ( i = 1; i < sparse->njc - 1; i++ ) {
+                                while ( j < sparse->nir && jc[j] <= i )
+                                    j++;
+                                sparse->jc[i] = j;
+                            }
                             free(jc);
+                            /* terminating nnz */
+                            sparse->jc[sparse->njc - 1] = sparse->nir;
+                        } else {
                             free(sparse->jc);
                             free(sparse->ir);
                             free(matvar->data);
                             matvar->data = NULL;
-                            return MATIO_E_FILE_FORMAT_VIOLATION;
+                            Mat_Critical("Couldn't allocate memory for the sparse index array");
+                            return MATIO_E_OUT_OF_MEMORY;
                         }
-                        for ( i = 1; i < sparse->njc - 1; i++ ) {
-                            while ( j < sparse->nir && jc[j] <= i )
-                                j++;
-                            sparse->jc[i] = j;
-                        }
-                        free(jc);
-                        /* terminating nnz */
-                        sparse->jc[sparse->njc - 1] = sparse->nir;
                     } else {
-                        free(sparse->jc);
                         free(sparse->ir);
                         free(matvar->data);
                         matvar->data = NULL;
@@ -484,11 +494,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                         return MATIO_E_OUT_OF_MEMORY;
                     }
                 } else {
-                    free(sparse->ir);
-                    free(matvar->data);
-                    matvar->data = NULL;
-                    Mat_Critical("Couldn't allocate memory for the sparse index array");
-                    return MATIO_E_OUT_OF_MEMORY;
+                    sparse->jc = (mat_uint32_t *)calloc(readcount, 1);
                 }
                 readcount = ReadDoubleData(mat, &tmp, data_type, 1);
                 if ( readcount != 1 ) {
@@ -629,7 +635,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                         Mat_Critical("Couldn't allocate memory for the complex sparse data");
                         return MATIO_E_OUT_OF_MEMORY;
                     }
-                } else {
+                } else if ( sparse->ndata > 0 ) {
                     sparse->data = malloc(sparse->ndata * Mat_SizeOf(data_type));
                     if ( sparse->data != NULL ) {
 #if defined(EXTENDED_SPARSE)
@@ -720,6 +726,17 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                         matvar->data = NULL;
                         Mat_Critical("Couldn't allocate memory for the sparse data");
                         return MATIO_E_OUT_OF_MEMORY;
+                    }
+                } else {
+                    readcount = ReadDoubleData(mat, &tmp, data_type, 1);
+                    err = readcount != 1;
+                    if ( err ) {
+                        free(sparse->data);
+                        free(sparse->jc);
+                        free(sparse->ir);
+                        free(matvar->data);
+                        matvar->data = NULL;
+                        return MATIO_E_FILE_FORMAT_VIOLATION;
                     }
                 }
                 break;
