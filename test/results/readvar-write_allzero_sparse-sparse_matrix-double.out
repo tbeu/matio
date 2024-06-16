@@ -1,0 +1,7 @@
+      Name: sparse_matrix
+      Rank: 2
+Dimensions: 5 x 10
+Class Type: Sparse Array
+ Data Type: IEEE 754 double-precision
+{
+}

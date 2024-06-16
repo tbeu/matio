@@ -284,6 +284,17 @@ AT_CHECK([cp $srcdir/matlab/test_write_sparse_complex.m .
 ],[])
 AT_CLEANUP
 
+AT_SETUP([Write 2D all-zero sparse double array])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 5 -z -c double write_allzero_sparse],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_allzero_sparse-sparse_matrix-double.out expout
+          $builddir/test_mat readvar test_write_allzero_sparse.mat sparse_matrix],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_allzero_sparse.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_allzero_sparse" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
 AT_SETUP([Write 2D empty array])
 AT_KEYWORDS([empty])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])

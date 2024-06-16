@@ -107,6 +107,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(matlab_dir)/test_write_empty_struct.m \
                  $(matlab_dir)/test_write_sparse.m \
                  $(matlab_dir)/test_write_sparse_complex.m \
+                 $(matlab_dir)/test_write_allzero_sparse.m \
                  $(matlab_dir)/test_write_struct_2d_logical.m \
                  $(matlab_dir)/test_write_struct_2d_numeric.m \
                  $(matlab_dir)/test_write_struct_char.m \
@@ -320,6 +321,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/readvar-write_sparse-sparse_matrix-uint16.out \
                  $(results_dir)/readvar-write_sparse-sparse_matrix-uint32.out \
                  $(results_dir)/readvar-write_sparse-sparse_matrix-uint64.out \
+                 $(results_dir)/readvar-write_allzero_sparse-sparse_matrix-double.out \
                  $(results_dir)/readvar-writeinf-d.out \
                  $(results_dir)/readvar-writeinf-d-win.out \
                  $(results_dir)/readvar-writenan-d.out \

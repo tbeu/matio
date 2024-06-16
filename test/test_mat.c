@@ -96,6 +96,9 @@ static const char *helptestsstr[] = {
     "write_complex_sparse     - Write a complex 2D sparse array to a matlab file.",
     "                           The class of the numeric array is set by the -c",
     "                           option or double if not set.",
+    "write_allzero_sparse     - Write a real 2D all-zero sparse array to a matlab file.",
+    "                           The class of the numeric array is set by the -c",
+    "                           option or double if not set.",
     "write_empty_2d_numeric   - Write an empty 2D numeric array to a matlab file.",
     "                           The class of the numeric array is set by the -c",
     "                           option or double if not set.",
@@ -262,6 +265,24 @@ static const char *helptest_write_sparse[] = {
     "    sparse_matrix(1:4:end,1:2:end) = 1;",
     "    sparse_matrix(2:4,2:2:end) = 1;",
     "    sparse_matrix = sparse_matrix.*reshape(1:50,5,10);",
+    "    sparse_matrix = sparse(sparse_matrix);",
+    "",
+    NULL};
+
+static const char *helptest_write_allzero_sparse[] = {
+    "TEST: write_allzero_sparse",
+    "",
+    "Usage: test_mat write_allzero_sparse",
+    "",
+    "Writes a variable named sparse_matrix to a MAT file. The variable is a 2d",
+    "real all-zero sparse array of dimensions 1x1. The class of the variable is",
+    "double. The MAT file is the default file version, or set by the -v",
+    "option. If the MAT file is version 5, compression can be enabled using",
+    "the -z option if built with zlib library.",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    sparse_matrix = zeros(5,10);",
     "    sparse_matrix = sparse(sparse_matrix);",
     "",
     NULL};
@@ -676,6 +697,8 @@ help_test(const char *test)
         Mat_Help(helptest_write_sparse);
     else if ( !strcmp(test, "write_complex_sparse") )
         Mat_Help(helptest_write_complex_sparse);
+    else if ( !strcmp(test, "write_allzero_sparse") )
+        Mat_Help(helptest_write_allzero_sparse);
     else if ( !strcmp(test, "write_empty_2d_numeric") )
         Mat_Help(helptest_write_empty_2d_numeric);
     else if ( !strcmp(test, "write_char") )
@@ -3534,11 +3557,11 @@ test_write_sparse(enum matio_classes matvar_class, const char *output_name)
                 Mat_VarWrite(mat, matvar2, compression);
                 Mat_VarFree(matvar2);
             } else {
-                Mat_Critical("test_writesparse: Couldn't create matlab variable");
+                Mat_Critical("test_write_sparse: Couldn't create matlab variable");
                 err = 1;
             }
         } else {
-            Mat_Critical("test_writesparse: Couldn't create matlab variable");
+            Mat_Critical("test_write_sparse: Couldn't create matlab variable");
             err = 1;
         }
     } else {
@@ -3714,6 +3737,100 @@ test_write_complex_sparse(enum matio_classes matvar_class, const char *output_na
             Mat_Critical(
                 "test_write_complex_sparse: Couldn't create "
                 "matlab variable");
+            err = 1;
+        }
+    } else {
+        err = 1;
+    }
+
+    Mat_Close(mat);
+
+    return err;
+}
+
+static int
+test_write_allzero_sparse(enum matio_classes matvar_class, const char *output_name)
+{
+    int err = 0;
+    const size_t dims[2] = {5, 10};
+    mat_uint32_t jc[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    mat_t *mat;
+    matvar_t *matvar;
+    mat_sparse_t sparse = {
+        0,
+    };
+    enum matio_types data_type = MAT_T_UNKNOWN;
+
+    sparse.nzmax = 1;
+    sparse.nir = 0;
+    sparse.ir = NULL;
+    sparse.njc = 11;
+    sparse.jc = jc;
+    sparse.ndata = 0;
+    sparse.data = NULL;
+
+    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( !mat )
+        return 1;
+
+    switch ( matvar_class ) {
+        case MAT_C_DOUBLE:
+            data_type = MAT_T_DOUBLE;
+            break;
+        case MAT_C_SINGLE:
+            data_type = MAT_T_SINGLE;
+            break;
+#ifdef HAVE_MAT_INT64_T
+        case MAT_C_INT64:
+            data_type = MAT_T_INT64;
+            break;
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_C_UINT64:
+            data_type = MAT_T_UINT64;
+            break;
+#endif
+        case MAT_C_INT32:
+            data_type = MAT_T_INT32;
+            break;
+        case MAT_C_UINT32:
+            data_type = MAT_T_UINT32;
+            break;
+        case MAT_C_INT16:
+            data_type = MAT_T_INT16;
+            break;
+        case MAT_C_UINT16:
+            data_type = MAT_T_UINT16;
+            break;
+        case MAT_C_INT8:
+            data_type = MAT_T_INT8;
+            break;
+        case MAT_C_UINT8:
+            data_type = MAT_T_UINT8;
+            break;
+        default:
+            err = 1;
+            break;
+    }
+
+    if ( NULL == sparse.data ) {
+        matvar = Mat_VarCreate("sparse_matrix", MAT_C_SPARSE, data_type, 2, dims, &sparse,
+                               MAT_F_DONT_COPY_DATA);
+        if ( matvar != NULL ) {
+            matvar_t *matvar2;
+
+            matvar2 =
+                Mat_VarCreate("sparse_matrix", MAT_C_SPARSE, data_type, 2, dims, matvar->data, 0);
+            Mat_VarFree(matvar);
+            if ( matvar2 != NULL ) {
+                Mat_VarWrite(mat, matvar2, compression);
+                Mat_VarFree(matvar2);
+            } else {
+                Mat_Critical("test_write_allzero_sparse: Couldn't create matlab variable");
+                err = 1;
+            }
+        } else {
+            Mat_Critical("test_write_allzero_sparse: Couldn't create matlab variable");
             err = 1;
         }
     } else {
@@ -4134,6 +4251,12 @@ main(int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_write_sparse_complex.mat";
             err += test_write_complex_sparse(matvar_class, output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "write_allzero_sparse") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_allzero_sparse.mat";
+            err += test_write_allzero_sparse(matvar_class, output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k], "ind2sub") ) {
             size_t *subs;
