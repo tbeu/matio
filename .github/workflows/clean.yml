@@ -1,0 +1,18 @@
+name: "Clean-up"
+
+on:
+  schedule:
+    - cron: "17 3 * * 0"
+  workflow_dispatch:
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete workflow runs
+        uses: dmvict/clean-workflow-runs@v1
+        with:
+          run_conclusions: skipped,success
+          save_period: 90
+          save_min_runs_number: 25
+          dry: false
