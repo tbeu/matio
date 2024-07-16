@@ -49,7 +49,8 @@ jobs:
         - ENABLE_MAT73=yes
         - WITH_ZLIB=$TRAVIS_BUILD_DIR/zlib
         - HDF5_VERSION=1.14
-        - HDF5_PATCH_VERSION=3
+        - HDF5_PATCH_VERSION=4
+        - HDF5_BUILD_VERSION=3
         - MAX_RANK=3
     - os: linux
       compiler: gcc-4.8

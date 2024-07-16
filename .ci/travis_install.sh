@@ -10,21 +10,23 @@ if [[ "$ENABLE_MAT73" == "yes" ]]; then
         make install -j8
         popd
 
-        HDF5_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_VERSION}/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION%-*}/src/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION}.tar.gz"
+        if [[ "$HDF5_VERSION" == "1.14" ]]; then
+            HDF5_URL="https://github.com/HDFGroup/hdf5/releases/download/hdf5_${HDF5_VERSION}.${HDF5_PATCH_VERSION}.${HDF5_BUILD_VERSION}/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION}-${HDF5_BUILD_VERSION}.tar.gz"
+        else
+            HDF5_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_VERSION}/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION%-*}/src/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION}.tar.gz"
+        fi
+
         wget --no-check-certificate -nv $HDF5_URL
-        tar -xzf hdf5-$HDF5_VERSION.$HDF5_PATCH_VERSION.tar.gz
-        pushd hdf5-$HDF5_VERSION.$HDF5_PATCH_VERSION
+        tar -xzf hdf5-*.tar.gz
+        pushd hdf5-*
 
         if [[ "$HDF5_VERSION" == "1.14" ]]; then
-            ./configure --quiet --enable-shared --enable-build-mode=debug --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-memory-alloc-sanity-check --disable-instrument --disable-parallel --disable-trace --disable-internal-debug --enable-optimization=debug --disable-asserts --disable-tests --disable-tools --with-pic --with-default-api-version=v114 --disable-dependency-tracking --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
-        fi
-        if [[ "$HDF5_VERSION" == "1.12" ]]; then
+            ./configure --quiet --enable-shared --enable-build-mode=debug --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-instrument --disable-parallel --disable-trace --disable-internal-debug --enable-optimization=debug --disable-asserts --disable-tests --disable-tools --with-pic --with-default-api-version=v114 --disable-dependency-tracking --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
+        elif [[ "$HDF5_VERSION" == "1.12" ]]; then
             ./configure --quiet --enable-shared --enable-build-mode=debug --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-memory-alloc-sanity-check --disable-instrument --disable-parallel --disable-trace --disable-internal-debug --enable-optimization=debug --disable-asserts --disable-tests --disable-tools --with-pic --with-default-api-version=v112 --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
-        fi
-        if [[ "$HDF5_VERSION" == "1.10" ]]; then
+        elif [[ "$HDF5_VERSION" == "1.10" ]]; then
             ./configure --quiet --enable-shared --enable-build-mode=debug --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-memory-alloc-sanity-check --disable-instrument --disable-parallel --disable-trace --disable-internal-debug --enable-optimization=debug --disable-asserts --disable-tools --with-pic --with-default-api-version=v110 --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
-        fi
-        if [[ "$HDF5_VERSION" == "1.8" ]]; then
+        elif [[ "$HDF5_VERSION" == "1.8" ]]; then
             ./configure --quiet --enable-shared --disable-production --enable-debug=all --with-pic --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-clear-file-buffers --disable-instrument --disable-parallel --disable-trace --with-default-api-version=v18 --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
         fi
 
