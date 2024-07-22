@@ -4903,14 +4903,13 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
     int nBytes, nzmax = 0;
     mat_off_t start = 0, end = 0;
 
-    if ( NULL == mat )
+    if ( NULL == mat || NULL == matvar )
         return MATIO_E_BAD_ARGUMENT;
+    if ( NULL == matvar->name )
+        return MATIO_E_OUTPUT_BAD_DATA;
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
     (void)fseeko((FILE *)mat->fp, 0, SEEK_END); /* Always write at end of file */
-
-    if ( NULL == matvar || NULL == matvar->name )
-        return MATIO_E_BAD_ARGUMENT;
 
 #if HAVE_ZLIB
     if ( compress == MAT_COMPRESSION_NONE ) {

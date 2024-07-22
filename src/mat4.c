@@ -128,6 +128,11 @@ Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
         return MATIO_E_BAD_ARGUMENT;
     if ( NULL == matvar->name || matvar->rank != 2 )
         return MATIO_E_OUTPUT_BAD_DATA;
+    if ( matvar->class_type == MAT_C_SPARSE ) {
+        const mat_sparse_t *sparse = (const mat_sparse_t *)matvar->data;
+        if ( NULL == matvar->data || sparse->njc == 0 )
+            return MATIO_E_OUTPUT_BAD_DATA;
+    }
 
     switch ( matvar->data_type ) {
         case MAT_T_DOUBLE:
