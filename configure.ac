@@ -171,7 +171,7 @@ AC_CHECK_HEADER([stdint.h],[AC_DEFINE_UNQUOTED([MATIO_HAVE_STDINT_H],[1],[Matio 
 AC_CHECK_HEADER([intsafe.h],[AC_DEFINE_UNQUOTED([HAVE_INTSAFE_H],[1],[Matio has access to intsafe.h])])
 AC_CHECK_HEADER([strings.h],[AC_DEFINE_UNQUOTED([HAVE_STRINGS_H],[1],[Matio has access to strings.h])])
 AC_CHECK_HEADER([unistd.h],[AC_DEFINE_UNQUOTED([HAVE_UNISTD_H],[1],[Matio has access to unistd.h])])
-AC_CHECK_HEADERS([locale.h stddef.h])
+AC_CHECK_HEADERS([float.h locale.h stddef.h])
 AC_CHECK_MEMBERS([struct lconv.decimal_point, struct lconv.thousands_sep], [], [], [#include <locale.h>])
 
 AC_CHECK_TYPES([ptrdiff_t])

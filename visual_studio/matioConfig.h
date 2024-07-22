@@ -83,6 +83,9 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
+/* Define to 1 if you have the <float.h> header file. */
+#define HAVE_FLOAT_H 1
+
 /* Define to 1 if the system has the type `intmax_t'. */
 #if defined(_MSC_VER) && _MSC_VER >= 1600
 #define HAVE_INTMAX_T 1

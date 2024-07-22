@@ -113,6 +113,7 @@
  *      HAVE_STDDEF_H
  *      HAVE_STDINT_H
  *      HAVE_STDLIB_H
+ *      HAVE_FLOAT_H
  *      HAVE_INTTYPES_H
  *      HAVE_LOCALE_H
  *      HAVE_LOCALECONV
@@ -209,6 +210,9 @@ static void *mymemcpy(void *, const void *, size_t);
 #if !HAVE_VSNPRINTF
 #include <errno.h>  /* For ERANGE and errno. */
 #include <limits.h> /* For *_MAX. */
+#if HAVE_FLOAT_H
+#include <float.h>  /* For *DBL_{MIN,MAX}_10_EXP. */
+#endif  /* HAVE_FLOAT_H */
 #if HAVE_INTTYPES_H
 #include <inttypes.h>   /* For intmax_t (if not defined in <stdint.h>). */
 #endif  /* HAVE_INTTYPES_H */
@@ -267,8 +271,12 @@ static void *mymemcpy(void *, const void *, size_t);
 #ifndef LDOUBLE
 #if HAVE_LONG_DOUBLE
 #define LDOUBLE long double
+#define LDOUBLE_MIN_10_EXP LDBL_MIN_10_EXP
+#define LDOUBLE_MAX_10_EXP LDBL_MAX_10_EXP
 #else
 #define LDOUBLE double
+#define LDOUBLE_MIN_10_EXP DBL_MIN_10_EXP
+#define LDOUBLE_MAX_10_EXP DBL_MAX_10_EXP
 #endif  /* HAVE_LONG_DOUBLE */
 #endif  /* !defined(LDOUBLE) */
 
@@ -387,7 +395,7 @@ static void *mymemcpy(void *, const void *, size_t);
 #define ISNAN(x) (x != x)
 #endif  /* !defined(ISNAN) */
 #ifndef ISINF
-#define ISINF(x) (x != 0.0 && x + x == x)
+#define ISINF(x) ((x < -1 || x > 1) && x + x == x)
 #endif  /* !defined(ISINF) */
 
 #ifdef OUTCHAR
@@ -663,50 +671,33 @@ rpl_vsnprintf(char *str, size_t size, const char *format, va_list args)
             case 'A':
                 /* Not yet supported, we'll use "%F". */
                 /* FALLTHROUGH */
+            case 'E':
+                if (ch == 'E')
+                    flags |= PRINT_F_TYPE_E;
+                /* FALLTHROUGH */
+            case 'G':
+                if (ch == 'G')
+                    flags |= PRINT_F_TYPE_G;
+                /* FALLTHROUGH */
             case 'F':
                 flags |= PRINT_F_UP;
+                /* FALLTHROUGH */
             case 'a':
                 /* Not yet supported, we'll use "%f". */
+                /* FALLTHROUGH */
+            case 'e':
+                if (ch == 'e')
+                    flags |= PRINT_F_TYPE_E;
+                /* FALLTHROUGH */
+            case 'g':
+                if (ch == 'g')
+                    flags |= PRINT_F_TYPE_G;
                 /* FALLTHROUGH */
             case 'f':
                 if (cflags == PRINT_C_LDOUBLE)
                     fvalue = va_arg(args, LDOUBLE);
                 else
                     fvalue = va_arg(args, double);
-                fmtflt(str, &len, size, fvalue, width,
-                    precision, flags, &overflow);
-                if (overflow)
-                    goto out;
-                break;
-            case 'E':
-                flags |= PRINT_F_UP;
-                /* FALLTHROUGH */
-            case 'e':
-                flags |= PRINT_F_TYPE_E;
-                if (cflags == PRINT_C_LDOUBLE)
-                    fvalue = va_arg(args, LDOUBLE);
-                else
-                    fvalue = va_arg(args, double);
-                fmtflt(str, &len, size, fvalue, width,
-                    precision, flags, &overflow);
-                if (overflow)
-                    goto out;
-                break;
-            case 'G':
-                flags |= PRINT_F_UP;
-                /* FALLTHROUGH */
-            case 'g':
-                flags |= PRINT_F_TYPE_G;
-                if (cflags == PRINT_C_LDOUBLE)
-                    fvalue = va_arg(args, LDOUBLE);
-                else
-                    fvalue = va_arg(args, double);
-                /*
-                 * If the precision is zero, it is treated as
-                 * one (cf. C99: 7.19.6.1, 8).
-                 */
-                if (precision == 0)
-                    precision = 1;
                 fmtflt(str, &len, size, fvalue, width,
                     precision, flags, &overflow);
                 if (overflow)
@@ -840,7 +831,7 @@ fmtstr(char *str, size_t *len, size_t size, const char *value, int width,
         OUTCHAR(str, *len, size, ' ');
         padlen--;
     }
-    while (*value != '\0' && (noprecision || precision-- > 0)) {
+    while ((noprecision || precision-- > 0) && *value != '\0') {
         OUTCHAR(str, *len, size, *value);
         value++;
     }
@@ -962,7 +953,7 @@ fmtflt(char *str, size_t *len, size_t size, LDOUBLE fvalue, int width,
     const char *infnan = NULL;
     char iconvert[MAX_CONVERT_LENGTH];
     char fconvert[MAX_CONVERT_LENGTH];
-    char econvert[4];   /* "e-12" (without nul-termination). */
+    char econvert[5];   /* "e-300" (without nul-termination). */
     char esign = 0;
     char sign = 0;
     int leadfraczeros = 0;
@@ -1012,6 +1003,12 @@ fmtflt(char *str, size_t *len, size_t size, LDOUBLE fvalue, int width,
     /* "%e" (or "%E") or "%g" (or "%G") conversion. */
     if (flags & PRINT_F_TYPE_E || flags & PRINT_F_TYPE_G) {
         if (flags & PRINT_F_TYPE_G) {
+            /*
+             * If the precision is zero, it is treated as one (cf.
+             * C99: 7.19.6.1, 8).
+             */
+            if (precision == 0)
+                precision = 1;
             /*
              * For "%g" (and "%G") conversions, the precision
              * specifies the number of significant digits, which
@@ -1131,12 +1128,12 @@ again:
             esign = '+';
 
         /*
-         * Convert the exponent.  The sizeof(econvert) is 4.  So, the
-         * econvert buffer can hold e.g. "e+99" and "e-99".  We don't
-         * support an exponent which contains more than two digits.
+         * Convert the exponent.  The sizeof(econvert) is 5.  So, the
+         * econvert buffer can hold e.g. "e+999" and "e-999".  We don't
+         * support an exponent which contains more than three digits.
          * Therefore, the following stores are safe.
          */
-        epos = convert(exponent, econvert, 2, 10, 0);
+        epos = convert(exponent, econvert, 3, 10, 0);
         /*
          * C99 says: "The exponent always contains at least two digits,
          * and only as many more digits as necessary to represent the
@@ -1280,15 +1277,15 @@ getexponent(LDOUBLE value)
     int exponent = 0;
 
     /*
-     * We check for 99 > exponent > -99 in order to work around possible
-     * endless loops which could happen (at least) in the second loop (at
-     * least) if we're called with an infinite value.  However, we checked
-     * for infinity before calling this function using our ISINF() macro, so
-     * this might be somewhat paranoid.
+     * We check for LDOUBLE_MAX_10_EXP >= exponent >= LDOUBLE_MIN_10_EXP in
+     * order to work around possible endless loops which could happen (at
+     * least) in the second loop (at least) if we're called with an infinite
+     * value.  However, we checked for infinity before calling this function
+     * using our ISINF() macro, so this might be somewhat paranoid.
      */
-    while (tmp < 1.0 && tmp > 0.0 && --exponent > -99)
+    while (tmp < 1.0 && tmp > 0.0 && --exponent >= LDOUBLE_MIN_10_EXP)
         tmp *= 10;
-    while (tmp >= 10.0 && ++exponent < 99)
+    while (tmp >= 10.0 && ++exponent <= LDOUBLE_MAX_10_EXP)
         tmp /= 10;
 
     return exponent;
@@ -1337,6 +1334,9 @@ static UINTMAX_T
 myround(LDOUBLE value)
 {
     UINTMAX_T intpart = cast(value);
+
+    if (intpart == UINTMAX_MAX)
+        return UINTMAX_MAX;
 
     return ((value -= intpart) < 0.5) ? intpart : intpart + 1;
 }
