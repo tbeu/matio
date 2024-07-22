@@ -110,7 +110,7 @@ Mat_Create4(const char *matname)
  * @endif
  */
 int
-Mat_VarWrite4(mat_t *mat, const matvar_t *matvar)
+Mat_VarWrite4(const mat_t *mat, const matvar_t *matvar)
 {
 #if defined(MATIO_LE) || defined(MATIO_BE)
     typedef struct
