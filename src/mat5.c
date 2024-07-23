@@ -1434,7 +1434,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 if ( NULL != ptr ) {
                     err = Inflate(mat, matvar->internal->z, ptr,
                                   (unsigned int)(nfields * fieldname_size + i), &bytesread);
-                    if ( 0 == err ) {
+                    if ( MATIO_E_NO_ERROR == err ) {
                         SetFieldNames(matvar, ptr, nfields, fieldname_size);
                     } else {
                         matvar->internal->num_fields = nfields;
