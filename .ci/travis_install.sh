@@ -11,7 +11,7 @@ if [[ "$ENABLE_MAT73" == "yes" ]]; then
         popd
 
         if [[ "$HDF5_VERSION" == "1.14" ]]; then
-            HDF5_URL="https://github.com/HDFGroup/hdf5/releases/download/hdf5_${HDF5_VERSION}.${HDF5_PATCH_VERSION}.${HDF5_BUILD_VERSION}/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION}-${HDF5_BUILD_VERSION}.tar.gz"
+            HDF5_URL="https://github.com/HDFGroup/hdf5/releases/download/hdf5_${HDF5_VERSION}.${HDF5_PATCH_VERSION}/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION}.tar.gz"
         else
             HDF5_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_VERSION}/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION%-*}/src/hdf5-${HDF5_VERSION}.${HDF5_PATCH_VERSION}.tar.gz"
         fi
