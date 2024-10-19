@@ -2243,7 +2243,7 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
         int err = Mul(&nelems_x_nfields, nelems, nfields);
         if ( MATIO_E_NO_ERROR == err && nelems_x_nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
-            if ( NULL != matvar->internal->fieldnames ) {
+            if ( NULL != matvar->internal->fieldnames && NULL != fields ) {
                 for ( i = 0; i < nelems_x_nfields; i++ ) {
                     if ( NULL == fields[i] ) {
                         printf("      Name: %s\n      Rank: %d\n",
