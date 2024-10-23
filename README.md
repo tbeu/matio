@@ -111,12 +111,14 @@ This option sets the default MAT file version (4,5,7.3) that will be used when w
 This option specifies a suffix to apply to library directories when installing and looking for dependent libraries (i.e. HDF5 and zlib). For example, some multi-arch Linux distributions install 64-bit libraries into lib64 and 32-bit libraries into lib.
 
 #### 2.2.3 CMake build system
-The CMake build system is supported as an alternative build system, which usually consists of three steps for configuration, build and installation, for example,
+The CMake build system is supported as an alternative build system, which usually consists of three steps for configuration, build and installation. By default the CMake project is also configured for testing the testsuite with CTest (provided a Python interpreter is available). For example,
 ```console
 git clone git://git.code.sf.net/p/matio/matio
 cd matio
+git submodule update --init  # for datasets used in unit tests
 cmake .
 cmake --build .
+ctest --test-dir .
 cmake --install .
 ```
 The following matio specific options for building with CMake are available.

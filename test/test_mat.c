@@ -4007,8 +4007,12 @@ main(int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_mat_copy.mat";
             mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+            if ( NULL == mat )
+                err++;
             mat2 = Mat_Open(argv[k++], MAT_ACC_RDONLY);
-            if ( mat && mat2 ) {
+            if ( NULL == mat2 )
+                err++;
+            if ( NULL != mat && NULL != mat2 ) {
                 while ( NULL != (matvar = Mat_VarReadNext(mat2)) ) {
                     matvar_t *copy = Mat_VarDuplicate(matvar, 1);
                     Mat_VarFree(matvar);
@@ -4019,9 +4023,11 @@ main(int argc, char *argv[])
                         err++;
                     }
                 }
-                Mat_Close(mat);
-                Mat_Close(mat2);
             }
+            if ( NULL != mat2 )
+                Mat_Close(mat2);
+            if ( NULL != mat )
+                Mat_Close(mat);
             ntests++;
         } else if ( !strcasecmp(argv[k], "delete") ) {
             k++;
@@ -4030,6 +4036,7 @@ main(int argc, char *argv[])
             ntests++;
         } else if ( !strcasecmp(argv[k], "directory") ) {
             k++;
+            redirect_output(output_name);
             err += test_directory(argv[k++]);
             ntests++;
         } else if ( !strcasecmp(argv[k], "write_2d_logical") ) {
@@ -4235,8 +4242,7 @@ main(int argc, char *argv[])
             ntests++;
         } else if ( !strcasecmp(argv[k], "readslab") ) {
             k++;
-            if ( NULL == output_name )
-                output_name = "XXX.mat";
+            redirect_output(output_name);
             test_readslab(argv[k], argv[k + 1], matvar_class);
             k += 2;
             ntests++;

@@ -43,6 +43,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 5
+          submodules: recursive
       - name: Setup python environment
         uses: actions/setup-python@v5
         with:
@@ -59,13 +60,13 @@ jobs:
             echo "/Users/runner/Library/Python/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
           fi
           if [ "${{ matrix.compiler }}" == "msvc" ]; then
-            cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+            cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DBUILD_TESTING=ON
           elif [ "${{ matrix.compiler }}" == "mingw" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -G "MinGW Makefiles"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DBUILD_TESTING=ON -DMATIO_ENABLE_CPPCHECK=ON -G "MinGW Makefiles"
           elif [ "${{ matrix.compiler }}" == "gcc" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DBUILD_TESTING=ON -DMATIO_ENABLE_CPPCHECK=ON
           else
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DBUILD_TESTING=ON
           fi
       - name: Build with ${{ matrix.compiler }}
         run: |
@@ -75,19 +76,7 @@ jobs:
             cmake --build build -- -j8
           fi
       - name: Test
-        run: |
-          if [ "${{ matrix.compiler }}" == "msvc" ]; then
-            MATDUMP="./build/Release/matdump.exe"
-          else
-            MATDUMP="./build/bin/matdump"
-          fi
-          for file in ./share/*.mat; do
-            "$MATDUMP" -d "$file" d
-            "$MATDUMP" -v "$file"
-            "$MATDUMP" -v -f whos "$file"
-          done
-          "$MATDUMP" -v -H
-          "$MATDUMP" -V
+        run: ctest --no-tests=error --test-dir build --build-config ${{ matrix.configuration }}
 
   build-openbsd:
     name: openbsd-clang
@@ -97,6 +86,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 5
+          submodules: recursive
       - name: Test with clang
         uses: vmactions/openbsd-vm@v1
         with:
@@ -107,17 +97,9 @@ jobs:
             pkg_add cmake
           run: |
             set -e
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF -DBUILD_TESTING=ON
             cmake --build build -- -j8
-            ./build/test_snprintf
-            ./build/test_mat -H
-            ./build/test_mat -L
-            ./build/test_mat -V
-            ./build/matdump -v -H
-            ./build/matdump -V
-            ./build/matdump -d ./share/test_file.mat structure
-            ./build/matdump -v ./share/test_file.mat
-            ./build/matdump -v -f whos ./share/test_file.mat
+            ctest --no-tests=error --test-dir build --build-config Release
 
   build-solaris:
     name: solaris-gcc
@@ -127,6 +109,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 5
+          submodules: recursive
       - name: Test with gcc
         uses: vmactions/solaris-vm@v1
         with:
@@ -139,17 +122,9 @@ jobs:
           run: |
             set -e
             mkdir build
-            cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF -DBUILD_TESTING=ON
             cmake --build build -- -j8
-            ./build/test_snprintf
-            ./build/test_mat -H
-            ./build/test_mat -L
-            ./build/test_mat -V
-            ./build/matdump -v -H
-            ./build/matdump -V
-            ./build/matdump -d ./share/test_file.mat structure
-            ./build/matdump -v ./share/test_file.mat
-            ./build/matdump -v -f whos ./share/test_file.mat
+            ctest --no-tests=error --test-dir build --build-config Release
 
   build-cygwin:
     name: windows-cygwin
@@ -177,8 +152,6 @@ jobs:
           export PATH=/usr/bin:$PATH
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
-        env:
-          CYGWIN_NOWINPATH: 1
       - name: Build with gcc
         run: |
           export PATH=/usr/bin:$PATH

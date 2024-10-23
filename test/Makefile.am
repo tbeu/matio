@@ -438,7 +438,7 @@ CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
                     LIBTOOL="$(top_builddir)/libtool"
 
 EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4 \
-             $(TEST_DATAFILES)
+             $(TEST_DATAFILES) $(srcdir)/convert_at_to_ctest.py
 
 if NEED_GETOPT
     GETOPT_CFLAGS = -I$(top_builddir)/getopt

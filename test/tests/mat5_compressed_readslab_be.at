@@ -30,7 +30,7 @@ AT_CHECK([cp $srcdir/results/dump-var70-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var70\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var70-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var70\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var70], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var70],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var7x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var70\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -42,7 +42,7 @@ AT_CHECK([cp $srcdir/results/dump-var71-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var71\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var71-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var71\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var71], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var71],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var7x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var71\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -54,7 +54,7 @@ AT_CHECK([cp $srcdir/results/dump-var72-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var72\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var72-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var72\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var72], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var72],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var7x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var72\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -66,7 +66,7 @@ AT_CHECK([cp $srcdir/results/dump-var73-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var73\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var73-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var73\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var73], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var73],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var7x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var73\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -78,7 +78,7 @@ AT_CHECK([cp $srcdir/results/dump-var74-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var74\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var74-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var74\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var74], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var74],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var7x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var74\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -90,7 +90,7 @@ AT_CHECK([cp $srcdir/results/dump-var75-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var75\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var75-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var75\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var75], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var75],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var7x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var75\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -102,7 +102,7 @@ AT_CHECK([cp $srcdir/results/dump-var76-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var76\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var76-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var76\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var76], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var76],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var7x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var76\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -114,7 +114,7 @@ AT_CHECK([cp $srcdir/results/dump-var77-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var77\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var77-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var77\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var77], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var77],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var7x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var77\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -126,7 +126,7 @@ AT_CHECK([cp $srcdir/results/dump-var78-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var78\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var78-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var78\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var78], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var78],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var78-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var78\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -138,7 +138,7 @@ AT_CHECK([cp $srcdir/results/dump-var79-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var79\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var79-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var79\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var79], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var79],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var79-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var79\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -150,7 +150,7 @@ AT_CHECK([cp $srcdir/results/dump-var80-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var80\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var80-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var80\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var80], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var80],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var8x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var80\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -162,7 +162,7 @@ AT_CHECK([cp $srcdir/results/dump-var81-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var81\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var81-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var81\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var81], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var81],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var8x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var81\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -174,7 +174,7 @@ AT_CHECK([cp $srcdir/results/dump-var82-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var82\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var82-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var82\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var82], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var82],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var8x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var82\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -186,7 +186,7 @@ AT_CHECK([cp $srcdir/results/dump-var83-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var83\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var83-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var83\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var83], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var83],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var8x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var83\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -198,7 +198,7 @@ AT_CHECK([cp $srcdir/results/dump-var84-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var84\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var84-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var84\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var84], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var84],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var8x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var84\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -210,7 +210,7 @@ AT_CHECK([cp $srcdir/results/dump-var85-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var85\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var85-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var85\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var85], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var85],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var8x-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var85\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -222,7 +222,7 @@ AT_CHECK([cp $srcdir/results/dump-var86-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var86\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var86-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var86\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var86], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var86],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var86-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var86\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -234,7 +234,7 @@ AT_CHECK([cp $srcdir/results/dump-var87-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var87\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var87-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var87\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var87], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var87],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var87-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var87\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -246,7 +246,7 @@ AT_CHECK([cp $srcdir/results/dump-var88-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var88\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var88-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var88\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var88], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var88],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var88-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var88\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP
@@ -258,7 +258,7 @@ AT_CHECK([cp $srcdir/results/dump-var89-1.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var89\(2:3:end,4:5:end,8:16:end\)],[0],[expout],[])
 AT_CHECK([cp $srcdir/results/dump-var89-2.out expout
           $builddir/../tools/matdump -d $srcdir/datasets/matio_test_cases_compressed_be.mat var89\(30:1:32,27:1:29,25:1:26\)],[0],[expout],[])
-AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var89], [0], [],[])
+AT_CHECK([$builddir/test_mat reshape32x32x32 -v 5 -z $srcdir/datasets/matio_test_cases_compressed_be.mat var89],[0],[],[])
 AT_CHECK([cp $srcdir/results/dump-var89-3.out expout
           $builddir/../tools/matdump -d test_write_reshape32x32x32.mat var89\(2:30:end,4:50:end\)],[0],[expout],[])
 AT_CLEANUP

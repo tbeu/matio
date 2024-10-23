@@ -32,11 +32,11 @@ AT_CLEANUP
 AT_SETUP([Linearly index cell array])
 AT_KEYWORDS([cell_api])
 AT_CHECK([cp $srcdir/results/cell_api_getlinear.out expout
-          $builddir/test_mat  cell_api_getlinear],[0],[expout],[])
+          $builddir/test_mat cell_api_getlinear],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Index cell array via dimension slices])
 AT_KEYWORDS([cell_api])
 AT_CHECK([cp $srcdir/results/cell_api_getcells.out expout
-          $builddir/test_mat  cell_api_getcells],[0],[expout],[])
+          $builddir/test_mat cell_api_getcells],[0],[expout],[])
 AT_CLEANUP

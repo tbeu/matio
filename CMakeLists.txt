@@ -22,6 +22,7 @@ set(matio_LIB_VERSIONINFO "13:0:0")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Installation options
+include(CTest)
 include(GNUInstallDirs)
 
 include(cmake/options.cmake)

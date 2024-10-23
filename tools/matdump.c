@@ -47,14 +47,12 @@ int rpl_snprintf(char *, size_t, const char *, ...);
 #define mat_snprintf snprintf
 #endif /* !HAVE_SNPRINTF */
 
-static const char *optstring = "df:hvHV";
-static struct option options[] = {{"data", no_argument, NULL, 'd'},
-                                  {"format", required_argument, NULL, 'f'},
-                                  {"human", no_argument, NULL, 'h'},
-                                  {"verbose", optional_argument, NULL, 'v'},
-                                  {"help", no_argument, NULL, 'H'},
-                                  {"version", no_argument, NULL, 'V'},
-                                  {NULL, 0, NULL, 0}};
+static const char *optstring = "df:hvo:HV";
+static struct option options[] = {
+    {"data", no_argument, NULL, 'd'},         {"format", required_argument, NULL, 'f'},
+    {"human", no_argument, NULL, 'h'},        {"verbose", optional_argument, NULL, 'v'},
+    {"help", no_argument, NULL, 'H'},         {"version", no_argument, NULL, 'V'},
+    {"output", required_argument, NULL, 'o'}, {NULL, 0, NULL, 0}};
 
 static const char *helpstr[] = {"",
                                 "Usage: matdump [OPTIONS] mat_file [var1 var2 ...]",
@@ -824,6 +822,14 @@ print_default(const matvar_t *matvar)
     }
 }
 
+static void
+redirect_output(const char *output)
+{
+    if ( output != NULL )
+        if ( freopen(output, "w", stdout) == NULL )
+            fprintf(stderr, "Unable to open %s for writing. Using stdout instead.", output);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -867,6 +873,9 @@ main(int argc, char *argv[])
                 break;
             case 'v':
                 Mat_SetVerbose(1, 0);
+                break;
+            case 'o':
+                redirect_output(optarg);
                 break;
             case 'H':
                 Mat_Help(helpstr);
