@@ -163,11 +163,14 @@ Table of Contents
         2.3.3. CMake build system
             The CMake build system is supported as an alternative build system,
             which usually consists of three steps for configuration, build and
-            installation, for example,
+            installation. By default, the CMake project is also configured for
+            testing with CTest. For example,
+
                 $ tar zxf matio-X.Y.Z.tar.gz
                 $ cd matio-X.Y.Z
                 $ cmake .
                 $ cmake --build .
+                $ ctest --test-dir .
                 $ cmake --install .
 
             The following matio specific options for building with CMake are
@@ -197,6 +200,8 @@ Table of Contents
               * 'MATIO_WITH_ZLIB:BOOL=ON'
                 This option enables CMake to check for availability of the
                 zlib library (see section 2.1.1 for information about zlib).
+              * 'MATIO_BUILD_TESTING:BOOL=ON'
+                This option enables the matio testsuite for CTest.
               * 'MATIO_ENABLE_CPPCHECK:BOOL=OFF'
                 This option enables CMake >= 3.10 to perform static analysis
                 with Cppcheck.

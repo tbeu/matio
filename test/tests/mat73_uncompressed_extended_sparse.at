@@ -42,7 +42,7 @@ AT_CLEANUP
 
 AT_SETUP([Write 2D sparse uint64 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
-AT_SKIP_IF([test $HAVE_INT64 -eq 0])
+AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -c uint64 write_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_sparse-sparse_matrix-uint64.out expout
@@ -107,7 +107,7 @@ AT_CLEANUP
 
 AT_SETUP([Write 2D sparse complex int64 array])
 AT_SKIP_IF([test $EXTENDED_SPARSE -ne 1])
-AT_SKIP_IF([test $HAVE_INT64 -eq 0])
+AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -c int64 write_complex_sparse],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_complex_sparse-sparse_matrix-int64.out expout

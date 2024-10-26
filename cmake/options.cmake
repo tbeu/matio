@@ -40,3 +40,11 @@ endif()
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.10")
     option(MATIO_ENABLE_CPPCHECK "Enable static analysis with Cppcheck." OFF)
 endif()
+
+# Option to enable matio testsuite
+option(MATIO_BUILD_TESTING "Build matio testing" ON)
+
+set(BUILD_TESTING OFF)
+if (MATIO_BUILD_TESTING)
+    set(BUILD_TESTING ON)
+endif()
