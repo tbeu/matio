@@ -1,3 +1,12 @@
+Changes in 1.5.28 (30 October 2024)
+* Fixed bug writing MAT_T_INT8/MAT_T_UINT8 encoded character array to
+  compressed v5 MAT file (regression of v1.5.12)
+* Fixed bug reading all-zero sparse array of v4 MAT file (regression of v1.5.18)
+* Updated C99 snprintf.c
+* CMake: Enabled testing
+* CMake: Fixed build with Visual Studio >= 17.10 and Conan 1.x
+* Several other fixes, for example for access violations in Mat_VarPrint
+
 Changes in 1.5.27 (20 April 2024)
 * Fixed const-correctness of input arguments of API functions
 * Fixed const-correctness of return type of Mat_GetDir
