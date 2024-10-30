@@ -1,0 +1,33 @@
+name: "Deploy"
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+          submodules: recursive
+      - name: Install texlive
+        timeout-minutes: 5
+        run: |
+          sudo apt-get update --fix-missing
+          sudo apt-get install -y texlive
+      - name: Configure
+        run: |
+          ./autogen.sh
+          ./configure --enable-shared --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=${GITHUB_WORKSPACE}/hdf5-1.14.5/hdf5 CFLAGS="-O3" CPPFLAGS="-DNDEBUG"
+      - name: Build documentation
+        run: make -C documentation pdf html MAKEINFOFLAGS=--no-split
+      - name: Build distribution
+        run: |
+          make dist-gzip
+          make dist-zip
+      - name: Deploy to BB
+        run: |
+          curl -X POST -H "Authorization: Bearer ${{ secrets.BBTOKEN }}" https://api.bitbucket.org/2.0/repositories/tbeu/downloads/downloads -F files=@./documentation/matio_user_guide.html -F files=@./documentation/matio_user_guide.pdf -F files=@./matio-1.5.28.tar.gz -F files=@./matio-1.5.28.zip
