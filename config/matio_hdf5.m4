@@ -34,7 +34,7 @@ AC_DEFUN([MATIO_CHECK_HDF5_V18],
     LIBS="$HDF5_LIBS $ZLIB_LIBS $saved_LIBS"
 
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-        #include<stdio.h>
+        #include <stdio.h>
         #include <stdlib.h>
         #include <hdf5.h>
     ]], [[#if defined(H5Rdereference)
@@ -90,7 +90,7 @@ then
     HDF5_REQUIRES_PRIVATE="hdf5 >= 1.8"
 
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-        #include<stdio.h>
+        #include <stdio.h>
         #include <stdlib.h>
         #include <hdf5.h>
     ]], [[H5open()]])],[ac_have_hdf5=yes],[ac_have_hdf5=no])
