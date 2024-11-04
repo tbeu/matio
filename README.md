@@ -41,7 +41,7 @@ The following people/organizations have helped in the development of matio throu
 * [LTX Simulation](https://www.ltx.de/english.html)
 * [Maarten Bent](https://github.com/MaartenBent)
 * [Modelica Association](https://modelica.org/association)
-* [Nelson](https://nelson-numerical-software.github.io/nelson-website/)
+* [Nelson](https://nelson-lang.github.io/nelson-website/)
 * [Nils Jannasch](https://github.com/NJannasch)
 * [OpenMEEG](http://openmeeg.github.io/)
 * [Scilab](http://www.scilab.org/)
