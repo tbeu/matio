@@ -1,4 +1,6 @@
 import glob
+import hashlib
+import json
 import os
 import re
 import sys
@@ -159,16 +161,38 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                     cmakef.write('endif()\n')
 
 
-def generate_ctest_files(file_list, output_dir):
+def get_file_hash(file_path, algorithm):
+    hash_obj = hashlib.new(algorithm)
+    with open(file_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_obj.update(chunk)
+    return hash_obj.hexdigest()
+
+
+def generate_ctest_files(file_list, output_dir, force):
     os.makedirs(output_dir, exist_ok=True)
 
     for autotest_file in file_list:
         base_name = os.path.splitext(os.path.basename(autotest_file))[0]
         cmake_output_file = os.path.join(output_dir, f'{base_name}.cmake')
-        if os.path.isfile(cmake_output_file):
+        if not force and os.path.isfile(cmake_output_file):
             continue
         convert_autotest_to_ctest(autotest_file, cmake_output_file)
 
 
 if __name__ == '__main__':
-    generate_ctest_files(file_list=glob.glob(os.path.join('tests', '*.at')), output_dir=sys.argv[1])
+    algorithm = 'sha256'
+    new_hash = get_file_hash(__file__, algorithm)
+    output_dir = sys.argv[1]
+    hash_json_file = os.path.join(output_dir, 'generator.json')
+    try:
+        with open(hash_json_file, 'r') as json_file:
+            old_hash = json.load(json_file).get(algorithm, '');
+    except OSError:
+        old_hash = ''
+    force = new_hash != old_hash
+
+    generate_ctest_files(glob.glob(os.path.join('tests', '*.at')), output_dir, force)
+
+    with open(hash_json_file, 'w') as json_file:
+        json.dump({algorithm: new_hash}, json_file)
