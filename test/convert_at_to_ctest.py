@@ -127,7 +127,7 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
 
                 if test_keywords:
                     keyword_str = ';'.join(sorted(list(set(test_keywords))))
-                    cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES LABELS "read;{keyword_str}")\n')
+                    cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES LABELS "{keyword_str}")\n')
 
                 if counter > 1:
                     depends_str = f'{test_name}_{counter - 1}'
@@ -141,15 +141,14 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                 cmakef.write(f'    add_test(NAME {test_name}_{counter + 1}\n')
                 cmakef.write(f'        COMMAND {command}\n')
                 cmakef.write('        WORKING_DIRECTORY ${MATIO_TESTING_DIR})\n')
-                cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES FIXTURES_REQUIRED TEMPDIR)\n')
+                cmakef.write(f'    set_tests_properties({test_name}_{counter + 1} PROPERTIES FIXTURES_REQUIRED TEMPDIR)\n')
 
                 if test_keywords:
                     keyword_str = ';'.join(sorted(list(set(test_keywords))))
                     cmakef.write(f'    set_tests_properties({test_name}_{counter + 1} PROPERTIES LABELS "diff;{keyword_str}")\n')
 
-                if counter > 1:
-                    depends_str = f'{test_name}_{counter}'
-                    cmakef.write(f'    set_tests_properties({test_name}_{counter + 1} PROPERTIES DEPENDS {depends_str})\n')
+                depends_str = f'{test_name}_{counter}'
+                cmakef.write(f'    set_tests_properties({test_name}_{counter + 1} PROPERTIES DEPENDS {depends_str})\n')
 
                 check_copy_match = None
                 check_diff_match = None
