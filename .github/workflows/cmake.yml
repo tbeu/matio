@@ -77,7 +77,7 @@ jobs:
             cmake --build build -- -j8
           fi
       - name: Test
-        run: ctest --no-tests=error --test-dir build --build-config ${{ matrix.configuration }}
+        run: ctest --no-tests=error --test-dir build --build-config ${{ matrix.configuration }} --parallel 8
 
   build-openbsd:
     name: openbsd-clang
@@ -100,7 +100,7 @@ jobs:
             set -e
             cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF
             cmake --build build -- -j8
-            ctest --no-tests=error --test-dir build --build-config Release
+            ctest --no-tests=error --test-dir build --build-config Release --parallel 8
 
   build-solaris:
     name: solaris-gcc
@@ -125,7 +125,7 @@ jobs:
             mkdir build
             cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF
             cmake --build build -- -j8
-            ctest --no-tests=error --test-dir build --build-config Release
+            ctest --no-tests=error --test-dir build --build-config Release --parallel 8
 
   build-cygwin:
     name: windows-cygwin
