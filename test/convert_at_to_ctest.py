@@ -62,6 +62,7 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                 counter = 1
                 check_copy_match = None
                 check_diff_match = None
+                mat_file_name = None
 
             elif keyword_match:
                 keywords = keyword_match.group(1).strip().split()
@@ -88,6 +89,10 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                     cmakef.write(f'if({combined_conditions})\n')
                     skip_conditions = []
 
+                if 'delete' not in test_keywords and command.startswith('$<TARGET_FILE:'):
+                    mat_file_name = f'test_{test_name}_{counter}.mat'
+                    command += f' -o {mat_file_name}'
+
                 cmakef.write(f'    add_test(NAME {test_name}_{counter}\n')
                 cmakef.write(f'        COMMAND {command}\n')
                 cmakef.write('        WORKING_DIRECTORY ${MATIO_TESTING_DIR})\n')
@@ -101,7 +106,7 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                     depends_str = f'{test_name}_{counter - 1}'
                     cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES DEPENDS {depends_str})\n')
 
-                if 'write' in base_name or 'delete' in test_keywords:
+                if 'delete' in test_keywords:
                     cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES RUN_SERIAL ON)\n')
 
                 counter += 1
@@ -110,6 +115,11 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                 command = check_diff_match.group(1)
                 for original, replacement in command_mapping.items():
                     command = command.replace(original, replacement)
+
+                if 'delete' not in test_keywords and counter > 1 and mat_file_name is not None and command.startswith('$<TARGET_FILE:'):
+                    command_items = command.split(' ')
+                    command_items = [item if not item.startswith('test_') or not item.endswith('.mat') else mat_file_name for item in command_items]
+                    command = ' '.join(command_items)
 
                 output_name = f'{test_name}_{counter}_output.txt'
                 if command.startswith('$<TARGET_FILE:'):
@@ -135,7 +145,7 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                     depends_str = f'{test_name}_{counter - 1}'
                     cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES DEPENDS {depends_str})\n')
 
-                if 'write' in base_name or 'delete' in test_keywords:
+                if 'delete' in test_keywords:
                     cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES RUN_SERIAL ON)\n')
 
                 expected_name = check_copy_match.group(1).replace('$srcdir/', '${PROJECT_SOURCE_DIR}/test/')
