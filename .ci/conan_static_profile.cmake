@@ -1,0 +1,9 @@
+[options]
+matio/*:shared=False
+matio/*:with_hdf5=static
+matio/*:with_zlib=static
+hdf5/*:hl=False
+hdf5/*:shared=False
+hdf5/*:with_zlib=True
+hdf5/*:enable_cxx=False
+zlib/*:shared=False

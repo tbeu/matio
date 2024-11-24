@@ -2,6 +2,13 @@ if(MATIO_USE_CONAN AND (MATIO_WITH_HDF5 OR MATIO_WITH_ZLIB))
     conan_add_remote(NAME conan-center URL https://center.conan.io VERIFY_SSL False)
 endif()
 
+if(MATIO_USE_CONAN)
+    message(WARNING
+        "MATIO_USE_CONAN for Conan 1.X is deprecated. "
+        "Please update your build configuration to Conan 2.X to avoid using this option."
+    )
+endif()
+
 if(MATIO_WITH_HDF5)
     if(NOT DEFINED HDF5_USE_STATIC_LIBRARIES)
         if(MATIO_SHARED)

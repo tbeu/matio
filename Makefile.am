@@ -47,8 +47,10 @@ VS_FILES = visual_studio/libmatio/libmatio.vcproj \
            visual_studio/stdint_msvc.h
 
 CMAKE_FILES = CMakeLists.txt \
+              conanfile.py \
               cmake/compilerOptions.cmake \
               cmake/conan.cmake \
+              cmake/conan_provider.cmake \
               cmake/getopt.cmake \
               cmake/options.cmake \
               cmake/src.cmake \
