@@ -106,9 +106,6 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                     depends_str = f'{test_name}_{counter - 1}'
                     cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES DEPENDS {depends_str})\n')
 
-                if 'delete' in test_keywords:
-                    cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES RUN_SERIAL ON)\n')
-
                 counter += 1
 
             elif check_copy_match and check_diff_match:
@@ -144,9 +141,6 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                 if counter > 1:
                     depends_str = f'{test_name}_{counter - 1}'
                     cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES DEPENDS {depends_str})\n')
-
-                if 'delete' in test_keywords:
-                    cmakef.write(f'    set_tests_properties({test_name}_{counter} PROPERTIES RUN_SERIAL ON)\n')
 
                 expected_name = check_copy_match.group(1).replace('$srcdir/', '${PROJECT_SOURCE_DIR}/test/')
                 command = f'${{CMAKE_COMMAND}} -E compare_files --ignore-eol {expected_name} {output_name}'
