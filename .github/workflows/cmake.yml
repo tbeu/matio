@@ -63,20 +63,27 @@ jobs:
           if [ "${{ matrix.os }}" == "macos-latest" ]; then
             echo "/Users/runner/Library/Python/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
           fi
-          pip install --disable-pip-version-check --user "conan>=1.62.0,<2"
+          pip install --disable-pip-version-check --user "conan>=2.16.1,<3"
+      - name: Cache conan folder
+        uses: actions/cache@v4
+        with:
+          path: ~/.conan2
+          key: ${{ runner.os }}-conan2-${{ hashFiles('conanfile.txt', 'conanfile.py', 'conan.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-conan2-
       - name: Configure (${{ matrix.configuration }})
         run: |
           if [ "${{ matrix.os }}" == "macos-latest" ]; then
             echo "/Users/runner/Library/Python/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
           fi
           if [ "${{ matrix.compiler }}" == "msvc" ]; then
-            cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
+            cmake -S . -B build -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=conan_provider -DCONAN_BUILD_PROFILE="${{ github.workspace }}/.ci/conan_static_profile.cmake" -DMATIO_SHARED=OFF -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
           elif [ "${{ matrix.compiler }}" == "mingw" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }} -G "MinGW Makefiles"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=conan_provider -DCONAN_HOST_PROFILE="default;auto-cmake;${{ github.workspace }}/.ci/conan_cppcheck_profile.cmake" -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }} -G "MinGW Makefiles"
           elif [ "${{ matrix.compiler }}" == "gcc" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=conan_provider -DCONAN_BUILD_PROFILE="${{ github.workspace }}/.ci/conan_cppcheck_profile.cmake" -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
           else
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=conan_provider -DCONAN_HOST_PROFILE="default;auto-cmake;${{ github.workspace }}/.ci/conan_static_profile.cmake" -DMATIO_SHARED=OFF -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
           fi
       - name: Build with ${{ matrix.compiler }}
         run: |

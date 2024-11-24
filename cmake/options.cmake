@@ -45,6 +45,6 @@ endif()
 option(MATIO_BUILD_TESTING "Build matio testing" ON)
 
 set(BUILD_TESTING OFF)
-if (MATIO_BUILD_TESTING)
+if(MATIO_BUILD_TESTING)
     set(BUILD_TESTING ON)
 endif()
