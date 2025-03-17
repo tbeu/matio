@@ -4431,7 +4431,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
     do {                                                       \
         ptr_in += start;                                       \
         if ( !stride ) {                                       \
-            memcpy(ptr, ptr_in, (size_t)edge *data_size);      \
+            memcpy(ptr, ptr_in, (size_t)edge * data_size);     \
         } else {                                               \
             int i;                                             \
             for ( i = 0; i < edge; i++ )                       \
