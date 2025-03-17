@@ -1,6 +1,5 @@
 ---
 BasedOnStyle: Google
-Language: Cpp
 TabWidth: 4
 UseTab: Never
 ColumnLimit: 100
