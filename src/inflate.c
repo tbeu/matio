@@ -74,8 +74,10 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread)
     z->next_out = uncomp_buf;
     err = inflate(z, Z_NO_FLUSH);
     if ( err == Z_STREAM_END ) {
+        z->next_out = NULL;
         return MATIO_E_NO_ERROR;
     } else if ( err != Z_OK ) {
+        z->next_out = NULL;
         Mat_Critical("InflateSkip: inflate returned %s",
                      zError(err == Z_NEED_DICT ? Z_DATA_ERROR : err));
         return MATIO_E_FILE_FORMAT_VIOLATION;
@@ -134,6 +136,8 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread)
         }
         z->avail_in = 0;
     }
+
+    z->next_out = NULL;
 
     return err;
 }
