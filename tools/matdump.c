@@ -216,7 +216,7 @@ slab_get_select(char *open, const char *close, int rank, int *start, int *stride
 }
 
 static int
-slab_select_valid(int rank, int *start, int *stride, int *edge, matvar_t *matvar)
+slab_select_valid(int rank, int *start, const int *stride, int *edge, matvar_t *matvar)
 {
     int valid = 1, i, nmemb = 1;
 
