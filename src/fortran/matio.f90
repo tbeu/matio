@@ -207,7 +207,7 @@ CONTAINS
 !----------------------------------------------------------
 !   FMat_LogInit
 !
-!   Initilize the logging functions
+!   Initialize the logging functions
 !
 !   prog_name: Name of program/function initializing log functions
 !----------------------------------------------------------
