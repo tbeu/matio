@@ -2304,34 +2304,26 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
                     mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
                     const char *rp = (const char *)complex_data->Re;
                     const char *ip = (const char *)complex_data->Im;
-                    for ( i = 0; i < matvar->dims[0] && i < 15; i++ ) {
-                        for ( j = 0; j < matvar->dims[1] && j < 15; j++ ) {
+                    for ( i = 0; i < matvar->dims[0]; i++ ) {
+                        for ( j = 0; j < matvar->dims[1]; j++ ) {
                             size_t idx = matvar->dims[0] * j + i;
                             Mat_PrintNumber(matvar->data_type, rp + idx * stride);
                             printf(" + ");
                             Mat_PrintNumber(matvar->data_type, ip + idx * stride);
                             printf("i ");
                         }
-                        if ( j < matvar->dims[1] )
-                            printf("...");
                         printf("\n");
                     }
-                    if ( i < matvar->dims[0] )
-                        printf(".\n.\n.\n");
                 } else {
                     const char *data = (const char *)matvar->data;
-                    for ( i = 0; i < matvar->dims[0] && i < 15; i++ ) {
-                        for ( j = 0; j < matvar->dims[1] && j < 15; j++ ) {
+                    for ( i = 0; i < matvar->dims[0]; i++ ) {
+                        for ( j = 0; j < matvar->dims[1]; j++ ) {
                             size_t idx = matvar->dims[0] * j + i;
                             Mat_PrintNumber(matvar->data_type, data + idx * stride);
                             printf(" ");
                         }
-                        if ( j < matvar->dims[1] )
-                            printf("...");
                         printf("\n");
                     }
-                    if ( i < matvar->dims[0] )
-                        printf(".\n.\n.\n");
                 }
                 break;
             }
