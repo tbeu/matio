@@ -2359,6 +2359,7 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
                     case MAT_T_UTF8: {
                         const mat_uint8_t *data = (const mat_uint8_t *)matvar->data;
                         size_t k = 0;
+                        int err = 0;
                         size_t *idxOffset;
                         if ( matvar->nbytes == 0 ) {
                             break;
@@ -2368,6 +2369,9 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
                             break;
                         }
                         for ( i = 0; i < matvar->dims[0]; i++ ) {
+                            if ( err ) {
+                                break;
+                            }
                             for ( j = 0; j < matvar->dims[1]; j++ ) {
                                 mat_uint8_t c;
                                 if ( k >= matvar->nbytes ) {
@@ -2376,15 +2380,35 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
                                 idxOffset[i * matvar->dims[1] + j] = k;
                                 c = data[k];
                                 if ( c <= 0x7F ) {
-                                } else if ( (c & 0xE0) == 0xC0 && k + 1 < matvar->nbytes ) {
-                                    k = k + 1;
-                                } else if ( (c & 0xF0) == 0xE0 && k + 2 < matvar->nbytes ) {
-                                    k = k + 2;
-                                } else if ( (c & 0xF8) == 0xF0 && k + 3 < matvar->nbytes ) {
-                                    k = k + 3;
+                                } else if ( (c & 0xE0) == 0xC0 ) {
+                                    if ( k + 1 < matvar->nbytes ) {
+                                        k += 1;
+                                    } else {
+                                        err = 1;
+                                        break;
+                                    }
+                                } else if ( (c & 0xF0) == 0xE0 ) {
+                                    if ( k + 2 < matvar->nbytes ) {
+                                        k += 2;
+                                    } else {
+                                        err = 1;
+                                        break;
+                                    }
+                                } else if ( (c & 0xF8) == 0xF0 ) {
+                                    if ( k + 3 < matvar->nbytes ) {
+                                        k += 3;
+                                    } else {
+                                        err = 1;
+                                        break;
+                                    }
                                 }
                                 ++k;
                             }
+                        }
+                        if ( err ) {
+                            free(idxOffset);
+                            Mat_Message("UTF-8 character data error at index %zu", k);
+                            break;
                         }
                         for ( i = 0; i < matvar->dims[0]; i++ ) {
                             for ( j = 0; j < matvar->dims[1]; j++ ) {
