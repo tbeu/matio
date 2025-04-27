@@ -1,4 +1,4 @@
-% Copyright (c) 2015-2024, The matio contributors
+% Copyright (c) 2015-2025, The matio contributors
 % Copyright (c) 2011-2014, Christopher C. Hulbert
 % All rights reserved.
 %
@@ -44,7 +44,7 @@
 @vskip 0pt plus 1filll
 @smallexample
 @group
-  Copyright (c) @var{2015-2024}, @var{The matio contributors}.
+  Copyright (c) @var{2015-2025}, @var{The matio contributors}.
   Copyright (c) @var{2011-2014}, @var{Christopher C. Hulbert}.
   All rights reserved.
 
