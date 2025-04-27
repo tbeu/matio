@@ -64,14 +64,21 @@ strdup_vprintf(const char *format, va_list ap)
     char *buffer;
 
     va_copy(ap2, ap);
-    size = mat_vsnprintf(NULL, 0, format, ap2) + 1;
+    size = mat_vsnprintf(NULL, 0, format, ap2);
     va_end(ap2);
 
-    buffer = (char *)malloc(size + 1);
-    if ( !buffer )
+    if ( size < 0 ) {
+        return NULL;
+    }
+
+    buffer = (char *)malloc((size_t)size + 1);
+    if ( NULL == buffer )
         return NULL;
 
-    mat_vsnprintf(buffer, size, format, ap);
+    if ( mat_vsnprintf(buffer, (size_t)size + 1, format, ap) < 0 ) {
+        free(buffer);
+        return NULL;
+    }
     return buffer;
 }
 
@@ -181,8 +188,12 @@ mat_log(int loglevel, const char *format, va_list ap)
     if ( !logfunc )
         return;
     buffer = strdup_vprintf(format, ap);
-    (*logfunc)(loglevel, buffer);
-    free(buffer);
+    if ( NULL == buffer ) {
+        (*logfunc)(loglevel, format);
+    } else {
+        (*logfunc)(loglevel, buffer);
+        free(buffer);
+    }
 }
 
 #if defined(MAT73) && MAT73
