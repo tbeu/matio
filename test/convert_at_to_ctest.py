@@ -165,7 +165,7 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                     cmakef.write('endif()\n')
 
 
-def get_file_hash(file_path, algorithm):
+def get_file_hash(file_path, algorithm='sha256'):
     hash_obj = hashlib.new(algorithm)
     with open(file_path, 'rb') as f:
         for chunk in iter(lambda: f.read(4096), b""):
@@ -173,30 +173,34 @@ def get_file_hash(file_path, algorithm):
     return hash_obj.hexdigest()
 
 
-def generate_ctest_files(file_list, output_dir, force):
+def generate_ctest_files(file_list, output_dir, global_force, hash_dict):
     os.makedirs(output_dir, exist_ok=True)
 
     for autotest_file in file_list:
         base_name = os.path.splitext(os.path.basename(autotest_file))[0]
         cmake_output_file = os.path.join(output_dir, f'{base_name}.cmake')
-        if not force and os.path.isfile(cmake_output_file):
+        hash = get_file_hash(autotest_file)
+        force = hash != hash_dict.get(base_name, '')
+        hash_dict[base_name] = hash
+        if not force and not global_force and os.path.isfile(cmake_output_file):
             continue
         convert_autotest_to_ctest(autotest_file, cmake_output_file)
 
 
 if __name__ == '__main__':
-    algorithm = 'sha256'
-    new_hash = get_file_hash(__file__, algorithm)
+    hash = get_file_hash(__file__)
     output_dir = sys.argv[1]
     hash_json_file = os.path.join(output_dir, 'generator.json')
     try:
         with open(hash_json_file, 'r') as json_file:
-            old_hash = json.load(json_file).get(algorithm, '');
+            hash_dict = json.load(json_file)
     except OSError:
-        old_hash = ''
-    force = new_hash != old_hash
+        hash_dict = {}
 
-    generate_ctest_files(glob.glob(os.path.join('tests', '*.at')), output_dir, force)
+    force = hash != hash_dict.get('generator', '')
+    hash_dict['generator'] = hash
+    hash_dict.pop('sha256', None)
+    generate_ctest_files(glob.glob(os.path.join('tests', '*.at')), output_dir, force, hash_dict)
 
     with open(hash_json_file, 'w') as json_file:
-        json.dump({algorithm: new_hash}, json_file)
+        json.dump(hash_dict, json_file)
