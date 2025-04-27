@@ -139,9 +139,9 @@ static const char *helptestsstr[] = {
     "",
     "    Character Variable Tests",
     "================================================================",
-    "write_char               - Write a 2D character array.",
-    "write_char_unicode       - Write a 2D Unicode character array.",
-    "write_char_utf8          - Write a 2D UTF-8 character array.",
+    "write_char_2d            - Write a 2D character array.",
+    "write_char_unicode_2d    - Write a 2D Unicode character array.",
+    "write_char_utf8_2d       - Write a 2D UTF-8 character array.",
     "",
     "    MAT File Tests",
     "================================================================",
@@ -326,10 +326,10 @@ static const char *helptest_write_empty_2d_numeric[] = {
     "",
     NULL};
 
-static const char *helptest_write_char[] = {
-    "TEST: write_char",
+static const char *helptest_write_char_2d[] = {
+    "TEST: write_char_2d",
     "",
-    "Usage: test_mat write_char",
+    "Usage: test_mat write_char_2d",
     "",
     "Writes a variable named a to a MAT file. The variable is a 2d character",
     "array of dimensions 4x26. The MAT file is the default file version, or",
@@ -345,10 +345,10 @@ static const char *helptest_write_char[] = {
     "",
     NULL};
 
-static const char *helptest_write_char_unicode[] = {
-    "TEST: write_char_unicode",
+static const char *helptest_write_char_unicode_2d[] = {
+    "TEST: write_char_unicode_2d",
     "",
-    "Usage: test_mat write_char_unicode",
+    "Usage: test_mat write_char_unicode_2d",
     "",
     "Writes a variable named a to a MAT file. The variable is a 2d character",
     "array of dimensions 2x4. The MAT file is the default file version, or",
@@ -361,10 +361,10 @@ static const char *helptest_write_char_unicode[] = {
     "",
     NULL};
 
-static const char *helptest_write_char_utf8[] = {
-    "TEST: write_char_utf8",
+static const char *helptest_write_char_utf8_2d[] = {
+    "TEST: write_char_utf8_2d",
     "",
-    "Usage: test_mat write_char_utf8",
+    "Usage: test_mat write_char_utf8_2d",
     "",
     "Writes a variable named a to a MAT file. The variable is a 2d character",
     "array of dimensions 2x4. The MAT file is the default file version, or",
@@ -701,12 +701,12 @@ help_test(const char *test)
         Mat_Help(helptest_write_allzero_sparse);
     else if ( !strcmp(test, "write_empty_2d_numeric") )
         Mat_Help(helptest_write_empty_2d_numeric);
-    else if ( !strcmp(test, "write_char") )
-        Mat_Help(helptest_write_char);
-    else if ( !strcmp(test, "write_char_unicode") )
-        Mat_Help(helptest_write_char_unicode);
-    else if ( !strcmp(test, "write_char_utf8") )
-        Mat_Help(helptest_write_char_utf8);
+    else if ( !strcmp(test, "write_char_2d") )
+        Mat_Help(helptest_write_char_2d);
+    else if ( !strcmp(test, "write_char_unicode_2d") )
+        Mat_Help(helptest_write_char_unicode_2d);
+    else if ( !strcmp(test, "write_char_utf8_2d") )
+        Mat_Help(helptest_write_char_utf8_2d);
     else if ( !strcmp(test, "write_struct_2d_numeric") )
         Mat_Help(helptest_write_struct_2d_numeric);
     else if ( !strcmp(test, "write_struct_complex_2d_numeric") )
@@ -1274,7 +1274,7 @@ test_write_empty_2d_numeric(enum matio_classes matvar_class, const char *output_
 }
 
 static int
-test_write_char(const char *output_name)
+test_write_char_2d(const char *output_name)
 {
     int err = 0;
     mat_t *mat;
@@ -1297,7 +1297,7 @@ test_write_char(const char *output_name)
 }
 
 static int
-test_write_char_unicode(const char *output_name)
+test_write_char_unicode_2d(const char *output_name)
 {
     const mat_uint16_t str[] = {1576, 273, 1580, 105, 1604, 7879, 1740, 110};
     int err = 0;
@@ -1318,7 +1318,7 @@ test_write_char_unicode(const char *output_name)
 }
 
 static int
-test_write_char_utf8(const char *output_name)
+test_write_char_utf8_2d(const char *output_name)
 {
     const mat_uint8_t str[] = {216, 168, 196, 145, 216, 172, 105, 217,
                                132, 225, 187, 135, 219, 140, 110};
@@ -4063,23 +4063,23 @@ main(int argc, char *argv[])
                 output_name = "test_write_empty_2d_numeric.mat";
             err += test_write_empty_2d_numeric(matvar_class, output_name);
             ntests++;
-        } else if ( !strcasecmp(argv[k], "write_char") ) {
+        } else if ( !strcasecmp(argv[k], "write_char_2d") ) {
             k++;
             if ( NULL == output_name )
-                output_name = "test_write_char.mat";
-            err += test_write_char(output_name);
+                output_name = "test_write_char_2d.mat";
+            err += test_write_char_2d(output_name);
             ntests++;
-        } else if ( !strcasecmp(argv[k], "write_char_unicode") ) {
+        } else if ( !strcasecmp(argv[k], "write_char_unicode_2d") ) {
             k++;
             if ( NULL == output_name )
-                output_name = "test_write_char_unicode.mat";
-            err += test_write_char_unicode(output_name);
+                output_name = "test_write_char_unicode_2d.mat";
+            err += test_write_char_unicode_2d(output_name);
             ntests++;
-        } else if ( !strcasecmp(argv[k], "write_char_utf8") ) {
+        } else if ( !strcasecmp(argv[k], "write_char_utf8_2d") ) {
             k++;
             if ( NULL == output_name )
-                output_name = "test_write_char_utf8.mat";
-            err += test_write_char_utf8(output_name);
+                output_name = "test_write_char_utf8_2d.mat";
+            err += test_write_char_utf8_2d(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k], "writenull") ) {
             k++;

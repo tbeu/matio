@@ -307,38 +307,38 @@ AT_CHECK([cp $srcdir/matlab/test_write_empty.m .
 ],[])
 AT_CLEANUP
 
-AT_SETUP([Write character array])
+AT_SETUP([Write 2D character array])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 5 -z write_char],[0],[],[])
-AT_CHECK([cp $srcdir/results/readvar-write_char-a-5.out expout
-          $builddir/test_mat readvar test_write_char.mat a],[0],[expout],[])
+AT_CHECK([$builddir/test_mat -v 5 -z write_char_2d],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_char_2d-a-5.out expout
+          $builddir/test_mat readvar test_write_char_2d.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
-AT_CHECK([cp $srcdir/matlab/test_write_char.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_char" | $GREP PASSED],[0],[PASSED
+AT_CHECK([cp $srcdir/matlab/test_write_char_2d.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_char_2d" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
 
-AT_SETUP([Write Unicode character array])
+AT_SETUP([Write 2D Unicode character array])
 AT_KEYWORDS([unicode])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 5 -z write_char_unicode],[0],[],[])
-AT_CHECK([cp $srcdir/results/readvar-write_char_unicode-a-5.out expout
-          $builddir/test_mat readvar test_write_char_unicode.mat a],[0],[expout],[])
+AT_CHECK([$builddir/test_mat -v 5 -z write_char_unicode_2d],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_char_unicode_2d-a-5.out expout
+          $builddir/test_mat readvar test_write_char_unicode_2d.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
-AT_CHECK([cp $srcdir/matlab/test_write_char_unicode.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_char_unicode" | $GREP PASSED],[0],[PASSED
+AT_CHECK([cp $srcdir/matlab/test_write_char_unicode_2d.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_char_unicode_2d" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
 
-AT_SETUP([Write UTF-8 character array])
+AT_SETUP([Write 2D UTF-8 character array])
 AT_KEYWORDS([utf8])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
-AT_CHECK([$builddir/test_mat -v 5 -z write_char_utf8],[0],[],[])
-AT_CHECK([cp $srcdir/results/readvar-write_char_utf8-a-5.out expout
-          $builddir/test_mat readvar test_write_char_utf8.mat a],[0],[expout],[])
+AT_CHECK([$builddir/test_mat -v 5 -z write_char_utf8_2d],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_char_utf8_2d-a-5.out expout
+          $builddir/test_mat readvar test_write_char_utf8_2d.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
-AT_CHECK([cp $srcdir/matlab/test_write_char_utf8.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_char_utf8" | $GREP PASSED],[0],[PASSED
+AT_CHECK([cp $srcdir/matlab/test_write_char_utf8_2d.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_char_utf8_2d" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
 

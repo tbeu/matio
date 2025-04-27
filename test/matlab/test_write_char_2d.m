@@ -1,5 +1,5 @@
 try
-    load test_write_char.mat
+    load test_write_char_2d.mat
     expdata = ['abcdefghijklmnopqrstuvwxyz';
                'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                '1234567890!@#$%^&*()-_=+`~';

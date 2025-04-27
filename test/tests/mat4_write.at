@@ -184,12 +184,12 @@ AT_CHECK([cp $srcdir/matlab/test_write_empty.m .
 ],[])
 AT_CLEANUP
 
-AT_SETUP([Write character array])
-AT_CHECK([$builddir/test_mat -v 4 write_char],[0],[],[])
-AT_CHECK([cp $srcdir/results/readvar-write_char-a.out expout
-          $builddir/test_mat readvar test_write_char.mat a],[0],[expout],[])
+AT_SETUP([Write 2D character array])
+AT_CHECK([$builddir/test_mat -v 4 write_char_2d],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_char_2d-a.out expout
+          $builddir/test_mat readvar test_write_char_2d.mat a],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
-AT_CHECK([cp $srcdir/matlab/test_write_char.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_char" | $GREP PASSED],[0],[PASSED
+AT_CHECK([cp $srcdir/matlab/test_write_char_2d.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_char_2d" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP

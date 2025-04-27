@@ -98,9 +98,9 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(matlab_dir)/test_write_cell_2d_numeric.m \
                  $(matlab_dir)/test_write_cell_complex_2d_numeric.m \
                  $(matlab_dir)/test_write_cell_empty_struct.m \
-                 $(matlab_dir)/test_write_char_unicode.m \
-                 $(matlab_dir)/test_write_char_utf8.m \
-                 $(matlab_dir)/test_write_char.m \
+                 $(matlab_dir)/test_write_char_unicode_2d.m \
+                 $(matlab_dir)/test_write_char_utf8_2d.m \
+                 $(matlab_dir)/test_write_char_2d.m \
                  $(matlab_dir)/test_write_complex_2d_numeric.m \
                  $(matlab_dir)/test_write_empty.m \
                  $(matlab_dir)/test_write_empty_cell.m \
@@ -287,12 +287,12 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var95-73.out \
                  $(results_dir)/read-x.out \
                  $(results_dir)/readvar-write_cell_empty_struct-var1.out \
-                 $(results_dir)/readvar-write_char_unicode-a-5.out \
-                 $(results_dir)/readvar-write_char_unicode-a-73.out \
-                 $(results_dir)/readvar-write_char_utf8-a-5.out \
-                 $(results_dir)/readvar-write_char-a.out \
-                 $(results_dir)/readvar-write_char-a-5.out \
-                 $(results_dir)/readvar-write_char-a-73.out \
+                 $(results_dir)/readvar-write_char_unicode_2d-a-5.out \
+                 $(results_dir)/readvar-write_char_unicode_2d-a-73.out \
+                 $(results_dir)/readvar-write_char_utf8_2d-a-5.out \
+                 $(results_dir)/readvar-write_char_2d-a.out \
+                 $(results_dir)/readvar-write_char_2d-a-5.out \
+                 $(results_dir)/readvar-write_char_2d-a-73.out \
                  $(results_dir)/readvar-write_complex_sparse-sparse_matrix-double.out \
                  $(results_dir)/readvar-write_complex_sparse-sparse_matrix-int8.out \
                  $(results_dir)/readvar-write_complex_sparse-sparse_matrix-int16.out \
