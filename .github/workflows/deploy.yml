@@ -21,7 +21,7 @@ jobs:
       - name: Configure
         run: |
           ./autogen.sh
-          ./configure --enable-shared --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=${GITHUB_WORKSPACE}/hdf5-1.14.5/hdf5 CFLAGS="-O3" CPPFLAGS="-DNDEBUG"
+          ./configure --enable-shared --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=${GITHUB_WORKSPACE}/hdf5-1.14.6/hdf5 CFLAGS="-O3" CPPFLAGS="-DNDEBUG"
       - name: Build documentation
         run: make -C documentation pdf html MAKEINFOFLAGS=--no-split
       - name: Build distribution

@@ -23,15 +23,15 @@ jobs:
       - name: Install hdf5
         timeout-minutes: 5
         run: |
-          wget --no-check-certificate -nv https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.5/hdf5-1.14.5.tar.gz
-          tar -xzf hdf5-1.14.5.tar.gz
-          cd hdf5-1.14.5
+          wget --no-check-certificate -nv https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.6/hdf5-1.14.6.tar.gz
+          tar -xzf hdf5-1.14.6.tar.gz
+          cd hdf5-1.14.6
           ./configure --quiet --enable-shared --enable-build-mode=production --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-instrument --disable-parallel --disable-trace --disable-internal-debug --disable-asserts --disable-tests --disable-tools --with-pic --with-default-api-version=v114 --disable-dependency-tracking CFLAGS="-w"
           make install -C src -j8
       - name: Configure
         run: |
           ./autogen.sh
-          ./configure --enable-shared --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=${GITHUB_WORKSPACE}/hdf5-1.14.5/hdf5 CFLAGS="-O3" CPPFLAGS="-DNDEBUG"
+          ./configure --enable-shared --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=${GITHUB_WORKSPACE}/hdf5-1.14.6/hdf5 CFLAGS="-O3" CPPFLAGS="-DNDEBUG"
       - name: Build with gcc
         run: make -j8
       - name: Test
