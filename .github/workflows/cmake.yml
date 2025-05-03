@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   build:
-    name: ${{ matrix.toolchain }}
+    name: ${{ matrix.toolchain }} (MATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }}, MATIO_MAT73=${{ matrix.mat73 }}, MATIO_WITH_ZLIB=${{ matrix.with-zlib }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -26,6 +26,15 @@ jobs:
           - Release
         python-version:
           - 3.13
+        extended-sparse:
+          - ON
+          - OFF
+        mat73:
+          - ON
+          - OFF
+        with-zlib:
+          - ON
+          - OFF
         include:
           - toolchain: linux-gcc
             os: ubuntu-latest
@@ -61,13 +70,13 @@ jobs:
             echo "/Users/runner/Library/Python/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
           fi
           if [ "${{ matrix.compiler }}" == "msvc" ]; then
-            cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+            cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
           elif [ "${{ matrix.compiler }}" == "mingw" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -G "MinGW Makefiles"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }} -G "MinGW Makefiles"
           elif [ "${{ matrix.compiler }}" == "gcc" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
           else
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
           fi
       - name: Build with ${{ matrix.compiler }}
         run: |
