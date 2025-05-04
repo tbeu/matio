@@ -450,7 +450,7 @@ Mat_LogClose(void)
  *
  * @ingroup mat_util
  * @param prog_name Name of the program initializing the logging functions
- * @return 0 on success
+ * @retval 0 on success
  */
 int
 Mat_LogInit(const char *prog_name)
@@ -471,7 +471,7 @@ Mat_LogInit(const char *prog_name)
  * @ingroup mat_util
  * @param prog_name Name of the program initializing the logging functions
  * @param log_func pointer to the function to do the logging
- * @return 0 on success
+ * @retval 0 on success
  */
 int
 Mat_LogInitFunc(const char *prog_name, void (*log_func)(int log_level, const char *message))

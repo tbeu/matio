@@ -321,17 +321,17 @@ Add(size_t *res, size_t a, size_t b)
 int
 Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread)
 {
-    const size_t readcount = fread(buf, size, count, fp);
-    int err = readcount != count;
+    const size_t readCount = fread(buf, size, count, fp);
+    int err = readCount != count;
     if ( NULL != bytesread ) {
-        *bytesread += readcount * size;
+        *bytesread += readCount * size;
     }
     if ( err ) {
         Mat_Warning(
             "Unexpected end-of-file: Read %zu"
             " bytes, expected %zu"
             " bytes",
-            readcount * size, count * size);
+            readCount * size, count * size);
         memset(buf, 0, count * size);
     }
     return err;

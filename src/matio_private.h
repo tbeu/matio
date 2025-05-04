@@ -202,24 +202,21 @@ EXTERN mat_int16_t Mat_int16Swap(mat_int16_t *a);
 EXTERN mat_uint16_t Mat_uint16Swap(mat_uint16_t *a);
 
 /* read_data.c */
-EXTERN size_t ReadDoubleData(mat_t *mat, double *data, enum matio_types data_type, size_t len);
-EXTERN size_t ReadSingleData(mat_t *mat, float *data, enum matio_types data_type, size_t len);
+EXTERN int ReadDoubleData(mat_t *mat, double *data, enum matio_types data_type, size_t len);
+EXTERN int ReadSingleData(mat_t *mat, float *data, enum matio_types data_type, size_t len);
 #ifdef HAVE_MAT_INT64_T
-EXTERN size_t ReadInt64Data(mat_t *mat, mat_int64_t *data, enum matio_types data_type, size_t len);
+EXTERN int ReadInt64Data(mat_t *mat, mat_int64_t *data, enum matio_types data_type, size_t len);
 #endif /* HAVE_MAT_INT64_T */
 #ifdef HAVE_MAT_UINT64_T
-EXTERN size_t ReadUInt64Data(mat_t *mat, mat_uint64_t *data, enum matio_types data_type,
-                             size_t len);
+EXTERN int ReadUInt64Data(mat_t *mat, mat_uint64_t *data, enum matio_types data_type, size_t len);
 #endif /* HAVE_MAT_UINT64_T */
-EXTERN size_t ReadInt32Data(mat_t *mat, mat_int32_t *data, enum matio_types data_type, size_t len);
-EXTERN size_t ReadUInt32Data(mat_t *mat, mat_uint32_t *data, enum matio_types data_type,
-                             size_t len);
-EXTERN size_t ReadInt16Data(mat_t *mat, mat_int16_t *data, enum matio_types data_type, size_t len);
-EXTERN size_t ReadUInt16Data(mat_t *mat, mat_uint16_t *data, enum matio_types data_type,
-                             size_t len);
-EXTERN size_t ReadInt8Data(mat_t *mat, mat_int8_t *data, enum matio_types data_type, size_t len);
-EXTERN size_t ReadUInt8Data(mat_t *mat, mat_uint8_t *data, enum matio_types data_type, size_t len);
-EXTERN size_t ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len);
+EXTERN int ReadInt32Data(mat_t *mat, mat_int32_t *data, enum matio_types data_type, size_t len);
+EXTERN int ReadUInt32Data(mat_t *mat, mat_uint32_t *data, enum matio_types data_type, size_t len);
+EXTERN int ReadInt16Data(mat_t *mat, mat_int16_t *data, enum matio_types data_type, size_t len);
+EXTERN int ReadUInt16Data(mat_t *mat, mat_uint16_t *data, enum matio_types data_type, size_t len);
+EXTERN int ReadInt8Data(mat_t *mat, mat_int8_t *data, enum matio_types data_type, size_t len);
+EXTERN int ReadUInt8Data(mat_t *mat, mat_uint8_t *data, enum matio_types data_type, size_t len);
+EXTERN int ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len);
 EXTERN int ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type,
                          enum matio_types data_type, int start, int stride, int edge);
 EXTERN int ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type,
