@@ -12,14 +12,30 @@ defaults:
 
 jobs:
   build:
-    name: linux-gcc
-    runs-on: ubuntu-latest
+    name: ${{ matrix.toolchain }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - linux-gcc
+          - macos-clang
+        include:
+          - toolchain: linux-gcc
+            os: ubuntu-latest
+            compiler: gcc
+          - toolchain: macos-clang
+            os: macos-latest
+            compiler: clang
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
           fetch-depth: 5
           submodules: recursive
+      - name: Install dependencies
+        if: matrix.toolchain == 'macos-clang'
+        run: brew install automake autoconf libtool
       - name: Install hdf5
         timeout-minutes: 5
         run: |
