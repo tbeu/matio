@@ -4310,6 +4310,7 @@ main(int argc, char *argv[])
             ntests++;
         } else {
             Mat_Critical("Unrecognized test %s", argv[k]);
+            err = 1;
             break;
         }
     }
