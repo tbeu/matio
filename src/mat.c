@@ -37,6 +37,7 @@
 #include "mat73.h"
 #endif
 #include "safe-math.h"
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -170,6 +171,237 @@ Mat_PrintNumber(enum matio_types type, const void *data)
         case MAT_T_UINT8:
             printf("%hhu", *(mat_uint8_t *)data);
             break;
+        default:
+            break;
+    }
+}
+
+static void
+Mat_PrintData(int rank, const size_t *_dims, const void *data, enum matio_classes class_type,
+              int isComplex, enum matio_types data_type, size_t nbytes, size_t nelems)
+{
+    size_t i, j;
+    size_t dims[2];
+
+    assert(NULL != data);
+
+    if ( rank > 2 ) {
+        printf("Can't print more than 2 dimensions\n");
+        return;
+    }
+
+    if ( rank < 1 || NULL == _dims )
+        return;
+
+    if ( 1 == rank ) {
+        // Print as column vector
+        dims[0] = _dims[0];
+        dims[1] = 1;
+    } else {
+        dims[0] = _dims[0];
+        dims[1] = _dims[1];
+    }
+
+    switch ( class_type ) {
+        case MAT_C_DOUBLE:
+        case MAT_C_SINGLE:
+#ifdef HAVE_MAT_INT64_T
+        case MAT_C_INT64:
+#endif
+#ifdef HAVE_MAT_UINT64_T
+        case MAT_C_UINT64:
+#endif
+        case MAT_C_INT32:
+        case MAT_C_UINT32:
+        case MAT_C_INT16:
+        case MAT_C_UINT16:
+        case MAT_C_INT8:
+        case MAT_C_UINT8: {
+            size_t stride = Mat_SizeOf(data_type);
+            if ( isComplex ) {
+                const mat_complex_split_t *complex_data = (const mat_complex_split_t *)data;
+                const char *rp = (const char *)complex_data->Re;
+                const char *ip = (const char *)complex_data->Im;
+                for ( i = 0; i < dims[0]; i++ ) {
+                    for ( j = 0; j < dims[1]; j++ ) {
+                        size_t idx = dims[0] * j + i;
+                        Mat_PrintNumber(data_type, rp + idx * stride);
+                        printf(" + ");
+                        Mat_PrintNumber(data_type, ip + idx * stride);
+                        printf("i ");
+                    }
+                    printf("\n");
+                }
+            } else {
+                const char *char_data = (const char *)data;
+                for ( i = 0; i < dims[0]; i++ ) {
+                    for ( j = 0; j < dims[1]; j++ ) {
+                        size_t idx = dims[0] * j + i;
+                        Mat_PrintNumber(data_type, char_data + idx * stride);
+                        printf(" ");
+                    }
+                    printf("\n");
+                }
+            }
+            break;
+        }
+        case MAT_C_CHAR: {
+            switch ( data_type ) {
+                case MAT_T_UINT16:
+                case MAT_T_UTF16: {
+                    const mat_uint16_t *uint16_data = (const mat_uint16_t *)data;
+                    for ( i = 0; i < dims[0]; i++ ) {
+                        for ( j = 0; j < dims[1]; j++ ) {
+                            const mat_uint16_t c = uint16_data[j * dims[0] + i];
+#if defined VARPRINT_UTF16
+                            printf("%c%c", c & 0xFF, (c >> 8) & 0xFF);
+#elif defined VARPRINT_UTF16_DECIMAL
+                            Mat_PrintNumber(MAT_T_UINT16, &c);
+                            printf(" ");
+#else
+                            /* Convert to UTF-8 */
+                            if ( c <= 0x7F ) {
+                                printf("%c", c);
+                            } else if ( c <= 0x7FF ) {
+                                printf("%c%c", 0xC0 | (c >> 6), 0x80 | (c & 0x3F));
+                            } else /* if (c <= 0xFFFF) */ {
+                                printf("%c%c%c", 0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F),
+                                       0x80 | (c & 0x3F));
+                            }
+#endif
+                        }
+                        printf("\n");
+                    }
+                    break;
+                }
+                case MAT_T_UTF8: {
+                    const mat_uint8_t *uint8_data = (const mat_uint8_t *)data;
+                    size_t k = 0;
+                    int err = 0;
+                    size_t *idxOffset;
+                    if ( nbytes == 0 ) {
+                        break;
+                    }
+                    idxOffset = (size_t *)calloc(nelems, sizeof(size_t));
+                    if ( idxOffset == NULL ) {
+                        break;
+                    }
+                    for ( i = 0; i < dims[0]; i++ ) {
+                        if ( err ) {
+                            break;
+                        }
+                        for ( j = 0; j < dims[1]; j++ ) {
+                            mat_uint8_t c;
+                            if ( k >= nbytes ) {
+                                break;
+                            }
+                            idxOffset[i * dims[1] + j] = k;
+                            c = uint8_data[k];
+                            if ( c <= 0x7F ) {
+                            } else if ( (c & 0xE0) == 0xC0 ) {
+                                if ( k + 1 < nbytes ) {
+                                    k += 1;
+                                } else {
+                                    err = 1;
+                                    break;
+                                }
+                            } else if ( (c & 0xF0) == 0xE0 ) {
+                                if ( k + 2 < nbytes ) {
+                                    k += 2;
+                                } else {
+                                    err = 1;
+                                    break;
+                                }
+                            } else if ( (c & 0xF8) == 0xF0 ) {
+                                if ( k + 3 < nbytes ) {
+                                    k += 3;
+                                } else {
+                                    err = 1;
+                                    break;
+                                }
+                            }
+                            ++k;
+                        }
+                    }
+                    if ( err ) {
+                        free(idxOffset);
+                        Mat_Message("UTF-8 character data error at index %zu", k);
+                        break;
+                    }
+                    for ( i = 0; i < dims[0]; i++ ) {
+                        for ( j = 0; j < dims[1]; j++ ) {
+                            mat_uint8_t c;
+                            k = idxOffset[j * dims[0] + i];
+                            c = uint8_data[k];
+                            if ( c <= 0x7F ) {
+                                printf("%c", c);
+                            } else if ( (c & 0xE0) == 0xC0 ) {
+                                printf("%c%c", c, uint8_data[k + 1]);
+                            } else if ( (c & 0xF0) == 0xE0 ) {
+                                printf("%c%c%c", c, uint8_data[k + 1], uint8_data[k + 2]);
+                            } else if ( (c & 0xF8) == 0xF0 ) {
+                                printf("%c%c%c%c", c, uint8_data[k + 1], uint8_data[k + 2],
+                                       uint8_data[k + 3]);
+                            }
+                        }
+                        printf("\n");
+                    }
+                    free(idxOffset);
+                    break;
+                }
+                default: {
+                    const char *char_data = (const char *)data;
+                    for ( i = 0; i < dims[0]; i++ ) {
+                        for ( j = 0; j < dims[1]; j++ )
+                            printf("%c", char_data[j * dims[0] + i]);
+                        printf("\n");
+                    }
+                    break;
+                }
+            }
+            break;
+        }
+        case MAT_C_SPARSE: {
+            mat_sparse_t *sparse;
+            size_t stride = Mat_SizeOf(data_type);
+#if !defined(EXTENDED_SPARSE)
+            if ( MAT_T_DOUBLE != data_type )
+                break;
+#endif
+            sparse = (mat_sparse_t *)data;
+            if ( sparse == NULL || sparse->ndata == 0 || sparse->nir == 0 || sparse->njc == 0 ||
+                 sparse->data == NULL ) {
+                break;
+            }
+            if ( isComplex ) {
+                const mat_complex_split_t *complex_data = (const mat_complex_split_t *)sparse->data;
+                const char *re = (const char *)complex_data->Re;
+                const char *im = (const char *)complex_data->Im;
+                for ( i = 0; i < (size_t)sparse->njc - 1; i++ ) {
+                    for ( j = sparse->jc[i]; j < (size_t)sparse->jc[i + 1] &&
+                                             j < (size_t)sparse->ndata && j < (size_t)sparse->nir;
+                          j++ ) {
+                        printf("    (%u,%" SIZE_T_FMTSTR ")  ", sparse->ir[j] + 1, i + 1);
+                        Mat_PrintNumber(data_type, re + j * stride);
+                        printf(" + ");
+                        Mat_PrintNumber(data_type, im + j * stride);
+                        printf("i\n");
+                    }
+                }
+            } else {
+                const char *data = (const char *)sparse->data;
+                for ( i = 0; i < (size_t)sparse->njc - 1; i++ ) {
+                    for ( j = sparse->jc[i]; j < (size_t)sparse->jc[i + 1] &&
+                                             j < (size_t)sparse->ndata && j < (size_t)sparse->nir;
+                          j++ ) {
+                        printf("    (%u,%" SIZE_T_FMTSTR ")  ", sparse->ir[j] + 1, i + 1);
+                        Mat_PrintNumber(data_type, data + j * stride);
+                        printf("\n");
+                    }
+                }
+            }
+            break;
+        }
         default:
             break;
     }
@@ -2161,7 +2393,7 @@ Mat_VarGetSize(const matvar_t *matvar)
 void
 Mat_VarPrint(const matvar_t *matvar, int printdata)
 {
-    size_t nelems = 0, i, j;
+    size_t nelems = 0, i;
     const char *class_type_desc[18] = {"Undefined",
                                        "Cell Array",
                                        "Structure",
@@ -2261,11 +2493,13 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
             printf("}\n");
         }
         return;
-    } else if ( matvar->data == NULL || matvar->data_size < 1 ) {
+    }
+    if ( matvar->data == NULL || matvar->data_size < 1 ) {
         if ( printdata )
             printf("{\n}\n");
         return;
-    } else if ( MAT_C_CELL == matvar->class_type ) {
+    }
+    if ( MAT_C_CELL == matvar->class_type ) {
         matvar_t **cells = (matvar_t **)matvar->data;
         nelems = matvar->nbytes / matvar->data_size;
         printf("{\n");
@@ -2273,223 +2507,13 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
             Mat_VarPrint(cells[i], printdata);
         printf("}\n");
         return;
-    } else if ( !printdata ) {
-        return;
     }
+    if ( !printdata )
+        return;
 
     printf("{\n");
-
-    if ( matvar->rank > 2 ) {
-        printf("I can't print more than 2 dimensions\n");
-    } else if ( matvar->rank == 1 && NULL != matvar->dims && matvar->dims[0] > 15 ) {
-        printf("I won't print more than 15 elements in a vector\n");
-    } else if ( matvar->rank == 2 && NULL != matvar->dims ) {
-        switch ( matvar->class_type ) {
-            case MAT_C_DOUBLE:
-            case MAT_C_SINGLE:
-#ifdef HAVE_MAT_INT64_T
-            case MAT_C_INT64:
-#endif
-#ifdef HAVE_MAT_UINT64_T
-            case MAT_C_UINT64:
-#endif
-            case MAT_C_INT32:
-            case MAT_C_UINT32:
-            case MAT_C_INT16:
-            case MAT_C_UINT16:
-            case MAT_C_INT8:
-            case MAT_C_UINT8: {
-                size_t stride = Mat_SizeOf(matvar->data_type);
-                if ( matvar->isComplex ) {
-                    mat_complex_split_t *complex_data = (mat_complex_split_t *)matvar->data;
-                    const char *rp = (const char *)complex_data->Re;
-                    const char *ip = (const char *)complex_data->Im;
-                    for ( i = 0; i < matvar->dims[0]; i++ ) {
-                        for ( j = 0; j < matvar->dims[1]; j++ ) {
-                            size_t idx = matvar->dims[0] * j + i;
-                            Mat_PrintNumber(matvar->data_type, rp + idx * stride);
-                            printf(" + ");
-                            Mat_PrintNumber(matvar->data_type, ip + idx * stride);
-                            printf("i ");
-                        }
-                        printf("\n");
-                    }
-                } else {
-                    const char *data = (const char *)matvar->data;
-                    for ( i = 0; i < matvar->dims[0]; i++ ) {
-                        for ( j = 0; j < matvar->dims[1]; j++ ) {
-                            size_t idx = matvar->dims[0] * j + i;
-                            Mat_PrintNumber(matvar->data_type, data + idx * stride);
-                            printf(" ");
-                        }
-                        printf("\n");
-                    }
-                }
-                break;
-            }
-            case MAT_C_CHAR: {
-                switch ( matvar->data_type ) {
-                    case MAT_T_UINT16:
-                    case MAT_T_UTF16: {
-                        const mat_uint16_t *data = (const mat_uint16_t *)matvar->data;
-                        for ( i = 0; i < matvar->dims[0]; i++ ) {
-                            for ( j = 0; j < matvar->dims[1]; j++ ) {
-                                const mat_uint16_t c = data[j * matvar->dims[0] + i];
-#if defined VARPRINT_UTF16
-                                printf("%c%c", c & 0xFF, (c >> 8) & 0xFF);
-#elif defined VARPRINT_UTF16_DECIMAL
-                                Mat_PrintNumber(MAT_T_UINT16, &c);
-                                printf(" ");
-#else
-                                /* Convert to UTF-8 */
-                                if ( c <= 0x7F ) {
-                                    printf("%c", c);
-                                } else if ( c <= 0x7FF ) {
-                                    printf("%c%c", 0xC0 | (c >> 6), 0x80 | (c & 0x3F));
-                                } else /* if (c <= 0xFFFF) */ {
-                                    printf("%c%c%c", 0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F),
-                                           0x80 | (c & 0x3F));
-                                }
-#endif
-                            }
-                            printf("\n");
-                        }
-                        break;
-                    }
-                    case MAT_T_UTF8: {
-                        const mat_uint8_t *data = (const mat_uint8_t *)matvar->data;
-                        size_t k = 0;
-                        int err = 0;
-                        size_t *idxOffset;
-                        if ( matvar->nbytes == 0 ) {
-                            break;
-                        }
-                        idxOffset = (size_t *)calloc(nelems, sizeof(size_t));
-                        if ( idxOffset == NULL ) {
-                            break;
-                        }
-                        for ( i = 0; i < matvar->dims[0]; i++ ) {
-                            if ( err ) {
-                                break;
-                            }
-                            for ( j = 0; j < matvar->dims[1]; j++ ) {
-                                mat_uint8_t c;
-                                if ( k >= matvar->nbytes ) {
-                                    break;
-                                }
-                                idxOffset[i * matvar->dims[1] + j] = k;
-                                c = data[k];
-                                if ( c <= 0x7F ) {
-                                } else if ( (c & 0xE0) == 0xC0 ) {
-                                    if ( k + 1 < matvar->nbytes ) {
-                                        k += 1;
-                                    } else {
-                                        err = 1;
-                                        break;
-                                    }
-                                } else if ( (c & 0xF0) == 0xE0 ) {
-                                    if ( k + 2 < matvar->nbytes ) {
-                                        k += 2;
-                                    } else {
-                                        err = 1;
-                                        break;
-                                    }
-                                } else if ( (c & 0xF8) == 0xF0 ) {
-                                    if ( k + 3 < matvar->nbytes ) {
-                                        k += 3;
-                                    } else {
-                                        err = 1;
-                                        break;
-                                    }
-                                }
-                                ++k;
-                            }
-                        }
-                        if ( err ) {
-                            free(idxOffset);
-                            Mat_Message("UTF-8 character data error at index %zu", k);
-                            break;
-                        }
-                        for ( i = 0; i < matvar->dims[0]; i++ ) {
-                            for ( j = 0; j < matvar->dims[1]; j++ ) {
-                                mat_uint8_t c;
-                                k = idxOffset[j * matvar->dims[0] + i];
-                                c = data[k];
-                                if ( c <= 0x7F ) {
-                                    printf("%c", c);
-                                } else if ( (c & 0xE0) == 0xC0 ) {
-                                    printf("%c%c", c, data[k + 1]);
-                                } else if ( (c & 0xF0) == 0xE0 ) {
-                                    printf("%c%c%c", c, data[k + 1], data[k + 2]);
-                                } else if ( (c & 0xF8) == 0xF0 ) {
-                                    printf("%c%c%c%c", c, data[k + 1], data[k + 2], data[k + 3]);
-                                }
-                            }
-                            printf("\n");
-                        }
-                        free(idxOffset);
-                        break;
-                    }
-                    default: {
-                        const char *data = (const char *)matvar->data;
-                        for ( i = 0; i < matvar->dims[0]; i++ ) {
-                            for ( j = 0; j < matvar->dims[1]; j++ )
-                                printf("%c", data[j * matvar->dims[0] + i]);
-                            printf("\n");
-                        }
-                        break;
-                    }
-                }
-                break;
-            }
-            case MAT_C_SPARSE: {
-                mat_sparse_t *sparse;
-                size_t stride = Mat_SizeOf(matvar->data_type);
-#if !defined(EXTENDED_SPARSE)
-                if ( MAT_T_DOUBLE != matvar->data_type )
-                    break;
-#endif
-                sparse = (mat_sparse_t *)matvar->data;
-                if ( sparse == NULL || sparse->ndata == 0 || sparse->nir == 0 || sparse->njc == 0 ||
-                     sparse->data == NULL ) {
-                    break;
-                }
-                if ( matvar->isComplex ) {
-                    mat_complex_split_t *complex_data = (mat_complex_split_t *)sparse->data;
-                    const char *re = (const char *)complex_data->Re;
-                    const char *im = (const char *)complex_data->Im;
-                    for ( i = 0; i < (size_t)sparse->njc - 1; i++ ) {
-                        for ( j = sparse->jc[i];
-                              j < (size_t)sparse->jc[i + 1] && j < (size_t)sparse->ndata &&
-                              j < (size_t)sparse->nir;
-                              j++ ) {
-                            printf("    (%u,%" SIZE_T_FMTSTR ")  ", sparse->ir[j] + 1, i + 1);
-                            Mat_PrintNumber(matvar->data_type, re + j * stride);
-                            printf(" + ");
-                            Mat_PrintNumber(matvar->data_type, im + j * stride);
-                            printf("i\n");
-                        }
-                    }
-                } else {
-                    const char *data = (const char *)sparse->data;
-                    for ( i = 0; i < (size_t)sparse->njc - 1; i++ ) {
-                        for ( j = sparse->jc[i];
-                              j < (size_t)sparse->jc[i + 1] && j < (size_t)sparse->ndata &&
-                              j < (size_t)sparse->nir;
-                              j++ ) {
-                            printf("    (%u,%" SIZE_T_FMTSTR ")  ", sparse->ir[j] + 1, i + 1);
-                            Mat_PrintNumber(matvar->data_type, data + j * stride);
-                            printf("\n");
-                        }
-                    }
-                }
-                break;
-            } /* case MAT_C_SPARSE: */
-            default:
-                break;
-        } /* switch( matvar->class_type ) */
-    }
-
+    Mat_PrintData(matvar->rank, matvar->dims, matvar->data, matvar->class_type, matvar->isComplex,
+                  matvar->data_type, matvar->nbytes, nelems);
     printf("}\n");
 }
 
