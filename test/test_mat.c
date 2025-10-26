@@ -83,12 +83,19 @@ static const char *helpstr[] = {
     NULL};
 
 static const char *helptestsstr[] = {
+    "write_1d_numeric         - Write a real 1D numeric array to a matlab file.",
+    "                           The class of the numeric array is set by the -c",
+    "                           option or double if not set.",
     "write_2d_numeric         - Write a real 2D numeric array to a matlab file.",
+    "                           The class of the numeric array is set by the -c",
+    "                           option or double if not set.",
+    "write_complex_1d_numeric - Write a complex 1D numeric array to a matlab file.",
     "                           The class of the numeric array is set by the -c",
     "                           option or double if not set.",
     "write_complex_2d_numeric - Write a complex 2D numeric array to a matlab file.",
     "                           The class of the numeric array is set by the -c",
     "                           option or double if not set.",
+    "write_1d_logical         - Write a 1D logical array to a matlab file.",
     "write_2d_logical         - Write a 2D logical array to a matlab file.",
     "write_sparse             - Write a real 2D sparse array to a matlab file.",
     "                           The class of the numeric array is set by the -c",
@@ -139,8 +146,11 @@ static const char *helptestsstr[] = {
     "",
     "    Character Variable Tests",
     "================================================================",
+    "write_char_1d            - Write a 1D character array.",
     "write_char_2d            - Write a 2D character array.",
+    "write_char_unicode_1d    - Write a 1D Unicode character array.",
     "write_char_unicode_2d    - Write a 2D Unicode character array.",
+    "write_char_utf8_1d       - Write a 1D UTF-8 character array.",
     "write_char_utf8_2d       - Write a 2D UTF-8 character array.",
     "",
     "    MAT File Tests",
@@ -185,6 +195,26 @@ static const char *helptest_directory[] = {"TEST: directory",
                                            "",
                                            NULL};
 
+static const char *helptest_write_1d_numeric[] = {
+    "TEST: write_1d_numeric",
+    "",
+    "Usage: test_mat write_1d_numeric",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a 1d real",
+    "numeric array of dimensions 50 containing the numbers from 1 to 50.",
+    "the class of the variable is double, or set by the -c option. The",
+    "MAT file is the default file version, or set by the -v option. If the",
+    "MAT file is version 5, compression can be enabled using the -z option",
+    "if built with zlib library. If the MAT file is version 7.3 and the -a",
+    "option is set, the MAT file is created by appending the data in a loop.",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    classtype = 'double';",
+    "    a = cast(1:50,classtype)';",
+    "",
+    NULL};
+
 static const char *helptest_write_2d_numeric[] = {
     "TEST: write_2d_numeric",
     "",
@@ -202,6 +232,27 @@ static const char *helptest_write_2d_numeric[] = {
     "",
     "    classtype = 'double';",
     "    a = cast(reshape(1:50,5,10),classtype);",
+    "",
+    NULL};
+
+static const char *helptest_write_complex_1d_numeric[] = {
+    "TEST: write_complex_1d_numeric",
+    "",
+    "Usage: test_mat write_complex_1d_numeric",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a 1d complex",
+    "numeric array of dimensions 50 containing the numbers from 1 to 50 in",
+    "the real part, and the numbers 51:100 in the imaginary part. The class",
+    "of the variable is double, or set by the -c option. The MAT file is the ",
+    "default file version, or set by the -v option. If the MAT file is ",
+    "version 5, compression can be enabled using the -z option if built with",
+    "zlib library. If the MAT file is version 7.3 and the -a option is set, ",
+    "the MAT file is created by appending the data in a loop.",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    classtype = 'double';",
+    "    a = cast([1:50] - j*[51:100],classtype)';",
     "",
     NULL};
 
@@ -226,12 +277,34 @@ static const char *helptest_write_complex_2d_numeric[] = {
     "",
     NULL};
 
+static const char *helptest_write_1d_logical[] = {
+    "TEST: write_1d_logical",
+    "",
+    "Usage: test_mat write_1d_logical",
+    "",
+    "Writes several variables to a MAT file. The variables are 1d logical",
+    "arrays. Variables l1, l2, l4, and l8 if 64-bit integers are available are",
+    "the same except the logical source data are different integer sizes. The",
+    "MAT file is the default file version, or set by the -v option. If the MAT",
+    "file is version 5, compression can be enabled using the -z option if",
+    "built with zlib library.",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    l0 = false(0,1);",
+    "    l1 = logical(mod(0:49,2))';",
+    "    l2 = logical(mod(0:49,2))';",
+    "    l4 = logical(mod(0:49,2))';",
+    "    l8 = logical(mod(0:49,2))';",
+    "",
+    NULL};
+
 static const char *helptest_write_2d_logical[] = {
     "TEST: write_2d_logical",
     "",
     "Usage: test_mat write_2d_logical",
     "",
-    "Writes a several variables to a MAT file. The variables are 2d logical",
+    "Writes several variables to a MAT file. The variables are 2d logical",
     "arrays. Variables l1, l2, l4, and l8 if 64-bit integers are available are",
     "the same except the logical source data are different integer sizes. The",
     "MAT file is the default file version, or set by the -v option. If the MAT",
@@ -326,6 +399,25 @@ static const char *helptest_write_empty_2d_numeric[] = {
     "",
     NULL};
 
+static const char *helptest_write_char_1d[] = {
+    "TEST: write_char_1d",
+    "",
+    "Usage: test_mat write_char_1d",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a 1d character",
+    "array of dimension 104. The MAT file is the default file version, or",
+    "set by the -v option. If the MAT file is version 5, compression can be",
+    "enabled using the -z option if built with zlib library",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    a = ['abcdefghijklmnopqrstuvwxyz',",
+    "         'ABCDEFGHIJKLMNOPQRSTUVWXYZ',",
+    "         '1234567890!@#$%^&*()-_=+`~',",
+    "         '[{]}\\|;:''\",<.>/?          ']';",
+    "",
+    NULL};
+
 static const char *helptest_write_char_2d[] = {
     "TEST: write_char_2d",
     "",
@@ -345,6 +437,22 @@ static const char *helptest_write_char_2d[] = {
     "",
     NULL};
 
+static const char *helptest_write_char_unicode_1d[] = {
+    "TEST: write_char_unicode_1d",
+    "",
+    "Usage: test_mat write_char_unicode_1d",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a 1d character",
+    "array of dimensions 8. The MAT file is the default file version, or",
+    "set by the -v option. If the MAT file is version 5, compression can be",
+    "enabled using the -z option if built with zlib library",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    a = char([1576,1580,1604,1740,273,105,7879,110])';",
+    "",
+    NULL};
+
 static const char *helptest_write_char_unicode_2d[] = {
     "TEST: write_char_unicode_2d",
     "",
@@ -358,6 +466,23 @@ static const char *helptest_write_char_unicode_2d[] = {
     "MATLAB code to generate expected data",
     "",
     "    a = char([1576,1580,1604,1740;273,105,7879,110]);",
+    "",
+    NULL};
+
+static const char *helptest_write_char_utf8_1d[] = {
+    "TEST: write_char_utf8_1d",
+    "",
+    "Usage: test_mat write_char_utf8_1d",
+    "",
+    "Writes a variable named a to a MAT file. The variable is a 2d character",
+    "array of dimensions 8. The MAT file is the default file version, or",
+    "set by the -v option. If the MAT file is version 5, compression can be",
+    "enabled using the -z option if built with zlib library",
+    "",
+    "MATLAB code to generate expected data",
+    "",
+    "    a = uint8([216,168,216,172,217,132,219,140,196,145,105,225,187,135,110])';",
+    "    a = native2unicode(a, 'UTF-8');",
     "",
     NULL};
 
@@ -687,10 +812,16 @@ help_test(const char *test)
         Mat_Help(helptest_readvarinfo);
     else if ( !strcmp(test, "readslab") )
         Mat_Help(helptest_readslab);
+    else if ( !strcmp(test, "write_1d_numeric") )
+        Mat_Help(helptest_write_1d_numeric);
     else if ( !strcmp(test, "write_2d_numeric") )
         Mat_Help(helptest_write_2d_numeric);
+    else if ( !strcmp(test, "write_complex_1d_numeric") )
+        Mat_Help(helptest_write_complex_1d_numeric);
     else if ( !strcmp(test, "write_complex_2d_numeric") )
         Mat_Help(helptest_write_complex_2d_numeric);
+    else if ( !strcmp(test, "write_1d_logical") )
+        Mat_Help(helptest_write_1d_logical);
     else if ( !strcmp(test, "write_2d_logical") )
         Mat_Help(helptest_write_2d_logical);
     else if ( !strcmp(test, "write_sparse") )
@@ -701,10 +832,16 @@ help_test(const char *test)
         Mat_Help(helptest_write_allzero_sparse);
     else if ( !strcmp(test, "write_empty_2d_numeric") )
         Mat_Help(helptest_write_empty_2d_numeric);
+    else if ( !strcmp(test, "write_char_1d") )
+        Mat_Help(helptest_write_char_1d);
     else if ( !strcmp(test, "write_char_2d") )
         Mat_Help(helptest_write_char_2d);
+    else if ( !strcmp(test, "write_char_unicode_1d") )
+        Mat_Help(helptest_write_char_unicode_1d);
     else if ( !strcmp(test, "write_char_unicode_2d") )
         Mat_Help(helptest_write_char_unicode_2d);
+    else if ( !strcmp(test, "write_char_utf8_1d") )
+        Mat_Help(helptest_write_char_utf8_1d);
     else if ( !strcmp(test, "write_char_utf8_2d") )
         Mat_Help(helptest_write_char_utf8_2d);
     else if ( !strcmp(test, "write_struct_2d_numeric") )
@@ -750,9 +887,8 @@ redirect_output(const char *output)
 }
 
 static int
-test_write_2d_logical(const char *output_name)
+test_write_logical(const char *output_name, int rank, const size_t *dims)
 {
-    size_t dims[2] = {5, 10};
     int err = 0, i;
 #ifdef HAVE_MAT_UINT64_T
     mat_uint64_t l8[50];
@@ -762,6 +898,9 @@ test_write_2d_logical(const char *output_name)
     mat_uint8_t l1[50];
     mat_t *mat;
     matvar_t *matvar;
+
+    if ( rank != 1 && rank != 2 )
+        return 1;
 
     for ( i = 0; i < 50; i++ ) {
         l1[i] = i % 2;
@@ -778,22 +917,29 @@ test_write_2d_logical(const char *output_name)
     }
 
 #ifdef HAVE_MAT_UINT64_T
-    matvar = Mat_VarCreate("l8", MAT_C_UINT64, MAT_T_UINT64, 2, dims, l8, MAT_F_LOGICAL);
-    Mat_VarWrite(mat, matvar, compression);
+    matvar = Mat_VarCreate("l8", MAT_C_UINT64, MAT_T_UINT64, rank, dims, l8, MAT_F_LOGICAL);
+    if ( Mat_VarWrite(mat, matvar, compression) )
+        err++;
     Mat_VarFree(matvar);
 #endif
-    matvar = Mat_VarCreate("l4", MAT_C_UINT32, MAT_T_UINT32, 2, dims, l4, MAT_F_LOGICAL);
-    Mat_VarWrite(mat, matvar, compression);
+    matvar = Mat_VarCreate("l4", MAT_C_UINT32, MAT_T_UINT32, rank, dims, l4, MAT_F_LOGICAL);
+    if ( Mat_VarWrite(mat, matvar, compression) )
+        err++;
     Mat_VarFree(matvar);
-    matvar = Mat_VarCreate("l2", MAT_C_UINT16, MAT_T_UINT16, 2, dims, l2, MAT_F_LOGICAL);
-    Mat_VarWrite(mat, matvar, compression);
+    matvar = Mat_VarCreate("l2", MAT_C_UINT16, MAT_T_UINT16, rank, dims, l2, MAT_F_LOGICAL);
+    if ( Mat_VarWrite(mat, matvar, compression) )
+        err++;
     Mat_VarFree(matvar);
-    matvar = Mat_VarCreate("l1", MAT_C_UINT8, MAT_T_UINT8, 2, dims, l1, MAT_F_LOGICAL);
-    Mat_VarWrite(mat, matvar, compression);
+    matvar = Mat_VarCreate("l1", MAT_C_UINT8, MAT_T_UINT8, rank, dims, l1, MAT_F_LOGICAL);
+    if ( Mat_VarWrite(mat, matvar, compression) )
+        err++;
     Mat_VarFree(matvar);
-    dims[0] = 0;
-    matvar = Mat_VarCreate("l0", MAT_C_UINT8, MAT_T_UINT8, 2, dims, NULL, MAT_F_LOGICAL);
-    Mat_VarWrite(mat, matvar, compression);
+    size_t zero_dims[2] = {0, 0};
+    memcpy(zero_dims, dims, rank * sizeof(size_t));
+    zero_dims[0] = 0;
+    matvar = Mat_VarCreate("l0", MAT_C_UINT8, MAT_T_UINT8, rank, zero_dims, NULL, MAT_F_LOGICAL);
+    if ( Mat_VarWrite(mat, matvar, compression) )
+        err++;
     Mat_VarFree(matvar);
 
     Mat_Close(mat);
@@ -802,7 +948,22 @@ test_write_2d_logical(const char *output_name)
 }
 
 static int
-test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, int dim_append)
+test_write_1d_logical(const char *output_name)
+{
+    const size_t dims[1] = {50};
+    return test_write_logical(output_name, 1, dims);
+}
+
+static int
+test_write_2d_logical(const char *output_name)
+{
+    const size_t dims[2] = {5, 10};
+    return test_write_logical(output_name, 2, dims);
+}
+
+static int
+test_write_numeric(enum matio_classes matvar_class, const char *output_name, int dim_append,
+                   int rank, const size_t *dims)
 {
     int err = 0, i;
     double d[50];
@@ -822,11 +983,15 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, 
     mat_t *mat;
     matvar_t *matvar;
 
-    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
-    if ( !mat ) {
+    if ( rank != 1 && rank != 2 )
         return 1;
-    }
+
+    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( !mat )
+        return 1;
+
     if ( MAT_ACC_RDWR != Mat_GetFileAccessMode(mat) ) {
+        Mat_Close(mat);
         return 1;
     }
 
@@ -848,42 +1013,40 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, 
     }
 
     if ( 0 == dim_append ) {
-        const size_t dims[2] = {5, 10};
-
         switch ( matvar_class ) {
             case MAT_C_DOUBLE:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_DOUBLE, 2, dims, d, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_DOUBLE, rank, dims, d, 0);
                 break;
             case MAT_C_SINGLE:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_SINGLE, 2, dims, f, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_SINGLE, rank, dims, f, 0);
                 break;
 #ifdef HAVE_MAT_INT64_T
             case MAT_C_INT64:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_INT64, 2, dims, i64, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_INT64, rank, dims, i64, 0);
                 break;
 #endif
 #ifdef HAVE_MAT_UINT64_T
             case MAT_C_UINT64:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT64, 2, dims, ui64, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT64, rank, dims, ui64, 0);
                 break;
 #endif
             case MAT_C_INT32:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_INT32, 2, dims, i32, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_INT32, rank, dims, i32, 0);
                 break;
             case MAT_C_UINT32:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT32, 2, dims, ui32, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT32, rank, dims, ui32, 0);
                 break;
             case MAT_C_INT16:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_INT16, 2, dims, i16, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_INT16, rank, dims, i16, 0);
                 break;
             case MAT_C_UINT16:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT16, 2, dims, ui16, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT16, rank, dims, ui16, 0);
                 break;
             case MAT_C_INT8:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_INT8, 2, dims, i8, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_INT8, rank, dims, i8, 0);
                 break;
             case MAT_C_UINT8:
-                matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT8, 2, dims, ui8, 0);
+                matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT8, rank, dims, ui8, 0);
                 break;
             default:
                 Mat_Close(mat);
@@ -892,11 +1055,7 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, 
         err = Mat_VarWrite(mat, matvar, compression);
         Mat_VarFree(matvar);
     } else {
-        size_t dims[2];
-
-        if ( 1 == dim_append ) {
-            dims[0] = 1;
-            dims[1] = 10;
+        if ( 1 == dim_append && 2 == rank ) {
             for ( i = 0; i < 5; i++ ) {
                 int j;
                 int k = i + 1;
@@ -918,65 +1077,60 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, 
                     k += 5;
                 }
             }
-        } else if ( 2 == dim_append ) {
-            dims[0] = 5;
-            dims[1] = 2;
-        } else {
-            Mat_Close(mat);
-            return 1;
         }
 
         for ( i = 0; i < 5; i++ ) {
-            int erri;
             switch ( matvar_class ) {
                 case MAT_C_DOUBLE:
-                    matvar = Mat_VarCreate("a", matvar_class, MAT_T_DOUBLE, 2, dims, &d[10 * i], 0);
+                    matvar =
+                        Mat_VarCreate("a", matvar_class, MAT_T_DOUBLE, rank, dims, &d[10 * i], 0);
                     break;
                 case MAT_C_SINGLE:
-                    matvar = Mat_VarCreate("a", matvar_class, MAT_T_SINGLE, 2, dims, &f[10 * i], 0);
+                    matvar =
+                        Mat_VarCreate("a", matvar_class, MAT_T_SINGLE, rank, dims, &f[10 * i], 0);
                     break;
 #ifdef HAVE_MAT_INT64_T
                 case MAT_C_INT64:
                     matvar =
-                        Mat_VarCreate("a", matvar_class, MAT_T_INT64, 2, dims, &i64[10 * i], 0);
+                        Mat_VarCreate("a", matvar_class, MAT_T_INT64, rank, dims, &i64[10 * i], 0);
                     break;
 #endif
 #ifdef HAVE_MAT_UINT64_T
                 case MAT_C_UINT64:
-                    matvar =
-                        Mat_VarCreate("a", matvar_class, MAT_T_UINT64, 2, dims, &ui64[10 * i], 0);
+                    matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT64, rank, dims,
+                                           &ui64[10 * i], 0);
                     break;
 #endif
                 case MAT_C_INT32:
                     matvar =
-                        Mat_VarCreate("a", matvar_class, MAT_T_INT32, 2, dims, &i32[10 * i], 0);
+                        Mat_VarCreate("a", matvar_class, MAT_T_INT32, rank, dims, &i32[10 * i], 0);
                     break;
                 case MAT_C_UINT32:
-                    matvar =
-                        Mat_VarCreate("a", matvar_class, MAT_T_UINT32, 2, dims, &ui32[10 * i], 0);
+                    matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT32, rank, dims,
+                                           &ui32[10 * i], 0);
                     break;
                 case MAT_C_INT16:
                     matvar =
-                        Mat_VarCreate("a", matvar_class, MAT_T_INT16, 2, dims, &i16[10 * i], 0);
+                        Mat_VarCreate("a", matvar_class, MAT_T_INT16, rank, dims, &i16[10 * i], 0);
                     break;
                 case MAT_C_UINT16:
-                    matvar =
-                        Mat_VarCreate("a", matvar_class, MAT_T_UINT16, 2, dims, &ui16[10 * i], 0);
+                    matvar = Mat_VarCreate("a", matvar_class, MAT_T_UINT16, rank, dims,
+                                           &ui16[10 * i], 0);
                     break;
                 case MAT_C_INT8:
-                    matvar = Mat_VarCreate("a", matvar_class, MAT_T_INT8, 2, dims, &i8[10 * i], 0);
+                    matvar =
+                        Mat_VarCreate("a", matvar_class, MAT_T_INT8, rank, dims, &i8[10 * i], 0);
                     break;
                 case MAT_C_UINT8:
                     matvar =
-                        Mat_VarCreate("a", matvar_class, MAT_T_UINT8, 2, dims, &ui8[10 * i], 0);
+                        Mat_VarCreate("a", matvar_class, MAT_T_UINT8, rank, dims, &ui8[10 * i], 0);
                     break;
                 default:
                     Mat_Close(mat);
                     return 1;
             }
-            erri = Mat_VarWriteAppend(mat, matvar, compression, dim_append);
-            Mat_VarFree(matvar);
-            err += erri < 0 ? -err : err;
+            if ( Mat_VarWriteAppend(mat, matvar, compression, dim_append) )
+                err++;
         }
     }
 
@@ -986,8 +1140,41 @@ test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, 
 }
 
 static int
-test_write_complex_2d_numeric(enum matio_classes matvar_class, const char *output_name,
-                              int dim_append)
+test_write_1d_numeric(enum matio_classes matvar_class, const char *output_name, int dim_append)
+{
+    size_t dims[1];
+    if ( 0 == dim_append ) {
+        dims[0] = 50;
+    } else if ( 1 == dim_append ) {
+        dims[0] = 10;
+    } else {
+        return 1;
+    }
+    return test_write_numeric(matvar_class, output_name, dim_append, 1, dims);
+}
+
+static int
+test_write_2d_numeric(enum matio_classes matvar_class, const char *output_name, int dim_append)
+{
+    size_t dims[2];
+    if ( 0 == dim_append ) {
+        dims[0] = 5;
+        dims[1] = 10;
+    } else if ( 1 == dim_append ) {
+        dims[0] = 1;
+        dims[1] = 10;
+    } else if ( 2 == dim_append ) {
+        dims[0] = 5;
+        dims[1] = 2;
+    } else {
+        return 1;
+    }
+    return test_write_numeric(matvar_class, output_name, dim_append, 2, dims);
+}
+
+static int
+test_write_complex_numeric(enum matio_classes matvar_class, const char *output_name, int dim_append,
+                           int rank, const size_t *dims)
 {
     int err = 0, i;
     double d_real[50], d_imag[50];
@@ -1009,8 +1196,15 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class, const char *outpu
     matvar_t *matvar;
     enum matio_types matvar_datatype = MAT_T_UNKNOWN;
 
+    if ( rank != 1 && rank != 2 )
+        return 1;
+
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
-    if ( !mat ) {
+    if ( !mat )
+        return 1;
+
+    if ( MAT_ACC_RDWR != Mat_GetFileAccessMode(mat) ) {
+        Mat_Close(mat);
         return 1;
     }
 
@@ -1102,17 +1296,11 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class, const char *outpu
     }
 
     if ( 0 == dim_append ) {
-        const size_t dims[2] = {5, 10};
-
-        matvar = Mat_VarCreate("a", matvar_class, matvar_datatype, 2, dims, &z, MAT_F_COMPLEX);
+        matvar = Mat_VarCreate("a", matvar_class, matvar_datatype, rank, dims, &z, MAT_F_COMPLEX);
         err = Mat_VarWrite(mat, matvar, compression);
         Mat_VarFree(matvar);
     } else {
-        size_t dims[2];
-
-        if ( 1 == dim_append ) {
-            dims[0] = 1;
-            dims[1] = 10;
+        if ( 1 == dim_append && 2 == rank ) {
             for ( i = 0; i < 5; i++ ) {
                 int j;
                 int k = i + 1;
@@ -1144,17 +1332,9 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class, const char *outpu
                     k += 5;
                 }
             }
-        } else if ( 2 == dim_append ) {
-            dims[0] = 5;
-            dims[1] = 2;
-        } else {
-            Mat_Close(mat);
-            return 1;
         }
 
         for ( i = 0; i < 5; i++ ) {
-            int erri;
-
             switch ( matvar_class ) {
                 case MAT_C_DOUBLE:
                     z.Re = &d_real[10 * i];
@@ -1205,16 +1385,52 @@ test_write_complex_2d_numeric(enum matio_classes matvar_class, const char *outpu
                     return 1;
             }
 
-            matvar = Mat_VarCreate("a", matvar_class, matvar_datatype, 2, dims, &z, MAT_F_COMPLEX);
-            erri = Mat_VarWriteAppend(mat, matvar, compression, dim_append);
+            matvar =
+                Mat_VarCreate("a", matvar_class, matvar_datatype, rank, dims, &z, MAT_F_COMPLEX);
+            if ( Mat_VarWriteAppend(mat, matvar, compression, dim_append) )
+                err++;
             Mat_VarFree(matvar);
-            err += erri < 0 ? -err : err;
         }
     }
 
     Mat_Close(mat);
 
     return err;
+}
+
+static int
+test_write_complex_1d_numeric(enum matio_classes matvar_class, const char *output_name,
+                              int dim_append)
+{
+    size_t dims[1];
+    if ( 0 == dim_append ) {
+        dims[0] = 50;
+    } else if ( 1 == dim_append ) {
+        dims[0] = 10;
+    } else {
+        return 1;
+    }
+    return test_write_complex_numeric(matvar_class, output_name, dim_append, 1, dims);
+}
+
+static int
+test_write_complex_2d_numeric(enum matio_classes matvar_class, const char *output_name,
+                              int dim_append)
+{
+    size_t dims[2];
+    if ( 0 == dim_append ) {
+        dims[0] = 5;
+        dims[1] = 10;
+    } else if ( 1 == dim_append ) {
+        dims[0] = 1;
+        dims[1] = 10;
+    } else if ( 2 == dim_append ) {
+        dims[0] = 5;
+        dims[1] = 2;
+    } else {
+        return 1;
+    }
+    return test_write_complex_numeric(matvar_class, output_name, dim_append, 2, dims);
 }
 
 static int
@@ -1274,19 +1490,21 @@ test_write_empty_2d_numeric(enum matio_classes matvar_class, const char *output_
 }
 
 static int
-test_write_char_2d(const char *output_name)
+test_write_char(const char *output_name, int rank, const size_t *dims)
 {
     int err = 0;
     mat_t *mat;
+
+    if ( rank != 1 && rank != 2 )
+        return 1;
 
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
     if ( mat ) {
         const char *str =
             "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
             "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
-        const size_t dims[2] = {4, 26};
-        matvar_t *matvar =
-            Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UINT8, 2, dims, (void *)str, MAT_F_DONT_COPY_DATA);
+        matvar_t *matvar = Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UINT8, rank, dims, (void *)str,
+                                         MAT_F_DONT_COPY_DATA);
         err = Mat_VarWrite(mat, matvar, compression);
         Mat_VarFree(matvar);
         Mat_Close(mat);
@@ -1294,20 +1512,79 @@ test_write_char_2d(const char *output_name)
         err = 1;
     }
     return err;
+}
+
+static int
+test_write_char_1d(const char *output_name)
+{
+    const size_t dims[1] = {104};
+    return test_write_char(output_name, 1, dims);
+}
+
+static int
+test_write_char_2d(const char *output_name)
+{
+    const size_t dims[2] = {4, 26};
+    return test_write_char(output_name, 2, dims);
+}
+
+static int
+test_write_char_unicode(const char *output_name, int rank, const size_t *dims)
+{
+    const mat_uint16_t str1[] = {1576, 1580, 1604, 1740, 273, 105, 7879, 110};
+    const mat_uint16_t str2[] = {1576, 273, 1580, 105, 1604, 7879, 1740, 110};
+    int err = 0;
+    mat_t *mat;
+
+    if ( rank != 1 && rank != 2 )
+        return 1;
+
+    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( mat ) {
+        const void *str = 1 == rank ? str1 : str2;
+        matvar_t *matvar =
+            Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UTF16, rank, dims, str, MAT_F_DONT_COPY_DATA);
+        err = Mat_VarWrite(mat, matvar, compression);
+        Mat_VarFree(matvar);
+        Mat_Close(mat);
+    } else {
+        err = 1;
+    }
+    return err;
+}
+
+static int
+test_write_char_unicode_1d(const char *output_name)
+{
+    const size_t dims[1] = {8};
+    return test_write_char_unicode(output_name, 1, dims);
 }
 
 static int
 test_write_char_unicode_2d(const char *output_name)
 {
-    const mat_uint16_t str[] = {1576, 273, 1580, 105, 1604, 7879, 1740, 110};
+    const size_t dims[2] = {2, 4};
+    return test_write_char_unicode(output_name, 2, dims);
+}
+
+static int
+test_write_char_utf8(const char *output_name, int rank, const size_t *dims)
+{
+    const mat_uint8_t str1[] = {216, 168, 216, 172, 217, 132, 219, 140,
+                                196, 145, 105, 225, 187, 135, 110};
+    const mat_uint8_t str2[] = {216, 168, 196, 145, 216, 172, 105, 217,
+                                132, 225, 187, 135, 219, 140, 110};
     int err = 0;
     mat_t *mat;
 
+    if ( rank != 1 && rank != 2 )
+        return 1;
+
     mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
     if ( mat ) {
-        const size_t dims[2] = {2, 4};
+        const void *str = 1 == rank ? str1 : str2;
         matvar_t *matvar =
-            Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UTF16, 2, dims, (void *)str, MAT_F_DONT_COPY_DATA);
+            Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UTF8, rank, dims, str, MAT_F_DONT_COPY_DATA);
         err = Mat_VarWrite(mat, matvar, compression);
         Mat_VarFree(matvar);
         Mat_Close(mat);
@@ -1318,25 +1595,17 @@ test_write_char_unicode_2d(const char *output_name)
 }
 
 static int
+test_write_char_utf8_1d(const char *output_name)
+{
+    const size_t dims[1] = {8};
+    return test_write_char_utf8(output_name, 1, dims);
+}
+
+static int
 test_write_char_utf8_2d(const char *output_name)
 {
-    const mat_uint8_t str[] = {216, 168, 196, 145, 216, 172, 105, 217,
-                               132, 225, 187, 135, 219, 140, 110};
-    int err = 0;
-    mat_t *mat;
-
-    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
-    if ( mat ) {
-        const size_t dims[2] = {2, 4};
-        matvar_t *matvar =
-            Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UTF8, 2, dims, (void *)str, MAT_F_DONT_COPY_DATA);
-        err = Mat_VarWrite(mat, matvar, compression);
-        Mat_VarFree(matvar);
-        Mat_Close(mat);
-    } else {
-        err = 1;
-    }
-    return err;
+    const size_t dims[2] = {2, 4};
+    return test_write_char_utf8(output_name, 2, dims);
 }
 
 static int
@@ -4039,17 +4308,35 @@ main(int argc, char *argv[])
             redirect_output(output_name);
             err += test_directory(argv[k++]);
             ntests++;
+        } else if ( !strcasecmp(argv[k], "write_1d_logical") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_1d_logical.mat";
+            err += test_write_1d_logical(output_name);
+            ntests++;
         } else if ( !strcasecmp(argv[k], "write_2d_logical") ) {
             k++;
             if ( NULL == output_name )
                 output_name = "test_write_2d_logical.mat";
             err += test_write_2d_logical(output_name);
             ntests++;
+        } else if ( !strcasecmp(argv[k], "write_1d_numeric") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_1d_numeric.mat";
+            err += test_write_1d_numeric(matvar_class, output_name, dim_append);
+            ntests++;
         } else if ( !strcasecmp(argv[k], "write_2d_numeric") ) {
             k++;
             if ( NULL == output_name )
                 output_name = "test_write_2d_numeric.mat";
             err += test_write_2d_numeric(matvar_class, output_name, dim_append);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "write_complex_1d_numeric") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_complex_1d_numeric.mat";
+            err += test_write_complex_1d_numeric(matvar_class, output_name, dim_append);
             ntests++;
         } else if ( !strcasecmp(argv[k], "write_complex_2d_numeric") ) {
             k++;
@@ -4063,17 +4350,35 @@ main(int argc, char *argv[])
                 output_name = "test_write_empty_2d_numeric.mat";
             err += test_write_empty_2d_numeric(matvar_class, output_name);
             ntests++;
+        } else if ( !strcasecmp(argv[k], "write_char_1d") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_char_1d.mat";
+            err += test_write_char_1d(output_name);
+            ntests++;
         } else if ( !strcasecmp(argv[k], "write_char_2d") ) {
             k++;
             if ( NULL == output_name )
                 output_name = "test_write_char_2d.mat";
             err += test_write_char_2d(output_name);
             ntests++;
+        } else if ( !strcasecmp(argv[k], "write_char_unicode_1d") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_char_unicode_1d.mat";
+            err += test_write_char_unicode_1d(output_name);
+            ntests++;
         } else if ( !strcasecmp(argv[k], "write_char_unicode_2d") ) {
             k++;
             if ( NULL == output_name )
                 output_name = "test_write_char_unicode_2d.mat";
             err += test_write_char_unicode_2d(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "write_char_utf8_1d") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_char_utf8_1d.mat";
+            err += test_write_char_utf8_1d(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k], "write_char_utf8_2d") ) {
             k++;

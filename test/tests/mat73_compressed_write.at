@@ -23,6 +23,138 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+AT_SETUP([Write 1D double array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-double.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D single array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-single.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D int64 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([test $HAVE_INT64 -eq 0])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-int64.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D uint64 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-uint64.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D int32 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-int32.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D uint32 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-uint32.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D int16 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-int16.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D uint16 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-uint16.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D int8 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-int8.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D uint8 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-uint8.out expout
+          $builddir/test_mat readvar test_write_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
 AT_SETUP([Write 2D double array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
@@ -142,6 +274,138 @@ AT_CHECK([cp $srcdir/results/write_2d_numeric-uint8.out expout
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_2d_numeric.m .
           $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_2d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex double array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c double write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-double.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='double';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex single array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c single write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-single.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='single';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex int64 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([test $HAVE_INT64 -eq 0])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int64 write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-int64.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='int64';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex uint64 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_SKIP_IF([test $HAVE_UINT64 -eq 0])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint64 write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-uint64.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='uint64';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex int32 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int32 write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-int32.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='int32';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex uint32 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint32 write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-uint32.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='uint32';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex int16 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int16 write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-int16.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='int16';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex uint16 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint16 write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-uint16.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='uint16';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex int8 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c int8 write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-int8.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='int8';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D complex uint8 array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z -c uint8 write_complex_1d_numeric],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_complex_1d_numeric-uint8.out expout
+          $builddir/test_mat readvar test_write_complex_1d_numeric.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_complex_1d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "type='uint8';test_write_complex_1d_numeric" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
 
@@ -267,7 +531,25 @@ AT_CHECK([cp $srcdir/matlab/test_write_complex_2d_numeric.m .
 ],[])
 AT_CLEANUP
 
+AT_SETUP([Write 1D logical array])
+AT_KEYWORDS([logical 1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_1d_logical],[0],[],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-l1-logical.out expout
+          $builddir/test_mat readvar test_write_1d_logical.mat l1],[0],[expout],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-73-l2-logical.out expout
+          $builddir/test_mat readvar test_write_1d_logical.mat l2],[0],[expout],[])
+AT_CHECK([cp $srcdir/results/write_1d_numeric-73-l4-logical.out expout
+          $builddir/test_mat readvar test_write_1d_logical.mat l4],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_1d_logical.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_1d_logical" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
 AT_SETUP([Write 2D logical array])
+AT_KEYWORDS([logical])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_2d_logical],[0],[],[])
@@ -320,6 +602,19 @@ AT_CHECK([cp $srcdir/matlab/test_write_empty.m .
 ],[])
 AT_CLEANUP
 
+AT_SETUP([Write 1D character array])
+AT_KEYWORDS([1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_char_1d],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_char_1d-a-73.out expout
+          $builddir/test_mat readvar test_write_char_1d.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_char_1d.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_char_1d" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
 AT_SETUP([Write 2D character array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
@@ -329,6 +624,19 @@ AT_CHECK([cp $srcdir/results/readvar-write_char_2d-a-73.out expout
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_char_2d.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_char_2d" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write 1D Unicode character array])
+AT_KEYWORDS([unicode 1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_char_unicode_1d],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_char_unicode_1d-a-73.out expout
+          $builddir/test_mat readvar test_write_char_unicode_1d.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_char_unicode_1d.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_char_unicode_1d" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
 
@@ -342,6 +650,19 @@ AT_CHECK([cp $srcdir/results/readvar-write_char_unicode_2d-a-73.out expout
 AT_SKIP_IF([test -z "$MATLABEXE"])
 AT_CHECK([cp $srcdir/matlab/test_write_char_unicode_2d.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_char_unicode_2d" | $GREP PASSED],[0],[PASSED
+],[])
+AT_CLEANUP
+
+AT_SETUP([Write qD UTF-8 character array])
+AT_KEYWORDS([utf8 1d])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -z write_char_utf8_1d],[0],[],[])
+AT_CHECK([cp $srcdir/results/readvar-write_char_unicode_1d-a-73.out expout
+          $builddir/test_mat readvar test_write_char_utf8_1d.mat a],[0],[expout],[])
+AT_SKIP_IF([test -z "$MATLABEXE"])
+AT_CHECK([cp $srcdir/matlab/test_write_char_utf8_1d.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_char_utf8_1d" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
 
@@ -622,6 +943,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_struct_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Write struct with 2D logical fields])
+AT_KEYWORDS([logical])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_struct_2d_logical],[0],[],[])
@@ -906,6 +1228,7 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_complex_2d_numeric.m .
 AT_CLEANUP
 
 AT_SETUP([Write cell array with 2D logical fields])
+AT_KEYWORDS([logical])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([$builddir/test_mat -v 7.3 -z write_cell_2d_logical],[0],[],[])

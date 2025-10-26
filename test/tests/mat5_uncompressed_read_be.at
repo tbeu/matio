@@ -128,6 +128,7 @@ AT_CHECK([cp $srcdir/results/read-var20.out expout
 AT_CLEANUP
 
 AT_SETUP([Read 2D logical array])
+AT_KEYWORDS([logical])
 AT_CHECK([cp $srcdir/results/read-var90.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var90],[0],[expout],[])
 AT_CLEANUP
@@ -272,6 +273,7 @@ AT_CHECK([cp $srcdir/results/read-var47.out expout
 AT_CLEANUP
 
 AT_SETUP([Read struct with logical fields])
+AT_KEYWORDS([logical])
 AT_CHECK([cp $srcdir/results/read-var91.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var91],[0],[expout],[])
 AT_CLEANUP
@@ -354,6 +356,7 @@ AT_CHECK([cp $srcdir/results/read-var62.out expout
 AT_CLEANUP
 
 AT_SETUP([Read cell array with logical arrays])
+AT_KEYWORDS([logical])
 AT_CHECK([cp $srcdir/results/read-var92.out expout
           $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_be.mat var92],[0],[expout],[])
 AT_CLEANUP

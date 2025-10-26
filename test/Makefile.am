@@ -92,15 +92,21 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/struct_nullpad_class_name_hdf_le.mat \
                  $(datasets_dir)/small_v4_be.mat \
                  $(datasets_dir)/small_v4_le.mat \
+                 $(matlab_dir)/test_write_1d_logical.m \
                  $(matlab_dir)/test_write_2d_logical.m \
+                 $(matlab_dir)/test_write_1d_numeric.m \
                  $(matlab_dir)/test_write_2d_numeric.m \
                  $(matlab_dir)/test_write_cell_2d_logical.m \
                  $(matlab_dir)/test_write_cell_2d_numeric.m \
                  $(matlab_dir)/test_write_cell_complex_2d_numeric.m \
                  $(matlab_dir)/test_write_cell_empty_struct.m \
+                 $(matlab_dir)/test_write_char_unicode_1d.m \
+                 $(matlab_dir)/test_write_char_utf8_1d.m \
+                 $(matlab_dir)/test_write_char_1d.m \
                  $(matlab_dir)/test_write_char_unicode_2d.m \
                  $(matlab_dir)/test_write_char_utf8_2d.m \
                  $(matlab_dir)/test_write_char_2d.m \
+                 $(matlab_dir)/test_write_complex_1d_numeric.m \
                  $(matlab_dir)/test_write_complex_2d_numeric.m \
                  $(matlab_dir)/test_write_empty.m \
                  $(matlab_dir)/test_write_empty_cell.m \
@@ -287,6 +293,12 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var95-73.out \
                  $(results_dir)/read-x.out \
                  $(results_dir)/readvar-write_cell_empty_struct-var1.out \
+                 $(results_dir)/readvar-write_char_unicode_1d-a-5.out \
+                 $(results_dir)/readvar-write_char_unicode_1d-a-73.out \
+                 $(results_dir)/readvar-write_char_utf8_1d-a-5.out \
+                 $(results_dir)/readvar-write_char_1d-a.out \
+                 $(results_dir)/readvar-write_char_1d-a-5.out \
+                 $(results_dir)/readvar-write_char_1d-a-73.out \
                  $(results_dir)/readvar-write_char_unicode_2d-a-5.out \
                  $(results_dir)/readvar-write_char_unicode_2d-a-73.out \
                  $(results_dir)/readvar-write_char_utf8_2d-a-5.out \
@@ -335,6 +347,21 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/struct_api_getlinear.out \
                  $(results_dir)/struct_api_setfield.out \
                  $(results_dir)/sub2ind.out \
+                 $(results_dir)/write_1d_numeric-73-l2-logical.out \
+                 $(results_dir)/write_1d_numeric-73-l4-logical.out \
+                 $(results_dir)/write_1d_numeric-double.out \
+                 $(results_dir)/write_1d_numeric-int8.out \
+                 $(results_dir)/write_1d_numeric-int16.out \
+                 $(results_dir)/write_1d_numeric-int32.out \
+                 $(results_dir)/write_1d_numeric-int64.out \
+                 $(results_dir)/write_1d_numeric-l1-logical.out \
+                 $(results_dir)/write_1d_numeric-l2-logical.out \
+                 $(results_dir)/write_1d_numeric-l4-logical.out \
+                 $(results_dir)/write_1d_numeric-single.out \
+                 $(results_dir)/write_1d_numeric-uint8.out \
+                 $(results_dir)/write_1d_numeric-uint16.out \
+                 $(results_dir)/write_1d_numeric-uint32.out \
+                 $(results_dir)/write_1d_numeric-uint64.out \
                  $(results_dir)/write_2d_numeric-73-l2-logical.out \
                  $(results_dir)/write_2d_numeric-73-l4-logical.out \
                  $(results_dir)/write_2d_numeric-double.out \
@@ -372,6 +399,16 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/write_cell_complex_2d_numeric-uint64.out \
                  $(results_dir)/write_cell_numeric-73-logical.out \
                  $(results_dir)/write_cell_numeric-logical.out \
+                 $(results_dir)/write_complex_1d_numeric-double.out \
+                 $(results_dir)/write_complex_1d_numeric-int8.out \
+                 $(results_dir)/write_complex_1d_numeric-int16.out \
+                 $(results_dir)/write_complex_1d_numeric-int32.out \
+                 $(results_dir)/write_complex_1d_numeric-int64.out \
+                 $(results_dir)/write_complex_1d_numeric-single.out \
+                 $(results_dir)/write_complex_1d_numeric-uint8.out \
+                 $(results_dir)/write_complex_1d_numeric-uint16.out \
+                 $(results_dir)/write_complex_1d_numeric-uint32.out \
+                 $(results_dir)/write_complex_1d_numeric-uint64.out \
                  $(results_dir)/write_complex_2d_numeric-double.out \
                  $(results_dir)/write_complex_2d_numeric-int8.out \
                  $(results_dir)/write_complex_2d_numeric-int16.out \
