@@ -307,7 +307,8 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                     err =
                         ReadDoubleData(mat, (double *)complex_data->Re, matvar->data_type, nelems);
                     if ( !err ) {
-                        ReadDoubleData(mat, (double *)complex_data->Im, matvar->data_type, nelems);
+                        err = ReadDoubleData(mat, (double *)complex_data->Im, matvar->data_type,
+                                             nelems);
                     }
                     if ( !err ) {
                         matvar->data = complex_data;

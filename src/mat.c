@@ -389,13 +389,13 @@ Mat_PrintData(int rank, const size_t *_dims, const void *data, enum matio_classe
                     }
                 }
             } else {
-                const char *data = (const char *)sparse->data;
+                const char *sparse_data = (const char *)sparse->data;
                 for ( i = 0; i < (size_t)sparse->njc - 1; i++ ) {
                     for ( j = sparse->jc[i]; j < (size_t)sparse->jc[i + 1] &&
                                              j < (size_t)sparse->ndata && j < (size_t)sparse->nir;
                           j++ ) {
                         printf("    (%u,%" SIZE_T_FMTSTR ")  ", sparse->ir[j] + 1, i + 1);
-                        Mat_PrintNumber(data_type, data + j * stride);
+                        Mat_PrintNumber(data_type, sparse_data + j * stride);
                         printf("\n");
                     }
                 }
