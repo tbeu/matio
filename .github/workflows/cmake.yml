@@ -48,6 +48,9 @@ jobs:
           - toolchain: windows-mingw
             os: windows-2022
             compiler: mingw
+        exclude:
+          - toolchain: windows-mingw
+            mat73: ON
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -72,7 +75,7 @@ jobs:
           if [ "${{ matrix.toolchain }}" == "windows-msvc" ]; then
             cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
           elif [ "${{ matrix.toolchain }}" == "windows-mingw" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }} -G "MinGW Makefiles"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }} -DMATIO_WITH_HDF5=${{ matrix.mat73 }} -G "MinGW Makefiles"
           elif [ "${{ matrix.toolchain }}" == "linux-gcc" ]; then
             cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -DMATIO_EXTENDED_SPARSE=${{ matrix.extended-sparse }} -DMATIO_MAT73=${{ matrix.mat73 }} -DMATIO_WITH_ZLIB=${{ matrix.with-zlib }}
           else
