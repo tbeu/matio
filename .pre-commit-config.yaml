@@ -24,11 +24,11 @@ repos:
     args:
     - --line-width=120
     - --tab-size=4
-    exclude: cmake/conan.cmake
+    exclude: cmake/conan.cmake|cmake/conan_provider.cmake|\.ci/
   - id: cmake-lint
     additional_dependencies: [pyyaml>=5.1]
     args:
     - --line-width=120
     - --tab-size=4
     - --disabled-codes=C0103
-    exclude: cmake/conan.cmake
+    exclude: cmake/conan.cmake|cmake/conan_provider.cmake|\.ci/

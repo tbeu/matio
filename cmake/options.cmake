@@ -1,7 +1,7 @@
 # Options
 
-# Option to utilize Conan
-option(MATIO_USE_CONAN "Use Conan to resolve library dependencies" OFF)
+# Option to utilize Conan 1.x
+option(MATIO_USE_CONAN "Use Conan 1.x to resolve library dependencies" OFF)
 
 # Option to enable extended sparse matrix data types not supported in MATLAB
 option(MATIO_EXTENDED_SPARSE "Enable extended sparse matrix data types not supported in MATLAB" ON)
@@ -18,7 +18,7 @@ option(MATIO_SHARED "Build shared matio library, disable for static library" ON)
 option(MATIO_PIC "Enable position-independent code (PIC), i.e., compilation with the -fPIC flag" ON)
 
 # Build with hdf5 support
-option(MATIO_WITH_HDF5 "Check for HDF5 library" ON)
+option(MATIO_WITH_HDF5 "Check for hdf5 library" ON)
 
 # Build with zlib support
 option(MATIO_WITH_ZLIB "Check for zlib library" ON)
@@ -45,6 +45,6 @@ endif()
 option(MATIO_BUILD_TESTING "Build matio testing" ON)
 
 set(BUILD_TESTING OFF)
-if (MATIO_BUILD_TESTING)
+if(MATIO_BUILD_TESTING)
     set(BUILD_TESTING ON)
 endif()

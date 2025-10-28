@@ -123,8 +123,6 @@ cmake --install .
 ```
 The following matio specific options for building with CMake are available.
 
-* `MATIO_USE_CONAN:BOOL=OFF`
-This option enables the Conan package manager to resolve the library dependencies. Only Conan 1.x is supported.
 * `MATIO_DEFAULT_FILE_VERSION:STRING=5`
 This option sets the default MAT file version (4,5,7.3) that will be used when writing.
 * `MATIO_EXTENDED_SPARSE:BOOL=ON`
@@ -143,8 +141,12 @@ This option enables CMake to check for availability of the zlib library (see sec
 This option enables the matio testsuite for CTest.
 * `MATIO_ENABLE_CPPCHECK:BOOL=OFF`
 This option enables CMake &GreaterEqual; 3.10 to perform static analysis with Cppcheck.
+* `MATIO_USE_CONAN:BOOL=OFF`
+This deprecated option enables the Conan 1.X package manager to resolve the library dependencies.
 
 To help CMake find the HDF5 libraries, set environment variable `HDF5_DIR` to the `cmake/hdf5` directory (containing `hdf5-config.cmake`) inside the HDF5 build or installation directory, or call cmake with `-DHDF5_DIR="dir/to/hdf5/cmake/hdf5"`. Alternatively call CMake with `-DCMAKE_PREFIX_PATH="dir/to/hdf5/cmake"`. See the [HDF5 instructions](https://support.hdfgroup.org/HDF5/release/cmakebuild.html#compile) for more information. Using `hdf5-config` is recommended over using CMake's built-in `FindHDF5`, especially for static builds. CMake 3.10 or later is recommended.
+
+For Conan 2.X as dependency provider call CMake with `-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=conan_provider`. CMake 3.24 or later is required.
 
 #### 2.2.4 Visual Studio
 Visual Studio solutions are provided as [matio_vs2008.sln](visual_studio/matio_vs2008.sln) for VS2008 and as [matio.sln](visual_studio/matio.sln) for VS2010 (and newer). The Debug and Release configurations of both solutions are set up to build a DLL of the matio library (libmatio.dll) and the matdump tool and assume HDF5 is available in the directory specified by the HDF5_DIR environment variable. It is assumed that the **shared** libraries of HDF5 (and zlib) are available. If the **static** libraries of HDF5 (and zlib) are installed/built the macro `H5_BUILT_AS_STATIC_LIB` needs to be defined (instead of `H5_BUILT_AS_DYNAMIC_LIB`). Furthermore, the Release Lib configuration of the VS2010 solution is set up to build a static LIB of the matio library (libmatio.lib) and assumes that the **static** libraries of HDF5 (and zlib) are installed/built.

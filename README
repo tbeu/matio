@@ -176,9 +176,6 @@ Table of Contents
             The following matio specific options for building with CMake are
             available.
 
-              * 'MATIO_USE_CONAN:BOOL=OFF'
-                This option enables the Conan package manager to resolve the
-                library dependencies. Only Conan 1.x is supported.
               * 'MATIO_DEFAULT_FILE_VERSION:STRING=5'
                 This option sets the default MAT file version (4,5,7.3) that
                 will be used when writing.
@@ -205,6 +202,9 @@ Table of Contents
               * 'MATIO_ENABLE_CPPCHECK:BOOL=OFF'
                 This option enables CMake >= 3.10 to perform static analysis
                 with Cppcheck.
+              * 'MATIO_USE_CONAN:BOOL=OFF'
+                This deprecated option enables the Conan 1.X package manager to
+                resolve the library dependencies.
 
             To help CMake find the HDF5 libraries, set environment variable
             HDF5_DIR to the 'cmake/hdf5' directory (containing 'hdf5-config.cmake')
@@ -215,6 +215,10 @@ Table of Contents
             for more information. Using 'hdf5-config.cmake' is recommended over
             using CMake's built-in 'FindHDF5', especially for static builds.
             CMake 3.10 or later is recommended.
+
+            For Conan 2.X as dependency provider call CMake with
+            `-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=conan_provider`. CMake 3.24 or
+            later is required.
 
         2.2.4 Visual Studio
             Visual Studio solutions are provided as visual_studio/matio_vs2008.sln

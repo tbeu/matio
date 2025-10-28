@@ -76,11 +76,11 @@ if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 endif()
 
-if(HDF5_FOUND)
+if(MATIO_WITH_HDF5 AND HDF5_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC MATIO::HDF5)
 endif()
 
-if(ZLIB_FOUND)
+if(MATIO_WITH_ZLIB AND ZLIB_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC MATIO::ZLIB)
 endif()
 
