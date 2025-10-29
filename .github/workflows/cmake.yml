@@ -149,6 +149,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 5
+          submodules: recursive
       - name: Setup cygwin
         uses: cygwin/cygwin-install-action@master
         with:
@@ -159,6 +160,7 @@ jobs:
             libhdf5-devel
             make
             ninja
+            python
             zlib-devel
       - name: Configure
         run: |
@@ -172,11 +174,6 @@ jobs:
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
       - name: Test
         run: |
-          for file in ./share/*.mat; do
-            ./build/matdump -d "$file" d
-            ./build/matdump -v "$file"
-            ./build/matdump -v -f whos "$file"
-          done
-          ./build/matdump -v -H
-          ./build/matdump -V
+          export PATH=/usr/bin:$PATH
+          ctest --no-tests=error --test-dir build --build-config Release --parallel 8
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'

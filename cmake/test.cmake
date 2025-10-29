@@ -26,10 +26,6 @@ if(MATIO_BUILD_TESTING)
         file(TO_NATIVE_PATH "${PROJECT_SOURCE_DIR}/test/convert_at_to_ctest.py" NATIVE_CONVERT_SCRIPT)
         file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}/tests" NATIVE_CTESTS_DIR)
         file(TO_NATIVE_PATH "${PROJECT_SOURCE_DIR}/test" NATIVE_WORKING_DIR)
-        if(CYGWIN)
-            execute_process(COMMAND cygpath.exe -u ${NATIVE_CONVERT_SCRIPT} OUTPUT_VARIABLE NATIVE_CONVERT_SCRIPT)
-            set(NATIVE_CONVERT_SCRIPT "cygdrive/d/a/matio/matio/test/convert_at_to_ctest.py")
-        endif()
         execute_process(
             COMMAND "${Python3_EXECUTABLE}" "${NATIVE_CONVERT_SCRIPT}" "${NATIVE_CTESTS_DIR}"
             WORKING_DIRECTORY "${NATIVE_WORKING_DIR}"
