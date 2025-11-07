@@ -23,10 +23,19 @@ if(MATIO_BUILD_TESTING)
     if(Python3_Interpreter_FOUND)
         set(MATIO_CTESTS_DIR ${PROJECT_BINARY_DIR}/tests)
         set(MATIO_TESTING_DIR ${MATIO_CTESTS_DIR}/temporary)
+        file(TO_NATIVE_PATH "${PROJECT_SOURCE_DIR}/test/convert_at_to_ctest.py" NATIVE_CONVERT_SCRIPT)
+        file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}/tests" NATIVE_CTESTS_DIR)
+        file(TO_NATIVE_PATH "${PROJECT_SOURCE_DIR}/test" NATIVE_WORKING_DIR)
         execute_process(
-            COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/test/convert_at_to_ctest.py" "${MATIO_CTESTS_DIR}"
-            WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/test"
+            COMMAND "${Python3_EXECUTABLE}" "${NATIVE_CONVERT_SCRIPT}" "${NATIVE_CTESTS_DIR}"
+            WORKING_DIRECTORY "${NATIVE_WORKING_DIR}"
+            RESULT_VARIABLE TEST_CONVERT_RESULT
+            OUTPUT_VARIABLE TEST_CONVERT_OUTPUT
+            ERROR_VARIABLE TEST_CONVERT_ERROR
         )
+        if(NOT TEST_CONVERT_RESULT EQUAL 0)
+            message(FATAL_ERROR "Python script failed: ${TEST_CONVERT_ERROR}")
+        endif()
 
         enable_testing()
 
