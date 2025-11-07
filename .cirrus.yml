@@ -3,18 +3,13 @@ freebsd_instance:
 task:
   install_script:
     # Update all packages
-    - pkg update -f
+    - env IGNORE_OSVERSION=yes pkg update -f
     - pkg upgrade -f -y
-    - pkg install -y cmake hdf5
+    - pkg install -y cmake git hdf5
+    - git submodule update --init
   configure_script:
     - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
   build_script:
     - cmake --build build -- -j8
-  test_script: |
-    for file in ./share/*.mat; do
-      ./build/matdump -d "$file" d
-      ./build/matdump -v "$file"
-      ./build/matdump -v -f whos "$file"
-    done
-    ./build/matdump -v -H
-    ./build/matdump -V
+  test_script:
+    - ctest --no-tests=error --test-dir build --build-config Release --parallel 8
