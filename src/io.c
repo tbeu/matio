@@ -59,25 +59,38 @@ static char *strdup_vprintf(const char *format, va_list ap) MATIO_FORMATATTR_VPR
 static char *
 strdup_vprintf(const char *format, va_list ap)
 {
-    va_list ap2;
     int size;
     char *buffer;
+    size_t need;
 
-    va_copy(ap2, ap);
-    size = mat_vsnprintf(NULL, 0, format, ap2);
-    va_end(ap2);
-
-    if ( size < 0 ) {
-        return NULL;
+    {
+        va_list ap2;
+        va_copy(ap2, ap);
+        size = mat_vsnprintf(NULL, 0, format, ap2);
+        va_end(ap2);
     }
 
-    buffer = (char *)malloc((size_t)size + 1);
+    if ( size < 0 )
+        return NULL;
+
+    need = (size_t)size + 1;
+    if ( need > (1ULL << 30) )
+        return NULL;
+
+    buffer = (char *)malloc(need);
     if ( NULL == buffer )
         return NULL;
 
-    if ( mat_vsnprintf(buffer, (size_t)size + 1, format, ap) < 0 ) {
-        free(buffer);
-        return NULL;
+    {
+        va_list ap2;
+        int written;
+        va_copy(ap2, ap);
+        written = mat_vsnprintf(buffer, need, format, ap2);
+        va_end(ap2);
+        if ( written < 0 || (size_t)written >= need ) {
+            free(buffer);
+            return NULL;
+        }
     }
     return buffer;
 }
