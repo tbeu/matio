@@ -934,14 +934,16 @@ test_write_logical(const char *output_name, int rank, const size_t *dims)
     if ( Mat_VarWrite(mat, matvar, compression) )
         err++;
     Mat_VarFree(matvar);
-    size_t zero_dims[2] = {0, 0};
-    memcpy(zero_dims, dims, rank * sizeof(size_t));
-    zero_dims[0] = 0;
-    matvar = Mat_VarCreate("l0", MAT_C_UINT8, MAT_T_UINT8, rank, zero_dims, NULL, MAT_F_LOGICAL);
-    if ( Mat_VarWrite(mat, matvar, compression) )
-        err++;
-    Mat_VarFree(matvar);
-
+    {
+        size_t zero_dims[2] = {0, 0};
+        memcpy(zero_dims, dims, rank * sizeof(size_t));
+        zero_dims[0] = 0;
+        matvar =
+            Mat_VarCreate("l0", MAT_C_UINT8, MAT_T_UINT8, rank, zero_dims, NULL, MAT_F_LOGICAL);
+        if ( Mat_VarWrite(mat, matvar, compression) )
+            err++;
+        Mat_VarFree(matvar);
+    }
     Mat_Close(mat);
 
     return err;
