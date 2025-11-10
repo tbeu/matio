@@ -39,10 +39,9 @@ jobs:
       - name: Install hdf5
         timeout-minutes: 5
         run: |
-          FILENAME=$(wget -qO- https://github.com/HDFGroup/hdf5/releases/download/snapshot/last-file.txt | head -n 1)
-          wget --no-check-certificate -nv https://github.com/HDFGroup/hdf5/releases/download/snapshot/${FILENAME}.tar.gz
-          tar -xzf ${FILENAME}.tar.gz
-          cd hdfsrc
+          wget --no-check-certificate -nv https://github.com/HDFGroup/hdf5/releases/download/vsnapshot-2.0.0-2/hdf5.tar.gz
+          tar -xzf hdf5.tar.gz
+          cd hdf5-2.0.0-2
           cmake -S . -B build -DHDF5_BUILD_EXAMPLES=OFF -DBUILD_LZ4_LIBRARY_SOURCE=OFF -DHDF5_BUILD_HL_LIB=OFF -DHDF5_BUILD_TOOLS=OFF -DHDF5_ENABLE_DEPRECATED_SYMBOLS=OFF -DHDF5_ENABLE_PREADWRITE=OFF -DHDF5_ENABLE_NONSTANDARD_FEATURES=OFF -DHDF5_DEFAULT_API_VERSION=v200 -DBUILD_TESTING=OFF -DHDF5_ENABLE_ALL_WARNINGS=OFF -DHDF5_ENABLE_EMBEDDED_LIBINFO=OFF -DHDF5_ENABLE_ZLIB_SUPPORT=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/hdf5
           cmake --build build -- -j8
           cmake --build build --target install
