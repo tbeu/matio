@@ -3,7 +3,8 @@ Changes in 1.5.29 (10 November 2025)
 * Fixed array index out of bounds in Mat_VarPrint when printing UTF-8 character
   data (CVE-2025-2337)
 * Fixed heap-based buffer overflow in strdup_vprintf (CVE-2025-2338)
-* Changed Mat_VarPrint to print all values of rank-2-variables
+* Changed Mat_VarPrint to print all values of rank-2-variable
+* Confirmed compatibility with HDF5 v2.0.0
 * autoconf: Updated config.sub and config.guess
 * CMake: Enabled dependency resolution via Conan 2.x for CMake >= 3.24
 * CMake: Enabled parallel testing

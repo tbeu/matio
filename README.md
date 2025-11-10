@@ -67,14 +67,14 @@ Matio has two optional dependencies. These are not required for the software to 
 To support compressed MAT files, zlib version &ge; 1.2.3 is required. The zlib software can be downloaded from http://zlib.net/.
 
 #### 2.1.2 HDF5
-Support for MAT file version 7.3 requires the HDF5 library. This library can be downloaded from https://www.hdfgroup.org/. Matio requires HDF5 version &ge; 1.8.x. Neither deprecated HDF5 1.6.x API functions nor HDF5 higher-level functions are called.
+Support for MAT file version 7.3 requires the HDF5 library of version &ge; 1.8.x. This library can be downloaded from https://github.com/HDFGroup/hdf5/releases.  Neither deprecated HDF5 1.6.x API functions nor HDF5 higher-level functions are called.
 
-* Building matio with HDF5 1.8.x requires configuration of HDF5 with default API version 1.8 (i.e. `--with-default-api-version=v18`).
-* Building matio with HDF5 1.10.x requires configuration of HDF5 with either default API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
-* Building matio with HDF5 1.12.x requires configuration of HDF5 with either default API version 1.12 (i.e. `--with-default-api-version=v112`), or with deprecated API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
-* Building matio with HDF5 1.14.x requires configuration of HDF5 with either default API version 1.14 (i.e. `--with-default-api-version=v114`), or with deprecated API version 1.12 (i.e. `--with-default-api-version=v112`), or with deprecated API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
+* Building matio with HDF5 1.8.x requires configuration of HDF5 with default API `v18`
+* Building matio with HDF5 1.10.x requires configuration of HDF5 with either default API `v110` or with deprecated API `v18`.
+* Building matio with HDF5 1.12.x requires configuration of HDF5 with either default API `v112`, or with deprecated APIs `v110` or `v18`.
+* Building matio with HDF5 1.14.x requires configuration of HDF5 with either default API `v114`, or with deprecated APIs `v112`, `v110` or `v18`.
+* Building matio with HDF5 2.0.0 requires configuration of HDF5 with either default API `v200`, or with deprecated APIs `v114`, `v112`, `v110` or `v18`.
 
-For Windows, the pre-compiled binaries can be used which also include a DLL of zlib to satisfy the zlib dependency.
 For Ubuntu, `sudo apt install libhdf5-dev` should work fine.
 
 ### 2.2 Building matio
@@ -144,7 +144,7 @@ This option enables CMake &GreaterEqual; 3.10 to perform static analysis with Cp
 * `MATIO_USE_CONAN:BOOL=OFF`
 This deprecated option enables the Conan 1.X package manager to resolve the library dependencies.
 
-To help CMake find the HDF5 libraries, set environment variable `HDF5_DIR` to the `cmake/hdf5` directory (containing `hdf5-config.cmake`) inside the HDF5 build or installation directory, or call cmake with `-DHDF5_DIR="dir/to/hdf5/cmake/hdf5"`. Alternatively call CMake with `-DCMAKE_PREFIX_PATH="dir/to/hdf5/cmake"`. See the [HDF5 instructions](https://support.hdfgroup.org/HDF5/release/cmakebuild.html#compile) for more information. Using `hdf5-config` is recommended over using CMake's built-in `FindHDF5`, especially for static builds. CMake 3.10 or later is recommended.
+To help CMake find the HDF5 libraries, set environment variable `HDF5_DIR` to the `cmake/hdf5` directory (containing `hdf5-config.cmake`) inside the HDF5 build or installation directory, or call CMake with `-DHDF5_DIR="dir/to/hdf5/cmake/hdf5"`. Alternatively call CMake with `-DCMAKE_PREFIX_PATH="dir/to/hdf5/cmake"`. See the [HDF5 documentation](https://support.hdfgroup.org/documentation/index.html) for more information. Using `hdf5-config` is recommended over using CMake's built-in `FindHDF5`, especially for static builds. CMake 3.10 or later is recommended.
 
 For Conan 2.X as dependency provider call CMake with `-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=conan_provider`. CMake 3.24 or later is required.
 
