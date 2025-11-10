@@ -30,4 +30,4 @@ jobs:
           make dist-zip
       - name: Deploy to BB
         run: |
-          curl -X POST -H "Authorization: Bearer ${{ secrets.BBTOKEN }}" https://api.bitbucket.org/2.0/repositories/tbeu/downloads/downloads -F files=@./documentation/matio_user_guide.html -F files=@./documentation/matio_user_guide.pdf -F files=@./matio-1.5.28.tar.gz -F files=@./matio-1.5.28.zip
+          curl -X POST -H "Authorization: Bearer ${{ secrets.BBTOKEN }}" https://api.bitbucket.org/2.0/repositories/tbeu/downloads/downloads -F files=@./documentation/matio_user_guide.html -F files=@./documentation/matio_user_guide.pdf -F files=@./matio-1.5.29.tar.gz -F files=@./matio-1.5.29.zip

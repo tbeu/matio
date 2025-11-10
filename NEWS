@@ -1,3 +1,15 @@
+Changes in 1.5.29 (10 November 2025)
+* Fixed printing rank-1-variable in Mat_VarPrint
+* Fixed array index out of bounds in Mat_VarPrint when printing UTF-8 character
+  data (CVE-2025-2337)
+* Fixed heap-based buffer overflow in strdup_vprintf (CVE-2025-2338)
+* Changed Mat_VarPrint to print all values of rank-2-variables
+* autoconf: Updated config.sub and config.guess
+* CMake: Enabled dependency resolution via Conan 2.x for CMake >= 3.24
+* CMake: Enabled parallel testing
+* CMake: Deprecated option MATIO_USE_CONAN:BOOL for Conan 1.x
+* Several other fixes, for example for access violations in Mat_VarPrint
+
 Changes in 1.5.28 (30 October 2024)
 * Fixed bug writing MAT_T_INT8/MAT_T_UINT8 encoded character array to
   compressed v5 MAT file (regression of v1.5.12)
