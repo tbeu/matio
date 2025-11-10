@@ -7,17 +7,29 @@ jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
+    env:
+      MATIO_VERSION: "1.5.29"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
           fetch-depth: 5
           submodules: recursive
-      - name: Install texlive
+      - name: Install dependencies
         timeout-minutes: 5
         run: |
           sudo apt-get update --fix-missing
-          sudo apt-get install -y texlive
+          sudo apt-get install -y gh texlive
+      - name: Check draft GH release exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="v${MATIO_VERSION}"
+          exists=$(gh release view "$tag" --json isDraft --jq '.isDraft' || echo "error")
+          if [ "$exists" != "true" ]; then
+            echo "No draft release exists for tag $tag. Canceling deploy."
+            exit 1
+          fi
       - name: Configure
         run: |
           ./autogen.sh
@@ -28,6 +40,9 @@ jobs:
         run: |
           make dist-gzip
           make dist-zip
-      - name: Deploy to BB
+      - name: Deploy to GH Releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -X POST -H "Authorization: Bearer ${{ secrets.BBTOKEN }}" https://api.bitbucket.org/2.0/repositories/tbeu/downloads/downloads -F files=@./documentation/matio_user_guide.html -F files=@./documentation/matio_user_guide.pdf -F files=@./matio-1.5.29.tar.gz -F files=@./matio-1.5.29.zip
+          tag="v${MATIO_VERSION}"
+          gh release upload "$tag" ./documentation/matio_user_guide.html ./documentation/matio_user_guide.pdf ./matio-${MATIO_VERSION}.tar.gz ./matio-${MATIO_VERSION}.zip --clobber
