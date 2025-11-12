@@ -33,10 +33,9 @@ popd
 #build hdf5
 pushd "$SRC"
 cd hdf5
-./autogen.sh
-./configure --disable-shared --disable-deprecated-symbols --disable-hl --disable-parallel --disable-trace --disable-internal-debug --disable-asserts --disable-tests --disable-tools --with-pic --with-zlib="$WORK" --prefix="$WORK"
-make -j$(nproc)
-make install
+cmake -S . -B build -DBUILD_SHARED_LIBS=OFF -DHDF5_BUILD_EXAMPLES=OFF -DHDF5_BUILD_UTILS=OFF -DBUILD_LZ4_LIBRARY_SOURCE=OFF -DHDF5_BUILD_HL_LIB=OFF -DHDF5_BUILD_TOOLS=OFF -DHDF5_ENABLE_DEPRECATED_SYMBOLS=OFF -DHDF5_ENABLE_PREADWRITE=OFF -DHDF5_ENABLE_NONSTANDARD_FEATURES=OFF -DBUILD_TESTING=OFF -DHDF5_ENABLE_ALL_WARNINGS=OFF -DHDF5_ENABLE_ZLIB_SUPPORT=ON -DCMAKE_INSTALL_PREFIX="$WORK"
+cmake --build build -- -j$(nproc)
+cmake --build build --target install
 popd
 
 # build matio
