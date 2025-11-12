@@ -1,0 +1,35 @@
+name: "Ossfuzz build"
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "27 2 * * 1"
+  workflow_call:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare
+        run: |
+          git clone --depth 1 https://github.com/madler/zlib.git zlib
+          git clone --depth 1 https://github.com/tbeu/matio.git matio
+          git clone --depth 1 --branch hdf5_1_14 https://github.com/HDFGroup/hdf5.git hdf5
+      - name: Test ossfuzz build script
+        run: |
+          mkdir -p work
+          cd matio
+          rm ./ossfuzz/matio_fuzzer.cpp
+          sudo -E ./ossfuzz/build.sh
+        env:
+          CFLAGS: -g
+          LIB_FUZZING_ENGINE: DUMMY
+          SRC: ${{ github.workspace }}
+          OUT: ${{ github.workspace }}
+          WORK: ${{ github.workspace }}/work
