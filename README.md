@@ -69,7 +69,7 @@ To support compressed MAT files, zlib version &ge; 1.2.3 is required. The zlib s
 #### 2.1.2 HDF5
 Support for MAT file version 7.3 requires the HDF5 library of version &ge; 1.8.x. This library can be downloaded from https://github.com/HDFGroup/hdf5/releases.  Neither deprecated HDF5 1.6.x API functions nor HDF5 higher-level functions are called.
 
-* Building matio with HDF5 1.8.x requires configuration of HDF5 with default API `v18`
+* Building matio with HDF5 1.8.x requires configuration of HDF5 with default API `v18`.
 * Building matio with HDF5 1.10.x requires configuration of HDF5 with either default API `v110` or with deprecated API `v18`.
 * Building matio with HDF5 1.12.x requires configuration of HDF5 with either default API `v112`, or with deprecated APIs `v110` or `v18`.
 * Building matio with HDF5 1.14.x requires configuration of HDF5 with either default API `v114`, or with deprecated APIs `v112`, `v110` or `v18`.
