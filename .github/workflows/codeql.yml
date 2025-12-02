@@ -25,7 +25,7 @@ jobs:
         language: [ 'cpp' ]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 5
       # Initializes the CodeQL tools for scanning.

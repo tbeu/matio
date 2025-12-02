@@ -11,7 +11,7 @@ jobs:
       MATIO_VERSION: "1.5.29"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 5
           submodules: recursive
