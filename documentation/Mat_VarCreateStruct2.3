@@ -24,10 +24,10 @@
 .\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
 .Dd January 5, 2026
-.Dt MAT_VARCREATESTRUCT 3
+.Dt MAT_VARCREATESTRUCT2 3
 .Os
 .Sh NAME
-.Nm Mat_VarCreateStruct
+.Nm Mat_VarCreateStruct2
 .Nd Creates a structure variable.
 .Sh SYNOPSIS
 .Fd #include <matio.h>
@@ -37,11 +37,10 @@
 .Fa "int rank"
 .Fa "const size_t *dims"
 .Fa "const char *const *fields"
-.Fa "unsigned nfields"
 .Fc
 .Sh DESCRIPTION
 The
-.Fn Mat_VarCreateStruct
+.Fn Mat_VarCreateStruct2
 function creates a structure variable named
 .Fa name
 that can be written to a MAT file.
@@ -53,9 +52,7 @@ The structure variable pointer should be free'd when no longer needed using
 .Fn Mat_VarFree .
 The names of the fields are copied in the function, and thus should be released
 after calling the function if necessary.
-.SH DEPRECATED
-This function is deprecated since version 1.5.30.
-Use \fBMat_VarCreateStruct2\fP instead.
+The names of the fields has to be a NULL-terminated array.
 .Sh EXAMPLES
 This example program opens a MAT file named by the first argument to the
 program, and writes a structure named
@@ -70,7 +67,7 @@ main(int argc, char **argv)
     mat_t    *matfp;
     matvar_t *matvar;
     matvar_t *field;
-    const char *fields[2] = {"field1", "field2"};
+    const char *fields[3] = {"field1", "field2", NULL};
     double       data1 = 1, data2 = 2;
     size_t       dims[2] = {1, 1};
 
@@ -81,7 +78,7 @@ main(int argc, char **argv)
     }
 
     dims[0] = 1; dims[1] = 1;
-    matvar = Mat_VarCreateStruct("a", 2, dims, fields, 2);
+    matvar = Mat_VarCreateStruct2("a", 2, dims, fields);
     if ( NULL == matvar ) {
         Mat_Close(matfp);
         return EXIT_FAILURE;
@@ -103,6 +100,5 @@ main(int argc, char **argv)
 }
 .Ed
 .Sh SEE ALSO
-.Xr Mat_VarCreateStruct2 3 ,
 .Xr Mat_VarCreate 3 ,
 .Xr Mat_VarSetStructFieldByName 3

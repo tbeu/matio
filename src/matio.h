@@ -306,8 +306,11 @@ EXTERN matvar_t *Mat_VarCalloc(void);
 EXTERN matvar_t *Mat_VarCreate(const char *name, enum matio_classes class_type,
                                enum matio_types data_type, int rank, const size_t *dims,
                                const void *data, int opt);
-EXTERN matvar_t *Mat_VarCreateStruct(const char *name, int rank, const size_t *dims,
-                                     const char **fields, unsigned nfields);
+EXTERN MATIO_DEPRECATED matvar_t *Mat_VarCreateStruct(const char *name, int rank,
+                                                      const size_t *dims, const char *const *fields,
+                                                      unsigned nfields);
+EXTERN matvar_t *Mat_VarCreateStruct2(const char *name, int rank, const size_t *dims,
+                                      const char *const *fields);
 EXTERN int Mat_VarDelete(mat_t *mat, const char *name);
 EXTERN matvar_t *Mat_VarDuplicate(const matvar_t *in, int opt);
 EXTERN void Mat_VarFree(matvar_t *matvar);

@@ -44,6 +44,7 @@ dist_man3_MANS  = \
     Mat_VarAddStructField.3 \
     Mat_VarCreate.3 \
     Mat_VarCreateStruct.3 \
+    Mat_VarCreateStruct2.3 \
     Mat_VarDelete.3 \
     Mat_VarFree.3 \
     Mat_VarGetNumberOfFields.3 \

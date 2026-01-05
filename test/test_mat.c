@@ -1755,14 +1755,13 @@ test_write_struct_char(const char *output_name)
         const char *str =
             "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
             "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
-        size_t num_fields = 2;
-        const char *fieldnames[2] = {"field1", "field2"};
+        const char *fieldnames[3] = {"field1", "field2", NULL};
         size_t dims[2];
         matvar_t *matvar, *struct_matvar;
 
         dims[0] = 2;
         dims[1] = 1;
-        struct_matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, num_fields);
+        struct_matvar = Mat_VarCreateStruct2("a", 2, dims, fieldnames);
         dims[0] = 4;
         dims[1] = 26;
         matvar = Mat_VarCreate(fieldnames[1], MAT_C_CHAR, MAT_T_UTF8, 2, dims, (void *)str, 0);
@@ -2200,14 +2199,14 @@ test_write_cell_empty_struct(const char *output_name)
         size_t dims[2] = {1, 3};
         int i;
         const double data[4] = {51., 53., 52., 54.};
-        const char *fieldnames[3] = {"field1", "field2", "field3"};
+        const char *fieldnames[4] = {"field1", "field2", "field3", NULL};
         matvar_t *cell_matvar = Mat_VarCreate("var1", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
 
         for ( i = 0; i < 3; ++i ) {
             matvar_t *matvar, *struct_matvar;
             dims[0] = 1;
             dims[1] = 1;
-            struct_matvar = Mat_VarCreateStruct("s", 2, dims, fieldnames, 3);
+            struct_matvar = Mat_VarCreateStruct2("s", 2, dims, fieldnames);
 
             dims[0] = 2;
             dims[1] = 2;
@@ -2688,22 +2687,21 @@ test_struct_api_create(void)
     size_t dims[2] = {5, 10};
     int err = 0;
     matvar_t *matvar;
-    size_t num_fields = 2;
-    const char *fieldnames[2] = {"field1", "field2"};
+    const char *fieldnames[3] = {"field1", "field2", NULL};
 
     dims[0] = 2;
     dims[1] = 1;
-    matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, num_fields);
+    matvar = Mat_VarCreateStruct2("a", 2, dims, fieldnames);
     Mat_VarPrint(matvar, 1);
     Mat_VarFree(matvar);
 
-    matvar = Mat_VarCreateStruct("b", 2, dims, NULL, 0);
+    matvar = Mat_VarCreateStruct2("b", 2, dims, NULL);
     Mat_VarPrint(matvar, 1);
     Mat_VarFree(matvar);
 
     dims[0] = 0;
     dims[1] = 0;
-    matvar = Mat_VarCreateStruct("c", 2, dims, fieldnames, num_fields);
+    matvar = Mat_VarCreateStruct2("c", 2, dims, fieldnames);
     Mat_VarPrint(matvar, 1);
     Mat_VarFree(matvar);
 
@@ -2717,8 +2715,7 @@ test_struct_api_setfield(void)
     int err = 0;
     const double data1[2] = {0, 1}, data2[3] = {2, 3, 4}, data3[3] = {5, 6, 7}, data4[2] = {8, 9};
     matvar_t *fields[5], *matvar;
-    const size_t num_fields = 2;
-    const char *fieldnames[2] = {"field1", "field2"};
+    const char *fieldnames[3] = {"field1", "field2", NULL};
 
     dims[0] = 2;
     dims[1] = 1;
@@ -2738,7 +2735,7 @@ test_struct_api_setfield(void)
         Mat_VarCreate(NULL, MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, data4, MAT_F_DONT_COPY_DATA);
     dims[0] = 2;
     dims[1] = 1;
-    matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, num_fields);
+    matvar = Mat_VarCreateStruct2("a", 2, dims, fieldnames);
     Mat_VarSetStructFieldByName(matvar, "field1", 0, fields[0]);
     Mat_VarSetStructFieldByName(matvar, "field2", 0, fields[1]);
     Mat_VarSetStructFieldByName(matvar, "field1", 1, fields[2]);
@@ -2750,7 +2747,7 @@ test_struct_api_setfield(void)
 
     dims[0] = 2;
     dims[1] = 1;
-    matvar = Mat_VarCreateStruct("b", 2, dims, fieldnames, num_fields);
+    matvar = Mat_VarCreateStruct2("b", 2, dims, fieldnames);
     Mat_VarSetStructFieldByIndex(matvar, 0, 0, fields[3]);
     Mat_VarSetStructFieldByIndex(matvar, 1, 0, fields[2]);
     Mat_VarSetStructFieldByIndex(matvar, 0, 1, fields[1]);
@@ -2767,14 +2764,13 @@ test_struct_api_getfieldnames(void)
     size_t dims[2];
     int err = 0;
     matvar_t *matvar;
-    const unsigned num_fields = 4;
-    const char *fieldnames[4] = {"field1", "field2", "field3", "field4"};
+    const char *fieldnames[5] = {"field1", "field2", "field3", "field4", NULL};
     unsigned nfields, i;
     char *const *fieldnames2;
 
     dims[0] = 2;
     dims[1] = 1;
-    matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, num_fields);
+    matvar = Mat_VarCreateStruct2("a", 2, dims, fieldnames);
     nfields = Mat_VarGetNumberOfFields(matvar);
     fieldnames2 = Mat_VarGetStructFieldnames(matvar);
     printf("Fieldnames of \"a\":\n");
@@ -2786,7 +2782,7 @@ test_struct_api_getfieldnames(void)
     }
     Mat_VarFree(matvar);
 
-    matvar = Mat_VarCreateStruct("b", 2, dims, NULL, 0);
+    matvar = Mat_VarCreateStruct2("b", 2, dims, NULL);
     nfields = Mat_VarGetNumberOfFields(matvar);
     fieldnames2 = Mat_VarGetStructFieldnames(matvar);
     printf("Fieldnames of \"b\":\n");
@@ -2820,7 +2816,7 @@ test_struct_api_addfield(void)
 
     dims[0] = 2;
     dims[1] = 1;
-    matvar = Mat_VarCreateStruct("a", 2, dims, NULL, 0);
+    matvar = Mat_VarCreateStruct2("a", 2, dims, NULL);
 
     dims[0] = 2;
     dims[1] = 1;
@@ -2860,12 +2856,11 @@ test_struct_api_getlinear(void)
            c[12] = {12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
     mat_complex_split_t z[12];
     matvar_t *matvar, *matvar2;
-    const size_t num_fields = 3;
-    const char *fieldnames[3] = {"r", "c", "z"};
+    const char *fieldnames[4] = {"r", "c", "z", NULL};
 
     dims[0] = 3;
     dims[1] = 4;
-    matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, num_fields);
+    matvar = Mat_VarCreateStruct2("a", 2, dims, fieldnames);
 
     dims[0] = 1;
     dims[1] = 1;
@@ -2917,14 +2912,13 @@ test_struct_api_get(void)
                0,
            };
     matvar_t *matvar, *matvar2;
-    const size_t num_fields = 2;
-    const char *fieldnames[3] = {"r", "c"};
+    const char *fieldnames[3] = {"r", "c", NULL};
 
     dims[0] = 3;
     dims[1] = 4;
     dims[2] = 5;
     dims[3] = 6;
-    matvar = Mat_VarCreateStruct("a", 4, dims, fieldnames, num_fields);
+    matvar = Mat_VarCreateStruct2("a", 4, dims, fieldnames);
 
     dims[0] = 1;
     dims[1] = 1;

@@ -32,19 +32,9 @@
 #define strdup _strdup
 #endif
 
-/** @brief Creates a structure MATLAB variable with the given name and fields
- *
- * @ingroup MAT
- * @param name Name of the structure variable to create
- * @param rank Rank of the variable
- * @param dims array of dimensions of the variable of size rank
- * @param fields Array of @c nfields fieldnames
- * @param nfields Number of fields in the structure
- * @return Pointer to the new structure MATLAB variable on success, NULL on error
- */
-matvar_t *
-Mat_VarCreateStruct(const char *name, int rank, const size_t *dims, const char **fields,
-                    unsigned nfields)
+static matvar_t *
+VarCreateStruct(const char *name, int rank, const size_t *dims, const char *const *fields,
+                unsigned nfields)
 {
     size_t nelems = 1;
     int j;
@@ -105,6 +95,45 @@ Mat_VarCreateStruct(const char *name, int rank, const size_t *dims, const char *
     return matvar;
 }
 
+/** @brief Creates a structure MATLAB variable with the given name and fields
+ *
+ * @ingroup MAT
+ * @param name Name of the structure variable to create
+ * @param rank Rank of the variable
+ * @param dims array of dimensions of the variable of size rank
+ * @param fields Array of @c nfields fieldnames
+ * @param nfields Number of fields in the structure
+ * @return Pointer to the new structure MATLAB variable on success, NULL on error
+ */
+matvar_t *
+Mat_VarCreateStruct(const char *name, int rank, const size_t *dims, const char *const *fields,
+                    unsigned nfields)
+{
+    return VarCreateStruct(name, rank, dims, fields, nfields);
+}
+
+/** @brief Creates a structure MATLAB variable with the given name and fields
+ *
+ * @ingroup MAT
+ * @param name Name of the structure variable to create
+ * @param rank Rank of the variable
+ * @param dims array of dimensions of the variable of size rank
+ * @param fields NULL-terminated array of fieldnames
+ * @return Pointer to the new structure MATLAB variable on success, NULL on error
+ */
+matvar_t *
+Mat_VarCreateStruct2(const char *name, int rank, const size_t *dims, const char *const *fields)
+{
+    unsigned count = 0;
+    if ( NULL == fields )
+        return VarCreateStruct(name, rank, dims, fields, count);
+
+    while ( fields[count] ) {
+        count++;
+    }
+    return VarCreateStruct(name, rank, dims, fields, count);
+}
+
 /** @brief Adds a field to a structure
  *
  * Adds the given field to the structure. fields should be an array of matvar_t
@@ -114,6 +143,7 @@ Mat_VarCreateStruct(const char *name, int rank, const size_t *dims, const char *
  * @param matvar Pointer to the Structure MAT variable
  * @param fieldname Name of field to be added
  * @retval 0 on success
+ * @deprecated Use Mat_VarAddStructField2 instead.
  */
 int
 Mat_VarAddStructField(matvar_t *matvar, const char *fieldname)

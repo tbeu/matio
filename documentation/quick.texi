@@ -350,7 +350,7 @@ Structure arrays are multidimensional arrays where each element of the array
 contains multiple data items as named fields. The fields of a structure can
 be accessed by name or index. A field can be a variable of any type (e.g.
 numeric, structure, cell arrays, etc.). The preferred method to create a
-structure array is using the @code{Mat_VarCreateStruct} function. After creating
+structure array is using the @code{Mat_VarCreateStruct2} function. After creating
 the structure array, the @code{Mat_VarSetStructFieldByName} and
 @code{Mat_VarSetStructFieldByIndex} functions can be used to set the fields of
 the structure array to a variable. The example below shows how to create a
@@ -372,8 +372,7 @@ main(int argc,char **argv)
               y1[10] = {21,22,23,24,25,26,27,28,29,30},
               y2[10] = {31,32,33,34,35,36,37,38,39,40};
     struct mat_complex_split_t z1 = {x1,y1}, z2 = {x2,y2};
-    const char *fieldnames[3] = {"x","y","z"};
-    unsigned nfields = 3;
+    const char *fieldnames[4] = {"x","y","z",NULL};
 
     matfp = Mat_CreateVer("test.mat",NULL,MAT_FT_DEFAULT);
     if ( NULL == matfp ) {
@@ -381,7 +380,7 @@ main(int argc,char **argv)
         return EXIT_FAILURE;
     }
 
-    matvar = Mat_VarCreateStruct("a", 2,struct_dims,fieldnames,nfields);
+    matvar = Mat_VarCreateStruct2("a", 2,struct_dims,fieldnames);
     if ( NULL == matvar ) {
         fprintf(stderr,"Error creating variable for 'a'\n");
         Mat_Close(matfp);

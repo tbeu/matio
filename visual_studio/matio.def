@@ -26,6 +26,7 @@ EXPORTS
     Mat_VarCalloc
     Mat_VarCreate
     Mat_VarCreateStruct
+    Mat_VarCreateStruct2
     Mat_VarDelete
     Mat_VarDuplicate
     Mat_VarFree

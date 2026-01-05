@@ -184,4 +184,16 @@
 #define MATIO_FORMATATTR_VPRINTF
 #endif
 
+/*
+  The following macro handles the deprecated attribute.
+*/
+
+#if defined(__GNUC__) || defined(__clang__)
+#define MATIO_DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#define MATIO_DEPRECATED __declspec(deprecated)
+#else
+#define MATIO_DEPRECATED
+#endif
+
 #endif /* MATIO_PUBCONF_H */
