@@ -167,6 +167,8 @@ jobs:
             cmake
             gcc-core
             gcc-g++
+            hdf5
+            libaec-devel
             libhdf5-devel
             make
             ninja
