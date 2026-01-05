@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, The matio contributors
+ * Copyright (c) 2015-2026, The matio contributors
  * Copyright (c) 2010-2014, Christopher C. Hulbert
  * All rights reserved.
  *

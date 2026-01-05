@@ -1,4 +1,4 @@
-@c Copyright (c) 2015-2025, The matio contributors
+@c Copyright (c) 2015-2026, The matio contributors
 @c Copyright (c) 2011-2014, Christopher C. Hulbert
 @c All rights reserved.
 @c
