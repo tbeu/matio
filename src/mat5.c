@@ -3458,6 +3458,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             /*  Read ir    */
             err = ReadSparse(mat, matvar, &sparse->nir, &sparse->ir);
             if ( err ) {
+                free(sparse->ir);
                 free(matvar->data);
                 matvar->data = NULL;
                 break;
@@ -3465,6 +3466,8 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             /*  Read jc    */
             err = ReadSparse(mat, matvar, &sparse->njc, &sparse->jc);
             if ( err ) {
+                free(sparse->jc);
+                free(sparse->ir);
                 free(matvar->data);
                 matvar->data = NULL;
                 break;
