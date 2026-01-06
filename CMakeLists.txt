@@ -7,7 +7,7 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 project(matio
-    VERSION 1.5.29
+    VERSION 1.5.30
     LANGUAGES C CXX
 )
 

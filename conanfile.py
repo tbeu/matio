@@ -2,7 +2,7 @@ from conan import ConanFile
 
 class MatioConan(ConanFile):
     name = 'matio'
-    version = '1.5.29'
+    version = '1.5.30'
     license = 'BSD-2-Clause License'
     description = 'Matio is a C library for reading and writing binary MATLAB MAT files.'
     settings = 'os', 'compiler', 'build_type', 'arch'

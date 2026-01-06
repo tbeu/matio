@@ -1,3 +1,9 @@
+Changes in 1.5.30 (6 January 2026)
+* Fixed const-correctness of input arguments of Mat_VarCreateStruct
+* Deprecated usage of Mat_VarCreateStruct in favor of Mat_VarCreateStruct2
+  (CVE-2025-50343)
+* Several other fixes, for example for memory leaks
+
 Changes in 1.5.29 (10 November 2025)
 * Fixed printing rank-1-variable in Mat_VarPrint
 * Fixed array index out of bounds in Mat_VarPrint when printing UTF-8 character
