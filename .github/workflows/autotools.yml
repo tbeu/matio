@@ -34,8 +34,12 @@ jobs:
           fetch-depth: 5
           submodules: recursive
       - name: Install dependencies
-        if: matrix.toolchain == 'macos-clang'
-        run: brew install automake autoconf libtool
+        run: |
+          if [ "${{ matrix.toolchain }}" == "macos-clang" ]; then
+            brew install automake autoconf libtool
+          else
+            pip install --user cpp-coveralls
+          fi
       - name: Install hdf5
         timeout-minutes: 5
         run: |
@@ -48,7 +52,7 @@ jobs:
       - name: Configure
         run: |
           ./autogen.sh
-          ./configure --enable-shared --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=${GITHUB_WORKSPACE}/hdf5 CFLAGS="-O3" CPPFLAGS="-DNDEBUG"
+          ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=${GITHUB_WORKSPACE}/hdf5
       - name: Build with ${{ matrix.compiler }}
         run: make -j8
       - name: Test
@@ -59,3 +63,10 @@ jobs:
             export LD_LIBRARY_PATH=${GITHUB_WORKSPACE}/hdf5/lib:$LD_LIBRARY_PATH
           fi
           make check
+      - name: Analyse coverage
+        if: matrix.toolchain == 'linux-gcc'
+        env:
+          COVERALLS_SERVICE_NAME: ${{ secrets.COVERALLS_SERVICE }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: |
+          coveralls -e coverity_model.c -e getopt -e test/datasets -e test/matlab -e test/results -e ossfuzz -e share -e hdf5 -e visual_studio -e snprintf --gcov-options '\-lp'
