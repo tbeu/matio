@@ -470,6 +470,11 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
         return MATIO_E_FAIL_TO_IDENTIFY;
     }
     type_id = H5Aget_type(attr_id);
+    if ( type_id == H5I_INVALID_HID ) {
+        H5Tclose(type_id);
+        H5Aclose(attr_id);
+        return MATIO_E_FAIL_TO_IDENTIFY;
+    }
     class_str = (char *)calloc(H5Tget_size(type_id) + 1, 1);
     if ( NULL != class_str ) {
         herr_t herr = H5Aread(attr_id, type_id, class_str);
@@ -628,27 +633,61 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
     int err, ndims;
 
     attr_id = H5Aopen_by_name(dset_id, ".", "MATLAB_fields", H5P_DEFAULT, H5P_DEFAULT);
+    if ( attr_id < 1 ) {
+        H5Aclose(attr_id);
+        return MATIO_E_FAIL_TO_IDENTIFY;
+    }
     space_id = H5Aget_space(attr_id);
+    if ( space_id == H5I_INVALID_HID ) {
+        H5Sclose(space_id);
+        H5Aclose(attr_id);
+        return MATIO_E_GENERIC_READ_ERROR;
+    }
     ndims = H5Sget_simple_extent_ndims(space_id);
     if ( 0 > ndims || 1 < ndims ) {
         *nfields = 0;
         H5Sclose(space_id);
         H5Aclose(attr_id);
         return MATIO_E_GENERIC_READ_ERROR;
-    } else {
-        err = MATIO_E_NO_ERROR;
     }
+    err = MATIO_E_NO_ERROR;
     (void)H5Sget_simple_extent_dims(space_id, nfields, NULL);
     if ( *nfields > 0 ) {
-        hid_t field_id;
+        hid_t type_id, super_id;
+        H5T_class_t type_class, super_class;
         hvl_t *fieldnames_vl = (hvl_t *)calloc((size_t)(*nfields), sizeof(*fieldnames_vl));
         if ( fieldnames_vl == NULL ) {
             H5Sclose(space_id);
             H5Aclose(attr_id);
             return MATIO_E_OUT_OF_MEMORY;
         }
-        field_id = H5Aget_type(attr_id);
-        herr = H5Aread(attr_id, field_id, fieldnames_vl);
+        type_id = H5Aget_type(attr_id);
+        if ( type_id == H5I_INVALID_HID ) {
+            H5Tclose(type_id);
+            free(fieldnames_vl);
+            H5Sclose(space_id);
+            H5Aclose(attr_id);
+            return MATIO_E_GENERIC_READ_ERROR;
+        }
+        type_class = H5Tget_class(type_id);
+        if ( type_class != H5T_VLEN ) {
+            H5Tclose(type_id);
+            free(fieldnames_vl);
+            H5Sclose(space_id);
+            H5Aclose(attr_id);
+            return MATIO_E_GENERIC_READ_ERROR;
+        }
+        super_id = H5Tget_super(type_id);
+        super_class = H5Tget_class(super_id);
+        H5Tclose(super_id);
+        if ( super_class != H5T_STRING ) {
+            H5Tclose(type_id);
+            free(fieldnames_vl);
+            H5Sclose(space_id);
+            H5Aclose(attr_id);
+            return MATIO_E_GENERIC_READ_ERROR;
+        }
+        herr = H5Aread(attr_id, type_id, fieldnames_vl);
         if ( herr >= 0 ) {
             matvar->internal->num_fields = (unsigned int)*nfields;
             matvar->internal->fieldnames =
@@ -670,12 +709,12 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
                 err = MATIO_E_OUT_OF_MEMORY;
             }
 #if H5_VERSION_GE(1, 12, 0)
-            H5Treclaim(field_id, space_id, H5P_DEFAULT, fieldnames_vl);
+            H5Treclaim(type_id, space_id, H5P_DEFAULT, fieldnames_vl);
 #else
-            H5Dvlen_reclaim(field_id, space_id, H5P_DEFAULT, fieldnames_vl);
+            H5Dvlen_reclaim(type_id, space_id, H5P_DEFAULT, fieldnames_vl);
 #endif
             free(fieldnames_vl);
-            H5Tclose(field_id);
+            H5Tclose(type_id);
         } else {
             err = MATIO_E_GENERIC_READ_ERROR;
         }
