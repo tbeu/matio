@@ -58,7 +58,7 @@ jobs:
           fetch-depth: 5
           submodules: recursive
       - name: Setup python environment
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install python packages
@@ -71,7 +71,7 @@ jobs:
         if: matrix.toolchain == 'linux-gcc'
         run: sudo apt-get update && sudo apt-get install -y cppcheck
       - name: Cache conan folder
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.conan2
           key: ${{ runner.os }}-conan2-${{ hashFiles('conanfile.txt', 'conanfile.py', 'conan.lock') }}
