@@ -543,7 +543,7 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
               int rank, const size_t *dims, const int *start, const int *stride, const int *edge)
 {
     int err;
-    int nBytes = 0, i, j, N, I = 0;
+    int i, j, N, I = 0;
     int inc[10] =
         {
             0,
@@ -853,7 +853,6 @@ ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
 {
     int err, i;
     size_t data_size;
-    int bytesread = 0;
 
     data_size = Mat_SizeOf(data_type);
     (void)fseek((FILE *)mat->fp, start * data_size, SEEK_CUR);
