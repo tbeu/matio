@@ -194,7 +194,7 @@ Mat_PrintData(int rank, const size_t *_dims, const void *data, enum matio_classe
         return;
 
     if ( 1 == rank ) {
-        // Print as column vector
+        /* Print as column vector */
         dims[0] = _dims[0];
         dims[1] = 1;
     } else {
