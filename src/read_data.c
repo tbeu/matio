@@ -923,44 +923,44 @@ ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
 
 #undef READ_DATA_SLAB1
 
-#define READ_DATA_SLAB2(ReadDataFunc)                                                      \
-    do {                                                                                   \
-        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */              \
-        /* data so get rid of the loops. */                                                \
-        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) ) {        \
-            err = ReadDataFunc(mat, ptr, data_type, (ptrdiff_t)edge[0] * edge[1]);         \
-        } else {                                                                           \
-            row_stride = (long)(stride[0] - 1) * data_size;                                \
-            col_stride = (long)stride[1] * dims[0] * data_size;                            \
-            pos = ftello((FILE *)mat->fp);                                                 \
-            if ( pos == -1L ) {                                                            \
-                Mat_Critical("Couldn't determine file position");                          \
-                return MATIO_E_GENERIC_READ_ERROR;                                         \
-            }                                                                              \
-            (void)fseeko((FILE *)mat->fp, (long)start[1] * dims[0] * data_size, SEEK_CUR); \
-            for ( i = 0; i < edge[1]; i++ ) {                                              \
-                pos = ftello((FILE *)mat->fp);                                             \
-                if ( pos == -1L ) {                                                        \
-                    Mat_Critical("Couldn't determine file position");                      \
-                    return MATIO_E_GENERIC_READ_ERROR;                                     \
-                }                                                                          \
-                (void)fseeko((FILE *)mat->fp, (long)start[0] * data_size, SEEK_CUR);       \
-                for ( j = 0; j < edge[0]; j++ ) {                                          \
-                    err = ReadDataFunc(mat, ptr++, data_type, 1);                          \
-                    if ( err ) {                                                           \
-                        return err;                                                        \
-                    }                                                                      \
-                    (void)fseeko((FILE *)mat->fp, row_stride, SEEK_CUR);                   \
-                }                                                                          \
-                pos2 = ftello((FILE *)mat->fp);                                            \
-                if ( pos2 == -1L ) {                                                       \
-                    Mat_Critical("Couldn't determine file position");                      \
-                    return MATIO_E_GENERIC_READ_ERROR;                                     \
-                }                                                                          \
-                pos += col_stride - pos2;                                                  \
-                (void)fseeko((FILE *)mat->fp, pos, SEEK_CUR);                              \
-            }                                                                              \
-        }                                                                                  \
+#define READ_DATA_SLAB2(ReadDataFunc)                                                \
+    do {                                                                             \
+        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */        \
+        /* data so get rid of the loops. */                                          \
+        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) ) {  \
+            err = ReadDataFunc(mat, ptr, data_type, (ptrdiff_t)edge[0] * edge[1]);   \
+        } else {                                                                     \
+            row_stride = (stride[0] - 1) * data_size;                                \
+            col_stride = stride[1] * dims[0] * data_size;                            \
+            pos = ftello((FILE *)mat->fp);                                           \
+            if ( pos == -1L ) {                                                      \
+                Mat_Critical("Couldn't determine file position");                    \
+                return MATIO_E_GENERIC_READ_ERROR;                                   \
+            }                                                                        \
+            (void)fseeko((FILE *)mat->fp, start[1] * dims[0] * data_size, SEEK_CUR); \
+            for ( i = 0; i < edge[1]; i++ ) {                                        \
+                pos = ftello((FILE *)mat->fp);                                       \
+                if ( pos == -1L ) {                                                  \
+                    Mat_Critical("Couldn't determine file position");                \
+                    return MATIO_E_GENERIC_READ_ERROR;                               \
+                }                                                                    \
+                (void)fseeko((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);       \
+                for ( j = 0; j < edge[0]; j++ ) {                                    \
+                    err = ReadDataFunc(mat, ptr++, data_type, 1);                    \
+                    if ( err ) {                                                     \
+                        return err;                                                  \
+                    }                                                                \
+                    (void)fseeko((FILE *)mat->fp, row_stride, SEEK_CUR);             \
+                }                                                                    \
+                pos2 = ftello((FILE *)mat->fp);                                      \
+                if ( pos2 == -1L ) {                                                 \
+                    Mat_Critical("Couldn't determine file position");                \
+                    return MATIO_E_GENERIC_READ_ERROR;                               \
+                }                                                                    \
+                pos += col_stride - pos2;                                            \
+                (void)fseeko((FILE *)mat->fp, pos, SEEK_CUR);                        \
+            }                                                                        \
+        }                                                                            \
     } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D
@@ -983,7 +983,7 @@ ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
 {
     int err;
     int data_size, i, j;
-    long pos, row_stride, col_stride, pos2;
+    mat_off_t pos, row_stride, col_stride, pos2;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) || (start == NULL) ||
          (stride == NULL) || (edge == NULL) ) {
