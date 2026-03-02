@@ -899,7 +899,7 @@ WriteCompressedCharData(mat_t *mat, z_streamp z, void *data, size_t N, enum mati
         case MAT_T_INT8: {
             mat_uint8_t *ptr;
             mat_uint16_t c;
-            int i;
+            size_t i;
 
             /* Matlab can't read MAT_C_CHAR as uint8, needs uint16 */
             data_size = 2;
