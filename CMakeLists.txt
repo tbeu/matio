@@ -23,7 +23,15 @@ set(matio_PACKAGE_TARNAME "${PROJECT_NAME}")
 set(matio_PACKAGE_URL "https://sourceforge.net/projects/matio")
 set(matio_LIB_VERSIONINFO "14:0:0")
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.21")
+    if(PROJECT_IS_TOP_LEVEL)
+        set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    endif()
+else()
+    if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+        set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    endif()
+endif()
 
 # Installation options
 include(GNUInstallDirs)
