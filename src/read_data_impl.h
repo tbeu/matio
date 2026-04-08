@@ -42,213 +42,213 @@
 
 // Converts value from its own type to READ_TYPE, carefully ensuring the value fits, otherwise sets success to false.
 static READ_TYPE
-CAT(ConvertFromInt8To, READ_TYPE)(int8_t value, int* success)
+CAT(ConvertFromInt8To, READ_TYPE)(int8_t value, int *success)
 {
-	// 8 bit can convert losslessly to anything.
-	*success = 1;
-	return (READ_TYPE)value;
+    // 8 bit can convert losslessly to anything.
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromUInt8To, READ_TYPE)(uint8_t value, int* success)
+CAT(ConvertFromUInt8To, READ_TYPE)(uint8_t value, int *success)
 {
-	// 8 bit can convert losslessly to anything.
-	*success = 1;
-	return (READ_TYPE)value;
+    // 8 bit can convert losslessly to anything.
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromInt16To, READ_TYPE)(int16_t value, int* success)
+CAT(ConvertFromInt16To, READ_TYPE)(int16_t value, int *success)
 {
-	// 16 bit can convert losslessly to anything except maybe smaller sized integers.
+    // 16 bit can convert losslessly to anything except maybe smaller sized integers.
 #if READ_TYPE_TYPE == READ_TYPE_INT8
-	if ((value < INT8_MIN) || (value > INT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT8_MIN) || (value > INT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT8
-	if ((value < 0) || (value > UINT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #endif
 
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromUInt16To, READ_TYPE)(uint16_t value, int* success)
+CAT(ConvertFromUInt16To, READ_TYPE)(uint16_t value, int *success)
 {
-	// 16 bit can convert losslessly to anything except maybe smaller sized integers.
+    // 16 bit can convert losslessly to anything except maybe smaller sized integers.
 #if READ_TYPE_TYPE == READ_TYPE_INT8
-	if (value > INT8_MAX) {
-		*success = 0;
-		return 0;
-	}
+    if ( value > INT8_MAX ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT8
-	if (value > UINT8_MAX) {
-		*success = 0;
-		return 0;
-	}
+    if ( value > UINT8_MAX ) {
+        *success = 0;
+        return 0;
+    }
 #endif
 
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromInt32To, READ_TYPE)(int32_t value, int* success)
+CAT(ConvertFromInt32To, READ_TYPE)(int32_t value, int *success)
 {
-	// 32 bit can convert losslessly to anything except maybe smaller sized integers and to float which can be lossy but at least is well-defined.
+    // 32 bit can convert losslessly to anything except maybe smaller sized integers and to float which can be lossy but at least is well-defined.
 #if READ_TYPE_TYPE == READ_TYPE_INT16
-	if ((value < INT16_MIN) || (value > INT16_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT16_MIN) || (value > INT16_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT16
-	if ((value < 0) || (value > UINT16_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT16_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_INT8
-	if ((value < INT8_MIN) || (value > INT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT8_MIN) || (value > INT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT8
-	if ((value < 0) || (value > UINT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #endif
 
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromUInt32To, READ_TYPE)(uint32_t value, int* success)
+CAT(ConvertFromUInt32To, READ_TYPE)(uint32_t value, int *success)
 {
-	// 32 bit can convert losslessly to anything except maybe smaller sized integers and to float which can be lossy but at least is well-defined. double can losslessly represent all int32.
+    // 32 bit can convert losslessly to anything except maybe smaller sized integers and to float which can be lossy but at least is well-defined. double can losslessly represent all int32.
 #if READ_TYPE_TYPE == READ_TYPE_INT16
-	if ((value < INT16_MIN) || (value > INT16_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT16_MIN) || (value > INT16_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT16
-	if ((value < 0) || (value > UINT16_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT16_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_INT8
-	if ((value < INT8_MIN) || (value > INT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT8_MIN) || (value > INT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT8
-	if ((value < 0) || (value > UINT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #endif
 
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromInt64To, READ_TYPE)(int64_t value, int* success)
+CAT(ConvertFromInt64To, READ_TYPE)(int64_t value, int *success)
 {
-	// 64 bit can convert losslessly to anything except maybe smaller sized integers and to float/double which can be lossy but at least is well-defined.
+    // 64 bit can convert losslessly to anything except maybe smaller sized integers and to float/double which can be lossy but at least is well-defined.
 #if READ_TYPE_TYPE == READ_TYPE_INT32
-	if ((value < INT32_MIN) || (value > INT32_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT32_MIN) || (value > INT32_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT32
-	if ((value < 0) || (value > UINT32_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT32_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_INT16
-	if ((value < INT16_MIN) || (value > INT16_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT16_MIN) || (value > INT16_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT16
-	if ((value < 0) || (value > UINT16_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT16_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_INT8
-	if ((value < INT8_MIN) || (value > INT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT8_MIN) || (value > INT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT8
-	if ((value < 0) || (value > UINT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #endif
 
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromUInt64To, READ_TYPE)(uint64_t value, int* success)
+CAT(ConvertFromUInt64To, READ_TYPE)(uint64_t value, int *success)
 {
-	// 64 bit can convert losslessly to anything except maybe smaller sized integers and to float/double which can be lossy but at least is well-defined.
+    // 64 bit can convert losslessly to anything except maybe smaller sized integers and to float/double which can be lossy but at least is well-defined.
 #if READ_TYPE_TYPE == READ_TYPE_INT32
-	if ((value < INT32_MIN) || (value > INT32_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT32_MIN) || (value > INT32_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT32
-	if ((value < 0) || (value > UINT32_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT32_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_INT16
-	if ((value < INT16_MIN) || (value > INT16_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT16_MIN) || (value > INT16_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT16
-	if ((value < 0) || (value > UINT16_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT16_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_INT8
-	if ((value < INT8_MIN) || (value > INT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < INT8_MIN) || (value > INT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #elif READ_TYPE_TYPE == READ_TYPE_UINT8
-	if ((value < 0) || (value > UINT8_MAX)) {
-		*success = 0;
-		return 0;
-	}
+    if ( (value < 0) || (value > UINT8_MAX) ) {
+        *success = 0;
+        return 0;
+    }
 #endif
 
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromFloatTo, READ_TYPE)(float value, int* success)
+CAT(ConvertFromFloatTo, READ_TYPE)(float value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromDoubleTo, READ_TYPE)(double value, int* success)
+CAT(ConvertFromDoubleTo, READ_TYPE)(double value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static int

@@ -51,7 +51,7 @@
                 for ( i = 0; i < len; i++ ) {                         \
                     TT val_ = v[i];                                   \
                     data[i] = ConvertFunc(val_, &success_);           \
-                    if (!success_) {                                  \
+                    if ( !success_ ) {                                \
                         err = MATIO_E_VALUE_OUT_OF_RANGE;             \
                         break;                                        \
                     }                                                 \
@@ -70,7 +70,7 @@
                     for ( j = 0; j < block_size; j++ ) {              \
                         TT val_ = v[j];                               \
                         data[i + j] = ConvertFunc(val_, &success_);   \
-                        if (!success_) {                              \
+                        if ( !success_ ) {                            \
                             err = MATIO_E_VALUE_OUT_OF_RANGE;         \
                             break;                                    \
                         }                                             \
@@ -90,7 +90,7 @@
                     for ( j = 0; j < len - i; j++ ) {                 \
                         TT val_ = v[j];                               \
                         data[i + j] = ConvertFunc(val_, &success_);   \
-                        if (!success_) {                              \
+                        if ( !success_ ) {                            \
                             err = MATIO_E_VALUE_OUT_OF_RANGE;         \
                             break;                                    \
                         }                                             \
@@ -102,7 +102,7 @@
             }                                                         \
         }                                                             \
     } while ( 0 )
-  
+
 #define READ_DATA(T, TT, SwapFunc, ConvertFunc)                             \
     do {                                                                    \
         int success_;                                                       \
@@ -115,7 +115,7 @@
                     for ( i = 0; i < len; i++ ) {                           \
                         TT swapped_ = SwapFunc(&v[i]);                      \
                         data[i] = ConvertFunc(swapped_, &success_);         \
-                        if (!success_) {                                    \
+                        if ( !success_ ) {                                  \
                             err = MATIO_E_VALUE_OUT_OF_RANGE;               \
                             break;                                          \
                         }                                                   \
@@ -134,7 +134,7 @@
                         for ( j = 0; j < block_size; j++ ) {                \
                             TT swapped_ = SwapFunc(&v[j]);                  \
                             data[i + j] = ConvertFunc(swapped_, &success_); \
-                            if (!success_) {                                \
+                            if ( !success_ ) {                              \
                                 err = MATIO_E_VALUE_OUT_OF_RANGE;           \
                                 break;                                      \
                             }                                               \
@@ -154,7 +154,7 @@
                         for ( j = 0; j < len - i; j++ ) {                   \
                             TT swapped_ = SwapFunc(&v[j]);                  \
                             data[i + j] = ConvertFunc(swapped_, &success_); \
-                            if (!success_) {                                \
+                            if ( !success_ ) {                              \
                                 err = MATIO_E_VALUE_OUT_OF_RANGE;           \
                                 break;                                      \
                             }                                               \
@@ -433,10 +433,11 @@ ReadCompressedCharData(mat_t *mat, z_streamp z, void *data, enum matio_types dat
 }
 #endif
 
-static inline mat_uint16_t ConvertFromUInt16ToUInt16(mat_uint16_t value, int* success)
+static inline mat_uint16_t
+ConvertFromUInt16ToUInt16(mat_uint16_t value, int *success)
 {
-	*success = 1;
-	return value;
+    *success = 1;
+    return value;
 }
 
 int
