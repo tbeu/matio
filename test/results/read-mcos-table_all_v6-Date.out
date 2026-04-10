@@ -1,0 +1,17 @@
+      Name: Date
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [datetime]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.48219e+12 
+1.48228e+12 
+1.48236e+12 
+}
+}

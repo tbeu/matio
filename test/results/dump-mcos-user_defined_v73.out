@@ -1,0 +1,299 @@
+      Name: obj_array
+      Rank: 2
+Dimensions: 2 x 2
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[12] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: b
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3 
+}
+      Name: b
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: b
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+      Name: b
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+      Name: obj_handle_1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [HandleClass]
+ Data Type: Structure
+Fields[1] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+20 
+}
+}
+      Name: obj_handle_2
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [HandleClass]
+ Data Type: Structure
+Fields[1] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+20 
+}
+}
+      Name: obj_no_vals
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: b
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+      Name: obj_with_default_val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [DefaultClass]
+ Data Type: Structure
+Fields[0] {
+}
+      Name: obj_with_nested_props
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Obj1
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Obj1
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: InnerProp
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Obj2
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+}
+}
+      Name: obj_with_vals
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+10 
+}
+      Name: b
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}

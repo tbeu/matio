@@ -1,0 +1,243 @@
+      Name: table_row_names
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [table]
+ Data Type: Structure
+Fields[7] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+2 
+3 
+}
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+5 
+6 
+}
+}
+      Name: ndims
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: nrows
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3 
+}
+      Name: rownames
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+R1
+}
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+R2
+}
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+R3
+}
+}
+      Name: nvars
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: varnames
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Col1
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Col2
+}
+}
+      Name: props
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[16] {
+      Name: useVariableNamesOriginal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: useDimensionNamesOriginal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: CustomProps
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: VariableCustomProps
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: versionSavedFrom
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+      Name: minCompatibleVersion
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: incompatibilityMsg
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: VersionSavedFrom
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+      Name: Description
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: VariableNamesOriginal
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: DimensionNames
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Row
+}
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Variables
+}
+}
+      Name: DimensionNamesOriginal
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: UserData
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: VariableDescriptions
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: VariableUnits
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: VariableContinuity
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+}
+}

@@ -189,6 +189,9 @@
 /* MAT v7.3 file support */
 #undef MAT73
 
+/* MATLAB Class Object System (MCOS) support */
+#undef MCOS
+
 /* Platform */
 #undef MATIO_PLATFORM
 

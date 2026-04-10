@@ -1,0 +1,50 @@
+      Name: cat_string
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [categorical]
+ Data Type: Structure
+Fields[2] {
+      Name: categoryNames
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+autumn
+}
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+spring
+}
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+summer
+}
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+winter
+}
+}
+      Name: codes
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+2 3 1 4 
+}
+}

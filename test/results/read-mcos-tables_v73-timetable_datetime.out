@@ -1,0 +1,229 @@
+      Name: timetable_datetime
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [timetable]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[21] {
+      Name: CustomProps
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: VariableCustomProps
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: versionSavedFrom
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+6 
+}
+      Name: minCompatibleVersion
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: incompatibilityMsg
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: arrayProps
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: Description
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: UserData
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: TableCustomProperties
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+2 
+3 
+}
+}
+      Name: numDims
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: useVarNamesOrig
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: useDimNamesOrig
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: dimNames
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Time
+}
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Variables
+}
+}
+      Name: dimNamesOrig
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: varNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+data1
+}
+}
+      Name: varNamesOrig
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: numRows
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3 
+}
+      Name: numVars
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: varDescriptions
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: varUnits
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: rowTimes
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [datetime]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.67253e+12 
+1.67262e+12 
+1.6727e+12 
+}
+}
+      Name: timeEvents
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: varContinuity
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+}
+}

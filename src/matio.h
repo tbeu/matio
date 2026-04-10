@@ -314,6 +314,7 @@ EXTERN matvar_t *Mat_VarGetStructs(const matvar_t *matvar, const int *start, con
 EXTERN matvar_t *Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int stride, int edge,
                                          int copy_fields);
 EXTERN void Mat_VarPrint(const matvar_t *matvar, int printdata);
+EXTERN const char *Mat_VarGetClassName(const matvar_t *matvar);
 EXTERN matvar_t *Mat_VarRead(mat_t *mat, const char *name);
 EXTERN int Mat_VarReadData(mat_t *mat, matvar_t *matvar, void *data, const int *start,
                            const int *stride, const int *edge);

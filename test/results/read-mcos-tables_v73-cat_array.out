@@ -1,0 +1,44 @@
+      Name: cat_array
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [categorical]
+ Data Type: Structure
+Fields[2] {
+      Name: categoryNames
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+high
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+low
+}
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+medium
+}
+}
+      Name: codes
+      Rank: 2
+Dimensions: 2 x 2
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+2 3 
+1 2 
+}
+}

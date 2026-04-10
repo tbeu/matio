@@ -1,0 +1,34 @@
+cdur_array = duration:
+cdur_days = duration:
+cdur_days_and_months = duration:
+cdur_days_and_qtrs = duration:
+cdur_empty = duration:
+cdur_millis = duration:
+cdur_months_and_years = duration:
+cdur_weeks = duration:
+dt_array = datetime:
+  1.74347e+12 ms, 1.74355e+12 ms, 1.74364e+12 ms, 1.74372e+12 ms, 1.74381e+12 ms, 1.7439e+12 ms
+dt_basic = datetime:
+  1.74351e+12 ms
+dt_empty = datetime:
+dt_fmt = datetime:
+  1.74351e+12 ms
+dt_tz = datetime:
+  1.74352e+12 ms
+dt_vector = datetime:
+  1.74347e+12 ms, 1.74355e+12 ms, 1.74364e+12 ms, 1.74372e+12 ms, 1.74381e+12 ms, 1.7439e+12 ms
+dur_array = duration:
+  10000 ms, 40000 ms, 20000 ms, 50000 ms, 30000 ms, 60000 ms
+dur_days = duration:
+  4.32e+08 ms
+dur_empty = duration:
+dur_h = duration:
+  1.8e+07 ms
+dur_hms = duration:
+  3.723e+06 ms
+dur_m = duration:
+  300000 ms
+dur_s = duration:
+  5000 ms
+dur_years = duration:
+  3.1557e+10 ms, 6.31139e+10 ms, 9.46709e+10 ms

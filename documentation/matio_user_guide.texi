@@ -37,8 +37,9 @@
 @contents
 
 @include intro.texi
-@include quick.texi
 @include build.texi
+@include quick.texi
 @include matvar_structure.texi
+@include mcos.texi
 
 @bye

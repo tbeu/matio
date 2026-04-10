@@ -191,6 +191,9 @@
 /* MAT v7.3 file support */
 #cmakedefine MAT73 1
 
+/* MATLAB Class Object System (MCOS) support */
+#cmakedefine MCOS 1
+
 /* Platform */
 #define MATIO_PLATFORM "@matio_PLATFORM@"
 

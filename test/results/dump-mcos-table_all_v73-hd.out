@@ -1,0 +1,17 @@
+Comment = string:
+  "Flight left on time, not crowded"
+  "Late departure, ran out of dinner options"
+  "Late, but only by half an hour. Otherwise fine."
+Customer = string:
+  "Jones"
+  "Brown"
+  "Smith"
+Date = datetime:
+  1.48219e+12 ms, 1.48228e+12 ms, 1.48236e+12 ms
+FlightNum =
+1261 
+547 
+3489 
+Rating = categorical:
+  Categories: {Fair, Good, Poor}
+  Values: Good, Poor, Fair

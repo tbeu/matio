@@ -1,0 +1,615 @@
+      Name: la
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Structure
+ Data Type: Structure
+Fields[42] {
+      Name: name
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+fc8R
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+dagnn.Conv
+}
+      Name: inputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+x18
+}
+}
+      Name: outputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+x21
+}
+}
+      Name: params
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+fc8Rf
+}
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+fc8Rb
+}
+}
+      Name: block
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: size
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 1 4096 20 
+}
+      Name: hasBias
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: opts
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: pad
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0 0 0 
+}
+      Name: stride
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 1 
+}
+}
+      Name: name
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SPP
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SPP
+}
+      Name: inputs
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+x14
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+rois
+}
+}
+      Name: outputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+xSPP
+}
+}
+      Name: params
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: block
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[7] {
+      Name: levels
+      Rank: 0
+      Name: fix_bounds
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: stride
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+16 
+}
+      Name: offset1
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+18 
+}
+      Name: offset2
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.5 
+}
+      Name: method
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+max
+}
+      Name: num_bins
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+36 
+}
+}
+      Name: name
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+softmaxDet
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SoftMax2
+}
+      Name: inputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+x21
+}
+}
+      Name: outputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+xSoftmaxDet
+}
+}
+      Name: params
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: block
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: dim
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+4 
+}
+      Name: temp
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+2 
+}
+      Name: scale
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+1 
+}
+}
+      Name: name
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+softmaxCls
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SoftMax2
+}
+      Name: inputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+xfc8C
+}
+}
+      Name: outputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+xSoftmaxCls
+}
+}
+      Name: params
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: block
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: dim
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+3 
+}
+      Name: temp
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+1 
+}
+      Name: scale
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+1 
+}
+}
+      Name: name
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+timesCR
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Times
+}
+      Name: inputs
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+xSoftmaxCls
+}
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+xSoftmaxDet
+}
+}
+      Name: outputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+xTimes
+}
+}
+      Name: params
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: block
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: name
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+sum
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SumOverDim
+}
+      Name: inputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+xTimes
+}
+}
+      Name: outputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+prediction
+}
+}
+      Name: params
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: block
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: dim
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+}
+      Name: name
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+mAP
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+LayerAP
+}
+      Name: inputs
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+prediction
+}
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+label
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ids
+}
+}
+      Name: outputs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+mAP
+}
+}
+      Name: params
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: block
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: loss
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+softmaxlog
+}
+      Name: opts
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+}
+}

@@ -75,6 +75,9 @@ Mat_Create4(const char *matname)
     mat->refs_id = -1;
 #endif
     mat->dir = NULL;
+#if defined(MCOS) && MCOS
+    mat->mcos = NULL;
+#endif
 
     Mat_Rewind(mat);
 

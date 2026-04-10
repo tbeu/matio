@@ -1,0 +1,69 @@
+      Name: cell
+      Rank: 2
+Dimensions: 2 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+text
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Rank: 3
+Dimensions: 5 x 10 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+Can't print more than 2 dimensions
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3 
+}
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+22 
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+33 
+}
+}
+}

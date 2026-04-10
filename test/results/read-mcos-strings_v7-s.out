@@ -1,0 +1,15 @@
+      Name: s
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 1 1 12 29555362188492915 33214455280500846 28429475166027873 
+}
+}

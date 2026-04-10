@@ -1,0 +1,35 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 9, 2026
+.Dt MAT_VARGETCLASSNAME 3
+.Os
+.Sh NAME
+.Nm Mat_VarGetClassName
+.Nd Returns the class name of an opaque MAT variable.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft const char *
+.Fo Mat_VarGetClassName
+.Fa "const matvar_t *matvar"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarGetClassName
+function returns the class name of a MATLAB Class Object System (MCOS)
+variable
+.Fa matvar .
+For opaque variables such as table, datetime, string, or other MCOS objects,
+this returns the class name (e.g. "table", "datetime").
+For non-opaque variables or if MCOS support is not enabled, the function
+returns NULL.
+.Sh RETURN VALUES
+A pointer to the class name string, or NULL if the variable is not an
+MCOS object or if MCOS support is disabled.
+The returned string must not be freed by the caller.
+.Sh SEE ALSO
+.Xr Mat_VarPrint 3 ,
+.Xr Mat_VarRead 3

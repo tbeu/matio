@@ -1,0 +1,314 @@
+      Name: la
+      Rank: 2
+Class Type: Structure
+Fields[6] {
+      Name: name
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+fc8R
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+dagnn.Conv
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[5] {
+        size =
+1 1 4096 20 
+        hasBias =
+1 
+              Name: opts
+              Rank: 2
+        Class Type: Cell Array
+        {
+        }
+        pad =
+0 0 0 0 
+        stride =
+1 1 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SPP
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SPP
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[7] {
+        levels [gpuArray]
+        fix_bounds =
+0 
+        stride =
+16 
+        offset1 =
+18 
+        offset2 =
+9.5 
+      Name: method
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+max
+}
+        num_bins =
+36 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+softmaxDet
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SoftMax2
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[3] {
+        dim =
+4 
+        temp =
+2 
+        scale =
+1 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+softmaxCls
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SoftMax2
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[3] {
+        dim =
+3 
+        temp =
+1 
+        scale =
+1 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+timesCR
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Times
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+      Name: name
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+sum
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+SumOverDim
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[1] {
+        dim =
+4 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+mAP
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+LayerAP
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[2] {
+      Name: loss
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+softmaxlog
+}
+              Name: opts
+              Rank: 2
+        Class Type: Cell Array
+        {
+        }
+    }
+}

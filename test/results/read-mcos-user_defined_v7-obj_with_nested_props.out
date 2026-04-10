@@ -1,0 +1,110 @@
+      Name: obj_with_nested_props
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Obj1
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Obj1
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: InnerProp
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Obj2
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+}
+}

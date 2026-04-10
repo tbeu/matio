@@ -1,0 +1,313 @@
+      Name: la
+      Rank: 2
+Class Type: Structure
+Fields[6] {
+      Name: name
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+fc8R
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+dagnn.Conv
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[5] {
+        size =
+1 1 4096 20 
+        hasBias =
+1 
+              Name: opts
+              Rank: 2
+        Class Type: Cell Array
+        {
+        }
+        pad =
+0 0 0 0 
+        stride =
+1 1 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+SPP
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+SPP
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[7] {
+        fix_bounds =
+0 
+        stride =
+16 
+        offset1 =
+18 
+        offset2 =
+9.5 
+      Name: method
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+max
+}
+        num_bins =
+36 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+softmaxDet
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+SoftMax2
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[3] {
+        dim =
+4 
+        temp =
+2 
+        scale =
+1 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+softmaxCls
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+SoftMax2
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[3] {
+        dim =
+3 
+        temp =
+1 
+        scale =
+1 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+timesCR
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Times
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+      Name: name
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+sum
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+SumOverDim
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[1] {
+        dim =
+4 
+    }
+      Name: name
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+mAP
+}
+      Name: type
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+LayerAP
+}
+          Name: inputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: outputs
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: params
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+          Name: block
+          Rank: 2
+    Class Type: Structure
+    Fields[2] {
+      Name: loss
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+softmaxlog
+}
+              Name: opts
+              Rank: 2
+        Class Type: Cell Array
+        {
+        }
+    }
+}

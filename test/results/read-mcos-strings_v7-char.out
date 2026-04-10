@@ -1,0 +1,8 @@
+      Name: char
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+char_value
+}

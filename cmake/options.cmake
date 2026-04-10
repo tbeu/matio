@@ -7,6 +7,10 @@ option(MATIO_USE_CONAN "Use Conan 1.x to resolve library dependencies" OFF)
 option(MATIO_EXTENDED_SPARSE "Enable extended sparse matrix data types not supported in MATLAB" ON)
 set(EXTENDED_SPARSE ${MATIO_EXTENDED_SPARSE})
 
+# Option to enable MCOS (MATLAB Class Object System) support
+option(MATIO_MCOS "Enable MATLAB Class Object System (MCOS) support" ON)
+set(MCOS ${MATIO_MCOS})
+
 # Option to enable MAT v7.3 file support
 option(MATIO_MAT73 "Enable support for version 7.3 MAT files" ON)
 set(MAT73 ${MATIO_MAT73})

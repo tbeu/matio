@@ -1,0 +1,20 @@
+obj = BasicDynamic (19 fields)
+    .Name = 'Example'
+    .DynamicName_ = 'DynamicData'
+    .DynamicType_ = 'any'
+    .DynamicValue_ = 42
+    .Description = 'Test Dyanmic Property'
+    .DetailedDescription: [0 mxCHAR_CLASS]
+    .GetAccess = 'public'
+    .SetAccess = 'public'
+    .Dependent: [1 mxUINT8_CLASS]
+    .Constant: [1 mxUINT8_CLASS]
+    .Abstract: [1 mxUINT8_CLASS]
+    .Transient: [1 mxUINT8_CLASS]
+    .Hidden: [1 mxUINT8_CLASS]
+    .GetObservable: [1 mxUINT8_CLASS]
+    .SetObservable: [1 mxUINT8_CLASS]
+    .AbortSet: [1 mxUINT8_CLASS]
+    .NonCopyable: [1 mxUINT8_CLASS]
+    .PartialMatchPriority = 1
+    .WeakReference: [1 mxUINT8_CLASS]

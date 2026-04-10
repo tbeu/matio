@@ -1,0 +1,158 @@
+
+  table_empty = 0x0 table
+
+    
+    
+
+
+  table_numeric = 3x2 table
+
+    Var1    Var2
+    ____    ____
+
+     1.1     4.4
+     2.2     5.5
+     3.3     6.6
+
+  table_strings = 3x1 table
+
+    Var1    
+    ________
+
+    "apple" 
+    "banana"
+    "cherry"
+
+  table_time = 3x2 table
+
+    Time           Duration
+    ___________    ________
+
+    01-Jan-2020    00:00:30
+    02-Jan-2020    00:01:00
+    03-Jan-2020    00:01:30
+
+  table_with_objects = 3x2 table
+
+    C           Var2        
+    ________    ____________
+
+    {struct}    [BasicClass]
+    {struct}    [BasicClass]
+    {struct}    [BasicClass]
+
+  table_from_cell = 3x1 table
+
+    Var1       
+    ___________
+
+    1          
+    "text"     
+    01-Jan-2023
+
+  table_nan = 3x2 table
+
+         Var1    Var2
+    _________    ____
+
+          1.1    "A" 
+    -nan(ind)    ""  
+          3.3    "C" 
+
+  table_var_names = 3x2 table
+
+       X       Y
+    ____    ____
+
+      10     100
+      20     200
+      30     300
+
+  table_row_names = 3x2 table
+
+    Col1    Col2
+    ____    ____
+
+       1       4
+       2       5
+       3       6
+
+  table_with_attrs = 2x2 table
+
+      ID    Label
+    ____    _____
+
+       1    "one"
+       2    "two"
+
+  Description: 'Test table with full metadata'
+
+  table_multi_col_data = 3x2 table
+
+    Var1           multicoldata
+    ___________    ____________
+
+    01-Jan-2023               1
+    02-Jan-2023               2
+    03-Jan-2023               3
+
+  timetable_datetime = 0x0 table
+
+
+  timetable_duration = 0x0 table
+
+
+  timetable_multi_col = 0x0 table
+
+
+  timetable_var_names = 0x0 table
+
+
+  timetable_from_sample_rate = 0x0 table
+
+
+  timetable_from_duration = 0x0 table
+
+
+  timetable_from_starttime_duration = 0x0 table
+
+
+  timetable_from_starttime_datetime = 0x0 table
+
+
+  timetable_from_starttime_calendarDuration = 0x0 table
+
+
+  timetable_with_attrs = 0x0 table
+
+
+  timetable_empty = 0x0 table
+
+cat_scalar = categorical:
+  Categories: {blue, green, red}
+  Values: red, green, blue, red
+cat_array = categorical:
+  Categories: {high, low, medium}
+  Values: low, high, medium, low
+cat_3D = categorical:
+  Categories: {maybe, no, yes}
+  Values: yes, yes, no, no, maybe, maybe, yes, yes, no, no, ... (12 total)
+cat_unordered = categorical:
+  Categories: {cold, warm, hot}
+  Values: cold, hot, warm
+cat_ordered = categorical:
+  Categories: {small, medium, large}
+  Values: small, medium, large
+cat_from_numeric = categorical:
+  Categories: {low, medium, high}
+  Values: low, medium, high, medium, low
+cat_empty = categorical:
+cat_missing = categorical:
+  Categories: {cat, dog, mouse}
+  Values: cat, <undefined>, dog, mouse
+cat_string = categorical:
+  Categories: {autumn, spring, summer, winter}
+  Values: spring, summer, autumn, winter
+cat_mixed_case = categorical:
+  Categories: {OFF, ON, On, off, on}
+  Values: On, off, OFF, ON, on

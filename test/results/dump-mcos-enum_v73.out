@@ -1,0 +1,323 @@
+      Name: enum_array
+      Rank: 2
+Class Type: Structure
+Fields[6] {
+3707764736 
+1 
+3 
+9 
+10 
+11 
+12 
+13 
+          Name: Values
+          Rank: 2
+    Class Type: Cell Array
+    {
+3707764736 
+2 
+1 
+1 
+3 
+1 
+3707764736 
+2 
+1 
+1 
+4 
+1 
+3707764736 
+2 
+1 
+1 
+5 
+1 
+3707764736 
+2 
+1 
+1 
+6 
+1 
+3707764736 
+2 
+1 
+1 
+7 
+1 
+3707764736 
+2 
+1 
+1 
+8 
+1 
+    }
+0 2 4 
+1 3 5 
+0 
+}
+      Name: enum_nested
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+1 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+1 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+9 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: c
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: InnerProp
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+1 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+10 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+}
+}
+}
+      Name: enum_scalar
+      Rank: 2
+Class Type: Structure
+Fields[6] {
+3707764736 
+1 
+3 
+          Name: Values
+          Rank: 2
+    Class Type: Cell Array
+    {
+3707764736 
+2 
+1 
+1 
+1 
+1 
+    }
+0 
+0 
+}
+      Name: enum_uint32
+      Rank: 2
+Class Type: Structure
+Fields[6] {
+3707764736 
+2 
+3 
+          Name: Values
+          Rank: 2
+    Class Type: Cell Array
+    {
+3707764736 
+2 
+1 
+1 
+2 
+2 
+    }
+0 
+3 
+}

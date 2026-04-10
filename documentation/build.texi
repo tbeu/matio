@@ -1,5 +1,5 @@
 @c Copyright (c) 2015-2026, The matio contributors
-@c Copyright (c) 2012-2014, Christopher C. Hulbert
+@c Copyright (c) 2011-2014, Christopher C. Hulbert
 @c All rights reserved.
 @c
 @c SPDX-License-Identifier: BSD-2-Clause
@@ -27,9 +27,13 @@ This flag enables/disables the support for version 7.3 MAT files. The option
 only makes sense if built with HDF5 as support for version 7.3 files will be
 disabled if HDF5 is not available.
 @item --enable-extended-sparse=yes
-Enable extended sparse matrix data types not supported in MATLAB. MATLAB only
-supports double-precision sparse data. With this flag, matio will read sparse
-data with other types (i.e. single-precision and integer types).
+This flag enables/disables extended sparse matrix data types not supported in
+MATLAB. MATLAB only supports double-precision sparse data. With this flag,
+matio will read sparse data with other types (i.e. single-precision and integer
+types).
+@item --enable-mcos=yes
+This flag en/disables the support for MATLAB Class Object System (MCOS) objects
+(e.g. table, datetime, string, etc.).
 @item --with-matlab=DIR
 This option specifies the directory (DIR) with the @code{matlab} program. With
 this option, the testsuite will check that the MAT files written by matio can be
@@ -75,6 +79,9 @@ will be used when writing.
 @item MATIO_EXTENDED_SPARSE:BOOL=ON
 This option enables extended sparse matrix data types not
 supported in MATLAB.
+@item MATIO_MCOS:BOOL=ON
+This option enables the support for MATLAB Class Object System (MCOS) objects
+(e.g. table, datetime, string, etc.).
 @item MATIO_MAT73:BOOL=ON
 This flag enables the support for version 7.3 MAT files.
 @item MATIO_PIC:BOOL=ON

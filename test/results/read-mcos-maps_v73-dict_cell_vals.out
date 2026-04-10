@@ -1,0 +1,81 @@
+      Name: dict_cell_vals
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [dictionary]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: Version
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 
+}
+      Name: IsKeyCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: IsValueCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: Key
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 2 1 4 3 28429440805568622 433798447201 
+}
+}
+      Name: Value
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 1 1 5 27866473672998977 101 
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+25 
+}
+}
+}
+}

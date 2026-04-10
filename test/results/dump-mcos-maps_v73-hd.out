@@ -1,0 +1,30 @@
+  dict_cell_keys = dictionary with 3 entries
+    1 : "one"
+    2 : "two"
+    3 : "three"
+  dict_cell_vals = dictionary with 2 entries
+    "name" : "Alice"
+    "age" : 25
+  dict_empty = dictionary with unset key and value types
+  dict_numeric_keys = dictionary with 3 entries
+    1 : "apple"
+    2 : "banana"
+    3 : "cherry"
+  dict_string_keys = dictionary with 3 entries
+    "x" : 10
+    "y" : 20
+    "z" : 30
+  dict_val_scalar = dictionary with 3 entries
+    1 : "a"
+    2 : "a"
+    3 : "a"
+  map_char_keys = Map (char -> double) with 2 entries
+    "a" : 1
+    "b" : 2
+  map_empty = Map (char -> any) with 0 entries
+  map_numeric_keys = Map (double -> char) with 2 entries
+    1 : "a"
+    2 : "b"
+  map_string_keys = Map (char -> double) with 2 entries
+    "a" : 1
+    "b" : 2

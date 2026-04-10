@@ -191,7 +191,9 @@ unsigned
 Mat_VarGetNumberOfFields(const matvar_t *matvar)
 {
     int nfields;
-    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT || NULL == matvar->internal ) {
+    if ( matvar == NULL ||
+         (matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT) ||
+         NULL == matvar->internal ) {
         nfields = 0;
     } else {
         nfields = matvar->internal->num_fields;
@@ -210,7 +212,9 @@ Mat_VarGetNumberOfFields(const matvar_t *matvar)
 char *const *
 Mat_VarGetStructFieldnames(const matvar_t *matvar)
 {
-    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT || NULL == matvar->internal ) {
+    if ( matvar == NULL ||
+         (matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT) ||
+         NULL == matvar->internal ) {
         return NULL;
     } else {
         return matvar->internal->fieldnames;
@@ -233,7 +237,8 @@ Mat_VarGetStructFieldByIndex(const matvar_t *matvar, size_t field_index, size_t 
     matvar_t *field = NULL;
     size_t nelems = 1, nfields;
 
-    if ( matvar == NULL || matvar->data == NULL || matvar->class_type != MAT_C_STRUCT ||
+    if ( matvar == NULL || matvar->data == NULL ||
+         (matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT) ||
          matvar->data_size == 0 )
         return NULL;
 
@@ -272,7 +277,8 @@ Mat_VarGetStructFieldByName(const matvar_t *matvar, const char *field_name, size
     matvar_t *field = NULL;
     size_t nelems = 1;
 
-    if ( matvar == NULL || matvar->data == NULL || matvar->class_type != MAT_C_STRUCT ||
+    if ( matvar == NULL || matvar->data == NULL ||
+         (matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT) ||
          matvar->data_size == 0 )
         return NULL;
 
@@ -381,7 +387,7 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
         return NULL;
     } else if ( matvar->rank > 9 ) {
         return NULL;
-    } else if ( matvar->class_type != MAT_C_STRUCT ) {
+    } else if ( matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT ) {
         return NULL;
     }
 

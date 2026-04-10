@@ -1,0 +1,5 @@
+F = scatteredInterpolant (4 fields)
+    .Points: [300 mxDOUBLE_CLASS]
+    .Values: [150 mxDOUBLE_CLASS]
+    .Method = 'linear'
+    .ExtrapolationMethod = 'linear'

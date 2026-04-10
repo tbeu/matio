@@ -1,0 +1,66 @@
+      Name: enum_uint32
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+2 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 6 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+2 
+1 
+1 
+2 
+2 
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3 
+}
+}

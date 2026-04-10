@@ -120,6 +120,9 @@ struct _mat_t
     hid_t refs_id; /**< Id of the /#refs# group in HDF5 */
 #endif
     char **dir; /**< Names of the datasets in the file */
+#if defined(MCOS) && MCOS
+    void *mcos; /**< Parsed MCOS subsystem data (lazy, may be NULL) */
+#endif
 };
 
 /** @if mat_devman
@@ -136,6 +139,13 @@ struct matvar_internal
     mat_off_t datapos;   /**< Offset from the beginning of the MAT file to the data */
     unsigned num_fields; /**< Number of fields */
     char **fieldnames;   /**< Pointer to fieldnames */
+#if defined(MCOS) && MCOS
+    char *type_name;          /**< Type system name for opaque types (e.g. "MCOS") */
+    char *class_name;         /**< Class name for opaque types (e.g. "table") */
+    mat_uint32_t *object_ids; /**< Object IDs for MCOS opaque variables */
+    mat_uint32_t class_id;    /**< Class ID for MCOS opaque variables */
+    size_t num_objects;       /**< Number of object IDs */
+#endif
 #if HAVE_ZLIB
     z_streamp z; /**< zlib compression state */
     void *data;  /**< Inflated data array */
@@ -268,6 +278,18 @@ EXTERN int CheckSeekFile(FILE *fp, mat_off_t offset);
 /* io.c */
 #if defined(_WIN32)
 EXTERN wchar_t *utf82u(const char *src);
+#endif
+
+/* mcos.c */
+#if defined(MCOS) && MCOS
+#define MCOS_REF_VALUE 0xDD000000U
+EXTERN int ParseOpaqueMetadata(const mat_uint32_t *meta, size_t meta_nvals, matvar_t *matvar);
+EXTERN int Mat_MCOS_Read5(mat_t *mat, matvar_t *matvar);
+EXTERN int Mat_MCOS_Read73(mat_t *mat, matvar_t *matvar);
+EXTERN void Mat_MCOS_Free(void *mcos);
+#endif
+#if defined(MAT73) && MAT73
+EXTERN matvar_t *Mat_VarReadFromH5Ref(mat_t *mat, hid_t container_id, hobj_ref_t ref);
 #endif
 
 #endif

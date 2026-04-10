@@ -1,0 +1,52 @@
+      Name: map_empty
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Map]
+ Data Type: Structure
+Fields[1] {
+      Name: serialization
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: keys
+      Rank: 2
+Dimensions: 1 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: values
+      Rank: 2
+Dimensions: 1 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: uniformity
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: keyType
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+char
+}
+      Name: valueType
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+any
+}
+}
+}

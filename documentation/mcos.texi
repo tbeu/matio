@@ -1,0 +1,329 @@
+@c Copyright (c) 2015-2026, The matio contributors
+@c Copyright (c) 2011-2014, Christopher C. Hulbert
+@c All rights reserved.
+@c
+@c SPDX-License-Identifier: BSD-2-Clause
+
+@chapter Reading MATLAB Objects (MCOS)
+@section Overview
+Starting with MATLAB R2008a, MATLAB uses the MATLAB Class Object System (MCOS)
+to serialise objects such as tables, strings, datetime arrays, and other
+class-based types into MAT files.  When built with MCOS support enabled
+(CMake option @code{MATIO_MCOS=ON}, which is the default), @emph{matio}
+automatically decodes these objects when a variable is read with
+@code{Mat_VarRead} or @code{Mat_VarReadNext}.
+
+After reading, every MCOS object has @code{class_type} set to
+@code{MAT_C_OBJECT} and @code{data_type} set to @code{MAT_T_STRUCT}.
+The object's MATLAB class name (e.g.@: @code{"table"}, @code{"string"}) can
+be obtained with @code{Mat_VarGetClassName}.  Object properties are exposed as
+struct fields, accessible through the same API used for ordinary structures:
+@code{Mat_VarGetStructFieldByName}, @code{Mat_VarGetStructFieldnames}, and
+@code{Mat_VarGetNumberOfFields}.
+
+@section Identifying an Object's Class
+Use @code{Mat_VarGetClassName} to obtain the MATLAB class name of an object
+variable.  The function returns @code{NULL} when MCOS support is disabled at
+build time or when the variable is not an object.
+
+@verbatim
+matvar_t *matvar = Mat_VarRead(matfp, "T");
+if ( matvar != NULL && matvar->class_type == MAT_C_OBJECT ) {
+    const char *cls = Mat_VarGetClassName(matvar);
+    if ( cls != NULL )
+        printf("Class: %s\n", cls);
+}
+Mat_VarFree(matvar);
+@end verbatim
+
+@section Table and Timetable
+MATLAB @code{table} and @code{timetable} objects are represented with the
+following struct fields:
+
+@table @code
+@item nrows
+A @code{MAT_C_DOUBLE} scalar containing the number of rows.
+@item nvars
+A @code{MAT_C_DOUBLE} scalar containing the number of variables (columns).
+@item varnames
+A @code{MAT_C_CELL} array of @code{MAT_C_CHAR} elements holding the column
+header names.
+@item data
+A @code{MAT_C_CELL} array with one element per column.  Each element can be
+a numeric array (@code{MAT_C_DOUBLE}, @code{MAT_C_SINGLE}), a character array
+(@code{MAT_C_CHAR}), a cell array (@code{MAT_C_CELL}), or another MCOS object
+(e.g.@: a @code{string} or @code{datetime} column).
+@item props
+A @code{MAT_C_STRUCT} containing table properties.  The @code{Description}
+field, if present, is a @code{MAT_C_CHAR} string.
+@end table
+
+@noindent
+Example: read a table and print its dimensions and column names.
+
+@verbatim
+matvar_t *T = Mat_VarRead(matfp, "T");
+if ( T != NULL && T->class_type == MAT_C_OBJECT ) {
+    matvar_t *f;
+    int nrows = 0, nvars = 0;
+
+    f = Mat_VarGetStructFieldByName(T, "nrows", 0);
+    if ( f != NULL && f->class_type == MAT_C_DOUBLE && f->data != NULL )
+        nrows = (int)*(double *)f->data;
+    f = Mat_VarGetStructFieldByName(T, "nvars", 0);
+    if ( f != NULL && f->class_type == MAT_C_DOUBLE && f->data != NULL )
+        nvars = (int)*(double *)f->data;
+
+    printf("Table: %d rows x %d columns\n", nrows, nvars);
+
+    f = Mat_VarGetStructFieldByName(T, "varnames", 0);
+    if ( f != NULL && f->class_type == MAT_C_CELL && f->data != NULL ) {
+        matvar_t **cells = (matvar_t **)f->data;
+        int i;
+        for ( i = 0; i < nvars; i++ ) {
+            if ( cells[i] != NULL && cells[i]->class_type == MAT_C_CHAR )
+                printf("  Column %d: %s\n", i, (const char *)cells[i]->data);
+        }
+    }
+}
+Mat_VarFree(T);
+@end verbatim
+
+@section String
+MATLAB @code{string} arrays are stored with the class name @code{"string"}.
+The character data is held in a single struct field:
+
+@table @code
+@item any
+A @code{MAT_C_UINT64} array containing packed UTF-16LE string data.
+@end table
+
+@noindent
+The @code{any} field has the following internal layout (all values are
+@code{uint64}):
+
+@table @code
+@item u64[0]@dots{}u64[1]
+Header and dimension information.
+@item u64[2]
+Number of strings (@var{nstrs}).
+@item u64[3]
+Flags.
+@item u64[4]@dots{}u64[4+@var{nstrs}-1]
+Length of each string in UTF-16 code units.
+@item u64[4+@var{nstrs}]@dots{}
+Packed UTF-16LE character data (four code units per @code{uint64}).
+@end table
+
+@noindent
+Example: extract the first string from a @code{string} scalar.
+
+@verbatim
+matvar_t *S = Mat_VarRead(matfp, "S");
+if ( S != NULL && S->class_type == MAT_C_OBJECT ) {
+    matvar_t *any = Mat_VarGetStructFieldByName(S, "any", 0);
+    if ( any != NULL && any->class_type == MAT_C_UINT64 && any->data != NULL ) {
+        const mat_uint64_t *u64 = (const mat_uint64_t *)any->data;
+        size_t nstrs = (size_t)u64[2];
+        if ( nstrs > 0 ) {
+            size_t header_len = 4 + nstrs;
+            size_t slen = (size_t)u64[4]; /* length of first string */
+            const unsigned char *bytes =
+                (const unsigned char *)&u64[header_len];
+            size_t j;
+            for ( j = 0; j < slen; j++ ) {
+                mat_uint16_t ch = (mat_uint16_t)(bytes[j * 2] |
+                    ((mat_uint16_t)bytes[j * 2 + 1] << 8));
+                if ( ch >= 32 && ch < 127 )
+                    putchar((char)ch);
+            }
+            putchar('\n');
+        }
+    }
+}
+Mat_VarFree(S);
+@end verbatim
+
+@section Datetime
+MATLAB @code{datetime} arrays are stored with the class name @code{"datetime"}.
+The timestamp data is held in a struct field:
+
+@table @code
+@item data
+A @code{MAT_C_DOUBLE} array.  Each element is a timestamp expressed as
+milliseconds since the Unix epoch (1970-01-01 00:00:00 UTC).
+@end table
+
+@noindent
+Example: read a datetime array and convert the first element.
+
+@verbatim
+matvar_t *D = Mat_VarRead(matfp, "D");
+if ( D != NULL && D->class_type == MAT_C_OBJECT ) {
+    matvar_t *data_f = Mat_VarGetStructFieldByName(D, "data", 0);
+    if ( data_f != NULL && data_f->class_type == MAT_C_DOUBLE &&
+         data_f->data != NULL ) {
+        double ms = *(const double *)data_f->data;
+        time_t t = (time_t)(ms / 1000.0);
+        printf("First timestamp: %s", ctime(&t));
+    }
+}
+Mat_VarFree(D);
+@end verbatim
+
+@section Duration and Calendar Duration
+MATLAB @code{duration} and @code{calendarDuration} arrays use the class names
+@code{"duration"} and @code{"calendarDuration"} respectively.  Both store
+their data in the same struct field:
+
+@table @code
+@item millis
+A @code{MAT_C_DOUBLE} array.  Each element is a duration expressed in
+milliseconds.
+@end table
+
+@noindent
+Example: read a duration array.
+
+@verbatim
+matvar_t *dur = Mat_VarRead(matfp, "dur");
+if ( dur != NULL && dur->class_type == MAT_C_OBJECT ) {
+    matvar_t *millis = Mat_VarGetStructFieldByName(dur, "millis", 0);
+    if ( millis != NULL && millis->class_type == MAT_C_DOUBLE &&
+         millis->data != NULL ) {
+        const double *d = (const double *)millis->data;
+        size_t n = 1;
+        int r;
+        for ( r = 0; r < millis->rank; r++ )
+            n *= millis->dims[r];
+        printf("Duration[0] = %g ms\n", d[0]);
+    }
+}
+Mat_VarFree(dur);
+@end verbatim
+
+@section Categorical
+MATLAB @code{categorical} arrays use the class name @code{"categorical"} and
+expose two struct fields:
+
+@table @code
+@item categoryNames
+A @code{MAT_C_CELL} array of @code{MAT_C_CHAR} elements holding the category
+labels.
+@item codes
+A @code{MAT_C_UINT8} array (or @code{MAT_C_UINT16} for large category sets).
+Each element is a 1-based index into @code{categoryNames}.  A value of 0
+indicates an undefined category.
+@end table
+
+@noindent
+Example: print categorical values.
+
+@verbatim
+matvar_t *C = Mat_VarRead(matfp, "C");
+if ( C != NULL && C->class_type == MAT_C_OBJECT ) {
+    matvar_t *names = Mat_VarGetStructFieldByName(C, "categoryNames", 0);
+    matvar_t *codes = Mat_VarGetStructFieldByName(C, "codes", 0);
+    if ( names != NULL && names->class_type == MAT_C_CELL &&
+         codes != NULL && codes->data != NULL ) {
+        matvar_t **cells = (matvar_t **)names->data;
+        size_t ncats = names->nbytes / names->data_size;
+        size_t i, n = 1;
+        int r;
+        for ( r = 0; r < codes->rank; r++ )
+            n *= codes->dims[r];
+        for ( i = 0; i < n; i++ ) {
+            mat_uint8_t code = ((mat_uint8_t *)codes->data)[i];
+            if ( code > 0 && code <= ncats )
+                printf("%s\n", (const char *)cells[code - 1]->data);
+            else
+                printf("<undefined>\n");
+        }
+    }
+}
+Mat_VarFree(C);
+@end verbatim
+
+@section containers.Map
+MATLAB @code{containers.Map} objects use the class name @code{"Map"} and store
+their contents in a nested struct:
+
+@table @code
+@item serialization
+A @code{MAT_C_STRUCT} containing the Map's key-value data.
+@item serialization.keys
+A @code{MAT_C_CELL} array of key values.
+@item serialization.values
+A @code{MAT_C_CELL} array of corresponding values.
+@item serialization.keyType
+A @code{MAT_C_CHAR} string naming the key type (e.g.@: @code{"char"},
+@code{"double"}).
+@item serialization.valueType
+A @code{MAT_C_CHAR} string naming the value type.
+@end table
+
+@noindent
+An empty map may not have the @code{serialization} field.
+
+@noindent
+Example: iterate over a Map's entries.
+
+@verbatim
+matvar_t *M = Mat_VarRead(matfp, "M");
+if ( M != NULL && M->class_type == MAT_C_OBJECT ) {
+    matvar_t *ser = Mat_VarGetStructFieldByName(M, "serialization", 0);
+    if ( ser != NULL && ser->class_type == MAT_C_STRUCT ) {
+        matvar_t *keys = Mat_VarGetStructFieldByName(ser, "keys", 0);
+        matvar_t *values = Mat_VarGetStructFieldByName(ser, "values", 0);
+        if ( keys != NULL && keys->class_type == MAT_C_CELL &&
+             values != NULL && values->class_type == MAT_C_CELL ) {
+            matvar_t **kcells = (matvar_t **)keys->data;
+            matvar_t **vcells = (matvar_t **)values->data;
+            size_t n = keys->nbytes / keys->data_size;
+            size_t i;
+            for ( i = 0; i < n; i++ ) {
+                printf("Key: ");
+                Mat_VarPrint(kcells[i], 0);
+                printf("Value: ");
+                Mat_VarPrint(vcells[i], 0);
+            }
+        }
+    }
+}
+Mat_VarFree(M);
+@end verbatim
+
+@section Dictionary
+MATLAB @code{dictionary} objects (R2022b and later) use the class name
+@code{"dictionary"} and store their data in a nested struct:
+
+@table @code
+@item data
+A @code{MAT_C_STRUCT} containing the dictionary contents.
+@item data.Key
+The key array.  Can be @code{MAT_C_CELL}, @code{MAT_C_DOUBLE}, or
+@code{MAT_C_OBJECT} (e.g.@: for string keys).
+@item data.Value
+The value array.  Same possible types as @code{Key}.
+@item data.Unconfigured
+A @code{MAT_C_UINT8} scalar.  Non-zero when the dictionary was created without
+specifying key and value types.
+@end table
+
+@section Other Object Types
+Any MCOS class that matio does not handle specially (e.g.@:
+@code{scatteredInterpolant}) is still decoded into a @code{MAT_C_OBJECT} with
+whatever properties MATLAB serialised.  The generic struct field API can be used
+to enumerate and access all fields:
+
+@verbatim
+int nfields = Mat_VarGetNumberOfFields(matvar);
+char *const *fieldnames = Mat_VarGetStructFieldnames(matvar);
+int i;
+for ( i = 0; i < nfields; i++ ) {
+    matvar_t *fld = Mat_VarGetStructFieldByName(matvar, fieldnames[i], 0);
+    printf("Field: %s\n", fieldnames[i]);
+    if ( fld != NULL )
+        Mat_VarPrint(fld, 0);
+}
+@end verbatim

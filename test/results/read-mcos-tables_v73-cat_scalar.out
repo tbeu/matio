@@ -1,0 +1,43 @@
+      Name: cat_scalar
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [categorical]
+ Data Type: Structure
+Fields[2] {
+      Name: categoryNames
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+blue
+}
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+green
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+red
+}
+}
+      Name: codes
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+3 2 1 3 
+}
+}

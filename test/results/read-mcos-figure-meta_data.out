@@ -1,0 +1,30 @@
+      Name: meta_data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: matlab_release
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[4] {
+      Name: 
+      Rank: 0
+      Name: 
+      Rank: 0
+      Name: Update
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+      Name: 
+      Rank: 0
+}
+      Name: 
+      Rank: 0
+}

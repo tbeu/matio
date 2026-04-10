@@ -759,6 +759,9 @@ Mat_Open(const char *matname, int mode)
     mat->refs_id = -1;
 #endif
     mat->dir = NULL;
+#if defined(MCOS) && MCOS
+    mat->mcos = NULL;
+#endif
 
     bytesread += fread(mat->header, 1, 116, fp);
     mat->header[116] = '\0';
@@ -912,6 +915,12 @@ Mat_Close(mat_t *mat)
             free(mat->header);
         if ( NULL != mat->subsys_offset )
             free(mat->subsys_offset);
+#if defined(MCOS) && MCOS
+        if ( NULL != mat->mcos ) {
+            Mat_MCOS_Free(mat->mcos);
+            mat->mcos = NULL;
+        }
+#endif
         if ( NULL != mat->filename )
             free(mat->filename);
         if ( NULL != mat->dir ) {
@@ -1191,6 +1200,13 @@ Mat_VarCalloc(void)
             matvar->internal->datapos = 0;
             matvar->internal->num_fields = 0;
             matvar->internal->fieldnames = NULL;
+#if defined(MCOS) && MCOS
+            matvar->internal->type_name = NULL;
+            matvar->internal->class_name = NULL;
+            matvar->internal->object_ids = NULL;
+            matvar->internal->class_id = 0;
+            matvar->internal->num_objects = 0;
+#endif
 #if HAVE_ZLIB
             matvar->internal->z = NULL;
             matvar->internal->data = NULL;
@@ -1730,7 +1746,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
     }
 
     out->dims = (size_t *)malloc(in->rank * sizeof(*out->dims));
-    if ( out->dims != NULL )
+    if ( out->dims != NULL && in->dims != NULL )
         memcpy(out->dims, in->dims, in->rank * sizeof(*out->dims));
 
     if ( NULL != in->internal ) {
@@ -1757,6 +1773,21 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                 }
             }
         }
+#if defined(MCOS) && MCOS
+        if ( NULL != in->internal->type_name )
+            out->internal->type_name = strdup(in->internal->type_name);
+        if ( NULL != in->internal->class_name )
+            out->internal->class_name = strdup(in->internal->class_name);
+        out->internal->class_id = in->internal->class_id;
+        out->internal->num_objects = in->internal->num_objects;
+        if ( NULL != in->internal->object_ids && in->internal->num_objects > 0 ) {
+            out->internal->object_ids =
+                (mat_uint32_t *)malloc(in->internal->num_objects * sizeof(mat_uint32_t));
+            if ( NULL != out->internal->object_ids )
+                memcpy(out->internal->object_ids, in->internal->object_ids,
+                       in->internal->num_objects * sizeof(mat_uint32_t));
+        }
+#endif
 
 #if HAVE_ZLIB
         if ( in->internal->z != NULL ) {
@@ -1839,7 +1870,7 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
         out->data = in->data;
     } else if ( in->data != NULL &&
                 (in->class_type == MAT_C_STRUCT || in->class_type == MAT_C_CELL ||
-                 in->class_type == MAT_C_FUNCTION) ) {
+                 in->class_type == MAT_C_FUNCTION || in->class_type == MAT_C_OBJECT) ) {
         out->data = malloc(in->nbytes);
         if ( out->data != NULL && in->data_size > 0 ) {
             const size_t ndata = in->nbytes / in->data_size;
@@ -2007,7 +2038,26 @@ Mat_VarFree(matvar_t *matvar)
                 }
                 break;
             case MAT_C_EMPTY:
+                break;
+#if defined(MCOS) && MCOS
             case MAT_C_OBJECT:
+                /* MCOS resolved object: fields like a struct */
+                if ( !matvar->mem_conserve ) {
+                    if ( MATIO_E_NO_ERROR == err ) {
+                        matvar_t **fields = (matvar_t **)matvar->data;
+                        size_t nfields = matvar->internal->num_fields;
+                        size_t total = 0;
+                        (void)Mul(&total, nelems, nfields);
+                        if ( NULL != fields ) {
+                            size_t k;
+                            for ( k = 0; k < total; k++ )
+                                Mat_VarFree(fields[k]);
+                        }
+                    }
+                    free(matvar->data);
+                }
+                break;
+#endif
             case MAT_C_OPAQUE:
                 break;
         }
@@ -2062,6 +2112,14 @@ Mat_VarFree(matvar_t *matvar)
             }
             free(matvar->internal->fieldnames);
         }
+#if defined(MCOS) && MCOS
+        if ( NULL != matvar->internal->type_name )
+            free(matvar->internal->type_name);
+        if ( NULL != matvar->internal->class_name )
+            free(matvar->internal->class_name);
+        if ( NULL != matvar->internal->object_ids )
+            free(matvar->internal->object_ids);
+#endif
         free(matvar->internal);
         matvar->internal = NULL;
     }
@@ -2419,6 +2477,12 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
         printf(" (complex)");
     else if ( matvar->isLogical )
         printf(" (logical)");
+#if defined(MCOS) && MCOS
+    if ( (matvar->class_type == MAT_C_OPAQUE || matvar->class_type == MAT_C_OBJECT) &&
+         NULL != matvar->internal && NULL != matvar->internal->class_name ) {
+        printf(" [%s]", matvar->internal->class_name);
+    }
+#endif
     printf("\n");
     if ( matvar->data_type ) {
         const char *data_type_desc[25] = {"Unknown",
@@ -2449,6 +2513,35 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
         printf(" Data Type: %s\n", data_type_desc[matvar->data_type]);
     }
 
+#if defined(MCOS) && MCOS
+    if ( MAT_C_OBJECT == matvar->class_type ) {
+        /* Print MCOS objects like structs */
+        matvar_t **fields = (matvar_t **)matvar->data;
+        size_t nfields = matvar->internal->num_fields;
+        size_t nelems_x_nfields = 1;
+        int err2 = Mul(&nelems_x_nfields, nelems, nfields);
+        if ( MATIO_E_NO_ERROR == err2 && nelems_x_nfields > 0 ) {
+            printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
+            if ( NULL != matvar->internal->fieldnames && NULL != fields ) {
+                for ( i = 0; i < nelems_x_nfields; i++ ) {
+                    if ( NULL == fields[i] ) {
+                        printf("      Name: %s\n      Rank: %d\n",
+                               matvar->internal->fieldnames[i % nfields], 0);
+                    } else {
+                        Mat_VarPrint(fields[i], printdata);
+                    }
+                }
+            }
+            printf("}\n");
+        } else {
+            printf("Fields[%" SIZE_T_FMTSTR "] {\n", nfields);
+            for ( i = 0; i < nfields; i++ )
+                printf("      Name: %s\n      Rank: %d\n", matvar->internal->fieldnames[i], 0);
+            printf("}\n");
+        }
+        return;
+    }
+#endif
     if ( MAT_C_STRUCT == matvar->class_type ) {
         matvar_t **fields = (matvar_t **)matvar->data;
         size_t nfields = matvar->internal->num_fields;
@@ -2496,6 +2589,25 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
     Mat_PrintData(matvar->rank, matvar->dims, matvar->data, matvar->class_type, matvar->isComplex,
                   matvar->data_type, matvar->nbytes, nelems);
     printf("}\n");
+}
+
+/** @brief Returns the MCOS class name for an opaque/object variable
+ *
+ * @ingroup MAT
+ * @param matvar Pointer to the matvar_t structure
+ * @return Class name string, or NULL if not an MCOS variable
+ */
+const char *
+Mat_VarGetClassName(const matvar_t *matvar)
+{
+#if defined(MCOS) && MCOS
+    if ( matvar == NULL || matvar->internal == NULL )
+        return NULL;
+    return matvar->internal->class_name;
+#else
+    (void)matvar;
+    return NULL;
+#endif
 }
 
 /** @brief Reads MAT variable data from a file
@@ -2941,6 +3053,7 @@ int
 Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
 {
     int err;
+    mat_off_t subsys_pos = -1L;
 
     if ( NULL == mat || NULL == matvar )
         return MATIO_E_BAD_ARGUMENT;
@@ -2950,7 +3063,7 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
         (void)Mat_GetDir(mat, &n);
     }
 
-    if ( NULL != mat->dir ) {
+    if ( NULL != mat->dir && NULL != matvar->name ) {
         /* Error if MAT variable already exists in MAT file */
         size_t i;
         for ( i = 0; i < mat->num_datasets; i++ ) {
@@ -2959,6 +3072,12 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
                 return MATIO_E_OUTPUT_BAD_DATA;
             }
         }
+    }
+
+    /* Record the file position for an unnamed variable (MCOS subsystem) */
+    if ( (NULL == matvar->name || '\0' == matvar->name[0]) && mat->version == MAT_FT_MAT5 ) {
+        (void)fseeko((FILE *)mat->fp, 0, SEEK_END);
+        subsys_pos = ftello((FILE *)mat->fp);
     }
 
     if ( mat->version == MAT_FT_MAT5 )
@@ -2975,23 +3094,38 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
         err = MATIO_E_FAIL_TO_IDENTIFY;
 
     if ( err == MATIO_E_NO_ERROR ) {
-        /* Update directory */
-        char **dir;
-        if ( NULL == mat->dir ) {
-            dir = (char **)malloc(sizeof(char *));
-        } else {
-            dir = (char **)realloc(mat->dir, (mat->num_datasets + 1) * (sizeof(char *)));
+        /* Update subsystem data offset for unnamed variables (MCOS) */
+        if ( subsys_pos > 0 && NULL != mat->subsys_offset ) {
+            mat_off_t save_pos = ftello((FILE *)mat->fp);
+            mat_uint32_t lo = (mat_uint32_t)(subsys_pos & 0xFFFFFFFFU);
+            mat_uint32_t hi = (mat_uint32_t)(((mat_uint64_t)subsys_pos >> 32) & 0xFFFFFFFFU);
+            (void)fseeko((FILE *)mat->fp, 116, SEEK_SET);
+            fwrite(&lo, 4, 1, (FILE *)mat->fp);
+            fwrite(&hi, 4, 1, (FILE *)mat->fp);
+            memcpy(mat->subsys_offset, &lo, 4);
+            memcpy(mat->subsys_offset + 4, &hi, 4);
+            if ( save_pos > 0 )
+                (void)fseeko((FILE *)mat->fp, save_pos, SEEK_SET);
         }
-        if ( NULL != dir ) {
-            mat->dir = dir;
-            if ( NULL != matvar->name ) {
-                mat->dir[mat->num_datasets++] = strdup(matvar->name);
+
+        { /* Update directory */
+            char **dir;
+            if ( NULL == mat->dir ) {
+                dir = (char **)malloc(sizeof(char *));
             } else {
-                mat->dir[mat->num_datasets++] = NULL;
+                dir = (char **)realloc(mat->dir, (mat->num_datasets + 1) * (sizeof(char *)));
             }
-        } else {
-            err = MATIO_E_OUT_OF_MEMORY;
-            Mat_Critical("Couldn't allocate memory for the directory");
+            if ( NULL != dir ) {
+                mat->dir = dir;
+                if ( NULL != matvar->name ) {
+                    mat->dir[mat->num_datasets++] = strdup(matvar->name);
+                } else {
+                    mat->dir[mat->num_datasets++] = NULL;
+                }
+            } else {
+                err = MATIO_E_OUT_OF_MEMORY;
+                Mat_Critical("Couldn't allocate memory for the directory");
+            }
         }
     }
 

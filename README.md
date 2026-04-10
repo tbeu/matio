@@ -35,6 +35,7 @@ You can contact the maintainer through email at t-beu@users.sourceforge.net.
 The following people/organizations have helped in the development of matio through patches, bug reports, and/or testing:
 
 * [Don Zimmer](https://github.com/dpzimmer)
+* [foreverallama](https://github.com/foreverallama)
 * [Greg Sjaardema](https://github.com/gsjaardema)
 * [Jacco van Beek](https://sourceforge.net/u/jabe)
 * [John Filo](https://github.com/jfilo)
@@ -99,6 +100,8 @@ The configure script used to build the software takes a number of options. This 
 This flag enables the support for version 7.3 MAT files. The option only makes sense if built with HDF5 as support for version 7.3 files. It will be disabled if HDF5 is not available.
 * `--enable-extended-sparse=yes`
 This option enables extended sparse matrix data types not supported in MATLAB. MATLAB only supports double-precision sparse data. With this flag, matio will read sparse data with other types (i.e. single-precision and integer types).
+* `--enable-mcos=yes`
+This option enables the support for MATLAB Class Object System (MCOS) objects (e.g. table, datetime, string, etc.).
 * `--with-matlab=DIR`
 This option specifies the directory (DIR) with the 'matlab' program. With this option, the testsuite will check that the MAT files written by matio can be read into MATLAB. Without this, the test will only check that matio can read the file written and if successful the test will be skipped. If matio can not read the file, the test will fail.
 * `--with-zlib=DIR`
@@ -127,6 +130,8 @@ The following matio specific options for building with CMake are available.
 This option sets the default MAT file version (4,5,7.3) that will be used when writing.
 * `MATIO_EXTENDED_SPARSE:BOOL=ON`
 This option enables extended sparse matrix data types not supported in MATLAB.
+* `MATIO_MCOS:BOOL=ON`
+This option enables the support for MATLAB Class Object System (MCOS) objects (e.g. table, datetime, string, etc.).
 * `MATIO_MAT73:BOOL=ON`
 This flag enables the support for version 7.3 MAT files.
 * `MATIO_PIC:BOOL=ON`

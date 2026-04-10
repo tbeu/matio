@@ -24,11 +24,12 @@ SNPRINTF_LIBS          = $(top_builddir)/snprintf/libsnprintf.la
 nodist_noinst_HEADERS  = matioConfig.h
 nodist_include_HEADERS = matio_pubconf.h
 include_HEADERS        = matio.h
-noinst_HEADERS         = matio_private.h mat4.h mat5.h mat73.h \
+noinst_HEADERS         = matio_private.h mat4.h mat5.h mat73.h mcos.h \
                          read_data_impl.h safe-math.h
 lib_LTLIBRARIES        = libmatio.la
 libmatio_la_SOURCES    = endian.c io.c $(ZLIB_SRC) read_data.c \
-                         mat5.c mat4.c mat.c matvar_cell.c matvar_struct.c
+                         mat5.c mat4.c mat.c matvar_cell.c matvar_struct.c \
+                         mcos.c
 libmatio_la_LIBADD     = $(HDF5_LIBS) $(ZLIB_LIBS) $(SNPRINTF_LIBS)
 libmatio_la_LDFLAGS    = -no-undefined -export-symbols @srcdir@/matio.sym $(AM_LDFLAGS)
 

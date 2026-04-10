@@ -1,0 +1,45 @@
+      Name: Rating
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [categorical]
+ Data Type: Structure
+Fields[2] {
+      Name: categoryNames
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Fair
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Good
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Poor
+}
+}
+      Name: codes
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+2 
+3 
+1 
+}
+}

@@ -1,0 +1,70 @@
+      Name: enum_scalar
+      Rank: 2
+Class Type: Structure
+Fields[6] {
+    EnumerationInstanceTag =
+3707764736 
+    ClassName =
+1 
+    ValueNames =
+3 
+          Name: Values
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+    ValueIndices =
+0 
+    BuiltinClassName =
+0 
+}
+      Name: enum_uint32
+      Rank: 2
+Class Type: Structure
+Fields[6] {
+    EnumerationInstanceTag =
+3707764736 
+    ClassName =
+2 
+    ValueNames =
+3 
+          Name: Values
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+    ValueIndices =
+0 
+    BuiltinClassName =
+3 
+}
+      Name: enum_array
+      Rank: 2
+Class Type: Structure
+Fields[6] {
+    EnumerationInstanceTag =
+3707764736 
+    ClassName =
+1 
+    ValueNames =
+3 
+9 
+10 
+11 
+12 
+13 
+          Name: Values
+          Rank: 2
+    Class Type: Cell Array
+    {
+    }
+    ValueIndices =
+0 2 4 
+1 3 5 
+    BuiltinClassName =
+0 
+}
+enum_nested = BasicClass (3 fields)
+    .a: [1 mxSTRUCT_CLASS]
+    .b: [1 mxCELL_CLASS]
+    .c: [1 mxSTRUCT_CLASS]

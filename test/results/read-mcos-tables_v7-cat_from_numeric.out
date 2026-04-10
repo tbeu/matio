@@ -1,0 +1,43 @@
+      Name: cat_from_numeric
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [categorical]
+ Data Type: Structure
+Fields[2] {
+      Name: categoryNames
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+low
+}
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+medium
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+high
+}
+}
+      Name: codes
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+1 2 3 2 1 
+}
+}

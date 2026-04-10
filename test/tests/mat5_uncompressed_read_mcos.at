@@ -1,0 +1,145 @@
+# Copyright (c) 2015-2026, The matio contributors
+# Copyright (c) 2010-2014, Christopher C. Hulbert
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+AT_SETUP([Read MCOS bugv6 la])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-bugv6-la.out expout
+          $builddir/test_mat readvar $srcdir/datasets/bugv6.mat la],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS class alias obj])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-class_alias-obj.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_class_alias.mat obj],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS class alias obj1])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-class_alias-obj1.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_class_alias.mat obj1],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS scattered interpolant v6 F])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-scattered_interpolant_v6-F.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_scattered_interpolant_v6.mat F],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table_all v6 Comment])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v6-Comment.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v6.mat Comment],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table_all v6 Customer])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v6-Customer.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v6.mat Customer],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table_all v6 Date])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v6-Date.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v6.mat Date],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table_all v6 FlightNum])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v6-FlightNum.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v6.mat FlightNum],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table_all v6 Rating])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v6-Rating.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v6.mat Rating],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table v6 T])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_v6-T.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_v6.mat T],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS bugv6])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-bugv6.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/bugv6.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS bugv6 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-bugv6-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/bugv6.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS class alias])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-class_alias.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_class_alias.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS class alias human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-class_alias-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_class_alias.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS scattered interpolant v6])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-scattered_interpolant_v6.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_scattered_interpolant_v6.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS scattered interpolant v6 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-scattered_interpolant_v6-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_scattered_interpolant_v6.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS table all v6])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-table_all_v6.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_table_all_v6.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS table all v6 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-table_all_v6-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_table_all_v6.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS table v6])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-table_v6.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_table_v6.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS table v6 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-table_v6-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_table_v6.mat],[0],[expout],[])
+AT_CLEANUP

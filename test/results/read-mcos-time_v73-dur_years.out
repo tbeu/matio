@@ -1,0 +1,23 @@
+      Name: dur_years
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [duration]
+ Data Type: Structure
+Fields[2] {
+      Name: millis
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.1557e+10 6.31139e+10 9.46709e+10 
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+y
+}
+}

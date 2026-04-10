@@ -1,0 +1,15 @@
+      Name: obj_handle_2
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [HandleClass]
+ Data Type: Structure
+Fields[1] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+20 
+}
+}

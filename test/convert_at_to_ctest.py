@@ -17,6 +17,7 @@ condition_mapping = {
     'test $EXTENDED_SPARSE -ne 1': 'MATIO_EXTENDED_SPARSE',
     'test $COMPRESSION_ZLIB -ne 1': 'HAVE_ZLIB',
     'test $MAT73 -ne 1': 'MAT73 AND HAVE_HDF5',
+    'test $MCOS -ne 1': 'MATIO_MCOS',
     'test $HAVE_INT64 -eq 0': 'HAVE_INT64',
     'test $HAVE_UINT64 -eq 0': 'HAVE_UINT64',
     '! grep -q "#define SIZEOF_VOID_P 4" $abs_top_builddir/src/matioConfig.h': 'CMAKE_SIZEOF_VOID_P EQUAL 4',

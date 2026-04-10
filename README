@@ -34,6 +34,7 @@ Table of Contents
         The following people/organizations have helped in the development of
         matio through patches, bug reports, and/or testing:
           * Don Zimmer (https://github.com/dpzimmer)
+          * foreverallama (https://github.com/foreverallama)
           * Greg Sjaardema (https://github.com/gsjaardema)
           * Jacco van Beek (https://sourceforge.net/u/jabe)
           * John Filo (https://github.com/jfilo)
@@ -122,10 +123,13 @@ Table of Contents
                 The option only makes sense if built with HDF5 as support for
                 version 7.3 files. It will be disabled if HDF5 is not available.
               * '--enable-extended-sparse=yes'
-                Enable extended sparse matrix data types not supported in
-                MATLAB. MATLAB only supports double-precision sparse data.
-                With this flag, matio will read sparse data with other types
-                (i.e. single-precision and integer types).
+                This flag en/disables extended sparse matrix data types not
+                supported in MATLAB. MATLAB only supports double-precision
+                sparse data. With this flag, matio will read sparse data with
+                other types (i.e. single-precision and integer types).
+              * '--enable-mcos=yes'
+                This flag en/disables the support for MATLAB Class Object
+                System (MCOS) objects (e.g. table, datetime, string, etc.).
               * '--with-matlab=DIR'
                 This option specifies the directory (DIR) with the 'matlab'
                 program. With this option, the testsuite will check that the
@@ -173,6 +177,9 @@ Table of Contents
               * 'MATIO_EXTENDED_SPARSE:BOOL=ON'
                 This option enables extended sparse matrix data types not
                 supported in MATLAB.
+              * 'MATIO_MCOS:BOOL=ON'
+                This option enables the support for MATLAB Class Object System
+                (MCOS) objects (e.g. table, datetime, string, etc.).
               * 'MATIO_MAT73:BOOL=ON'
                 This flag enables the support for version 7.3 MAT files.
               * 'MATIO_PIC:BOOL=ON'

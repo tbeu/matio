@@ -1,0 +1,23 @@
+      Name: dt_fmt
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [datetime]
+ Data Type: Structure
+Fields[2] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.74351e+12 
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 19
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+yyyy-MM-dd HH:mm:ss
+}
+}

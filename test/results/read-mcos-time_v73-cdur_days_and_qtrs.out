@@ -1,0 +1,46 @@
+      Name: cdur_days_and_qtrs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [calendarDuration]
+ Data Type: Structure
+Fields[2] {
+      Name: components
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: months
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3 
+}
+      Name: days
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+15 
+}
+      Name: millis
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 
+}
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+yqmdt
+}
+}

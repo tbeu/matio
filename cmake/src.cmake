@@ -21,8 +21,10 @@ set(MATIO_SOURCES
     ${PROJECT_SOURCE_DIR}/src/mat4.c
     ${PROJECT_SOURCE_DIR}/src/mat5.c
     ${PROJECT_SOURCE_DIR}/src/read_data.c
+    ${PROJECT_SOURCE_DIR}/src/mcos.c
     ${PROJECT_SOURCE_DIR}/snprintf/snprintf.c
     ${PROJECT_SOURCE_DIR}/src/mat5.h
+    ${PROJECT_SOURCE_DIR}/src/mcos.h
     ${PROJECT_SOURCE_DIR}/src/mat73.h
     ${PROJECT_SOURCE_DIR}/src/matio_private.h
     ${PROJECT_SOURCE_DIR}/src/mat4.h

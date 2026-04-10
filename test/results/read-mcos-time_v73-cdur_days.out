@@ -1,0 +1,38 @@
+      Name: cdur_days
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [calendarDuration]
+ Data Type: Structure
+Fields[1] {
+      Name: components
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: months
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 
+}
+      Name: days
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 2 3 
+}
+      Name: millis
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 
+}
+}
+}

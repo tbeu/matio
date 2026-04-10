@@ -1,0 +1,23 @@
+      Name: dur_h
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [duration]
+ Data Type: Structure
+Fields[2] {
+      Name: millis
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.8e+07 
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+h
+}
+}

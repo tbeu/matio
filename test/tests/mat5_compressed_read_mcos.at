@@ -1,0 +1,1069 @@
+# Copyright (c) 2015-2026, The matio contributors
+# Copyright (c) 2010-2014, Christopher C. Hulbert
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+AT_SETUP([Read MCOS bugv7 la])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-bugv7-la.out expout
+          $builddir/test_mat readvar $srcdir/datasets/bugv7.mat la],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS dynamic v7 obj])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-dynamic_v7-obj.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_dynamic_v7.mat obj],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS function handles v7 builtin_fh])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-function_handles_v7-builtin_fh.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_function_handles_v7.mat builtin_fh],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS function handles v7 custom_fh])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-function_handles_v7-custom_fh.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_function_handles_v7.mat custom_fh],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS function handles v7 anonymous_fh])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-function_handles_v7-anonymous_fh.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_function_handles_v7.mat anonymous_fh],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS function handles v7 class_fh])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-function_handles_v7-class_fh.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_function_handles_v7.mat class_fh],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS function handles v7 nested_fh])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-function_handles_v7-nested_fh.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_function_handles_v7.mat nested_fh],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS enum v7 enum_scalar])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-enum_v7-enum_scalar.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_enum_v7.mat enum_scalar],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS enum v7 enum_uint32])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-enum_v7-enum_uint32.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_enum_v7.mat enum_uint32],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS enum v7 enum_array])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-enum_v7-enum_array.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_enum_v7.mat enum_array],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS enum v7 enum_nested])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-enum_v7-enum_nested.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_enum_v7.mat enum_nested],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 map_empty])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-map_empty.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat map_empty],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 map_numeric_keys])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-map_numeric_keys.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat map_numeric_keys],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 map_char_keys])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-map_char_keys.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat map_char_keys],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 map_string_keys])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-map_string_keys.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat map_string_keys],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 dict_numeric_keys])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-dict_numeric_keys.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat dict_numeric_keys],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 dict_string_keys])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-dict_string_keys.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat dict_string_keys],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 dict_cell_vals])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-dict_cell_vals.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat dict_cell_vals],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 dict_cell_keys])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-dict_cell_keys.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat dict_cell_keys],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 dict_empty])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-dict_empty.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat dict_empty],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS maps v7 dict_val_scalar])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-dict_val_scalar.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat dict_val_scalar],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS scattered interpolant v7 F])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-scattered_interpolant_v7-F.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_scattered_interpolant_v7.mat F],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS string v7 string_scalar])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-string_v7-string_scalar.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_string_v7.mat string_scalar],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS string v7 string_array])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-string_v7-string_array.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_string_v7.mat string_array],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS string v7 string_empty])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-string_v7-string_empty.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_string_v7.mat string_empty],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 a])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-a.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat a],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 b])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-b.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat b],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 c])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-c.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat c],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 cell])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-cell.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat cell],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 char])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-char.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat char],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 ee])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-ee.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat ee],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 s])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-s.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat s],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 s1])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-s1.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat s1],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 s2])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-s2.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat s2],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS strings v7 str_last])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-strings_v7-str_last.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_strings_v7.mat str_last],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table all v7 Comment])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v7-Comment.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v7.mat Comment],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table all v7 Customer])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v7-Customer.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v7.mat Customer],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table all v7 Date])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v7-Date.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v7.mat Date],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table all v7 FlightNum])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v7-FlightNum.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v7.mat FlightNum],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table all v7 Rating])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_all_v7-Rating.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_all_v7.mat Rating],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS table v7 T])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-table_v7-T.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_table_v7.mat T],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_empty])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_empty.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_empty],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_numeric])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_numeric.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_numeric],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_strings])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_strings.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_strings],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_time])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_time.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_time],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_with_objects])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_with_objects.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_with_objects],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_from_cell])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_from_cell.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_from_cell],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_var_names])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_var_names.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_var_names],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_row_names])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_row_names.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_row_names],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_with_attrs])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_with_attrs.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_with_attrs],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 table_multi_col_data])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-table_multi_col_data.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat table_multi_col_data],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_datetime])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_datetime.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_datetime],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_duration])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_duration.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_duration],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_multi_col])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_multi_col.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_multi_col],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_var_names])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_var_names.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_var_names],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_from_sample_rate])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_from_sample_rate.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_from_sample_rate],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_from_duration])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_from_duration.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_from_duration],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_from_starttime_duration])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_from_starttime_duration.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_from_starttime_duration],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_from_starttime_datetime])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_from_starttime_datetime.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_from_starttime_datetime],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_with_attrs])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_with_attrs.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_with_attrs],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 timetable_empty])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-timetable_empty.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat timetable_empty],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_scalar])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_scalar.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_scalar],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_array])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_array.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_array],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_3D])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_3D.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_3D],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_unordered])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_unordered.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_unordered],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_ordered])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_ordered.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_ordered],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_from_numeric])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_from_numeric.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_from_numeric],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_empty])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_empty.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_empty],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_missing])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_missing.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_missing],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_string])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_string.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_string],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS tables v7 cat_mixed_case])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-tables_v7-cat_mixed_case.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_tables_v7.mat cat_mixed_case],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dt_basic])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dt_basic.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dt_basic],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dt_vector])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dt_vector.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dt_vector],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dt_array])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dt_array.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dt_array],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dt_empty])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dt_empty.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dt_empty],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dt_tz])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dt_tz.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dt_tz],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dt_fmt])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dt_fmt.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dt_fmt],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dur_s])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dur_s.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dur_s],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dur_m])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dur_m.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dur_m],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dur_h])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dur_h.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dur_h],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dur_days])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dur_days.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dur_days],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dur_hms])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dur_hms.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dur_hms],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dur_array])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dur_array.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dur_array],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dur_empty])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dur_empty.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dur_empty],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 dur_years])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-dur_years.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat dur_years],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 cdur_empty])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-cdur_empty.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat cdur_empty],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 cdur_days])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-cdur_days.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat cdur_days],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 cdur_weeks])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-cdur_weeks.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat cdur_weeks],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 cdur_days_and_months])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-cdur_days_and_months.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat cdur_days_and_months],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 cdur_months_and_years])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-cdur_months_and_years.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat cdur_months_and_years],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 cdur_days_and_qtrs])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-cdur_days_and_qtrs.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat cdur_days_and_qtrs],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 cdur_array])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-cdur_array.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat cdur_array],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS time v7 cdur_millis])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-time_v7-cdur_millis.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_time_v7.mat cdur_millis],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS type systems v7 javatype])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-type_systems_v7-javatype.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_type_systems_v7.mat javatype],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS type systems v7 handletype])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-type_systems_v7-handletype.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_type_systems_v7.mat handletype],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS user defined v7 obj_no_vals])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-user_defined_v7-obj_no_vals.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_user_defined_v7.mat obj_no_vals],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS user defined v7 obj_with_vals])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-user_defined_v7-obj_with_vals.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_user_defined_v7.mat obj_with_vals],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS user defined v7 obj_with_default_val])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-user_defined_v7-obj_with_default_val.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_user_defined_v7.mat obj_with_default_val],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS user defined v7 obj_with_nested_props])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-user_defined_v7-obj_with_nested_props.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_user_defined_v7.mat obj_with_nested_props],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS user defined v7 obj_array])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-user_defined_v7-obj_array.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_user_defined_v7.mat obj_array],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS user defined v7 obj_handle_1])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-user_defined_v7-obj_handle_1.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_user_defined_v7.mat obj_handle_1],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS user defined v7 obj_handle_2])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-user_defined_v7-obj_handle_2.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_user_defined_v7.mat obj_handle_2],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS figure hgS_070000])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-figure-hgS_070000.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_figure.fig hgS_070000],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS figure hgM_070000])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-figure-hgM_070000.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_figure.fig hgM_070000],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS figure meta_data])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-figure-meta_data.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_figure.fig meta_data],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS bugv7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-bugv7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/bugv7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS bugv7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-bugv7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/bugv7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS dynamic v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-dynamic_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_dynamic_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS dynamic v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-dynamic_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_dynamic_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS function handles v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-function_handles_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_function_handles_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS function handles v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-function_handles_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_function_handles_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS enum v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-enum_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_enum_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS enum v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-enum_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_enum_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS maps v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-maps_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_maps_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS maps v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-maps_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_maps_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS scattered interpolant v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-scattered_interpolant_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_scattered_interpolant_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS scattered interpolant v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-scattered_interpolant_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_scattered_interpolant_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS string v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-string_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_string_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS string v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-string_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_string_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS strings v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-strings_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_strings_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS strings v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-strings_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_strings_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS table all v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-table_all_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_table_all_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS table all v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-table_all_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_table_all_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS table v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-table_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_table_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS table v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-table_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_table_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS time v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-time_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_time_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS time v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-time_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_time_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS type systems v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-type_systems_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_type_systems_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS type systems v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-type_systems_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_type_systems_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS user defined v7])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-user_defined_v7.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_user_defined_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS user defined v7 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-user_defined_v7-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_user_defined_v7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS figure])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-figure.out expout
+          $builddir/../tools/matdump -d $srcdir/datasets/test_figure.fig],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS figure human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-figure-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/test_figure.fig],[0],[expout],[])
+AT_CLEANUP

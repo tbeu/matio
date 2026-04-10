@@ -1,0 +1,59 @@
+      Name: cat_ordered
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [categorical]
+ Data Type: Structure
+Fields[4] {
+      Name: categoryNames
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+small
+}
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+medium
+}
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+large
+}
+}
+      Name: codes
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+1 2 3 
+}
+      Name: isProtected
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: isOrdinal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}

@@ -13,6 +13,7 @@
 #include "matio_private.h"
 #if defined(MAT73) && MAT73
 #include "mat73.h"
+#include "mcos.h"
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -537,6 +538,28 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
             return MATIO_E_GENERIC_READ_ERROR;
         }
         matvar->class_type = ClassStr2ClassType(class_str);
+        if ( MAT_C_EMPTY == matvar->class_type ) {
+            /* Check for MCOS object: unknown class name on a dataset.
+             * MCOS objects in v7.3 are stored as uint8 datasets with a
+             * non-standard MATLAB_class attribute. Groups with unknown class
+             * names (e.g. enumeration types) are not MCOS objects but
+             * struct-like containers (read as MAT_C_STRUCT).
+             */
+#if defined(MCOS) && MCOS
+            if ( H5Iget_type(dset_id) == H5I_DATASET && 0 != strcmp(class_str, "logical") &&
+                 0 != strcmp(class_str, "unknown") ) {
+                /* Likely an MCOS object — store class name and mark as opaque */
+                matvar->class_type = MAT_C_OPAQUE;
+                matvar->internal->class_name = strdup(class_str);
+                matvar->internal->type_name = strdup("MCOS");
+                matvar->data_type = MAT_T_UINT8;
+            } else if ( H5Iget_type(dset_id) == H5I_GROUP && 0 != strcmp(class_str, "logical") &&
+                        0 != strcmp(class_str, "unknown") ) {
+                /* Group with unknown class (e.g. enum instance) — treat as struct */
+                matvar->class_type = MAT_C_STRUCT;
+            }
+#endif
+        }
         if ( MAT_C_EMPTY == matvar->class_type || MAT_C_CHAR == matvar->class_type ) {
             int int_decode = 0;
             if ( H5Aexists_by_name(dset_id, ".", "MATLAB_int_decode", H5P_DEFAULT) ) {
@@ -2537,11 +2560,11 @@ Mat_VarWriteNextType73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs
                 err = Mat_VarWriteSparse73(id, matvar, name);
                 break;
             case MAT_C_EMPTY:
+            case MAT_C_OBJECT:
+            case MAT_C_OPAQUE:
                 err = Mat_WriteEmptyVariable73(id, name, matvar->rank, matvar->dims);
                 break;
             case MAT_C_FUNCTION:
-            case MAT_C_OBJECT:
-            case MAT_C_OPAQUE:
                 err = MATIO_E_OPERATION_NOT_SUPPORTED;
                 break;
             default:
@@ -2674,6 +2697,9 @@ Mat_Create73(const char *matname, const char *hdr_str)
     mat->num_datasets = 0;
     mat->refs_id = -1;
     mat->dir = NULL;
+#if defined(MCOS) && MCOS
+    mat->mcos = NULL;
+#endif
 
     t = time(NULL);
     mat->filename = strdup(matname);
@@ -3029,8 +3055,62 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
         case MAT_C_EMPTY:
         case MAT_C_FUNCTION:
         case MAT_C_OBJECT:
-        case MAT_C_OPAQUE:
             break;
+        case MAT_C_OPAQUE: {
+            /* Read MCOS opaque data: the dataset contains uint32 reference values */
+            hid_t opaque_id = matvar->internal->id;
+            if ( opaque_id > 0 ) {
+                hid_t dtype_id = H5Dget_type(opaque_id);
+                H5T_class_t type_class = H5T_NO_CLASS;
+                if ( dtype_id >= 0 ) {
+                    type_class = H5Tget_class(dtype_id);
+                    H5Tclose(dtype_id);
+                }
+                if ( type_class == H5T_INTEGER ) {
+                    hsize_t nelems = 1;
+                    int k;
+                    hid_t space_id = H5Dget_space(opaque_id);
+                    if ( space_id >= 0 ) {
+                        int ndims = H5Sget_simple_extent_ndims(space_id);
+                        if ( ndims > 0 ) {
+                            hsize_t *h5dims = (hsize_t *)malloc((size_t)ndims * sizeof(hsize_t));
+                            if ( h5dims != NULL ) {
+                                H5Sget_simple_extent_dims(space_id, h5dims, NULL);
+                                for ( k = 0; k < ndims; k++ )
+                                    nelems *= h5dims[k];
+                                free(h5dims);
+                            }
+                        }
+                        H5Sclose(space_id);
+                    }
+                    if ( nelems > 0 ) {
+                        /* Read the raw data as uint32 values */
+                        mat_uint32_t *meta =
+                            (mat_uint32_t *)malloc((size_t)nelems * sizeof(mat_uint32_t));
+                        if ( meta != NULL ) {
+                            herr_t herr = H5Dread(opaque_id, H5T_NATIVE_UINT32, H5S_ALL, H5S_ALL,
+                                                  H5P_DEFAULT, meta);
+                            if ( herr >= 0 ) {
+#if defined(MCOS) && MCOS
+                                (void)ParseOpaqueMetadata(meta, (size_t)nelems, matvar);
+#endif
+                            }
+                            free(meta);
+                        }
+                    }
+                }
+            }
+
+            /* Try to resolve MCOS object from subsystem */
+#if defined(MCOS) && MCOS
+            if ( matvar->internal->type_name != NULL &&
+                 strcmp(matvar->internal->type_name, "MCOS") == 0 &&
+                 matvar->internal->num_objects > 0 && matvar->internal->object_ids != NULL ) {
+                err = Mat_MCOS_Read73(mat, matvar);
+            }
+#endif
+            break;
+        }
         default:
             err = MATIO_E_FAIL_TO_IDENTIFY;
             break;
@@ -3209,6 +3289,56 @@ Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int
     return err;
 }
 
+/** @brief Read a matvar_t from an HDF5 object reference
+ *
+ * This function dereferences the given HDF5 object reference, reads
+ * the metadata and data, and returns a fully populated matvar_t.
+ * It is used by the MCOS subsystem parser to read individual cells
+ * of the FileWrapper__ cell array from v7.3 files.
+ *
+ * @param mat        MAT file pointer
+ * @param container_id  HDF5 object ID that contains the reference
+ * @param ref        The object reference to dereference
+ * @return pointer to the newly allocated matvar_t, or NULL on error
+ */
+matvar_t *
+Mat_VarReadFromH5Ref(mat_t *mat, hid_t container_id, hobj_ref_t ref)
+{
+    int err;
+    hid_t ref_id;
+    matvar_t *matvar;
+
+    if ( mat == NULL || container_id < 0 )
+        return NULL;
+
+    ref_id = H5RDEREFERENCE(container_id, H5R_OBJECT, &ref);
+    if ( ref_id < 0 )
+        return NULL;
+
+    matvar = Mat_VarCalloc();
+    if ( matvar == NULL ) {
+        H5Dclose(ref_id);
+        return NULL;
+    }
+
+    matvar->internal->hdf5_ref = ref;
+    matvar->internal->id = ref_id;
+
+    err = Mat_H5ReadNextReferenceInfo(ref_id, matvar, mat);
+    if ( err ) {
+        Mat_VarFree(matvar);
+        return NULL;
+    }
+
+    err = Mat_H5ReadNextReferenceData(matvar, mat);
+    if ( err ) {
+        Mat_VarFree(matvar);
+        return NULL;
+    }
+
+    return matvar;
+}
+
 /** @if mat_devman
  * @brief Reads the header information for the next MAT variable
  *
@@ -3241,7 +3371,7 @@ Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data)
     iter_data.pred_user_data = user_data;
     herr = H5Literate(id, H5_INDEX_NAME, H5_ITER_NATIVE, &idx, Mat_VarReadNextInfoIterate,
                       (void *)&iter_data);
-    if ( herr > 0 )
+    if ( herr >= 0 )
         mat->next_index = (size_t)idx;
     return iter_data.matvar;
 }
@@ -3298,7 +3428,7 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
             }
             if ( err ) {
                 Mat_VarFree(matvar);
-                return -1;
+                return 0; /* Skip unreadable variable */
             }
             iter_data->matvar = matvar;
             break;
@@ -3320,7 +3450,7 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
             err = Mat_H5ReadGroupInfo(mat, matvar, dset_id);
             if ( err ) {
                 Mat_VarFree(matvar);
-                return -1;
+                return 0; /* Skip unreadable variable */
             }
             iter_data->matvar = matvar;
             break;

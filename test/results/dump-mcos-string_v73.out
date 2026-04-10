@@ -1,0 +1,45 @@
+      Name: string_array
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 18
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 2 3 5 4 6 3 6 6 30399778528428097 32651513914720357 30962664054325349 19703664988782689 29273685347467369 34058961815732325 31525614010892359 7536741 
+}
+}
+      Name: string_empty
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 1 1 0 
+}
+}
+      Name: string_scalar
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 1 1 5 30399761347838024 111 
+}
+}

@@ -1,0 +1,28 @@
+      Name: obj_no_vals
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicClass]
+ Data Type: Structure
+Fields[3] {
+      Name: a
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: b
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: c
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}

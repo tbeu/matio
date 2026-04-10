@@ -1,0 +1,80 @@
+      Name: map_string_keys
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Map]
+ Data Type: Structure
+Fields[1] {
+      Name: serialization
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: keys
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+a
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+b
+}
+}
+      Name: values
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+}
+      Name: uniformity
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: keyType
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+char
+}
+      Name: valueType
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+double
+}
+}
+}

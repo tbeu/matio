@@ -9,7 +9,7 @@
 
 info_TEXINFOS       = matio_user_guide.texi
 matio_user_guide_TEXINFOS = intro.texi quick.texi matvar_structure.texi \
-                            build.texi
+                            build.texi mcos.texi
 
 dist_man3_MANS  = \
     Mat_Close.3 \
@@ -28,6 +28,7 @@ dist_man3_MANS  = \
     Mat_VarCreateStruct2.3 \
     Mat_VarDelete.3 \
     Mat_VarFree.3 \
+    Mat_VarGetClassName.3 \
     Mat_VarGetNumberOfFields.3 \
     Mat_VarGetSize.3 \
     Mat_VarGetStructFieldnames.3 \

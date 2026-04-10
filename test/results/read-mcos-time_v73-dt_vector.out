@@ -1,0 +1,15 @@
+      Name: dt_vector
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [datetime]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.74347e+12 1.74355e+12 1.74364e+12 1.74372e+12 1.74381e+12 1.7439e+12 
+}
+}

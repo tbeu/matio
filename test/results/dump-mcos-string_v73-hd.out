@@ -1,0 +1,6 @@
+string_array = string:
+  "\u0006"
+  ""
+string_empty = string:
+string_scalar = string:
+  "Hello"

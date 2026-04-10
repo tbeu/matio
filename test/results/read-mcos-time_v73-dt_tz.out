@@ -1,0 +1,23 @@
+      Name: dt_tz
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [datetime]
+ Data Type: Structure
+Fields[2] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.74352e+12 
+}
+      Name: tz
+      Rank: 2
+Dimensions: 1 x 16
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+America/New_York
+}
+}

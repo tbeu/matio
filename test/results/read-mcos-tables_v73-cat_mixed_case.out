@@ -1,0 +1,57 @@
+      Name: cat_mixed_case
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [categorical]
+ Data Type: Structure
+Fields[2] {
+      Name: categoryNames
+      Rank: 2
+Dimensions: 5 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+OFF
+}
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ON
+}
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+On
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+off
+}
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+on
+}
+}
+      Name: codes
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+3 4 1 2 5 
+}
+}

@@ -1,0 +1,673 @@
+      Name: dict_cell_keys
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [dictionary]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: Version
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 
+}
+      Name: IsKeyCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: IsValueCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: Key
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3 
+}
+}
+      Name: Value
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 3 1 3 3 5 32651531097342063 29273895801389175 433798316146 
+}
+}
+}
+}
+      Name: dict_cell_vals
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [dictionary]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: Version
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 
+}
+      Name: IsKeyCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: IsValueCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: Key
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 2 1 4 3 28429440805568622 433798447201 
+}
+}
+      Name: Value
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 1 1 5 27866473672998977 101 
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+25 
+}
+}
+}
+}
+      Name: dict_empty
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [dictionary]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: Version
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 
+}
+      Name: Unconfigured
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+}
+      Name: dict_numeric_keys
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [dictionary]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: Version
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 
+}
+      Name: IsKeyCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: IsValueCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: Key
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+2 
+3 
+}
+      Name: Value
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 12
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 3 1 5 6 6 30399778528428129 30962664056422501 27866439313391713 32088636977905768 121 
+}
+}
+}
+}
+      Name: dict_string_keys
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [dictionary]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: Version
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 
+}
+      Name: IsKeyCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: IsValueCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: Key
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 3 1 1 1 1 523993940088 
+}
+}
+      Name: Value
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+10 
+20 
+30 
+}
+}
+}
+      Name: dict_val_scalar
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [dictionary]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: Version
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 
+}
+      Name: IsKeyCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: IsValueCombined
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: Key
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+2 
+3 
+}
+      Name: Value
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 3 1 1 1 1 416618184801 
+}
+}
+}
+}
+      Name: map_char_keys
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Map]
+ Data Type: Structure
+Fields[1] {
+      Name: serialization
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: keys
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+a
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+b
+}
+}
+      Name: values
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+}
+      Name: uniformity
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: keyType
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+char
+}
+      Name: valueType
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+double
+}
+}
+}
+      Name: map_empty
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Map]
+ Data Type: Structure
+Fields[1] {
+      Name: serialization
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: keys
+      Rank: 2
+Dimensions: 1 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: values
+      Rank: 2
+Dimensions: 1 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: uniformity
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: keyType
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+char
+}
+      Name: valueType
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+any
+}
+}
+}
+      Name: map_numeric_keys
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Map]
+ Data Type: Structure
+Fields[1] {
+      Name: serialization
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: keys
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+}
+      Name: values
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+a
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+b
+}
+}
+      Name: uniformity
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: keyType
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+double
+}
+      Name: valueType
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+char
+}
+}
+}
+      Name: map_string_keys
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Map]
+ Data Type: Structure
+Fields[1] {
+      Name: serialization
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[5] {
+      Name: keys
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+a
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+b
+}
+}
+      Name: values
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+}
+      Name: uniformity
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: keyType
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+char
+}
+      Name: valueType
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+double
+}
+}
+}

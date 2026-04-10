@@ -1,0 +1,30 @@
+      Name: dict_empty
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [dictionary]
+ Data Type: Structure
+Fields[1] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: Version
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 
+}
+      Name: Unconfigured
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+}

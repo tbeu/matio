@@ -1,0 +1,7 @@
+      Name: obj_with_default_val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [DefaultClass]
+ Data Type: Structure
+Fields[0] {
+}

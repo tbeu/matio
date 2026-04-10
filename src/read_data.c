@@ -911,8 +911,8 @@ ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
         if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) ) {  \
             err = ReadDataFunc(mat, ptr, data_type, (ptrdiff_t)edge[0] * edge[1]);   \
         } else {                                                                     \
-            row_stride = (stride[0] - 1) * data_size;                                \
-            col_stride = stride[1] * dims[0] * data_size;                            \
+            row_stride = (mat_off_t)(stride[0] - 1) * data_size;                     \
+            col_stride = (mat_off_t)stride[1] * dims[0] * data_size;                 \
             pos = ftello((FILE *)mat->fp);                                           \
             if ( pos == -1L ) {                                                      \
                 Mat_Critical("Couldn't determine file position");                    \

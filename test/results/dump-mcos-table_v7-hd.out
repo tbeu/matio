@@ -1,0 +1,9 @@
+
+  T = 3x5 table
+
+    FlightNum    Customer    Date           Rating    Comment                                          
+    _________    ________    ___________    ______    _________________________________________________
+
+         1261    "Jones"     20-Dec-2016    Good      "Flight left on time, not crowded"               
+          547    "Brown"     21-Dec-2016    Poor      "Late departure, ran out of dinner options"      
+         3489    "Smith"     22-Dec-2016    Fair      "Late, but only by half an hour. Otherwise fine."

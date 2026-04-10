@@ -1,0 +1,284 @@
+      Name: table_with_attrs
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [table]
+ Data Type: Structure
+Fields[7] {
+      Name: data
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+2 
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [string]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 2 1 3 3 32651531097342063 7274615 
+}
+}
+}
+      Name: ndims
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: nrows
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: rownames
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: nvars
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: varnames
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ID
+}
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Label
+}
+}
+      Name: props
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[16] {
+      Name: useVariableNamesOriginal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: useDimensionNamesOriginal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: CustomProps
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: VariableCustomProps
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: versionSavedFrom
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+      Name: minCompatibleVersion
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: incompatibilityMsg
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: VersionSavedFrom
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+      Name: Description
+      Rank: 2
+Dimensions: 1 x 29
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Test table with full metadata
+}
+      Name: VariableNamesOriginal
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: DimensionNames
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+RowId
+}
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Features
+}
+}
+      Name: DimensionNamesOriginal
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+}
+      Name: UserData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: CreatedBy
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+UnitTest
+}
+      Name: Version
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+}
+      Name: VariableDescriptions
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ID number
+}
+      Rank: 2
+Dimensions: 1 x 14
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Category label
+}
+}
+      Name: VariableUnits
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+category
+}
+}
+      Name: VariableContinuity
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+continuous
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+step
+}
+}
+}
+}

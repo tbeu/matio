@@ -42,6 +42,7 @@ EXPORTS
     Mat_VarGetStructFieldnames
     Mat_VarGetStructs
     Mat_VarGetStructsLinear
+    Mat_VarGetClassName
     Mat_VarPrint
     Mat_VarRead
     Mat_VarReadData

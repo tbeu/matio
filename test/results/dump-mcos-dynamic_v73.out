@@ -1,0 +1,158 @@
+      Name: obj
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BasicDynamic]
+ Data Type: Structure
+Fields[19] {
+      Name: Name
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Example
+}
+      Name: DynamicName_
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+DynamicData
+}
+      Name: DynamicType_
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+any
+}
+      Name: DynamicValue_
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+42 
+}
+      Name: Description
+      Rank: 2
+Dimensions: 1 x 21
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+Test Dyanmic Property
+}
+      Name: DetailedDescription
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: GetAccess
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+public
+}
+      Name: SetAccess
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+public
+}
+      Name: Dependent
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: Constant
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: Abstract
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: Transient
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: Hidden
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: GetObservable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: SetObservable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: AbortSet
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: NonCopyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: PartialMatchPriority
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: WeakReference
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}

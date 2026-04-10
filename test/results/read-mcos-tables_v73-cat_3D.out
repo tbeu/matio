@@ -1,0 +1,43 @@
+      Name: cat_3D
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [categorical]
+ Data Type: Structure
+Fields[2] {
+      Name: categoryNames
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+maybe
+}
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+no
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+yes
+}
+}
+      Name: codes
+      Rank: 3
+Dimensions: 2 x 3 x 2
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+Can't print more than 2 dimensions
+}
+}

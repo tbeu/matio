@@ -1,0 +1,21 @@
+obj_no_vals = BasicClass (3 fields)
+    .a: [0 mxDOUBLE_CLASS]
+    .b: [0 mxDOUBLE_CLASS]
+    .c: [0 mxDOUBLE_CLASS]
+obj_with_vals = BasicClass (3 fields)
+    .a = 10
+    .b: [0 mxDOUBLE_CLASS]
+    .c: [0 mxDOUBLE_CLASS]
+obj_with_default_val = DefaultClass (0 fields)
+obj_with_nested_props = BasicClass (3 fields)
+    .a: [1 mxOBJECT_CLASS]
+    .b: [1 mxCELL_CLASS]
+    .c: [1 mxSTRUCT_CLASS]
+obj_array = BasicClass (3 fields)
+    .a = 1
+    .b: [0 mxDOUBLE_CLASS]
+    .c: [0 mxDOUBLE_CLASS]
+obj_handle_1 = HandleClass (1 fields)
+    .a = 20
+obj_handle_2 = HandleClass (1 fields)
+    .a = 20

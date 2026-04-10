@@ -162,6 +162,15 @@ m4_include([mat73_uncompressed_extended_sparse.at])
 AT_BANNER([Extended Sparse Compressed MAT version 7.3])
 m4_include([mat73_compressed_extended_sparse.at])
 
+AT_BANNER([Read Uncompressed MCOS MAT version 5])
+m4_include([mat5_uncompressed_read_mcos.at])
+
+AT_BANNER([Read Compressed MCOS MAT version 5])
+m4_include([mat5_compressed_read_mcos.at])
+
+AT_BANNER([Read MCOS MAT version 7.3])
+m4_include([mat73_read_mcos.at])
+
 AT_BANNER([API Tests])
 m4_include([struct_api.at])
 m4_include([cell_api.at])

@@ -326,6 +326,24 @@ else
 fi
 AM_CONDITIONAL([EXTENDED_SPARSE], [test "x$extended_sparse" = "xyes"])
 
+dnl
+dnl Check whether to enable MCOS (MATLAB Class Object System) support
+dnl
+AC_ARG_ENABLE(mcos,
+    AS_HELP_STRING([--enable-mcos=yes],[Enable MATLAB Class Object System (MCOS) support]),
+mcos=$enableval,mcos=yes)
+AC_MSG_CHECKING(enable MCOS support)
+if test "x$mcos" = "xno"
+then
+    AC_MSG_RESULT([no])
+    mcos=no
+else
+    AC_MSG_RESULT([yes])
+    AC_DEFINE_UNQUOTED([MCOS],[1],[MATLAB Class Object System (MCOS) support])
+    mcos=yes
+fi
+AM_CONDITIONAL([MATIO_MCOS], [test "x$mcos" = "xyes"])
+
 linux="no"
 winnt="no"
 sun="no"
@@ -386,6 +404,7 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([Features --------------------------------------------])
 AC_MSG_RESULT([  MAT v7.3 file support: $mat73])
 AC_MSG_RESULT([Extended sparse support: $extended_sparse])
+AC_MSG_RESULT([           MCOS support: $mcos])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Packages --------------------------------------------])
 AC_MSG_RESULT([                 zlib: $ZLIB_LIBS])

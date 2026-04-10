@@ -52,7 +52,10 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(tests_dir)/mat5_compressed_extended_sparse.at \
                $(tests_dir)/mat5_uncompressed_extended_sparse.at \
                $(tests_dir)/mat73_compressed_extended_sparse.at \
-               $(tests_dir)/mat73_uncompressed_extended_sparse.at
+               $(tests_dir)/mat73_uncompressed_extended_sparse.at \
+               $(tests_dir)/mat5_uncompressed_read_mcos.at \
+               $(tests_dir)/mat5_compressed_read_mcos.at \
+               $(tests_dir)/mat73_read_mcos.at
 
 TESTSUITE = $(srcdir)/testsuite
 
@@ -73,6 +76,41 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/struct_nullpad_class_name_hdf_le.mat \
                  $(datasets_dir)/small_v4_be.mat \
                  $(datasets_dir)/small_v4_le.mat \
+                 $(datasets_dir)/bugv6.mat \
+                 $(datasets_dir)/bugv7.mat \
+                 $(datasets_dir)/test_basic_v73.mat \
+                 $(datasets_dir)/test_class_alias.mat \
+                 $(datasets_dir)/test_corrupted_mcos_object_metadata.mat \
+                 $(datasets_dir)/test_corrupted_subsystem.mat \
+                 $(datasets_dir)/test_dynamic_v7.mat \
+                 $(datasets_dir)/test_dynamic_v73.mat \
+                 $(datasets_dir)/test_enum_v7.mat \
+                 $(datasets_dir)/test_enum_v73.mat \
+                 $(datasets_dir)/test_figure.fig \
+                 $(datasets_dir)/test_function_handles_v7.mat \
+                 $(datasets_dir)/test_function_handles_v73.mat \
+                 $(datasets_dir)/test_maps_v7.mat \
+                 $(datasets_dir)/test_maps_v73.mat \
+                 $(datasets_dir)/test_scattered_interpolant_v6.mat \
+                 $(datasets_dir)/test_scattered_interpolant_v7.mat \
+                 $(datasets_dir)/test_scattered_interpolant_v7.3.mat \
+                 $(datasets_dir)/test_string_v7.mat \
+                 $(datasets_dir)/test_string_v73.mat \
+                 $(datasets_dir)/test_strings_v7.mat \
+                 $(datasets_dir)/test_table_all_v6.mat \
+                 $(datasets_dir)/test_table_all_v7.mat \
+                 $(datasets_dir)/test_table_all_v7.3.mat \
+                 $(datasets_dir)/test_table_v6.mat \
+                 $(datasets_dir)/test_table_v7.mat \
+                 $(datasets_dir)/test_table_v7.3.mat \
+                 $(datasets_dir)/test_tables_v7.mat \
+                 $(datasets_dir)/test_tables_v73.mat \
+                 $(datasets_dir)/test_time_v7.mat \
+                 $(datasets_dir)/test_time_v73.mat \
+                 $(datasets_dir)/test_type_systems_v7.mat \
+                 $(datasets_dir)/test_type_systems_v73.mat \
+                 $(datasets_dir)/test_user_defined_v7.mat \
+                 $(datasets_dir)/test_user_defined_v73.mat \
                  $(matlab_dir)/test_write_1d_logical.m \
                  $(matlab_dir)/test_write_2d_logical.m \
                  $(matlab_dir)/test_write_1d_numeric.m \
@@ -423,7 +461,273 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/write_struct_complex_2d_numeric-uint8.out \
                  $(results_dir)/write_struct_complex_2d_numeric-uint16.out \
                  $(results_dir)/write_struct_complex_2d_numeric-uint32.out \
-                 $(results_dir)/write_struct_complex_2d_numeric-uint64.out
+                 $(results_dir)/write_struct_complex_2d_numeric-uint64.out \
+                 $(results_dir)/read-mcos-bugv6-la.out \
+                 $(results_dir)/read-mcos-bugv7-la.out \
+                 $(results_dir)/read-mcos-class_alias-obj.out \
+                 $(results_dir)/read-mcos-class_alias-obj1.out \
+                 $(results_dir)/read-mcos-dynamic_v7-obj.out \
+                 $(results_dir)/read-mcos-dynamic_v73-obj.out \
+                 $(results_dir)/read-mcos-enum_v7-enum_array.out \
+                 $(results_dir)/read-mcos-enum_v7-enum_nested.out \
+                 $(results_dir)/read-mcos-enum_v7-enum_scalar.out \
+                 $(results_dir)/read-mcos-enum_v7-enum_uint32.out \
+                 $(results_dir)/read-mcos-enum_v73-enum_array.out \
+                 $(results_dir)/read-mcos-enum_v73-enum_nested.out \
+                 $(results_dir)/read-mcos-enum_v73-enum_scalar.out \
+                 $(results_dir)/read-mcos-enum_v73-enum_uint32.out \
+                 $(results_dir)/read-mcos-figure-hgM_070000.out \
+                 $(results_dir)/read-mcos-figure-hgS_070000.out \
+                 $(results_dir)/read-mcos-figure-meta_data.out \
+                 $(results_dir)/read-mcos-function_handles_v7-anonymous_fh.out \
+                 $(results_dir)/read-mcos-function_handles_v7-builtin_fh.out \
+                 $(results_dir)/read-mcos-function_handles_v7-class_fh.out \
+                 $(results_dir)/read-mcos-function_handles_v7-custom_fh.out \
+                 $(results_dir)/read-mcos-function_handles_v7-nested_fh.out \
+                 $(results_dir)/read-mcos-function_handles_v73-anonymous_fh.out \
+                 $(results_dir)/read-mcos-function_handles_v73-builtin_fh.out \
+                 $(results_dir)/read-mcos-function_handles_v73-class_fh.out \
+                 $(results_dir)/read-mcos-function_handles_v73-custom_fh.out \
+                 $(results_dir)/read-mcos-function_handles_v73-nested_fh.out \
+                 $(results_dir)/read-mcos-maps_v7-dict_cell_keys.out \
+                 $(results_dir)/read-mcos-maps_v7-dict_cell_vals.out \
+                 $(results_dir)/read-mcos-maps_v7-dict_empty.out \
+                 $(results_dir)/read-mcos-maps_v7-dict_numeric_keys.out \
+                 $(results_dir)/read-mcos-maps_v7-dict_string_keys.out \
+                 $(results_dir)/read-mcos-maps_v7-dict_val_scalar.out \
+                 $(results_dir)/read-mcos-maps_v7-map_char_keys.out \
+                 $(results_dir)/read-mcos-maps_v7-map_empty.out \
+                 $(results_dir)/read-mcos-maps_v7-map_numeric_keys.out \
+                 $(results_dir)/read-mcos-maps_v7-map_string_keys.out \
+                 $(results_dir)/read-mcos-maps_v73-dict_cell_keys.out \
+                 $(results_dir)/read-mcos-maps_v73-dict_cell_vals.out \
+                 $(results_dir)/read-mcos-maps_v73-dict_empty.out \
+                 $(results_dir)/read-mcos-maps_v73-dict_numeric_keys.out \
+                 $(results_dir)/read-mcos-maps_v73-dict_string_keys.out \
+                 $(results_dir)/read-mcos-maps_v73-dict_val_scalar.out \
+                 $(results_dir)/read-mcos-maps_v73-map_char_keys.out \
+                 $(results_dir)/read-mcos-maps_v73-map_empty.out \
+                 $(results_dir)/read-mcos-maps_v73-map_numeric_keys.out \
+                 $(results_dir)/read-mcos-maps_v73-map_string_keys.out \
+                 $(results_dir)/read-mcos-scattered_interpolant_v6-F.out \
+                 $(results_dir)/read-mcos-scattered_interpolant_v7-F.out \
+                 $(results_dir)/read-mcos-scattered_interpolant_v73-F.out \
+                 $(results_dir)/read-mcos-string_v7-string_array.out \
+                 $(results_dir)/read-mcos-string_v7-string_empty.out \
+                 $(results_dir)/read-mcos-string_v7-string_scalar.out \
+                 $(results_dir)/read-mcos-string_v73-string_array.out \
+                 $(results_dir)/read-mcos-string_v73-string_empty.out \
+                 $(results_dir)/read-mcos-string_v73-string_scalar.out \
+                 $(results_dir)/read-mcos-strings_v7-a.out \
+                 $(results_dir)/read-mcos-strings_v7-b.out \
+                 $(results_dir)/read-mcos-strings_v7-c.out \
+                 $(results_dir)/read-mcos-strings_v7-cell.out \
+                 $(results_dir)/read-mcos-strings_v7-char.out \
+                 $(results_dir)/read-mcos-strings_v7-ee.out \
+                 $(results_dir)/read-mcos-strings_v7-s.out \
+                 $(results_dir)/read-mcos-strings_v7-s1.out \
+                 $(results_dir)/read-mcos-strings_v7-s2.out \
+                 $(results_dir)/read-mcos-strings_v7-str_last.out \
+                 $(results_dir)/read-mcos-table_all_v6-Comment.out \
+                 $(results_dir)/read-mcos-table_all_v6-Customer.out \
+                 $(results_dir)/read-mcos-table_all_v6-Date.out \
+                 $(results_dir)/read-mcos-table_all_v6-FlightNum.out \
+                 $(results_dir)/read-mcos-table_all_v6-Rating.out \
+                 $(results_dir)/read-mcos-table_all_v7-Comment.out \
+                 $(results_dir)/read-mcos-table_all_v7-Customer.out \
+                 $(results_dir)/read-mcos-table_all_v7-Date.out \
+                 $(results_dir)/read-mcos-table_all_v7-FlightNum.out \
+                 $(results_dir)/read-mcos-table_all_v7-Rating.out \
+                 $(results_dir)/read-mcos-table_all_v73-Comment.out \
+                 $(results_dir)/read-mcos-table_all_v73-Customer.out \
+                 $(results_dir)/read-mcos-table_all_v73-Date.out \
+                 $(results_dir)/read-mcos-table_all_v73-FlightNum.out \
+                 $(results_dir)/read-mcos-table_all_v73-Rating.out \
+                 $(results_dir)/read-mcos-table_v6-T.out \
+                 $(results_dir)/read-mcos-table_v7-T.out \
+                 $(results_dir)/read-mcos-table_v73-T.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_3D.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_array.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_empty.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_from_numeric.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_missing.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_mixed_case.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_ordered.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_scalar.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_string.out \
+                 $(results_dir)/read-mcos-tables_v7-cat_unordered.out \
+                 $(results_dir)/read-mcos-tables_v7-table_empty.out \
+                 $(results_dir)/read-mcos-tables_v7-table_from_cell.out \
+                 $(results_dir)/read-mcos-tables_v7-table_multi_col_data.out \
+                 $(results_dir)/read-mcos-tables_v7-table_numeric.out \
+                 $(results_dir)/read-mcos-tables_v7-table_row_names.out \
+                 $(results_dir)/read-mcos-tables_v7-table_strings.out \
+                 $(results_dir)/read-mcos-tables_v7-table_time.out \
+                 $(results_dir)/read-mcos-tables_v7-table_var_names.out \
+                 $(results_dir)/read-mcos-tables_v7-table_with_attrs.out \
+                 $(results_dir)/read-mcos-tables_v7-table_with_objects.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_datetime.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_duration.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_empty.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_from_duration.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_from_sample_rate.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_from_starttime_datetime.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_from_starttime_duration.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_multi_col.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_var_names.out \
+                 $(results_dir)/read-mcos-tables_v7-timetable_with_attrs.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_3D.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_array.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_empty.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_from_numeric.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_missing.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_mixed_case.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_ordered.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_scalar.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_string.out \
+                 $(results_dir)/read-mcos-tables_v73-cat_unordered.out \
+                 $(results_dir)/read-mcos-tables_v73-table_empty.out \
+                 $(results_dir)/read-mcos-tables_v73-table_from_cell.out \
+                 $(results_dir)/read-mcos-tables_v73-table_multi_col_data.out \
+                 $(results_dir)/read-mcos-tables_v73-table_numeric.out \
+                 $(results_dir)/read-mcos-tables_v73-table_row_names.out \
+                 $(results_dir)/read-mcos-tables_v73-table_strings.out \
+                 $(results_dir)/read-mcos-tables_v73-table_time.out \
+                 $(results_dir)/read-mcos-tables_v73-table_var_names.out \
+                 $(results_dir)/read-mcos-tables_v73-table_with_attrs.out \
+                 $(results_dir)/read-mcos-tables_v73-table_with_objects.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_datetime.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_duration.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_empty.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_from_duration.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_from_sample_rate.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_from_starttime_datetime.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_from_starttime_duration.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_multi_col.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_var_names.out \
+                 $(results_dir)/read-mcos-tables_v73-timetable_with_attrs.out \
+                 $(results_dir)/read-mcos-time_v7-cdur_array.out \
+                 $(results_dir)/read-mcos-time_v7-cdur_days.out \
+                 $(results_dir)/read-mcos-time_v7-cdur_days_and_months.out \
+                 $(results_dir)/read-mcos-time_v7-cdur_days_and_qtrs.out \
+                 $(results_dir)/read-mcos-time_v7-cdur_empty.out \
+                 $(results_dir)/read-mcos-time_v7-cdur_millis.out \
+                 $(results_dir)/read-mcos-time_v7-cdur_months_and_years.out \
+                 $(results_dir)/read-mcos-time_v7-cdur_weeks.out \
+                 $(results_dir)/read-mcos-time_v7-dt_array.out \
+                 $(results_dir)/read-mcos-time_v7-dt_basic.out \
+                 $(results_dir)/read-mcos-time_v7-dt_empty.out \
+                 $(results_dir)/read-mcos-time_v7-dt_fmt.out \
+                 $(results_dir)/read-mcos-time_v7-dt_tz.out \
+                 $(results_dir)/read-mcos-time_v7-dt_vector.out \
+                 $(results_dir)/read-mcos-time_v7-dur_array.out \
+                 $(results_dir)/read-mcos-time_v7-dur_days.out \
+                 $(results_dir)/read-mcos-time_v7-dur_empty.out \
+                 $(results_dir)/read-mcos-time_v7-dur_h.out \
+                 $(results_dir)/read-mcos-time_v7-dur_hms.out \
+                 $(results_dir)/read-mcos-time_v7-dur_m.out \
+                 $(results_dir)/read-mcos-time_v7-dur_s.out \
+                 $(results_dir)/read-mcos-time_v7-dur_years.out \
+                 $(results_dir)/read-mcos-time_v73-cdur_array.out \
+                 $(results_dir)/read-mcos-time_v73-cdur_days.out \
+                 $(results_dir)/read-mcos-time_v73-cdur_days_and_months.out \
+                 $(results_dir)/read-mcos-time_v73-cdur_days_and_qtrs.out \
+                 $(results_dir)/read-mcos-time_v73-cdur_empty.out \
+                 $(results_dir)/read-mcos-time_v73-cdur_millis.out \
+                 $(results_dir)/read-mcos-time_v73-cdur_months_and_years.out \
+                 $(results_dir)/read-mcos-time_v73-cdur_weeks.out \
+                 $(results_dir)/read-mcos-time_v73-dt_array.out \
+                 $(results_dir)/read-mcos-time_v73-dt_basic.out \
+                 $(results_dir)/read-mcos-time_v73-dt_empty.out \
+                 $(results_dir)/read-mcos-time_v73-dt_fmt.out \
+                 $(results_dir)/read-mcos-time_v73-dt_tz.out \
+                 $(results_dir)/read-mcos-time_v73-dt_vector.out \
+                 $(results_dir)/read-mcos-time_v73-dur_array.out \
+                 $(results_dir)/read-mcos-time_v73-dur_days.out \
+                 $(results_dir)/read-mcos-time_v73-dur_empty.out \
+                 $(results_dir)/read-mcos-time_v73-dur_h.out \
+                 $(results_dir)/read-mcos-time_v73-dur_hms.out \
+                 $(results_dir)/read-mcos-time_v73-dur_m.out \
+                 $(results_dir)/read-mcos-time_v73-dur_s.out \
+                 $(results_dir)/read-mcos-time_v73-dur_years.out \
+                 $(results_dir)/read-mcos-type_systems_v7-handletype.out \
+                 $(results_dir)/read-mcos-type_systems_v7-javatype.out \
+                 $(results_dir)/read-mcos-type_systems_v73-handletype.out \
+                 $(results_dir)/read-mcos-type_systems_v73-javatype.out \
+                 $(results_dir)/read-mcos-user_defined_v7-obj_array.out \
+                 $(results_dir)/read-mcos-user_defined_v7-obj_handle_1.out \
+                 $(results_dir)/read-mcos-user_defined_v7-obj_handle_2.out \
+                 $(results_dir)/read-mcos-user_defined_v7-obj_no_vals.out \
+                 $(results_dir)/read-mcos-user_defined_v7-obj_with_default_val.out \
+                 $(results_dir)/read-mcos-user_defined_v7-obj_with_nested_props.out \
+                 $(results_dir)/read-mcos-user_defined_v7-obj_with_vals.out \
+                 $(results_dir)/read-mcos-user_defined_v73-obj_array.out \
+                 $(results_dir)/read-mcos-user_defined_v73-obj_handle_1.out \
+                 $(results_dir)/read-mcos-user_defined_v73-obj_handle_2.out \
+                 $(results_dir)/read-mcos-user_defined_v73-obj_no_vals.out \
+                 $(results_dir)/read-mcos-user_defined_v73-obj_with_default_val.out \
+                 $(results_dir)/read-mcos-user_defined_v73-obj_with_nested_props.out \
+                 $(results_dir)/read-mcos-user_defined_v73-obj_with_vals.out \
+                 $(results_dir)/dump-mcos-bugv6.out \
+                 $(results_dir)/dump-mcos-bugv6-hd.out \
+                 $(results_dir)/dump-mcos-bugv7.out \
+                 $(results_dir)/dump-mcos-bugv7-hd.out \
+                 $(results_dir)/dump-mcos-class_alias.out \
+                 $(results_dir)/dump-mcos-class_alias-hd.out \
+                 $(results_dir)/dump-mcos-dynamic_v7.out \
+                 $(results_dir)/dump-mcos-dynamic_v7-hd.out \
+                 $(results_dir)/dump-mcos-dynamic_v73.out \
+                 $(results_dir)/dump-mcos-dynamic_v73-hd.out \
+                 $(results_dir)/dump-mcos-enum_v7.out \
+                 $(results_dir)/dump-mcos-enum_v7-hd.out \
+                 $(results_dir)/dump-mcos-enum_v73.out \
+                 $(results_dir)/dump-mcos-enum_v73-hd.out \
+                 $(results_dir)/dump-mcos-figure.out \
+                 $(results_dir)/dump-mcos-figure-hd.out \
+                 $(results_dir)/dump-mcos-function_handles_v7.out \
+                 $(results_dir)/dump-mcos-function_handles_v7-hd.out \
+                 $(results_dir)/dump-mcos-maps_v7.out \
+                 $(results_dir)/dump-mcos-maps_v7-hd.out \
+                 $(results_dir)/dump-mcos-maps_v73.out \
+                 $(results_dir)/dump-mcos-maps_v73-hd.out \
+                 $(results_dir)/dump-mcos-scattered_interpolant_v6.out \
+                 $(results_dir)/dump-mcos-scattered_interpolant_v6-hd.out \
+                 $(results_dir)/dump-mcos-scattered_interpolant_v7.out \
+                 $(results_dir)/dump-mcos-scattered_interpolant_v7-hd.out \
+                 $(results_dir)/dump-mcos-scattered_interpolant_v73.out \
+                 $(results_dir)/dump-mcos-scattered_interpolant_v73-hd.out \
+                 $(results_dir)/dump-mcos-string_v7.out \
+                 $(results_dir)/dump-mcos-string_v7-hd.out \
+                 $(results_dir)/dump-mcos-string_v73.out \
+                 $(results_dir)/dump-mcos-string_v73-hd.out \
+                 $(results_dir)/dump-mcos-strings_v7.out \
+                 $(results_dir)/dump-mcos-strings_v7-hd.out \
+                 $(results_dir)/dump-mcos-table_all_v6.out \
+                 $(results_dir)/dump-mcos-table_all_v6-hd.out \
+                 $(results_dir)/dump-mcos-table_all_v7.out \
+                 $(results_dir)/dump-mcos-table_all_v7-hd.out \
+                 $(results_dir)/dump-mcos-table_all_v73.out \
+                 $(results_dir)/dump-mcos-table_all_v73-hd.out \
+                 $(results_dir)/dump-mcos-table_v6.out \
+                 $(results_dir)/dump-mcos-table_v6-hd.out \
+                 $(results_dir)/dump-mcos-table_v7.out \
+                 $(results_dir)/dump-mcos-table_v7-hd.out \
+                 $(results_dir)/dump-mcos-table_v73.out \
+                 $(results_dir)/dump-mcos-table_v73-hd.out \
+                 $(results_dir)/dump-mcos-tables_v7.out \
+                 $(results_dir)/dump-mcos-tables_v7-hd.out \
+                 $(results_dir)/dump-mcos-time_v7.out \
+                 $(results_dir)/dump-mcos-time_v7-hd.out \
+                 $(results_dir)/dump-mcos-time_v73.out \
+                 $(results_dir)/dump-mcos-time_v73-hd.out \
+                 $(results_dir)/dump-mcos-type_systems_v7.out \
+                 $(results_dir)/dump-mcos-type_systems_v7-hd.out \
+                 $(results_dir)/dump-mcos-type_systems_v73.out \
+                 $(results_dir)/dump-mcos-type_systems_v73-hd.out \
+                 $(results_dir)/dump-mcos-user_defined_v7.out \
+                 $(results_dir)/dump-mcos-user_defined_v7-hd.out \
+                 $(results_dir)/dump-mcos-user_defined_v73.out \
+                 $(results_dir)/dump-mcos-user_defined_v73-hd.out
 if MAT73
     MAT73 = 1
 else
@@ -448,10 +752,17 @@ else
     IS_WIN32 = 0
 endif
 
+if MATIO_MCOS
+    MCOS = 1
+else
+    MCOS = 0
+endif
+
 CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
                     HAVE_UINT64=$(HAVE_UINT64) HAVE_INT64=$(HAVE_INT64) \
                     EXTENDED_SPARSE=$(EXTENDED_SPARSE) \
                     COMPRESSION_ZLIB=$(COMPRESSION_ZLIB) \
+                    MCOS=$(MCOS) \
                     IS_WIN32=$(IS_WIN32) \
                     LIBTOOL="$(top_builddir)/libtool"
 
