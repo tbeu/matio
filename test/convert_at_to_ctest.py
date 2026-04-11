@@ -1,3 +1,11 @@
+# Convert autotest files to CTest format
+#
+# Copyright (c) 2015-2026, The matio contributors
+# Copyright (c) 2011-2014, Christopher C. Hulbert
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
 import glob
 import hashlib
 import json

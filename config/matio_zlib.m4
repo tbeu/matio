@@ -1,3 +1,8 @@
+dnl Copyright (c) 2015-2026, The matio contributors
+dnl Copyright (c) 2011-2014, Christopher C. Hulbert
+dnl All rights reserved.
+dnl
+dnl SPDX-License-Identifier: BSD-2-Clause
 AC_DEFUN([MATIO_CHECK_ZLIB],
 [
 AC_ARG_WITH(zlib,AS_HELP_STRING([--with-zlib=DIR],
