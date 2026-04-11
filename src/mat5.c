@@ -160,7 +160,6 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
             if ( err )
                 return err;
 
-            /* FIXME: Add bytes for the fieldnames */
             if ( NULL != fields && nfields > 0 ) {
                 size_t nelems_x_nfields = 1;
                 err = Mul(&nelems_x_nfields, nelems, nfields);
@@ -3437,7 +3436,6 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         break;
                 }
             }
-            /* FIXME: */
             matvar->data_type = MAT_T_CELL;
             break;
         }
@@ -4098,7 +4096,6 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         break;
                 }
             }
-            /* FIXME: */
             matvar->data_type = MAT_T_FUNCTION;
             break;
         }

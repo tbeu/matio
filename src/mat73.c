@@ -101,6 +101,8 @@ static hid_t DataType2H5T(enum matio_types data_type);
 static hid_t SizeType2H5T(void);
 static hid_t DataType(hid_t h5_type, int isComplex);
 static void Mat_H5GetChunkSize(size_t rank, const hsize_t *dims, hsize_t *chunk_dims);
+static int Mat_H5TypeIsComplex(hid_t type_id);
+static int Mat_H5ReadScalarAttribute(hid_t attr_id, hid_t mem_type, void *value);
 static int Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id);
 static size_t *Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank);
 static int Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields);
@@ -457,6 +459,75 @@ Mat_H5GetChunkSize(size_t rank, const hsize_t *dims, hsize_t *chunk_dims)
 }
 
 static int
+Mat_H5TypeIsComplex(hid_t type_id)
+{
+    hid_t member0_type;
+    hid_t member1_type;
+    size_t member_size;
+    int nmembers;
+    int is_complex;
+
+    if ( H5T_COMPOUND != H5Tget_class(type_id) ) {
+        return 0;
+    }
+
+    nmembers = H5Tget_nmembers(type_id);
+    if ( 2 != nmembers ) {
+        return 0;
+    }
+
+    member0_type = H5Tget_member_type(type_id, 0);
+    member1_type = H5Tget_member_type(type_id, 1);
+    if ( member0_type < 0 || member1_type < 0 ) {
+        if ( member0_type >= 0 )
+            H5Tclose(member0_type);
+        if ( member1_type >= 0 )
+            H5Tclose(member1_type);
+        return 0;
+    }
+
+    member_size = H5Tget_size(member0_type);
+    is_complex = (H5Tequal(member0_type, member1_type) > 0) &&
+                 (0 == H5Tget_member_offset(type_id, 0)) &&
+                 (member_size == H5Tget_member_offset(type_id, 1)) &&
+                 (2 * member_size == H5Tget_size(type_id));
+
+    H5Tclose(member0_type);
+    H5Tclose(member1_type);
+
+    return is_complex;
+}
+
+static int
+Mat_H5ReadScalarAttribute(hid_t attr_id, hid_t mem_type, void *value)
+{
+    H5S_class_t attr_class;
+    hid_t space_id;
+    herr_t herr;
+    hssize_t npoints;
+
+    space_id = H5Aget_space(attr_id);
+    if ( space_id < 0 ) {
+        return MATIO_E_FAIL_TO_IDENTIFY;
+    }
+
+    attr_class = H5Sget_simple_extent_type(space_id);
+    npoints = H5Sget_simple_extent_npoints(space_id);
+    H5Sclose(space_id);
+
+    if ( ((H5S_SCALAR != attr_class) && (H5S_SIMPLE != attr_class)) || 1 != npoints ) {
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
+
+    herr = H5Aread(attr_id, mem_type, value);
+    if ( herr < 0 ) {
+        return MATIO_E_GENERIC_READ_ERROR;
+    }
+
+    return MATIO_E_NO_ERROR;
+}
+
+static int
 Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
 {
     hid_t attr_id, type_id;
@@ -490,14 +561,13 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
             if ( H5Aexists_by_name(dset_id, ".", "MATLAB_int_decode", H5P_DEFAULT) ) {
                 hid_t attr_id2 =
                     H5Aopen_by_name(dset_id, ".", "MATLAB_int_decode", H5P_DEFAULT, H5P_DEFAULT);
-                /* FIXME: Check that dataspace is scalar */
-                herr = H5Aread(attr_id2, H5T_NATIVE_INT, &int_decode);
+                err = Mat_H5ReadScalarAttribute(attr_id2, H5T_NATIVE_INT, &int_decode);
                 H5Aclose(attr_id2);
-                if ( herr < 0 ) {
+                if ( err ) {
                     free(class_str);
                     H5Tclose(type_id);
                     H5Aclose(attr_id);
-                    return MATIO_E_GENERIC_READ_ERROR;
+                    return err;
                 }
             }
             switch ( int_decode ) {
@@ -539,13 +609,11 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
 
     /* Check if the variable is global */
     if ( H5Aexists_by_name(dset_id, ".", "MATLAB_global", H5P_DEFAULT) ) {
-        herr_t herr;
         attr_id = H5Aopen_by_name(dset_id, ".", "MATLAB_global", H5P_DEFAULT, H5P_DEFAULT);
-        /* FIXME: Check that dataspace is scalar */
-        herr = H5Aread(attr_id, H5T_NATIVE_INT, &matvar->isGlobal);
+        err = Mat_H5ReadScalarAttribute(attr_id, H5T_NATIVE_INT, &matvar->isGlobal);
         H5Aclose(attr_id);
-        if ( herr < 0 ) {
-            return MATIO_E_GENERIC_READ_ERROR;
+        if ( err ) {
+            return err;
         }
     }
 
@@ -745,14 +813,13 @@ Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
     /* Check for attribute that indicates an empty array */
     if ( H5Aexists_by_name(dset_id, ".", "MATLAB_empty", H5P_DEFAULT) ) {
         int empty = 0;
-        herr_t herr;
         hid_t attr_id = H5Aopen_by_name(dset_id, ".", "MATLAB_empty", H5P_DEFAULT, H5P_DEFAULT);
-        /* FIXME: Check that dataspace is scalar */
-        herr = H5Aread(attr_id, H5T_NATIVE_INT, &empty);
+        err = Mat_H5ReadScalarAttribute(attr_id, H5T_NATIVE_INT, &empty);
         H5Aclose(attr_id);
-        if ( herr < 0 ) {
-            err = MATIO_E_GENERIC_READ_ERROR;
+        if ( err ) {
+            return err;
         } else if ( empty ) {
+            herr_t herr;
             matvar->rank = (int)matvar->dims[0];
             free(matvar->dims);
             matvar->dims = (size_t *)calloc(matvar->rank, sizeof(*matvar->dims));
@@ -778,8 +845,7 @@ Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
     /* Test if dataset type is compound and if so if it's complex */
     {
         hid_t type_id = H5Dget_type(dset_id);
-        if ( H5T_COMPOUND == H5Tget_class(type_id) ) {
-            /* FIXME: Any more checks? */
+        if ( Mat_H5TypeIsComplex(type_id) ) {
             matvar->isComplex = MAT_F_COMPLEX;
         }
         H5Tclose(type_id);
@@ -922,8 +988,7 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
             hid_t type_id;
             sparse_dset_id = H5Dopen(dset_id, "data", H5P_DEFAULT);
             type_id = H5Dget_type(sparse_dset_id);
-            if ( H5T_COMPOUND == H5Tget_class(type_id) ) {
-                /* FIXME: Any more checks? */
+            if ( Mat_H5TypeIsComplex(type_id) ) {
                 matvar->isComplex = MAT_F_COMPLEX;
             }
             H5Tclose(type_id);
