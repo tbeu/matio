@@ -240,6 +240,7 @@ typedef struct mat_sparse_t
 #define MATIO_E_FILESYSTEM_COULD_NOT_REOPEN 22
 #define MATIO_E_BAD_OPEN_MODE 23
 #define MATIO_E_FILESYSTEM_ERROR_ON_CLOSE 24
+#define MATIO_E_VALUE_OUT_OF_RANGE 25
 /** @endcond */
 
 /**
