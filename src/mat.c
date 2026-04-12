@@ -540,11 +540,8 @@ Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread)
         *bytesread += readCount * size;
     }
     if ( err ) {
-        Mat_Warning(
-            "Unexpected end-of-file: Read %zu"
-            " bytes, expected %zu"
-            " bytes",
-            readCount * size, count * size);
+        Mat_Warning("Read: Unexpected end-of-file: Read %zu bytes, expected %zu bytes",
+                    readCount * size, count * size);
         memset(buf, 0, count * size);
     }
     return err;

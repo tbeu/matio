@@ -43,6 +43,8 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread)
     if ( !z->avail_in ) {
         size_t nbytes = fread(comp_buf, 1, n, (FILE *)mat->fp);
         if ( 0 == nbytes ) {
+            Mat_Warning("InflateSkip: Unexpected end-of-file: Processed 0 bytes, expected %d bytes",
+                        nBytes);
             return err;
         }
         if ( NULL != bytesread ) {
@@ -252,6 +254,9 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesre
     if ( !z->avail_in ) {
         size_t nbytes = fread(comp_buf, 1, 1, (FILE *)mat->fp);
         if ( 0 == nbytes ) {
+            Mat_Warning("Inflate: Unexpected end-of-file: Processed 0 bytes, expected %u bytes",
+                        nBytes);
+            memset(buf, 0, nBytes);
             return err;
         }
         if ( NULL != bytesread ) {
@@ -300,10 +305,8 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesre
     }
 
     if ( z->avail_out && feof((FILE *)mat->fp) ) {
-        Mat_Warning(
-            "Unexpected end-of-file: "
-            "Processed %u bytes, expected %u bytes",
-            nBytes - z->avail_out, nBytes);
+        Mat_Warning("Inflate: Unexpected end-of-file: Processed %u bytes, expected %u bytes",
+                    nBytes - z->avail_out, nBytes);
         memset(buf, 0, nBytes);
     }
 
@@ -339,6 +342,9 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     if ( !z->avail_in ) {
         size_t nbytes = fread(comp_buf, 1, n, (FILE *)mat->fp);
         if ( 0 == nbytes ) {
+            Mat_Warning("InflateData: Unexpected end-of-file: Processed 0 bytes, expected %u bytes",
+                        nBytes);
+            memset(buf, 0, nBytes);
             return err;
         }
         bytesread += nbytes;
