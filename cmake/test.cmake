@@ -5,6 +5,10 @@ if(MATIO_BUILD_TESTING)
         target_link_libraries(test_mat getopt)
     endif()
 
+    add_executable(test_ossfuzz "${PROJECT_SOURCE_DIR}/ossfuzz/test_ossfuzz.cpp")
+    target_link_libraries(test_ossfuzz matio)
+    target_include_directories(test_ossfuzz PRIVATE "${PROJECT_SOURCE_DIR}/src" "${PROJECT_BINARY_DIR}/src")
+
     if(NOT HAVE_SNPRINTF OR UNIX)
         add_executable(test_snprintf
             "${PROJECT_SOURCE_DIR}/test/test_snprintf.c"
