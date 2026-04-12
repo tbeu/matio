@@ -715,6 +715,10 @@ Mat_Create5(const char *matname, const char *hdr_str)
     mat->byteswap = 0;
     mat->header = (char *)malloc(128 * sizeof(char));
     mat->subsys_offset = (char *)malloc(8 * sizeof(char));
+    if ( NULL == mat->filename || NULL == mat->header || NULL == mat->subsys_offset ) {
+        Mat_Close(mat);
+        return NULL;
+    }
     memset(mat->header, ' ', 128);
     if ( hdr_str == NULL ) {
         err = mat_snprintf(mat->header, 116,
@@ -1584,8 +1588,14 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 for ( k = 0; k < nfields; k++ ) {
                     if ( NULL != matvar->internal->fieldnames[k] ) {
                         fields[i * nfields + k]->name = strdup(matvar->internal->fieldnames[k]);
+                        if ( NULL == fields[i * nfields + k]->name ) {
+                            err = MATIO_E_OUT_OF_MEMORY;
+                            break;
+                        }
                     }
                 }
+                if ( err )
+                    break;
             }
         }
 
@@ -2232,6 +2242,8 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                     if ( NULL != matvar->internal->fieldnames[k] &&
                          NULL != fields[i * nfields + k] ) {
                         fields[i * nfields + k]->name = strdup(matvar->internal->fieldnames[k]);
+                        if ( NULL == fields[i * nfields + k]->name )
+                            return bytesread;
                     }
                 }
             }
@@ -2459,6 +2471,10 @@ WriteType(mat_t *mat, matvar_t *matvar)
             nBytes = nfields * fieldname_size;
             fwrite(&nBytes, 4, 1, (FILE *)mat->fp);
             padzero = (char *)calloc(fieldname_size, 1);
+            if ( padzero == NULL ) {
+                err = MATIO_E_OUT_OF_MEMORY;
+                break;
+            }
             for ( i = 0; i < nfields; i++ ) {
                 size_t len = strlen(matvar->internal->fieldnames[i]);
                 fwrite(matvar->internal->fieldnames[i], 1, len, (FILE *)mat->fp);
@@ -2818,6 +2834,10 @@ WriteCompressedType(mat_t *mat, matvar_t *matvar, z_streamp z)
             uncomp_buf[3] = nfields * fieldname_size;
 
             padzero = (unsigned char *)calloc(fieldname_size, 1);
+            if ( padzero == NULL ) {
+                err = MATIO_E_OUT_OF_MEMORY;
+                break;
+            }
             z->next_in = ZLIB_BYTE_PTR(uncomp_buf);
             z->avail_in = 16;
             do {

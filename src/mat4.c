@@ -65,6 +65,10 @@ Mat_Create4(const char *matname)
     mat->header = NULL;
     mat->subsys_offset = NULL;
     mat->filename = strdup(matname);
+    if ( NULL == mat->filename ) {
+        Mat_Close(mat);
+        return NULL;
+    }
     mat->version = 0x0010;
     mat->byteswap = 0;
     mat->mode = MAT_ACC_RDWR;

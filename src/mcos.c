@@ -293,6 +293,8 @@ ParseLinkingMetadata(const mat_uint8_t *data, size_t len, mcos_subsystem_t *ss, 
                     ss->class_info[i].name = strdup(ss->strings[name_idx - 1]);
                 else
                     ss->class_info[i].name = strdup("");
+                if ( ss->class_info[i].namespace_ == NULL || ss->class_info[i].name == NULL )
+                    return MATIO_E_OUT_OF_MEMORY;
                 region_pos += block_size;
             }
         }
@@ -385,6 +387,9 @@ ParseLinkingMetadata(const mat_uint8_t *data, size_t len, mcos_subsystem_t *ss, 
                     mcos_property_set_t *tmp =
                         (mcos_property_set_t *)realloc(prop_sets, new_cap * sizeof(*prop_sets));
                     if ( tmp == NULL ) {
+                        size_t k;
+                        for ( k = 0; k < count; k++ )
+                            FreePropertySet(&prop_sets[k]);
                         free(prop_sets);
                         return MATIO_E_OUT_OF_MEMORY;
                     }
@@ -397,6 +402,9 @@ ParseLinkingMetadata(const mat_uint8_t *data, size_t len, mcos_subsystem_t *ss, 
                     prop_sets[count].props =
                         (mcos_property_t *)calloc(nprops, sizeof(mcos_property_t));
                     if ( prop_sets[count].props == NULL ) {
+                        size_t k;
+                        for ( k = 0; k < count; k++ )
+                            FreePropertySet(&prop_sets[k]);
                         free(prop_sets);
                         return MATIO_E_OUT_OF_MEMORY;
                     }
@@ -422,6 +430,13 @@ ParseLinkingMetadata(const mat_uint8_t *data, size_t len, mcos_subsystem_t *ss, 
                         prop_sets[count].props[j].name = strdup(ss->strings[name_idx - 1]);
                     else
                         prop_sets[count].props[j].name = strdup("");
+                    if ( prop_sets[count].props[j].name == NULL ) {
+                        size_t k;
+                        for ( k = 0; k <= count; k++ )
+                            FreePropertySet(&prop_sets[k]);
+                        free(prop_sets);
+                        return MATIO_E_OUT_OF_MEMORY;
+                    }
                     prop_sets[count].props[j].field_type = (int)ftype;
                     prop_sets[count].props[j].value = fvalue;
                 }
@@ -548,6 +563,8 @@ ParseClassAliases(const matvar_t *alias_cell, mcos_subsystem_t *ss)
 
         if ( alias_idx > 0 && alias_idx <= ss->num_strings )
             ss->class_aliases[i - 1] = strdup(ss->strings[alias_idx - 1]);
+        if ( alias_idx > 0 && ss->class_aliases[i - 1] == NULL )
+            return MATIO_E_OUT_OF_MEMORY;
     }
 
     return MATIO_E_NO_ERROR;
@@ -1323,6 +1340,8 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
                                        strcmp(matvar->internal->class_name, resolved_name) != 0) ) {
             free(matvar->internal->class_name);
             matvar->internal->class_name = strdup(resolved_name);
+            if ( matvar->internal->class_name == NULL )
+                return MATIO_E_OUT_OF_MEMORY;
         }
     }
 
@@ -1422,6 +1441,10 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
                     /* Set field name */
                     free(field_val->name);
                     field_val->name = strdup(fname);
+                    if ( field_val->name == NULL ) {
+                        Mat_VarFree(field_val);
+                        return MATIO_E_OUT_OF_MEMORY;
+                    }
                 }
 
                 fields[oi * nfields + fi] = field_val;
@@ -1519,6 +1542,8 @@ ResolveEncodedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
     /* Set type_name to "MCOS" */
     free(matvar->internal->type_name);
     matvar->internal->type_name = strdup("MCOS");
+    if ( matvar->internal->type_name == NULL )
+        return MATIO_E_OUT_OF_MEMORY;
 
     /* Update dims to match the MCOS object dimensions */
     free(matvar->dims);
