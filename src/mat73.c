@@ -126,7 +126,32 @@ static int Mat_H5WriteAppendData(hid_t id, hid_t h5_type, int mrank, const char 
                                  const size_t *mdims, hsize_t *dims, int dim, int isComplex,
                                  void *data);
 static int Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression,
-                           hid_t *refs_id, hobj_ref_t *ref);
+                           hid_t *refs_id, hobj_ref_t *ref, hsize_t *num_refs_p);
+
+/** Phase-change threshold: use dense (indexed) link storage from the start */
+#define REFS_LINK_PHASE_CHANGE_MAX_COMPACT 0
+#define REFS_LINK_PHASE_CHANGE_MIN_DENSE 0
+/** Estimated number of entries and average name length in /#refs# group */
+#define REFS_EST_NUM_ENTRIES 512
+#define REFS_EST_NAME_LEN 6
+/** Metadata block allocation size in bytes */
+#define META_BLOCK_SIZE 65536
+
+/** @brief Create the /#refs# group with properties optimized for many members */
+static hid_t
+Mat_CreateRefsGroup(hid_t id)
+{
+    hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
+    hid_t refs_id;
+    /* Transition to dense (indexed) storage immediately for fast lookup */
+    H5Pset_link_phase_change(gcpl, REFS_LINK_PHASE_CHANGE_MAX_COMPACT,
+                             REFS_LINK_PHASE_CHANGE_MIN_DENSE);
+    /* Hint about expected number of entries and name length */
+    H5Pset_est_link_info(gcpl, REFS_EST_NUM_ENTRIES, REFS_EST_NAME_LEN);
+    refs_id = H5Gcreate(id, "/#refs#", H5P_DEFAULT, gcpl, H5P_DEFAULT);
+    H5Pclose(gcpl);
+    return refs_id;
+}
 
 static enum matio_classes
 ClassStr2ClassType(const char *name)
@@ -1501,25 +1526,39 @@ Mat_H5WriteAppendData(hid_t id, hid_t h5_type, int mrank, const char *name, cons
 
 static int
 Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression, hid_t *refs_id,
-                hobj_ref_t *ref)
+                hobj_ref_t *ref, hsize_t *num_refs_p)
 {
     int err;
-    herr_t herr;
-    H5G_info_t group_info;
+    char obj_name[64];
+    hsize_t num_refs;
 
-    group_info.nlinks = 0;
-    herr = H5Gget_info(*refs_id, &group_info);
-    if ( herr < 0 ) {
-        err = MATIO_E_BAD_ARGUMENT;
+    if ( NULL != num_refs_p ) {
+        num_refs = *num_refs_p;
     } else {
-        char obj_name[64];
-        mat_snprintf(obj_name, sizeof(obj_name), "%llu", (unsigned long long)group_info.nlinks);
-        if ( NULL != matvar )
-            matvar->compression = compression;
-        err = Mat_VarWriteNext73(*refs_id, matvar, obj_name, refs_id);
-        mat_snprintf(obj_name, sizeof(obj_name), "/#refs#/%llu",
-                     (unsigned long long)group_info.nlinks);
+        H5G_info_t group_info = {0};
+        if ( H5Gget_info(*refs_id, &group_info) < 0 )
+            return MATIO_E_BAD_ARGUMENT;
+        num_refs = group_info.nlinks;
+    }
+
+    mat_snprintf(obj_name, sizeof(obj_name), "%llu", (unsigned long long)num_refs);
+    if ( NULL != matvar )
+        matvar->compression = compression;
+    err = Mat_VarWriteNext73(*refs_id, matvar, obj_name, refs_id);
+    if ( MATIO_E_NO_ERROR == err ) {
+        mat_snprintf(obj_name, sizeof(obj_name), "/#refs#/%llu", (unsigned long long)num_refs);
         H5Rcreate(ref, id, obj_name, H5R_OBJECT, -1);
+        if ( NULL != num_refs_p ) {
+            if ( NULL != matvar &&
+                 (matvar->class_type == MAT_C_STRUCT || matvar->class_type == MAT_C_CELL) ) {
+                /* Compound types may recursively add refs; re-query actual count */
+                H5G_info_t group_info = {0};
+                H5Gget_info(*refs_id, &group_info);
+                *num_refs_p = group_info.nlinks;
+            } else {
+                (*num_refs_p)++;
+            }
+        }
     }
     return err;
 }
@@ -1644,7 +1683,7 @@ Mat_VarWriteCell73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
             if ( H5Lexists(id, "/#refs#", H5P_DEFAULT) ) {
                 *refs_id = H5Gopen(id, "/#refs#", H5P_DEFAULT);
             } else {
-                *refs_id = H5Gcreate(id, "/#refs#", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+                *refs_id = Mat_CreateRefsGroup(id);
             }
         }
         if ( *refs_id > -1 ) {
@@ -1653,9 +1692,14 @@ Mat_VarWriteCell73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
                 hid_t mspace_id = H5Screate_simple(matvar->rank, dims, NULL);
                 hid_t dset_id = H5Dcreate(id, name, H5T_STD_REF_OBJ, mspace_id, H5P_DEFAULT,
                                           H5P_DEFAULT, H5P_DEFAULT);
+                H5G_info_t group_info = {0};
+                hsize_t num_refs;
+                H5Gget_info(*refs_id, &group_info);
+                num_refs = group_info.nlinks;
 
                 for ( l = 0; l < nelems; l++ ) {
-                    err = Mat_VarWriteRef(id, cells[l], matvar->compression, refs_id, refs + l);
+                    err = Mat_VarWriteRef(id, cells[l], matvar->compression, refs_id, refs + l,
+                                          &num_refs);
                     if ( err )
                         break;
                 }
@@ -2293,8 +2337,7 @@ Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_i
                         if ( H5Lexists(id, "/#refs#", H5P_DEFAULT) ) {
                             *refs_id = H5Gopen(id, "/#refs#", H5P_DEFAULT);
                         } else {
-                            *refs_id =
-                                H5Gcreate(id, "/#refs#", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+                            *refs_id = Mat_CreateRefsGroup(id);
                         }
                     }
                     if ( *refs_id > -1 ) {
@@ -2311,11 +2354,15 @@ Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_i
                             }
 
                             if ( MATIO_E_NO_ERROR == err ) {
+                                H5G_info_t group_info = {0};
+                                hsize_t num_refs;
+                                H5Gget_info(*refs_id, &group_info);
+                                num_refs = group_info.nlinks;
                                 for ( k = 0; k < nelems; k++ ) {
                                     for ( l = 0; l < nfields; l++ ) {
                                         err = Mat_VarWriteRef(id, fields[k * nfields + l],
                                                               matvar->compression, refs_id,
-                                                              refs[l] + k);
+                                                              refs[l] + k, &num_refs);
                                         if ( err )
                                             break;
                                     }
@@ -2419,10 +2466,14 @@ Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *
 
                 if ( MATIO_E_NO_ERROR == err ) {
                     hsize_t k;
+                    H5G_info_t group_info = {0};
+                    hsize_t num_refs;
+                    H5Gget_info(*refs_id, &group_info);
+                    num_refs = group_info.nlinks;
                     for ( k = 0; k < nelems; k++ ) {
                         for ( l = 0; l < nfields; l++ ) {
                             err = Mat_VarWriteRef(id, fields[k * nfields + l], matvar->compression,
-                                                  refs_id, refs[l] + k);
+                                                  refs_id, refs[l] + k, &num_refs);
                             if ( err )
                                 break;
                         }
@@ -2656,6 +2707,7 @@ Mat_Create73(const char *matname, const char *hdr_str)
 #if H5_VERSION_GE(1, 10, 2)
     H5Pset_libver_bounds(plist_ap, H5F_LIBVER_EARLIEST, H5F_LIBVER_V18);
 #endif
+    H5Pset_meta_block_size(plist_ap, META_BLOCK_SIZE);
     fid = H5Fcreate(matname, H5F_ACC_TRUNC, plist_id, plist_ap);
     H5Fclose(fid);
     H5Pclose(plist_id);
