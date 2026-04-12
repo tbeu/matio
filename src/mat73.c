@@ -128,6 +128,8 @@ static int Mat_H5WriteAppendData(hid_t id, hid_t h5_type, int mrank, const char 
 static int Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression,
                            hid_t *refs_id, hobj_ref_t *ref, hsize_t *num_refs_p);
 
+/** Maximum recursion depth when reading HDF5 references */
+#define MAX_REF_DEPTH 32
 /** Phase-change threshold: use dense (indexed) link storage from the start */
 #define REFS_LINK_PHASE_CHANGE_MAX_COMPACT 0
 #define REFS_LINK_PHASE_CHANGE_MIN_DENSE 0
@@ -973,9 +975,15 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
     H5O_type_t obj_type;
     int err;
 
+    if ( mat->ref_depth >= MAX_REF_DEPTH ) {
+        Mat_Critical("Exceeded maximum reference recursion depth");
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
+    mat->ref_depth++;
+
     err = Mat_H5ReadVarInfo(matvar, dset_id);
     if ( err ) {
-        return err;
+        goto done_group;
     }
 
     /* Check if the variable is sparse */
@@ -988,7 +996,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
         herr = H5Aread(attr_id, H5T_NATIVE_UINT, &nrows);
         H5Aclose(attr_id);
         if ( herr < 0 ) {
-            return MATIO_E_GENERIC_READ_ERROR;
+            err = MATIO_E_GENERIC_READ_ERROR;
+            goto done_group;
         }
 
         matvar->class_type = MAT_C_SPARSE;
@@ -1009,7 +1018,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                 matvar->dims[0] = nrows;
             }
         } else {
-            return MATIO_E_UNKNOWN_ERROR;
+            err = MATIO_E_UNKNOWN_ERROR;
+            goto done_group;
         }
 
         /* Test if dataset type is compound and if so if it's complex */
@@ -1023,18 +1033,20 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
             H5Tclose(type_id);
             H5Dclose(sparse_dset_id);
         }
-        return MATIO_E_NO_ERROR;
+        err = MATIO_E_NO_ERROR;
+        goto done_group;
     }
 
     if ( MAT_C_STRUCT != matvar->class_type ) {
-        return MATIO_E_GENERIC_READ_ERROR;
+        err = MATIO_E_GENERIC_READ_ERROR;
+        goto done_group;
     }
 
     /* Check if the structure defines its fields in MATLAB_fields */
     if ( H5Aexists_by_name(dset_id, ".", "MATLAB_fields", H5P_DEFAULT) ) {
         err = Mat_H5ReadFieldNames(matvar, dset_id, &nfields);
         if ( err ) {
-            return err;
+            goto done_group;
         }
     } else {
         herr_t herr;
@@ -1071,7 +1083,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
         herr = H5OGET_INFO_BY_NAME(dset_id, matvar->internal->fieldnames[0], &object_info,
                                    H5P_DEFAULT);
         if ( herr < 0 ) {
-            return MATIO_E_GENERIC_READ_ERROR;
+            err = MATIO_E_GENERIC_READ_ERROR;
+            goto done_group;
         }
         obj_type = object_info.type;
     } else {
@@ -1081,7 +1094,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
         hid_t field_type_id;
         field_id = H5Dopen(dset_id, matvar->internal->fieldnames[0], H5P_DEFAULT);
         if ( field_id < 0 ) {
-            return MATIO_E_GENERIC_READ_ERROR;
+            err = MATIO_E_GENERIC_READ_ERROR;
+            goto done_group;
         }
         field_type_id = H5Dget_type(field_id);
         if ( H5T_REFERENCE == H5Tget_class(field_type_id) ) {
@@ -1100,7 +1114,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                     H5Tclose(field_type_id);
                     H5Dclose(field_id);
                     Mat_Critical("Error allocating memory for matvar->dims");
-                    return MATIO_E_OUT_OF_MEMORY;
+                    err = MATIO_E_OUT_OF_MEMORY;
+                    goto done_group;
                 }
             } else {
                 matvar->dims = Mat_H5ReadDims(field_id, &nelems, &matvar->rank);
@@ -1109,7 +1124,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                 } else {
                     H5Tclose(field_type_id);
                     H5Dclose(field_id);
-                    return MATIO_E_OUT_OF_MEMORY;
+                    err = MATIO_E_OUT_OF_MEMORY;
+                    goto done_group;
                 }
             }
         } else {
@@ -1124,7 +1140,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                 H5Tclose(field_type_id);
                 H5Dclose(field_id);
                 Mat_Critical("Error allocating memory for matvar->dims");
-                return MATIO_E_OUT_OF_MEMORY;
+                err = MATIO_E_OUT_OF_MEMORY;
+                goto done_group;
             }
         }
         H5Tclose(field_type_id);
@@ -1139,12 +1156,13 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
             nelems = 1;
         } else {
             Mat_Critical("Error allocating memory for matvar->dims");
-            return MATIO_E_OUT_OF_MEMORY;
+            err = MATIO_E_OUT_OF_MEMORY;
+            goto done_group;
         }
     }
 
     if ( nelems < 1 || nfields < 1 )
-        return err;
+        goto done_group;
 
     matvar->data_size = sizeof(*fields);
     {
@@ -1154,7 +1172,7 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
         if ( err ) {
             Mat_Critical("Integer multiplication overflow");
             matvar->nbytes = 0;
-            return err;
+            goto done_group;
         }
     }
     fields = (matvar_t **)calloc(matvar->nbytes, 1);
@@ -1229,6 +1247,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
         err = MATIO_E_OUT_OF_MEMORY;
     }
 
+done_group:
+    mat->ref_depth--;
     return err;
 }
 
@@ -1281,6 +1301,12 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id, matvar_t *matvar, mat_t *mat)
     if ( ref_id < 0 || matvar == NULL )
         return MATIO_E_NO_ERROR;
 
+    if ( mat->ref_depth >= MAX_REF_DEPTH ) {
+        Mat_Critical("Exceeded maximum reference recursion depth");
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
+    mat->ref_depth++;
+
     switch ( H5Iget_type(ref_id) ) {
         case H5I_DATASET:
             err = Mat_H5ReadDatasetInfo(mat, matvar, ref_id);
@@ -1301,6 +1327,7 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id, matvar_t *matvar, mat_t *mat)
             break;
     }
 
+    mat->ref_depth--;
     return err;
 }
 
@@ -1351,6 +1378,12 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
     if ( matvar->internal->id < 0 )
         return MATIO_E_FAIL_TO_IDENTIFY;
 
+    if ( mat->ref_depth >= MAX_REF_DEPTH ) {
+        Mat_Critical("Exceeded maximum reference recursion depth");
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
+    mat->ref_depth++;
+
     /* If the datatype with references is a cell, we've already read info into
      * the variable data, so just loop over each cell element and call
      * Mat_H5ReadNextReferenceData on it.
@@ -1360,11 +1393,11 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
         matvar_t **cells;
 
         if ( NULL == matvar->data ) {
-            return err;
+            goto done_ref;
         }
         err = Mat_MulDims(matvar, &nelems);
         if ( err ) {
-            return err;
+            goto done_ref;
         }
         cells = (matvar_t **)matvar->data;
         for ( i = 0; i < nelems; i++ ) {
@@ -1375,7 +1408,7 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
                 break;
             }
         }
-        return err;
+        goto done_ref;
     }
 
     switch ( H5Iget_type(matvar->internal->id) ) {
@@ -1441,6 +1474,8 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
             break;
     }
 
+done_ref:
+    mat->ref_depth--;
     return err;
 }
 
@@ -2748,6 +2783,7 @@ Mat_Create73(const char *matname, const char *hdr_str)
     mat->next_index = 0;
     mat->num_datasets = 0;
     mat->refs_id = -1;
+    mat->ref_depth = 0;
     mat->dir = NULL;
 #if defined(MCOS) && MCOS
     mat->mcos = NULL;
@@ -2834,6 +2870,12 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
     else if ( matvar->internal->id < 0 )
         return MATIO_E_FAIL_TO_IDENTIFY;
 
+    if ( mat->ref_depth >= MAX_REF_DEPTH ) {
+        Mat_Critical("Exceeded maximum reference recursion depth");
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
+    mat->ref_depth++;
+
     switch ( matvar->class_type ) {
         case MAT_C_DOUBLE:
         case MAT_C_SINGLE:
@@ -2850,12 +2892,12 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             err = Mat_MulDims(matvar, &nelems);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return err;
+                goto done;
             }
             err = Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return err;
+                goto done;
             }
 
             if ( nelems < 1 )
@@ -2890,12 +2932,12 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             err = Mat_MulDims(matvar, &nelems);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return err;
+                goto done;
             }
             err = Mul(&matvar->nbytes, nelems, matvar->data_size);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return err;
+                goto done;
             }
 
             dset_id = matvar->internal->id;
@@ -2926,12 +2968,12 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             err = Mat_MulDims(matvar, &nelems);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return err;
+                goto done;
             }
             err = Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
             if ( err ) {
                 Mat_Critical("Integer multiplication overflow");
-                return err;
+                goto done;
             }
 
             fields = (matvar_t **)matvar->data;
@@ -2994,7 +3036,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                         H5Gclose(dset_id);
                         free(sparse_data);
                         Mat_Critical("Integer multiplication overflow");
-                        return err;
+                        goto done;
                     }
                     sparse_data->ir = (mat_uint32_t *)malloc(nbytes);
                     if ( sparse_data->ir != NULL ) {
@@ -3015,7 +3057,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     if ( sparse_data->ir != NULL )
                         free(sparse_data->ir);
                     free(sparse_data);
-                    return err;
+                    goto done;
                 }
             }
 
@@ -3036,7 +3078,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                         H5Gclose(dset_id);
                         free(sparse_data);
                         Mat_Critical("Integer multiplication overflow");
-                        return err;
+                        goto done;
                     }
                     sparse_data->jc = (mat_uint32_t *)malloc(nbytes);
                     if ( sparse_data->jc != NULL ) {
@@ -3059,7 +3101,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     if ( sparse_data->ir != NULL )
                         free(sparse_data->ir);
                     free(sparse_data);
-                    return err;
+                    goto done;
                 }
             }
 
@@ -3081,7 +3123,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                         H5Gclose(dset_id);
                         free(sparse_data);
                         Mat_Critical("Integer multiplication overflow");
-                        return err;
+                        goto done;
                     }
                     matvar->data_size = sizeof(mat_sparse_t);
                     matvar->nbytes = matvar->data_size;
@@ -3167,6 +3209,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             err = MATIO_E_FAIL_TO_IDENTIFY;
             break;
     }
+done:
+    mat->ref_depth--;
     return err;
 }
 

@@ -757,6 +757,7 @@ Mat_Open(const char *matname, int mode)
     mat->num_datasets = 0;
 #if defined(MAT73) && MAT73
     mat->refs_id = -1;
+    mat->ref_depth = 0;
 #endif
     mat->dir = NULL;
 #if defined(MCOS) && MCOS
@@ -813,6 +814,7 @@ Mat_Open(const char *matname, int mode)
         mat->next_index = 0;
 #if defined(MAT73) && MAT73
         mat->refs_id = -1;
+        mat->ref_depth = 0;
 #endif
 
         Mat_Rewind(mat);
@@ -869,6 +871,7 @@ Mat_Open(const char *matname, int mode)
             } else {
                 mat->num_datasets = (size_t)group_info.nlinks;
                 mat->refs_id = H5I_INVALID_HID;
+                mat->ref_depth = 0;
             }
         }
 #else
