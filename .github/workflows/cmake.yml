@@ -104,6 +104,26 @@ jobs:
       - name: Test
         run: ctest --no-tests=error --test-dir build --build-config ${{ matrix.configuration }} --parallel 8
 
+  build-windows-arm:
+    name: windows-arm-msvc
+    runs-on: windows-11-arm
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 5
+          submodules: recursive
+      - name: Setup python environment
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.13
+      - name: Configure
+        run: cmake -S . -B build -A ARM64 -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF -DMATIO_WITH_ZLIB=OFF
+      - name: Build with msvc
+        run: cmake --build build --config Release
+      - name: Test
+        run: ctest --no-tests=error --test-dir build --build-config Release --parallel 8
+
   build-openbsd:
     name: openbsd-clang
     runs-on: ubuntu-latest
