@@ -266,7 +266,7 @@ EXTERN int InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes);
 #endif
 
 /* mat.c */
-EXTERN mat_complex_split_t *ComplexMalloc(size_t nbytes);
+EXTERN mat_complex_split_t *ComplexCalloc(size_t nbytes);
 EXTERN void ComplexFree(mat_complex_split_t *complex_data);
 EXTERN enum matio_types ClassType2DataType(enum matio_classes class_type);
 EXTERN int Add(size_t *res, size_t a, size_t b);

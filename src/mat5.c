@@ -3841,7 +3841,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Integer multiplication overflow");
                     break;
                 }
-                complex_data = ComplexMalloc(nBytes);
+                complex_data = ComplexCalloc(nBytes);
                 if ( NULL == complex_data ) {
                     err = MATIO_E_OUT_OF_MEMORY;
                     Mat_Critical("Couldn't allocate memory for the complex sparse data");
@@ -4436,7 +4436,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     break;
                 }
 
-                complex_data = ComplexMalloc(matvar->nbytes);
+                complex_data = ComplexCalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
                     err = MATIO_E_OUT_OF_MEMORY;
                     Mat_Critical("Couldn't allocate memory for the complex data");

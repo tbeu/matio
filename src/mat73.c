@@ -1436,7 +1436,7 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
             if ( !matvar->isComplex ) {
                 matvar->data = malloc(matvar->nbytes);
             } else {
-                matvar->data = ComplexMalloc(matvar->nbytes);
+                matvar->data = ComplexCalloc(matvar->nbytes);
             }
             if ( NULL != matvar->data ) {
                 err = Mat_H5ReadData(matvar->internal->id, data_type_id, H5S_ALL, H5S_ALL,
@@ -2916,7 +2916,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             if ( !matvar->isComplex ) {
                 matvar->data = malloc(matvar->nbytes);
             } else {
-                matvar->data = ComplexMalloc(matvar->nbytes);
+                matvar->data = ComplexCalloc(matvar->nbytes);
             }
             if ( NULL != matvar->data ) {
                 err = Mat_H5ReadData(dset_id, ClassType2H5T(matvar->class_type), H5S_ALL, H5S_ALL,
@@ -3130,7 +3130,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     if ( !matvar->isComplex ) {
                         sparse_data->data = malloc(ndata_bytes);
                     } else {
-                        sparse_data->data = ComplexMalloc(ndata_bytes);
+                        sparse_data->data = ComplexCalloc(ndata_bytes);
                     }
                     if ( NULL != sparse_data->data ) {
                         err =

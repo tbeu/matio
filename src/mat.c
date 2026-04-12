@@ -389,13 +389,13 @@ Mat_PrintData(int rank, const size_t *_dims, const void *data, enum matio_classe
 }
 
 mat_complex_split_t *
-ComplexMalloc(size_t nbytes)
+ComplexCalloc(size_t nbytes)
 {
     mat_complex_split_t *complex_data = (mat_complex_split_t *)malloc(sizeof(*complex_data));
     if ( NULL != complex_data ) {
-        complex_data->Re = malloc(nbytes);
+        complex_data->Re = calloc(nbytes, 1);
         if ( NULL != complex_data->Re ) {
-            complex_data->Im = malloc(nbytes);
+            complex_data->Im = calloc(nbytes, 1);
             if ( NULL == complex_data->Im ) {
                 free(complex_data->Re);
                 free(complex_data);

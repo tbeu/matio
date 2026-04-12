@@ -286,7 +286,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
             }
 
             if ( matvar->isComplex ) {
-                mat_complex_split_t *complex_data = ComplexMalloc(matvar->nbytes);
+                mat_complex_split_t *complex_data = ComplexCalloc(matvar->nbytes);
                 if ( NULL != complex_data ) {
                     err =
                         ReadDoubleData(mat, (double *)complex_data->Re, matvar->data_type, nelems);
@@ -494,7 +494,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                 data_type = matvar->data_type;
                 if ( matvar->isComplex ) {
                     mat_complex_split_t *complex_data =
-                        ComplexMalloc(sparse->ndata * Mat_SizeOf(data_type));
+                        ComplexCalloc(sparse->ndata * Mat_SizeOf(data_type));
                     if ( NULL != complex_data ) {
                         sparse->data = complex_data;
 #if defined(EXTENDED_SPARSE)
