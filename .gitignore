@@ -228,3 +228,7 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
+
+#
+# Copilot
+.github/copilot-instructions.md
