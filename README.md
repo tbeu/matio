@@ -144,6 +144,16 @@ This option enables CMake to check for availability of the HDF5 library (see sec
 This option enables CMake to check for availability of the zlib library (see section [2.1.1](#211-zlib) for information about zlib).
 * `MATIO_BUILD_TESTING:BOOL=ON`
 This option enables the matio testsuite for CTest.
+* `MATIO_MATLAB:BOOL=OFF`
+This option enables MATLAB verification of written MAT files in the testsuite. MATLAB can be available either locally or on a remote host via SSH.
+* `MATIO_MATLAB_EXE:FILEPATH`
+Path to a local MATLAB executable. If set, MATLAB tests run locally.
+* `MATIO_MATLAB_SSH_KEY:FILEPATH`
+SSH private key for a remote MATLAB host. Used when `MATIO_MATLAB_EXE` is not set.
+* `MATIO_MATLAB_SSH_HOST:STRING`
+SSH user@host for remote MATLAB (e.g., user@host).
+* `MATIO_MATLAB_SSH_DIR:STRING=/tmp`
+Remote working directory for MATLAB test files.
 * `MATIO_ENABLE_CPPCHECK:BOOL=OFF`
 This option enables CMake &GreaterEqual; 3.10 to perform static analysis with Cppcheck.
 * `MATIO_USE_CONAN:BOOL=OFF`

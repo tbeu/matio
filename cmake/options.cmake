@@ -48,6 +48,13 @@ endif()
 # Option to enable matio testsuite
 option(MATIO_BUILD_TESTING "Build matio testing" ON)
 
+# Option to enable MATLAB verification of written MAT files
+option(MATIO_MATLAB "Enable MATLAB verification of written MAT files" OFF)
+set(MATIO_MATLAB_EXE "" CACHE FILEPATH "Path to local MATLAB executable")
+set(MATIO_MATLAB_SSH_KEY "" CACHE FILEPATH "SSH private key for remote MATLAB host")
+set(MATIO_MATLAB_SSH_HOST "" CACHE STRING "SSH user@host for remote MATLAB (e.g., user@host)")
+set(MATIO_MATLAB_SSH_DIR "/tmp" CACHE STRING "Remote working directory for MATLAB test files")
+
 set(BUILD_TESTING OFF)
 if(MATIO_BUILD_TESTING)
     set(BUILD_TESTING ON)

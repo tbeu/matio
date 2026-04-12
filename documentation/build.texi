@@ -97,6 +97,18 @@ HDF5 library (see section 2.1.2 for information about HDF5).
 @item MATIO_WITH_ZLIB:BOOL=ON
 This option enables CMake to check for availability of the
 zlib library (see section 2.1.1 for information about zlib).
+@item MATIO_MATLAB:BOOL=OFF
+This option enables MATLAB verification of written MAT files in the testsuite.
+MATLAB can be available either locally or on a remote host via SSH.
+@item MATIO_MATLAB_EXE:FILEPATH
+Path to a local MATLAB executable. If set, MATLAB tests run locally.
+@item MATIO_MATLAB_SSH_KEY:FILEPATH
+SSH private key for a remote MATLAB host. Used when @code{MATIO_MATLAB_EXE} is
+not set.
+@item MATIO_MATLAB_SSH_HOST:STRING
+SSH user@@host for remote MATLAB (e.g., user@@host).
+@item MATIO_MATLAB_SSH_DIR:STRING=/tmp
+Remote working directory for MATLAB test files.
 @end table
 
 To help CMake find the HDF5 libraries, set environment variable

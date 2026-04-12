@@ -22,6 +22,7 @@ condition_mapping = {
     'test $HAVE_UINT64 -eq 0': 'HAVE_UINT64',
     '! grep -q "#define SIZEOF_VOID_P 4" $abs_top_builddir/src/matioConfig.h': 'CMAKE_SIZEOF_VOID_P EQUAL 4',
     '! grep -q "#define SIZEOF_VOID_P 8" $abs_top_builddir/src/matioConfig.h': 'CMAKE_SIZEOF_VOID_P EQUAL 8',
+    'test -z "$MATLABEXE"': 'MATIO_MATLAB',
 }
 
 command_mapping = {
@@ -42,6 +43,8 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
         check_re = re.compile(r'AT_CHECK\(\[([^\]]+)\]')
         check_copy_re = re.compile(r'AT_CHECK\(\[cp (.*?) expout')
         check_diff_re = re.compile(r'\s*(.*?)\],\[0\],\[expout\],\[\]\)')
+        check_matlab_cp_re = re.compile(r'AT_CHECK\(\[cp \$srcdir/matlab/(\S+\.m) \.')
+        check_matlab_cmd_re = re.compile(r'\$MATLABEXE -nosplash -nojvm -r "([^"]+)"')
         cleanup_re = re.compile(r'AT_CLEANUP')
         keyword_re = re.compile(r'AT_KEYWORDS\(\[([^\]]+)\]\)')
 
@@ -50,6 +53,8 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
         counter = 1
         check_copy_match = None
         check_diff_match = None
+        check_matlab_cp_match = None
+        check_matlab_cmd_match = None
 
         for line in atf:
             setup_match = setup_re.search(line)
@@ -59,6 +64,10 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                 check_copy_match = check_copy_re.search(line)
             if check_diff_match is None:
                 check_diff_match = check_diff_re.search(line)
+            if check_matlab_cp_match is None:
+                check_matlab_cp_match = check_matlab_cp_re.search(line)
+            if check_matlab_cp_match is not None and check_matlab_cmd_match is None:
+                check_matlab_cmd_match = check_matlab_cmd_re.search(line)
             cleanup_match = cleanup_re.search(line)
             keyword_match = keyword_re.search(line)
 
@@ -71,6 +80,8 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                 counter = 1
                 check_copy_match = None
                 check_diff_match = None
+                check_matlab_cp_match = None
+                check_matlab_cmd_match = None
                 mat_file_name = None
 
             elif keyword_match:
@@ -168,6 +179,65 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                 check_copy_match = None
                 check_diff_match = None
                 counter += 2
+
+            elif check_matlab_cp_match and check_matlab_cmd_match:
+                matlab_m_file = check_matlab_cp_match.group(1)
+                matlab_cmd = check_matlab_cmd_match.group(1)
+
+                # Parse type and script from MATLAB command
+                if ';' in matlab_cmd:
+                    parts = matlab_cmd.split(';', 1)
+                    type_match = re.match(r"type='(\w+)'", parts[0])
+                    matlab_type = type_match.group(1) if type_match else ''
+                    matlab_script = parts[1]
+                else:
+                    matlab_type = ''
+                    matlab_script = matlab_cmd
+
+                mat_file_remote = matlab_m_file.replace('.m', '.mat')
+                m_file_path = f'${{PROJECT_SOURCE_DIR}}/test/matlab/{matlab_m_file}'
+
+                if skip_conditions:
+                    if len(skip_conditions) > 1:
+                        skip_conditions = skip_conditions[1:]
+                    combined_conditions = ' AND '.join(skip_conditions)
+                    cmakef.write(f'    if({combined_conditions})\n')
+                    skip_conditions = []
+
+                cmd_parts = ['${CMAKE_COMMAND}']
+                if mat_file_name:
+                    cmd_parts.append(f'-DMAT_FILE={mat_file_name}')
+                cmd_parts.append(f'-DMAT_FILE_REMOTE={mat_file_remote}')
+                cmd_parts.append(f'-DM_FILE={m_file_path}')
+                cmd_parts.append(f'-DMATLAB_SCRIPT={matlab_script}')
+                if matlab_type:
+                    cmd_parts.append(f'-DMATLAB_TYPE={matlab_type}')
+                cmd_parts.append('-DMATIO_MATLAB_EXE=${MATIO_MATLAB_EXE}')
+                cmd_parts.append('-DMATIO_MATLAB_SSH_KEY=${MATIO_MATLAB_SSH_KEY}')
+                cmd_parts.append('-DMATIO_MATLAB_SSH_HOST=${MATIO_MATLAB_SSH_HOST}')
+                cmd_parts.append('-DMATIO_MATLAB_SSH_DIR=${MATIO_MATLAB_SSH_DIR}')
+                cmd_parts.append('-P ${PROJECT_SOURCE_DIR}/cmake/run_matlab_test.cmake')
+                command = ' '.join(cmd_parts)
+
+                cmakef.write(f'        add_test(NAME {test_name}_{counter}\n')
+                cmakef.write(f'            COMMAND {command}\n')
+                cmakef.write('            WORKING_DIRECTORY ${MATIO_TESTING_DIR})\n')
+                cmakef.write(f'        set_tests_properties({test_name}_{counter} PROPERTIES FIXTURES_REQUIRED TEMPDIR)\n')
+
+                matlab_keywords = sorted(list(set(test_keywords + ['matlab'])))
+                keyword_str = ';'.join(matlab_keywords)
+                cmakef.write(f'        set_tests_properties({test_name}_{counter} PROPERTIES LABELS "{keyword_str}")\n')
+
+                if counter > 1:
+                    depends_str = f'{test_name}_{counter - 1}'
+                    cmakef.write(f'        set_tests_properties({test_name}_{counter} PROPERTIES DEPENDS {depends_str})\n')
+
+                cmakef.write(f'        set_tests_properties({test_name}_{counter} PROPERTIES TIMEOUT 120)\n')
+                cmakef.write('    endif()\n')
+
+                check_matlab_cp_match = None
+                check_matlab_cmd_match = None
+                counter += 1
 
             elif cleanup_match:
                 if counter > 1:

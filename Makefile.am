@@ -34,6 +34,8 @@ CMAKE_FILES = CMakeLists.txt \
               cmake/conan_provider.cmake \
               cmake/getopt.cmake \
               cmake/options.cmake \
+              cmake/run_matlab_test.cmake \
+              cmake/run_matlab_cmd.cmake \
               cmake/src.cmake \
               cmake/staticAnalyzers.cmake \
               cmake/test.cmake \

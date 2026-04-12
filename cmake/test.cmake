@@ -43,9 +43,25 @@ if(MATIO_BUILD_TESTING)
 
         enable_testing()
 
+        if(MATIO_MATLAB)
+            add_test(NAME matlab_ver
+                COMMAND ${CMAKE_COMMAND}
+                    -DMATLAB_CMD=ver
+                    -DMATIO_MATLAB_EXE=${MATIO_MATLAB_EXE}
+                    -DMATIO_MATLAB_SSH_KEY=${MATIO_MATLAB_SSH_KEY}
+                    -DMATIO_MATLAB_SSH_HOST=${MATIO_MATLAB_SSH_HOST}
+                    -P ${PROJECT_SOURCE_DIR}/cmake/run_matlab_cmd.cmake)
+            set_tests_properties(matlab_ver PROPERTIES FIXTURES_SETUP MATLAB_VER)
+            set_tests_properties(matlab_ver PROPERTIES LABELS "matlab")
+            set_tests_properties(matlab_ver PROPERTIES TIMEOUT 120)
+        endif()
+
         add_test(NAME create_temp_dir
             COMMAND ${CMAKE_COMMAND} -E make_directory ${MATIO_TESTING_DIR})
         set_tests_properties(create_temp_dir PROPERTIES FIXTURES_SETUP TEMPDIR)
+        if(MATIO_MATLAB)
+            set_tests_properties(create_temp_dir PROPERTIES FIXTURES_REQUIRED MATLAB_VER)
+        endif()
 
         file(GLOB CMAKE_TEST_FILES "${MATIO_CTESTS_DIR}/*.cmake")
         foreach(test_file ${CMAKE_TEST_FILES})
