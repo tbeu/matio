@@ -3,7 +3,8 @@
  * Copyright (c) 2010-2014, Christopher C. Hulbert
  * All rights reserved.
  *
- * SPDX-License-Identifier: BSD-2-Clause */
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
 
 #ifndef MATIO_PUBCONF_H
 #define MATIO_PUBCONF_H 1
