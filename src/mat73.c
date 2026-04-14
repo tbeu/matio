@@ -539,9 +539,10 @@ Mat_H5ReadScalarAttribute(hid_t attr_id, hid_t mem_type, void *value)
 static int
 Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
 {
-    hid_t attr_id, type_id;
+    hid_t attr_id, type_id, mem_type_id = H5I_INVALID_HID;
     int err = MATIO_E_NO_ERROR;
     char *class_str;
+    size_t class_len;
 
     matvar->internal->id = dset_id;
     attr_id = H5Aopen_by_name(dset_id, ".", "MATLAB_class", H5P_DEFAULT, H5P_DEFAULT);
@@ -555,15 +556,31 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
         H5Aclose(attr_id);
         return MATIO_E_FAIL_TO_IDENTIFY;
     }
-    class_str = (char *)calloc(H5Tget_size(type_id) + 1, 1);
+    class_len = H5Tget_size(type_id);
+    mem_type_id = H5Tcopy(H5T_C_S1);
+    if ( mem_type_id == H5I_INVALID_HID ) {
+        H5Tclose(type_id);
+        H5Aclose(attr_id);
+        return MATIO_E_FAIL_TO_IDENTIFY;
+    }
+    if ( 0 > H5Tset_size(mem_type_id, class_len + 1) ||
+         0 > H5Tset_strpad(mem_type_id, H5T_STR_NULLTERM) ) {
+        H5Tclose(mem_type_id);
+        H5Tclose(type_id);
+        H5Aclose(attr_id);
+        return MATIO_E_FAIL_TO_IDENTIFY;
+    }
+    class_str = (char *)calloc(class_len + 1, 1);
     if ( NULL != class_str ) {
-        herr_t herr = H5Aread(attr_id, type_id, class_str);
+        herr_t herr = H5Aread(attr_id, mem_type_id, class_str);
         if ( herr < 0 ) {
             free(class_str);
+            H5Tclose(mem_type_id);
             H5Tclose(type_id);
             H5Aclose(attr_id);
             return MATIO_E_GENERIC_READ_ERROR;
         }
+        class_str[class_len] = '\0';
         matvar->class_type = ClassStr2ClassType(class_str);
         if ( MAT_C_EMPTY == matvar->class_type ) {
             /* Check for MCOS object: unknown class name on a dataset.
@@ -581,6 +598,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
                 matvar->internal->type_name = strdup("MCOS");
                 if ( NULL == matvar->internal->class_name || NULL == matvar->internal->type_name ) {
                     free(class_str);
+                    H5Tclose(mem_type_id);
                     H5Tclose(type_id);
                     H5Aclose(attr_id);
                     return MATIO_E_OUT_OF_MEMORY;
@@ -602,6 +620,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
                 H5Aclose(attr_id2);
                 if ( err ) {
                     free(class_str);
+                    H5Tclose(mem_type_id);
                     H5Tclose(type_id);
                     H5Aclose(attr_id);
                     return err;
@@ -637,6 +656,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
     } else {
         err = MATIO_E_OUT_OF_MEMORY;
     }
+    H5Tclose(mem_type_id);
     H5Tclose(type_id);
     H5Aclose(attr_id);
 
