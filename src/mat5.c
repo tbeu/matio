@@ -2241,6 +2241,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 for ( k = 0; k < nfields; k++ ) {
                     if ( NULL != matvar->internal->fieldnames[k] &&
                          NULL != fields[i * nfields + k] ) {
+                        free(fields[i * nfields + k]->name);
                         fields[i * nfields + k]->name = strdup(matvar->internal->fieldnames[k]);
                         if ( NULL == fields[i * nfields + k]->name )
                             return bytesread;
