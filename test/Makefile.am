@@ -127,7 +127,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(matlab_dir)/test_write_char_2d.m \
                  $(matlab_dir)/test_write_complex_1d_numeric.m \
                  $(matlab_dir)/test_write_complex_2d_numeric.m \
-                 $(matlab_dir)/test_write_empty.m \
+                 $(matlab_dir)/test_write_empty_2d_numeric.m \
                  $(matlab_dir)/test_write_empty_cell.m \
                  $(matlab_dir)/test_write_empty_struct.m \
                  $(matlab_dir)/test_write_sparse.m \

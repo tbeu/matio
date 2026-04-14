@@ -233,6 +233,7 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                     cmakef.write(f'        set_tests_properties({test_name}_{counter} PROPERTIES DEPENDS {depends_str})\n')
 
                 cmakef.write(f'        set_tests_properties({test_name}_{counter} PROPERTIES TIMEOUT 120)\n')
+                cmakef.write(f'        set_tests_properties({test_name}_{counter} PROPERTIES RESOURCE_LOCK MATLAB_SESSION)\n')
                 cmakef.write('    endif()\n')
 
                 check_matlab_cp_match = None

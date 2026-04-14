@@ -160,8 +160,8 @@ AT_CHECK([$builddir/test_mat -v 4 -c double write_empty_2d_numeric],[0],[],[])
 AT_CHECK([cp $srcdir/results/readvar-write_empty_2d_numeric-empty.out expout
           $builddir/test_mat readvar test_write_empty_2d_numeric.mat empty],[0],[expout],[])
 AT_SKIP_IF([test -z "$MATLABEXE"])
-AT_CHECK([cp $srcdir/matlab/test_write_empty.m .
-          $MATLABEXE -nosplash -nojvm -r "test_write_empty" | $GREP PASSED],[0],[PASSED
+AT_CHECK([cp $srcdir/matlab/test_write_empty_2d_numeric.m .
+          $MATLABEXE -nosplash -nojvm -r "test_write_empty_2d_numeric" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
 

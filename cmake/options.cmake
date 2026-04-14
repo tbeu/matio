@@ -42,6 +42,7 @@ else()
 endif()
 
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.10")
+    # Option to enable static analysis with Cppcheck
     option(MATIO_ENABLE_CPPCHECK "Enable static analysis with Cppcheck." OFF)
 endif()
 

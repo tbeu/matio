@@ -53,6 +53,7 @@ if(MATIO_BUILD_TESTING)
                     -P ${PROJECT_SOURCE_DIR}/cmake/run_matlab_cmd.cmake)
             set_tests_properties(matlab_ver PROPERTIES FIXTURES_SETUP MATLAB_VER)
             set_tests_properties(matlab_ver PROPERTIES LABELS "matlab")
+            set_tests_properties(matlab_ver PROPERTIES RESOURCE_LOCK MATLAB_SESSION)
             set_tests_properties(matlab_ver PROPERTIES TIMEOUT 120)
         endif()
 
