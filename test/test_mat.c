@@ -2685,6 +2685,15 @@ test_struct_api_create(void)
     Mat_VarPrint(matvar, 1);
     Mat_VarFree(matvar);
 
+    matvar = Mat_VarCreateStruct2("d", 2, dims, fieldnames);
+    free(matvar->internal->fieldnames[0]);
+    free(matvar->internal->fieldnames[1]);
+    free(matvar->internal->fieldnames);
+    matvar->internal->fieldnames = NULL;
+    matvar->internal->num_fields = 2;
+    Mat_VarPrint(matvar, 1);
+    Mat_VarFree(matvar);
+
     return err;
 }
 

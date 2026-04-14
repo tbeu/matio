@@ -31,3 +31,14 @@ Fields[2] {
       Name: field2
       Rank: 0
 }
+      Name: d
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: 
+      Rank: 0
+      Name: 
+      Rank: 0
+}

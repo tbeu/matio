@@ -2422,6 +2422,16 @@ Mat_VarGetSize(const matvar_t *matvar)
     return bytes;
 }
 
+static const char *
+Mat_VarPrintFieldName(const matvar_t *matvar, size_t field_index)
+{
+    if ( NULL != matvar && NULL != matvar->internal && NULL != matvar->internal->fieldnames &&
+         NULL != matvar->internal->fieldnames[field_index] )
+        return matvar->internal->fieldnames[field_index];
+
+    return "";
+}
+
 /** @brief Prints the variable information
  *
  * Prints to stdout the values of the @ref matvar_t structure
@@ -2526,7 +2536,7 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
                 for ( i = 0; i < nelems_x_nfields; i++ ) {
                     if ( NULL == fields[i] ) {
                         printf("      Name: %s\n      Rank: %d\n",
-                               matvar->internal->fieldnames[i % nfields], 0);
+                               Mat_VarPrintFieldName(matvar, i % nfields), 0);
                     } else {
                         Mat_VarPrint(fields[i], printdata);
                     }
@@ -2536,7 +2546,7 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
         } else {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nfields);
             for ( i = 0; i < nfields; i++ )
-                printf("      Name: %s\n      Rank: %d\n", matvar->internal->fieldnames[i], 0);
+                printf("      Name: %s\n      Rank: %d\n", Mat_VarPrintFieldName(matvar, i), 0);
             printf("}\n");
         }
         return;
@@ -2553,7 +2563,7 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
                 for ( i = 0; i < nelems_x_nfields; i++ ) {
                     if ( NULL == fields[i] ) {
                         printf("      Name: %s\n      Rank: %d\n",
-                               matvar->internal->fieldnames[i % nfields], 0);
+                               Mat_VarPrintFieldName(matvar, i % nfields), 0);
                     } else {
                         Mat_VarPrint(fields[i], printdata);
                     }
@@ -2563,7 +2573,7 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
         } else {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nfields);
             for ( i = 0; i < nfields; i++ )
-                printf("      Name: %s\n      Rank: %d\n", matvar->internal->fieldnames[i], 0);
+                printf("      Name: %s\n      Rank: %d\n", Mat_VarPrintFieldName(matvar, i), 0);
             printf("}\n");
         }
         return;
