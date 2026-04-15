@@ -139,6 +139,22 @@ static int Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression co
 /** Metadata block allocation size in bytes */
 #define META_BLOCK_SIZE 65536
 
+/** @brief Create an HDF5 simple dataspace from matvar dimensions */
+static hid_t
+Mat_dims_to_space(int rank, const size_t *dims)
+{
+    int i;
+    hsize_t *h5dims = (hsize_t *)malloc((size_t)rank * sizeof(hsize_t));
+    hid_t space_id;
+    if ( NULL == h5dims )
+        return H5Screate(H5S_SCALAR);
+    for ( i = 0; i < rank; i++ )
+        h5dims[i] = (hsize_t)dims[i];
+    space_id = H5Screate_simple(rank, h5dims, NULL);
+    free(h5dims);
+    return space_id;
+}
+
 /** @brief Create the /#refs# group with properties optimized for many members */
 static hid_t
 Mat_CreateRefsGroup(hid_t id)
@@ -883,8 +899,12 @@ Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
             if ( matvar->dims == NULL ) {
                 err = MATIO_E_OUT_OF_MEMORY;
             } else {
-                herr =
-                    H5Dread(dset_id, SizeType2H5T(), H5S_ALL, H5S_ALL, H5P_DEFAULT, matvar->dims);
+                hsize_t hrank = (hsize_t)matvar->rank;
+                hid_t mem_space_id = H5Screate_simple(1, &hrank, NULL);
+                herr = H5Dread(dset_id, SizeType2H5T(), mem_space_id, H5S_ALL, H5P_DEFAULT,
+                               matvar->dims);
+                H5Sclose(mem_space_id);
+
                 if ( herr < 0 ) {
                     err = MATIO_E_GENERIC_READ_ERROR;
                 } else {
@@ -947,8 +967,10 @@ Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
             hobj_ref_t *ref_ids = (hobj_ref_t *)calloc(nelems, sizeof(*ref_ids));
             if ( ref_ids != NULL ) {
                 size_t i;
+                hid_t mem_space_id = H5Screate_simple(1, &nelems, NULL);
                 herr_t herr =
-                    H5Dread(dset_id, H5T_STD_REF_OBJ, H5S_ALL, H5S_ALL, H5P_DEFAULT, ref_ids);
+                    H5Dread(dset_id, H5T_STD_REF_OBJ, mem_space_id, H5S_ALL, H5P_DEFAULT, ref_ids);
+                H5Sclose(mem_space_id);
                 if ( herr < 0 ) {
                     free(ref_ids);
                     return MATIO_E_GENERIC_READ_ERROR;
@@ -1236,8 +1258,10 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                     hobj_ref_t *ref_ids = (hobj_ref_t *)calloc((size_t)nelems, sizeof(*ref_ids));
                     if ( ref_ids != NULL ) {
                         hsize_t l;
-                        herr = H5Dread(field_id, H5T_STD_REF_OBJ, H5S_ALL, H5S_ALL, H5P_DEFAULT,
-                                       ref_ids);
+                        hid_t mem_space_id = H5Screate_simple(1, &nelems, NULL);
+                        herr = H5Dread(field_id, H5T_STD_REF_OBJ, mem_space_id, H5S_ALL,
+                                       H5P_DEFAULT, ref_ids);
+                        H5Sclose(mem_space_id);
                         if ( herr < 0 ) {
                             err = MATIO_E_GENERIC_READ_ERROR;
                         } else {
@@ -1491,8 +1515,10 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
                 matvar->data = ComplexCalloc(matvar->nbytes);
             }
             if ( NULL != matvar->data ) {
-                err = Mat_H5ReadData(matvar->internal->id, data_type_id, H5S_ALL, H5S_ALL,
+                hid_t mem_space_id = Mat_dims_to_space(matvar->rank, matvar->dims);
+                err = Mat_H5ReadData(matvar->internal->id, data_type_id, mem_space_id, H5S_ALL,
                                      matvar->isComplex, matvar->data);
+                H5Sclose(mem_space_id);
             }
             break;
         }
@@ -2991,8 +3017,10 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 matvar->data = ComplexCalloc(matvar->nbytes);
             }
             if ( NULL != matvar->data ) {
-                err = Mat_H5ReadData(dset_id, ClassType2H5T(matvar->class_type), H5S_ALL, H5S_ALL,
-                                     matvar->isComplex, matvar->data);
+                hid_t mem_space_id = Mat_dims_to_space(matvar->rank, matvar->dims);
+                err = Mat_H5ReadData(dset_id, ClassType2H5T(matvar->class_type), mem_space_id,
+                                     H5S_ALL, matvar->isComplex, matvar->data);
+                H5Sclose(mem_space_id);
             }
             H5Dclose(dset_id);
             H5Dclose(ref_id);
@@ -3118,8 +3146,10 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     }
                     sparse_data->ir = (mat_uint32_t *)malloc(nbytes);
                     if ( sparse_data->ir != NULL ) {
-                        herr_t herr = H5Dread(sparse_dset_id, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL,
-                                              H5P_DEFAULT, sparse_data->ir);
+                        hid_t mem_space_id = H5Screate_simple(1, &nelems, NULL);
+                        herr_t herr = H5Dread(sparse_dset_id, H5T_NATIVE_UINT, mem_space_id,
+                                              H5S_ALL, H5P_DEFAULT, sparse_data->ir);
+                        H5Sclose(mem_space_id);
                         if ( herr < 0 ) {
                             err = MATIO_E_GENERIC_READ_ERROR;
                         }
@@ -3166,8 +3196,10 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     }
                     sparse_data->jc = (mat_uint32_t *)malloc(nbytes);
                     if ( sparse_data->jc != NULL ) {
-                        herr_t herr = H5Dread(sparse_dset_id, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL,
-                                              H5P_DEFAULT, sparse_data->jc);
+                        hid_t mem_space_id = H5Screate_simple(1, &nelems, NULL);
+                        herr_t herr = H5Dread(sparse_dset_id, H5T_NATIVE_UINT, mem_space_id,
+                                              H5S_ALL, H5P_DEFAULT, sparse_data->jc);
+                        H5Sclose(mem_space_id);
                         if ( herr < 0 ) {
                             err = MATIO_E_GENERIC_READ_ERROR;
                         }
@@ -3280,8 +3312,10 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                         mat_uint32_t *meta =
                             (mat_uint32_t *)malloc((size_t)nelems * sizeof(mat_uint32_t));
                         if ( meta != NULL ) {
-                            herr_t herr = H5Dread(opaque_id, H5T_NATIVE_UINT32, H5S_ALL, H5S_ALL,
-                                                  H5P_DEFAULT, meta);
+                            hid_t mem_space_id = H5Screate_simple(1, &nelems, NULL);
+                            herr_t herr = H5Dread(opaque_id, H5T_NATIVE_UINT32, mem_space_id,
+                                                  H5S_ALL, H5P_DEFAULT, meta);
+                            H5Sclose(mem_space_id);
                             if ( herr >= 0 ) {
 #if defined(MCOS) && MCOS
                                 (void)ParseOpaqueMetadata(meta, (size_t)nelems, matvar);
