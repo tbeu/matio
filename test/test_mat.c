@@ -233,7 +233,7 @@ static const char *helptest_write_complex_1d_numeric[] = {
     "MATLAB code to generate expected data",
     "",
     "    classtype = 'double';",
-    "    a = cast([1:50] - j*[51:100],classtype)';",
+    "    a = cast([1:50] + j*[51:100],classtype).';",
     "",
     NULL};
 
@@ -392,9 +392,9 @@ static const char *helptest_write_char_1d[] = {
     "",
     "MATLAB code to generate expected data",
     "",
-    "    a = ['abcdefghijklmnopqrstuvwxyz',",
-    "         'ABCDEFGHIJKLMNOPQRSTUVWXYZ',",
-    "         '1234567890!@#$%^&*()-_=+`~',",
+    "    a = ['abcdefghijklmnopqrstuvwxyz' ...",
+    "         'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ...",
+    "         '1234567890!@#$%^&*()-_=+`~' ...",
     "         '[{]}\\|;:''\",<.>/?          ']';",
     "",
     NULL};
@@ -1501,14 +1501,44 @@ static int
 test_write_char_1d(const char *output_name)
 {
     const size_t dims[1] = {104};
-    return test_write_char(output_name, 1, dims);
+    int err = 0;
+
+    mat_t *mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( mat ) {
+        const char *str =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "1234567890!@#$%^&*()-_=+`~[{]}\\|;:'\",<.>/?          ";
+        matvar_t *matvar =
+            Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UINT8, 1, dims, (void *)str, MAT_F_DONT_COPY_DATA);
+        err = Mat_VarWrite(mat, matvar, compression);
+        Mat_VarFree(matvar);
+        Mat_Close(mat);
+    } else {
+        err = 1;
+    }
+    return err;
 }
 
 static int
 test_write_char_2d(const char *output_name)
 {
     const size_t dims[2] = {4, 26};
-    return test_write_char(output_name, 2, dims);
+    int err = 0;
+
+    mat_t *mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( mat ) {
+        const char *str =
+            "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
+            "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
+        matvar_t *matvar =
+            Mat_VarCreate("a", MAT_C_CHAR, MAT_T_UINT8, 2, dims, (void *)str, MAT_F_DONT_COPY_DATA);
+        err = Mat_VarWrite(mat, matvar, compression);
+        Mat_VarFree(matvar);
+        Mat_Close(mat);
+    } else {
+        err = 1;
+    }
+    return err;
 }
 
 static int
