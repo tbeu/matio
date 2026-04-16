@@ -5952,6 +5952,9 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                     (void)Mat_uint32Swap(&meta[0]);
             }
         } else {
+            if ( meta_nbytes > UINT32_MAX - 7 ) {
+                return MATIO_E_FILE_FORMAT_VIOLATION;
+            }
             meta_pad = (meta_nbytes % 8 == 0) ? meta_nbytes : meta_nbytes + 8 - (meta_nbytes % 8);
             meta = (mat_uint32_t *)malloc(meta_pad);
             if ( meta == NULL )
@@ -6270,6 +6273,9 @@ ReadCompressedOpaqueInfo5(mat_t *mat, matvar_t *matvar, size_t *bytesread)
                     (void)Mat_uint32Swap(&meta[0]);
             }
         } else {
+            if ( meta_nbytes > UINT32_MAX - 7 ) {
+                return MATIO_E_FILE_FORMAT_VIOLATION;
+            }
             meta_pad = (meta_nbytes % 8 == 0) ? meta_nbytes : meta_nbytes + 8 - (meta_nbytes % 8);
             meta = (mat_uint32_t *)malloc(meta_pad);
             if ( meta == NULL )
