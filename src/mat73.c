@@ -3671,6 +3671,10 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
             }
 
             dset_id = H5Dopen(id, name, H5P_DEFAULT);
+            if ( dset_id < 0 ) {
+                Mat_VarFree(matvar);
+                return 0;
+            }
             err = Mat_H5ReadDatasetInfo(mat, matvar, dset_id);
             if ( matvar->internal->id != dset_id ) {
                 /* Close dataset and increment count */
@@ -3678,7 +3682,7 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
             }
             if ( err ) {
                 Mat_VarFree(matvar);
-                return 0; /* Skip unreadable variable */
+                return 0;
             }
             iter_data->matvar = matvar;
             break;
@@ -3697,10 +3701,14 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
             }
 
             dset_id = H5Gopen(id, name, H5P_DEFAULT);
+            if ( dset_id < 0 ) {
+                Mat_VarFree(matvar);
+                return 0;
+            }
             err = Mat_H5ReadGroupInfo(mat, matvar, dset_id);
             if ( err ) {
                 Mat_VarFree(matvar);
-                return 0; /* Skip unreadable variable */
+                return 0;
             }
             iter_data->matvar = matvar;
             break;
