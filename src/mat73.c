@@ -885,6 +885,21 @@ Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
         return err;
     }
 
+    /* Validate the dataset's storage: check for corrupted chunked datasets */
+    {
+        hid_t dcpl_id = H5Dget_create_plist(dset_id);
+        if ( dcpl_id >= 0 ) {
+            H5D_layout_t layout = H5Pget_layout(dcpl_id);
+            H5Pclose(dcpl_id);
+            if ( layout == H5D_CHUNKED ) {
+                H5D_space_status_t space_status;
+                if ( H5Dget_space_status(dset_id, &space_status) < 0 ) {
+                    return MATIO_E_FILE_FORMAT_VIOLATION;
+                }
+            }
+        }
+    }
+
     matvar->dims = Mat_H5ReadDims(dset_id, &nelems, &matvar->rank);
     if ( NULL == matvar->dims ) {
         return MATIO_E_UNKNOWN_ERROR;
