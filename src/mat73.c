@@ -828,6 +828,13 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
             H5Aclose(attr_id);
             return MATIO_E_GENERIC_READ_ERROR;
         }
+        if ( H5Aget_storage_size(attr_id) < (hsize_t)*nfields * H5Tget_size(type_id) ) {
+            H5Tclose(type_id);
+            free(fieldnames_vl);
+            H5Sclose(space_id);
+            H5Aclose(attr_id);
+            return MATIO_E_FILE_FORMAT_VIOLATION;
+        }
         herr = H5Aread(attr_id, type_id, fieldnames_vl);
         if ( herr >= 0 ) {
             matvar->internal->num_fields = (unsigned int)*nfields;
