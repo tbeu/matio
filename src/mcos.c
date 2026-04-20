@@ -58,8 +58,8 @@ ParseOpaqueMetadata(const mat_uint32_t *meta, size_t meta_nvals, matvar_t *matva
     ndims = meta[1];
     dim_start = 2;
 
-    if ( dim_start + ndims + 1 > meta_nvals )
-        return MATIO_E_NO_ERROR;
+    if ( (size_t)dim_start + ndims + 1 > meta_nvals )
+        return MATIO_E_FILE_FORMAT_VIOLATION;
 
     /* Set rank and dims */
     free(matvar->dims);
@@ -69,12 +69,15 @@ ParseOpaqueMetadata(const mat_uint32_t *meta, size_t meta_nvals, matvar_t *matva
         mat_uint32_t d;
         for ( d = 0; d < ndims; d++ ) {
             matvar->dims[d] = meta[dim_start + d];
-            total_objs *= meta[dim_start + d];
+            if ( Mul(&total_objs, total_objs, meta[dim_start + d]) ) {
+                total_objs = 0;
+                break;
+            }
         }
     }
 
     obj_start = dim_start + ndims;
-    if ( obj_start + total_objs < meta_nvals ) {
+    if ( total_objs > 0 && (size_t)obj_start + total_objs < meta_nvals ) {
         matvar->internal->num_objects = total_objs;
         matvar->internal->object_ids = (mat_uint32_t *)malloc(total_objs * sizeof(mat_uint32_t));
         if ( matvar->internal->object_ids != NULL ) {
