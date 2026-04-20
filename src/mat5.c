@@ -3797,6 +3797,8 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 matvar->internal->z->avail_in = 0;
                 err = Inflate(mat, matvar->internal->z, tag, 4, &bytesread);
                 if ( err ) {
+                    free(sparse->jc);
+                    free(sparse->ir);
                     free(matvar->data);
                     matvar->data = NULL;
                     break;
@@ -3815,6 +3817,8 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             } else {
                 err = Read(tag, 4, 1, (FILE *)mat->fp, &bytesread);
                 if ( err ) {
+                    free(sparse->jc);
+                    free(sparse->ir);
                     free(matvar->data);
                     matvar->data = NULL;
                     break;
@@ -3829,6 +3833,8 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     data_in_tag = 0;
                     err = Read(&N, 4, 1, (FILE *)mat->fp, &bytesread);
                     if ( err ) {
+                        free(sparse->jc);
+                        free(sparse->ir);
                         free(matvar->data);
                         matvar->data = NULL;
                         break;
