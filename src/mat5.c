@@ -1766,6 +1766,9 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 size_t opaque_bytes = 0;
                 uLong total_out_before = matvar->internal->z->total_out;
 
+                free(fields[i]->name);
+                fields[i]->name = NULL;
+
                 /* See also READ_COMPRESSED_STRING in ReadCompressedOpaqueInfo5 */
 #define INFLATE_TAGGED_STRING(z_strm, bytesread_ptr, out_str)                          \
     do {                                                                               \
