@@ -1,0 +1,36 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VARREADDATAALL 3
+.Os
+.Sh NAME
+.Nm Mat_VarReadDataAll
+.Nd Reads all data for a MAT variable.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_VarReadDataAll
+.Fa "mat_t *mat"
+.Fa "matvar_t *matvar"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarReadDataAll
+function allocates and reads the complete data payload for
+.Fa matvar
+from the MAT file
+.Fa mat .
+On success,
+.Fa matvar
+is populated with the loaded data.
+.Sh RETURN VALUES
+The function returns 0 on success.
+Otherwise, a matio error code is returned.
+.Sh SEE ALSO
+.Xr Mat_VarRead 3 ,
+.Xr Mat_VarReadData 3 ,
+.Xr Mat_VarReadInfo 3

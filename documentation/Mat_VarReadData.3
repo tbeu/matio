@@ -1,0 +1,50 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VARREADDATA 3
+.Os
+.Sh NAME
+.Nm Mat_VarReadData
+.Nd Reads a subset of numeric variable data from a MAT file.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_VarReadData
+.Fa "mat_t *mat"
+.Fa "matvar_t *matvar"
+.Fa "void *data"
+.Fa "const int *start"
+.Fa "const int *stride"
+.Fa "const int *edge"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarReadData
+function reads a subset of the data for
+.Fa matvar
+from the MAT file
+.Fa mat
+into the caller-allocated buffer
+.Fa data .
+The variable metadata must already have been obtained with
+.Fn Mat_VarReadInfo .
+The
+.Fa start ,
+.Fa stride ,
+and
+.Fa edge
+arrays specify the per-dimension selection to read.
+
+This function supports numeric variables.
+.Sh RETURN VALUES
+The function returns 0 on success.
+Otherwise, a matio error code is returned.
+.Sh SEE ALSO
+.Xr Mat_VarRead 3 ,
+.Xr Mat_VarReadDataAll 3 ,
+.Xr Mat_VarReadDataLinear 3 ,
+.Xr Mat_VarReadInfo 3

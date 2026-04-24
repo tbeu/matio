@@ -1,0 +1,33 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VERBMESSAGE 3
+.Os
+.Sh NAME
+.Nm Mat_VerbMessage
+.Nd Logs a message if the requested verbose level is enabled.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_VerbMessage
+.Fa "int level"
+.Fa "const char *format"
+.Fa "..."
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VerbMessage
+function emits a message only when
+.Fa level
+is less than or equal to the current verbose level set with
+.Fn Mat_SetVerbose .
+If the library is in silent mode, no message is emitted.
+.Sh RETURN VALUES
+The function returns 0.
+.Sh SEE ALSO
+.Xr Mat_SetVerbose 3 ,
+.Xr Mat_Message 3

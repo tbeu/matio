@@ -1,0 +1,44 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VARGETCELLSLINEAR 3
+.Os
+.Sh NAME
+.Nm Mat_VarGetCellsLinear
+.Nd Gets a linear subset of elements from a cell array.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft matvar_t **
+.Fo Mat_VarGetCellsLinear
+.Fa "const matvar_t *matvar"
+.Fa "int start"
+.Fa "int stride"
+.Fa "int edge"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarGetCellsLinear
+function returns an allocated array of pointers to cell elements selected from
+the cell array
+.Fa matvar
+using a 0-relative linear
+.Fa start
+index,
+.Fa stride ,
+and number of elements
+.Fa edge .
+The returned cell elements remain owned by the original cell array.
+If copies are needed, use
+.Fn Mat_VarDuplicate
+on each returned element.
+.Sh RETURN VALUES
+On success, an allocated array of cell element pointers is returned.
+Otherwise NULL is returned.
+The returned pointer array should be freed by the caller.
+.Sh SEE ALSO
+.Xr Mat_VarGetCell 3 ,
+.Xr Mat_VarGetCells 3

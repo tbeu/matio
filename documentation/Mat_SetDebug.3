@@ -1,0 +1,28 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_SETDEBUG 3
+.Os
+.Sh NAME
+.Nm Mat_SetDebug
+.Nd Sets the library debug logging level.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_SetDebug
+.Fa "int d"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_SetDebug
+function stores the library debug level used by
+.Fn Mat_DebugMessage .
+.Sh RETURN VALUES
+The function returns 0.
+.Sh SEE ALSO
+.Xr Mat_SetVerbose 3 ,
+.Xr Mat_DebugMessage 3

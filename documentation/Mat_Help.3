@@ -1,0 +1,28 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_HELP 3
+.Os
+.Sh NAME
+.Nm Mat_Help
+.Nd Prints help text and exits successfully.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft void
+.Fo Mat_Help
+.Fa "const char *helpstr[]"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_Help
+function writes each non-NULL string from
+.Fa helpstr
+to standard output, one line per entry, and then exits the process with
+success status.
+The final array element must be NULL.
+.Sh SEE ALSO
+.Xr Mat_Error 3

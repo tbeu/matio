@@ -1,0 +1,38 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VARWRITEINFO 3
+.Os
+.Sh NAME
+.Nm Mat_VarWriteInfo
+.Nd Deprecated variable-write helper that is no longer supported.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_VarWriteInfo
+.Fa "const mat_t *mat"
+.Fa "matvar_t *matvar"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarWriteInfo
+function remains in the public API for compatibility, but current matio
+versions do not support it.
+Calls fail and emit a diagnostic directing callers to
+.Fn Mat_VarWrite
+or, for MAT 7.3 files, to
+.Fn Mat_VarWriteAppend .
+.Sh DEPRECATED
+This function is deprecated since version 1.5.14.
+Use \fBMat_VarWrite\fP or, for MAT 7.3 files, \fBMat_VarWriteAppend\fP instead.
+.Sh RETURN VALUES
+The function returns
+.Dv MATIO_E_OPERATION_NOT_SUPPORTED .
+.Sh SEE ALSO
+.Xr Mat_VarWrite 3 ,
+.Xr Mat_VarWriteAppend 3 ,
+.Xr Mat_VarWriteData 3

@@ -1,0 +1,47 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VARGETSTRUCTFIELDBYINDEX 3
+.Os
+.Sh NAME
+.Nm Mat_VarGetStructFieldByIndex
+.Nd Gets a structure field by field index.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft matvar_t *
+.Fo Mat_VarGetStructFieldByIndex
+.Fa "const matvar_t *matvar"
+.Fa "size_t field_index"
+.Fa "size_t index"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarGetStructFieldByIndex
+function returns a pointer to the field at 0-relative field index
+.Fa field_index
+for the structure element at linear index
+.Fa index
+in the structure variable
+.Fa matvar .
+The function requires
+.Fa matvar
+to be a valid structure or object variable.
+.Sh RETURN VALUES
+On success, a pointer to the requested field is returned.
+Otherwise NULL is returned.
+.Sh EXAMPLES
+This example gets the second field of the first structure element.
+.Bd -literal
+matvar_t *field;
+
+field = Mat_VarGetStructFieldByIndex(matvar, 1, 0);
+.Ed
+.Sh SEE ALSO
+.Xr Mat_VarGetStructField 3 ,
+.Xr Mat_VarGetStructFieldByName 3 ,
+.Xr Mat_VarGetStructFieldnames 3 ,
+.Xr Mat_VarGetNumberOfFields 3

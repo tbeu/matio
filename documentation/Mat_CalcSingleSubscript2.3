@@ -1,0 +1,49 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_CALCSINGLESUBSCRIPT2 3
+.Os
+.Sh NAME
+.Nm Mat_CalcSingleSubscript2
+.Nd Converts MATLAB-style subscripts to a 0-relative linear index using size_t arrays.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_CalcSingleSubscript2
+.Fa "int rank"
+.Fa "const size_t *dims"
+.Fa "const size_t *subs"
+.Fa "size_t *index"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_CalcSingleSubscript2
+function converts a set of 1-relative MATLAB-style subscripts in
+.Fa subs
+for an array with dimensions
+.Fa dims
+and rank
+.Fa rank
+into a 0-relative linear index stored in
+.Fa *index .
+The caller should initialize
+.Fa *index
+to 0 before calling the function.
+Each subscript must be in the range 1 through the corresponding dimension size.
+.Sh RETURN VALUES
+The function returns 0 on success.
+Otherwise, a matio error code is returned.
+.Sh EXAMPLES
+.Bd -literal
+size_t dims[2] = {3, 4};
+size_t subs[2] = {2, 3};
+size_t index = 0;
+
+Mat_CalcSingleSubscript2(2, dims, subs, &index);
+.Ed
+.Sh SEE ALSO
+.Xr Mat_CalcSingleSubscript 3

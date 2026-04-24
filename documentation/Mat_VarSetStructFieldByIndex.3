@@ -1,0 +1,60 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VARSETSTRUCTFIELDBYINDEX 3
+.Os
+.Sh NAME
+.Nm Mat_VarSetStructFieldByIndex
+.Nd Sets a field in a structure array by index.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft matvar_t *
+.Fo Mat_VarSetStructFieldByIndex
+.Fa "matvar_t *matvar"
+.Fa "size_t field_index"
+.Fa "size_t index"
+.Fa "matvar_t *field"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarSetStructFieldByIndex
+function assigns
+.Fa field
+to the structure field at 0-relative field index
+.Fa field_index
+for the structure element at linear
+.Fa index
+in
+.Fa matvar .
+The function requires
+.Fa matvar
+to be a structure variable created by
+.Fn Mat_VarCreateStruct
+or
+.Fn Mat_VarCreateStruct2 .
+When a field is assigned successfully, the field variable name is updated to
+match the structure field name.
+.Sh RETURN VALUES
+On success, the previous field stored at the requested structure element and
+field position is returned.
+If no previous field was set, or if
+.Fa matvar
+is not a valid structure variable, NULL is returned.
+.Sh EXAMPLES
+This example assigns a field in a structure array by index.
+.Bd -literal
+matvar_t *old_field;
+
+old_field = Mat_VarSetStructFieldByIndex(matvar, 1, 0, field2);
+if ( old_field != NULL )
+    Mat_VarFree(old_field);
+.Ed
+.Sh SEE ALSO
+.Xr Mat_VarCreateStruct 3 ,
+.Xr Mat_VarCreateStruct2 3 ,
+.Xr Mat_VarAddStructField 3 ,
+.Xr Mat_VarSetStructFieldByName 3

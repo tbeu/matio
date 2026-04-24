@@ -1,0 +1,28 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_LOGCLOSE 3
+.Os
+.Sh NAME
+.Nm Mat_LogClose
+.Nd Disables matio logging.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_LogClose
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_LogClose
+function disables the active matio logging callback.
+After it is called, message-style logging functions do not emit output until
+logging is reinitialized.
+.Sh RETURN VALUES
+The function returns 1.
+.Sh SEE ALSO
+.Xr Mat_LogInit 3 ,
+.Xr Mat_LogInitFunc 3

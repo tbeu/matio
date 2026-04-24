@@ -1,0 +1,27 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_WARNING 3
+.Os
+.Sh NAME
+.Nm Mat_Warning
+.Nd Logs a warning message and returns.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft void
+.Fo Mat_Warning
+.Fa "const char *format"
+.Fa "..."
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_Warning
+function formats and emits a warning message through the active matio logging
+callback, then returns to the caller.
+.Sh SEE ALSO
+.Xr Mat_Critical 3 ,
+.Xr Mat_Message 3

@@ -1,0 +1,49 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VARREADDATALINEAR 3
+.Os
+.Sh NAME
+.Nm Mat_VarReadDataLinear
+.Nd Reads a linear subset of numeric variable data from a MAT file.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_VarReadDataLinear
+.Fa "mat_t *mat"
+.Fa "matvar_t *matvar"
+.Fa "void *data"
+.Fa "int start"
+.Fa "int stride"
+.Fa "int edge"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarReadDataLinear
+function reads a linear subset of the data for
+.Fa matvar
+from the MAT file
+.Fa mat
+into the caller-allocated buffer
+.Fa data .
+The variable metadata must already have been obtained with
+.Fn Mat_VarReadInfo .
+The data is selected using the 0-relative linear start index
+.Fa start ,
+the linear
+.Fa stride ,
+and the number of elements
+.Fa edge .
+
+This function supports numeric variables.
+.Sh RETURN VALUES
+The function returns 0 on success.
+Otherwise, a matio error code is returned.
+.Sh SEE ALSO
+.Xr Mat_VarRead 3 ,
+.Xr Mat_VarReadData 3 ,
+.Xr Mat_VarReadInfo 3

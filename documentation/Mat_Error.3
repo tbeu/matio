@@ -1,0 +1,28 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_ERROR 3
+.Os
+.Sh NAME
+.Nm Mat_Error
+.Nd Logs an error message and terminates the process.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft void
+.Fo Mat_Error
+.Fa "const char *format"
+.Fa "..."
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_Error
+function formats and emits an error message through the active matio logging
+callback and then aborts the process.
+It does not return.
+.Sh SEE ALSO
+.Xr Mat_Critical 3 ,
+.Xr Mat_Help 3

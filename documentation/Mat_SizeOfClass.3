@@ -1,0 +1,35 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_SIZEOFCLASS 3
+.Os
+.Sh NAME
+.Nm Mat_SizeOfClass
+.Nd Returns the size in bytes of a MATLAB class type.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft size_t
+.Fo Mat_SizeOfClass
+.Fa "int class_type"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_SizeOfClass
+function returns the size in bytes associated with the MATLAB class type
+enumerator
+.Fa class_type
+such as
+.Dv MAT_C_DOUBLE
+or
+.Dv MAT_C_INT32 .
+.Sh RETURN VALUES
+On success, the size in bytes for
+.Fa class_type
+is returned.
+If the class type is not recognized, 0 is returned.
+.Sh SEE ALSO
+.Xr Mat_SizeOf 3

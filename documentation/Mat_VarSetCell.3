@@ -1,0 +1,44 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VARSETCELL 3
+.Os
+.Sh NAME
+.Nm Mat_VarSetCell
+.Nd Sets an element of a cell array.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft matvar_t *
+.Fo Mat_VarSetCell
+.Fa "matvar_t *matvar"
+.Fa "int index"
+.Fa "matvar_t *cell"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarSetCell
+function assigns
+.Fa cell
+to the element at 0-relative linear index
+.Fa index
+in the cell array
+.Fa matvar .
+.Sh RETURN VALUES
+On success, the previous cell element at the requested index is returned.
+If there was no previous element, or if an error occurs, NULL is returned.
+.Sh EXAMPLES
+.Bd -literal
+matvar_t *old_cell;
+
+old_cell = Mat_VarSetCell(cell_array, 0, cell_element);
+if ( old_cell != NULL )
+    Mat_VarFree(old_cell);
+.Ed
+.Sh SEE ALSO
+.Xr Mat_VarGetCell 3 ,
+.Xr Mat_VarGetCells 3 ,
+.Xr Mat_VarGetCellsLinear 3

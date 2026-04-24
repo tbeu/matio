@@ -1,0 +1,33 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_DEBUGMESSAGE 3
+.Os
+.Sh NAME
+.Nm Mat_DebugMessage
+.Nd Logs a debug message if the requested level is enabled.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_DebugMessage
+.Fa "int level"
+.Fa "const char *format"
+.Fa "..."
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_DebugMessage
+function emits a debug message only when
+.Fa level
+is less than or equal to the current debug level set with
+.Fn Mat_SetDebug .
+If the library is in silent mode, no message is emitted.
+.Sh RETURN VALUES
+The function returns 0.
+.Sh SEE ALSO
+.Xr Mat_SetDebug 3 ,
+.Xr Mat_Message 3

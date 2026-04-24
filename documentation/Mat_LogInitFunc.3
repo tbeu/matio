@@ -1,0 +1,39 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_LOGINITFUNC 3
+.Os
+.Sh NAME
+.Nm Mat_LogInitFunc
+.Nd Initializes matio logging with a caller-provided logger.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft int
+.Fo Mat_LogInitFunc
+.Fa "const char *prog_name"
+.Fa "void (*log_func)(int log_level, const char *message)"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_LogInitFunc
+function installs the caller-provided logging callback
+.Fa log_func
+and records
+.Fa prog_name
+for log message prefixes.
+It also resets verbose and silent logging state.
+The
+.Fa log_level
+argument passed to the callback uses the
+.Dv MATIO_LOG_LEVEL_*
+bit flags defined in
+.Pa matio.h .
+.Sh RETURN VALUES
+The function returns 0.
+.Sh SEE ALSO
+.Xr Mat_LogInit 3 ,
+.Xr Mat_LogClose 3

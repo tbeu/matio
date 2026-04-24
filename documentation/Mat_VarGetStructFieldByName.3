@@ -1,0 +1,47 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_VARGETSTRUCTFIELDBYNAME 3
+.Os
+.Sh NAME
+.Nm Mat_VarGetStructFieldByName
+.Nd Gets a structure field by field name.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft matvar_t *
+.Fo Mat_VarGetStructFieldByName
+.Fa "const matvar_t *matvar"
+.Fa "const char *field_name"
+.Fa "size_t index"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_VarGetStructFieldByName
+function returns a pointer to the field named
+.Fa field_name
+for the structure element at linear index
+.Fa index
+in the structure variable
+.Fa matvar .
+The function requires
+.Fa matvar
+to be a valid structure or object variable.
+.Sh RETURN VALUES
+On success, a pointer to the requested field is returned.
+Otherwise NULL is returned.
+.Sh EXAMPLES
+This example gets a structure field by name.
+.Bd -literal
+matvar_t *field;
+
+field = Mat_VarGetStructFieldByName(matvar, "field1", 0);
+.Ed
+.Sh SEE ALSO
+.Xr Mat_VarGetStructField 3 ,
+.Xr Mat_VarGetStructFieldByIndex 3 ,
+.Xr Mat_VarGetStructFieldnames 3 ,
+.Xr Mat_VarGetNumberOfFields 3

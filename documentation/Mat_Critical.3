@@ -1,0 +1,30 @@
+.\" Copyright (c) 2015-2026, The matio contributors
+.\" Copyright (c) 2012-2014, Christopher C. Hulbert
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd April 23, 2026
+.Dt MAT_CRITICAL 3
+.Os
+.Sh NAME
+.Nm Mat_Critical
+.Nd Logs a critical error message and returns.
+.Sh SYNOPSIS
+.Fd #include <matio.h>
+.Ft void
+.Fo Mat_Critical
+.Fa "const char *format"
+.Fa "..."
+.Fc
+.Sh DESCRIPTION
+The
+.Fn Mat_Critical
+function formats and emits a critical error message through the active matio
+logging callback, then returns to the caller.
+Use
+.Fn Mat_Error
+when the program should terminate.
+.Sh SEE ALSO
+.Xr Mat_Error 3 ,
+.Xr Mat_Warning 3
