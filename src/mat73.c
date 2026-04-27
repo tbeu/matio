@@ -3068,8 +3068,10 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             if ( matvar->nbytes > 0 ) {
                 matvar->data = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
-                    herr_t herr = H5Dread(dset_id, DataType2H5T(matvar->data_type), H5S_ALL,
+                    hid_t mem_space_id = Mat_dims_to_space(matvar->rank, matvar->dims);
+                    herr_t herr = H5Dread(dset_id, DataType2H5T(matvar->data_type), mem_space_id,
                                           H5S_ALL, H5P_DEFAULT, matvar->data);
+                    H5Sclose(mem_space_id);
                     if ( herr < 0 ) {
                         err = MATIO_E_GENERIC_READ_ERROR;
                     }
