@@ -1541,6 +1541,14 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
                 err = Mat_H5ReadData(matvar->internal->id, data_type_id, mem_space_id, H5S_ALL,
                                      matvar->isComplex, matvar->data);
                 H5Sclose(mem_space_id);
+                if ( err ) {
+                    if ( !matvar->isComplex ) {
+                        free(matvar->data);
+                    } else {
+                        ComplexFree((mat_complex_split_t *)matvar->data);
+                    }
+                    matvar->data = NULL;
+                }
             }
             break;
         }
@@ -3043,6 +3051,14 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 err = Mat_H5ReadData(dset_id, ClassType2H5T(matvar->class_type), mem_space_id,
                                      H5S_ALL, matvar->isComplex, matvar->data);
                 H5Sclose(mem_space_id);
+                if ( err ) {
+                    if ( !matvar->isComplex ) {
+                        free(matvar->data);
+                    } else {
+                        ComplexFree((mat_complex_split_t *)matvar->data);
+                    }
+                    matvar->data = NULL;
+                }
             }
             H5Dclose(dset_id);
             H5Dclose(ref_id);
@@ -3073,6 +3089,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                                           H5S_ALL, H5P_DEFAULT, matvar->data);
                     H5Sclose(mem_space_id);
                     if ( herr < 0 ) {
+                        free(matvar->data);
+                        matvar->data = NULL;
                         err = MATIO_E_GENERIC_READ_ERROR;
                     }
                 } else {
