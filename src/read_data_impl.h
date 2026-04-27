@@ -460,6 +460,9 @@ READ_TYPE_INT32_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len)
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_INT32
     err = InflateData(mat, z, data, len * sizeof(mat_int32_t));
+    if ( err ) {
+        return err;
+    }
     if ( mat->byteswap ) {
         mat_uint32_t i;
         for ( i = 0; i < len; i++ ) {
