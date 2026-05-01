@@ -21,15 +21,21 @@
 #include <math.h>
 #include <time.h>
 
-#define READ_DATA_NOSWAP(T)                                           \
+#define READ_DATA_NOSWAP(T, TT, ConvertFunc)                          \
     do {                                                              \
+        int success_;                                                 \
         const size_t block_size = READ_BLOCK_SIZE / data_size;        \
         err = MATIO_E_NO_ERROR;                                       \
         if ( len <= block_size ) {                                    \
             readCount = fread(v, data_size, len, (FILE *)mat->fp);    \
             if ( readCount == len ) {                                 \
                 for ( i = 0; i < len; i++ ) {                         \
-                    data[i] = (T)v[i];                                \
+                    TT val_ = v[i];                                   \
+                    data[i] = ConvertFunc(val_, &success_);           \
+                    if ( !success_ ) {                                \
+                        err = MATIO_E_VALUE_OUT_OF_RANGE;             \
+                        break;                                        \
+                    }                                                 \
                 }                                                     \
             } else {                                                  \
                 err = MATIO_E_GENERIC_READ_ERROR;                     \
@@ -43,7 +49,12 @@
                 readCount += j;                                       \
                 if ( j == block_size ) {                              \
                     for ( j = 0; j < block_size; j++ ) {              \
-                        data[i + j] = (T)v[j];                        \
+                        TT val_ = v[j];                               \
+                        data[i + j] = ConvertFunc(val_, &success_);   \
+                        if ( !success_ ) {                            \
+                            err = MATIO_E_VALUE_OUT_OF_RANGE;         \
+                            break;                                    \
+                        }                                             \
                     }                                                 \
                 } else {                                              \
                     err = MATIO_E_GENERIC_READ_ERROR;                 \
@@ -58,7 +69,12 @@
                 readCount += j;                                       \
                 if ( j == len - i ) {                                 \
                     for ( j = 0; j < len - i; j++ ) {                 \
-                        data[i + j] = (T)v[j];                        \
+                        TT val_ = v[j];                               \
+                        data[i + j] = ConvertFunc(val_, &success_);   \
+                        if ( !success_ ) {                            \
+                            err = MATIO_E_VALUE_OUT_OF_RANGE;         \
+                            break;                                    \
+                        }                                             \
                     }                                                 \
                 } else {                                              \
                     err = MATIO_E_GENERIC_READ_ERROR;                 \
@@ -68,58 +84,74 @@
         }                                                             \
     } while ( 0 )
 
-#define READ_DATA(T, SwapFunc)                                            \
-    do {                                                                  \
-        if ( mat->byteswap ) {                                            \
-            const size_t block_size = READ_BLOCK_SIZE / data_size;        \
-            err = MATIO_E_NO_ERROR;                                       \
-            if ( len <= block_size ) {                                    \
-                readCount = fread(v, data_size, len, (FILE *)mat->fp);    \
-                if ( readCount == len ) {                                 \
-                    for ( i = 0; i < len; i++ ) {                         \
-                        data[i] = (T)SwapFunc(&v[i]);                     \
-                    }                                                     \
-                } else {                                                  \
-                    err = MATIO_E_GENERIC_READ_ERROR;                     \
-                    break;                                                \
-                }                                                         \
-            } else {                                                      \
-                size_t j;                                                 \
-                readCount = 0;                                            \
-                for ( i = 0; i < len - block_size; i += block_size ) {    \
-                    j = fread(v, data_size, block_size, (FILE *)mat->fp); \
-                    readCount += j;                                       \
-                    if ( j == block_size ) {                              \
-                        for ( j = 0; j < block_size; j++ ) {              \
-                            data[i + j] = (T)SwapFunc(&v[j]);             \
-                        }                                                 \
-                    } else {                                              \
-                        err = MATIO_E_GENERIC_READ_ERROR;                 \
-                        break;                                            \
-                    }                                                     \
-                }                                                         \
-                if ( err ) {                                              \
-                    break;                                                \
-                }                                                         \
-                if ( len > i ) {                                          \
-                    j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
-                    readCount += j;                                       \
-                    if ( j == len - i ) {                                 \
-                        for ( j = 0; j < len - i; j++ ) {                 \
-                            data[i + j] = (T)SwapFunc(&v[j]);             \
-                        }                                                 \
-                    } else {                                              \
-                        err = MATIO_E_GENERIC_READ_ERROR;                 \
-                        break;                                            \
-                    }                                                     \
-                }                                                         \
-            }                                                             \
-        } else {                                                          \
-            READ_DATA_NOSWAP(T);                                          \
-            if ( err ) {                                                  \
-                break;                                                    \
-            }                                                             \
-        }                                                                 \
+#define READ_DATA(T, TT, SwapFunc, ConvertFunc)                             \
+    do {                                                                    \
+        int success_;                                                       \
+        if ( mat->byteswap ) {                                              \
+            const size_t block_size = READ_BLOCK_SIZE / data_size;          \
+            err = MATIO_E_NO_ERROR;                                         \
+            if ( len <= block_size ) {                                      \
+                readCount = fread(v, data_size, len, (FILE *)mat->fp);      \
+                if ( readCount == len ) {                                   \
+                    for ( i = 0; i < len; i++ ) {                           \
+                        TT swapped_ = SwapFunc(&v[i]);                      \
+                        data[i] = ConvertFunc(swapped_, &success_);         \
+                        if ( !success_ ) {                                  \
+                            err = MATIO_E_VALUE_OUT_OF_RANGE;               \
+                            break;                                          \
+                        }                                                   \
+                    }                                                       \
+                } else {                                                    \
+                    err = MATIO_E_GENERIC_READ_ERROR;                       \
+                    break;                                                  \
+                }                                                           \
+            } else {                                                        \
+                size_t j;                                                   \
+                readCount = 0;                                              \
+                for ( i = 0; i < len - block_size; i += block_size ) {      \
+                    j = fread(v, data_size, block_size, (FILE *)mat->fp);   \
+                    readCount += j;                                         \
+                    if ( j == block_size ) {                                \
+                        for ( j = 0; j < block_size; j++ ) {                \
+                            TT swapped_ = SwapFunc(&v[j]);                  \
+                            data[i + j] = ConvertFunc(swapped_, &success_); \
+                            if ( !success_ ) {                              \
+                                err = MATIO_E_VALUE_OUT_OF_RANGE;           \
+                                break;                                      \
+                            }                                               \
+                        }                                                   \
+                    } else {                                                \
+                        err = MATIO_E_GENERIC_READ_ERROR;                   \
+                        break;                                              \
+                    }                                                       \
+                }                                                           \
+                if ( err ) {                                                \
+                    break;                                                  \
+                }                                                           \
+                if ( len > i ) {                                            \
+                    j = fread(v, data_size, len - i, (FILE *)mat->fp);      \
+                    readCount += j;                                         \
+                    if ( j == len - i ) {                                   \
+                        for ( j = 0; j < len - i; j++ ) {                   \
+                            TT swapped_ = SwapFunc(&v[j]);                  \
+                            data[i + j] = ConvertFunc(swapped_, &success_); \
+                            if ( !success_ ) {                              \
+                                err = MATIO_E_VALUE_OUT_OF_RANGE;           \
+                                break;                                      \
+                            }                                               \
+                        }                                                   \
+                    } else {                                                \
+                        err = MATIO_E_GENERIC_READ_ERROR;                   \
+                        break;                                              \
+                    }                                                       \
+                }                                                           \
+            }                                                               \
+        } else {                                                            \
+            READ_DATA_NOSWAP(T, TT, ConvertFunc);                           \
+            if ( err ) {                                                    \
+                break;                                                      \
+            }                                                               \
+        }                                                                   \
     } while ( 0 )
 
 #if HAVE_ZLIB
@@ -382,6 +414,13 @@ ReadCompressedCharData(mat_t *mat, z_streamp z, void *data, enum matio_types dat
 }
 #endif
 
+static inline mat_uint16_t
+ConvertFromUInt16ToUInt16(mat_uint16_t value, int *success)
+{
+    *success = 1;
+    return value;
+}
+
 int
 ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
 {
@@ -405,7 +444,7 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
             size_t i, readCount;
             mat_uint16_t *data = (mat_uint16_t *)_data;
             mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
-            READ_DATA(mat_uint16_t, Mat_uint16Swap);
+            READ_DATA(mat_uint16_t, mat_uint16_t, Mat_uint16Swap, ConvertFromUInt16ToUInt16);
             break;
         }
         default:
