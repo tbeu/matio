@@ -69,6 +69,8 @@ ParseOpaqueMetadata(const mat_uint32_t *meta, size_t meta_nvals, matvar_t *matva
         mat_uint32_t d;
         for ( d = 0; d < ndims; d++ ) {
             matvar->dims[d] = meta[dim_start + d];
+        }
+        for ( d = 0; d < ndims; d++ ) {
             if ( Mul(&total_objs, total_objs, meta[dim_start + d]) ) {
                 total_objs = 0;
                 break;
