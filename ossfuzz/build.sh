@@ -38,6 +38,12 @@ cmake --build build -- -j$(nproc)
 cmake --build build --target install
 popd
 
+# Wipe stale object files from prior sanitizer builds. helper.py --clean
+# only wipes /out/ and /work/, not the bind-mounted source directory.
+find . \( -name '*.o' -o -name '*.lo' -o -name '*.la' -o -name '.deps' -o -name '.libs' \) \
+    -not -path './ossfuzz/*' -prune -exec rm -rf {} + 2>/dev/null || true
+[ -f Makefile ] && make distclean 2>/dev/null || true
+
 # build matio
 ./autogen.sh
 ./configure --prefix="$WORK" --disable-shared --with-hdf5="$WORK" --with-zlib="$WORK"
@@ -52,9 +58,17 @@ MATIO_LIBS="$LIB_FUZZING_ENGINE $MATIO_LIBS_NO_FUZZ"
 cd ./ossfuzz
 for fuzzers in $(find . -name '*_fuzzer.cpp'); do
   base=$(basename -s .cpp $fuzzers)
-  $CXX $CXXFLAGS -std=c++11 -I$MATIO_INCLUDE $fuzzers -o $OUT/$base $MATIO_LIBS
-  zip -q -r ${base}_seed_corpus.zip ../share
+  $CXX $CXXFLAGS -std=c++17 -I$MATIO_INCLUDE $fuzzers -o $OUT/$base $MATIO_LIBS
+
+  CORPUS_TMP=$(mktemp -d)
+  cp ../share/*.mat "$CORPUS_TMP/" 2>/dev/null || true
+  cp "$SRC"/matio_test_datasets/*.mat "$CORPUS_TMP/" 2>/dev/null || true
+  (cd "$CORPUS_TMP" && zip -q "$OUT/${base}_seed_corpus.zip" *.mat) || true
+  rm -rf "$CORPUS_TMP"
 done
 
 find . -name '*_fuzzer.dict' -exec cp -v '{}' $OUT ';'
-find . -name '*_fuzzer_seed_corpus.zip' -exec cp -v '{}' $OUT ';'
+for f in $OUT/*_fuzzer; do
+    base=$(basename "$f")
+    [ -f "$OUT/${base}.dict" ] || cp "$OUT/matio_fuzzer.dict" "$OUT/${base}.dict" 2>/dev/null || true
+done

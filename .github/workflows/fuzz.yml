@@ -12,6 +12,9 @@ defaults:
   run:
     shell: bash
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,6 +24,7 @@ jobs:
           git clone --depth 1 https://github.com/madler/zlib.git zlib
           git clone --depth 1 https://github.com/tbeu/matio.git matio
           git clone --depth 1 --branch hdf5_2_1_1 https://github.com/HDFGroup/hdf5.git hdf5
+          git clone --depth 1 https://git.code.sf.net/p/matio/matio_test_datasets matio_test_datasets
       - name: Test ossfuzz build script
         run: |
           mkdir -p work
@@ -33,3 +37,26 @@ jobs:
           SRC: ${{ github.workspace }}
           OUT: ${{ github.workspace }}
           WORK: ${{ github.workspace }}/work
+
+  cifuzz:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Build Fuzzers
+        id: build
+        uses: google/oss-fuzz/infra/cifuzz/actions/build_fuzzers@master
+        with:
+          oss-fuzz-project-name: 'matio'
+          language: c++
+      - name: Run Fuzzers
+        uses: google/oss-fuzz/infra/cifuzz/actions/run_fuzzers@master
+        with:
+          oss-fuzz-project-name: 'matio'
+          language: c++
+          fuzz-seconds: 600
+      - name: Upload Crash
+        uses: actions/upload-artifact@v4
+        if: failure() && steps.build.outcome == 'success'
+        with:
+          name: artifacts
+          path: ./out/artifacts
