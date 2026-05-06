@@ -1,11 +1,3 @@
-// Copyright 2019 Google Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
 // Fast read-only fuzzer that skips Mat_VarPrint(matvar, 1). The original
 // matio_fuzzer's Mat_VarPrint with print_data=1 stringifies every element,
 // so a mutated input claiming dims=[1<<30, 1<<30] hits libfuzzer's

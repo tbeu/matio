@@ -1,11 +1,3 @@
-// Copyright 2019 Google Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
 // Struct / cell API fuzzer — drives matvar_struct.c and matvar_cell.c
 // API surface against attacker-controlled .mat files. The other read
 // fuzzers don't call Mat_VarGetStructFieldBy{Name,Index}, GetStructs,
