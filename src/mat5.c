@@ -5750,6 +5750,55 @@ ReadTaggedString(mat_t *mat, char **str, const mat_uint32_t *pre_buf)
     return MATIO_E_NO_ERROR;
 }
 
+/** @brief Processes opaque metadata after reading/inflating
+ *
+ * Byte-swaps metadata values if needed, then extracts rank/dims or
+ * delegates to ParseOpaqueMetadata.
+ *
+ * @param mat MAT file pointer
+ * @param matvar MAT variable pointer
+ * @param meta Metadata buffer (freed by this function)
+ * @param meta_nvals Number of uint32 values in meta
+ * @retval 0 on success
+ */
+static int
+ProcessOpaqueMetadata(mat_t *mat, matvar_t *matvar, mat_uint32_t *meta, mat_uint32_t meta_nvals)
+{
+    int err = MATIO_E_NO_ERROR;
+
+    if ( mat->byteswap ) {
+        mat_uint32_t k;
+        for ( k = 0; k < meta_nvals; k++ )
+            (void)Mat_uint32Swap(&meta[k]);
+    }
+
+    if ( meta_nvals >= 4 ) {
+#if defined(MCOS) && MCOS
+        err = ParseOpaqueMetadata(meta, meta_nvals, matvar);
+        if ( err ) {
+            free(meta);
+            return err;
+        }
+#else
+        mat_uint32_t ndims = meta[1];
+        mat_uint32_t dim_start = 2;
+
+        if ( dim_start + ndims + 1 <= meta_nvals ) {
+            mat_uint32_t d;
+            matvar->rank = (int)ndims;
+            matvar->dims = (size_t *)malloc(ndims * sizeof(size_t));
+            if ( matvar->dims != NULL ) {
+                for ( d = 0; d < ndims; d++ )
+                    matvar->dims[d] = meta[dim_start + d];
+            }
+        }
+#endif
+    }
+    free(meta);
+
+    return err;
+}
+
 /** @brief Reads opaque variable subelements from an uncompressed stream
  *
  * Reads: array name, type system name, class name, object metadata.
@@ -5957,13 +6006,11 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
         meta_nvals = meta_nbytes / sizeof(mat_uint32_t);
         if ( is_small ) {
             /* Data is in tag[1] */
-            if ( meta_nvals > 0 && meta_nvals <= 1 ) {
-                meta = (mat_uint32_t *)malloc(meta_nvals * sizeof(mat_uint32_t));
+            if ( meta_nvals == 1 ) {
+                meta = (mat_uint32_t *)malloc(sizeof(mat_uint32_t));
                 if ( meta == NULL )
                     return MATIO_E_OUT_OF_MEMORY;
                 meta[0] = tag[1];
-                if ( mat->byteswap )
-                    (void)Mat_uint32Swap(&meta[0]);
             }
         } else {
             if ( meta_nbytes > UINT32_MAX - 7 ) {
@@ -5978,37 +6025,13 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                 free(meta);
                 return err;
             }
-            if ( mat->byteswap ) {
-                mat_uint32_t k;
-                for ( k = 0; k < meta_nvals; k++ )
-                    (void)Mat_uint32Swap(&meta[k]);
-            }
         }
 
-        if ( meta != NULL && meta_nvals >= 4 ) {
-#if defined(MCOS) && MCOS
-            err = ParseOpaqueMetadata(meta, meta_nvals, matvar);
-            if ( err ) {
-                free(meta);
+        if ( meta != NULL ) {
+            err = ProcessOpaqueMetadata(mat, matvar, meta, meta_nvals);
+            if ( err )
                 return err;
-            }
-#else
-            /* Without MCOS, just extract rank and dims */
-            mat_uint32_t ndims = meta[1];
-            mat_uint32_t dim_start = 2;
-
-            if ( dim_start + ndims + 1 <= meta_nvals ) {
-                mat_uint32_t d;
-                matvar->rank = (int)ndims;
-                matvar->dims = (size_t *)malloc(ndims * sizeof(size_t));
-                if ( matvar->dims != NULL ) {
-                    for ( d = 0; d < ndims; d++ )
-                        matvar->dims[d] = meta[dim_start + d];
-                }
-            }
-#endif
         }
-        free(meta);
     }
 
     return MATIO_E_NO_ERROR;
@@ -6278,13 +6301,11 @@ ReadCompressedOpaqueInfo5(mat_t *mat, matvar_t *matvar, size_t *bytesread)
         meta_nvals = meta_nbytes / sizeof(mat_uint32_t);
 
         if ( is_small ) {
-            if ( meta_nvals > 0 && meta_nvals <= 1 ) {
+            if ( meta_nvals == 1 ) {
                 meta = (mat_uint32_t *)malloc(sizeof(mat_uint32_t));
                 if ( meta == NULL )
                     return MATIO_E_OUT_OF_MEMORY;
                 meta[0] = buf[1];
-                if ( mat->byteswap )
-                    (void)Mat_uint32Swap(&meta[0]);
             }
         } else {
             if ( meta_nbytes > UINT32_MAX - 7 ) {
@@ -6299,36 +6320,13 @@ ReadCompressedOpaqueInfo5(mat_t *mat, matvar_t *matvar, size_t *bytesread)
                 free(meta);
                 return err;
             }
-            if ( mat->byteswap ) {
-                mat_uint32_t k;
-                for ( k = 0; k < meta_nvals; k++ )
-                    (void)Mat_uint32Swap(&meta[k]);
-            }
         }
 
-        if ( meta != NULL && meta_nvals >= 4 ) {
-#if defined(MCOS) && MCOS
-            err = ParseOpaqueMetadata(meta, meta_nvals, matvar);
-            if ( err ) {
-                free(meta);
+        if ( meta != NULL ) {
+            err = ProcessOpaqueMetadata(mat, matvar, meta, meta_nvals);
+            if ( err )
                 return err;
-            }
-#else
-            mat_uint32_t ndims = meta[1];
-            mat_uint32_t dim_start = 2;
-
-            if ( dim_start + ndims + 1 <= meta_nvals ) {
-                mat_uint32_t d;
-                matvar->rank = (int)ndims;
-                matvar->dims = (size_t *)malloc(ndims * sizeof(size_t));
-                if ( matvar->dims != NULL ) {
-                    for ( d = 0; d < ndims; d++ )
-                        matvar->dims[d] = meta[dim_start + d];
-                }
-            }
-#endif
         }
-        free(meta);
     }
 
 #undef READ_COMPRESSED_STRING
