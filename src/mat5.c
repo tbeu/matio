@@ -1458,6 +1458,47 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
     return bytesread;
 }
 
+/** @brief Allocates struct fields data for the given variable
+ *
+ * @ingroup mat_internal
+ * @param matvar MAT variable pointer
+ * @param nelems Number of elements
+ * @param nfields Number of fields
+ * @param[out] nelems_x_nfields Product of nelems and nfields
+ * @param[out] fields Pointer to allocated fields array
+ * @retval 0 on success
+ */
+static int
+AllocateStructFields(matvar_t *matvar, size_t nelems, size_t nfields, size_t *nelems_x_nfields,
+                     matvar_t ***fields)
+{
+    int err;
+
+    matvar->data_size = sizeof(matvar_t *);
+    err = Mul(nelems_x_nfields, nelems, nfields);
+    if ( err ) {
+        Mat_Critical("Integer multiplication overflow");
+        return err;
+    }
+    err = Mul(&matvar->nbytes, *nelems_x_nfields, matvar->data_size);
+    if ( err ) {
+        Mat_Critical("Integer multiplication overflow");
+        return err;
+    }
+    if ( !matvar->nbytes )
+        return MATIO_E_NO_ERROR;
+
+    matvar->data = calloc(*nelems_x_nfields, matvar->data_size);
+    if ( NULL == matvar->data ) {
+        matvar->nbytes = 0;
+        Mat_Critical("Couldn't allocate memory for the data");
+        return MATIO_E_OUT_OF_MEMORY;
+    }
+
+    *fields = (matvar_t **)matvar->data;
+    return MATIO_E_NO_ERROR;
+}
+
 /** @brief Reads the next struct field of the structure in @c matvar
  *
  * Reads the next struct fields (fieldname length,names,data headers for all
@@ -1554,28 +1595,10 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
             }
         }
 
-        matvar->data_size = sizeof(matvar_t *);
-        err = Mul(&nelems_x_nfields, nelems, nfields);
-        if ( err ) {
-            Mat_Critical("Integer multiplication overflow");
-            return bytesread;
-        }
-        err = Mul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
-        if ( err ) {
-            Mat_Critical("Integer multiplication overflow");
-            return bytesread;
-        }
-        if ( !matvar->nbytes )
+        err = AllocateStructFields(matvar, nelems, nfields, &nelems_x_nfields, &fields);
+        if ( err || !matvar->nbytes )
             return bytesread;
 
-        matvar->data = calloc(nelems_x_nfields, matvar->data_size);
-        if ( NULL == matvar->data ) {
-            matvar->nbytes = 0;
-            Mat_Critical("Couldn't allocate memory for the data");
-            return bytesread;
-        }
-
-        fields = (matvar_t **)matvar->data;
         for ( i = 0; i < nelems; i++ ) {
             size_t k;
             for ( k = 0; k < nfields; k++ ) {
@@ -2031,28 +2054,10 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
             }
         }
 
-        matvar->data_size = sizeof(matvar_t *);
-        err = Mul(&nelems_x_nfields, nelems, nfields);
-        if ( err ) {
-            Mat_Critical("Integer multiplication overflow");
-            return bytesread;
-        }
-        err = Mul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
-        if ( err ) {
-            Mat_Critical("Integer multiplication overflow");
-            return bytesread;
-        }
-        if ( !matvar->nbytes )
+        err = AllocateStructFields(matvar, nelems, nfields, &nelems_x_nfields, &fields);
+        if ( err || !matvar->nbytes )
             return bytesread;
 
-        matvar->data = calloc(nelems_x_nfields, matvar->data_size);
-        if ( NULL == matvar->data ) {
-            matvar->nbytes = 0;
-            Mat_Critical("Couldn't allocate memory for the data");
-            return bytesread;
-        }
-
-        fields = (matvar_t **)matvar->data;
         for ( i = 0; i < nelems_x_nfields; i++ ) {
             mat_uint32_t nBytes;
 
