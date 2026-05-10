@@ -411,10 +411,14 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
     }
     I *= nfields;
     struct_slab->nbytes = N * nfields * sizeof(matvar_t *);
-    struct_slab->data = malloc(struct_slab->nbytes);
-    if ( struct_slab->data == NULL ) {
-        Mat_VarFree(struct_slab);
-        return NULL;
+    if ( struct_slab->nbytes > 0 ) {
+        struct_slab->data = malloc(struct_slab->nbytes);
+        if ( struct_slab->data == NULL ) {
+            Mat_VarFree(struct_slab);
+            return NULL;
+        }
+    } else {
+        struct_slab->data = NULL;
     }
     fields = (matvar_t **)struct_slab->data;
     for ( i = 0; i < N; i += edge[0] ) {
@@ -484,10 +488,14 @@ Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int stride, int edge,
         nfields = matvar->internal->num_fields;
 
         struct_slab->nbytes = (size_t)edge * nfields * sizeof(matvar_t *);
-        struct_slab->data = malloc(struct_slab->nbytes);
-        if ( struct_slab->data == NULL ) {
-            Mat_VarFree(struct_slab);
-            return NULL;
+        if ( struct_slab->nbytes > 0 ) {
+            struct_slab->data = malloc(struct_slab->nbytes);
+            if ( struct_slab->data == NULL ) {
+                Mat_VarFree(struct_slab);
+                return NULL;
+            }
+        } else {
+            struct_slab->data = NULL;
         }
         struct_slab->dims[0] = edge;
         struct_slab->dims[1] = 1;
