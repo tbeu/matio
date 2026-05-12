@@ -3532,8 +3532,18 @@ Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int
                 break;
             }
             dimp[0] = 1;
-            for ( k = 1; k < matvar->rank; k++ )
+            for ( k = 1; k < matvar->rank; k++ ) {
+                if ( matvar->dims[k - 1] == 0 ) {
+                    err = MATIO_E_FILE_FORMAT_VIOLATION;
+                    free(points);
+                    free(dimp);
+                    break;
+                }
                 dimp[k] = dimp[k - 1] * matvar->dims[k - 1];
+            }
+            if ( err ) {
+                break;
+            }
             for ( k = 0; k < edge; k++ ) {
                 size_t l, coord;
                 coord = (size_t)(start + k * stride);
