@@ -62,6 +62,7 @@ matvar_t **
 Mat_VarGetCells(const matvar_t *matvar, const int *start, const int *stride, const int *edge)
 {
     int i, j, N, I;
+    size_t ndata;
     size_t idx[10] =
         {
             0,
@@ -75,12 +76,14 @@ Mat_VarGetCells(const matvar_t *matvar, const int *start, const int *stride, con
            };
     matvar_t **cells;
 
-    if ( matvar == NULL || start == NULL || stride == NULL || edge == NULL ) {
+    if ( matvar == NULL || matvar->data == NULL || start == NULL || stride == NULL ||
+         edge == NULL ) {
         return NULL;
     } else if ( matvar->rank > 9 ) {
         return NULL;
     }
 
+    ndata = matvar->nbytes / sizeof(matvar_t *);
     dimp[0] = matvar->dims[0];
     N = edge[0];
     I = start[0];
@@ -92,8 +95,14 @@ Mat_VarGetCells(const matvar_t *matvar, const int *start, const int *stride, con
         I += start[i] * dimp[i - 1];
     }
     cells = (matvar_t **)malloc(N * sizeof(matvar_t *));
+    if ( cells == NULL )
+        return NULL;
     for ( i = 0; i < N; i += edge[0] ) {
         for ( j = 0; j < edge[0]; j++ ) {
+            if ( I < 0 || (size_t)I >= ndata ) {
+                free(cells);
+                return NULL;
+            }
             cells[i + j] = *((matvar_t **)matvar->data + I);
             I += stride[0];
         }
