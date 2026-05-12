@@ -135,11 +135,18 @@ Mat_VarGetCellsLinear(const matvar_t *matvar, int start, int stride, int edge)
 {
     matvar_t **cells = NULL;
 
-    if ( matvar != NULL ) {
+    if ( matvar != NULL && matvar->data != NULL && edge > 0 ) {
         int i, I;
+        size_t ndata = matvar->nbytes / sizeof(matvar_t *);
         cells = (matvar_t **)malloc(edge * sizeof(matvar_t *));
+        if ( cells == NULL )
+            return NULL;
         I = start;
         for ( i = 0; i < edge; i++ ) {
+            if ( I < 0 || (size_t)I >= ndata ) {
+                free(cells);
+                return NULL;
+            }
             cells[i] = *((matvar_t **)matvar->data + I);
             I += stride;
         }
