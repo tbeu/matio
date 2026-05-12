@@ -1050,7 +1050,7 @@ Mat_GetDir(mat_t *mat, size_t *n)
                 if ( NULL != matvar ) {
                     if ( NULL != matvar->name ) {
                         if ( NULL == mat->dir ) {
-                            dir = (char **)malloc(sizeof(char *));
+                            dir = (char **)calloc(1, sizeof(char *));
                         } else {
                             dir = (char **)realloc(mat->dir,
                                                    (mat->num_datasets + 1) * (sizeof(char *)));
