@@ -5042,6 +5042,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
     mat_uint32_t tag[2] = {0, 0};
 #if HAVE_ZLIB
     z_stream z;
+    int z_copy = 0;
 #endif
 
     (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
@@ -5089,9 +5090,11 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
             Mat_Critical("inflateCopy returned error %s", zError(err));
             return MATIO_E_FILE_FORMAT_VIOLATION;
         }
+        z_copy = 1;
         z.avail_in = 0;
         err = Inflate(mat, &z, tag, 4, NULL);
         if ( err ) {
+            inflateEnd(&z);
             return err;
         }
         if ( mat->byteswap ) {
@@ -5101,6 +5104,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
         if ( !(tag[0] & 0xffff0000) ) { /* Data is NOT packed in the tag */
             err = Inflate(mat, &z, tag + 1, 4, NULL);
             if ( err ) {
+                inflateEnd(&z);
                 return err;
             }
             if ( mat->byteswap ) {
@@ -5161,12 +5165,15 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                 err = inflateCopy(&z, matvar->internal->z);
                 if ( err != Z_OK ) {
                     Mat_Critical("inflateCopy returned error %s", zError(err));
+                    z_copy = 0;
                     return MATIO_E_FILE_FORMAT_VIOLATION;
                 }
                 InflateSkip(mat, &z, real_bytes, NULL);
                 z.avail_in = 0;
                 err = Inflate(mat, &z, tag, 4, NULL);
                 if ( err ) {
+                    inflateEnd(&z);
+                    z_copy = 0;
                     return err;
                 }
                 if ( mat->byteswap ) {
@@ -5183,6 +5190,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                                         matvar->dims, start, stride, edge);
             }
             inflateEnd(&z);
+            z_copy = 0;
         }
 #endif
     } else {
@@ -5228,12 +5236,15 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                 err = inflateCopy(&z, matvar->internal->z);
                 if ( err != Z_OK ) {
                     Mat_Critical("inflateCopy returned error %s", zError(err));
+                    z_copy = 0;
                     return MATIO_E_FILE_FORMAT_VIOLATION;
                 }
                 InflateSkip(mat, &z, real_bytes, NULL);
                 z.avail_in = 0;
                 err = Inflate(mat, &z, tag, 4, NULL);
                 if ( err ) {
+                    inflateEnd(&z);
+                    z_copy = 0;
                     return err;
                 }
                 if ( mat->byteswap ) {
@@ -5251,9 +5262,15 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                                         matvar->rank, matvar->dims, start, stride, edge);
             }
             inflateEnd(&z);
+            z_copy = 0;
         }
 #endif
     }
+#if HAVE_ZLIB
+    if ( z_copy ) {
+        inflateEnd(&z);
+    }
+#endif
     if ( err == MATIO_E_NO_ERROR ) {
         matvar->data_type = ClassType2DataType(matvar->class_type);
         matvar->data_size = Mat_SizeOfClass(matvar->class_type);
@@ -5281,6 +5298,7 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
     mat_uint32_t tag[2] = {0, 0};
 #if HAVE_ZLIB
     z_stream z;
+    int z_copy = 0;
 #endif
     size_t nelems = 1;
 
@@ -5330,8 +5348,10 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
             Mat_Critical("inflateCopy returned error %s", zError(err));
             return MATIO_E_FILE_FORMAT_VIOLATION;
         }
+        z_copy = 1;
         err = Inflate(mat, &z, tag, 4, NULL);
         if ( err ) {
+            inflateEnd(&z);
             return err;
         }
         if ( mat->byteswap ) {
@@ -5342,6 +5362,7 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
         if ( !(tag[0] & 0xffff0000) ) { /* Data is NOT packed in the tag */
             err = Inflate(mat, &z, tag + 1, 4, NULL);
             if ( err ) {
+                inflateEnd(&z);
                 return err;
             }
             if ( mat->byteswap ) {
@@ -5403,12 +5424,15 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
             err = inflateCopy(&z, matvar->internal->z);
             if ( err != Z_OK ) {
                 Mat_Critical("inflateCopy returned error %s", zError(err));
+                z_copy = 0;
                 return MATIO_E_FILE_FORMAT_VIOLATION;
             }
             InflateSkip(mat, &z, real_bytes, NULL);
             z.avail_in = 0;
             err = Inflate(mat, &z, tag, 4, NULL);
             if ( err ) {
+                inflateEnd(&z);
+                z_copy = 0;
                 return err;
             }
             if ( mat->byteswap ) {
@@ -5425,9 +5449,15 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
                                     stride, edge);
         }
         inflateEnd(&z);
+        z_copy = 0;
 #endif
     }
 
+#if HAVE_ZLIB
+    if ( z_copy ) {
+        inflateEnd(&z);
+    }
+#endif
     matvar->data_type = ClassType2DataType(matvar->class_type);
     matvar->data_size = Mat_SizeOfClass(matvar->class_type);
 
