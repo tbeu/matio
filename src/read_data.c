@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
 #include <math.h>
 #include <time.h>
 
@@ -505,6 +506,23 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
         }                                                                                      \
     } while ( 0 )
 
+static int
+CheckEdgeOverflow(int rank, const int *edge)
+{
+    int i, err;
+    size_t nElements = 1;
+    for ( i = 0; i < rank; i++ ) {
+        if ( edge[i] < 0 ) {
+            return 1;
+        }
+        err = Mul(&nElements, nElements, (size_t)edge[i]);
+        if ( err || nElements > (size_t)INT_MAX ) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 /** @brief Reads data of type @c data_type by user-defined dimensions
  *
  * @ingroup mat_internal
@@ -542,6 +560,10 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
          (stride == NULL) || (edge == NULL) ) {
         return MATIO_E_BAD_ARGUMENT;
     } else if ( rank > 10 ) {
+        return MATIO_E_BAD_ARGUMENT;
+    }
+
+    if ( CheckEdgeOverflow(rank, edge) ) {
         return MATIO_E_BAD_ARGUMENT;
     }
 
@@ -726,6 +748,10 @@ ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes 
          (stride == NULL) || (edge == NULL) ) {
         return 0;
     } else if ( rank > 10 ) {
+        return 0;
+    }
+
+    if ( CheckEdgeOverflow(rank, edge) ) {
         return 0;
     }
 
