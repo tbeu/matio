@@ -1200,6 +1200,21 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
             } else {
                 matvar->dims = Mat_H5ReadDims(field_id, &nelems, &matvar->rank);
                 if ( NULL != matvar->dims ) {
+                    if ( matvar->rank == 0 ) {
+                        free(matvar->dims);
+                        matvar->rank = 2;
+                        matvar->dims = (size_t *)malloc(2 * sizeof(*matvar->dims));
+                        if ( NULL != matvar->dims ) {
+                            matvar->dims[0] = 1;
+                            matvar->dims[1] = 1;
+                            nelems = 1;
+                        } else {
+                            H5Tclose(field_type_id);
+                            H5Dclose(field_id);
+                            err = MATIO_E_OUT_OF_MEMORY;
+                            goto done_group;
+                        }
+                    }
                     fields_are_variables = 0;
                 } else {
                     H5Tclose(field_type_id);
