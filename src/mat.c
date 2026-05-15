@@ -2160,8 +2160,14 @@ Mat_CalcSingleSubscript(int rank, const int *dims, const int *subs)
             break;
         }
         k--;
-        for ( j = i; j--; )
-            k *= dims[j];
+        for ( j = i; j--; ) {
+            if ( !psnip_safe_int_mul(&k, k, dims[j]) ) {
+                err = MATIO_E_OPERATION_NOT_SUPPORTED;
+                break;
+            }
+        }
+        if ( err )
+            break;
         index += k;
     }
     if ( err )
