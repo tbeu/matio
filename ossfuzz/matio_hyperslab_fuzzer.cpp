@@ -26,6 +26,8 @@ namespace
         int strides[kMaxRank] = {0};
         int edges[kMaxRank] = {0};
         size_t buf_elems = 1;
+        if ( fdp.remaining_bytes() < (size_t)rank * 3 * sizeof(int) )
+            return;
         for ( int i = 0; i < rank; ++i ) {
             size_t dim = matvar->dims ? matvar->dims[i] : 1;
             if ( dim == 0 )
@@ -60,6 +62,8 @@ namespace
             total *= d;
         }
         if ( total == 0 )
+            return;
+        if ( fdp.remaining_bytes() < 3 * sizeof(int) )
             return;
         int lstart =
             fdp.ConsumeIntegralInRange<int>(0, static_cast<int>(total > 0 ? total - 1 : 0));
@@ -102,7 +106,8 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         TryHyperslab(mat, matvar, fdp);
         // Then exercise the size / subscript helpers — these wrap arithmetic
         // on rank/dims and have their own coverage gaps.
-        if ( matvar->rank > 0 && matvar->rank <= kMaxRank ) {
+        if ( matvar->rank > 0 && matvar->rank <= kMaxRank &&
+             fdp.remaining_bytes() >= (size_t)matvar->rank * sizeof(int) ) {
             int subs[kMaxRank] = {0};
             for ( int i = 0; i < matvar->rank; ++i ) {
                 subs[i] = fdp.ConsumeIntegralInRange<int>(0, 8);
