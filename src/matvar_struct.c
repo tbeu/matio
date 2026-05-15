@@ -277,7 +277,7 @@ Mat_VarGetStructFieldByName(const matvar_t *matvar, const char *field_name, size
     matvar_t *field = NULL;
     size_t nelems = 1;
 
-    if ( matvar == NULL || matvar->data == NULL ||
+    if ( matvar == NULL || matvar->data == NULL || field_name == NULL ||
          (matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT) ||
          matvar->data_size == 0 )
         return NULL;
