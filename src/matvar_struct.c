@@ -482,6 +482,12 @@ Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int stride, int edge,
         matvar_t **fields;
 
         struct_slab = Mat_VarDuplicate(matvar, 0);
+        if ( NULL == struct_slab )
+            return NULL;
+        if ( struct_slab->rank < 2 || NULL == struct_slab->dims ) {
+            Mat_VarFree(struct_slab);
+            return NULL;
+        }
         if ( !copy_fields )
             struct_slab->mem_conserve = 1;
 
