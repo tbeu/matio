@@ -347,9 +347,8 @@ Mat_VarGetStructField(const matvar_t *matvar, void *name_or_index, int opt, int 
  * Finds structures of a structure array given a start, stride, and edge for
  * each dimension.  The structures are placed in a new structure array.  If
  * copy_fields is non-zero, the indexed structures are copied and should be
- * freed, but if copy_fields is zero, the indexed structures are pointers to
- * the original, but should still be freed. The structures have a flag set
- * so that the structure fields are not freed.
+ * freed, but if copy_fields is zero, the indexed structures are shallow
+ * duplicates of the original with conserved memory and should be freed.
  *
  * Note that this function is limited to structure arrays with a rank less than
  * 10.
@@ -392,8 +391,6 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
     }
 
     struct_slab = Mat_VarDuplicate(matvar, 0);
-    if ( !copy_fields )
-        struct_slab->mem_conserve = 1;
 
     nfields = matvar->internal->num_fields;
 
@@ -424,11 +421,15 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
     for ( i = 0; i < N; i += edge[0] ) {
         for ( j = 0; j < edge[0]; j++ ) {
             for ( field = 0; field < nfields; field++ ) {
-                if ( copy_fields )
+                if ( copy_fields ) {
                     fields[(i + j) * nfields + field] =
                         Mat_VarDuplicate(*((matvar_t **)matvar->data + I), 1);
-                else
-                    fields[(i + j) * nfields + field] = *((matvar_t **)matvar->data + I);
+                } else {
+                    fields[(i + j) * nfields + field] =
+                        Mat_VarDuplicate(*((matvar_t **)matvar->data + I), 0);
+                    if ( fields[(i + j) * nfields + field] != NULL )
+                        fields[(i + j) * nfields + field]->mem_conserve = 1;
+                }
                 I++;
             }
             I += (stride[0] - 1) * nfields;
@@ -458,9 +459,8 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
  * Finds structures of a structure array given a single (linear)start, stride,
  * and edge.  The structures are placed in a new structure array.  If
  * copy_fields is non-zero, the indexed structures are copied and should be
- * freed, but if copy_fields is zero, the indexed structures are pointers to
- * the original, but should still be freed since the mem_conserve flag is set
- * so that the structures are not freed.
+ * freed, but if copy_fields is zero, the indexed structures are shallow
+ * duplicates of the original with conserved memory and should be freed.
  * MAT file version must be 5.
  * @ingroup MAT
  * @param matvar Structure matlab variable
@@ -488,8 +488,6 @@ Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int stride, int edge,
             Mat_VarFree(struct_slab);
             return NULL;
         }
-        if ( !copy_fields )
-            struct_slab->mem_conserve = 1;
 
         nfields = matvar->internal->num_fields;
 
@@ -508,17 +506,17 @@ Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int stride, int edge,
         fields = (matvar_t **)struct_slab->data;
         I = start * nfields;
         for ( i = 0; i < edge; i++ ) {
-            if ( copy_fields ) {
-                for ( field = 0; field < nfields; field++ ) {
+            for ( field = 0; field < nfields; field++ ) {
+                if ( copy_fields ) {
                     fields[i * nfields + field] =
                         Mat_VarDuplicate(*((matvar_t **)matvar->data + I), 1);
-                    I++;
+                } else {
+                    fields[i * nfields + field] =
+                        Mat_VarDuplicate(*((matvar_t **)matvar->data + I), 0);
+                    if ( fields[i * nfields + field] != NULL )
+                        fields[i * nfields + field]->mem_conserve = 1;
                 }
-            } else {
-                for ( field = 0; field < nfields; field++ ) {
-                    fields[i * nfields + field] = *((matvar_t **)matvar->data + I);
-                    I++;
-                }
+                I++;
             }
             I += (stride - 1) * nfields;
         }
