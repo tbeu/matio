@@ -5380,6 +5380,11 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
     err = Mat_MulDims(matvar, &nelems);
     if ( err ) {
         Mat_Critical("Integer multiplication overflow");
+#if HAVE_ZLIB
+        if ( z_copy ) {
+            inflateEnd(&z);
+        }
+#endif
         return err;
     }
 
