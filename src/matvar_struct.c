@@ -391,6 +391,10 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
     }
 
     struct_slab = Mat_VarDuplicate(matvar, 0);
+    if ( NULL == struct_slab )
+        return NULL;
+    struct_slab->data = NULL;
+    struct_slab->nbytes = 0;
 
     nfields = matvar->internal->num_fields;
 
@@ -484,6 +488,8 @@ Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int stride, int edge,
         struct_slab = Mat_VarDuplicate(matvar, 0);
         if ( NULL == struct_slab )
             return NULL;
+        struct_slab->data = NULL;
+        struct_slab->nbytes = 0;
         if ( struct_slab->rank < 2 || NULL == struct_slab->dims ) {
             Mat_VarFree(struct_slab);
             return NULL;
