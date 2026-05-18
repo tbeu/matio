@@ -8,7 +8,7 @@
 ! Copyright (c) 2005-2014, Christopher C. Hulbert
 ! All rights reserved.
 !
-| SPDX-License-Identifier: BSD-2-Clause
+! SPDX-License-Identifier: BSD-2-Clause
 !
 
 FUNCTION FMat_VarReadDoubleData_0(mat,matvar,d,start,stride,edge) RESULT(err)

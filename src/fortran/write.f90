@@ -3,7 +3,7 @@
 ! Copyright (c) 2005-2014, Christopher C. Hulbert
 ! All rights reserved.
 !
-| SPDX-License-Identifier: BSD-2-Clause
+! SPDX-License-Identifier: BSD-2-Clause
 !
 
 !   FIXME: Find a less memory hungry way to split the complex data
