@@ -1,3 +1,4 @@
+#include <climits>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -63,10 +64,11 @@ namespace
         }
         if ( total == 0 )
             return;
+        if ( total > INT_MAX )
+            total = INT_MAX;
         if ( fdp.remaining_bytes() < 3 * sizeof(int) )
             return;
-        int lstart =
-            fdp.ConsumeIntegralInRange<int>(0, static_cast<int>(total > 0 ? total - 1 : 0));
+        int lstart = fdp.ConsumeIntegralInRange<int>(0, static_cast<int>(total - 1));
         int lstride = fdp.ConsumeIntegralInRange<int>(1, 8);
         int ledge = fdp.ConsumeIntegralInRange<int>(
             0, static_cast<int>(
