@@ -567,6 +567,12 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
         return MATIO_E_BAD_ARGUMENT;
     }
 
+    for ( i = 0; i < rank; i++ ) {
+        if ( dims[i] == 0 ) {
+            return MATIO_E_BAD_ARGUMENT;
+        }
+    }
+
     data_size = Mat_SizeOf(data_type);
 
     switch ( class_type ) {
@@ -746,13 +752,19 @@ ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes 
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) || (start == NULL) ||
          (stride == NULL) || (edge == NULL) ) {
-        return 0;
+        return -1;
     } else if ( rank > 10 ) {
-        return 0;
+        return -1;
     }
 
     if ( CheckEdgeOverflow(rank, edge) ) {
-        return 0;
+        return -1;
+    }
+
+    for ( i = 0; i < rank; i++ ) {
+        if ( dims[i] == 0 ) {
+            return -1;
+        }
     }
 
     err = inflateCopy(&z_copy, z);
