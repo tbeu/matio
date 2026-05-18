@@ -19,9 +19,13 @@ jobs:
       matrix:
         toolchain:
           - linux-gcc
+          - linux-gcc-fortran
           - macos-clang
         include:
           - toolchain: linux-gcc
+            os: ubuntu-latest
+            compiler: gcc
+          - toolchain: linux-gcc-fortran
             os: ubuntu-latest
             compiler: gcc
           - toolchain: macos-clang
@@ -37,8 +41,11 @@ jobs:
         run: |
           if [ "${{ matrix.toolchain }}" == "macos-clang" ]; then
             brew install automake autoconf libtool
-          else
+          elif [ "${{ matrix.toolchain }}" == "linux-gcc" ]; then
             pip install --user cpp-coveralls
+          fi
+          if [ "${{ matrix.toolchain }}" == "linux-gcc-fortran" ]; then
+            sudo apt-get install -y gfortran
           fi
       - name: Install hdf5
         timeout-minutes: 5
@@ -52,7 +59,11 @@ jobs:
       - name: Configure
         run: |
           ./autogen.sh
-          ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=${GITHUB_WORKSPACE}/hdf5
+          FORTRAN_FLAG=""
+          if [ "${{ matrix.toolchain }}" == "linux-gcc-fortran" ]; then
+            FORTRAN_FLAG="--enable-fortran"
+          fi
+          ./configure --quiet --enable-shared --enable-coverage --enable-debug --enable-mat73 --enable-extended-sparse --with-pic --with-hdf5=${GITHUB_WORKSPACE}/hdf5 $FORTRAN_FLAG
       - name: Build with ${{ matrix.compiler }}
         run: make -j8
       - name: Test

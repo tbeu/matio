@@ -130,6 +130,9 @@ Table of Contents
               * '--enable-mcos=yes'
                 This flag en/disables the support for MATLAB Class Object
                 System (MCOS) objects (e.g. table, datetime, string, etc.).
+              * '--enable-fortran=yes'
+                This flag enables building the Fortran interface to matio.
+                A Fortran compiler (e.g. gfortran) is required.
               * '--with-matlab=DIR'
                 This option specifies the directory (DIR) with the 'matlab'
                 program. With this option, the testsuite will check that the

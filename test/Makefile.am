@@ -783,6 +783,16 @@ TEST_LFLAGS = -L$(top_builddir)/src
 
 noinst_PROGRAMS = test_mat test_snprintf
 
+if ENABLE_FORTRAN
+noinst_PROGRAMS += test_matf
+
+test_matf_SOURCES = test_matf.f90
+test_matf_CFLAGS  = -I$(top_builddir)/src -I$(top_builddir)/src/fortran
+test_matf_FCFLAGS = -I$(top_builddir)/src -I$(top_builddir)/src/fortran
+test_matf_LDFLAGS = -L$(top_builddir)/src -L$(top_builddir)/src/fortran
+test_matf_LDADD   = $(TEST_LIBS)
+endif
+
 test_mat_SOURCES = test_mat.c
 test_mat_LDADD   = $(TEST_LIBS)
 test_mat_LDFLAGS = $(TEST_LFLAGS)

@@ -31,13 +31,29 @@ libmatio_la_SOURCES    = endian.c io.c $(ZLIB_SRC) read_data.c \
                          mat5.c mat4.c mat.c matvar_cell.c matvar_struct.c \
                          mcos.c
 libmatio_la_LIBADD     = $(HDF5_LIBS) $(ZLIB_LIBS) $(SNPRINTF_LIBS)
-libmatio_la_LDFLAGS    = -no-undefined -export-symbols @srcdir@/matio.sym $(AM_LDFLAGS)
 
 if MAT73
     libmatio_la_SOURCES += mat73.c
 endif
 
 EXTRA_DIST = matio.sym
+
+if ENABLE_FORTRAN
+    AM_FCFLAGS              = -I. -I$(top_builddir)/src/fortran
+    noinst_LTLIBRARIES      = libfmatio.la
+    libfmatio_la_SOURCES    = fortran/matio_internal.c fortran/matio.f90
+    libfmatio_la_CFLAGS     = $(AM_CFLAGS)
+    libfmatio_la_LDFLAGS    =
+    libmatio_la_LIBADD     += libfmatio.la $(FCLIBS)
+    libmatio_la_LDFLAGS     = -no-undefined -export-symbols-regex '(Mat_|__matio_MOD_)' $(AM_LDFLAGS)
+    nodist_include_HEADERS += matio.mod
+    noinst_HEADERS         += fortran/create.f90 fortran/read_data.f90 \
+                              fortran/write_data.f90 fortran/write.f90
+else
+    libmatio_la_LDFLAGS     = -no-undefined -export-symbols @srcdir@/matio.sym $(AM_LDFLAGS)
+endif
+
+matio.mod: libfmatio.la
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \

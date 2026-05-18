@@ -102,6 +102,8 @@ This flag enables the support for version 7.3 MAT files. The option only makes s
 This option enables extended sparse matrix data types not supported in MATLAB. MATLAB only supports double-precision sparse data. With this flag, matio will read sparse data with other types (i.e. single-precision and integer types).
 * `--enable-mcos=yes`
 This option enables the support for MATLAB Class Object System (MCOS) objects (e.g. table, datetime, string, etc.).
+* `--enable-fortran=yes`
+This option enables building the Fortran interface to matio. A Fortran compiler (e.g. gfortran) is required.
 * `--with-matlab=DIR`
 This option specifies the directory (DIR) with the 'matlab' program. With this option, the testsuite will check that the MAT files written by matio can be read into MATLAB. Without this, the test will only check that matio can read the file written and if successful the test will be skipped. If matio can not read the file, the test will fail.
 * `--with-zlib=DIR`

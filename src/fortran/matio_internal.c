@@ -6,14 +6,12 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include "matio_private.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #if defined(HAVE_STRINGS_H)
 #include <strings.h>
 #endif
-#include "matio.h"
-#include "matio_private.h"
 
 #define fmat_loginit_c \
             FC_FUNC_(fmat_loginit_c,FMAT_LOGINIT_C)
