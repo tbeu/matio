@@ -1952,41 +1952,38 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
 void
 Mat_VarFree(matvar_t *matvar)
 {
-    size_t nelems = 0;
-    int err;
-
     if ( NULL == matvar )
         return;
     if ( NULL != matvar->dims ) {
-        nelems = 1;
-        err = Mat_MulDims(matvar, &nelems);
         free(matvar->dims);
-    } else {
-        err = MATIO_E_BAD_ARGUMENT;
     }
     if ( NULL != matvar->data ) {
         switch ( matvar->class_type ) {
             case MAT_C_STRUCT:
                 if ( !matvar->mem_conserve ) {
-                    if ( MATIO_E_NO_ERROR == err ) {
-                        matvar_t **fields = (matvar_t **)matvar->data;
-                        size_t nelems_x_nfields;
-                        err = Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
-                        if ( MATIO_E_NO_ERROR == err && nelems_x_nfields > 0 ) {
-                            size_t i;
-                            for ( i = 0; i < nelems_x_nfields; i++ )
-                                Mat_VarFree(fields[i]);
-                        }
+                    matvar_t **fields = (matvar_t **)matvar->data;
+                    size_t nelems_x_nfields = 0;
+                    if ( matvar->data_size > 0 ) {
+                        nelems_x_nfields = matvar->nbytes / matvar->data_size;
+                    }
+                    if ( nelems_x_nfields > 0 ) {
+                        size_t i;
+                        for ( i = 0; i < nelems_x_nfields; i++ )
+                            Mat_VarFree(fields[i]);
                     }
                     free(matvar->data);
                 }
                 break;
             case MAT_C_CELL:
                 if ( !matvar->mem_conserve ) {
-                    if ( MATIO_E_NO_ERROR == err ) {
-                        matvar_t **cells = (matvar_t **)matvar->data;
+                    matvar_t **cells = (matvar_t **)matvar->data;
+                    size_t ncells = 0;
+                    if ( matvar->data_size > 0 ) {
+                        ncells = matvar->nbytes / matvar->data_size;
+                    }
+                    if ( ncells > 0 ) {
                         size_t i;
-                        for ( i = 0; i < nelems; i++ )
+                        for ( i = 0; i < ncells; i++ )
                             Mat_VarFree(cells[i]);
                     }
                     free(matvar->data);
@@ -2029,10 +2026,15 @@ Mat_VarFree(matvar_t *matvar)
                 break;
             case MAT_C_FUNCTION:
                 if ( !matvar->mem_conserve ) {
-                    size_t i;
                     matvar_t **functions = (matvar_t **)matvar->data;
-                    for ( i = 0; i < nelems; i++ ) {
-                        Mat_VarFree(functions[i]);
+                    size_t nfuncs = 0;
+                    if ( matvar->data_size > 0 ) {
+                        nfuncs = matvar->nbytes / matvar->data_size;
+                    }
+                    if ( nfuncs > 0 ) {
+                        size_t i;
+                        for ( i = 0; i < nfuncs; i++ )
+                            Mat_VarFree(functions[i]);
                     }
                     free(matvar->data);
                 }
@@ -2043,16 +2045,15 @@ Mat_VarFree(matvar_t *matvar)
             case MAT_C_OBJECT:
                 /* MCOS resolved object: fields like a struct */
                 if ( !matvar->mem_conserve ) {
-                    if ( MATIO_E_NO_ERROR == err ) {
-                        matvar_t **fields = (matvar_t **)matvar->data;
-                        size_t nfields = matvar->internal->num_fields;
-                        size_t total = 0;
-                        (void)Mul(&total, nelems, nfields);
-                        if ( NULL != fields ) {
-                            size_t k;
-                            for ( k = 0; k < total; k++ )
-                                Mat_VarFree(fields[k]);
-                        }
+                    matvar_t **fields = (matvar_t **)matvar->data;
+                    size_t total = 0;
+                    if ( matvar->data_size > 0 ) {
+                        total = matvar->nbytes / matvar->data_size;
+                    }
+                    if ( NULL != fields && total > 0 ) {
+                        size_t k;
+                        for ( k = 0; k < total; k++ )
+                            Mat_VarFree(fields[k]);
                     }
                     free(matvar->data);
                 }
