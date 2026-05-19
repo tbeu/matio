@@ -237,7 +237,7 @@ Mat_VarGetStructFieldByIndex(const matvar_t *matvar, size_t field_index, size_t 
     matvar_t *field = NULL;
     size_t nelems = 1, nfields;
 
-    if ( matvar == NULL || matvar->data == NULL ||
+    if ( matvar == NULL || matvar->data == NULL || matvar->internal == NULL ||
          (matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT) ||
          matvar->data_size == 0 )
         return NULL;
@@ -277,7 +277,7 @@ Mat_VarGetStructFieldByName(const matvar_t *matvar, const char *field_name, size
     matvar_t *field = NULL;
     size_t nelems = 1;
 
-    if ( matvar == NULL || matvar->data == NULL || field_name == NULL ||
+    if ( matvar == NULL || matvar->data == NULL || matvar->internal == NULL || field_name == NULL ||
          (matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT) ||
          matvar->data_size == 0 )
         return NULL;
@@ -323,6 +323,9 @@ Mat_VarGetStructField(const matvar_t *matvar, void *name_or_index, int opt, int 
     int err, nfields;
     matvar_t *field = NULL;
     size_t nelems = 1;
+
+    if ( matvar == NULL || matvar->internal == NULL )
+        return NULL;
 
     err = Mat_MulDims(matvar, &nelems);
     nfields = matvar->internal->num_fields;
