@@ -11,6 +11,7 @@
  */
 
 #include "matio_private.h"
+#include "safe-math.h"
 #if HAVE_ZLIB
 #include <zlib.h>
 #endif
@@ -523,6 +524,30 @@ CheckEdgeOverflow(int rank, const int *edge)
     return 0;
 }
 
+static int
+CheckSlabOverflow(int rank, const size_t *dims, const int *stride)
+{
+    int i, j;
+    for ( i = 0; i < rank; i++ ) {
+        if ( dims[i] > (size_t)INT_MAX ) {
+            return 1;
+        }
+    }
+    for ( i = 1; i < rank; i++ ) {
+        int inc_i = stride[i] - 1;
+        int dimp_i = (int)dims[i - 1];
+        for ( j = i; j--; ) {
+            if ( !psnip_safe_int_mul(&inc_i, inc_i, (int)dims[j]) ) {
+                return 1;
+            }
+            if ( !psnip_safe_int_mul(&dimp_i, dimp_i, (int)dims[j + 1]) ) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 /** @brief Reads data of type @c data_type by user-defined dimensions
  *
  * @ingroup mat_internal
@@ -564,6 +589,10 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
     }
 
     if ( CheckEdgeOverflow(rank, edge) ) {
+        return MATIO_E_BAD_ARGUMENT;
+    }
+
+    if ( CheckSlabOverflow(rank, dims, stride) ) {
         return MATIO_E_BAD_ARGUMENT;
     }
 
@@ -758,6 +787,10 @@ ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes 
     }
 
     if ( CheckEdgeOverflow(rank, edge) ) {
+        return -1;
+    }
+
+    if ( CheckSlabOverflow(rank, dims, stride) ) {
         return -1;
     }
 
