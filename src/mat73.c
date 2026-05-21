@@ -864,6 +864,8 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
             free(fieldnames_vl);
             H5Tclose(type_id);
         } else {
+            free(fieldnames_vl);
+            H5Tclose(type_id);
             err = MATIO_E_GENERIC_READ_ERROR;
         }
     }
