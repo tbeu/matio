@@ -387,9 +387,14 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
 
     if ( matvar == NULL || start == NULL || stride == NULL || edge == NULL ) {
         return NULL;
-    } else if ( matvar->rank > 9 ) {
+    }
+    if ( matvar->rank > 9 ) {
         return NULL;
-    } else if ( matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT ) {
+    }
+    if ( matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_OBJECT ) {
+        return NULL;
+    }
+    if ( matvar->data == NULL ) {
         return NULL;
     }
 
@@ -480,55 +485,51 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
 matvar_t *
 Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int stride, int edge, int copy_fields)
 {
+    int i, I, field, nfields;
+    matvar_t **fields;
     matvar_t *struct_slab;
 
-    if ( matvar == NULL || matvar->rank > 10 ) {
-        struct_slab = NULL;
-    } else {
-        int i, I, field, nfields;
-        matvar_t **fields;
+    if ( matvar == NULL || matvar->rank > 10 || matvar->data == NULL )
+        return NULL;
 
-        struct_slab = Mat_VarDuplicate(matvar, 0);
-        if ( NULL == struct_slab )
-            return NULL;
-        struct_slab->data = NULL;
-        struct_slab->nbytes = 0;
-        if ( struct_slab->rank < 2 || NULL == struct_slab->dims ) {
+    struct_slab = Mat_VarDuplicate(matvar, 0);
+    if ( NULL == struct_slab )
+        return NULL;
+    struct_slab->data = NULL;
+    struct_slab->nbytes = 0;
+    if ( struct_slab->rank < 2 || NULL == struct_slab->dims ) {
+        Mat_VarFree(struct_slab);
+        return NULL;
+    }
+
+    nfields = matvar->internal->num_fields;
+
+    struct_slab->nbytes = (size_t)edge * nfields * sizeof(matvar_t *);
+    if ( struct_slab->nbytes > 0 ) {
+        struct_slab->data = malloc(struct_slab->nbytes);
+        if ( struct_slab->data == NULL ) {
             Mat_VarFree(struct_slab);
             return NULL;
         }
-
-        nfields = matvar->internal->num_fields;
-
-        struct_slab->nbytes = (size_t)edge * nfields * sizeof(matvar_t *);
-        if ( struct_slab->nbytes > 0 ) {
-            struct_slab->data = malloc(struct_slab->nbytes);
-            if ( struct_slab->data == NULL ) {
-                Mat_VarFree(struct_slab);
-                return NULL;
+    } else {
+        struct_slab->data = NULL;
+    }
+    struct_slab->dims[0] = edge;
+    struct_slab->dims[1] = 1;
+    fields = (matvar_t **)struct_slab->data;
+    I = start * nfields;
+    for ( i = 0; i < edge; i++ ) {
+        for ( field = 0; field < nfields; field++ ) {
+            if ( copy_fields ) {
+                fields[i * nfields + field] = Mat_VarDuplicate(*((matvar_t **)matvar->data + I), 1);
+            } else {
+                fields[i * nfields + field] = Mat_VarDuplicate(*((matvar_t **)matvar->data + I), 0);
+                if ( fields[i * nfields + field] != NULL )
+                    fields[i * nfields + field]->mem_conserve = 1;
             }
-        } else {
-            struct_slab->data = NULL;
+            I++;
         }
-        struct_slab->dims[0] = edge;
-        struct_slab->dims[1] = 1;
-        fields = (matvar_t **)struct_slab->data;
-        I = start * nfields;
-        for ( i = 0; i < edge; i++ ) {
-            for ( field = 0; field < nfields; field++ ) {
-                if ( copy_fields ) {
-                    fields[i * nfields + field] =
-                        Mat_VarDuplicate(*((matvar_t **)matvar->data + I), 1);
-                } else {
-                    fields[i * nfields + field] =
-                        Mat_VarDuplicate(*((matvar_t **)matvar->data + I), 0);
-                    if ( fields[i * nfields + field] != NULL )
-                        fields[i * nfields + field]->mem_conserve = 1;
-                }
-                I++;
-            }
-            I += (stride - 1) * nfields;
-        }
+        I += (stride - 1) * nfields;
     }
     return struct_slab;
 }
