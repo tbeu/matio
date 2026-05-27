@@ -16,6 +16,7 @@ namespace
 {
 
     constexpr int kMaxRank = 4;
+    constexpr int kMaxVars = 16;
 
     void
     TryHyperslab(mat_t *mat, matvar_t *matvar, FuzzedDataProvider &fdp)
@@ -96,14 +97,14 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     size_t n = 0;
     char *const *dir = Mat_GetDir(mat, &n);
-    if ( n > 16 )
-        n = 16;
+    if ( n > kMaxVars )
+        n = kMaxVars;
 
     // Iterate, reading each variable's info and then exercising hyperslab
     // and linear-region reads against it.
     matvar_t *matvar;
     int loops = 0;
-    while ( (matvar = Mat_VarReadNextInfo(mat)) != nullptr && loops < 16 ) {
+    while ( (matvar = Mat_VarReadNextInfo(mat)) != nullptr && loops < kMaxVars ) {
         // First the metadata-driven hyperslab (no full data load).
         TryHyperslab(mat, matvar, fdp);
         // Then exercise the size / subscript helpers — these wrap arithmetic
@@ -146,6 +147,8 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         Mat_VarFree(matvar);
         ++loops;
     }
+    if ( loops >= kMaxVars && matvar != nullptr )
+        Mat_VarFree(matvar);
 
     // Try named reads (Mat_VarRead by name) over the directory and call
     // hyperslab on those (with full data already loaded).
