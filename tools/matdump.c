@@ -28,6 +28,26 @@ int rpl_snprintf(char *, size_t, const char *, ...);
 #define mat_snprintf snprintf
 #endif /* !HAVE_SNPRINTF */
 
+#include "safe-math.h"
+
+/* Safe product of matvar dimensions (overflow returns non-zero) */
+static int
+MulDims(const matvar_t *matvar, size_t *nelems)
+{
+    int i;
+    if ( matvar->rank == 0 ) {
+        *nelems = 0;
+        return 0;
+    }
+    for ( i = 0; i < matvar->rank; i++ ) {
+        if ( !psnip_safe_size_mul(nelems, *nelems, matvar->dims[i]) ) {
+            *nelems = 0;
+            return 1;
+        }
+    }
+    return 0;
+}
+
 static const char *optstring = "df:hvo:HV";
 static struct option options[] = {
     {"data", no_argument, NULL, 'd'},         {"format", required_argument, NULL, 'f'},
@@ -178,17 +198,19 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
     const mat_uint64_t *u64;
     size_t n = 1, nstrs, header_len, char_offset, slen, j;
     const unsigned char *bytes;
-    int pos = 0, r;
+    int pos = 0;
 
     if ( any == NULL || any->class_type != MAT_C_UINT64 || any->data == NULL )
         return 0;
 
-    u64 = (const mat_uint64_t *)any->data;
-    for ( r = 0; r < any->rank; r++ )
-        n *= any->dims[r];
-
-    if ( n <= 4 )
+    if ( MulDims(any, &n) || n <= 4 )
         return 0;
+
+    /* Validate n against actual allocation */
+    if ( n * sizeof(mat_uint64_t) > any->nbytes )
+        return 0;
+
+    u64 = (const mat_uint64_t *)any->data;
 
     nstrs = (size_t)u64[2];
     if ( (size_t)row >= nstrs )
@@ -207,18 +229,26 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
 
     slen = (size_t)u64[4 + row];
 
-    for ( j = 0; j < slen && (size_t)pos < bufsz - 1; j++ ) {
-        size_t byte_idx = (char_offset + j) * 2;
-        mat_uint16_t ch =
-            (mat_uint16_t)(bytes[byte_idx] | ((mat_uint16_t)bytes[byte_idx + 1] << 8));
-        if ( ch >= 32 && ch < 127 )
-            buf[pos++] = (char)ch;
-        else if ( ch == 0 )
-            break;
-        else {
-            int nn = mat_snprintf(buf + pos, bufsz - pos, "\\u%04X", ch);
-            if ( nn > 0 )
-                pos += nn;
+    {
+        size_t data_bytes = (n - header_len) * sizeof(mat_uint64_t);
+        for ( j = 0; j < slen && (size_t)pos < bufsz - 1; j++ ) {
+            size_t byte_idx = (char_offset + j) * 2;
+            mat_uint16_t ch;
+            if ( byte_idx + 1 >= data_bytes )
+                break;
+            ch = (mat_uint16_t)(bytes[byte_idx] | ((mat_uint16_t)bytes[byte_idx + 1] << 8));
+            if ( ch >= 32 && ch < 127 )
+                buf[pos++] = (char)ch;
+            else if ( ch == 0 )
+                break;
+            else {
+                size_t remaining = bufsz - (size_t)pos;
+                int nn = mat_snprintf(buf + pos, remaining, "\\u%04X", ch);
+                if ( nn > 0 && (size_t)nn < remaining )
+                    pos += nn;
+                else
+                    break;
+            }
         }
     }
     buf[pos] = '\0';
@@ -676,10 +706,7 @@ print_human_string(const matvar_t *matvar)
     if ( any != NULL && any->class_type == MAT_C_UINT64 && any->data != NULL ) {
         const mat_uint64_t *u64 = (const mat_uint64_t *)any->data;
         size_t n = 1;
-        int r;
-        for ( r = 0; r < any->rank; r++ )
-            n *= any->dims[r];
-        if ( n > 4 ) {
+        if ( !MulDims(any, &n) && n > 4 && n * sizeof(mat_uint64_t) <= any->nbytes ) {
             size_t nstrs = (size_t)u64[2];
             size_t header_len = 4 + nstrs;
             if ( header_len < n && nstrs > 0 && nstrs < 10000 ) {
