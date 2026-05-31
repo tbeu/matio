@@ -14,6 +14,8 @@
 namespace
 {
 
+    constexpr int kMaxVars = 32;
+
     void
     ExerciseCell(matvar_t *cell, FuzzedDataProvider &fdp)
     {
@@ -186,7 +188,7 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     matvar_t *matvar;
     int loops = 0;
-    while ( (matvar = Mat_VarReadNext(mat)) != nullptr && loops < 32 ) {
+    while ( (matvar = Mat_VarReadNext(mat)) != nullptr && loops < kMaxVars ) {
         // For struct/cell vars, exercise the API surface.
         if ( matvar->class_type == MAT_C_CELL ) {
             ExerciseCell(matvar, fdp);
@@ -205,6 +207,8 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         Mat_VarFree(matvar);
         ++loops;
     }
+    if ( loops >= kMaxVars && matvar != nullptr )
+        Mat_VarFree(matvar);
 
     Mat_Close(mat);
     return 0;
