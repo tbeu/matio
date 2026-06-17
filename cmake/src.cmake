@@ -10,6 +10,16 @@ configure_file(
     ESCAPE_QUOTES @ONLY
 )
 
+function(matio_set_common_properties target)
+    if(MSVC)
+        target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
+        set_target_properties(${target} PROPERTIES
+            COMPILE_FLAGS "/wd4267"
+            LINK_FLAGS "/ignore:4099"
+        )
+    endif()
+endfunction()
+
 function(matio_link_dependencies target)
     if(MATIO_WITH_HDF5 AND HDF5_FOUND)
         target_link_libraries(${target} PRIVATE ${MATIO_HDF5_LINK_LIBRARIES})
@@ -73,6 +83,8 @@ else()
 endif()
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
+matio_set_common_properties(${PROJECT_NAME})
+
 target_include_directories(${PROJECT_NAME}
     INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
     PUBLIC    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/src>
@@ -87,7 +99,6 @@ if(HAVE_LIBM)
 endif()
 
 if(MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS /wd4267)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 endif()
 
