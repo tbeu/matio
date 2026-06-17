@@ -62,11 +62,12 @@ endif()
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
-    INTERFACE ${PROJECT_SOURCE_DIR}/src
-    PUBLIC    ${PROJECT_BINARY_DIR}/src
+    INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+    PUBLIC    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/src>
+              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 if(STDINT_MSVC)
-    target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/visual_studio)
+    target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/visual_studio>)
 endif()
 
 if(HAVE_LIBM)
@@ -79,7 +80,7 @@ if(MSVC)
 endif()
 
 if(MATIO_WITH_HDF5 AND HDF5_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC MATIO::HDF5)
+    target_link_libraries(${PROJECT_NAME} PRIVATE MATIO::HDF5)
 endif()
 
 if(MATIO_WITH_ZLIB AND ZLIB_FOUND)
@@ -118,4 +119,23 @@ install(TARGETS ${PROJECT_NAME} EXPORT lib${PROJECT_NAME}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+install(
+    EXPORT "lib${PROJECT_NAME}"
+    FILE "${PROJECT_NAME}.cmake"
+    DESTINATION "cmake"
+)
+
+include(CMakePackageConfigHelpers)
+
+set(MATIO_EXPORT_NAME "${PROJECT_NAME}")
+configure_package_config_file(
+    "cmake/matio.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION "cmake"
+)
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    DESTINATION "cmake"
 )
