@@ -2,9 +2,9 @@ add_executable(matdump
     ${PROJECT_SOURCE_DIR}/tools/matdump.c
     ${PROJECT_SOURCE_DIR}/snprintf/snprintf.c
 )
-target_link_libraries(matdump matio)
+target_link_libraries(matdump PRIVATE matio)
 if(NOT HAVE_GETOPT)
-    target_link_libraries(matdump getopt)
+    target_link_libraries(matdump PRIVATE getopt)
 endif()
 
 install(TARGETS matdump

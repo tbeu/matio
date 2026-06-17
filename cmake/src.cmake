@@ -10,6 +10,18 @@ configure_file(
     ESCAPE_QUOTES @ONLY
 )
 
+function(matio_link_dependencies target)
+    if(MATIO_WITH_HDF5 AND HDF5_FOUND)
+        target_link_libraries(${target} PRIVATE ${MATIO_HDF5_LINK_LIBRARIES})
+        target_include_directories(${target} PRIVATE ${MATIO_HDF5_INCLUDE_DIRECTORIES})
+        target_compile_definitions(${target} PRIVATE ${MATIO_HDF5_COMPILE_DEFINITIONS})
+    endif()
+
+    if(MATIO_WITH_ZLIB AND ZLIB_FOUND)
+        target_link_libraries(${target} PRIVATE ${MATIO_ZLIB_LINK_LIBRARIES})
+    endif()
+endfunction()
+
 set(MATIO_SOURCES
     ${PROJECT_SOURCE_DIR}/src/endian.c
     ${PROJECT_SOURCE_DIR}/src/mat.c
@@ -79,13 +91,7 @@ if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 endif()
 
-if(MATIO_WITH_HDF5 AND HDF5_FOUND)
-    target_link_libraries(${PROJECT_NAME} PRIVATE MATIO::HDF5)
-endif()
-
-if(MATIO_WITH_ZLIB AND ZLIB_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC MATIO::ZLIB)
-endif()
+matio_link_dependencies(${PROJECT_NAME})
 
 if(REQUIRE_EXPLICIT_LIBC_LINK)
     target_link_libraries(${PROJECT_NAME} PUBLIC c)
