@@ -10,6 +10,7 @@ configure_file(
     ESCAPE_QUOTES @ONLY
 )
 
+# Set common compiler properties for a given target.
 function(matio_set_common_properties target)
     if(MSVC)
         target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
@@ -20,6 +21,7 @@ function(matio_set_common_properties target)
     endif()
 endfunction()
 
+# Link HDF5 and ZLIB dependencies to the given target.
 function(matio_link_dependencies target)
     if(MATIO_WITH_HDF5 AND HDF5_FOUND)
         target_link_libraries(${target} PRIVATE ${MATIO_HDF5_LINK_LIBRARIES})
