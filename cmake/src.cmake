@@ -10,6 +10,30 @@ configure_file(
     ESCAPE_QUOTES @ONLY
 )
 
+# Set common compiler properties for a given target.
+function(matio_set_common_properties target)
+    if(MSVC)
+        target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
+        set_target_properties(${target} PROPERTIES
+            COMPILE_FLAGS "/wd4267"
+            LINK_FLAGS "/ignore:4099"
+        )
+    endif()
+endfunction()
+
+# Link HDF5 and ZLIB dependencies to the given target.
+function(matio_link_dependencies target)
+    if(MATIO_WITH_HDF5 AND HDF5_FOUND)
+        target_link_libraries(${target} PRIVATE ${MATIO_HDF5_LINK_LIBRARIES})
+        target_include_directories(${target} PRIVATE ${MATIO_HDF5_INCLUDE_DIRECTORIES})
+        target_compile_definitions(${target} PRIVATE ${MATIO_HDF5_COMPILE_DEFINITIONS})
+    endif()
+
+    if(MATIO_WITH_ZLIB AND ZLIB_FOUND)
+        target_link_libraries(${target} PRIVATE ${MATIO_ZLIB_LINK_LIBRARIES})
+    endif()
+endfunction()
+
 set(MATIO_SOURCES
     ${PROJECT_SOURCE_DIR}/src/endian.c
     ${PROJECT_SOURCE_DIR}/src/mat.c
@@ -61,12 +85,15 @@ else()
 endif()
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
+matio_set_common_properties(${PROJECT_NAME})
+
 target_include_directories(${PROJECT_NAME}
-    INTERFACE ${PROJECT_SOURCE_DIR}/src
-    PUBLIC    ${PROJECT_BINARY_DIR}/src
+    INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+    PUBLIC    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/src>
+              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 if(STDINT_MSVC)
-    target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/visual_studio)
+    target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/visual_studio>)
 endif()
 
 if(HAVE_LIBM)
@@ -74,17 +101,10 @@ if(HAVE_LIBM)
 endif()
 
 if(MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS /wd4267)
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 endif()
 
-if(MATIO_WITH_HDF5 AND HDF5_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC MATIO::HDF5)
-endif()
-
-if(MATIO_WITH_ZLIB AND ZLIB_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC MATIO::ZLIB)
-endif()
+matio_link_dependencies(${PROJECT_NAME})
 
 if(REQUIRE_EXPLICIT_LIBC_LINK)
     target_link_libraries(${PROJECT_NAME} PUBLIC c)
@@ -118,4 +138,23 @@ install(TARGETS ${PROJECT_NAME} EXPORT lib${PROJECT_NAME}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+install(
+    EXPORT "lib${PROJECT_NAME}"
+    FILE "${PROJECT_NAME}.cmake"
+    DESTINATION "cmake"
+)
+
+include(CMakePackageConfigHelpers)
+
+set(MATIO_EXPORT_NAME "${PROJECT_NAME}")
+configure_package_config_file(
+    "cmake/matio.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION "cmake"
+)
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    DESTINATION "cmake"
 )

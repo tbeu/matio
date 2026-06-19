@@ -6,6 +6,7 @@ if(NOT HAVE_GETOPT)
         )
         add_library(getopt STATIC ${getopt_SOURCES})
         target_include_directories(getopt PUBLIC ${PROJECT_SOURCE_DIR}/getopt)
+        matio_set_common_properties(getopt)
 
         # FIXME this should be fixed in the sourcecode
         target_compile_definitions(getopt PUBLIC -DREPLACE_GETOPT=1)

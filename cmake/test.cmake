@@ -1,8 +1,11 @@
 if(MATIO_BUILD_TESTING)
     add_executable(test_mat "${PROJECT_SOURCE_DIR}/test/test_mat.c")
-    target_link_libraries(test_mat matio)
+    matio_set_common_properties(test_mat)
+    matio_link_dependencies(test_mat)
+
+    target_link_libraries(test_mat PRIVATE matio)
     if(NOT HAVE_GETOPT)
-        target_link_libraries(test_mat getopt)
+        target_link_libraries(test_mat PRIVATE getopt)
     endif()
 
     if(NOT HAVE_SNPRINTF OR UNIX)

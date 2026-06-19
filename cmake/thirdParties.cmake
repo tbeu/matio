@@ -55,33 +55,28 @@ endif()
 
 if(HDF5_FOUND)
     set(HAVE_HDF5 1)
-    add_library(MATIO::HDF5 INTERFACE IMPORTED)
     if(MATIO_USE_CONAN AND TARGET CONAN_PKG::hdf5)
         # target from Conan
-        target_link_libraries(MATIO::HDF5 INTERFACE CONAN_PKG::hdf5)
+        set(MATIO_HDF5_LINK_LIBRARIES CONAN_PKG::hdf5)
     elseif(HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::hdf5-static)
         # static target from hdf5 1.10 or 1.12 config
-        target_link_libraries(MATIO::HDF5 INTERFACE hdf5::hdf5-static)
+        set(MATIO_HDF5_LINK_LIBRARIES hdf5::hdf5-static)
     elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::hdf5-shared)
         # shared target from hdf5 1.10 or 1.12 config
-        target_link_libraries(MATIO::HDF5 INTERFACE hdf5::hdf5-shared)
+        set(MATIO_HDF5_LINK_LIBRARIES hdf5::hdf5-shared)
     elseif(TARGET hdf5)
         # target from hdf5 1.8 config
-        target_link_libraries(MATIO::HDF5 INTERFACE hdf5)
+        set(MATIO_HDF5_LINK_LIBRARIES hdf5)
     elseif(TARGET HDF5::HDF5)
         # target defined in CMake FindHDF5 (since 3.19)
-        target_link_libraries(MATIO::HDF5 INTERFACE HDF5::HDF5)
+        set(MATIO_HDF5_LINK_LIBRARIES HDF5::HDF5)
     else()
         # results from CMake FindHDF5
-        set_target_properties(MATIO::HDF5 PROPERTIES
-            INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIRS}"
-            INTERFACE_LINK_LIBRARIES "${HDF5_LIBRARIES}"
-        )
+        set(MATIO_HDF5_LINK_LIBRARIES ${HDF5_LIBRARIES})
+        set(MATIO_HDF5_INCLUDE_DIRECTORIES ${HDF5_INCLUDE_DIRS})
     endif()
     if(NOT HDF5_USE_STATIC_LIBRARIES)
-        set_target_properties(MATIO::HDF5 PROPERTIES
-            INTERFACE_COMPILE_DEFINITIONS "H5_BUILT_AS_DYNAMIC_LIB"
-        )
+        set(MATIO_HDF5_COMPILE_DEFINITIONS "H5_BUILT_AS_DYNAMIC_LIB")
     endif()
 endif()
 
@@ -91,8 +86,7 @@ endif()
 
 # Create the zlib target
 macro(MATIO_CREATE_ZLIB target)
-    add_library(MATIO::ZLIB INTERFACE IMPORTED)
-    set_target_properties(MATIO::ZLIB PROPERTIES INTERFACE_LINK_LIBRARIES ${target})
+    set(MATIO_ZLIB_LINK_LIBRARIES ${target})
     set(ZLIB_FOUND TRUE)
 endmacro()
 
@@ -103,14 +97,14 @@ if(MATIO_WITH_ZLIB)
 
     if(MATIO_USE_CONAN AND TARGET CONAN_PKG::zlib)
         MATIO_CREATE_ZLIB(CONAN_PKG::zlib)
-    elseif(HDF5_USE_STATIC_LIBRARIES AND TARGET zlib-static)
-        MATIO_CREATE_ZLIB(zlib-static)
-    elseif(HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::zlib-static)
-        MATIO_CREATE_ZLIB(hdf5::zlib-static)
-    elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET zlib-shared)
-        MATIO_CREATE_ZLIB(zlib-shared)
     elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::zlib-shared)
         MATIO_CREATE_ZLIB(hdf5::zlib-shared)
+    elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET zlib-shared)
+        MATIO_CREATE_ZLIB(zlib-shared)
+    elseif(TARGET hdf5::zlib-static)
+        MATIO_CREATE_ZLIB(hdf5::zlib-static)
+    elseif(TARGET zlib-static)
+        MATIO_CREATE_ZLIB(zlib-static)
     elseif(TARGET zlib)
         MATIO_CREATE_ZLIB(zlib)
     elseif(TARGET ZLIB::ZLIB)
