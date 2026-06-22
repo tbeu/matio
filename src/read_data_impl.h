@@ -23,73 +23,73 @@
 
 // Stubs only: Converts value from its own type to READ_TYPE.
 static READ_TYPE
-CAT(ConvertFromInt8To, READ_TYPE)(int8_t value, int* success)
+CAT(ConvertFromInt8To, READ_TYPE)(int8_t value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromUInt8To, READ_TYPE)(uint8_t value, int* success)
+CAT(ConvertFromUInt8To, READ_TYPE)(uint8_t value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromInt16To, READ_TYPE)(int16_t value, int* success)
+CAT(ConvertFromInt16To, READ_TYPE)(int16_t value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromUInt16To, READ_TYPE)(uint16_t value, int* success)
+CAT(ConvertFromUInt16To, READ_TYPE)(uint16_t value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromInt32To, READ_TYPE)(int32_t value, int* success)
+CAT(ConvertFromInt32To, READ_TYPE)(int32_t value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromUInt32To, READ_TYPE)(uint32_t value, int* success)
+CAT(ConvertFromUInt32To, READ_TYPE)(uint32_t value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromInt64To, READ_TYPE)(int64_t value, int* success)
+CAT(ConvertFromInt64To, READ_TYPE)(int64_t value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromUInt64To, READ_TYPE)(uint64_t value, int* success)
+CAT(ConvertFromUInt64To, READ_TYPE)(uint64_t value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromFloatTo, READ_TYPE)(float value, int* success)
+CAT(ConvertFromFloatTo, READ_TYPE)(float value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static READ_TYPE
-CAT(ConvertFromDoubleTo, READ_TYPE)(double value, int* success)
+CAT(ConvertFromDoubleTo, READ_TYPE)(double value, int *success)
 {
-	*success = 1;
-	return (READ_TYPE)value;
+    *success = 1;
+    return (READ_TYPE)value;
 }
 
 static int
