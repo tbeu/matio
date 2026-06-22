@@ -525,7 +525,7 @@ CheckEdgeOverflow(int rank, const int *edge)
 }
 
 static int
-CheckSlabOverflow(int rank, const size_t *dims, const int *stride)
+CheckSlabOverflow(int rank, const size_t *dims, const int *start, const int *stride)
 {
     int i, j;
     for ( i = 0; i < rank; i++ ) {
@@ -543,6 +543,9 @@ CheckSlabOverflow(int rank, const size_t *dims, const int *stride)
             if ( !psnip_safe_int_mul(&dimp_i, dimp_i, (int)dims[j + 1]) ) {
                 return 1;
             }
+        }
+        if ( start[i] && !psnip_safe_int_mul(&dimp_i, dimp_i, start[i]) ) {
+            return 1;
         }
     }
     return 0;
@@ -592,7 +595,7 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
         return MATIO_E_BAD_ARGUMENT;
     }
 
-    if ( CheckSlabOverflow(rank, dims, stride) ) {
+    if ( CheckSlabOverflow(rank, dims, start, stride) ) {
         return MATIO_E_BAD_ARGUMENT;
     }
 
@@ -790,7 +793,7 @@ ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes 
         return -1;
     }
 
-    if ( CheckSlabOverflow(rank, dims, stride) ) {
+    if ( CheckSlabOverflow(rank, dims, start, stride) ) {
         return -1;
     }
 
