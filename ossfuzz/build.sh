@@ -63,6 +63,7 @@ for fuzzers in $(find . -name '*_fuzzer.cpp'); do
   CORPUS_TMP=$(mktemp -d)
   cp ../share/*.mat "$CORPUS_TMP/" 2>/dev/null || true
   cp "$SRC"/matio_test_datasets/*.mat "$CORPUS_TMP/" 2>/dev/null || true
+  cp seeds/*.mat "$CORPUS_TMP/" 2>/dev/null || true
   (cd "$CORPUS_TMP" && zip -q "$OUT/${base}_seed_corpus.zip" ./*.mat) || true
   rm -rf "$CORPUS_TMP"
 done
