@@ -63,9 +63,6 @@ for fuzzers in $(find . -name '*_fuzzer.cpp'); do
   CORPUS_TMP=$(mktemp -d)
   cp ../share/*.mat "$CORPUS_TMP/" 2>/dev/null || true
   cp "$SRC"/matio_test_datasets/*.mat "$CORPUS_TMP/" 2>/dev/null || true
-
-  # The share/ and matio_test_datasets corpora are all v5/v7.3, leaving the
-  # MAT v4 reader (src/mat4.c) almost unexercised. Seed the v4 path too.
   cp seeds/*.mat "$CORPUS_TMP/" 2>/dev/null || true
   (cd "$CORPUS_TMP" && zip -q "$OUT/${base}_seed_corpus.zip" ./*.mat) || true
   rm -rf "$CORPUS_TMP"
