@@ -109,17 +109,6 @@ print_char_as_string(const matvar_t *matvar)
     }
 }
 
-/* Helper: get length of a MAT_C_CHAR variable as a plain ASCII string */
-static size_t
-get_char_strlen(const matvar_t *matvar)
-{
-    if ( NULL == matvar || NULL == matvar->data || matvar->class_type != MAT_C_CHAR )
-        return 0;
-    if ( matvar->data_type == MAT_T_UINT16 || matvar->data_type == MAT_T_UTF16 )
-        return matvar->nbytes / sizeof(mat_uint16_t);
-    return matvar->nbytes / matvar->data_size;
-}
-
 /* Helper: snprintf a char field into buf, returns length written */
 static int
 snprint_char(char *buf, size_t bufsz, const matvar_t *matvar)
@@ -150,22 +139,6 @@ snprint_char(char *buf, size_t bufsz, const matvar_t *matvar)
 }
 
 #if defined(MCOS) && MCOS
-/* Helper: check if a uint32 column is an MCOS-encoded reference */
-static int
-is_mcos_encoded(const matvar_t *col)
-{
-    if ( col != NULL && col->class_type == MAT_C_UINT32 && col->data != NULL ) {
-        const mat_uint32_t *u32 = (const mat_uint32_t *)col->data;
-        size_t n = 1;
-        int r;
-        for ( r = 0; r < col->rank; r++ )
-            n *= col->dims[r];
-        if ( n >= 2 && u32[0] == 0xDD000000u )
-            return 1;
-    }
-    return 0;
-}
-
 /* Column type identifiers for table display */
 #define COL_TYPE_NUMERIC 0
 #define COL_TYPE_STRING 1
