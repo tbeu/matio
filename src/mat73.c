@@ -2930,6 +2930,8 @@ Mat_Create73(const char *matname, const char *hdr_str)
     mat->header = (char *)malloc(128 * sizeof(char));
     mat->subsys_offset = (char *)malloc(8 * sizeof(char));
     if ( NULL == mat->filename || NULL == mat->header || NULL == mat->subsys_offset ) {
+        fclose(fp);
+        H5Pclose(plist_ap);
         Mat_Close(mat);
         return NULL;
     }
