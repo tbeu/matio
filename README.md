@@ -65,7 +65,7 @@ This section describes how to build matio. Section [2.1](#21-dependencies) descr
 Matio has two optional dependencies. These are not required for the software to work, but without them some files may be unreadable. Zlib is required to read/write level 5 MAT files that use compression. HDF5 is required to work with newer MAT files that use the HDF5-format files.
 
 #### 2.1.1 zlib
-To support compressed MAT files, zlib version &ge; 1.2.3 is required. The zlib software can be downloaded from http://zlib.net/.
+To support compressed MAT files, zlib version &ge; 1.2.3 is required. The zlib software can be downloaded from https://zlib.net/.
 
 #### 2.1.2 HDF5
 Support for MAT file version 7.3 requires the HDF5 library of version &ge; 1.8.x. This library can be downloaded from https://github.com/HDFGroup/hdf5/releases.  Neither deprecated HDF5 1.6.x API functions nor HDF5 higher-level functions are called.
