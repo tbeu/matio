@@ -74,7 +74,7 @@ Support for MAT file version 7.3 requires the HDF5 library of version &ge; 1.8.x
 * Building matio with HDF5 1.10.x requires configuration of HDF5 with either default API `v110` or with deprecated API `v18`.
 * Building matio with HDF5 1.12.x requires configuration of HDF5 with either default API `v112`, or with deprecated APIs `v110` or `v18`.
 * Building matio with HDF5 1.14.x requires configuration of HDF5 with either default API `v114`, or with deprecated APIs `v112`, `v110` or `v18`.
-* Building matio with HDF5 2.0.0 requires configuration of HDF5 with either default API `v200`, or with deprecated APIs `v114`, `v112`, `v110` or `v18`.
+* Building matio with HDF5 2.x requires configuration of HDF5 with either default API `v200`, or with deprecated APIs `v114`, `v112`, `v110` or `v18`.
 
 For Ubuntu, `sudo apt install libhdf5-dev` should work fine.
 
