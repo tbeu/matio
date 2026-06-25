@@ -99,37 +99,57 @@ if(MATIO_USE_ZLIB_NG AND MATIO_WITH_ZLIB)
     # which uses standard zlib types (z_streamp, inflate, etc.)
     find_package(zlib-ng QUIET CONFIG)
     if(zlib-ng_FOUND)
-        if(TARGET ZLIB::ZLIB)
-            MATIO_CREATE_ZLIB("ZLIB::ZLIB")
-        elseif(TARGET ZLIB::zlibstatic)
-            MATIO_CREATE_ZLIB("ZLIB::zlibstatic")
-        elseif(TARGET zlib-ng::zlib AND TARGET zlib)
-            # zlib-ng with ZLIB_ALIASES and ZLIB_COMPAT
-            MATIO_CREATE_ZLIB(zlib)
-        elseif(TARGET zlib-ng::zlibstatic AND TARGET zlibstatic)
-            MATIO_CREATE_ZLIB(zlibstatic)
+        if(NOT MATIO_SHARED)
+            # Static build: prefer static zlib-ng libraries
+            if(TARGET ZLIB::zlibstatic)
+                MATIO_CREATE_ZLIB("ZLIB::zlibstatic")
+            elseif(TARGET zlib-ng::zlibstatic AND TARGET zlibstatic)
+                MATIO_CREATE_ZLIB(zlibstatic)
+            elseif(TARGET ZLIB::ZLIB)
+                MATIO_CREATE_ZLIB("ZLIB::ZLIB")
+            elseif(TARGET zlib-ng::zlib AND TARGET zlib)
+                MATIO_CREATE_ZLIB(zlib)
+            else()
+                message(FATAL_ERROR
+                    "zlib-ng found but not built with zlib compatibility. "
+                    "Set MATIO_USE_ZLIB_NG=OFF or rebuild zlib-ng with -DZLIB_COMPAT=ON."
+                )
+            endif()
         else()
-            message(FATAL_ERROR
-                "zlib-ng found but not built with zlib compatibility. "
-                "Set MATIO_USE_ZLIB_NG=OFF or rebuild zlib-ng with -DZLIB_COMPAT=ON."
-            )
+            # Shared build: prefer shared zlib-ng libraries
+            if(TARGET ZLIB::ZLIB)
+                MATIO_CREATE_ZLIB("ZLIB::ZLIB")
+            elseif(TARGET zlib-ng::zlib AND TARGET zlib)
+                MATIO_CREATE_ZLIB(zlib)
+            elseif(TARGET ZLIB::zlibstatic)
+                MATIO_CREATE_ZLIB("ZLIB::zlibstatic")
+            elseif(TARGET zlib-ng::zlibstatic AND TARGET zlibstatic)
+                MATIO_CREATE_ZLIB(zlibstatic)
+            else()
+                message(FATAL_ERROR
+                    "zlib-ng found but not built with zlib compatibility. "
+                    "Set MATIO_USE_ZLIB_NG=OFF or rebuild zlib-ng with -DZLIB_COMPAT=ON."
+                )
+            endif()
         endif()
     else()
         # Fallback: fetch and build zlib-ng from source (always in compat mode)
         message(STATUS "zlib-ng not found on system, fetching from GitHub")
         FetchContent_Declare(zlib-ng
             GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng
-            GIT_TAG        12731092979c6d07f42da27da673a9f6c7b13586
+            GIT_TAG        2.3.3
             GIT_SHALLOW    TRUE
+            EXCLUDE_FROM_ALL
         )
-        set(ZLIB_COMPAT ON CACHE BOOL "Build zlib-ng with zlib compatibility" FORCE)
-        set(ZLIB_ENABLE_TESTS OFF CACHE INTERNAL "")
+        set(ZLIB_COMPAT ON)
         FetchContent_MakeAvailable(zlib-ng)
 
-        if(TARGET ZLIB::ZLIB)
-            MATIO_CREATE_ZLIB("ZLIB::ZLIB")
-        elseif(TARGET zlib)
-            MATIO_CREATE_ZLIB(zlib)
+        if(NOT MATIO_SHARED AND TARGET zlib-ng-static)
+            MATIO_CREATE_ZLIB(zlib-ng-static)
+            install(TARGETS zlib-ng-static)
+        elseif(MATIO_SHARED AND TARGET zlib-ng)
+            MATIO_CREATE_ZLIB(zlib-ng)
+            install(TARGETS zlib-ng)
         else()
             message(FATAL_ERROR "Failed to build zlib-ng in compat mode")
         endif()
