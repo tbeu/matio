@@ -65,7 +65,7 @@ This section describes how to build matio. Section [2.1](#21-dependencies) descr
 Matio has two optional dependencies. These are not required for the software to work, but without them some files may be unreadable. Zlib is required to read/write level 5 MAT files that use compression. HDF5 is required to work with newer MAT files that use the HDF5-format files.
 
 #### 2.1.1 zlib
-To support compressed MAT files, zlib version &ge; 1.2.3 is required. The zlib software can be downloaded from http://zlib.net/.
+To support compressed MAT files, zlib version &ge; 1.2.3 is required. The zlib software can be downloaded from http://zlib.net/. As an alternative, [zlib-ng](https://github.com/zlib-ng/zlib-ng) can be used as a drop-in replacement. Enable the `MATIO_USE_ZLIB_NG` CMake option or set the `ZLIBNG_ROOT` hint to locate the zlib-ng installation.
 
 #### 2.1.2 HDF5
 Support for MAT file version 7.3 requires the HDF5 library of version &ge; 1.8.x. This library can be downloaded from https://github.com/HDFGroup/hdf5/releases.  Neither deprecated HDF5 1.6.x API functions nor HDF5 higher-level functions are called.
@@ -144,6 +144,8 @@ This option builds the matio library as shared object (i.e., a dynamic link libr
 This option enables CMake to check for availability of the HDF5 library (see section [2.1.2](#212-hdf5) for information about HDF5).
 * `MATIO_WITH_ZLIB:BOOL=ON`
 This option enables CMake to check for availability of the zlib library (see section [2.1.1](#211-zlib) for information about zlib).
+* `MATIO_USE_ZLIB_NG:BOOL=OFF`
+This option enables zlib-ng as an alternative zlib implementation (see section [2.1.1](#211-zlib) for information about zlib). When enabled, CMake searches for a system-installed zlib-ng first, and falls back to building zlib-ng from source via `FetchContent`. zlib-ng is always used in zlib compatibility mode (`ZLIB_COMPAT=ON`), which provides the standard zlib API headers and types. Set `ZLIBNG_ROOT` to a directory containing a zlib-ng installation.
 * `MATIO_BUILD_TESTING:BOOL=ON`
 This option enables the matio testsuite for CTest.
 * `MATIO_MATLAB:BOOL=OFF`
@@ -164,6 +166,8 @@ This deprecated option enables the Conan 1.X package manager to resolve the libr
 To help CMake find the HDF5 libraries, set environment variable `HDF5_DIR` to the `cmake/hdf5` directory (containing `hdf5-config.cmake`) inside the HDF5 build or installation directory, or call CMake with `-DHDF5_DIR="dir/to/hdf5/cmake/hdf5"`. Alternatively call CMake with `-DCMAKE_PREFIX_PATH="dir/to/hdf5/cmake"`. See the [HDF5 documentation](https://support.hdfgroup.org/documentation/index.html) for more information. Using `hdf5-config` is recommended over using CMake's built-in `FindHDF5`, especially for static builds. CMake 3.10 or later is recommended.
 
 For Conan 2.X as dependency provider call CMake with `-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=conan_provider`. CMake 3.24 or later is required.
+
+To help CMake find zlib-ng (when `MATIO_USE_ZLIB_NG=ON`), set the environment variable `ZLIBNG_ROOT` to the zlib-ng installation prefix, or call CMake with `-DZLIBNG_ROOT="dir/to/zlib-ng"`.
 
 #### 2.2.4 Visual Studio
 Visual Studio solutions are provided as [matio_vs2008.sln](visual_studio/matio_vs2008.sln) for VS2008 and as [matio.sln](visual_studio/matio.sln) for VS2010 (and newer). The Debug and Release configurations of both solutions are set up to build a DLL of the matio library (libmatio.dll) and the matdump tool and assume HDF5 is available in the directory specified by the HDF5_DIR environment variable. It is assumed that the **shared** libraries of HDF5 (and zlib) are available. If the **static** libraries of HDF5 (and zlib) are installed/built the macro `H5_BUILT_AS_STATIC_LIB` needs to be defined (instead of `H5_BUILT_AS_DYNAMIC_LIB`). Furthermore, the Release Lib configuration of the VS2010 solution is set up to build a static LIB of the matio library (libmatio.lib) and assumes that the **static** libraries of HDF5 (and zlib) are installed/built.

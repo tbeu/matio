@@ -75,6 +75,9 @@ Table of Contents
         2.1.1 zlib
             To support compressed MAT files, zlib 1.2.3 or greater is required.
             The zlib software can be downloaded from http://zlib.net.
+            As an alternative, zlib-ng (https://github.com/zlib-ng/zlib-ng) can be used
+            as a drop-in replacement. Enable the MATIO_USE_ZLIB_NG CMake option or set
+            the ZLIBNG_ROOT hint to locate the zlib-ng installation.
 
         2.1.2 HDF5
             Support for MAT file version 7.3 requires the HDF5 library of
@@ -220,6 +223,14 @@ Table of Contents
               * 'MATIO_USE_CONAN:BOOL=OFF'
                 This deprecated option enables the Conan 1.X package manager to
                 resolve the library dependencies.
+              * 'MATIO_USE_ZLIB_NG:BOOL=OFF'
+                This option enables zlib-ng as an alternative zlib
+                implementation. When enabled, CMake searches for a
+                system-installed zlib-ng first, and falls back to building
+                zlib-ng from source via 'FetchContent'. zlib-ng is always used
+                in zlib compatibility mode ('ZLIB_COMPAT=ON'), which provides
+                the standard zlib API headers and types. Set 'ZLIBNG_ROOT' to a
+                directory containing a zlib-ng installation.
 
             To help CMake find the HDF5 libraries, set environment variable
             HDF5_DIR to the 'cmake/hdf5' directory (containing 'hdf5-config.cmake')

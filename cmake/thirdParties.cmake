@@ -90,7 +90,73 @@ macro(MATIO_CREATE_ZLIB target)
     set(ZLIB_FOUND TRUE)
 endmacro()
 
-if(MATIO_WITH_ZLIB)
+# Try zlib-ng first if requested (as alternative to regular zlib)
+if(MATIO_USE_ZLIB_NG AND MATIO_WITH_ZLIB)
+    include(FetchContent)
+
+    # Try zlib-ng via its own CMake config file first.
+    # zlib-ng must be in zlib compatibility mode (ZLIB_COMPAT) for matio,
+    # which uses standard zlib types (z_streamp, inflate, etc.)
+    find_package(zlib-ng QUIET CONFIG)
+    if(zlib-ng_FOUND)
+        if(NOT MATIO_SHARED)
+            # Static build: prefer static zlib-ng libraries
+            if(TARGET ZLIB::zlibstatic)
+                MATIO_CREATE_ZLIB("ZLIB::zlibstatic")
+            elseif(TARGET zlib-ng::zlibstatic AND TARGET zlibstatic)
+                MATIO_CREATE_ZLIB(zlibstatic)
+            elseif(TARGET ZLIB::ZLIB)
+                MATIO_CREATE_ZLIB("ZLIB::ZLIB")
+            elseif(TARGET zlib-ng::zlib AND TARGET zlib)
+                MATIO_CREATE_ZLIB(zlib)
+            else()
+                message(FATAL_ERROR
+                    "zlib-ng found but not built with zlib compatibility. "
+                    "Set MATIO_USE_ZLIB_NG=OFF or rebuild zlib-ng with -DZLIB_COMPAT=ON."
+                )
+            endif()
+        else()
+            # Shared build: prefer shared zlib-ng libraries
+            if(TARGET ZLIB::ZLIB)
+                MATIO_CREATE_ZLIB("ZLIB::ZLIB")
+            elseif(TARGET zlib-ng::zlib AND TARGET zlib)
+                MATIO_CREATE_ZLIB(zlib)
+            elseif(TARGET ZLIB::zlibstatic)
+                MATIO_CREATE_ZLIB("ZLIB::zlibstatic")
+            elseif(TARGET zlib-ng::zlibstatic AND TARGET zlibstatic)
+                MATIO_CREATE_ZLIB(zlibstatic)
+            else()
+                message(FATAL_ERROR
+                    "zlib-ng found but not built with zlib compatibility. "
+                    "Set MATIO_USE_ZLIB_NG=OFF or rebuild zlib-ng with -DZLIB_COMPAT=ON."
+                )
+            endif()
+        endif()
+    else()
+        # Fallback: fetch and build zlib-ng from source (always in compat mode)
+        message(STATUS "zlib-ng not found on system, fetching from GitHub")
+        FetchContent_Declare(zlib-ng
+            GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng
+            GIT_TAG        2.3.3
+            GIT_SHALLOW    TRUE
+            EXCLUDE_FROM_ALL
+        )
+        set(ZLIB_COMPAT ON)
+        FetchContent_MakeAvailable(zlib-ng)
+
+        if(NOT MATIO_SHARED AND TARGET zlib-ng-static)
+            MATIO_CREATE_ZLIB(zlib-ng-static)
+            install(TARGETS zlib-ng-static)
+        elseif(MATIO_SHARED AND TARGET zlib-ng)
+            MATIO_CREATE_ZLIB(zlib-ng)
+            install(TARGETS zlib-ng)
+        else()
+            message(FATAL_ERROR "Failed to build zlib-ng in compat mode")
+        endif()
+    endif()
+endif()
+
+if(MATIO_WITH_ZLIB AND NOT MATIO_USE_ZLIB_NG)
     if(MATIO_USE_CONAN AND NOT MATIO_WITH_HDF5)
         conan_cmake_run(REQUIRES "zlib/[>=1.2.3]" BASIC_SETUP CMAKE_TARGETS OPTIONS BUILD missing)
     endif()
@@ -115,8 +181,8 @@ if(MATIO_WITH_ZLIB)
             MATIO_CREATE_ZLIB(ZLIB::ZLIB)
         endif()
     endif()
+endif()
 
-    if(ZLIB_FOUND)
-        set(HAVE_ZLIB 1)
-    endif()
+if(MATIO_WITH_ZLIB AND ZLIB_FOUND)
+    set(HAVE_ZLIB 1)
 endif()
