@@ -3203,6 +3203,13 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     size_t nbytes = 0;
                     sparse_data->nir = (mat_uint32_t)dims[0];
                     free(dims);
+                    if ( rank != 1 || (hsize_t)sparse_data->nir != nelems ) {
+                        H5Dclose(sparse_dset_id);
+                        H5Gclose(dset_id);
+                        free(sparse_data);
+                        err = MATIO_E_FILE_FORMAT_VIOLATION;
+                        goto done;
+                    }
                     err = Mul(&nbytes, sparse_data->nir, sizeof(mat_uint32_t));
                     if ( err ) {
                         H5Dclose(sparse_dset_id);
@@ -3253,6 +3260,15 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     size_t nbytes = 0;
                     sparse_data->njc = (mat_uint32_t)dims[0];
                     free(dims);
+                    if ( rank != 1 || (hsize_t)sparse_data->njc != nelems ) {
+                        H5Dclose(sparse_dset_id);
+                        H5Gclose(dset_id);
+                        if ( sparse_data->ir != NULL )
+                            free(sparse_data->ir);
+                        free(sparse_data);
+                        err = MATIO_E_FILE_FORMAT_VIOLATION;
+                        goto done;
+                    }
                     err = Mul(&nbytes, sparse_data->njc, sizeof(mat_uint32_t));
                     if ( err ) {
                         H5Dclose(sparse_dset_id);
@@ -3310,6 +3326,17 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     sparse_data->nzmax = (mat_uint32_t)dims[0];
                     sparse_data->ndata = (mat_uint32_t)dims[0];
                     free(dims);
+                    if ( rank != 1 || (hsize_t)sparse_data->nzmax != nelems ) {
+                        H5Dclose(sparse_dset_id);
+                        H5Gclose(dset_id);
+                        if ( sparse_data->jc != NULL )
+                            free(sparse_data->jc);
+                        if ( sparse_data->ir != NULL )
+                            free(sparse_data->ir);
+                        free(sparse_data);
+                        err = MATIO_E_FILE_FORMAT_VIOLATION;
+                        goto done;
+                    }
                     err = Mul(&ndata_bytes, sparse_data->nzmax, Mat_SizeOf(matvar->data_type));
                     if ( err ) {
                         H5Dclose(sparse_dset_id);
