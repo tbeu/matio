@@ -496,9 +496,24 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                 }
                 sparse->ndata = sparse->nir;
                 data_type = matvar->data_type;
+#if !defined(EXTENDED_SPARSE)
+                /* Without extended sparse support the values are always read as
+                   double, so the destination buffer must be sized for double
+                   regardless of the type declared in the file. */
+                matvar->data_type = MAT_T_DOUBLE;
+#endif
                 if ( matvar->isComplex ) {
-                    mat_complex_split_t *complex_data =
-                        ComplexCalloc(sparse->ndata * Mat_SizeOf(data_type));
+                    mat_complex_split_t *complex_data;
+                    err = Mul(&nBytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+                    if ( err ) {
+                        free(sparse->jc);
+                        free(sparse->ir);
+                        free(matvar->data);
+                        matvar->data = NULL;
+                        Mat_Critical("Integer multiplication overflow");
+                        return err;
+                    }
+                    complex_data = ComplexCalloc(nBytes);
                     if ( NULL != complex_data ) {
                         sparse->data = complex_data;
 #if defined(EXTENDED_SPARSE)
@@ -640,7 +655,16 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                         return MATIO_E_OUT_OF_MEMORY;
                     }
                 } else if ( sparse->ndata > 0 ) {
-                    sparse->data = malloc(sparse->ndata * Mat_SizeOf(data_type));
+                    err = Mul(&nBytes, sparse->ndata, Mat_SizeOf(matvar->data_type));
+                    if ( err ) {
+                        free(sparse->jc);
+                        free(sparse->ir);
+                        free(matvar->data);
+                        matvar->data = NULL;
+                        Mat_Critical("Integer multiplication overflow");
+                        return err;
+                    }
+                    sparse->data = malloc(nBytes);
                     if ( sparse->data != NULL ) {
 #if defined(EXTENDED_SPARSE)
                         switch ( data_type ) {
