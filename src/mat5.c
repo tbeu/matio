@@ -4779,8 +4779,8 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
             err = MATIO_E_BAD_ARGUMENT;
         else if ( (size_t)stride[1] * (edge[1] - 1) + start[1] + 1 > dims[1] )
             err = MATIO_E_BAD_ARGUMENT;
-        else if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) &&
-                  (same_type == 1) )
+        else if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) &&
+                  (stride[1] == 1 && (size_t)edge[1] == dims[1]) && (same_type == 1) )
             memcpy(data_out, data_in, nbytes);
         else {
             int i, j;
