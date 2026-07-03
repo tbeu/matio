@@ -5304,6 +5304,15 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
 
     if ( mat->version == MAT_FT_MAT4 )
         return -1;
+
+    err = Mat_MulDims(matvar, &nelems);
+    if ( err ) {
+        Mat_Critical("Integer multiplication overflow");
+        return err;
+    }
+    if ( (size_t)stride * (edge - 1) + start + 1 > nelems )
+        return MATIO_E_BAD_ARGUMENT;
+
     (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         err = Read(tag, 4, 2, (FILE *)mat->fp, NULL);
@@ -5377,20 +5386,7 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
     if ( real_bytes % 8 )
         real_bytes += (8 - (real_bytes % 8));
 
-    err = Mat_MulDims(matvar, &nelems);
-    if ( err ) {
-        Mat_Critical("Integer multiplication overflow");
-#if HAVE_ZLIB
-        if ( z_copy ) {
-            inflateEnd(&z);
-        }
-#endif
-        return err;
-    }
-
-    if ( (size_t)stride * (edge - 1) + start + 1 > nelems ) {
-        err = MATIO_E_BAD_ARGUMENT;
-    } else if ( matvar->compression == MAT_COMPRESSION_NONE ) {
+    if ( matvar->compression == MAT_COMPRESSION_NONE ) {
         if ( matvar->isComplex ) {
             mat_complex_split_t *complex_data = (mat_complex_split_t *)data;
 
