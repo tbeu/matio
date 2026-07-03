@@ -27,6 +27,9 @@ option(MATIO_WITH_HDF5 "Check for hdf5 library" ON)
 # Build with zlib support
 option(MATIO_WITH_ZLIB "Check for zlib library" ON)
 
+# Option to use zlib-ng as an alternative zlib implementation
+option(MATIO_USE_ZLIB_NG "Use zlib-ng library instead of zlib" OFF)
+
 # Select what MAT file format version is used by default
 set(MATIO_DEFAULT_FILE_VERSION "5" CACHE STRING "Default MAT file version")
 set_property(CACHE MATIO_DEFAULT_FILE_VERSION PROPERTY STRINGS 4 5 7.3)
