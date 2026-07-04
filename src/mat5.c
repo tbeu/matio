@@ -6658,6 +6658,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     matvar->nbytes = buf[3];
                 }
             }
+            matvar->data_type = ClassType2DataType(matvar->class_type);
             if ( matvar->class_type == MAT_C_OPAQUE ) {
                 /* For opaque: buf[4..5] is the array name tag, not rank/dims.
                  * Read: name (using buf[4..5] as pre-read tag), type_name, class_name, metadata
