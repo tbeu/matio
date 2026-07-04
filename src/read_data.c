@@ -909,6 +909,10 @@ ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
     int err, i;
     size_t data_size;
 
+    if ( start < 0 || stride < 0 || edge < 0 ) {
+        return MATIO_E_BAD_ARGUMENT;
+    }
+
     data_size = Mat_SizeOf(data_type);
     (void)fseek((FILE *)mat->fp, start * data_size, SEEK_CUR);
     stride = data_size * (stride - 1);
@@ -1045,6 +1049,18 @@ ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
         return MATIO_E_BAD_ARGUMENT;
     }
 
+    if ( CheckEdgeOverflow(2, edge) ) {
+        return MATIO_E_BAD_ARGUMENT;
+    }
+
+    if ( CheckSlabOverflow(2, dims, start, stride) ) {
+        return MATIO_E_BAD_ARGUMENT;
+    }
+
+    if ( dims[0] == 0 || dims[1] == 0 ) {
+        return MATIO_E_BAD_ARGUMENT;
+    }
+
     data_size = Mat_SizeOf(data_type);
 
     switch ( class_type ) {
@@ -1149,6 +1165,9 @@ ReadCompressedDataSlab1(mat_t *mat, z_streamp z, void *data, enum matio_classes 
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) )
         return 0;
+
+    if ( start < 0 || stride < 0 || edge < 0 )
+        return -1;
 
     stride--;
     err = inflateCopy(&z_copy, z);
@@ -1283,6 +1302,18 @@ ReadCompressedDataSlab2(mat_t *mat, z_streamp z, void *data, enum matio_classes 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) || (start == NULL) ||
          (stride == NULL) || (edge == NULL) ) {
         return 0;
+    }
+
+    if ( CheckEdgeOverflow(2, edge) ) {
+        return -1;
+    }
+
+    if ( CheckSlabOverflow(2, dims, start, stride) ) {
+        return -1;
+    }
+
+    if ( dims[0] == 0 || dims[1] == 0 ) {
+        return -1;
     }
 
     err = inflateCopy(&z_copy, z);
