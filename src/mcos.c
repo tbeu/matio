@@ -1018,6 +1018,11 @@ ParseSubsystem5(mat_t *mat)
                 goto cleanup_ss;
         }
 
+        /* ncells is derived from the cell dimensions; make sure the pointer
+         * array actually holds that many entries before indexing it. */
+        if ( ncells == 0 || ncells > mcos_var->nbytes / sizeof(matvar_t *) )
+            goto cleanup_ss;
+
         /* Cell 1 (index 0): Linking metadata as uint8 array */
         cell1 = cells[0];
         if ( cell1 == NULL || cell1->data == NULL )
@@ -1605,6 +1610,7 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
     if ( matvar->class_type == MAT_C_CELL && matvar->data != NULL ) {
         matvar_t **cells = (matvar_t **)matvar->data;
         size_t ncells = 1;
+        size_t ndata = matvar->nbytes / sizeof(matvar_t *);
         size_t i;
 
         {
@@ -1612,6 +1618,12 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
             if ( err )
                 return err;
         }
+
+        /* The dimensions come from the subsystem metadata and can disagree
+         * with the number of pointers actually stored in matvar->data. Walk
+         * only what was allocated. */
+        if ( ncells > ndata )
+            ncells = ndata;
 
         for ( i = 0; i < ncells; i++ ) {
             if ( cells[i] == NULL )
@@ -1627,6 +1639,7 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
         size_t nfields = matvar->internal->num_fields;
         size_t nelems = 1;
         size_t total = 0;
+        size_t ndata = matvar->nbytes / sizeof(matvar_t *);
         size_t i;
         matvar_t **fields = (matvar_t **)matvar->data;
 
@@ -1638,6 +1651,9 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
 
         if ( Mul(&total, nfields, nelems) )
             return MATIO_E_INDEX_TOO_BIG;
+
+        if ( total > ndata )
+            total = ndata;
 
         for ( i = 0; i < total; i++ ) {
             if ( fields[i] == NULL )
