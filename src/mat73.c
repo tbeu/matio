@@ -588,13 +588,13 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
     }
     class_str = (char *)calloc(class_len + 1, 1);
     if ( NULL != class_str ) {
-        herr_t herr = H5Aread(attr_id, mem_type_id, class_str);
-        if ( herr < 0 ) {
+        err = Mat_H5ReadScalarAttribute(attr_id, mem_type_id, class_str);
+        if ( err ) {
             free(class_str);
             H5Tclose(mem_type_id);
             H5Tclose(type_id);
             H5Aclose(attr_id);
-            return MATIO_E_GENERIC_READ_ERROR;
+            return err;
         }
         class_str[class_len] = '\0';
         matvar->class_type = ClassStr2ClassType(class_str);
@@ -1116,15 +1116,13 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
 
     /* Check if the variable is sparse */
     if ( H5Aexists_by_name(dset_id, ".", "MATLAB_sparse", H5P_DEFAULT) ) {
-        herr_t herr;
         hid_t sparse_dset_id;
         unsigned nrows = 0;
 
         attr_id = H5Aopen_by_name(dset_id, ".", "MATLAB_sparse", H5P_DEFAULT, H5P_DEFAULT);
-        herr = H5Aread(attr_id, H5T_NATIVE_UINT, &nrows);
+        err = Mat_H5ReadScalarAttribute(attr_id, H5T_NATIVE_UINT, &nrows);
         H5Aclose(attr_id);
-        if ( herr < 0 ) {
-            err = MATIO_E_GENERIC_READ_ERROR;
+        if ( err ) {
             goto done_group;
         }
 
