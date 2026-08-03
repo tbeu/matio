@@ -104,6 +104,30 @@ jobs:
       - name: Test
         run: ctest --no-tests=error --test-dir build --build-config ${{ matrix.configuration }} --parallel 8
 
+  # Reproduces https://github.com/tbeu/matio/issues/326: building matio as a
+  # subproject of a CMake project that also checks vasprintf with
+  # CMAKE_REQUIRED_DEFINITIONS=-D_GNU_SOURCE (as json-c does) poisons the shared
+  # CMake cache with HAVE_VASPRINTF=1, so matio compiles snprintf/snprintf.c
+  # with HAVE_VASPRINTF=1 but without _GNU_SOURCE and fails with
+  # "implicit declaration of function 'vasprintf'". This job is expected to
+  # fail until the issue is fixed.
+  build-windows-mingw-vasprintf:
+    name: windows-mingw (issue #326 vasprintf)
+    runs-on: windows-latest
+    env:
+      CC: gcc
+      CXX: g++
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 5
+          submodules: recursive
+      - name: Configure
+        run: cmake -S .ci/reproduce_issue326 -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DMATIO_WITH_ZLIB=OFF -DMATIO_WITH_HDF5=OFF -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF -DMATIO_MCOS=OFF -DMATIO_EXTENDED_SPARSE=OFF -DMATIO_BUILD_TESTING=OFF
+      - name: Build with gcc
+        run: cmake --build build --target matio -- -j8
+
   build-windows-arm:
     name: windows-arm-msvc
     runs-on: windows-11-arm
