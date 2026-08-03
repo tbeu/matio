@@ -61,6 +61,9 @@ ParseOpaqueMetadata(const mat_uint32_t *meta, size_t meta_nvals, matvar_t *matva
     if ( (size_t)dim_start + ndims + 1 > meta_nvals )
         return MATIO_E_FILE_FORMAT_VIOLATION;
 
+    if ( ndims == 0 )
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+
     /* Set rank and dims */
     free(matvar->dims);
     matvar->rank = (int)ndims;
@@ -1477,9 +1480,9 @@ IsMCOSEncoded(const matvar_t *matvar)
     if ( matvar != NULL && matvar->class_type == MAT_C_UINT32 && matvar->data != NULL ) {
         const mat_uint32_t *u32 = (const mat_uint32_t *)matvar->data;
         size_t n = 1;
-        int r;
-        for ( r = 0; r < matvar->rank; r++ )
-            n *= matvar->dims[r];
+        int err = Mat_MulDims(matvar, &n);
+        if ( err )
+            return 0;
         if ( n >= 4 && u32[0] == MCOS_REF_VALUE )
             return 1;
     }
@@ -1506,7 +1509,6 @@ ResolveEncodedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
     size_t total_objs = 1;
     mat_uint32_t obj_start;
     int r;
-    int err;
 
     if ( ss == NULL || matvar == NULL || matvar->internal == NULL || depth > MCOS_MAX_DEPTH )
         return MATIO_E_NO_ERROR;
@@ -1515,17 +1517,25 @@ ResolveEncodedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
         return MATIO_E_NO_ERROR;
 
     meta = (const mat_uint32_t *)matvar->data;
-    for ( r = 0; r < matvar->rank; r++ )
-        n *= matvar->dims[r];
+    {
+        int err = Mat_MulDims(matvar, &n);
+        if ( err )
+            return err;
+    }
 
     ndims = meta[1];
     if ( dim_start + ndims + 1 > n )
         return MATIO_E_NO_ERROR; /* Not enough data */
 
+    if ( ndims == 0 )
+        return MATIO_E_NO_ERROR; /* No dimensions */
+
     /* Compute total objects from encoded dimensions */
     total_objs = 1;
-    for ( r = 0; r < (int)ndims; r++ )
-        total_objs *= meta[dim_start + r];
+    for ( r = 0; r < (int)ndims; r++ ) {
+        if ( Mul(&total_objs, total_objs, meta[dim_start + r]) )
+            return MATIO_E_INDEX_TOO_BIG;
+    }
 
     obj_start = dim_start + ndims;
     if ( obj_start + total_objs >= n )
@@ -1566,10 +1576,12 @@ ResolveEncodedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
     matvar->data_type = MAT_T_UNKNOWN;
     matvar->class_type = MAT_C_OPAQUE;
 
-    /* Resolve the MCOS object */
-    err = ResolveMCOS(ss, matvar);
-    if ( err )
-        return err;
+    {
+        /* Resolve the MCOS object */
+        int err = ResolveMCOS(ss, matvar);
+        if ( err )
+            return err;
+    }
 
     /* Recursively resolve nested MCOS references in the resolved object */
     return ResolveNestedMCOS(ss, matvar, depth);
@@ -1594,10 +1606,12 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
         matvar_t **cells = (matvar_t **)matvar->data;
         size_t ncells = 1;
         size_t i;
-        int r;
 
-        for ( r = 0; r < matvar->rank; r++ )
-            ncells *= matvar->dims[r];
+        {
+            int err = Mat_MulDims(matvar, &ncells);
+            if ( err )
+                return err;
+        }
 
         for ( i = 0; i < ncells; i++ ) {
             if ( cells[i] == NULL )
@@ -1612,15 +1626,19 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
                 matvar->data != NULL && matvar->internal != NULL ) {
         size_t nfields = matvar->internal->num_fields;
         size_t nelems = 1;
-        size_t total;
+        size_t total = 0;
         size_t i;
-        int r;
         matvar_t **fields = (matvar_t **)matvar->data;
 
-        for ( r = 0; r < matvar->rank; r++ )
-            nelems *= matvar->dims[r];
+        {
+            int err = Mat_MulDims(matvar, &nelems);
+            if ( err )
+                return err;
+        }
 
-        total = nfields * nelems;
+        if ( Mul(&total, nfields, nelems) )
+            return MATIO_E_INDEX_TOO_BIG;
+
         for ( i = 0; i < total; i++ ) {
             if ( fields[i] == NULL )
                 continue;
