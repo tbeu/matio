@@ -1,5 +1,11 @@
 # Check functions
 include(CheckSymbolExists)
+
+if(MINGW OR CYGWIN)
+    set(CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} -D_GNU_SOURCE")
+    add_definitions("-D_GNU_SOURCE")
+endif()
+
 check_symbol_exists(vsnprintf  stdio.h  HAVE_VSNPRINTF)
 check_symbol_exists(snprintf   stdio.h  HAVE_SNPRINTF)
 check_symbol_exists(vasprintf  stdio.h  HAVE_VASPRINTF)
