@@ -248,10 +248,10 @@ Mat_VarGetStructFieldByIndex(const matvar_t *matvar, size_t field_index, size_t 
 
     nfields = matvar->internal->num_fields;
 
-    if ( nelems > 0 && index >= nelems ) {
+    if ( index >= nelems ) {
         Mat_Critical("Mat_VarGetStructField: structure index out of bounds");
     } else if ( nfields > 0 ) {
-        if ( field_index > nfields ) {
+        if ( field_index >= nfields ) {
             Mat_Critical("Mat_VarGetStructField: field index out of bounds");
         } else {
             field = *((matvar_t **)matvar->data + index * nfields + field_index);
