@@ -23,7 +23,25 @@
 #include <math.h>
 #include <time.h>
 
-#define READ_DATA_NOSWAP(T)                                           \
+/* Conversion of a value read from the file into the destination type T.
+ * Casting an out-of-range (or NaN/Inf) floating value to an integer type is
+ * undefined behavior (C11 6.3.1.4), which a crafted file can reach whenever a
+ * floating source type is read into an integer destination (e.g. v4 sparse
+ * row/column indices are stored as double and read into mat_uint32_t). Integer
+ * sources keep the existing modular cast; floating sources saturate to the
+ * destination range and map NaN to 0, leaving every in-range value unchanged. */
+#define MAT_TYPE_IS_SIGNED(T) (((T) - 1) < ((T)0))
+#define MAT_TYPE_MAX(T) \
+    (MAT_TYPE_IS_SIGNED(T) ? (T)((((T)1 << (sizeof(T) * CHAR_BIT - 2)) - 1) * 2 + 1) : (T) ~(T)0)
+#define MAT_TYPE_MIN(T) (MAT_TYPE_IS_SIGNED(T) ? (T)(-MAT_TYPE_MAX(T) - 1) : (T)0)
+#define MAT_CAST_PLAIN(T, x) ((T)(x))
+#define MAT_CAST_SAT(T, x)                                      \
+    ((x) != (x)                               ? (T)0            \
+     : (double)(x) <= (double)MAT_TYPE_MIN(T) ? MAT_TYPE_MIN(T) \
+     : (double)(x) >= (double)MAT_TYPE_MAX(T) ? MAT_TYPE_MAX(T) \
+                                              : (T)(x))
+
+#define READ_DATA_NOSWAP(T, CVT)                                      \
     do {                                                              \
         const size_t block_size = READ_BLOCK_SIZE / data_size;        \
         err = MATIO_E_NO_ERROR;                                       \
@@ -31,7 +49,7 @@
             readCount = fread(v, data_size, len, (FILE *)mat->fp);    \
             if ( readCount == len ) {                                 \
                 for ( i = 0; i < len; i++ ) {                         \
-                    data[i] = (T)v[i];                                \
+                    data[i] = CVT(T, v[i]);                           \
                 }                                                     \
             } else {                                                  \
                 err = MATIO_E_GENERIC_READ_ERROR;                     \
@@ -45,7 +63,7 @@
                 readCount += j;                                       \
                 if ( j == block_size ) {                              \
                     for ( j = 0; j < block_size; j++ ) {              \
-                        data[i + j] = (T)v[j];                        \
+                        data[i + j] = CVT(T, v[j]);                   \
                     }                                                 \
                 } else {                                              \
                     err = MATIO_E_GENERIC_READ_ERROR;                 \
@@ -60,7 +78,7 @@
                 readCount += j;                                       \
                 if ( j == len - i ) {                                 \
                     for ( j = 0; j < len - i; j++ ) {                 \
-                        data[i + j] = (T)v[j];                        \
+                        data[i + j] = CVT(T, v[j]);                   \
                     }                                                 \
                 } else {                                              \
                     err = MATIO_E_GENERIC_READ_ERROR;                 \
@@ -70,7 +88,7 @@
         }                                                             \
     } while ( 0 )
 
-#define READ_DATA(T, SwapFunc)                                            \
+#define READ_DATA(T, SwapFunc, CVT)                                       \
     do {                                                                  \
         if ( mat->byteswap ) {                                            \
             const size_t block_size = READ_BLOCK_SIZE / data_size;        \
@@ -79,7 +97,8 @@
                 readCount = fread(v, data_size, len, (FILE *)mat->fp);    \
                 if ( readCount == len ) {                                 \
                     for ( i = 0; i < len; i++ ) {                         \
-                        data[i] = (T)SwapFunc(&v[i]);                     \
+                        (void)SwapFunc(&v[i]);                            \
+                        data[i] = CVT(T, v[i]);                           \
                     }                                                     \
                 } else {                                                  \
                     err = MATIO_E_GENERIC_READ_ERROR;                     \
@@ -93,7 +112,8 @@
                     readCount += j;                                       \
                     if ( j == block_size ) {                              \
                         for ( j = 0; j < block_size; j++ ) {              \
-                            data[i + j] = (T)SwapFunc(&v[j]);             \
+                            (void)SwapFunc(&v[j]);                        \
+                            data[i + j] = CVT(T, v[j]);                   \
                         }                                                 \
                     } else {                                              \
                         err = MATIO_E_GENERIC_READ_ERROR;                 \
@@ -108,7 +128,8 @@
                     readCount += j;                                       \
                     if ( j == len - i ) {                                 \
                         for ( j = 0; j < len - i; j++ ) {                 \
-                            data[i + j] = (T)SwapFunc(&v[j]);             \
+                            (void)SwapFunc(&v[j]);                        \
+                            data[i + j] = CVT(T, v[j]);                   \
                         }                                                 \
                     } else {                                              \
                         err = MATIO_E_GENERIC_READ_ERROR;                 \
@@ -117,7 +138,7 @@
                 }                                                         \
             }                                                             \
         } else {                                                          \
-            READ_DATA_NOSWAP(T);                                          \
+            READ_DATA_NOSWAP(T, CVT);                                     \
             if ( err ) {                                                  \
                 break;                                                    \
             }                                                             \
@@ -125,7 +146,7 @@
     } while ( 0 )
 
 #if HAVE_ZLIB
-#define READ_COMPRESSED_DATA_NOSWAP(T)                                                \
+#define READ_COMPRESSED_DATA_NOSWAP(T, CVT)                                           \
     do {                                                                              \
         const size_t block_size = READ_BLOCK_SIZE / data_size;                        \
         if ( len <= block_size ) {                                                    \
@@ -134,7 +155,7 @@
                 break;                                                                \
             }                                                                         \
             for ( i = 0; i < len; i++ ) {                                             \
-                data[i] = (T)v[i];                                                    \
+                data[i] = CVT(T, v[i]);                                               \
             }                                                                         \
         } else {                                                                      \
             mat_uint32_t j;                                                           \
@@ -145,7 +166,7 @@
                     break;                                                            \
                 }                                                                     \
                 for ( j = 0; j < block_size; j++ ) {                                  \
-                    data[i + j] = (T)v[j];                                            \
+                    data[i + j] = CVT(T, v[j]);                                       \
                 }                                                                     \
             }                                                                         \
             if ( err ) {                                                              \
@@ -157,12 +178,12 @@
                 break;                                                                \
             }                                                                         \
             for ( j = 0; j < len; j++ ) {                                             \
-                data[i + j] = (T)v[j];                                                \
+                data[i + j] = CVT(T, v[j]);                                           \
             }                                                                         \
         }                                                                             \
     } while ( 0 )
 
-#define READ_COMPRESSED_DATA(T, SwapFunc)                                                 \
+#define READ_COMPRESSED_DATA(T, SwapFunc, CVT)                                            \
     do {                                                                                  \
         if ( mat->byteswap ) {                                                            \
             const size_t block_size = READ_BLOCK_SIZE / data_size;                        \
@@ -172,7 +193,8 @@
                     break;                                                                \
                 }                                                                         \
                 for ( i = 0; i < len; i++ ) {                                             \
-                    data[i] = (T)SwapFunc(&v[i]);                                         \
+                    (void)SwapFunc(&v[i]);                                                \
+                    data[i] = CVT(T, v[i]);                                               \
                 }                                                                         \
             } else {                                                                      \
                 mat_uint32_t j;                                                           \
@@ -183,7 +205,8 @@
                         break;                                                            \
                     }                                                                     \
                     for ( j = 0; j < block_size; j++ ) {                                  \
-                        data[i + j] = (T)SwapFunc(&v[j]);                                 \
+                        (void)SwapFunc(&v[j]);                                            \
+                        data[i + j] = CVT(T, v[j]);                                       \
                     }                                                                     \
                 }                                                                         \
                 if ( err ) {                                                              \
@@ -195,11 +218,12 @@
                     break;                                                                \
                 }                                                                         \
                 for ( j = 0; j < len; j++ ) {                                             \
-                    data[i + j] = (T)SwapFunc(&v[j]);                                     \
+                    (void)SwapFunc(&v[j]);                                                \
+                    data[i + j] = CVT(T, v[j]);                                           \
                 }                                                                         \
             }                                                                             \
         } else {                                                                          \
-            READ_COMPRESSED_DATA_NOSWAP(T);                                               \
+            READ_COMPRESSED_DATA_NOSWAP(T, CVT);                                          \
             if ( err ) {                                                                  \
                 break;                                                                    \
             }                                                                             \
@@ -407,7 +431,7 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
             size_t i, readCount;
             mat_uint16_t *data = (mat_uint16_t *)_data;
             mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
-            READ_DATA(mat_uint16_t, Mat_uint16Swap);
+            READ_DATA(mat_uint16_t, Mat_uint16Swap, MAT_CAST_PLAIN);
             break;
         }
         default:
