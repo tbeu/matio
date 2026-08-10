@@ -56,12 +56,12 @@ jobs:
             mat73: ON
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 5
           submodules: recursive
       - name: Setup python environment
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install python packages
@@ -74,7 +74,7 @@ jobs:
         if: matrix.toolchain == 'linux-gcc'
         run: sudo apt-get update && sudo apt-get install -y cppcheck
       - name: Cache conan folder
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.conan2
           key: ${{ runner.os }}-conan2-${{ hashFiles('conanfile.txt', 'conanfile.py', 'conan.lock') }}
@@ -119,7 +119,7 @@ jobs:
       CXX: g++
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 5
           submodules: recursive
@@ -133,12 +133,12 @@ jobs:
     runs-on: windows-11-arm
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 5
           submodules: recursive
       - name: Setup python environment
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: 3.13
       - name: Configure
@@ -153,7 +153,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 5
           submodules: recursive
@@ -176,7 +176,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 5
           submodules: recursive
@@ -201,12 +201,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 5
           submodules: recursive
       - name: Setup python environment
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: 3.13
       - name: Install python packages
@@ -226,7 +226,7 @@ jobs:
       - name: Set git to use LF
         run: git config --global core.autocrlf input
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 5
           submodules: recursive
