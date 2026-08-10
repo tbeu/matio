@@ -72,6 +72,11 @@ struct ReadGroupInfoIterData
 #define MAX_RANK (3)
 #endif
 
+#if !defined(MAX_CLASS_NAME)
+/* Maximal length of the MATLAB_class attribute value */
+#define MAX_CLASS_NAME (256)
+#endif
+
 /*===========================================================================
  *  Private functions
  *===========================================================================
@@ -573,6 +578,23 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
         return MATIO_E_FAIL_TO_IDENTIFY;
     }
     class_len = H5Tget_size(type_id);
+    /* The MATLAB_class attribute must be a scalar fixed-length string of
+     * bounded size. The scalar/extent guard lives in Mat_H5ReadScalarAttribute;
+     * here we additionally reject variable-length strings and enforce a maximum
+     * length so that class_len + 1 cannot wrap on 32-bit platforms. H5Tget_size
+     * on a variable-length string returns sizeof(char *), which would otherwise
+     * truncate the class name.
+     */
+    if ( H5T_STRING != H5Tget_class(type_id) || 0 < H5Tis_variable_str(type_id) ) {
+        H5Tclose(type_id);
+        H5Aclose(attr_id);
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
+    if ( 0 == class_len || class_len > MAX_CLASS_NAME ) {
+        H5Tclose(type_id);
+        H5Aclose(attr_id);
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
     mem_type_id = H5Tcopy(H5T_C_S1);
     if ( mem_type_id == H5I_INVALID_HID ) {
         H5Tclose(type_id);
