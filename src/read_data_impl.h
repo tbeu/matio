@@ -6,6 +6,16 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+/* Conversion applied when a floating source (double/single) is read into this
+ * destination type. A floating destination stays a plain cast; an integer
+ * destination saturates so the out-of-range float-to-integer conversion is not
+ * undefined behavior. */
+#if READ_TYPE_TYPE == READ_TYPE_DOUBLE || READ_TYPE_TYPE == READ_TYPE_SINGLE
+#define READ_FLOAT_CVT MAT_CAST_PLAIN
+#else
+#define READ_FLOAT_CVT MAT_CAST_SAT
+#endif
+
 #define READ_TYPE_DOUBLE_DATA CAT(READ_TYPED_FUNC1, Double)
 #define READ_TYPE_SINGLE_DATA CAT(READ_TYPED_FUNC1, Single)
 #define READ_TYPE_INT32_DATA CAT(READ_TYPED_FUNC1, Int32)
@@ -42,7 +52,7 @@ READ_TYPE_DOUBLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(double);
     double v[READ_BLOCK_SIZE / sizeof(double)];
-    READ_DATA(READ_TYPE, Mat_doubleSwap);
+    READ_DATA(READ_TYPE, Mat_doubleSwap, READ_FLOAT_CVT);
 #endif
     return err;
 }
@@ -68,7 +78,7 @@ READ_TYPE_SINGLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(float);
     float v[READ_BLOCK_SIZE / sizeof(float)];
-    READ_DATA(READ_TYPE, Mat_floatSwap);
+    READ_DATA(READ_TYPE, Mat_floatSwap, READ_FLOAT_CVT);
 #endif
     return err;
 }
@@ -94,7 +104,7 @@ READ_TYPE_INT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_int32_t);
     mat_int32_t v[READ_BLOCK_SIZE / sizeof(mat_int32_t)];
-    READ_DATA(READ_TYPE, Mat_int32Swap);
+    READ_DATA(READ_TYPE, Mat_int32Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -120,7 +130,7 @@ READ_TYPE_UINT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_uint32_t);
     mat_uint32_t v[READ_BLOCK_SIZE / sizeof(mat_uint32_t)];
-    READ_DATA(READ_TYPE, Mat_uint32Swap);
+    READ_DATA(READ_TYPE, Mat_uint32Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -146,7 +156,7 @@ READ_TYPE_INT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_int16_t);
     mat_int16_t v[READ_BLOCK_SIZE / sizeof(mat_int16_t)];
-    READ_DATA(READ_TYPE, Mat_int16Swap);
+    READ_DATA(READ_TYPE, Mat_int16Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -172,7 +182,7 @@ READ_TYPE_UINT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_uint16_t);
     mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
-    READ_DATA(READ_TYPE, Mat_uint16Swap);
+    READ_DATA(READ_TYPE, Mat_uint16Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -192,7 +202,7 @@ READ_TYPE_INT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_int8_t);
     mat_int8_t v[READ_BLOCK_SIZE / sizeof(mat_int8_t)];
-    READ_DATA_NOSWAP(READ_TYPE);
+    READ_DATA_NOSWAP(READ_TYPE, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -212,7 +222,7 @@ READ_TYPE_UINT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_uint8_t);
     mat_uint8_t v[READ_BLOCK_SIZE / sizeof(mat_uint8_t)];
-    READ_DATA_NOSWAP(READ_TYPE);
+    READ_DATA_NOSWAP(READ_TYPE, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -239,7 +249,7 @@ READ_TYPE_INT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_int64_t);
     mat_int64_t v[READ_BLOCK_SIZE / sizeof(mat_int64_t)];
-    READ_DATA(READ_TYPE, Mat_int64Swap);
+    READ_DATA(READ_TYPE, Mat_int64Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -267,7 +277,7 @@ READ_TYPE_UINT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t i;
     const size_t data_size = sizeof(mat_uint64_t);
     mat_uint64_t v[READ_BLOCK_SIZE / sizeof(mat_uint64_t)];
-    READ_DATA(READ_TYPE, Mat_uint64Swap);
+    READ_DATA(READ_TYPE, Mat_uint64Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -373,7 +383,7 @@ READ_TYPE_DOUBLE_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len
     mat_uint32_t i;
     const size_t data_size = sizeof(double);
     double v[READ_BLOCK_SIZE / sizeof(double)];
-    READ_COMPRESSED_DATA(READ_TYPE, Mat_doubleSwap);
+    READ_COMPRESSED_DATA(READ_TYPE, Mat_doubleSwap, READ_FLOAT_CVT);
 #endif
     return err;
 }
@@ -397,7 +407,7 @@ READ_TYPE_SINGLE_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len
     mat_uint32_t i;
     const size_t data_size = sizeof(float);
     float v[READ_BLOCK_SIZE / sizeof(float)];
-    READ_COMPRESSED_DATA(READ_TYPE, Mat_floatSwap);
+    READ_COMPRESSED_DATA(READ_TYPE, Mat_floatSwap, READ_FLOAT_CVT);
 #endif
     return err;
 }
@@ -422,7 +432,7 @@ READ_TYPE_INT64_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len)
     mat_uint32_t i;
     const size_t data_size = sizeof(mat_int64_t);
     mat_int64_t v[READ_BLOCK_SIZE / sizeof(mat_int64_t)];
-    READ_COMPRESSED_DATA(READ_TYPE, Mat_int64Swap);
+    READ_COMPRESSED_DATA(READ_TYPE, Mat_int64Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -448,7 +458,7 @@ READ_TYPE_UINT64_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len
     mat_uint32_t i;
     const size_t data_size = sizeof(mat_uint64_t);
     mat_uint64_t v[READ_BLOCK_SIZE / sizeof(mat_uint64_t)];
-    READ_COMPRESSED_DATA(READ_TYPE, Mat_uint64Swap);
+    READ_COMPRESSED_DATA(READ_TYPE, Mat_uint64Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -473,7 +483,7 @@ READ_TYPE_INT32_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len)
     mat_uint32_t i;
     const size_t data_size = sizeof(mat_int32_t);
     mat_int32_t v[READ_BLOCK_SIZE / sizeof(mat_int32_t)];
-    READ_COMPRESSED_DATA(READ_TYPE, Mat_int32Swap);
+    READ_COMPRESSED_DATA(READ_TYPE, Mat_int32Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -497,7 +507,7 @@ READ_TYPE_UINT32_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len
     mat_uint32_t i;
     const size_t data_size = sizeof(mat_uint32_t);
     mat_uint32_t v[READ_BLOCK_SIZE / sizeof(mat_uint32_t)];
-    READ_COMPRESSED_DATA(READ_TYPE, Mat_uint32Swap);
+    READ_COMPRESSED_DATA(READ_TYPE, Mat_uint32Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -521,7 +531,7 @@ READ_TYPE_INT16_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len)
     mat_uint32_t i;
     const size_t data_size = sizeof(mat_int16_t);
     mat_int16_t v[READ_BLOCK_SIZE / sizeof(mat_int16_t)];
-    READ_COMPRESSED_DATA(READ_TYPE, Mat_int16Swap);
+    READ_COMPRESSED_DATA(READ_TYPE, Mat_int16Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -545,7 +555,7 @@ READ_TYPE_UINT16_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len
     mat_uint32_t i;
     const size_t data_size = sizeof(mat_uint16_t);
     mat_uint16_t v[READ_BLOCK_SIZE / sizeof(mat_uint16_t)];
-    READ_COMPRESSED_DATA(READ_TYPE, Mat_uint16Swap);
+    READ_COMPRESSED_DATA(READ_TYPE, Mat_uint16Swap, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -560,7 +570,7 @@ READ_TYPE_INT8_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len)
     mat_uint32_t i;
     const size_t data_size = sizeof(mat_int8_t);
     mat_int8_t v[READ_BLOCK_SIZE / sizeof(mat_int8_t)];
-    READ_COMPRESSED_DATA_NOSWAP(READ_TYPE);
+    READ_COMPRESSED_DATA_NOSWAP(READ_TYPE, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -575,7 +585,7 @@ READ_TYPE_UINT8_DATA(mat_t *mat, z_streamp z, READ_TYPE *data, mat_uint32_t len)
     mat_uint32_t i;
     const size_t data_size = sizeof(mat_uint8_t);
     mat_uint8_t v[READ_BLOCK_SIZE / sizeof(mat_uint8_t)];
-    READ_COMPRESSED_DATA_NOSWAP(READ_TYPE);
+    READ_COMPRESSED_DATA_NOSWAP(READ_TYPE, MAT_CAST_PLAIN);
 #endif
     return err;
 }
@@ -646,3 +656,5 @@ READ_TYPED_FUNC2(mat_t *mat, z_streamp z, READ_TYPE *data, enum matio_types data
 #endif /* HAVE_MAT_UINT64_T */
 
 #endif
+
+#undef READ_FLOAT_CVT
