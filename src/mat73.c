@@ -1446,11 +1446,75 @@ Mat_H5ReadNextReferenceInfo(hid_t ref_id, matvar_t *matvar, mat_t *mat)
     return err;
 }
 
+/* Validate that an HDF5 datatype is well-formed enough to be read safely.
+ */
+static int
+Mat_H5ValidateDatatype(hid_t type_id)
+{
+    H5T_class_t tclass = H5Tget_class(type_id);
+
+    switch ( tclass ) {
+        case H5T_COMPOUND: {
+            int nmembers = H5Tget_nmembers(type_id);
+            int i;
+            for ( i = 0; i < nmembers; i++ ) {
+                hid_t member_id = H5Tget_member_type(type_id, (unsigned)i);
+                int err = Mat_H5ValidateDatatype(member_id);
+                H5Tclose(member_id);
+                if ( err ) {
+                    return err;
+                }
+            }
+            return MATIO_E_NO_ERROR;
+        }
+        case H5T_ARRAY:
+        case H5T_VLEN:
+        case H5T_ENUM: {
+            hid_t super_id = H5Tget_super(type_id);
+            int err = Mat_H5ValidateDatatype(super_id);
+            H5Tclose(super_id);
+            return err;
+        }
+        case H5T_FLOAT: {
+            size_t size = H5Tget_size(type_id);
+            size_t prec = H5Tget_precision(type_id);
+            size_t spos, epos, esize, mpos, msize;
+            if ( 0 == size || 0 == prec || prec > size * 8 ) {
+                return MATIO_E_FILE_FORMAT_VIOLATION;
+            }
+            H5Tget_fields(type_id, &spos, &epos, &esize, &mpos, &msize);
+            if ( 0 == esize || epos + esize > size * 8 || mpos + msize > size * 8 ) {
+                return MATIO_E_FILE_FORMAT_VIOLATION;
+            }
+            return MATIO_E_NO_ERROR;
+        }
+        case H5T_INTEGER: {
+            size_t size = H5Tget_size(type_id);
+            size_t prec = H5Tget_precision(type_id);
+            if ( 0 == size || 0 == prec || prec > size * 8 ) {
+                return MATIO_E_FILE_FORMAT_VIOLATION;
+            }
+            return MATIO_E_NO_ERROR;
+        }
+        default:
+            return MATIO_E_NO_ERROR;
+    }
+}
+
 static int
 Mat_H5ReadData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space, int isComplex,
                void *data)
 {
     herr_t herr;
+
+    {
+        hid_t file_type_id = H5Dget_type(dset_id);
+        int err = Mat_H5ValidateDatatype(file_type_id);
+        H5Tclose(file_type_id);
+        if ( err ) {
+            return MATIO_E_FILE_FORMAT_VIOLATION;
+        }
+    }
 
     if ( !isComplex ) {
         herr = H5Dread(dset_id, h5_type, mem_space, dset_space, H5P_DEFAULT, data);
@@ -3105,6 +3169,13 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             H5Iinc_ref(dset_id);
 
             if ( matvar->nbytes > 0 ) {
+                hid_t char_type_id = H5Dget_type(dset_id);
+                err = Mat_H5ValidateDatatype(char_type_id);
+                H5Tclose(char_type_id);
+                if ( err ) {
+                    H5Dclose(dset_id);
+                    break;
+                }
                 matvar->data = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
                     hid_t mem_space_id = Mat_dims_to_space(matvar->rank, matvar->dims);
