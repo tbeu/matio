@@ -1491,7 +1491,8 @@ Mat_H5ValidateDatatype(hid_t type_id)
         case H5T_INTEGER: {
             size_t size = H5Tget_size(type_id);
             size_t prec = H5Tget_precision(type_id);
-            if ( 0 == size || 0 == prec || prec > size * 8 ) {
+            if ( 0 == size || 0 == prec || prec > size * 8 ||
+                 prec > (size_t)(8 * sizeof(uint64_t)) ) {
                 return MATIO_E_FILE_FORMAT_VIOLATION;
             }
             return MATIO_E_NO_ERROR;
