@@ -460,10 +460,10 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
                     (void)fseek((FILE *)mat->fp,                                                  \
                                 data_size * (dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]),   \
                                 SEEK_CUR);                                                        \
-                    I += dimp[j] - (I % dimp[j]) + (ptrdiff_t)dimp[j - 1] * start[j];             \
+                    I += dimp[j] - (I % dimp[j]) + (size_t)dimp[j - 1] * (size_t)start[j];        \
                 } else if ( start[j] ) {                                                          \
                     (void)fseek((FILE *)mat->fp, data_size * (dimp[j - 1] * start[j]), SEEK_CUR); \
-                    I += (ptrdiff_t)dimp[j - 1] * start[j];                                       \
+                    I += (size_t)dimp[j - 1] * (size_t)start[j];                                  \
                 }                                                                                 \
             } else {                                                                              \
                 I += inc[j];                                                                      \
@@ -487,7 +487,7 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
                 dimp[i] *= dims[j + 1];                                                        \
             }                                                                                  \
             N *= edge[i];                                                                      \
-            I += (ptrdiff_t)dimp[i - 1] * start[i];                                            \
+            I += (size_t)dimp[i - 1] * (size_t)start[i];                                       \
         }                                                                                      \
         (void)fseek((FILE *)mat->fp, I * data_size, SEEK_CUR);                                 \
         if ( stride[0] == 1 ) {                                                                \
@@ -594,18 +594,18 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
               int rank, const size_t *dims, const int *start, const int *stride, const int *edge)
 {
     int err;
-    int i, j, N, I = 0;
-    int inc[10] =
+    int i, j;
+    size_t N, I = 0;
+    size_t inc[10] =
         {
             0,
         },
-        cnt[10] =
-            {
-                0,
-            },
-        dimp[10] = {
-            0,
-        };
+           dimp[10] = {
+               0,
+           };
+    int cnt[10] = {
+        0,
+    };
     size_t data_size;
 
     if ( (mat == NULL) || (data == NULL) || (mat->fp == NULL) || (start == NULL) ||
@@ -697,28 +697,28 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
 #undef READ_DATA_SLABN_RANK_LOOP
 
 #if HAVE_ZLIB
-#define READ_COMPRESSED_DATA_SLABN_RANK_LOOP                                           \
-    do {                                                                               \
-        for ( j = 1; j < rank; j++ ) {                                                 \
-            cnt[j]++;                                                                  \
-            if ( (cnt[j] % edge[j]) == 0 ) {                                           \
-                cnt[j] = 0;                                                            \
-                if ( (I % dimp[j]) != 0 ) {                                            \
-                    InflateSkipData(mat, &z_copy, data_type,                           \
-                                    dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]); \
-                    I += dimp[j] - (I % dimp[j]) + (ptrdiff_t)dimp[j - 1] * start[j];  \
-                } else if ( start[j] ) {                                               \
-                    InflateSkipData(mat, &z_copy, data_type, dimp[j - 1] * start[j]);  \
-                    I += (ptrdiff_t)dimp[j - 1] * start[j];                            \
-                }                                                                      \
-            } else {                                                                   \
-                if ( inc[j] ) {                                                        \
-                    I += inc[j];                                                       \
-                    InflateSkipData(mat, &z_copy, data_type, inc[j]);                  \
-                }                                                                      \
-                break;                                                                 \
-            }                                                                          \
-        }                                                                              \
+#define READ_COMPRESSED_DATA_SLABN_RANK_LOOP                                               \
+    do {                                                                                   \
+        for ( j = 1; j < rank; j++ ) {                                                     \
+            cnt[j]++;                                                                      \
+            if ( (cnt[j] % edge[j]) == 0 ) {                                               \
+                cnt[j] = 0;                                                                \
+                if ( (I % dimp[j]) != 0 ) {                                                \
+                    InflateSkipData(mat, &z_copy, data_type,                               \
+                                    dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]);     \
+                    I += dimp[j] - (I % dimp[j]) + (size_t)dimp[j - 1] * (size_t)start[j]; \
+                } else if ( start[j] ) {                                                   \
+                    InflateSkipData(mat, &z_copy, data_type, dimp[j - 1] * start[j]);      \
+                    I += (size_t)dimp[j - 1] * (size_t)start[j];                           \
+                }                                                                          \
+            } else {                                                                       \
+                if ( inc[j] ) {                                                            \
+                    I += inc[j];                                                           \
+                    InflateSkipData(mat, &z_copy, data_type, inc[j]);                      \
+                }                                                                          \
+                break;                                                                     \
+            }                                                                              \
+        }                                                                                  \
     } while ( 0 )
 
 #define READ_COMPRESSED_DATA_SLABN(ReadDataFunc)                                                \
@@ -735,7 +735,7 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
                 dimp[i] *= dims[j + 1];                                                         \
             }                                                                                   \
             N *= edge[i];                                                                       \
-            I += (ptrdiff_t)dimp[i - 1] * start[i];                                             \
+            I += (size_t)dimp[i - 1] * (size_t)start[i];                                        \
         }                                                                                       \
         /* Skip all data to the starting indices */                                             \
         InflateSkipData(mat, &z_copy, data_type, I);                                            \
@@ -790,18 +790,18 @@ ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes 
                         enum matio_types data_type, int rank, const size_t *dims, const int *start,
                         const int *stride, const int *edge)
 {
-    int nBytes = 0, i, j, N, I = 0, err;
-    int inc[10] =
+    int nBytes = 0, i, j, err;
+    size_t N, I = 0;
+    size_t inc[10] =
         {
             0,
         },
-        cnt[10] =
-            {
-                0,
-            },
-        dimp[10] = {
-            0,
-        };
+           dimp[10] = {
+               0,
+           };
+    int cnt[10] = {
+        0,
+    };
     z_stream z_copy = {
         0,
     };
