@@ -288,10 +288,13 @@ Mat_VarGetStructFieldByName(const matvar_t *matvar, const char *field_name, size
 
     nfields = matvar->internal->num_fields;
     field_index = -1;
-    for ( i = 0; i < nfields; i++ ) {
-        if ( !strcmp(matvar->internal->fieldnames[i], field_name) ) {
-            field_index = i;
-            break;
+    if ( matvar->internal->fieldnames != NULL ) {
+        for ( i = 0; i < nfields; i++ ) {
+            if ( matvar->internal->fieldnames[i] != NULL &&
+                 !strcmp(matvar->internal->fieldnames[i], field_name) ) {
+                field_index = i;
+                break;
+            }
         }
     }
 
@@ -613,10 +616,13 @@ Mat_VarSetStructFieldByName(matvar_t *matvar, const char *field_name, size_t ind
 
     nfields = matvar->internal->num_fields;
     field_index = -1;
-    for ( i = 0; i < nfields; i++ ) {
-        if ( !strcmp(matvar->internal->fieldnames[i], field_name) ) {
-            field_index = i;
-            break;
+    if ( matvar->internal->fieldnames != NULL ) {
+        for ( i = 0; i < nfields; i++ ) {
+            if ( matvar->internal->fieldnames[i] != NULL &&
+                 !strcmp(matvar->internal->fieldnames[i], field_name) ) {
+                field_index = i;
+                break;
+            }
         }
     }
 

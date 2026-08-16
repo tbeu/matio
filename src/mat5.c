@@ -476,19 +476,30 @@ GetEmptyMatrixMaxBufSize(const char *name, int rank, size_t *size)
 static void
 SetFieldNames(matvar_t *matvar, const char *buf, size_t nfields, mat_uint32_t fieldname_length)
 {
-    matvar->internal->num_fields = nfields;
+    size_t i;
+
+    matvar->internal->num_fields = 0;
+    if ( nfields == 0 || fieldname_length == 0 )
+        return;
+
     matvar->internal->fieldnames = (char **)calloc(nfields, sizeof(*matvar->internal->fieldnames));
-    if ( NULL != matvar->internal->fieldnames ) {
-        size_t i;
-        for ( i = 0; i < nfields; i++ ) {
-            matvar->internal->fieldnames[i] = (char *)malloc(fieldname_length);
-            if ( NULL != matvar->internal->fieldnames[i] ) {
-                memcpy(matvar->internal->fieldnames[i], buf + i * fieldname_length,
-                       fieldname_length);
-                matvar->internal->fieldnames[i][fieldname_length - 1] = '\0';
-            }
+    if ( NULL == matvar->internal->fieldnames )
+        return;
+
+    for ( i = 0; i < nfields; i++ ) {
+        matvar->internal->fieldnames[i] = (char *)malloc(fieldname_length);
+        if ( NULL == matvar->internal->fieldnames[i] ) {
+            size_t j;
+            for ( j = 0; j < i; j++ )
+                free(matvar->internal->fieldnames[j]);
+            free(matvar->internal->fieldnames);
+            matvar->internal->fieldnames = NULL;
+            return;
         }
+        memcpy(matvar->internal->fieldnames[i], buf + i * fieldname_length, fieldname_length);
+        matvar->internal->fieldnames[i][fieldname_length - 1] = '\0';
     }
+    matvar->internal->num_fields = nfields;
 }
 
 static int
@@ -1569,9 +1580,6 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                                   (unsigned int)(nfields * fieldname_size + i), &bytesread);
                     if ( MATIO_E_NO_ERROR == err ) {
                         SetFieldNames(matvar, ptr, nfields, fieldname_size);
-                    } else {
-                        matvar->internal->num_fields = nfields;
-                        matvar->internal->fieldnames = NULL;
                     }
                     free(ptr);
                 }
@@ -1594,6 +1602,9 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 nfields = 0;
             }
         }
+
+        if ( NULL == matvar->internal->fieldnames )
+            nfields = 0;
 
         err = AllocateStructFields(matvar, nelems, nfields, &nelems_x_nfields, &fields);
         if ( err || !matvar->nbytes )
@@ -2053,6 +2064,9 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 nfields = 0;
             }
         }
+
+        if ( NULL == matvar->internal->fieldnames )
+            nfields = 0;
 
         err = AllocateStructFields(matvar, nelems, nfields, &nelems_x_nfields, &fields);
         if ( err || !matvar->nbytes )
