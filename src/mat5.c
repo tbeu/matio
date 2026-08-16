@@ -4859,6 +4859,8 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                     break;
             }
         }
+    } else if ( rank > 10 ) {
+        err = MATIO_E_BAD_ARGUMENT;
     } else {
         int i, j, N, I = 0;
         int inc[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
