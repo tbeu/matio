@@ -469,3 +469,12 @@ AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/read-nullpad_class_name.out expout
          $builddir/../tools/matdump -d $srcdir/datasets/struct_nullpad_class_name_hdf_le.mat],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read struct without MATLAB_fields attribute])
+AT_KEYWORDS([structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-issue321.out expout
+         $builddir/test_mat readvar $srcdir/datasets/issue321_v73_nofields.mat s],[0],[expout],[])
+AT_CHECK([cp $srcdir/results/dump-issue321.out expout
+         $builddir/../tools/matdump -d $srcdir/datasets/issue321_v73_nofields.mat s],[0],[expout],[])
+AT_CLEANUP
