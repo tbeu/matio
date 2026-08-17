@@ -44,11 +44,22 @@ CMAKE_FILES = CMakeLists.txt \
               cmake/matio_pubconf.cmake.in \
               cmake/matioConfig.cmake.in
 
+LICENSE_FILES = LICENSES/Autoconf-exception-3.0.txt \
+                LICENSES/BSD-2-Clause.txt \
+                LICENSES/CC0-1.0.txt \
+                LICENSES/GPL-2.0-or-later.txt \
+                LICENSES/GPL-3.0-or-later.txt \
+                LICENSES/ISC.txt \
+                LICENSES/LicenseRef-snprintf.txt \
+                LICENSES/MIT.txt
+
 EXTRA_DIST = matio.pc.in \
              autogen.sh \
              share/test_file.mat \
              share/test_file_v6.mat \
              share/test_file_hdf5.mat \
+             REUSE.toml \
+             $(LICENSE_FILES) \
              $(CMAKE_FILES) \
              $(VS_FILES)
 

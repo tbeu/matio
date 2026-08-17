@@ -1,0 +1,180 @@
+# REUSE.toml — machine-readable license/copyright metadata for matio
+# See https://reuse.software/spec-3.3/
+version = 1
+
+# --------------------------------------------------------------------------
+# matio core: BSD-2-Clause
+# --------------------------------------------------------------------------
+[[annotations]]
+path = [
+    "README",
+    "README.md",
+    "NEWS",
+    "COPYING",
+    ".gitignore",
+    "CMakeLists.txt",
+    "configure.ac",
+    "autogen.sh",
+    "Makefile.am",
+    "matio.pc.in",
+    "conanfile.py",
+    "coverity_model.c",
+    ".appveyor.yml",
+    ".clang-format",
+    ".gitmodules",
+    ".pre-commit-config.yaml",
+    "**/Makefile.am",
+]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = [".ci/**"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = [".github/**"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = ["cmake/**"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = ["config/matio_*.m4"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = ["config/pkg.m4"]
+SPDX-License-Identifier = ["GPL-2.0-or-later"]
+SPDX-FileCopyrightText = [
+    "Free Software Foundation, Inc.",
+    "2006, 2007, 2008, 2010, 2011, 2014, 2015, 2016, 2018, 2020 pkg-config",
+]
+
+[[annotations]]
+path = ["config/config.guess", "config/config.sub"]
+SPDX-License-Identifier = ["GPL-3.0-or-later WITH Autoconf-exception-3.0"]
+SPDX-FileCopyrightText = ["Free Software Foundation, Inc."]
+
+[[annotations]]
+path = ["config/install-sh", "config/missing"]
+SPDX-License-Identifier = ["MIT"]
+SPDX-FileCopyrightText = ["1994 X Consortium"]
+
+[[annotations]]
+path = ["documentation/**"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = [
+    "src/endian.c",
+    "src/inflate.c",
+    "src/io.c",
+    "src/Makefile.am",
+    "src/mat.c",
+    "src/mat4.c",
+    "src/mat4.h",
+    "src/mat5.c",
+    "src/mat5.h",
+    "src/mat73.c",
+    "src/mat73.h",
+    "src/matio.h",
+    "src/matio.sym",
+    "src/matioConfig.h.in",
+    "src/matio_private.h",
+    "src/matio_pubconf.h.in",
+    "src/matvar_cell.c",
+    "src/matvar_struct.c",
+    "src/mcos.c",
+    "src/mcos.h",
+    "src/read_data.c",
+    "src/read_data_impl.h",
+]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = ["src/fortran/**"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = ["ossfuzz/**"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = ["test/**"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = ["share/**"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+[[annotations]]
+path = ["visual_studio/**"]
+SPDX-License-Identifier = ["BSD-2-Clause"]
+SPDX-FileCopyrightText = [
+    "2015-2026, The matio contributors",
+    "2005-2014, Christopher C. Hulbert",
+]
+
+# --------------------------------------------------------------------------
+# Bundled third-party sources
+# --------------------------------------------------------------------------
+[[annotations]]
+path = ["getopt/getopt_long.c", "getopt/getopt.h"]
+SPDX-License-Identifier = ["ISC"]
+SPDX-FileCopyrightText = [
+    "2002 Todd C. Miller",
+    "2000 The NetBSD Foundation, Inc.",
+]
+
+[[annotations]]
+path = ["snprintf/snprintf.c"]
+SPDX-License-Identifier = ["LicenseRef-snprintf"]
+SPDX-FileCopyrightText = [
+    "1995 Patrick Powell",
+    "2008 Holger Weiss",
+]

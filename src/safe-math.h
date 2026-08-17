@@ -1,4 +1,7 @@
-/* Overflow-safe math functions
+/* SPDX-FileCopyrightText: Evan Nemerson <evan@nemerson.com>
+ * SPDX-License-Identifier: CC0-1.0
+ *
+ * Overflow-safe math functions
  * Portable Snippets - https://github.com/nemequ/portable-snippets
  * Created by Evan Nemerson <evan@nemerson.com>
  *
