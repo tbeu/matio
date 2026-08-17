@@ -3624,6 +3624,17 @@ Mat_VarReadDataLinear73(mat_t *mat, matvar_t *matvar, void *data, int start, int
     else if ( matvar->internal->id < 0 )
         return MATIO_E_FAIL_TO_IDENTIFY;
 
+    if ( edge <= 0 || stride <= 0 || start < 0 )
+        return MATIO_E_BAD_ARGUMENT;
+
+    {
+        size_t nelems = 1;
+        if ( Mat_MulDims(matvar, &nelems) )
+            return MATIO_E_FILE_FORMAT_VIOLATION;
+        if ( (size_t)stride * (size_t)(edge - 1) + (size_t)start + 1 > nelems )
+            return MATIO_E_BAD_ARGUMENT;
+    }
+
     dset_edge = edge;
     mem_space = H5Screate_simple(1, &dset_edge, NULL);
 
