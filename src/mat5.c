@@ -1578,7 +1578,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 if ( NULL != ptr ) {
                     err = Inflate(mat, matvar->internal->z, ptr,
                                   (unsigned int)(nfields * fieldname_size + i), &bytesread);
-                    if ( MATIO_E_NO_ERROR == err ) {
+                    if ( !err ) {
                         SetFieldNames(matvar, ptr, nfields, fieldname_size);
                     }
                     free(ptr);
@@ -2348,7 +2348,7 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
 
             for ( i = 0; i < matvar->rank; i++ ) {
                 err = Read(&buf, sizeof(mat_uint32_t), 1, (FILE *)mat->fp, read_bytes);
-                if ( MATIO_E_NO_ERROR == err ) {
+                if ( !err ) {
                     if ( mat->byteswap ) {
                         matvar->dims[i] = Mat_uint32Swap(&buf);
                     } else {
@@ -5089,7 +5089,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                 ci = (mat_complex_split_t *)matvar->internal->data;
                 err = GetDataSlab(ci->Re, co->Re, matvar->class_type, matvar->data_type,
                                   matvar->dims, start, stride, edge, matvar->rank, matvar->nbytes);
-                if ( MATIO_E_NO_ERROR == err )
+                if ( !err )
                     err = GetDataSlab(ci->Im, co->Im, matvar->class_type, matvar->data_type,
                                       matvar->dims, start, stride, edge, matvar->rank,
                                       matvar->nbytes);
@@ -5287,7 +5287,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
         inflateEnd(&z);
     }
 #endif
-    if ( err == MATIO_E_NO_ERROR ) {
+    if ( !err ) {
         matvar->data_type = ClassType2DataType(matvar->class_type);
         matvar->data_size = Mat_SizeOfClass(matvar->class_type);
     }
@@ -5357,7 +5357,7 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
                 ci = (mat_complex_split_t *)matvar->internal->data;
                 err = GetDataLinear(ci->Re, co->Re, matvar->class_type, matvar->data_type, start,
                                     stride, edge);
-                if ( err == MATIO_E_NO_ERROR )
+                if ( !err )
                     err = GetDataLinear(ci->Im, co->Im, matvar->class_type, matvar->data_type,
                                         start, stride, edge);
                 return err;
@@ -6744,7 +6744,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     matvar->name = (char *)malloc(len_pad + 1);
                     if ( NULL != matvar->name ) {
                         err = Read(matvar->name, 1, len_pad, (FILE *)mat->fp, NULL);
-                        if ( MATIO_E_NO_ERROR == err ) {
+                        if ( !err ) {
                             matvar->name[len] = '\0';
                         } else {
                             Mat_VarFree(matvar);

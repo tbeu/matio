@@ -1613,7 +1613,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
             n = tmp->num_datasets;
             Mat_Close(tmp);
 
-            if ( MATIO_E_NO_ERROR == err ) {
+            if ( !err ) {
                 char *new_name = strdup(mat->filename);
 #if defined(MAT73) && MAT73
                 if ( mat_file_ver == MAT_FT_MAT73 ) {
@@ -1624,8 +1624,8 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     fclose((FILE *)mat->fp);
                     mat->fp = NULL;
                 }
-
-                if ( (err = Mat_CopyFile(path_buf, new_name)) != MATIO_E_NO_ERROR ) {
+                err = Mat_CopyFile(path_buf, new_name);
+                if ( err ) {
                     if ( NULL != dir ) {
                         size_t i;
                         for ( i = 0; i < n; i++ ) {
@@ -2481,7 +2481,7 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
         nelems = 1;
         err = Mat_MulDims(matvar, &nelems);
         printf("Dimensions: %" SIZE_T_FMTSTR, matvar->dims[0]);
-        if ( MATIO_E_NO_ERROR == err ) {
+        if ( !err ) {
             int k;
             for ( k = 1; k < matvar->rank; k++ ) {
                 printf(" x %" SIZE_T_FMTSTR, matvar->dims[k]);
@@ -2537,7 +2537,7 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
         size_t nfields = matvar->internal->num_fields;
         size_t nelems_x_nfields = 1;
         int err2 = Mul(&nelems_x_nfields, nelems, nfields);
-        if ( MATIO_E_NO_ERROR == err2 && nelems_x_nfields > 0 ) {
+        if ( !err2 && nelems_x_nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
             if ( NULL != matvar->internal->fieldnames && NULL != fields ) {
                 for ( i = 0; i < nelems_x_nfields; i++ ) {
@@ -2564,7 +2564,7 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
         size_t nfields = matvar->internal->num_fields;
         size_t nelems_x_nfields = 1;
         int err = Mul(&nelems_x_nfields, nelems, nfields);
-        if ( MATIO_E_NO_ERROR == err && nelems_x_nfields > 0 ) {
+        if ( !err && nelems_x_nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
             if ( NULL != matvar->internal->fieldnames && NULL != fields ) {
                 for ( i = 0; i < nelems_x_nfields; i++ ) {
@@ -3110,7 +3110,7 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
     else
         err = MATIO_E_FAIL_TO_IDENTIFY;
 
-    if ( err == MATIO_E_NO_ERROR ) {
+    if ( !err ) {
         /* Update subsystem data offset for unnamed variables (MCOS) */
         if ( subsys_pos > 0 && NULL != mat->subsys_offset ) {
             mat_off_t save_pos = ftello((FILE *)mat->fp);
@@ -3190,7 +3190,7 @@ Mat_VarWriteAppend(mat_t *mat, matvar_t *matvar, enum matio_compression compress
             }
         }
         err = Mat_VarWriteAppend73(mat, matvar, compress, dim);
-        if ( err == MATIO_E_NO_ERROR && 0 == append ) {
+        if ( !err && 0 == append ) {
             /* Update directory */
             char **dir;
             if ( NULL == mat->dir ) {
