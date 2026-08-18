@@ -793,6 +793,7 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
     }
     err = MATIO_E_NO_ERROR;
     (void)H5Sget_simple_extent_dims(space_id, nfields, NULL);
+    matvar->internal->num_fields = 0;
     if ( *nfields > 0 ) {
         hid_t type_id, super_id;
         H5T_class_t type_class, super_class;
@@ -837,7 +838,6 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
         }
         herr = H5Aread(attr_id, type_id, fieldnames_vl);
         if ( herr >= 0 ) {
-            matvar->internal->num_fields = (unsigned int)*nfields;
             matvar->internal->fieldnames =
                 (char **)calloc((size_t)(*nfields), sizeof(*matvar->internal->fieldnames));
             if ( matvar->internal->fieldnames != NULL ) {
@@ -856,6 +856,8 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
             } else {
                 err = MATIO_E_OUT_OF_MEMORY;
             }
+            if ( !err )
+                matvar->internal->num_fields = (unsigned int)*nfields;
 #if H5_VERSION_GE(1, 12, 0)
             H5Treclaim(type_id, space_id, H5P_DEFAULT, fieldnames_vl);
 #else
