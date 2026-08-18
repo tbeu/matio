@@ -397,7 +397,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                     }
                 }
                 err = ReadDoubleData(mat, &tmp, data_type, 1);
-                if ( err || tmp > UINT_MAX - 1 || tmp < 0 ) {
+                if ( err || !(tmp >= 0 && tmp <= UINT_MAX - 1) ) {
                     free(sparse->ir);
                     free(matvar->data);
                     matvar->data = NULL;
@@ -416,7 +416,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                 }
                 (void)fseeko((FILE *)mat->fp, sparse->nir * Mat_SizeOf(data_type), SEEK_CUR);
                 err = ReadDoubleData(mat, &tmp, data_type, 1);
-                if ( err || tmp > UINT_MAX - 1 || tmp < 0 ) {
+                if ( err || !(tmp >= 0 && tmp <= UINT_MAX - 1) ) {
                     free(sparse->ir);
                     free(matvar->data);
                     matvar->data = NULL;
