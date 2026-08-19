@@ -878,6 +878,40 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
     return err;
 }
 
+/** @brief Reject datasets that rely on external storage or virtual datasets
+ *
+ * External-storage (H5Pset_external) and virtual (H5D_VIRTUAL) datasets
+ * service reads from files other than the MAT file itself. Honoring them when
+ * parsing untrusted MAT 7.3 (HDF5) files is an arbitrary-file-read primitive,
+ * so they are rejected on the read path.
+ *
+ * @param dset_id HDF5 dataset identifier
+ * @retval MATIO_E_NO_ERROR if the dataset is self-contained
+ * @retval MATIO_E_FILE_FORMAT_VIOLATION otherwise
+ */
+static int
+Mat_H5RejectExternalStorage(hid_t dset_id)
+{
+    if ( H5Iget_type(dset_id) == H5I_DATASET ) {
+        hid_t dcpl_id = H5Dget_create_plist(dset_id);
+        if ( dcpl_id >= 0 ) {
+            H5D_layout_t layout = H5Pget_layout(dcpl_id);
+            int n_external = H5Pget_external_count(dcpl_id);
+            H5Pclose(dcpl_id);
+#if H5_VERSION_GE(1, 10, 0)
+            if ( layout == H5D_VIRTUAL || n_external > 0 )
+#else
+            if ( n_external > 0 )
+#endif
+            {
+                Mat_Critical("External storage / virtual datasets are not permitted");
+                return MATIO_E_FILE_FORMAT_VIOLATION;
+            }
+        }
+    }
+    return MATIO_E_NO_ERROR;
+}
+
 static int
 Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
 {
@@ -885,6 +919,11 @@ Mat_H5ReadDatasetInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
     hsize_t nelems;
 
     err = Mat_H5ReadVarInfo(matvar, dset_id);
+    if ( err ) {
+        return err;
+    }
+
+    err = Mat_H5RejectExternalStorage(dset_id);
     if ( err ) {
         return err;
     }
@@ -1516,6 +1555,13 @@ Mat_H5ReadData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space, 
         H5Tclose(file_type_id);
         if ( err ) {
             return MATIO_E_FILE_FORMAT_VIOLATION;
+        }
+    }
+
+    {
+        int err = Mat_H5RejectExternalStorage(dset_id);
+        if ( err ) {
+            return err;
         }
     }
 
@@ -3078,13 +3124,18 @@ Mat_Close73(mat_t *mat)
 int
 Mat_VarRead73(mat_t *mat, matvar_t *matvar)
 {
-    int err = MATIO_E_NO_ERROR;
+    int err;
     hid_t dset_id, ref_id;
 
     if ( NULL == mat || NULL == matvar )
         return MATIO_E_BAD_ARGUMENT;
     else if ( matvar->internal->id < 0 )
         return MATIO_E_FAIL_TO_IDENTIFY;
+
+    err = Mat_H5RejectExternalStorage(matvar->internal->id);
+    if ( err ) {
+        return err;
+    }
 
     if ( mat->ref_depth >= MAX_REF_DEPTH ) {
         Mat_Critical("Exceeded maximum reference recursion depth");
@@ -3532,7 +3583,7 @@ int
 Mat_VarReadData73(mat_t *mat, matvar_t *matvar, void *data, const int *start, const int *stride,
                   const int *edge)
 {
-    int err = MATIO_E_NO_ERROR, k;
+    int err, k;
     hid_t dset_id, ref_id, dset_space, mem_space;
     hsize_t *dset_start_stride_edge;
     hsize_t *dset_start, *dset_stride, *dset_edge;
@@ -3542,6 +3593,11 @@ Mat_VarReadData73(mat_t *mat, matvar_t *matvar, void *data, const int *start, co
         return MATIO_E_BAD_ARGUMENT;
     else if ( matvar->internal->id < 0 )
         return MATIO_E_FAIL_TO_IDENTIFY;
+
+    err = Mat_H5RejectExternalStorage(matvar->internal->id);
+    if ( err ) {
+        return err;
+    }
 
     dset_start_stride_edge = (hsize_t *)malloc(matvar->rank * 3 * sizeof(hsize_t));
     if ( NULL == dset_start_stride_edge ) {
@@ -3810,6 +3866,10 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
         return 0;
     if ( (NULL != iter_data) && (NULL != iter_data->pred) &&
          0 == iter_data->pred(name, iter_data->pred_user_data) ) /* do we need to skip it? */
+        return 0;
+
+    /* Do not follow external links to files outside the MAT file */
+    if ( info->type == H5L_TYPE_EXTERNAL )
         return 0;
 
     object_info.type = H5O_TYPE_UNKNOWN;
