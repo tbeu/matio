@@ -707,6 +707,21 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank)
         H5Sclose(space_id);
         return NULL;
     }
+    if ( 0 == *rank ) {
+        /* Scalar (rank-0) dataspace. A malloc(0) here hands the callers that
+         * read dims[0] (empty-array and sparse ir/jc/data readers) a
+         * zero-length buffer, so they read out of bounds. Return one zeroed
+         * element instead; rank stays 0 so callers that special-case a scalar
+         * still do, and those reading dims[0] see a defined value. */
+        perm_dims = (size_t *)calloc(1, sizeof(*perm_dims));
+        H5Sclose(space_id);
+        if ( NULL != perm_dims ) {
+            *nelems = 1;
+        } else {
+            Mat_Critical("Error allocating memory for matvar->dims");
+        }
+        return perm_dims;
+    }
     perm_dims = (size_t *)malloc(*rank * sizeof(*perm_dims));
     if ( NULL != perm_dims ) {
         int err = 0;
