@@ -19,6 +19,7 @@
 #endif
 #include "safe-math.h"
 #include <assert.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -519,6 +520,36 @@ Add(size_t *res, size_t a, size_t b)
         return MATIO_E_INDEX_TOO_BIG;
     }
 
+    return MATIO_E_NO_ERROR;
+}
+
+/** @brief Checks the product of the edge dimensions for overflow
+ *
+ * Validates that each edge is non-negative and that the product of the edge
+ * dimensions does not overflow and stays within @c INT_MAX, so that the result
+ * can be used as an @c int element count.
+ * @param rank Number of dimensions
+ * @param edge Number of elements to read per dimension
+ * @retval 0 on success
+ */
+int
+CheckEdgeOverflow(int rank, const int *edge, size_t extra)
+{
+    int i, err;
+    size_t nElements = 1;
+    for ( i = 0; i < rank; i++ ) {
+        if ( edge[i] < 0 ) {
+            return MATIO_E_BAD_ARGUMENT;
+        }
+        err = Mul(&nElements, nElements, (size_t)edge[i]);
+        if ( err || nElements > (size_t)INT_MAX ) {
+            return MATIO_E_INDEX_TOO_BIG;
+        }
+    }
+    err = Mul(&nElements, nElements, extra);
+    if ( err || nElements > (size_t)INT_MAX ) {
+        return MATIO_E_INDEX_TOO_BIG;
+    }
     return MATIO_E_NO_ERROR;
 }
 

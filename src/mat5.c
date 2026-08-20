@@ -5859,7 +5859,7 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
     char *type_name = NULL;
     char *class_name = NULL;
 
-    /* Array name — use pre-read tag */
+    /* Array name - use pre-read tag */
     err = ReadTaggedString(mat, &matvar->name, name_tag);
     if ( err )
         return err;

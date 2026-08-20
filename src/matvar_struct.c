@@ -7,6 +7,7 @@
  */
 
 #include "matio_private.h"
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #if defined(_MSC_VER) || defined(__MINGW32__)
@@ -398,6 +399,10 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
         return NULL;
     }
     if ( matvar->data == NULL ) {
+        return NULL;
+    }
+
+    if ( CheckEdgeOverflow(matvar->rank, edge, matvar->internal->num_fields) ) {
         return NULL;
     }
 

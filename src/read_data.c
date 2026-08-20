@@ -532,23 +532,6 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
     } while ( 0 )
 
 static int
-CheckEdgeOverflow(int rank, const int *edge)
-{
-    int i, err;
-    size_t nElements = 1;
-    for ( i = 0; i < rank; i++ ) {
-        if ( edge[i] < 0 ) {
-            return 1;
-        }
-        err = Mul(&nElements, nElements, (size_t)edge[i]);
-        if ( err || nElements > (size_t)INT_MAX ) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-static int
 CheckSlabOverflow(int rank, const size_t *dims, const int *start, const int *stride)
 {
     int i, j;
@@ -615,7 +598,7 @@ ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
         return MATIO_E_BAD_ARGUMENT;
     }
 
-    if ( CheckEdgeOverflow(rank, edge) ) {
+    if ( CheckEdgeOverflow(rank, edge, 1) ) {
         return MATIO_E_BAD_ARGUMENT;
     }
 
@@ -813,7 +796,7 @@ ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes 
         return -1;
     }
 
-    if ( CheckEdgeOverflow(rank, edge) ) {
+    if ( CheckEdgeOverflow(rank, edge, 1) ) {
         return -1;
     }
 
@@ -1073,7 +1056,7 @@ ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
         return MATIO_E_BAD_ARGUMENT;
     }
 
-    if ( CheckEdgeOverflow(2, edge) ) {
+    if ( CheckEdgeOverflow(2, edge, 1) ) {
         return MATIO_E_BAD_ARGUMENT;
     }
 
@@ -1328,7 +1311,7 @@ ReadCompressedDataSlab2(mat_t *mat, z_streamp z, void *data, enum matio_classes 
         return 0;
     }
 
-    if ( CheckEdgeOverflow(2, edge) ) {
+    if ( CheckEdgeOverflow(2, edge, 1) ) {
         return -1;
     }
 

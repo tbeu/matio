@@ -83,6 +83,10 @@ Mat_VarGetCells(const matvar_t *matvar, const int *start, const int *stride, con
         return NULL;
     }
 
+    if ( CheckEdgeOverflow(matvar->rank, edge, 1) ) {
+        return NULL;
+    }
+
     ndata = matvar->nbytes / sizeof(matvar_t *);
     dimp[0] = matvar->dims[0];
     N = edge[0];
