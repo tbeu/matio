@@ -7,7 +7,6 @@
  */
 
 #include "matio_private.h"
-#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -84,15 +83,8 @@ Mat_VarGetCells(const matvar_t *matvar, const int *start, const int *stride, con
         return NULL;
     }
 
-    {
-        int k;
-        size_t nelems = 1;
-        for ( k = 0; k < matvar->rank; k++ ) {
-            if ( edge[k] < 0 || Mul(&nelems, nelems, (size_t)edge[k]) ||
-                 nelems > (size_t)INT_MAX ) {
-                return NULL;
-            }
-        }
+    if ( CheckEdgeOverflow(matvar->rank, edge, 1) ) {
+        return NULL;
     }
 
     ndata = matvar->nbytes / sizeof(matvar_t *);

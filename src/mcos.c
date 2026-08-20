@@ -1043,7 +1043,7 @@ ParseSubsystem5(mat_t *mat)
             trailing_shared_cells = 1;
         }
 
-        /* Cell 2 (index 1): Empty/reserved — skip */
+        /* Cell 2 (index 1): Empty/reserved - skip */
 
         /* Cells 3.. contain property content cells. FileWrapper__ v4 adds
          * three trailing shared cells: unknown, class alias metadata, defaults.
@@ -1242,7 +1242,7 @@ ParseSubsystem73(mat_t *mat)
             trailing_shared_cells = 1;
         }
 
-        /* Cell 1: Empty/reserved — skip */
+        /* Cell 1: Empty/reserved - skip */
 
         /* Cells 2..N: property content */
         if ( ncells > 2 + trailing_shared_cells )
@@ -1329,7 +1329,7 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
 
     num_objs = matvar->internal->num_objects;
     if ( num_objs == 0 || matvar->internal->object_ids == NULL ) {
-        /* No object IDs — leave as opaque */
+        /* No object IDs - leave as opaque */
         return MATIO_E_NO_ERROR;
     }
 
@@ -1389,7 +1389,7 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
     nfields = all_fieldnames_count;
     if ( nfields == 0 ) {
         free(all_fieldnames);
-        /* Object with no properties — set it up as an empty struct-like object */
+        /* Object with no properties - set it up as an empty struct-like object */
         matvar->class_type = MAT_C_OBJECT;
         matvar->data_type = MAT_T_STRUCT;
         matvar->data_size = sizeof(matvar_t *);

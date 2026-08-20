@@ -276,6 +276,7 @@ EXTERN int Mat_MulDims(const matvar_t *matvar, size_t *nelems);
 EXTERN int Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread);
 EXTERN int IsEndOfFile(FILE *fp, mat_off_t *fpos);
 EXTERN int CheckSeekFile(FILE *fp, mat_off_t offset);
+EXTERN int CheckEdgeOverflow(int rank, const int *edge, size_t extra);
 
 /* io.c */
 #if defined(_WIN32)

@@ -402,17 +402,8 @@ Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, c
         return NULL;
     }
 
-    {
-        int k;
-        size_t nelems = 1;
-        for ( k = 0; k < matvar->rank; k++ ) {
-            if ( edge[k] < 0 || Mul(&nelems, nelems, (size_t)edge[k]) ) {
-                return NULL;
-            }
-        }
-        if ( Mul(&nelems, nelems, matvar->internal->num_fields) || nelems > (size_t)INT_MAX ) {
-            return NULL;
-        }
+    if ( CheckEdgeOverflow(matvar->rank, edge, matvar->internal->num_fields) ) {
+        return NULL;
     }
 
     struct_slab = Mat_VarDuplicate(matvar, 0);

@@ -608,7 +608,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
 #if defined(MCOS) && MCOS
             if ( H5Iget_type(dset_id) == H5I_DATASET && 0 != strcmp(class_str, "logical") &&
                  0 != strcmp(class_str, "unknown") ) {
-                /* Likely an MCOS object — store class name and mark as opaque */
+                /* Likely an MCOS object - store class name and mark as opaque */
                 matvar->class_type = MAT_C_OPAQUE;
                 matvar->internal->class_name = strdup(class_str);
                 matvar->internal->type_name = strdup("MCOS");
@@ -622,7 +622,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
                 matvar->data_type = MAT_T_UINT8;
             } else if ( H5Iget_type(dset_id) == H5I_GROUP && 0 != strcmp(class_str, "logical") &&
                         0 != strcmp(class_str, "unknown") ) {
-                /* Group with unknown class (e.g. enum instance) — treat as struct */
+                /* Group with unknown class (e.g. enum instance) - treat as struct */
                 matvar->class_type = MAT_C_STRUCT;
             }
 #endif
