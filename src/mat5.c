@@ -4533,27 +4533,6 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 }
 
 #if HAVE_ZLIB
-#define GET_DATA_SLABN_RANK_LOOP                                                \
-    do {                                                                        \
-        for ( j = 1; j < rank; j++ ) {                                          \
-            cnt[j]++;                                                           \
-            if ( (cnt[j] % edge[j]) == 0 ) {                                    \
-                cnt[j] = 0;                                                     \
-                if ( (I % dimp[j]) != 0 ) {                                     \
-                    ptr_in += dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]; \
-                    I += dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j];      \
-                } else if ( start[j] ) {                                        \
-                    ptr_in += dimp[j - 1] * start[j];                           \
-                    I += dimp[j - 1] * start[j];                                \
-                }                                                               \
-            } else {                                                            \
-                I += inc[j];                                                    \
-                ptr_in += inc[j];                                               \
-                break;                                                          \
-            }                                                                   \
-        }                                                                       \
-    } while ( 0 )
-
 #define GET_DATA_SLAB2(T)                              \
     do {                                               \
         ptr_in += start[1] * dims[0] + start[0];       \
@@ -4566,53 +4545,21 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
         }                                              \
     } while ( 0 )
 
-#define GET_DATA_SLABN(T)                                                      \
-    do {                                                                       \
-        inc[0] = stride[0] - 1;                                                \
-        dimp[0] = (int)dims[0];                                                \
-        N = edge[0];                                                           \
-        I = 0; /* start[0]; */                                                 \
-        for ( i = 1; i < rank; i++ ) {                                         \
-            inc[i] = stride[i] - 1;                                            \
-            dimp[i] = (int)dims[i - 1];                                        \
-            for ( j = i; j--; ) {                                              \
-                inc[i] *= (int)dims[j];                                        \
-                dimp[i] *= (int)dims[j + 1];                                   \
-            }                                                                  \
-            N *= edge[i];                                                      \
-            I += dimp[i - 1] * start[i];                                       \
-        }                                                                      \
-        ptr_in += I;                                                           \
-        if ( stride[0] == 1 ) {                                                \
-            for ( i = 0; i < N; i += edge[0] ) {                               \
-                int k;                                                         \
-                if ( start[0] ) {                                              \
-                    ptr_in += start[0];                                        \
-                    I += start[0];                                             \
-                }                                                              \
-                for ( k = 0; k < edge[0]; k++ ) {                              \
-                    *(ptr + i + k) = (T)(*(ptr_in + k));                       \
-                }                                                              \
-                I += (int)dims[0] - start[0];                                  \
-                ptr_in += dims[0] - start[0];                                  \
-                GET_DATA_SLABN_RANK_LOOP;                                      \
-            }                                                                  \
-        } else {                                                               \
-            for ( i = 0; i < N; i += edge[0] ) {                               \
-                if ( start[0] ) {                                              \
-                    ptr_in += start[0];                                        \
-                    I += start[0];                                             \
-                }                                                              \
-                for ( j = 0; j < edge[0]; j++ ) {                              \
-                    *(ptr + i + j) = (T)(*ptr_in);                             \
-                    ptr_in += stride[0];                                       \
-                    I += stride[0];                                            \
-                }                                                              \
-                I += (int)dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0]; \
-                ptr_in += dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0]; \
-                GET_DATA_SLABN_RANK_LOOP;                                      \
-            }                                                                  \
-        }                                                                      \
+#define GET_DATA_SLABN(T)                                                                         \
+    do {                                                                                          \
+        for ( i = 0; i < N; i += (size_t)edge[0] ) {                                              \
+            int k;                                                                                \
+            size_t block = i / (size_t)edge[0];                                                   \
+            size_t input_index = (size_t)start[0];                                                \
+            for ( j = 1; j < rank; j++ ) {                                                        \
+                const size_t coordinate = block % (size_t)edge[j];                                \
+                input_index += ((size_t)start[j] + coordinate * (size_t)stride[j]) * dimp[j - 1]; \
+                block /= (size_t)edge[j];                                                         \
+            }                                                                                     \
+            for ( k = 0; k < edge[0]; k++ )                                                       \
+                *(ptr + i + (size_t)k) =                                                          \
+                    (T)(*(ptr_in + input_index + (size_t)k * (size_t)stride[0]));                 \
+        }                                                                                         \
     } while ( 0 )
 
 #ifdef HAVE_MAT_INT64_T
@@ -4774,7 +4721,7 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
             enum matio_types data_type, const size_t *dims, const int *start, const int *stride,
             const int *edge, int rank, size_t nbytes)
 {
-    int err = MATIO_E_NO_ERROR;
+    int err = MATIO_E_NO_ERROR, i;
     int same_type = 0;
     if ( (class_type == MAT_C_DOUBLE && data_type == MAT_T_DOUBLE) ||
          (class_type == MAT_C_SINGLE && data_type == MAT_T_SINGLE) ||
@@ -4788,13 +4735,17 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
          (class_type == MAT_C_UINT8 && data_type == MAT_T_UINT8) )
         same_type = 1;
 
+    if ( rank < 1 || rank > 10 )
+        return MATIO_E_BAD_ARGUMENT;
+    for ( i = 0; i < rank; i++ ) {
+        if ( start[i] < 0 || stride[i] < 1 || edge[i] < 1 || (size_t)start[i] >= dims[i] ||
+             (size_t)(edge[i] - 1) > (dims[i] - 1 - (size_t)start[i]) / (size_t)stride[i] )
+            return MATIO_E_BAD_ARGUMENT;
+    }
+
     if ( rank == 2 ) {
-        if ( (size_t)stride[0] * (edge[0] - 1) + start[0] + 1 > dims[0] )
-            err = MATIO_E_BAD_ARGUMENT;
-        else if ( (size_t)stride[1] * (edge[1] - 1) + start[1] + 1 > dims[1] )
-            err = MATIO_E_BAD_ARGUMENT;
-        else if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) &&
-                  (stride[1] == 1 && (size_t)edge[1] == dims[1]) && (same_type == 1) )
+        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) &&
+             (stride[1] == 1 && (size_t)edge[1] == dims[1]) && (same_type == 1) )
             memcpy(data_out, data_in, nbytes);
         else {
             int i, j;
@@ -4859,13 +4810,18 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
                     break;
             }
         }
-    } else if ( rank > 10 ) {
-        err = MATIO_E_BAD_ARGUMENT;
     } else {
-        int i, j, N, I = 0;
-        int inc[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        int cnt[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        int dimp[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int j;
+        size_t N = (size_t)edge[0];
+        size_t dimp[10] = {dims[0], 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        for ( j = 1; j < rank; j++ ) {
+            err = Mul(&dimp[j], dimp[j - 1], dims[j]);
+            if ( !err )
+                err = Mul(&N, N, (size_t)edge[j]);
+            if ( err )
+                return err;
+        }
 
         switch ( class_type ) {
             case MAT_C_DOUBLE: {
@@ -4939,7 +4895,6 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
 #undef GET_DATA_SLABN_TYPE
 #undef GET_DATA_SLABN_INT64
 #undef GET_DATA_SLABN_UINT64
-#undef GET_DATA_SLABN_RANK_LOOP
 
 #define GET_DATA_LINEAR                                        \
     do {                                                       \
