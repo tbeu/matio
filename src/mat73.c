@@ -72,6 +72,11 @@ struct ReadGroupInfoIterData
 #define MAX_RANK (3)
 #endif
 
+#if !defined(MAX_CLASS_NAME)
+/* Maximal length of the MATLAB_class attribute value */
+#define MAX_CLASS_NAME (256)
+#endif
+
 /*===========================================================================
  *  Private functions
  *===========================================================================
@@ -573,6 +578,23 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
         return MATIO_E_FAIL_TO_IDENTIFY;
     }
     class_len = H5Tget_size(type_id);
+    /* The MATLAB_class attribute must be a scalar fixed-length string of
+     * bounded size. The scalar/extent guard lives in Mat_H5ReadScalarAttribute;
+     * here we additionally reject variable-length strings and enforce a maximum
+     * length so that class_len + 1 cannot wrap on 32-bit platforms. H5Tget_size
+     * on a variable-length string returns sizeof(char *), which would otherwise
+     * truncate the class name.
+     */
+    if ( H5T_STRING != H5Tget_class(type_id) || 0 < H5Tis_variable_str(type_id) ) {
+        H5Tclose(type_id);
+        H5Aclose(attr_id);
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
+    if ( 0 == class_len || class_len > MAX_CLASS_NAME ) {
+        H5Tclose(type_id);
+        H5Aclose(attr_id);
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
     mem_type_id = H5Tcopy(H5T_C_S1);
     if ( mem_type_id == H5I_INVALID_HID ) {
         H5Tclose(type_id);
@@ -588,13 +610,13 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
     }
     class_str = (char *)calloc(class_len + 1, 1);
     if ( NULL != class_str ) {
-        herr_t herr = H5Aread(attr_id, mem_type_id, class_str);
-        if ( herr < 0 ) {
+        err = Mat_H5ReadScalarAttribute(attr_id, mem_type_id, class_str);
+        if ( err ) {
             free(class_str);
             H5Tclose(mem_type_id);
             H5Tclose(type_id);
             H5Aclose(attr_id);
-            return MATIO_E_GENERIC_READ_ERROR;
+            return err;
         }
         class_str[class_len] = '\0';
         matvar->class_type = ClassStr2ClassType(class_str);
@@ -1116,15 +1138,13 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
 
     /* Check if the variable is sparse */
     if ( H5Aexists_by_name(dset_id, ".", "MATLAB_sparse", H5P_DEFAULT) ) {
-        herr_t herr;
         hid_t sparse_dset_id;
         unsigned nrows = 0;
 
         attr_id = H5Aopen_by_name(dset_id, ".", "MATLAB_sparse", H5P_DEFAULT, H5P_DEFAULT);
-        herr = H5Aread(attr_id, H5T_NATIVE_UINT, &nrows);
+        err = Mat_H5ReadScalarAttribute(attr_id, H5T_NATIVE_UINT, &nrows);
         H5Aclose(attr_id);
-        if ( herr < 0 ) {
-            err = MATIO_E_GENERIC_READ_ERROR;
+        if ( err ) {
             goto done_group;
         }
 
