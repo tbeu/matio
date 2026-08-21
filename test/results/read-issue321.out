@@ -1,0 +1,23 @@
+      Name: s
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: a
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 2 3 4 
+}
+      Name: b
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 3 4 5 
+}
+}

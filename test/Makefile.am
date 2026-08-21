@@ -111,6 +111,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/test_type_systems_v73.mat \
                  $(datasets_dir)/test_user_defined_v7.mat \
                  $(datasets_dir)/test_user_defined_v73.mat \
+                 $(datasets_dir)/issue321_v73_nofields.mat \
                  $(matlab_dir)/test_write_1d_logical.m \
                  $(matlab_dir)/test_write_2d_logical.m \
                  $(matlab_dir)/test_write_1d_numeric.m \
@@ -145,6 +146,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/dir_le.out \
                  $(results_dir)/dir-5_be.out \
                  $(results_dir)/dir-73_be.out \
+                 $(results_dir)/dump-issue321.out \
                  $(results_dir)/dump-large_struct_compressed.out \
                  $(results_dir)/dump-large_struct_compressed_32.out \
                  $(results_dir)/dump-mat_copy-4.out \
@@ -222,6 +224,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/dump-var89-4.out \
                  $(results_dir)/getstructfield-large_struct_compressed.out \
                  $(results_dir)/ind2sub.out \
+                 $(results_dir)/read-issue321.out \
                  $(results_dir)/read-packed_field_name.out \
                  $(results_dir)/read-nullpad_class_name.out \
                  $(results_dir)/readslab-var1.out \

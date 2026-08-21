@@ -1218,7 +1218,8 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
             /* First iteration to retrieve number of relevant links */
             herr = H5Literate(dset_id, H5_INDEX_NAME, H5_ITER_NATIVE, NULL,
                               Mat_H5ReadGroupInfoIterate, (void *)&group_data);
-            if ( herr > 0 && group_data.nfields > 0 ) {
+            /* H5Literate returns 0 on full success; >0 only if callback short-circuits */
+            if ( herr >= 0 && group_data.nfields > 0 ) {
                 matvar->internal->fieldnames = (char **)calloc(
                     (size_t)(group_data.nfields), sizeof(*matvar->internal->fieldnames));
                 group_data.nfields = 0;
@@ -1484,7 +1485,8 @@ Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *in
             break;
     }
 
-    return 1;
+    /* Return 0 so H5Literate continues over all structure fields */
+    return 0;
 }
 
 static int
