@@ -8,7 +8,7 @@ dnl All rights reserved.
 dnl
 dnl SPDX-License-Identifier: BSD-2-Clause
 
-AC_INIT([MATIO],[1.5.30],[t-beu@users.sourceforge.net],[],[https://sourceforge.net/projects/matio])
+AC_INIT([MATIO],[1.6.0],[t-beu@users.sourceforge.net],[],[https://sourceforge.net/projects/matio])
 AC_CONFIG_SRCDIR([src/matio.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([config])
@@ -19,11 +19,11 @@ AC_PREREQ([2.60])
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([MATIO_PLATFORM],"${host}",[Platform])
 AC_DEFINE_UNQUOTED([MATIO_MAJOR_VERSION],1,[Matio major version number])
-AC_DEFINE_UNQUOTED([MATIO_MINOR_VERSION],5,[Matio minor version number])
-AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],30,[Matio release level number])
-AC_DEFINE_UNQUOTED([MATIO_VERSION],1530,[Matio version number])
-PACKAGE_RELEASE_DATE="6 January 2026"
-AC_DEFINE_UNQUOTED([MATIO_VERSION_STR],"1.5.30",[Matio version number])
+AC_DEFINE_UNQUOTED([MATIO_MINOR_VERSION],6,[Matio minor version number])
+AC_DEFINE_UNQUOTED([MATIO_RELEASE_LEVEL],0,[Matio release level number])
+AC_DEFINE_UNQUOTED([MATIO_VERSION],1600,[Matio version number])
+PACKAGE_RELEASE_DATE="22 August 2026"
+AC_DEFINE_UNQUOTED([MATIO_VERSION_STR],"1.6.0",[Matio version number])
 AC_SUBST(PACKAGE_RELEASE_DATE)
 
 AC_ARG_VAR([LT_CFLAGS],[C compiler flags passed to libtool in compile mode])

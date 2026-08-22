@@ -1,3 +1,26 @@
+Changes in 1.6.0 (22 August 2026)
+* Added support for reading MCOS (MATLAB Class Object System)
+* Added support for struct array without MATLAB_fields attribute in HDF5 MAT file
+* Added REUSE configuration
+* Adopted SPDX-License-Identifier
+* Fixed write performance of HDF5 MAT file
+* Fixed stack-overflow when reading (crafted) HDF5 MAT file with cyclic references
+* Improved validation and allocation checks in variable read paths
+* Fixed endianness detection for MSVC on ARM/ARM64
+* Confirmed compatibility with HDF5 v2.2.0
+* autoconf: Fixed build issues of Fortran interface
+* CMake: Added MATLAB verification of written MAT files (local or via SSH)
+* CMake: Added install package
+* CMake: Added support for zlib-ng in compat mode
+* CMake: Updated cmake-conan to version 0.19.0
+* CMake: Fixed getopt target conflict when consumer already defines it
+* CMake: Fixed zlib target of HDF5 v2.2.0
+* CMake: Fixed Cygwin/MinGW compilation to define _GNU_SOURC 
+* Updated documentation
+* Several additional issues when reading (crafted) MAT files, including
+  buffer overflows, null-pointer dereferences, integer overflows, illegal
+  memory access, floating point exception, and memory leaks
+
 Changes in 1.5.30 (6 January 2026)
 * Fixed const-correctness of input arguments of Mat_VarCreateStruct
 * Deprecated usage of Mat_VarCreateStruct in favor of Mat_VarCreateStruct2
