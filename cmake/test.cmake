@@ -59,9 +59,6 @@ if(MATIO_BUILD_TESTING)
         add_test(NAME create_temp_dir
             COMMAND ${CMAKE_COMMAND} -E make_directory ${MATIO_TESTING_DIR})
         set_tests_properties(create_temp_dir PROPERTIES FIXTURES_SETUP TEMPDIR)
-        if(MATIO_MATLAB)
-            set_tests_properties(create_temp_dir PROPERTIES FIXTURES_REQUIRED MATLAB_VER)
-        endif()
 
         file(GLOB CMAKE_TEST_FILES "${MATIO_CTESTS_DIR}/*.cmake")
         foreach(test_file ${CMAKE_TEST_FILES})

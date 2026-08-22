@@ -222,7 +222,7 @@ def convert_autotest_to_ctest(autotest_file, cmake_output_file):
                 cmakef.write(f'        add_test(NAME {test_name}_{counter}\n')
                 cmakef.write(f'            COMMAND {command}\n')
                 cmakef.write('            WORKING_DIRECTORY ${MATIO_TESTING_DIR})\n')
-                cmakef.write(f'        set_tests_properties({test_name}_{counter} PROPERTIES FIXTURES_REQUIRED TEMPDIR)\n')
+                cmakef.write(f'        set_tests_properties({test_name}_{counter} PROPERTIES FIXTURES_REQUIRED "TEMPDIR;MATLAB_VER")\n')
 
                 matlab_keywords = sorted(list(set(test_keywords + ['matlab'])))
                 keyword_str = ';'.join(matlab_keywords)
@@ -280,7 +280,21 @@ if __name__ == '__main__':
     force = hash != hash_dict.get('generator', '')
     hash_dict['generator'] = hash
     hash_dict.pop('sha256', None)
-    generate_ctest_files(glob.glob(os.path.join('tests', '*.at')), output_dir, force, hash_dict)
+    file_list = glob.glob(os.path.join('tests', '*.at'))
+    generate_ctest_files(file_list, output_dir, force, hash_dict)
+
+    # Remove outdated/orphaned test files (e.g. after an .at source was
+    # renamed or deleted) so stale tests are no longer picked up by CTest.
+    generated_bases = {os.path.splitext(os.path.basename(f))[0] for f in file_list}
+    for stale in glob.glob(os.path.join(output_dir, '*.cmake')):
+        base = os.path.splitext(os.path.basename(stale))[0]
+        if base not in generated_bases:
+            try:
+                os.remove(stale)
+                hash_dict.pop(base, None)
+            except OSError as exc:
+                sys.stderr.write(
+                    'Warning: could not remove outdated test file {}: {}\n'.format(stale, exc))
 
     with open(hash_json_file, 'w') as json_file:
         json.dump(hash_dict, json_file)
