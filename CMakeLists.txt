@@ -21,7 +21,7 @@ set(matio_PACKAGE_BUGREPORT "t-beu@users.sourceforge.net")
 set(matio_PACKAGE_STRING "${PROJECT_NAME_UPPER} ${matio_VERSION}")
 set(matio_PACKAGE_TARNAME "${PROJECT_NAME}")
 set(matio_PACKAGE_URL "https://sourceforge.net/projects/matio")
-set(matio_LIB_VERSIONINFO "14:0:0")
+set(matio_LIB_VERSIONINFO "15:0:1")
 
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.21")
     if(PROJECT_IS_TOP_LEVEL)
