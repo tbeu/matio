@@ -843,7 +843,7 @@ ParseSubsystem5(mat_t *mat)
             Mat_uint32Swap(&lo);
             Mat_uint32Swap(&hi);
         }
-        subsys_pos = (mat_off_t)lo | ((mat_off_t)hi << 32);
+        subsys_pos = (mat_off_t)((mat_uint64_t)lo | ((mat_uint64_t)hi << 32));
     }
 
     if ( subsys_pos <= 0 )
