@@ -2126,7 +2126,12 @@ Mat_VarWriteChar73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims)
         if ( !err && matvar->data_type == MAT_T_UTF8 ) {
             /* Convert to UTF-16 */
             h5type = H5T_NATIVE_UINT16;
-            u16 = (mat_uint16_t *)calloc(nelems, sizeof(mat_uint16_t));
+            /* The loop below emits one code unit per decoded UTF-8 code point
+             * and walks matvar->nbytes input bytes, so the number of writes is
+             * bounded by nbytes, which can exceed nelems when the variable was
+             * read from a file whose declared dimensions undercount its bytes.
+             */
+            u16 = (mat_uint16_t *)calloc(matvar->nbytes, sizeof(mat_uint16_t));
             if ( u16 != NULL ) {
                 const mat_uint8_t *data = (const mat_uint8_t *)matvar->data;
                 size_t i, j = 0;
