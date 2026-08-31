@@ -1284,12 +1284,13 @@ ParseSubsystem73(mat_t *mat)
 cleanup_ss:
     Mat_MCOS_Free(ss);
     ss = NULL;
-cleanup: {
-    hsize_t ci;
-    for ( ci = 0; ci < ncells; ci++ )
-        Mat_VarFree(cells[ci]);
-    free(cells);
-}
+cleanup:
+    {
+        hsize_t ci;
+        for ( ci = 0; ci < ncells; ci++ )
+            Mat_VarFree(cells[ci]);
+        free(cells);
+    }
     return NULL;
 }
 
