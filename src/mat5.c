@@ -5637,24 +5637,38 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
                            (FILE *)mat->fp);
                 } while ( z->avail_out == 0 );
             } else {
-                mat_uint32_t array_name_len = (mat_uint32_t)strlen(name);
+                const mat_uint32_t array_name_len = (mat_uint32_t)strlen(name);
                 const mat_uint32_t array_name_type = MAT_T_INT8;
+                const mat_uint8_t zeros[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+                const Bytef *chunks[3];
+                uInt chunk_len[3];
+                int n_chunks = 2, c;
 
-                memset(uncomp_buf, 0, buf_size * sizeof(*uncomp_buf));
+                /* Stream the name straight into the deflate stream instead of
+                 * copying it into the fixed uncomp_buf, so a name longer than
+                 * that buffer cannot overflow it. */
                 uncomp_buf[0] = array_name_type;
                 uncomp_buf[1] = array_name_len;
-                memcpy(uncomp_buf + 2, name, array_name_len);
-                if ( array_name_len % 8 )
-                    array_name_len += 8 - (array_name_len % 8);
-                z->next_in = ZLIB_BYTE_PTR(uncomp_buf);
-                z->avail_in = 8 + array_name_len;
-                do {
-                    z->next_out = ZLIB_BYTE_PTR(comp_buf);
-                    z->avail_out = buf_size * sizeof(*comp_buf);
-                    deflate(z, Z_NO_FLUSH);
-                    fwrite(comp_buf, 1, buf_size * sizeof(*comp_buf) - z->avail_out,
-                           (FILE *)mat->fp);
-                } while ( z->avail_out == 0 );
+                chunks[0] = ZLIB_BYTE_PTR(uncomp_buf);
+                chunk_len[0] = 8;
+                chunks[1] = ZLIB_BYTE_PTR(name);
+                chunk_len[1] = array_name_len;
+                if ( array_name_len % 8 ) {
+                    chunks[2] = ZLIB_BYTE_PTR(zeros);
+                    chunk_len[2] = 8 - (array_name_len % 8);
+                    n_chunks = 3;
+                }
+                for ( c = 0; c < n_chunks; c++ ) {
+                    z->next_in = (Bytef *)chunks[c];
+                    z->avail_in = chunk_len[c];
+                    do {
+                        z->next_out = ZLIB_BYTE_PTR(comp_buf);
+                        z->avail_out = buf_size * sizeof(*comp_buf);
+                        deflate(z, Z_NO_FLUSH);
+                        fwrite(comp_buf, 1, buf_size * sizeof(*comp_buf) - z->avail_out,
+                               (FILE *)mat->fp);
+                    } while ( z->avail_out == 0 );
+                }
             }
         }
         if ( NULL != matvar->internal ) {
