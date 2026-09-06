@@ -2030,7 +2030,13 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 len = buf[1];
             nfields = len / fieldname_size;
             if ( nfields ) {
-                char *ptr = (char *)malloc(nfields * fieldname_size);
+                char *ptr;
+                /* The field names are read from the file right away */
+                if ( nfields * fieldname_size > MAX_READ_SIZE_WITHOUT_EOF_CHECK &&
+                     CheckSeekFile((FILE *)mat->fp, (mat_off_t)(nfields * fieldname_size)) ) {
+                    return bytesread;
+                }
+                ptr = (char *)malloc(nfields * fieldname_size);
                 if ( NULL != ptr ) {
                     err = Read(ptr, 1, nfields * fieldname_size, (FILE *)mat->fp, &bytesread);
                     if ( 0 == err ) {
@@ -2340,6 +2346,11 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
     int err = MATIO_E_NO_ERROR;
     /* Rank and dimension */
     if ( data_type == MAT_T_INT32 ) {
+        /* The dimension array is read from the file right away */
+        if ( nbytes > MAX_READ_SIZE_WITHOUT_EOF_CHECK &&
+             CheckSeekFile((FILE *)mat->fp, (mat_off_t)nbytes) ) {
+            return MATIO_E_FILE_FORMAT_VIOLATION;
+        }
         matvar->rank = nbytes / sizeof(mat_uint32_t);
         matvar->dims = (size_t *)malloc(matvar->rank * sizeof(*matvar->dims));
         if ( NULL != matvar->dims ) {
@@ -4476,6 +4487,14 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
         case MAT_C_UINT16:
         case MAT_C_INT8:
         case MAT_C_UINT8:
+            /* Every element occupies at least one byte in the uncompressed file */
+            if ( matvar->compression == MAT_COMPRESSION_NONE ) {
+                err = CheckSeekFile((FILE *)mat->fp, (mat_off_t)nelems);
+                if ( err ) {
+                    err = MATIO_E_FILE_FORMAT_VIOLATION;
+                    break;
+                }
+            }
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data;
 

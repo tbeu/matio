@@ -629,8 +629,12 @@ CheckSeekFile(FILE *fp, mat_off_t offset)
         return MATIO_E_GENERIC_READ_ERROR;
     }
 
-    (void)fseeko(fp, offset - 1, SEEK_CUR);
-    err = 1 != fread(&c, 1, 1, fp);
+    /* A failing fseeko leaves the position unchanged, so the read below would
+       succeed and wrongly report that the file is large enough. */
+    err = 0 != fseeko(fp, offset - 1, SEEK_CUR);
+    if ( !err ) {
+        err = 1 != fread(&c, 1, 1, fp);
+    }
     (void)fseeko(fp, fPos, SEEK_SET);
     if ( err ) {
         Mat_Critical("Couldn't set file position");
