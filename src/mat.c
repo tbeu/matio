@@ -2284,8 +2284,12 @@ Mat_CalcSubscripts(int rank, const int *dims, int index)
         int k = 1;
         for ( j = i; j--; )
             k *= dims[j];
-        subs[i] = (int)floor(l / (double)k);
-        l -= subs[i] * k;
+        if ( k != 0 ) {
+            subs[i] = (int)floor(l / (double)k);
+            l -= subs[i] * k;
+        } else {
+            subs[i] = 0;
+        }
         subs[i]++;
     }
 
@@ -2328,8 +2332,12 @@ Mat_CalcSubscripts2(int rank, const size_t *dims, size_t index)
         size_t k = 1;
         for ( j = i; j--; )
             k *= dims[j];
-        subs[i] = (size_t)floor(l / (double)k);
-        l -= (double)(subs[i] * k);
+        if ( k != 0 ) {
+            subs[i] = (size_t)floor(l / (double)k);
+            l -= (double)(subs[i] * k);
+        } else {
+            subs[i] = 0;
+        }
         subs[i]++;
     }
 
