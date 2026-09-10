@@ -3569,9 +3569,15 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                         H5Sclose(space_id);
                     }
                     if ( nelems > 0 ) {
-                        /* Read the raw data as uint32 values */
-                        mat_uint32_t *meta =
-                            (mat_uint32_t *)malloc((size_t)nelems * sizeof(mat_uint32_t));
+                        /* Size the buffer with a checked multiply so it matches
+                         * the element count passed to H5Screate_simple below. */
+                        size_t meta_size = 0;
+                        mat_uint32_t *meta = NULL;
+                        if ( (hsize_t)(size_t)nelems == nelems &&
+                             MATIO_E_NO_ERROR ==
+                                 Mul(&meta_size, (size_t)nelems, sizeof(mat_uint32_t)) ) {
+                            meta = (mat_uint32_t *)malloc(meta_size);
+                        }
                         if ( meta != NULL ) {
                             hid_t mem_space_id = H5Screate_simple(1, &nelems, NULL);
                             herr_t herr = H5Dread(opaque_id, H5T_NATIVE_UINT32, mem_space_id,
