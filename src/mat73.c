@@ -3574,7 +3574,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                         size_t meta_size = 0;
                         mat_uint32_t *meta = NULL;
                         if ( (hsize_t)(size_t)nelems == nelems &&
-                             0 == Mul(&meta_size, (size_t)nelems, sizeof(mat_uint32_t)) ) {
+                             MATIO_E_NO_ERROR == Mul(&meta_size, (size_t)nelems, sizeof(mat_uint32_t)) ) {
                             meta = (mat_uint32_t *)malloc(meta_size);
                         }
                         if ( meta != NULL ) {
