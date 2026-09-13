@@ -5832,6 +5832,9 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                  * Read dims, skip name, then use ReadNextStructField.
                  */
                 mat_uint32_t rank_inner = ndims_bytes / sizeof(mat_uint32_t);
+                if ( rank_inner > 32 ) {
+                    return MATIO_E_FILE_FORMAT_VIOLATION;
+                }
                 if ( ndims_pad > 0 ) {
                     mat_uint32_t *dims_buf = (mat_uint32_t *)malloc(ndims_pad);
                     if ( dims_buf == NULL )
@@ -5843,7 +5846,12 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                     }
                     matvar->rank = (int)rank_inner;
                     matvar->dims = (size_t *)calloc(rank_inner, sizeof(size_t));
-                    if ( matvar->dims != NULL ) {
+                    if ( matvar->dims == NULL ) {
+                        matvar->rank = 0;
+                        free(dims_buf);
+                        return MATIO_E_OUT_OF_MEMORY;
+                    }
+                    {
                         mat_uint32_t j_d;
                         for ( j_d = 0; j_d < rank_inner; j_d++ ) {
                             if ( mat->byteswap )
@@ -6118,6 +6126,9 @@ ReadCompressedOpaqueInfo5(mat_t *mat, matvar_t *matvar, size_t *bytesread)
                  */
                 mat_uint32_t rank_inner = ndims_bytes / sizeof(mat_uint32_t);
                 mat_uint32_t *dims_buf = NULL;
+                if ( rank_inner > 32 ) {
+                    return MATIO_E_FILE_FORMAT_VIOLATION;
+                }
                 if ( ndims_pad > 0 ) {
                     dims_buf = (mat_uint32_t *)malloc(ndims_pad);
                     if ( dims_buf == NULL )
@@ -6130,6 +6141,11 @@ ReadCompressedOpaqueInfo5(mat_t *mat, matvar_t *matvar, size_t *bytesread)
                 }
                 matvar->rank = (int)rank_inner;
                 matvar->dims = (size_t *)calloc(rank_inner, sizeof(size_t));
+                if ( rank_inner > 0 && matvar->dims == NULL ) {
+                    matvar->rank = 0;
+                    free(dims_buf);
+                    return MATIO_E_OUT_OF_MEMORY;
+                }
                 if ( matvar->dims != NULL && dims_buf != NULL ) {
                     mat_uint32_t j_d;
                     for ( j_d = 0; j_d < rank_inner; j_d++ ) {

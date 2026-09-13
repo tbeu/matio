@@ -472,9 +472,17 @@ Mat_MulDims(const matvar_t *matvar, size_t *nelems)
 {
     int i;
 
+    if ( matvar == NULL || nelems == NULL )
+        return MATIO_E_BAD_ARGUMENT;
+
     if ( matvar->rank == 0 ) {
         *nelems = 0;
         return MATIO_E_NO_ERROR;
+    }
+
+    if ( matvar->dims == NULL ) {
+        *nelems = 0;
+        return MATIO_E_BAD_ARGUMENT;
     }
 
     for ( i = 0; i < matvar->rank; i++ ) {
