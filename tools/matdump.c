@@ -1012,6 +1012,9 @@ get_next_token(char *str)
     const char *tokens = "(){}.";
     char *next_tok, *tok;
 
+    if ( str == NULL )
+        return NULL;
+
     next_tok = NULL;
     while ( *tokens != '\0' ) {
         tok = strchr(str, *tokens);
@@ -1232,6 +1235,9 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
     matvar_t *matvar = *_matvar;
 
     next_tok_pos = get_next_token(index_str);
+    if ( NULL == next_tok_pos ) {
+        return;
+    }
     next_tok = *next_tok_pos;
 
     while ( !done ) {
@@ -1241,9 +1247,16 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
 
             open = next_tok_pos;
             close = strchr(open + 1, ')');
+            if ( NULL == close ) {
+                fprintf(stderr, "Missing closing ')' in index expression");
+                break;
+            }
 
             /* Get the next token after this selection */
             next_tok_pos = get_next_token(close + 1);
+            if ( NULL == next_tok_pos ) {
+                break;
+            }
             if ( next_tok_pos != (close + 1) ) {
                 *next_tok_pos = '\0';
                 next_tok = *next_tok_pos;
@@ -1375,9 +1388,16 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
             }
             open = next_tok_pos;
             close = strchr(open + 1, '}');
+            if ( NULL == close ) {
+                fprintf(stderr, "Missing closing '}' in index expression");
+                break;
+            }
 
             /* Get the next token after this selection */
             next_tok_pos = get_next_token(close + 1);
+            if ( NULL == next_tok_pos ) {
+                break;
+            }
             if ( *next_tok_pos != '\0' ) {
                 next_tok = *next_tok_pos;
                 *next_tok_pos = '\0';
