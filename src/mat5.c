@@ -40,7 +40,11 @@
 #define MAX_READ_SIZE_WITHOUT_EOF_CHECK (3)
 #endif
 
+/** Maximum nesting depth for cell/struct info parsing */
+#define MAX_NEST_DEPTH 32
+
 static mat_complex_split_t null_complex_data = {NULL, NULL};
+static int nest_depth = 0;
 
 /*===========================================================================
  *  Private functions
@@ -59,6 +63,8 @@ static int GetEmptyMatrixMaxBufSize(const char *name, int rank, size_t *size);
 static size_t WriteCharData(mat_t *mat, void *data, size_t N, enum matio_types data_type);
 static size_t ReadNextCell(mat_t *mat, matvar_t *matvar);
 static size_t ReadNextStructField(mat_t *mat, matvar_t *matvar);
+static size_t ReadNextCellImpl(mat_t *mat, matvar_t *matvar);
+static size_t ReadNextStructFieldImpl(mat_t *mat, matvar_t *matvar);
 static size_t ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar);
 static int ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type,
                         mat_uint32_t nbytes, size_t *read_bytes);
@@ -80,6 +86,34 @@ static size_t WriteCompressedStructField(mat_t *mat, matvar_t *matvar, z_streamp
 static size_t Mat_WriteCompressedEmptyVariable5(mat_t *mat, const char *name, int rank,
                                                 const size_t *dims, z_streamp z);
 #endif
+
+static size_t
+ReadNextCell(mat_t *mat, matvar_t *matvar)
+{
+    size_t n;
+    if ( nest_depth >= MAX_NEST_DEPTH ) {
+        Mat_Critical("Exceeded maximum nesting depth");
+        return 0;
+    }
+    nest_depth++;
+    n = ReadNextCellImpl(mat, matvar);
+    nest_depth--;
+    return n;
+}
+
+static size_t
+ReadNextStructField(mat_t *mat, matvar_t *matvar)
+{
+    size_t n;
+    if ( nest_depth >= MAX_NEST_DEPTH ) {
+        Mat_Critical("Exceeded maximum nesting depth");
+        return 0;
+    }
+    nest_depth++;
+    n = ReadNextStructFieldImpl(mat, matvar);
+    nest_depth--;
+    return n;
+}
 
 /** @brief Reads a tagged INT8 string subelement from the file
  *
@@ -1087,7 +1121,7 @@ WriteCompressedData(mat_t *mat, z_streamp z, void *data, int N, enum matio_types
  * @return Number of bytes read
  */
 static size_t
-ReadNextCell(mat_t *mat, matvar_t *matvar)
+ReadNextCellImpl(mat_t *mat, matvar_t *matvar)
 {
     size_t bytesread = 0;
     int err;
@@ -1520,7 +1554,7 @@ AllocateStructFields(matvar_t *matvar, size_t nelems, size_t nfields, size_t *ne
  * @return Number of bytes read
  */
 static size_t
-ReadNextStructField(mat_t *mat, matvar_t *matvar)
+ReadNextStructFieldImpl(mat_t *mat, matvar_t *matvar)
 {
     int err;
     size_t bytesread = 0;
