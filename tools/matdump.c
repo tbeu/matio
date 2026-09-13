@@ -1422,9 +1422,17 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
                     for ( j = 0; j < nmemb; j++ )
                         cells[j] = Mat_VarDuplicate(cells[j], 1);
                     tmp = Mat_VarCreate(matvar->name, MAT_C_CELL, MAT_T_CELL, matvar->rank,
-                                        matvar->dims, cells, MAT_F_DONT_COPY_DATA);
-                    Mat_VarFree(matvar);
-                    matvar = tmp;
+                                        matvar->dims, cells, 0);
+                    if ( NULL == tmp ) {
+                        for ( j = 0; j < nmemb; j++ )
+                            Mat_VarFree(cells[j]);
+                        free(cells);
+                        err = 1;
+                    } else {
+                        free(cells);
+                        Mat_VarFree(matvar);
+                        matvar = tmp;
+                    }
                 }
             } else {
                 fprintf(stderr, "Cell selection not valid");
