@@ -1384,6 +1384,10 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                             for ( l = 0; l < nelems; l++ ) {
                                 hid_t ref_id;
                                 fields[l * nfields + k] = Mat_VarCalloc();
+                                if ( NULL == fields[l * nfields + k] ) {
+                                    err = MATIO_E_OUT_OF_MEMORY;
+                                    break;
+                                }
                                 fields[l * nfields + k]->name =
                                     strdup(matvar->internal->fieldnames[k]);
                                 if ( NULL == fields[l * nfields + k]->name ) {
@@ -1412,6 +1416,10 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                     H5Dclose(field_id);
                 } else {
                     fields[k] = Mat_VarCalloc();
+                    if ( NULL == fields[k] ) {
+                        err = MATIO_E_OUT_OF_MEMORY;
+                        break;
+                    }
                     fields[k]->name = strdup(matvar->internal->fieldnames[k]);
                     if ( NULL == fields[k]->name ) {
                         err = MATIO_E_OUT_OF_MEMORY;
@@ -1423,6 +1431,10 @@ Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id)
                 field_id = H5Gopen(dset_id, matvar->internal->fieldnames[k], H5P_DEFAULT);
                 if ( -1 < field_id ) {
                     fields[k] = Mat_VarCalloc();
+                    if ( NULL == fields[k] ) {
+                        err = MATIO_E_OUT_OF_MEMORY;
+                        break;
+                    }
                     fields[k]->name = strdup(matvar->internal->fieldnames[k]);
                     if ( NULL == fields[k]->name ) {
                         err = MATIO_E_OUT_OF_MEMORY;
