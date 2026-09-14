@@ -1332,7 +1332,45 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                 } else {
                     Mat_Critical("Couldn't allocate memory");
                 }
+            } else {
+                size_t opaque_bytes = 0;
+                cells[i]->internal->z = (z_streamp)calloc(1, sizeof(z_stream));
+                if ( NULL != cells[i]->internal->z ) {
+                    err = inflateCopy(cells[i]->internal->z, matvar->internal->z);
+                    if ( err == Z_OK ) {
+                        cells[i]->internal->datapos = ftello((FILE *)mat->fp);
+                        if ( cells[i]->internal->datapos != -1L ) {
+                            cells[i]->internal->datapos -= matvar->internal->z->avail_in;
+                            err = ReadCompressedOpaqueInfo5(mat, cells[i], &opaque_bytes);
+                            if ( err == Z_OK ) {
+                                inflateEnd(cells[i]->internal->z);
+                                free(cells[i]->internal->z);
+                                cells[i]->internal->z = NULL;
+                                bytesread += opaque_bytes;
+                                (void)fseeko((FILE *)mat->fp, cells[i]->internal->datapos,
+                                             SEEK_SET);
+                            } else {
+                                inflateEnd(cells[i]->internal->z);
+                                free(cells[i]->internal->z);
+                                cells[i]->internal->z = NULL;
+                                Mat_Critical("Couldn't read compressed opaque info");
+                            }
+                        } else {
+                            inflateEnd(cells[i]->internal->z);
+                            free(cells[i]->internal->z);
+                            cells[i]->internal->z = NULL;
+                            Mat_Critical("Couldn't determine file position");
+                        }
+                    } else {
+                        free(cells[i]->internal->z);
+                        cells[i]->internal->z = NULL;
+                        Mat_Critical("inflateCopy returned error %s", zError(err));
+                    }
+                } else {
+                    Mat_Critical("Couldn't allocate memory");
+                }
             }
+
             InflateSkip(mat, matvar->internal->z, nBytes, &bytesread);
         }
 #else
@@ -1415,6 +1453,25 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                     cells[i]->nbytes = buf[3];
                 }
             }
+
+            if ( cells[i]->class_type == MAT_C_OPAQUE && NULL != mat->filename ) {
+                /* Do NOT go here while processing GetSubsystem5 (mat->filename==NULL) */
+                mat_uint32_t name_tag[2];
+                mat_off_t opaque_data_start = ftello((FILE *)mat->fp);
+                name_tag[0] = buf[4];
+                name_tag[1] = buf[5];
+                err = ReadOpaqueInfo5(mat, cells[i], name_tag);
+                if ( err ) {
+                    Mat_VarFree(cells[i]);
+                    cells[i] = NULL;
+                    break;
+                }
+                /* Seek to the end of the cell data */
+                if ( -1L != opaque_data_start )
+                    (void)fseeko((FILE *)mat->fp, opaque_data_start + nBytes, SEEK_SET);
+                continue;
+            }
+
             /* Rank and dimension */
             nbytes = 0;
             err = ReadRankDims(mat, cells[i], (enum matio_types)buf[4], buf[5], &nbytes);
@@ -1793,201 +1850,55 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Couldn't allocate memory");
                 }
             } else {
-                /* MAT_C_OPAQUE: Read the opaque subelements (name, type_name,
-                 * class_name) from the parent's z stream, then save the inflate
-                 * state so the remaining data payload can be read later.
-                 */
                 size_t opaque_bytes = 0;
-                uLong total_out_before = matvar->internal->z->total_out;
-
-                free(fields[i]->name);
+                /* Save the field name since ReadCompressedOpaqueInfo5 overwrites
+                 * fields[i]->name with the array name of the opaque subelement.
+                 */
+                char *name = fields[i]->name;
                 fields[i]->name = NULL;
-
-                /* See also READ_COMPRESSED_STRING in ReadCompressedOpaqueInfo5 */
-#define INFLATE_TAGGED_STRING(z_strm, bytesread_ptr, out_str)                          \
-    do {                                                                               \
-        mat_uint32_t _tag[2];                                                          \
-        char *_s = NULL;                                                               \
-        err = Inflate(mat, z_strm, _tag, 8, bytesread_ptr);                            \
-        if ( err )                                                                     \
-            break;                                                                     \
-        if ( mat->byteswap )                                                           \
-            (void)Mat_uint32Swap(_tag);                                                \
-        if ( _tag[0] == MAT_T_INT8 ) {                                                 \
-            mat_uint32_t _len, _pad;                                                   \
-            if ( mat->byteswap )                                                       \
-                _len = Mat_uint32Swap(_tag + 1);                                       \
-            else                                                                       \
-                _len = _tag[1];                                                        \
-            if ( _len % 8 == 0 )                                                       \
-                _pad = _len;                                                           \
-            else if ( _len < UINT32_MAX - 8 + (_len % 8) )                             \
-                _pad = _len + 8 - (_len % 8);                                          \
-            else {                                                                     \
-                err = MATIO_E_FILE_FORMAT_VIOLATION;                                   \
-                break;                                                                 \
-            }                                                                          \
-            _s = (char *)malloc(_pad + 1);                                             \
-            if ( _s == NULL ) {                                                        \
-                err = MATIO_E_OUT_OF_MEMORY;                                           \
-                break;                                                                 \
-            }                                                                          \
-            if ( _pad > 0 ) {                                                          \
-                err = Inflate(mat, z_strm, _s, _pad, bytesread_ptr);                   \
-                if ( err ) {                                                           \
-                    free(_s);                                                          \
-                    break;                                                             \
-                }                                                                      \
-            }                                                                          \
-            _s[_len] = '\0';                                                           \
-        } else {                                                                       \
-            mat_uint32_t _slen = (_tag[0] & 0xffff0000) >> 16;                         \
-            if ( ((_tag[0] & 0x0000ffff) == MAT_T_INT8) && _slen > 0 && _slen <= 4 ) { \
-                _s = (char *)malloc(_slen + 1);                                        \
-                if ( _s != NULL ) {                                                    \
-                    memcpy(_s, _tag + 1, _slen);                                       \
-                    _s[_slen] = '\0';                                                  \
-                }                                                                      \
-            }                                                                          \
-        }                                                                              \
-        (out_str) = _s;                                                                \
-    } while ( 0 )
-
-                INFLATE_TAGGED_STRING(matvar->internal->z, &opaque_bytes, fields[i]->name);
-                if ( !err ) {
-                    char *tn_tmp = NULL;
-                    INFLATE_TAGGED_STRING(matvar->internal->z, &opaque_bytes, tn_tmp);
-#if defined(MCOS) && MCOS
-                    fields[i]->internal->type_name = tn_tmp;
-#else
-                    free(tn_tmp);
-#endif
-                }
-                if ( !err ) {
-                    char *cn_tmp = NULL;
-                    INFLATE_TAGGED_STRING(matvar->internal->z, &opaque_bytes, cn_tmp);
-#if defined(MCOS) && MCOS
-                    fields[i]->internal->class_name = cn_tmp;
-#else
-                    free(cn_tmp);
-#endif
-                }
-
-#undef INFLATE_TAGGED_STRING
-
-                bytesread += opaque_bytes;
-                /* Subtract uncompressed bytes consumed (not compressed bytesread) */
-                nBytes -= (mat_uint32_t)(matvar->internal->z->total_out - total_out_before);
-
-                if ( !err && nBytes > 0 ) {
-                    /* Peek at the remaining data: inflate 8 bytes for the
-                     * next subelement tag to determine what it contains.
-                     */
-                    mat_uint32_t payload_tag[2];
-                    size_t peek_bytes = 0;
-                    err = Inflate(mat, matvar->internal->z, payload_tag, 8, &peek_bytes);
-                    bytesread += peek_bytes;
-                    nBytes -= 8;
-                    if ( !err && payload_tag[0] == MAT_T_MATRIX && payload_tag[1] > 0 ) {
-                        /* The payload is a nested MATRIX element.
-                         * Read its array flags to determine the class.
-                         */
-                        mat_uint32_t inner_flags[4];
-                        size_t inner_bytes = 0;
-                        err = Inflate(mat, matvar->internal->z, inner_flags, 16, &inner_bytes);
-                        bytesread += inner_bytes;
-                        nBytes -= 16;
-                        if ( !err ) {
-                            if ( mat->byteswap ) {
-                                (void)Mat_uint32Swap(&inner_flags[0]);
-                                (void)Mat_uint32Swap(&inner_flags[2]);
+                fields[i]->internal->z = (z_streamp)calloc(1, sizeof(z_stream));
+                if ( NULL != fields[i]->internal->z ) {
+                    err = inflateCopy(fields[i]->internal->z, matvar->internal->z);
+                    if ( err == Z_OK ) {
+                        fields[i]->internal->datapos = ftello((FILE *)mat->fp);
+                        if ( fields[i]->internal->datapos != -1L ) {
+                            err = ReadCompressedOpaqueInfo5(mat, fields[i], &opaque_bytes);
+                            if ( err == Z_OK ) {
+                                inflateEnd(fields[i]->internal->z);
+                                free(fields[i]->internal->z);
+                                fields[i]->internal->z = NULL;
+                                free(fields[i]->name);
+                                fields[i]->name = name;
+                                bytesread += opaque_bytes;
+                                (void)fseeko((FILE *)mat->fp, fields[i]->internal->datapos,
+                                             SEEK_SET);
+                            } else {
+                                inflateEnd(fields[i]->internal->z);
+                                free(fields[i]->internal->z);
+                                fields[i]->internal->z = NULL;
+                                free(fields[i]->name);
+                                fields[i]->name = name;
+                                Mat_Critical("Couldn't read compressed opaque info");
                             }
-                            if ( inner_flags[0] == MAT_T_UINT32 ) {
-                                enum matio_classes inner_class =
-                                    CLASS_FROM_ARRAY_FLAGS(inner_flags[2]);
-                                if ( inner_class == MAT_C_CELL ) {
-                                    /* Convert the opaque field to a cell array
-                                     * and read its contents.
-                                     */
-                                    mat_uint32_t *dims2 = NULL;
-                                    int do_clean2 = 0;
-
-                                    fields[i]->class_type = MAT_C_CELL;
-
-                                    err = InflateRankDims(mat, matvar->internal->z, uncomp_buf,
-                                                          sizeof(uncomp_buf), &dims2, &bytesread);
-                                    if ( NULL == dims2 )
-                                        dims2 = uncomp_buf + 2;
-                                    else
-                                        do_clean2 = 1;
-                                    nBytes -= 8;
-                                    if ( !err ) {
-                                        if ( mat->byteswap ) {
-                                            (void)Mat_uint32Swap(uncomp_buf);
-                                            (void)Mat_uint32Swap(uncomp_buf + 1);
-                                        }
-                                        if ( uncomp_buf[0] == MAT_T_INT32 ) {
-                                            fields[i]->rank = uncomp_buf[1] / 4;
-                                            nBytes -= uncomp_buf[1];
-                                            fields[i]->dims =
-                                                (size_t *)malloc(fields[i]->rank * sizeof(size_t));
-                                            if ( fields[i]->dims != NULL ) {
-                                                int j;
-                                                for ( j = 0; j < fields[i]->rank; j++ ) {
-                                                    fields[i]->dims[j] =
-                                                        mat->byteswap ? Mat_uint32Swap(dims2 + j)
-                                                                      : dims2[j];
-                                                }
-                                            }
-                                            if ( fields[i]->rank % 2 != 0 )
-                                                nBytes -= 4;
-                                        }
-                                    }
-                                    if ( do_clean2 )
-                                        free(dims2);
-
-                                    /* Skip inner name tag */
-                                    {
-                                        size_t name_skip_bytes = 0;
-                                        err = Inflate(mat, matvar->internal->z, uncomp_buf, 8,
-                                                      &name_skip_bytes);
-                                        bytesread += name_skip_bytes;
-                                        nBytes -= 8;
-                                    }
-
-                                    /* Now read the cell contents */
-                                    if ( !err ) {
-                                        fields[i]->internal->z =
-                                            (z_streamp)calloc(1, sizeof(z_stream));
-                                        if ( fields[i]->internal->z != NULL ) {
-                                            err = inflateCopy(fields[i]->internal->z,
-                                                              matvar->internal->z);
-                                            if ( err == Z_OK ) {
-                                                fields[i]->internal->datapos =
-                                                    ftello((FILE *)mat->fp);
-                                                if ( fields[i]->internal->datapos != -1L ) {
-                                                    fields[i]->internal->datapos -=
-                                                        matvar->internal->z->avail_in;
-                                                }
-                                                bytesread += ReadNextCell(mat, fields[i]);
-                                                (void)fseeko((FILE *)mat->fp,
-                                                             fields[i]->internal->datapos,
-                                                             SEEK_SET);
-                                                /* Free inflate state of cell */
-                                                inflateEnd(fields[i]->internal->z);
-                                                free(fields[i]->internal->z);
-                                                fields[i]->internal->z = NULL;
-                                            } else {
-                                                inflateEnd(fields[i]->internal->z);
-                                                free(fields[i]->internal->z);
-                                                fields[i]->internal->z = NULL;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                        } else {
+                            inflateEnd(fields[i]->internal->z);
+                            free(fields[i]->internal->z);
+                            fields[i]->internal->z = NULL;
+                            free(fields[i]->name);
+                            fields[i]->name = name;
+                            Mat_Critical("Couldn't determine file position");
                         }
+                    } else {
+                        free(fields[i]->internal->z);
+                        fields[i]->internal->z = NULL;
+                        free(fields[i]->name);
+                        fields[i]->name = name;
+                        Mat_Critical("inflateCopy returned error %s", zError(err));
                     }
+                } else {
+                    free(fields[i]->name);
+                    fields[i]->name = name;
+                    Mat_Critical("Couldn't allocate memory");
                 }
             }
             InflateSkip(mat, matvar->internal->z, nBytes, &bytesread);
@@ -2142,7 +2053,20 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                         fields[i]->nbytes = buf[3];
                     }
                 }
-                if ( fields[i]->class_type == MAT_C_OPAQUE ) {
+                if ( fields[i]->class_type == MAT_C_OPAQUE && NULL != mat->filename ) {
+                    /* Do NOT go here while processing GetSubsystem5 (mat->filename==NULL) */
+                    mat_uint32_t name_tag[2];
+                    name_tag[0] = buf[4];
+                    name_tag[1] = buf[5];
+                    err = ReadOpaqueInfo5(mat, fields[i], name_tag);
+                    if ( err ) {
+                        Mat_VarFree(fields[i]);
+                        fields[i] = NULL;
+                        break;
+                    }
+                    /* Seek to the end of the field data regardless */
+                    (void)fseeko((FILE *)mat->fp, field_data_start + field_data_nBytes, SEEK_SET);
+                } else if ( fields[i]->class_type == MAT_C_OPAQUE ) {
                     /* For opaque fields, buf[4..5] is the array name tag,
                  * not the rank/dims tag. Read the opaque subelements.
                  */

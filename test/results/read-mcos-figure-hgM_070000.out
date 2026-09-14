@@ -4,6 +4,7220 @@ Dimensions: 1 x 1
 Class Type: Structure
  Data Type: Structure
 Fields[1] {
-      Name: 
-      Rank: 0
+      Name: GraphicsObjects
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [GraphicsObjects]
+ Data Type: Structure
+Fields[1] {
+      Name: Format3Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Figure]
+ Data Type: Structure
+Fields[20] {
+      Name: StoragePosition
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [UnitPos]
+ Data Type: Structure
+Fields[16] {
+      Name: UnitsMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: Units_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+pixels
+}
+      Name: RefFrameMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: RefFrame_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0 1920 1080 
+}
+      Name: ScreenResolutionMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: ScreenResolution_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+96 
+}
+      Name: CharacterWidthMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: CharacterWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.75 
+}
+      Name: CharacterHeightMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: CharacterHeight_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.75 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+pixels
+}
+      Name: RefFrameInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: CharWidthInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: CharHeightInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: DPIInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+680 458 560 420 
+}
+}
+      Name: StorageOuterPosition
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [UnitPos]
+ Data Type: Structure
+Fields[16] {
+      Name: UnitsMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: Units_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+pixels
+}
+      Name: RefFrameMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: RefFrame_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0 1920 1080 
+}
+      Name: ScreenResolutionMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: ScreenResolution_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+96 
+}
+      Name: CharacterWidthMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: CharacterWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.75 
+}
+      Name: CharacterHeightMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: CharacterHeight_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.75 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+pixels
+}
+      Name: RefFrameInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: CharWidthInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: CharHeightInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: DPIInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+672 450 576 513 
+}
+}
+      Name: CloseRequestFcn_IS
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+closereq
+}
+      Name: CurrentAxesMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: NextPlotMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: DefaultTools_I
+      Rank: 2
+Dimensions: 1 x 15
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+menusandtoolbar
+}
+      Name: PointerShapeCData_IS
+      Rank: 2
+Dimensions: 16 x 16
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+}
+      Name: PointerShapeHotSpot_IS
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 1 
+}
+      Name: matlab.ui.container.Container.SerializableChildren
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Axes]
+ Data Type: Structure
+Fields[56] {
+      Name: CameraPosition_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 0 17.3205 
+}
+      Name: CameraTarget_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 0 0 
+}
+      Name: CameraViewAngle_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+6.60861 
+}
+      Name: ViewMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: DataAspectRatio_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 1 1 
+}
+      Name: PlotBoxAspectRatio_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 0.790323 0.790323 
+}
+      Name: FontName_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: XLabel_IS
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[24] {
+      Name: Color_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.15 0.15 0.15 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: DecorationContainer_I
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 19
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase Label
+}
+      Name: DimensionNames_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+X
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Y
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Z
+}
+}
+      Name: FontAngleMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: FontNameMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: FontSizeStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: FontSize_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: FontWeightMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+off
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+back
+}
+      Name: PositionStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 -1.138 -1 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 -1.138 -1 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.75 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.75 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: Position_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 -1.138 -1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: Internal_InteractionsArray
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EditInteraction]
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: SerializableBehavior
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: SeriesIndex_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+none
+}
+      Name: StringMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+x
+}
+      Name: Text
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[16] {
+      Name: Font_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Font]
+ Data Type: Structure
+Fields[2] {
+      Name: Name_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Helvetica
+}
+      Name: Size_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+x
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+3.5 
+-1.138 
+-1 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: HorizontalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+center
+}
+      Name: VerticalAlignment_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+top
+}
+      Name: Interpreter_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+tex
+}
+      Name: Clipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: AnchorPointClipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: LineWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Text Text
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: XLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: YLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: ZLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+}
+      Name: YLabel_IS
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[25] {
+      Name: Color_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.15 0.15 0.15 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: DecorationContainer_I
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 19
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase Label
+}
+      Name: DimensionNames_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+X
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Y
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Z
+}
+}
+      Name: FontAngleMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: FontNameMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: FontSizeStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: FontSize_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: FontWeightMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+off
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+back
+}
+      Name: PositionStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.521505 9.53674e-07 -1 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.521505 9.53674e-07 -1 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.75 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.75 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: Position_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.521505 9.53674e-07 -1 
+}
+      Name: Rotation_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+90 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: Internal_InteractionsArray
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EditInteraction]
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: SerializableBehavior
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: SeriesIndex_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+none
+}
+      Name: StringMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+sin(x)
+}
+      Name: Text
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[17] {
+      Name: Font_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Font]
+ Data Type: Structure
+Fields[2] {
+      Name: Name_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Helvetica
+}
+      Name: Size_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+sin(x)
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+-0.521505 
+9.53674e-07 
+-1 
+}
+      Name: Rotation_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+90 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: HorizontalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+center
+}
+      Name: VerticalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+bottom
+}
+      Name: Interpreter_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+tex
+}
+      Name: Clipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: AnchorPointClipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: LineWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Text Text
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: XLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: YLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: ZLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+}
+      Name: ZLabel_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Camera_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Camera3D]
+ Data Type: Structure
+Fields[13] {
+      Name: Position_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 0.5 9.16025 
+}
+      Name: Target_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 0.5 0.5 
+}
+      Name: ViewAngle_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+6.60861 
+}
+      Name: DepthSort_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Viewport_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [UnitPosition]
+ Data Type: Structure
+Fields[6] {
+      Name: ScreenResolution_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+96 
+}
+      Name: RefFrame_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 1 560 420 
+}
+      Name: CharacterWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.75 
+}
+      Name: CharacterHeight_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.75 
+}
+      Name: Position_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.13 0.11 0.775 0.815 
+}
+      Name: Store
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+2 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+2 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.13 0.11 0.775 0.815 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.13 0.11 0.775 0.815 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 1 560 420 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.75 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.75 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+}
+      Name: AspectRatio_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes Camera
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: DataSpace_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [CartesianDataSpace]
+ Data Type: Structure
+Fields[18] {
+      Name: PreferDataSpaceManualProps
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: XLim_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 7 
+}
+      Name: XDataLim_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 6.2 
+}
+      Name: XLimWithInfs_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 7 
+}
+      Name: YLim_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 1 
+}
+      Name: YDataLim_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.999923 0.999574 
+}
+      Name: YLimWithInfs_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 1 
+}
+      Name: ZLim_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 1 
+}
+      Name: ZDataLim_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 1 
+}
+      Name: ZLimWithInfs_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 1 
+}
+      Name: AllowStretchExtents
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 14
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes DataSpace
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: ColorSpace_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [MapColorSpace]
+ Data Type: Structure
+Fields[8] {
+      Name: Alphamap_I
+      Rank: 2
+Dimensions: 1 x 64
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0.0159 0.0317 0.0476 0.0635 0.0794 0.0952 0.1111 0.127 0.1429 0.1587 0.1746 0.1905 0.2063 0.2222 0.2381 0.254 0.2698 0.2857 0.3016 0.3175 0.3333 0.3492 0.3651 0.381 0.3968 0.4127 0.4286 0.4444 0.4603 0.4762 0.4921 0.5079 0.5238 0.5397 0.5556 0.5714 0.5873 0.6032 0.619 0.6349 0.6508 0.6667 0.6825 0.6984 0.7143 0.7302 0.746 0.7619 0.7778 0.7937 0.8095 0.8254 0.8413 0.8571 0.873 0.8889 0.9048 0.9206 0.9365 0.9524 0.9683 0.9841 1 
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 15
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes ColorSpace
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: DecorationContainer_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [DecorationContainer]
+ Data Type: Structure
+Fields[7] {
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 24
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes DecorationContainer
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: ChildContainer_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [ClipNode]
+ Data Type: Structure
+Fields[8] {
+      Name: Position_I
+      Rank: 2
+Dimensions: 3 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 7 
+-1 1 
+-1 1 
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Line]
+ Data Type: Structure
+Fields[22] {
+      Name: XDataMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: XData_I
+      Rank: 2
+Dimensions: 1 x 63
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4 4.1 4.2 4.3 4.4 4.5 4.6 4.7 4.8 4.9 5 5.1 5.2 5.3 5.4 5.5 5.6 5.7 5.8 5.9 6 6.1 6.2 
+}
+      Name: YDataMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: YData_I
+      Rank: 2
+Dimensions: 1 x 63
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0.0998334 0.198669 0.29552 0.389418 0.479426 0.564642 0.644218 0.717356 0.783327 0.841471 0.891207 0.932039 0.963558 0.98545 0.997495 0.999574 0.991665 0.973848 0.9463 0.909297 0.863209 0.808496 0.745705 0.675463 0.598472 0.515501 0.42738 0.334988 0.239249 0.14112 0.0415807 -0.0583741 -0.157746 -0.255541 -0.350783 -0.44252 -0.529836 -0.611858 -0.687766 -0.756802 -0.818277 -0.871576 -0.916166 -0.951602 -0.97753 -0.993691 -0.999923 -0.996165 -0.982453 -0.958924 -0.925815 -0.883455 -0.832267 -0.772764 -0.70554 -0.631267 -0.550686 -0.464602 -0.373877 -0.279415 -0.182163 -0.0830894 
+}
+      Name: Color_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0.447 0.741 
+}
+      Name: SelectionHandle
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: MarkerIndices_I
+      Rank: 2
+Dimensions: 1 x 63
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 
+}
+      Name: DimensionNames_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+X
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Y
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Z
+}
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: SerializableBehavior
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: matlab.graphics.internal.GraphicsCoreProperties.SerializableUIContextMenu
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: matlab.graphics.internal.GraphicsCoreProperties.TopLevelSerializedObject
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: BeingDeleted
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Annotation
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Annotation]
+ Data Type: Structure
+Fields[2] {
+      Name: LegendInformation
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [LegendEntry]
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: DisplayNameAssignedByLegend
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SeriesIndex_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: DataTipTemplate_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: DataPropertiesStorage
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: VariablePropertyValues
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: DataPropertyModes
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: X
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: Y
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: Z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+}
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 19
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes ChildContainer
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: Backdrop_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Backdrop]
+ Data Type: Structure
+Fields[8] {
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 13
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes Backdrop
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: PickableParts_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+all
+}
+}
+      Name: Title_IS
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[20] {
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: DecorationContainer_I
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes Title
+}
+      Name: DimensionNames_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+X
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Y
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Z
+}
+}
+      Name: FontSizeStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: FontSize_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: FontWeight_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+bold
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+off
+}
+      Name: PositionStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 1.01603 0 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 1.01603 0 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.75 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.75 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: Position_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 1.01603 0 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: Internal_InteractionsArray
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EditInteraction]
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: SerializableBehavior
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: SeriesIndex_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+none
+}
+      Name: StringMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 16
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Simple Sine Wave
+}
+      Name: Text
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[15] {
+      Name: Font_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Font]
+ Data Type: Structure
+Fields[3] {
+      Name: Name_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Helvetica
+}
+      Name: Size_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: Weight_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+bold
+}
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 16
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Simple Sine Wave
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+3.5 
+1.01603 
+0 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+0 
+0 
+0 
+255 
+}
+      Name: HorizontalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+center
+}
+      Name: VerticalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+bottom
+}
+      Name: Interpreter_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+tex
+}
+      Name: Clipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: AnchorPointClipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: LineWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Text Text
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: XLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: YLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: ZLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+}
+      Name: Subtitle_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: BoxFrame_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [BoxFrame]
+ Data Type: Structure
+Fields[12] {
+      Name: XColor_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.15 0.15 0.15 
+}
+      Name: YColor_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.15 0.15 0.15 
+}
+      Name: ZColor_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.15 0.15 0.15 
+}
+      Name: LineWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 13
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes BoxFrame
+}
+      Name: Visible_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: XRuler_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [NumericRuler]
+ Data Type: Structure
+Fields[29] {
+      Name: Limits_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 7 
+}
+      Name: NumericLimits
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 7 
+}
+      Name: NumericTickValues_I
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 1 2 3 4 5 6 7 
+}
+      Name: TickValues_I
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 1 2 3 4 5 6 7 
+}
+      Name: MinorTick_IS
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: NumericMinorTickValues_I
+      Rank: 2
+Dimensions: 1 x 28
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.2 0.4 0.6 0.8 1.2 1.4 1.6 1.8 2.2 2.4 2.6 2.8 3.2 3.4 3.6 3.8 4.2 4.4 4.6 4.8 5.2 5.4 5.6 5.8 6.2 6.4 6.6 6.8 
+}
+      Name: MinorTickValues_I
+      Rank: 2
+Dimensions: 1 x 28
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.2 0.4 0.6 0.8 1.2 1.4 1.6 1.8 2.2 2.4 2.6 2.8 3.2 3.4 3.6 3.8 4.2 4.4 4.6 4.8 5.2 5.4 5.6 5.8 6.2 6.4 6.6 6.8 
+}
+      Name: MirrorVisible_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: TickDirection_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+in
+}
+      Name: LineWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 
+}
+      Name: TickLabels_I
+      Rank: 2
+Dimensions: 8 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+1
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+2
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+3
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+4
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+5
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+6
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+7
+}
+}
+      Name: Axle
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [LineStrip]
+ Data Type: Structure
+Fields[13] {
+      Name: AlignVertexCenters_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: LineCap_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+square
+}
+      Name: StripData_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+1 3 5 
+}
+      Name: Texture_I
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+0 7 0 7 
+-1 -1 1 1 
+-1 -1 -1 -1 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: ColorBinding_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+object
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 18
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase Axle
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: MajorTickChild
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [LineStrip]
+ Data Type: Structure
+Fields[12] {
+      Name: AlignVertexCenters_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: LineCap_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+square
+}
+      Name: Texture_I
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 32
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7 0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7 
+-1 -0.974694 -1 -0.974694 -1 -0.974694 -1 -0.974694 -1 -0.974694 -1 -0.974694 -1 -0.974694 -1 -0.974694 1 0.974694 1 0.974694 1 0.974694 1 0.974694 1 0.974694 1 0.974694 1 0.974694 1 0.974694 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: ColorBinding_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+object
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 28
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase MajorTickChild
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: MinorTickChild
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: TickLabelChild
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[14] {
+      Name: Font_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Font]
+ Data Type: Structure
+Fields[2] {
+      Name: Name_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Helvetica
+}
+      Name: Size_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+10 
+}
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 8 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+1
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+2
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+3
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+4
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+5
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+6
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+7
+}
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 8
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+0 1 2 3 4 5 6 7 
+-1.0311 -1.0311 -1.0311 -1.0311 -1.0311 -1.0311 -1.0311 -1.0311 
+-1 -1 -1 -1 -1 -1 -1 -1 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: HorizontalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+center
+}
+      Name: VerticalAlignment_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+top
+}
+      Name: AlignmentAngleData_I
+      Rank: 2
+Dimensions: 1 x 0
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+}
+      Name: Interpreter_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+tex
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 28
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase TickLabelChild
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: Label_IS
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[24] {
+      Name: Color_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.15 0.15 0.15 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: DecorationContainer_I
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 19
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase Label
+}
+      Name: DimensionNames_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+X
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Y
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Z
+}
+}
+      Name: FontAngleMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: FontNameMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: FontSizeStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: FontSize_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: FontWeightMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+off
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+back
+}
+      Name: PositionStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 -1.138 -1 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 -1.138 -1 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.75 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.75 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: Position_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.5 -1.138 -1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: Internal_InteractionsArray
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EditInteraction]
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: SerializableBehavior
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: SeriesIndex_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+none
+}
+      Name: StringMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+x
+}
+      Name: Text
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[16] {
+      Name: Font_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Font]
+ Data Type: Structure
+Fields[2] {
+      Name: Name_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Helvetica
+}
+      Name: Size_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+x
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+3.5 
+-1.138 
+-1 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: HorizontalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+center
+}
+      Name: VerticalAlignment_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+top
+}
+      Name: Interpreter_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+tex
+}
+      Name: Clipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: AnchorPointClipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: LineWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Text Text
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: XLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: YLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: ZLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+}
+      Name: LabelPosition_IS
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+auto
+}
+      Name: SecondaryLabel_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: LabelFontSizeMultiplier_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.1 
+}
+      Name: FirstCrossoverValue_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-inf 
+}
+      Name: FirstCrossoverAxis_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SecondCrossoverValue_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-inf 
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes XRuler
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: XBaseline_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: YRuler_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [NumericRuler]
+ Data Type: Structure
+Fields[29] {
+      Name: Limits_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 1 
+}
+      Name: NumericLimits
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 1 
+}
+      Name: NumericTickValues_I
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 
+}
+      Name: TickValues_I
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 
+}
+      Name: MinorTick_IS
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: NumericMinorTickValues_I
+      Rank: 2
+Dimensions: 1 x 30
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.95 -0.9 -0.85 -0.75 -0.7 -0.65 -0.55 -0.5 -0.45 -0.35 -0.3 -0.25 -0.15 -0.1 -0.05 0.05 0.1 0.15 0.25 0.3 0.35 0.45 0.5 0.55 0.65 0.7 0.75 0.85 0.9 0.95 
+}
+      Name: MinorTickValues_I
+      Rank: 2
+Dimensions: 1 x 30
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.95 -0.9 -0.85 -0.75 -0.7 -0.65 -0.55 -0.5 -0.45 -0.35 -0.3 -0.25 -0.15 -0.1 -0.05 0.05 0.1 0.15 0.25 0.3 0.35 0.45 0.5 0.55 0.65 0.7 0.75 0.85 0.9 0.95 
+}
+      Name: MirrorVisible_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: TickDirection_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+in
+}
+      Name: LineWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 
+}
+      Name: TickLabels_I
+      Rank: 2
+Dimensions: 11 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-1
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-0.8
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-0.6
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-0.4
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-0.2
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0.2
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0.4
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0.6
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0.8
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+1
+}
+}
+      Name: Axle
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [LineStrip]
+ Data Type: Structure
+Fields[13] {
+      Name: AlignVertexCenters_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: LineCap_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+square
+}
+      Name: StripData_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+1 3 5 
+}
+      Name: Texture_I
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 4
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+0 0 7 7 
+-1 1 -1 1 
+-1 -1 -1 -1 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: ColorBinding_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+object
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 18
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase Axle
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: MajorTickChild
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [LineStrip]
+ Data Type: Structure
+Fields[12] {
+      Name: AlignVertexCenters_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: LineCap_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+square
+}
+      Name: Texture_I
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 44
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+0 0.07 0 0.07 0 0.07 0 0.07 0 0.07 0 0.07 0 0.07 0 0.07 0 0.07 0 0.07 0 0.07 7 6.93 7 6.93 7 6.93 7 6.93 7 6.93 7 6.93 7 6.93 7 6.93 7 6.93 7 6.93 7 6.93 
+-1 -1 -0.8 -0.8 -0.6 -0.6 -0.4 -0.4 -0.2 -0.2 0 0 0.2 0.2 0.4 0.4 0.6 0.6 0.8 0.8 1 1 -1 -1 -0.8 -0.8 -0.6 -0.6 -0.4 -0.4 -0.2 -0.2 0 0 0.2 0.2 0.4 0.4 0.6 0.6 0.8 0.8 1 1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: ColorBinding_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+object
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 28
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase MajorTickChild
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: MinorTickChild
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: TickLabelChild
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[14] {
+      Name: Font_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Font]
+ Data Type: Structure
+Fields[2] {
+      Name: Name_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Helvetica
+}
+      Name: Size_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+10 
+}
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 11 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-1
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-0.8
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-0.6
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-0.4
+}
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+-0.2
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0.2
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0.4
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0.6
+}
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+0.8
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+1
+}
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 11
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+-0.0860215 -0.0860215 -0.0860215 -0.0860215 -0.0860215 -0.0860215 -0.0860215 -0.0860215 -0.0860215 -0.0860215 -0.0860215 
+-1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: HorizontalAlignment_I
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+right
+}
+      Name: VerticalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+middle
+}
+      Name: AlignmentAngleData_I
+      Rank: 2
+Dimensions: 1 x 0
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+}
+      Name: Interpreter_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+tex
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 28
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase TickLabelChild
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: Label_IS
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[25] {
+      Name: Color_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.15 0.15 0.15 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: DecorationContainer_I
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 19
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+AxisRulerBase Label
+}
+      Name: DimensionNames_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+X
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Y
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Z
+}
+}
+      Name: FontAngleMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: FontNameMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: FontSizeStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+3 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: FontSize_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: FontWeightMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+off
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+back
+}
+      Name: PositionStore
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[10] {
+      Name: Units
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: UnitsCache
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+6 
+}
+      Name: Position
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.521505 9.53674e-07 -1 
+}
+      Name: PositionCache
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.521505 9.53674e-07 -1 
+}
+      Name: ReferenceFrame
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 47 434 343 
+}
+      Name: RefFrameValid
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+      Name: ScreenResolution
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+96 
+}
+      Name: CharWidth
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3.75 
+}
+      Name: CharHeight
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9.75 
+}
+      Name: PositionUpToDate
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, signed integer array
+ Data Type: 32-bit, signed integer
+{
+1 
+}
+}
+      Name: Position_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.521505 9.53674e-07 -1 
+}
+      Name: Rotation_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+90 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: Internal_InteractionsArray
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EditInteraction]
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: SerializableBehavior
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: SeriesIndex_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+none
+}
+      Name: StringMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+manual
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+sin(x)
+}
+      Name: Text
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Text]
+ Data Type: Structure
+Fields[17] {
+      Name: Font_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Font]
+ Data Type: Structure
+Fields[2] {
+      Name: Name_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Helvetica
+}
+      Name: Size_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+}
+      Name: String_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+sin(x)
+}
+      Name: VertexData_I
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Single Precision Array
+ Data Type: IEEE 754 single-precision
+{
+-0.521505 
+9.53674e-07 
+-1 
+}
+      Name: Rotation_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+90 
+}
+      Name: ColorData_I
+      Rank: 2
+Dimensions: 4 x 1
+Class Type: 8-bit, unsigned integer array
+ Data Type: 8-bit, unsigned integer
+{
+38 
+38 
+38 
+255 
+}
+      Name: HorizontalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+center
+}
+      Name: VerticalAlignment_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+bottom
+}
+      Name: Interpreter_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+tex
+}
+      Name: Clipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: AnchorPointClipping_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: LineWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 
+}
+      Name: Layer_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+back
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 9
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Text Text
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: XLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: YLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+      Name: ZLimInclude_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+6 
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+80 
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [OnOffSwitchState]
+ Data Type: Structure
+Fields[1] {
+      Name: logical.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+7 
+}
+}
+}
+      Name: LabelPosition_IS
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+auto
+}
+      Name: SecondaryLabel_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: LabelFontSizeMultiplier_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.1 
+}
+      Name: FirstCrossoverValue_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-inf 
+}
+      Name: SecondCrossoverValue_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-inf 
+}
+      Name: Axis_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes YRuler
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: YBaseline_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: ZRuler_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [NumericRuler]
+ Data Type: Structure
+Fields[28] {
+      Name: Limits_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 1 
+}
+      Name: NumericLimits
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 1 
+}
+      Name: NumericTickValues_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 0 1 
+}
+      Name: TickValues_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-1 0 1 
+}
+      Name: MinorTick_IS
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: NumericMinorTickValues_I
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.8 -0.6 -0.4 -0.2 0.2 0.4 0.6 0.8 
+}
+      Name: MinorTickValues_I
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-0.8 -0.6 -0.4 -0.2 0.2 0.4 0.6 0.8 
+}
+      Name: MirrorVisible_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: TickDirection_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+in
+}
+      Name: LineWidth_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.5 
+}
+      Name: Axle
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: MajorTickChild
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: MinorTickChild
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: TickLabelChild
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Label_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: LabelPosition_IS
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+auto
+}
+      Name: SecondaryLabel_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: LabelFontSizeMultiplier_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.1 
+}
+      Name: FirstCrossoverValue_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-inf 
+}
+      Name: SecondCrossoverValue_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+-inf 
+}
+      Name: Axis_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
+2 
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes ZRuler
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+}
+      Name: ZBaseline_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: SelectionHandle
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: AmbientLightSource_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [LightSource]
+ Data Type: Structure
+Fields[6] {
+      Name: Style_I
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+ambient
+}
+      Name: Description_I
+      Rank: 2
+Dimensions: 1 x 23
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Axes AmbientLightSource
+}
+      Name: HandleVisibility_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: BubbleSizeRange_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: BubbleSizeLimits_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: BoxMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: Box_I
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: SerializableInteractionOptions
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Units_IS
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+normalized
+}
+      Name: Position_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.13 0.11 0.775 0.815 
+}
+      Name: InnerPosition_I
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.13 0.11 0.775 0.815 
+}
+      Name: InnerPosition_IS
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.13 0.11 0.775 0.815 
+}
+      Name: OuterPosition_IS
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0 1 1 
+}
+      Name: LooseInset_IS
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0.13 0.11 0.095 0.075 
+}
+      Name: Alphamap_I
+      Rank: 2
+Dimensions: 1 x 64
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0.0159 0.0317 0.0476 0.0635 0.0794 0.0952 0.1111 0.127 0.1429 0.1587 0.1746 0.1905 0.2063 0.2222 0.2381 0.254 0.2698 0.2857 0.3016 0.3175 0.3333 0.3492 0.3651 0.381 0.3968 0.4127 0.4286 0.4444 0.4603 0.4762 0.4921 0.5079 0.5238 0.5397 0.5556 0.5714 0.5873 0.6032 0.619 0.6349 0.6508 0.6667 0.6825 0.6984 0.7143 0.7302 0.746 0.7619 0.7778 0.7937 0.8095 0.8254 0.8413 0.8571 0.873 0.8889 0.9048 0.9206 0.9365 0.9524 0.9683 0.9841 1 
+}
+      Name: ColorOrderIndex_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: NextSeriesIndex_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: FontUnits_IS
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+points
+}
+      Name: FontSize_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: SortMethod_I
+      Rank: 2
+Dimensions: 1 x 10
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+childorder
+}
+      Name: NextPlot_IS
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+replace
+}
+      Name: Toolbar_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Line]
+ Data Type: Structure
+Fields[22] {
+      Name: XDataMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: XData_I
+      Rank: 2
+Dimensions: 1 x 63
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4 4.1 4.2 4.3 4.4 4.5 4.6 4.7 4.8 4.9 5 5.1 5.2 5.3 5.4 5.5 5.6 5.7 5.8 5.9 6 6.1 6.2 
+}
+      Name: YDataMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: YData_I
+      Rank: 2
+Dimensions: 1 x 63
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0.0998334 0.198669 0.29552 0.389418 0.479426 0.564642 0.644218 0.717356 0.783327 0.841471 0.891207 0.932039 0.963558 0.98545 0.997495 0.999574 0.991665 0.973848 0.9463 0.909297 0.863209 0.808496 0.745705 0.675463 0.598472 0.515501 0.42738 0.334988 0.239249 0.14112 0.0415807 -0.0583741 -0.157746 -0.255541 -0.350783 -0.44252 -0.529836 -0.611858 -0.687766 -0.756802 -0.818277 -0.871576 -0.916166 -0.951602 -0.97753 -0.993691 -0.999923 -0.996165 -0.982453 -0.958924 -0.925815 -0.883455 -0.832267 -0.772764 -0.70554 -0.631267 -0.550686 -0.464602 -0.373877 -0.279415 -0.182163 -0.0830894 
+}
+      Name: Color_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0.447 0.741 
+}
+      Name: SelectionHandle
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: MarkerIndices_I
+      Rank: 2
+Dimensions: 1 x 63
+Class Type: 64-bit, unsigned integer array
+ Data Type: 64-bit, unsigned integer
+{
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 
+}
+      Name: DimensionNames_I
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+X
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Y
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Z
+}
+}
+      Name: matlab.graphics.primitive.world.Group.SerializableChildren
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: SerializableBehavior
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: matlab.graphics.internal.GraphicsCoreProperties.SerializableUIContextMenu
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: matlab.graphics.internal.GraphicsCoreProperties.TopLevelSerializedObject
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: BeingDeleted
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: Annotation
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Annotation]
+ Data Type: Structure
+Fields[2] {
+      Name: LegendInformation
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [LegendEntry]
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+      Name: DisplayNameAssignedByLegend
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: SeriesIndex_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: DataTipTemplate_IS
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: DataPropertiesStorage
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: VariablePropertyValues
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: DataPropertyModes
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: X
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: Y
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: Z
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+}
+}
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Layout
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: SerializableBehavior
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: matlab.graphics.internal.GraphicsCoreProperties.SerializableUIContextMenu
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: matlab.graphics.internal.GraphicsCoreProperties.TopLevelSerializedObject
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: BeingDeleted
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+}
+      Name: Internal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: SerializableApplicationData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: Copyable
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: CustomThemePropertyMappings
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[0] {
+}
+      Name: matlab.graphics.internal.GraphicsCoreProperties.SerializableUIContextMenu
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Opaque
+{
+}
+      Name: matlab.graphics.internal.GraphicsCoreProperties.TopLevelSerializedObject
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: BeingDeleted
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+off
+}
+      Name: matlab.ui.internal.mixin.Printable.PaperPositionStorage
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [PaperPositionStorage]
+ Data Type: Structure
+Fields[6] {
+      Name: Units_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+inches
+}
+      Name: ScreenResolutionMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: ScreenResolution_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: matlab.ui.internal.UnitPos.UnitsCache
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+inches
+}
+      Name: matlab.ui.internal.UnitPos.DPIInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: matlab.ui.internal.UnitPos.PositionCache
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1.33333 3.3125 5.83333 4.375 
+}
+}
+      Name: matlab.ui.internal.mixin.Printable.PaperTypeStorage
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [PaperTypeStorage]
+ Data Type: Structure
+Fields[6] {
+      Name: Units_I
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+inches
+}
+      Name: ScreenResolutionMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: ScreenResolution_I
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+1 
+}
+      Name: matlab.ui.internal.UnitPos.UnitsCache
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+inches
+}
+      Name: matlab.ui.internal.UnitPos.DPIInitialized
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+on
+}
+      Name: matlab.ui.internal.UnitPos.PositionCache
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+0 0 8.5 11 
+}
+}
+      Name: ScreenPixelsPerInchMode
+      Rank: 2
+Dimensions: 1 x 6
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+manual
+}
+      Name: SerializableTheme
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[1] {
+      Name: ThemeMode
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+auto
+}
+}
+}
+}
 }

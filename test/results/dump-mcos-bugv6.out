@@ -132,7 +132,11 @@ xSPP
     Class Type: Structure
     Fields[7] {
       Name: levels
-      Rank: 0
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Opaque [gpuArray]
+{
+}
 0 
 16 
 18 
