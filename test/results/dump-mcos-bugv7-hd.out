@@ -86,6 +86,7 @@ SPP
           Rank: 2
     Class Type: Structure
     Fields[7] {
+        levels [gpuArray]
         fix_bounds =
 0 
         stride =

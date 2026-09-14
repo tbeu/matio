@@ -2455,6 +2455,8 @@ auto
       Rank: 2
 Class Type: Structure
 Fields[1] {
+    GraphicsObjects = GraphicsObjects (1 fields)
+    .Format3Data: [1 mxOBJECT_CLASS]
 }
       Name: meta_data
       Rank: 2
@@ -2464,7 +2466,15 @@ Fields[2] {
           Rank: 2
     Class Type: Structure
     Fields[4] {
+        Release = string:
+  "R2023b"
+        Stage = string:
+  "release"
         Update =
 4 
+        Date = datetime:
+  1.69802e+12 ms
     }
+    uuid = string:
+  "79c77fb2-c3c1-45e0-b499-82e4bc8236a1"
 }

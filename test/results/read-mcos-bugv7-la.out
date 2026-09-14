@@ -179,8 +179,12 @@ Dimensions: 1 x 1
 Class Type: Structure
  Data Type: Structure
 Fields[7] {
-      Name: 
-      Rank: 0
+      Name: levels
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Opaque [gpuArray]
+{
+}
       Name: fix_bounds
       Rank: 2
 Dimensions: 1 x 1
