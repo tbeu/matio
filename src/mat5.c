@@ -1230,6 +1230,15 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                         continue;
                     }
                     cells[i]->dims = (size_t *)malloc(size);
+                    if ( NULL == cells[i]->dims ) {
+                        if ( do_clean ) {
+                            free(dims);
+                        }
+                        Mat_VarFree(cells[i]);
+                        cells[i] = NULL;
+                        Mat_Critical("Couldn't allocate memory for dims");
+                        continue;
+                    }
                     if ( mat->byteswap ) {
                         for ( j = 0; j < cells[i]->rank; j++ )
                             cells[i]->dims[j] = Mat_uint32Swap(dims + j);
@@ -1791,6 +1800,15 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                         continue;
                     }
                     fields[i]->dims = (size_t *)malloc(size);
+                    if ( NULL == fields[i]->dims ) {
+                        if ( do_clean ) {
+                            free(dims);
+                        }
+                        Mat_VarFree(fields[i]);
+                        fields[i] = NULL;
+                        Mat_Critical("Couldn't allocate memory for dims");
+                        continue;
+                    }
                     if ( mat->byteswap ) {
                         for ( j = 0; j < fields[i]->rank; j++ )
                             fields[i]->dims[j] = Mat_uint32Swap(dims + j);
