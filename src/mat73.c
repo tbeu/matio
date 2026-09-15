@@ -3350,7 +3350,12 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             cells = (matvar_t **)matvar->data;
             for ( i = 0; i < nelems; i++ ) {
                 if ( NULL != cells[i] ) {
-                    err = Mat_H5ReadNextReferenceData(cells[i], mat);
+                    if ( MAT_C_OPAQUE == cells[i]->class_type ) {
+                        /* Read full variable data for opaque objects */
+                        err = Mat_VarRead73(mat, cells[i]);
+                    } else {
+                        err = Mat_H5ReadNextReferenceData(cells[i], mat);
+                    }
                 }
                 if ( err ) {
                     break;
