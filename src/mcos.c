@@ -1474,6 +1474,7 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
 
 /* Forward declarations for mutual recursion */
 static int ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth);
+static int ResolveEnumStruct(mcos_subsystem_t *ss, matvar_t *matvar, int depth);
 
 /** @brief Check if a matvar_t is an MCOS-encoded uint32 reference
  *
@@ -1493,6 +1494,29 @@ IsMCOSEncoded(const matvar_t *matvar)
             return 1;
     }
     return 0;
+}
+
+/** @brief Check if a matvar_t is an enumeration instance struct
+ *
+ * Enumeration instance arrays are stored as structs carrying an
+ * "EnumerationInstanceTag" field equal to the MCOS reference value.
+ *
+ * @param matvar  The variable to check
+ * @return 1 if an enumeration struct, 0 otherwise
+ */
+static int
+IsEnumStruct(const matvar_t *matvar)
+{
+    const matvar_t *tag;
+
+    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT )
+        return 0;
+
+    tag = Mat_VarGetStructFieldByName(matvar, "EnumerationInstanceTag", 0);
+    if ( tag == NULL || tag->class_type != MAT_C_UINT32 || tag->data == NULL )
+        return 0;
+
+    return ((const mat_uint32_t *)tag->data)[0] == MCOS_REF_VALUE;
 }
 
 /** @brief Parse MCOS reference metadata from a uint32 array and resolve in-place
@@ -1629,7 +1653,9 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
         for ( i = 0; i < ncells; i++ ) {
             if ( cells[i] == NULL )
                 continue;
-            if ( IsMCOSEncoded(cells[i]) ) {
+            if ( IsEnumStruct(cells[i]) ) {
+                ResolveEnumStruct(ss, cells[i], depth + 1);
+            } else if ( IsMCOSEncoded(cells[i]) ) {
                 ResolveEncodedMCOS(ss, cells[i], depth + 1);
             } else {
                 ResolveNestedMCOS(ss, cells[i], depth + 1);
@@ -1659,7 +1685,9 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
         for ( i = 0; i < total; i++ ) {
             if ( fields[i] == NULL )
                 continue;
-            if ( IsMCOSEncoded(fields[i]) ) {
+            if ( IsEnumStruct(fields[i]) ) {
+                ResolveEnumStruct(ss, fields[i], depth + 1);
+            } else if ( IsMCOSEncoded(fields[i]) ) {
                 ResolveEncodedMCOS(ss, fields[i], depth + 1);
             } else {
                 ResolveNestedMCOS(ss, fields[i], depth + 1);
@@ -1723,5 +1751,260 @@ Mat_MCOS_Read73(mat_t *mat, matvar_t *matvar)
     return ResolveNestedMCOS(ss, matvar, 0);
 }
 #endif
+
+/** @brief Resolve string-table indices in an enumeration field
+ *
+ * Converts a MAT_C_UINT32 array of string-table indices into a cell array of
+ * character arrays.  An index of zero resolves to an empty string.
+ *
+ * @param ss     Parsed subsystem (source of the string table)
+ * @param matvar The uint32 variable holding the string indices
+ * @return Newly allocated matvar_t, or NULL on failure (caller keeps original)
+ */
+static matvar_t *
+ResolveStringIndices(mcos_subsystem_t *ss, matvar_t *matvar)
+{
+    size_t nelems = 1;
+    matvar_t *res = NULL;
+
+    if ( ss == NULL || matvar == NULL || matvar->class_type != MAT_C_UINT32 ||
+         matvar->data == NULL )
+        return NULL;
+
+    if ( Mat_MulDims(matvar, &nelems) )
+        return NULL;
+
+    if ( nelems > 0 ) {
+        matvar_t **cells = (matvar_t **)calloc(nelems, sizeof(matvar_t *));
+
+        if ( cells != NULL ) {
+            size_t i;
+            int ok = 1;
+
+            for ( i = 0; i < nelems; i++ ) {
+                const mat_uint32_t idx = ((const mat_uint32_t *)matvar->data)[i];
+                const char *s = "";
+                size_t dims[2];
+
+                if ( idx > 0 && idx <= ss->num_strings && ss->strings[idx - 1] != NULL )
+                    s = ss->strings[idx - 1];
+                dims[0] = 1;
+                dims[1] = strlen(s);
+                cells[i] = Mat_VarCreate(matvar->name, MAT_C_CHAR, MAT_T_UINT8, 2, dims, s, 0);
+                if ( cells[i] == NULL )
+                    ok = 0;
+            }
+
+            if ( ok ) {
+                res = Mat_VarCreate(matvar->name, MAT_C_CELL, MAT_T_CELL, matvar->rank,
+                                    matvar->dims, cells, 0);
+            }
+            if ( res == NULL ) {
+                for ( i = 0; i < nelems; i++ )
+                    Mat_VarFree(cells[i]);
+            }
+            free(cells);
+        }
+    }
+
+    return res;
+}
+
+/** @brief Build the fully-qualified class name for a class ID
+ *
+ * Combines the namespace and class name from the parsed class information.
+ *
+ * @param ss       Parsed subsystem
+ * @param class_id Class ID (1-based)
+ * @return malloc'd string, or NULL if the class ID is invalid
+ */
+static char *
+BuildClassName(const mcos_subsystem_t *ss, mat_uint32_t class_id)
+{
+    const mcos_class_info_t *cls;
+
+    if ( ss == NULL || class_id < 1 || class_id > ss->num_classes )
+        return NULL;
+
+    cls = &ss->class_info[class_id - 1];
+    if ( cls->name == NULL )
+        return NULL;
+
+    if ( cls->namespace_ != NULL && cls->namespace_[0] != '\0' ) {
+        const size_t len = strlen(cls->namespace_) + 1 + strlen(cls->name) + 1;
+        char *buf = (char *)malloc(len);
+        if ( buf != NULL )
+            (void)sprintf(buf, "%s.%s", cls->namespace_, cls->name);
+        return buf;
+    }
+
+    return strdup(cls->name);
+}
+
+/** @brief Resolve a class ID field into a character array
+ *
+ * Converts a scalar MAT_C_UINT32 holding a class ID into a character array
+ * carrying the fully-qualified class name.  A class ID of zero resolves to an
+ * empty string.
+ *
+ * @param ss       Parsed subsystem
+ * @param matvar   The uint32 variable holding the class ID
+ * @param out_name If non-NULL, receives the malloc'd class name (ownership
+ *                 transferred to the caller), or NULL if there is none
+ * @return Newly allocated matvar_t, or NULL on failure
+ */
+static matvar_t *
+ResolveClassName(mcos_subsystem_t *ss, matvar_t *matvar, char **out_name)
+{
+    const mat_uint32_t class_id = (matvar->class_type == MAT_C_UINT32 && matvar->data != NULL &&
+                                   matvar->nbytes >= sizeof(mat_uint32_t))
+                                      ? ((const mat_uint32_t *)matvar->data)[0]
+                                      : 0;
+    char *name = NULL;
+    const char *s = "";
+    size_t dims[2];
+    matvar_t *res;
+
+    if ( class_id != 0 )
+        name = BuildClassName(ss, class_id);
+    if ( name != NULL )
+        s = name;
+
+    dims[0] = 1;
+    dims[1] = strlen(s);
+    res = Mat_VarCreate(matvar->name, MAT_C_CHAR, MAT_T_UINT8, 2, dims, s, 0);
+
+    if ( out_name != NULL ) {
+        *out_name = name;
+        name = NULL;
+    }
+    free(name);
+    return res;
+}
+
+/** @brief Resolve the string and class fields of an enumeration struct
+ *
+ * Substitutes the "ClassName" and "BuiltinClassName" class IDs and the
+ * "ValueNames" string-table indices with character arrays (or a cell array of
+ * character arrays), records the class name on the matvar and marks it as
+ * MAT_C_OBJECT.  The "Values" cell array is expected to have been decoded
+ * already by the caller.
+ *
+ * @param ss     Parsed subsystem
+ * @param matvar Enumeration struct to resolve in-place
+ * @return 0 on success
+ */
+static int
+ResolveEnumFields(mcos_subsystem_t *ss, matvar_t *matvar)
+{
+    matvar_t **fields;
+    size_t i, nelems = 1;
+
+    if ( Mat_MulDims(matvar, &nelems) )
+        return MATIO_E_NO_ERROR;
+
+    fields = (matvar_t **)matvar->data;
+    for ( i = 0; i < (size_t)matvar->internal->num_fields * nelems; i++ ) {
+        matvar_t *f = fields[i];
+        matvar_t *resolved = NULL;
+
+        if ( f == NULL || f->name == NULL )
+            continue;
+
+        if ( 0 == strcmp(f->name, "ClassName") ) {
+            char *name = NULL;
+            resolved = ResolveClassName(ss, f, &name);
+            if ( name != NULL ) {
+                free(matvar->internal->class_name);
+                matvar->internal->class_name = name;
+            }
+        } else if ( 0 == strcmp(f->name, "ValueNames") ) {
+            resolved = ResolveStringIndices(ss, f);
+        } else if ( 0 == strcmp(f->name, "BuiltinClassName") ) {
+            resolved = ResolveClassName(ss, f, NULL);
+        }
+
+        if ( resolved != NULL ) {
+            Mat_VarFree(f);
+            fields[i] = resolved;
+        }
+    }
+
+    matvar->class_type = MAT_C_OBJECT;
+
+    return MATIO_E_NO_ERROR;
+}
+
+/** @brief Resolve a Simulink.IntEnumType enumeration struct into an MCOS object
+ *
+ * Enumeration instance arrays are stored as structs carrying an
+ * "EnumerationInstanceTag" field equal to the MCOS reference value.  Their
+ * "ClassName" and "BuiltinClassName" fields hold class IDs and their
+ * "ValueNames" field holds string-table indices into the subsystem, and their
+ * "Values" cell array holds MCOS object references.  This resolves all of
+ * these into strings/objects and marks the variable as MAT_C_OBJECT so it is
+ * not written back as a plain struct.
+ *
+ * @param ss     Parsed subsystem
+ * @param matvar Struct matvar_t to resolve in-place
+ * @param depth  Current recursion depth (for safety)
+ * @return 0 on success
+ */
+static int
+ResolveEnumStruct(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
+{
+    int err;
+
+    if ( ss == NULL || matvar == NULL || matvar->internal == NULL )
+        return MATIO_E_NO_ERROR;
+
+    if ( !IsEnumStruct(matvar) )
+        return MATIO_E_NO_ERROR;
+
+    /* Decode the MCOS object references in the "Values" cell array. */
+    err = ResolveNestedMCOS(ss, matvar, depth + 1);
+    if ( err )
+        return err;
+
+    return ResolveEnumFields(ss, matvar);
+}
+
+/** @brief Resolve a Simulink.IntEnumType enumeration struct into an MCOS object
+ *
+ * Public entry point used by the v5 and v7.3 readers after a struct has been
+ * read.  This is a no-op for variables that are not enumeration instances.
+ *
+ * @param mat    MAT file pointer
+ * @param matvar Struct matvar_t to resolve in-place
+ * @return 0 on success
+ */
+int
+Mat_MCOS_ReadEnum(mat_t *mat, matvar_t *matvar)
+{
+    mcos_subsystem_t *ss;
+
+    if ( mat == NULL || matvar == NULL )
+        return MATIO_E_BAD_ARGUMENT;
+
+    /* Check for an enumeration struct first, so the subsystem is not fetched
+     * (and lazily parsed) for ordinary structs.  This also prevents re-entrant
+     * subsystem parsing: the struct cells read while parsing the subsystem are
+     * not enumerations and return here without calling GetSubsystem*. */
+    if ( !IsEnumStruct(matvar) )
+        return MATIO_E_NO_ERROR;
+
+    ss = (mcos_subsystem_t *)mat->mcos;
+    if ( ss == NULL ) {
+#if defined(MAT73) && MAT73
+        ss = (mat->version == MAT_FT_MAT73) ? GetSubsystem73(mat) : GetSubsystem5(mat);
+#else
+        ss = GetSubsystem5(mat);
+#endif
+    }
+    if ( ss == NULL )
+        return MATIO_E_NO_ERROR;
+
+    return ResolveEnumStruct(ss, matvar, 0);
+}
 
 #endif /* MCOS */
