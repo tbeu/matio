@@ -78,9 +78,12 @@ jobs:
           fi
           make check
       - name: Analyse coverage
-        if: matrix.toolchain == 'linux-gcc'
+        # Fork PRs cannot read COVERALLS_* secrets; an empty token makes
+        # cpp-coveralls exit 1 and fails the whole Autotools workflow.
+        if: matrix.toolchain == 'linux-gcc' && github.event_name != 'pull_request' && secrets.COVERALLS_TOKEN != ''
         env:
           COVERALLS_SERVICE_NAME: ${{ secrets.COVERALLS_SERVICE }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         run: |
+          export PATH="$HOME/.local/bin:$PATH"
           coveralls -e coverity_model.c -e getopt -e test/datasets -e test/matlab -e test/results -e ossfuzz -e share -e hdf5 -e visual_studio -e snprintf --gcov-options '\-lp'

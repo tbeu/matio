@@ -40,6 +40,9 @@
 #define MAX_READ_SIZE_WITHOUT_EOF_CHECK (3)
 #endif
 
+/* Maximal number of array dimensions (rank) for a MAT5 variable */
+#define MAT5_MAX_DIMS (32)
+
 static mat_complex_split_t null_complex_data = {NULL, NULL};
 
 /*===========================================================================
@@ -1213,7 +1216,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                     cells[i]->rank = uncomp_buf[1];
                     nBytes -= cells[i]->rank;
                     cells[i]->rank /= 4;
-                    if ( 0 == do_clean && cells[i]->rank > 13 ) {
+                    if ( 0 == do_clean && cells[i]->rank > MAT5_MAX_DIMS ) {
                         int rank = cells[i]->rank;
                         cells[i]->rank = 0;
                         Mat_Critical("%d is not a valid rank", rank);
@@ -1783,7 +1786,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                     fields[i]->rank = uncomp_buf[1];
                     nBytes -= fields[i]->rank;
                     fields[i]->rank /= 4;
-                    if ( 0 == do_clean && fields[i]->rank > 13 ) {
+                    if ( 0 == do_clean && fields[i]->rank > MAT5_MAX_DIMS ) {
                         int rank = fields[i]->rank;
                         fields[i]->rank = 0;
                         Mat_Critical("%d is not a valid rank", rank);
@@ -5850,6 +5853,9 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                  * Read dims, skip name, then use ReadNextStructField.
                  */
                 mat_uint32_t rank_inner = ndims_bytes / sizeof(mat_uint32_t);
+                if ( rank_inner > MAT5_MAX_DIMS ) {
+                    return MATIO_E_FILE_FORMAT_VIOLATION;
+                }
                 if ( ndims_pad > 0 ) {
                     mat_uint32_t *dims_buf = (mat_uint32_t *)malloc(ndims_pad);
                     if ( dims_buf == NULL )
@@ -5861,7 +5867,12 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                     }
                     matvar->rank = (int)rank_inner;
                     matvar->dims = (size_t *)calloc(rank_inner, sizeof(size_t));
-                    if ( matvar->dims != NULL ) {
+                    if ( matvar->dims == NULL ) {
+                        matvar->rank = 0;
+                        free(dims_buf);
+                        return MATIO_E_OUT_OF_MEMORY;
+                    }
+                    {
                         mat_uint32_t j_d;
                         for ( j_d = 0; j_d < rank_inner; j_d++ ) {
                             if ( mat->byteswap )
@@ -6136,6 +6147,9 @@ ReadCompressedOpaqueInfo5(mat_t *mat, matvar_t *matvar, size_t *bytesread)
                  */
                 mat_uint32_t rank_inner = ndims_bytes / sizeof(mat_uint32_t);
                 mat_uint32_t *dims_buf = NULL;
+                if ( rank_inner > MAT5_MAX_DIMS ) {
+                    return MATIO_E_FILE_FORMAT_VIOLATION;
+                }
                 if ( ndims_pad > 0 ) {
                     dims_buf = (mat_uint32_t *)malloc(ndims_pad);
                     if ( dims_buf == NULL )
@@ -6148,6 +6162,11 @@ ReadCompressedOpaqueInfo5(mat_t *mat, matvar_t *matvar, size_t *bytesread)
                 }
                 matvar->rank = (int)rank_inner;
                 matvar->dims = (size_t *)calloc(rank_inner, sizeof(size_t));
+                if ( rank_inner > 0 && matvar->dims == NULL ) {
+                    matvar->rank = 0;
+                    free(dims_buf);
+                    return MATIO_E_OUT_OF_MEMORY;
+                }
                 if ( matvar->dims != NULL && dims_buf != NULL ) {
                     mat_uint32_t j_d;
                     for ( j_d = 0; j_d < rank_inner; j_d++ ) {
@@ -6426,7 +6445,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     size_t size;
                     int nbytes = uncomp_buf[1];
                     matvar->rank = nbytes / 4;
-                    if ( 0 == do_clean && matvar->rank > 13 ) {
+                    if ( 0 == do_clean && matvar->rank > MAT5_MAX_DIMS ) {
                         int rank = matvar->rank;
                         matvar->rank = 0;
                         Mat_Critical("%d is not a valid rank", rank);
