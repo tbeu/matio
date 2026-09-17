@@ -2522,11 +2522,6 @@ WriteCellArrayField(mat_t *mat, matvar_t *matvar)
     if ( matvar == NULL || mat == NULL )
         return MATIO_E_BAD_ARGUMENT;
 
-    if ( matvar->class_type == MAT_C_OBJECT || matvar->class_type == MAT_C_OPAQUE ) {
-        Mat_Critical("Writing MCOS objects is not supported");
-        return MATIO_E_OPERATION_NOT_SUPPORTED;
-    }
-
     fwrite(&matrix_type, 4, 1, (FILE *)mat->fp);
     fwrite(&pad4, 4, 1, (FILE *)mat->fp);
     if ( MAT_C_EMPTY == matvar->class_type ) {
@@ -2947,11 +2942,6 @@ WriteStructField(mat_t *mat, matvar_t *matvar)
         const size_t dims[2] = {0, 0};
         Mat_WriteEmptyVariable5(mat, NULL, 2, dims);
         return MATIO_E_NO_ERROR;
-    }
-
-    if ( matvar->class_type == MAT_C_OBJECT || matvar->class_type == MAT_C_OPAQUE ) {
-        Mat_Critical("Writing MCOS objects is not supported");
-        return MATIO_E_OPERATION_NOT_SUPPORTED;
     }
 
     fwrite(&matrix_type, 4, 1, (FILE *)mat->fp);
@@ -5425,11 +5415,6 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
 
     if ( NULL == mat || NULL == matvar )
         return MATIO_E_BAD_ARGUMENT;
-
-    if ( matvar->class_type == MAT_C_OBJECT || matvar->class_type == MAT_C_OPAQUE ) {
-        Mat_Critical("Writing MCOS objects is not supported");
-        return MATIO_E_OPERATION_NOT_SUPPORTED;
-    }
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
     (void)fseeko((FILE *)mat->fp, 0, SEEK_END); /* Always write at end of file */

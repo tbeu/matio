@@ -1519,6 +1519,61 @@ IsEnumStruct(const matvar_t *matvar)
     return ((const mat_uint32_t *)tag->data)[0] == MCOS_REF_VALUE;
 }
 
+/** @brief Recursively check for a nested enumeration instance struct
+ *
+ * Scans a variable's cell elements and struct/object fields for an enumeration
+ * struct.  This does not require the MCOS subsystem, so it can be used to
+ * decide whether the subsystem must be parsed at all.
+ *
+ * @param matvar The variable to scan
+ * @param depth  Current recursion depth (for safety)
+ * @return 1 if an enumeration struct is found, 0 otherwise
+ */
+static int
+HasEnumStruct(const matvar_t *matvar, int depth)
+{
+    size_t i;
+
+    if ( matvar == NULL || depth > MCOS_MAX_DEPTH )
+        return 0;
+
+    if ( IsEnumStruct(matvar) )
+        return 1;
+
+    if ( matvar->class_type == MAT_C_CELL && matvar->data != NULL ) {
+        matvar_t **cells = (matvar_t **)matvar->data;
+        size_t ncells = 1;
+        size_t ndata = matvar->nbytes / sizeof(matvar_t *);
+        int err = Mat_MulDims(matvar, &ncells);
+        if ( err )
+            return 0;
+        if ( ncells > ndata )
+            ncells = ndata;
+        for ( i = 0; i < ncells; i++ )
+            if ( cells[i] != NULL && HasEnumStruct(cells[i], depth + 1) )
+                return 1;
+    } else if ( (matvar->class_type == MAT_C_OBJECT || matvar->class_type == MAT_C_STRUCT) &&
+                matvar->data != NULL && matvar->internal != NULL ) {
+        size_t nfields = matvar->internal->num_fields;
+        size_t nelems = 1;
+        size_t total = 0;
+        size_t ndata = matvar->nbytes / sizeof(matvar_t *);
+        matvar_t **fields = (matvar_t **)matvar->data;
+        int err = Mat_MulDims(matvar, &nelems);
+        if ( err )
+            return 0;
+        if ( Mul(&total, nfields, nelems) )
+            return 0;
+        if ( total > ndata )
+            total = ndata;
+        for ( i = 0; i < total; i++ )
+            if ( fields[i] != NULL && HasEnumStruct(fields[i], depth + 1) )
+                return 1;
+    }
+
+    return 0;
+}
+
 /** @brief Parse MCOS reference metadata from a uint32 array and resolve in-place
  *
  * Converts a MAT_C_UINT32 variable with the 0xDD000000 magic marker
@@ -1851,10 +1906,12 @@ BuildClassName(const mcos_subsystem_t *ss, mat_uint32_t class_id)
  * @param matvar   The uint32 variable holding the class ID
  * @param out_name If non-NULL, receives the malloc'd class name (ownership
  *                 transferred to the caller), or NULL if there is none
+ * @param builtin  If non-zero, append the ".Data" storage-class suffix used
+ *                 for builtin data classes (e.g. "int32" -> "int32.Data")
  * @return Newly allocated matvar_t, or NULL on failure
  */
 static matvar_t *
-ResolveClassName(mcos_subsystem_t *ss, matvar_t *matvar, char **out_name)
+ResolveClassName(mcos_subsystem_t *ss, matvar_t *matvar, char **out_name, int builtin)
 {
     const mat_uint32_t class_id = (matvar->class_type == MAT_C_UINT32 && matvar->data != NULL &&
                                    matvar->nbytes >= sizeof(mat_uint32_t))
@@ -1867,6 +1924,17 @@ ResolveClassName(mcos_subsystem_t *ss, matvar_t *matvar, char **out_name)
 
     if ( class_id != 0 )
         name = BuildClassName(ss, class_id);
+    if ( builtin && name != NULL && strstr(name, ".Data") == NULL ) {
+        const char suffix[] = ".Data";
+        const size_t len = strlen(name);
+        char *full = (char *)malloc(len + strlen(suffix) + 1);
+        if ( full != NULL ) {
+            memcpy(full, name, len);
+            memcpy(full + len, suffix, strlen(suffix) + 1);
+            free(name);
+            name = full;
+        }
+    }
     if ( name != NULL )
         s = name;
 
@@ -1913,7 +1981,7 @@ ResolveEnumFields(mcos_subsystem_t *ss, matvar_t *matvar)
 
         if ( 0 == strcmp(f->name, "ClassName") ) {
             char *name = NULL;
-            resolved = ResolveClassName(ss, f, &name);
+            resolved = ResolveClassName(ss, f, &name, 0);
             if ( name != NULL ) {
                 free(matvar->internal->class_name);
                 matvar->internal->class_name = name;
@@ -1921,7 +1989,7 @@ ResolveEnumFields(mcos_subsystem_t *ss, matvar_t *matvar)
         } else if ( 0 == strcmp(f->name, "ValueNames") ) {
             resolved = ResolveStringIndices(ss, f);
         } else if ( 0 == strcmp(f->name, "BuiltinClassName") ) {
-            resolved = ResolveClassName(ss, f, NULL);
+            resolved = ResolveClassName(ss, f, NULL, 1);
         }
 
         if ( resolved != NULL ) {
@@ -1986,11 +2054,12 @@ Mat_MCOS_ReadEnum(mat_t *mat, matvar_t *matvar)
     if ( mat == NULL || matvar == NULL )
         return MATIO_E_BAD_ARGUMENT;
 
-    /* Check for an enumeration struct first, so the subsystem is not fetched
-     * (and lazily parsed) for ordinary structs.  This also prevents re-entrant
-     * subsystem parsing: the struct cells read while parsing the subsystem are
-     * not enumerations and return here without calling GetSubsystem*. */
-    if ( !IsEnumStruct(matvar) )
+    /* Check for a (possibly nested) enumeration struct first, so the subsystem
+     * is not fetched (and lazily parsed) for ordinary structs.  This also
+     * prevents re-entrant subsystem parsing: the struct cells read while
+     * parsing the subsystem are not enumerations and return here without
+     * calling GetSubsystem*. */
+    if ( !HasEnumStruct(matvar, 0) )
         return MATIO_E_NO_ERROR;
 
     ss = (mcos_subsystem_t *)mat->mcos;
@@ -2004,7 +2073,10 @@ Mat_MCOS_ReadEnum(mat_t *mat, matvar_t *matvar)
     if ( ss == NULL )
         return MATIO_E_NO_ERROR;
 
-    return ResolveEnumStruct(ss, matvar, 0);
+    if ( IsEnumStruct(matvar) )
+        return ResolveEnumStruct(ss, matvar, 0);
+
+    return ResolveNestedMCOS(ss, matvar, 0);
 }
 
 #endif /* MCOS */

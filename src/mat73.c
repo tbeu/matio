@@ -2947,12 +2947,9 @@ Mat_VarWriteNextType73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs
                 err = Mat_VarWriteSparse73(id, matvar, name);
                 break;
             case MAT_C_EMPTY:
-                err = Mat_WriteEmptyVariable73(id, name, matvar->rank, matvar->dims);
-                break;
             case MAT_C_OBJECT:
             case MAT_C_OPAQUE:
-                Mat_Critical("Writing MCOS objects is not supported");
-                err = MATIO_E_OPERATION_NOT_SUPPORTED;
+                err = Mat_WriteEmptyVariable73(id, name, matvar->rank, matvar->dims);
                 break;
             case MAT_C_FUNCTION:
                 err = MATIO_E_OPERATION_NOT_SUPPORTED;

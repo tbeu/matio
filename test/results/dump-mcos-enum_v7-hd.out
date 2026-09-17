@@ -11,7 +11,7 @@ enum_uint32 = TestClasses.EnumClassWithBase (6 fields)
     .ValueNames: [1 mxCELL_CLASS]
     .Values: [1 mxCELL_CLASS]
     .ValueIndices: [1 mxUINT32_CLASS]
-    .BuiltinClassName = 'uint32'
+    .BuiltinClassName = 'uint32.Data'
 enum_array = TestClasses.EnumClass (6 fields)
     .EnumerationInstanceTag: [1 mxUINT32_CLASS]
     .ClassName = 'TestClasses.EnumClass'

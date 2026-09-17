@@ -3127,11 +3127,6 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
     if ( NULL == mat || NULL == matvar )
         return MATIO_E_BAD_ARGUMENT;
 
-    if ( matvar->class_type == MAT_C_OBJECT || matvar->class_type == MAT_C_OPAQUE ) {
-        Mat_Critical("Writing MCOS objects is not supported");
-        return MATIO_E_OPERATION_NOT_SUPPORTED;
-    }
-
     if ( NULL == mat->dir ) {
         size_t n = 0;
         (void)Mat_GetDir(mat, &n);
