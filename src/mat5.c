@@ -1108,6 +1108,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
 
     matvar->data = calloc(nelems, matvar->data_size);
     if ( NULL == matvar->data ) {
+        matvar->nbytes = 0;
         if ( NULL != matvar->name )
             Mat_Critical("Couldn't allocate memory for %s->data", matvar->name);
         return bytesread;

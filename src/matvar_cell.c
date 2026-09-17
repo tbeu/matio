@@ -26,7 +26,7 @@ Mat_VarGetCell(const matvar_t *matvar, int index)
     matvar_t *cell = NULL;
     int err;
 
-    if ( matvar == NULL )
+    if ( matvar == NULL || matvar->data == NULL )
         return NULL;
 
     err = Mat_MulDims(matvar, &nelems);
@@ -184,7 +184,7 @@ Mat_VarSetCell(matvar_t *matvar, int index, matvar_t *cell)
     matvar_t **cells, *old_cell = NULL;
     int err;
 
-    if ( matvar == NULL || matvar->rank < 1 )
+    if ( matvar == NULL || matvar->rank < 1 || matvar->data == NULL )
         return NULL;
 
     err = Mat_MulDims(matvar, &nelems);
