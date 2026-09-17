@@ -1,59 +1,187 @@
       Name: enum_array
       Rank: 2
-Class Type: Structure
+Dimensions: 1 x 1
+Class Type: Object [TestClasses.EnumClass]
+ Data Type: Structure
 Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
 3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 21
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+TestClasses.EnumClass
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 6 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum1
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum2
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum3
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum4
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum5
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum6
+}
+}
+      Name: Values
+      Rank: 2
+Dimensions: 6 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
 1 
-3 
-9 
-10 
-11 
-12 
-13 
-          Name: Values
-          Rank: 2
-    Class Type: Cell Array
-    {
-3707764736 
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
 2 
-1 
-1 
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
 3 
-1 
-3707764736 
-2 
-1 
-1 
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
 4 
-1 
-3707764736 
-2 
-1 
-1 
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
 5 
-1 
-3707764736 
-2 
-1 
-1 
+}
+}
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
 6 
-1 
-3707764736 
-2 
-1 
-1 
-7 
-1 
-3707764736 
-2 
-1 
-1 
-8 
-1 
-    }
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 2 x 3
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
 0 2 4 
 1 3 5 
-0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 0
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+}
 }
       Name: enum_nested
       Rank: 2
@@ -64,7 +192,7 @@ Fields[3] {
       Name: a
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Structure
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[6] {
       Name: EnumerationInstanceTag
@@ -77,19 +205,26 @@ Class Type: 32-bit, unsigned integer array
 }
       Name: ClassName
       Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
+Dimensions: 1 x 21
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
 {
-1 
+TestClasses.EnumClass
 }
       Name: ValueNames
       Rank: 2
 Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
+Class Type: Cell Array
+ Data Type: Cell Array
 {
-3 
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum1
+}
 }
       Name: Values
       Rank: 2
@@ -122,11 +257,10 @@ Class Type: 32-bit, unsigned integer array
 }
       Name: BuiltinClassName
       Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
+Dimensions: 1 x 0
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
 {
-0 
 }
 }
       Name: b
@@ -137,7 +271,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Structure
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[6] {
       Name: EnumerationInstanceTag
@@ -150,19 +284,26 @@ Class Type: 32-bit, unsigned integer array
 }
       Name: ClassName
       Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
+Dimensions: 1 x 21
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
 {
-1 
+TestClasses.EnumClass
 }
       Name: ValueNames
       Rank: 2
 Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
+Class Type: Cell Array
+ Data Type: Cell Array
 {
-9 
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum2
+}
 }
       Name: Values
       Rank: 2
@@ -195,11 +336,10 @@ Class Type: 32-bit, unsigned integer array
 }
       Name: BuiltinClassName
       Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
+Dimensions: 1 x 0
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
 {
-0 
 }
 }
 }
@@ -212,7 +352,7 @@ Fields[1] {
       Name: InnerProp
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Structure
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[6] {
       Name: EnumerationInstanceTag
@@ -225,19 +365,26 @@ Class Type: 32-bit, unsigned integer array
 }
       Name: ClassName
       Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
+Dimensions: 1 x 21
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
 {
-1 
+TestClasses.EnumClass
 }
       Name: ValueNames
       Rank: 2
 Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
+Class Type: Cell Array
+ Data Type: Cell Array
 {
-10 
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum3
+}
 }
       Name: Values
       Rank: 2
@@ -270,54 +417,160 @@ Class Type: 32-bit, unsigned integer array
 }
       Name: BuiltinClassName
       Rank: 2
-Dimensions: 1 x 1
-Class Type: 32-bit, unsigned integer array
- Data Type: 32-bit, unsigned integer
+Dimensions: 1 x 0
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
 {
-0 
 }
 }
 }
 }
       Name: enum_scalar
       Rank: 2
-Class Type: Structure
+Dimensions: 1 x 1
+Class Type: Object [TestClasses.EnumClass]
+ Data Type: Structure
 Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
 3707764736 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 21
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+TestClasses.EnumClass
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum1
+}
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClass]
+ Data Type: Structure
+Fields[1] {
+      Name: val
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
 1 
-3 
-          Name: Values
-          Rank: 2
-    Class Type: Cell Array
-    {
-3707764736 
-2 
-1 
-1 
-1 
-1 
-    }
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
 0 
-0 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 0
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+}
 }
       Name: enum_uint32
       Rank: 2
-Class Type: Structure
+Dimensions: 1 x 1
+Class Type: Object [TestClasses.EnumClassWithBase]
+ Data Type: Structure
 Fields[6] {
+      Name: EnumerationInstanceTag
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
 3707764736 
-2 
-3 
-          Name: Values
-          Rank: 2
-    Class Type: Cell Array
-    {
-3707764736 
-2 
+}
+      Name: ClassName
+      Rank: 2
+Dimensions: 1 x 29
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+TestClasses.EnumClassWithBase
+}
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Name: ValueNames
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+enum1
+}
+}
+      Name: Values
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Cell Array
+ Data Type: Cell Array
+{
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [EnumClassWithBase]
+ Data Type: Structure
+Fields[1] {
+      Name: uint32.Data
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
 1 
-1 
-2 
-2 
-    }
+}
+}
+}
+      Name: ValueIndices
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 32-bit, unsigned integer array
+ Data Type: 32-bit, unsigned integer
+{
 0 
-3 
+}
+      Name: BuiltinClassName
+      Rank: 2
+Dimensions: 1 x 11
+Class Type: Character Array
+ Data Type: 8-bit, unsigned integer
+{
+uint32.Data
+}
 }

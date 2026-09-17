@@ -289,6 +289,7 @@ EXTERN wchar_t *utf82u(const char *src);
 EXTERN int ParseOpaqueMetadata(const mat_uint32_t *meta, size_t meta_nvals, matvar_t *matvar);
 EXTERN int Mat_MCOS_Read5(mat_t *mat, matvar_t *matvar);
 EXTERN int Mat_MCOS_Read73(mat_t *mat, matvar_t *matvar);
+EXTERN int Mat_MCOS_ReadEnum(mat_t *mat, matvar_t *matvar);
 EXTERN void Mat_MCOS_Free(void *mcos);
 #endif
 #if defined(MAT73) && MAT73

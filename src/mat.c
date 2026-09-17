@@ -86,17 +86,30 @@ Mat_mktemp(char *path_buf, char *dir_buf)
 static int
 ReadData(mat_t *mat, matvar_t *matvar)
 {
+    int err;
+
     if ( mat == NULL || matvar == NULL || mat->fp == NULL )
         return MATIO_E_BAD_ARGUMENT;
     else if ( mat->version == MAT_FT_MAT5 )
-        return Mat_VarRead5(mat, matvar);
+        err = Mat_VarRead5(mat, matvar);
 #if defined(MAT73) && MAT73
     else if ( mat->version == MAT_FT_MAT73 )
-        return Mat_VarRead73(mat, matvar);
+        err = Mat_VarRead73(mat, matvar);
 #endif
     else if ( mat->version == MAT_FT_MAT4 )
-        return Mat_VarRead4(mat, matvar);
-    return MATIO_E_FAIL_TO_IDENTIFY;
+        err = Mat_VarRead4(mat, matvar);
+    else
+        return MATIO_E_FAIL_TO_IDENTIFY;
+
+#if defined(MCOS) && MCOS
+    /* Resolve Simulink.IntEnumType enumeration structs once the data has been
+     * fully read.  This is done here (rather than in the v5/v7.3 readers) so
+     * that the subsystem is not resolved while it is still being parsed. */
+    if ( !err )
+        err = Mat_MCOS_ReadEnum(mat, matvar);
+#endif
+
+    return err;
 }
 
 static void
