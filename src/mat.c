@@ -292,27 +292,15 @@ Mat_PrintData(int rank, const size_t *_dims, const void *data, enum matio_classe
                             }
                             idxOffset[i * dims[1] + j] = k;
                             c = uint8_data[k];
-                            if ( c <= 0x7F ) {
-                            } else if ( (c & 0xE0) == 0xC0 ) {
-                                if ( k + 1 < nbytes ) {
-                                    k += 1;
-                                } else {
-                                    err = 1;
-                                    break;
-                                }
-                            } else if ( (c & 0xF0) == 0xE0 ) {
-                                if ( k + 2 < nbytes ) {
-                                    k += 2;
-                                } else {
-                                    err = 1;
-                                    break;
-                                }
-                            } else if ( (c & 0xF8) == 0xF0 ) {
-                                if ( k + 3 < nbytes ) {
-                                    k += 3;
-                                } else {
-                                    err = 1;
-                                    break;
+                            {
+                                const size_t len = Mat_Utf8SeqLen(c);
+                                if ( len > 1 ) {
+                                    if ( k + len - 1 < nbytes ) {
+                                        k += len - 1;
+                                    } else {
+                                        err = 1;
+                                        break;
+                                    }
                                 }
                             }
                             ++k;
@@ -328,15 +316,22 @@ Mat_PrintData(int rank, const size_t *_dims, const void *data, enum matio_classe
                             mat_uint8_t c;
                             k = idxOffset[j * dims[0] + i];
                             c = uint8_data[k];
-                            if ( c <= 0x7F ) {
-                                printf("%c", c);
-                            } else if ( (c & 0xE0) == 0xC0 ) {
-                                printf("%c%c", c, uint8_data[k + 1]);
-                            } else if ( (c & 0xF0) == 0xE0 ) {
-                                printf("%c%c%c", c, uint8_data[k + 1], uint8_data[k + 2]);
-                            } else if ( (c & 0xF8) == 0xF0 ) {
-                                printf("%c%c%c%c", c, uint8_data[k + 1], uint8_data[k + 2],
-                                       uint8_data[k + 3]);
+                            switch ( Mat_Utf8SeqLen(c) ) {
+                                case 1:
+                                    printf("%c", c);
+                                    break;
+                                case 2:
+                                    printf("%c%c", c, uint8_data[k + 1]);
+                                    break;
+                                case 3:
+                                    printf("%c%c%c", c, uint8_data[k + 1], uint8_data[k + 2]);
+                                    break;
+                                case 4:
+                                    printf("%c%c%c%c", c, uint8_data[k + 1], uint8_data[k + 2],
+                                           uint8_data[k + 3]);
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                         printf("\n");
@@ -469,6 +464,31 @@ ClassType2DataType(enum matio_classes class_type)
         default:
             return MAT_T_UNKNOWN;
     }
+}
+
+/** @brief Returns the length of a UTF-8 sequence for a lead byte
+ *
+ * Determines the number of bytes (1-4) that make up a UTF-8 code point whose
+ * first byte is @c c. Returns 0 for bytes that cannot start a valid UTF-8
+ * sequence (continuation bytes and bytes 0xF8-0xFF).
+ *
+ * @ingroup MAT
+ * @param c first byte of the UTF-8 sequence
+ * @returns length of the sequence in bytes, or 0 if @c c is not a lead byte
+ */
+size_t
+Mat_Utf8SeqLen(mat_uint8_t c)
+{
+    if ( c <= 0x7F )
+        return 1;
+    else if ( (c & 0xE0) == 0xC0 )
+        return 2;
+    else if ( (c & 0xF0) == 0xE0 )
+        return 3;
+    else if ( (c & 0xF8) == 0xF0 )
+        return 4;
+    else
+        return 0;
 }
 
 /** @brief Gets number of elements from a variable
@@ -1429,16 +1449,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
             size_t i;
             const mat_uint8_t *ptr = (const mat_uint8_t *)data;
             for ( i = 0; i < nelems; i++ ) {
-                const mat_uint8_t c = ptr[k];
-                if ( c <= 0x7F ) {
-                    k++;
-                } else if ( (c & 0xE0) == 0xC0 ) {
-                    k += 2;
-                } else if ( (c & 0xF0) == 0xE0 ) {
-                    k += 3;
-                } else if ( (c & 0xF8) == 0xF0 ) {
-                    k += 4;
-                }
+                k += Mat_Utf8SeqLen(ptr[k]);
             }
         }
         matvar->nbytes = k;
