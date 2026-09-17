@@ -43,7 +43,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val

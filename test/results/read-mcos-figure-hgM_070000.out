@@ -7,19 +7,19 @@ Fields[1] {
       Name: GraphicsObjects
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [GraphicsObjects]
+Class Type: Object [matlab.graphics.internal.figfile.GraphicsObjects]
  Data Type: Structure
 Fields[1] {
       Name: Format3Data
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Figure]
+Class Type: Object [matlab.ui.Figure]
  Data Type: Structure
 Fields[20] {
       Name: StoragePosition
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [UnitPos]
+Class Type: Object [matlab.ui.internal.UnitPos]
  Data Type: Structure
 Fields[16] {
       Name: UnitsMode
@@ -154,7 +154,7 @@ Class Type: Double Precision Array
       Name: StorageOuterPosition
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [UnitPos]
+Class Type: Object [matlab.ui.internal.UnitPos]
  Data Type: Structure
 Fields[16] {
       Name: UnitsMode
@@ -352,7 +352,7 @@ Class Type: Double Precision Array
       Name: matlab.ui.container.Container.SerializableChildren
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Axes]
+Class Type: Object [matlab.graphics.axis.Axes]
  Data Type: Structure
 Fields[56] {
       Name: CameraPosition_I
@@ -413,7 +413,7 @@ Class Type: Double Precision Array
       Name: XLabel_IS
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.Text]
  Data Type: Structure
 Fields[24] {
       Name: Color_I
@@ -712,7 +712,7 @@ Fields[1] {
       Name: Internal_InteractionsArray
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EditInteraction]
+Class Type: Object [matlab.graphics.interaction.interactions.EditInteraction]
  Data Type: Structure
 Fields[0] {
 }
@@ -757,13 +757,13 @@ x
       Name: Text
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.world.Text]
  Data Type: Structure
 Fields[16] {
       Name: Font_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Font]
+Class Type: Object [matlab.graphics.general.Font]
  Data Type: Structure
 Fields[2] {
       Name: Name_I
@@ -953,7 +953,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -1028,7 +1028,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -1103,7 +1103,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -1137,7 +1137,7 @@ logical.Data
       Name: YLabel_IS
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.Text]
  Data Type: Structure
 Fields[25] {
       Name: Color_I
@@ -1444,7 +1444,7 @@ Fields[1] {
       Name: Internal_InteractionsArray
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EditInteraction]
+Class Type: Object [matlab.graphics.interaction.interactions.EditInteraction]
  Data Type: Structure
 Fields[0] {
 }
@@ -1489,13 +1489,13 @@ sin(x)
       Name: Text
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.world.Text]
  Data Type: Structure
 Fields[17] {
       Name: Font_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Font]
+Class Type: Object [matlab.graphics.general.Font]
  Data Type: Structure
 Fields[2] {
       Name: Name_I
@@ -1693,7 +1693,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -1768,7 +1768,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -1843,7 +1843,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -1883,7 +1883,7 @@ Class Type: Opaque
       Name: Camera_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Camera3D]
+Class Type: Object [matlab.graphics.axis.camera.Camera3D]
  Data Type: Structure
 Fields[13] {
       Name: Position_I
@@ -1921,7 +1921,7 @@ off
       Name: Viewport_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [UnitPosition]
+Class Type: Object [matlab.graphics.general.UnitPosition]
  Data Type: Structure
 Fields[6] {
       Name: ScreenResolution_I
@@ -2116,7 +2116,7 @@ Fields[0] {
       Name: DataSpace_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [CartesianDataSpace]
+Class Type: Object [matlab.graphics.axis.dataspace.CartesianDataSpace]
  Data Type: Structure
 Fields[18] {
       Name: PreferDataSpaceManualProps
@@ -2263,7 +2263,7 @@ Fields[0] {
       Name: ColorSpace_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [MapColorSpace]
+Class Type: Object [matlab.graphics.axis.colorspace.MapColorSpace]
  Data Type: Structure
 Fields[8] {
       Name: Alphamap_I
@@ -2330,7 +2330,7 @@ Fields[0] {
       Name: DecorationContainer_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [DecorationContainer]
+Class Type: Object [matlab.graphics.axis.decorator.DecorationContainer]
  Data Type: Structure
 Fields[7] {
       Name: matlab.graphics.primitive.world.Group.SerializableChildren
@@ -2389,7 +2389,7 @@ Fields[0] {
       Name: ChildContainer_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [ClipNode]
+Class Type: Object [matlab.graphics.primitive.world.ClipNode]
  Data Type: Structure
 Fields[8] {
       Name: Position_I
@@ -2405,7 +2405,7 @@ Class Type: Double Precision Array
       Name: matlab.graphics.primitive.world.Group.SerializableChildren
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Line]
+Class Type: Object [matlab.graphics.chart.primitive.Line]
  Data Type: Structure
 Fields[22] {
       Name: XDataMode
@@ -2558,13 +2558,13 @@ off
       Name: Annotation
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Annotation]
+Class Type: Object [matlab.graphics.eventdata.Annotation]
  Data Type: Structure
 Fields[2] {
       Name: LegendInformation
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [LegendEntry]
+Class Type: Object [matlab.graphics.eventdata.LegendEntry]
  Data Type: Structure
 Fields[0] {
 }
@@ -2695,7 +2695,7 @@ Fields[0] {
       Name: Backdrop_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Backdrop]
+Class Type: Object [matlab.graphics.axis.decorator.Backdrop]
  Data Type: Structure
 Fields[8] {
       Name: matlab.graphics.primitive.world.Group.SerializableChildren
@@ -2762,7 +2762,7 @@ all
       Name: Title_IS
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.Text]
  Data Type: Structure
 Fields[20] {
       Name: CustomThemePropertyMappings
@@ -3029,7 +3029,7 @@ Fields[1] {
       Name: Internal_InteractionsArray
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EditInteraction]
+Class Type: Object [matlab.graphics.interaction.interactions.EditInteraction]
  Data Type: Structure
 Fields[0] {
 }
@@ -3074,13 +3074,13 @@ Simple Sine Wave
       Name: Text
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.world.Text]
  Data Type: Structure
 Fields[15] {
       Name: Font_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Font]
+Class Type: Object [matlab.graphics.general.Font]
  Data Type: Structure
 Fields[3] {
       Name: Name_I
@@ -3270,7 +3270,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -3345,7 +3345,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -3420,7 +3420,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -3460,7 +3460,7 @@ Class Type: Opaque
       Name: BoxFrame_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BoxFrame]
+Class Type: Object [matlab.graphics.axis.decorator.BoxFrame]
  Data Type: Structure
 Fields[12] {
       Name: XColor_I
@@ -3559,7 +3559,7 @@ Fields[0] {
       Name: XRuler_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [NumericRuler]
+Class Type: Object [matlab.graphics.axis.decorator.NumericRuler]
  Data Type: Structure
 Fields[29] {
       Name: Limits_I
@@ -3708,7 +3708,7 @@ Class Type: Character Array
       Name: Axle
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [LineStrip]
+Class Type: Object [matlab.graphics.primitive.world.LineStrip]
  Data Type: Structure
 Fields[13] {
       Name: AlignVertexCenters_I
@@ -3821,7 +3821,7 @@ Class Type: 8-bit, unsigned integer array (logical)
       Name: MajorTickChild
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [LineStrip]
+Class Type: Object [matlab.graphics.primitive.world.LineStrip]
  Data Type: Structure
 Fields[12] {
       Name: AlignVertexCenters_I
@@ -3932,13 +3932,13 @@ Class Type: Opaque
       Name: TickLabelChild
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.world.Text]
  Data Type: Structure
 Fields[14] {
       Name: Font_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Font]
+Class Type: Object [matlab.graphics.general.Font]
  Data Type: Structure
 Fields[2] {
       Name: Name_I
@@ -4124,7 +4124,7 @@ Class Type: 8-bit, unsigned integer array (logical)
       Name: Label_IS
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.Text]
  Data Type: Structure
 Fields[24] {
       Name: Color_I
@@ -4423,7 +4423,7 @@ Fields[1] {
       Name: Internal_InteractionsArray
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EditInteraction]
+Class Type: Object [matlab.graphics.interaction.interactions.EditInteraction]
  Data Type: Structure
 Fields[0] {
 }
@@ -4468,13 +4468,13 @@ x
       Name: Text
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.world.Text]
  Data Type: Structure
 Fields[16] {
       Name: Font_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Font]
+Class Type: Object [matlab.graphics.general.Font]
  Data Type: Structure
 Fields[2] {
       Name: Name_I
@@ -4664,7 +4664,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -4739,7 +4739,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -4814,7 +4814,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -4953,7 +4953,7 @@ Class Type: Opaque
       Name: YRuler_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [NumericRuler]
+Class Type: Object [matlab.graphics.axis.decorator.NumericRuler]
  Data Type: Structure
 Fields[29] {
       Name: Limits_I
@@ -5123,7 +5123,7 @@ Class Type: Character Array
       Name: Axle
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [LineStrip]
+Class Type: Object [matlab.graphics.primitive.world.LineStrip]
  Data Type: Structure
 Fields[13] {
       Name: AlignVertexCenters_I
@@ -5236,7 +5236,7 @@ Class Type: 8-bit, unsigned integer array (logical)
       Name: MajorTickChild
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [LineStrip]
+Class Type: Object [matlab.graphics.primitive.world.LineStrip]
  Data Type: Structure
 Fields[12] {
       Name: AlignVertexCenters_I
@@ -5347,13 +5347,13 @@ Class Type: Opaque
       Name: TickLabelChild
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.world.Text]
  Data Type: Structure
 Fields[14] {
       Name: Font_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Font]
+Class Type: Object [matlab.graphics.general.Font]
  Data Type: Structure
 Fields[2] {
       Name: Name_I
@@ -5560,7 +5560,7 @@ Class Type: 8-bit, unsigned integer array (logical)
       Name: Label_IS
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.Text]
  Data Type: Structure
 Fields[25] {
       Name: Color_I
@@ -5867,7 +5867,7 @@ Fields[1] {
       Name: Internal_InteractionsArray
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EditInteraction]
+Class Type: Object [matlab.graphics.interaction.interactions.EditInteraction]
  Data Type: Structure
 Fields[0] {
 }
@@ -5912,13 +5912,13 @@ sin(x)
       Name: Text
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Text]
+Class Type: Object [matlab.graphics.primitive.world.Text]
  Data Type: Structure
 Fields[17] {
       Name: Font_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Font]
+Class Type: Object [matlab.graphics.general.Font]
  Data Type: Structure
 Fields[2] {
       Name: Name_I
@@ -6116,7 +6116,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -6191,7 +6191,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -6266,7 +6266,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [OnOffSwitchState]
+Class Type: Object [matlab.lang.OnOffSwitchState]
  Data Type: Structure
 Fields[1] {
       Name: logical.Data
@@ -6405,7 +6405,7 @@ Class Type: Opaque
       Name: ZRuler_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [NumericRuler]
+Class Type: Object [matlab.graphics.axis.decorator.NumericRuler]
  Data Type: Structure
 Fields[28] {
       Name: Limits_I
@@ -6632,7 +6632,7 @@ Class Type: Opaque
       Name: AmbientLightSource_I
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [LightSource]
+Class Type: Object [matlab.graphics.primitive.world.LightSource]
  Data Type: Structure
 Fields[6] {
       Name: Style_I
@@ -6832,7 +6832,7 @@ Class Type: Opaque
       Name: matlab.graphics.primitive.world.Group.SerializableChildren
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Line]
+Class Type: Object [matlab.graphics.chart.primitive.Line]
  Data Type: Structure
 Fields[22] {
       Name: XDataMode
@@ -6985,13 +6985,13 @@ off
       Name: Annotation
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Annotation]
+Class Type: Object [matlab.graphics.eventdata.Annotation]
  Data Type: Structure
 Fields[2] {
       Name: LegendInformation
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [LegendEntry]
+Class Type: Object [matlab.graphics.eventdata.LegendEntry]
  Data Type: Structure
 Fields[0] {
 }
@@ -7193,7 +7193,7 @@ off
       Name: matlab.ui.internal.mixin.Printable.PaperPositionStorage
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [PaperPositionStorage]
+Class Type: Object [matlab.ui.internal.PaperPositionStorage]
  Data Type: Structure
 Fields[6] {
       Name: Units_I
@@ -7248,7 +7248,7 @@ Class Type: Double Precision Array
       Name: matlab.ui.internal.mixin.Printable.PaperTypeStorage
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [PaperTypeStorage]
+Class Type: Object [matlab.ui.internal.PaperTypeStorage]
  Data Type: Structure
 Fields[6] {
       Name: Units_I

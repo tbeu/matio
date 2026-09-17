@@ -1,13 +1,13 @@
       Name: obj_with_nested_props
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
@@ -42,7 +42,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
@@ -79,7 +79,7 @@ Fields[1] {
       Name: InnerProp
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a

@@ -1,0 +1,61 @@
+      Name: p
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [Simulink.Parameter]
+ Data Type: Structure
+Fields[8] {
+      Name: Value
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+123 
+}
+      Name: CoderInfo
+      Rank: 0
+      Name: Description
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+}
+      Name: DataType
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+auto
+}
+      Name: Min
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: Max
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: DocUnits
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+}
+      Name: Dimensions
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 1 
+}
+}

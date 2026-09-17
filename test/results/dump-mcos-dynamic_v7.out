@@ -1,7 +1,7 @@
       Name: obj
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicDynamic]
+Class Type: Object [TestClasses.BasicDynamic]
  Data Type: Structure
 Fields[19] {
       Name: Name

@@ -1,7 +1,7 @@
       Name: obj_no_vals
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
@@ -29,7 +29,7 @@ Class Type: Double Precision Array
       Name: obj_with_vals
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
@@ -58,20 +58,20 @@ Class Type: Double Precision Array
       Name: obj_with_default_val
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [DefaultClass]
+Class Type: Object [TestClasses.DefaultClass]
  Data Type: Structure
 Fields[0] {
 }
       Name: obj_with_nested_props
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
@@ -106,7 +106,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
@@ -143,7 +143,7 @@ Fields[1] {
       Name: InnerProp
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
@@ -175,7 +175,7 @@ Class Type: Double Precision Array
       Name: obj_array
       Rank: 2
 Dimensions: 2 x 2
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[12] {
       Name: a
@@ -270,7 +270,7 @@ Class Type: Double Precision Array
       Name: obj_handle_1
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [HandleClass]
+Class Type: Object [TestClasses.HandleClass]
  Data Type: Structure
 Fields[1] {
       Name: a
@@ -285,7 +285,7 @@ Class Type: Double Precision Array
       Name: obj_handle_2
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [HandleClass]
+Class Type: Object [TestClasses.HandleClass]
  Data Type: Structure
 Fields[1] {
       Name: a
