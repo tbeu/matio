@@ -43,7 +43,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val
@@ -117,7 +117,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClassWithBase]
+Class Type: Object [TestClasses.EnumClassWithBase]
  Data Type: Structure
 Fields[1] {
       Name: uint32.Data
@@ -232,7 +232,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val
@@ -246,7 +246,7 @@ Class Type: Double Precision Array
 }
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val
@@ -260,7 +260,7 @@ Class Type: Double Precision Array
 }
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val
@@ -274,7 +274,7 @@ Class Type: Double Precision Array
 }
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val
@@ -288,7 +288,7 @@ Class Type: Double Precision Array
 }
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val
@@ -302,7 +302,7 @@ Class Type: Double Precision Array
 }
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val
@@ -335,7 +335,7 @@ Class Type: Character Array
       Name: enum_nested
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a
@@ -383,7 +383,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val
@@ -462,7 +462,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val
@@ -543,7 +543,7 @@ Class Type: Cell Array
 {
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [EnumClass]
+Class Type: Object [TestClasses.EnumClass]
  Data Type: Structure
 Fields[1] {
       Name: val

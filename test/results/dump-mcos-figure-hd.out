@@ -2455,7 +2455,7 @@ auto
       Rank: 2
 Class Type: Structure
 Fields[1] {
-    GraphicsObjects = GraphicsObjects (1 fields)
+    GraphicsObjects = matlab.graphics.internal.figfile.GraphicsObjects (1 fields)
     .Format3Data: [1 mxOBJECT_CLASS]
 }
       Name: meta_data

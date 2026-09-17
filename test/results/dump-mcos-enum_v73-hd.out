@@ -5,7 +5,7 @@ enum_array = TestClasses.EnumClass (6 fields)
     .Values: [6 mxCELL_CLASS]
     .ValueIndices: [6 mxUINT32_CLASS]
     .BuiltinClassName: [0 mxCHAR_CLASS]
-enum_nested = BasicClass (3 fields)
+enum_nested = TestClasses.BasicClass (3 fields)
     .a: [1 mxOBJECT_CLASS]
     .b: [1 mxCELL_CLASS]
     .c: [1 mxSTRUCT_CLASS]

@@ -1308,6 +1308,42 @@ GetSubsystem73(mat_t *mat)
 }
 #endif /* MAT73 */
 
+/** @brief Build the fully-qualified class name for a class ID
+ *
+ * Combines the namespace and class name from the parsed class information.
+ *
+ * @param ss       Parsed subsystem
+ * @param class_id Class ID (1-based)
+ * @return malloc'd string, or NULL if the class ID is invalid
+ */
+static char *BuildClassName(const mcos_subsystem_t *ss, mat_uint32_t class_id);
+
+/** @brief Check whether an alias is merely the unqualified suffix of a class name
+ *
+ * @param full_name Fully-qualified class name (e.g. "Simulink.Parameter")
+ * @param alias     Candidate class alias (e.g. "Parameter")
+ * @return 1 if @p alias is a non-empty suffix of @p full_name preceded by a
+ *         package separator ".", 0 otherwise
+ */
+static int
+IsUnqualifiedClassSuffix(const char *full_name, const char *alias)
+{
+    size_t len_full;
+    size_t len_alias;
+
+    if ( full_name == NULL || alias == NULL )
+        return 0;
+
+    len_full = strlen(full_name);
+    len_alias = strlen(alias);
+
+    if ( len_alias == 0 || len_full <= len_alias )
+        return 0;
+
+    return full_name[len_full - len_alias - 1] == '.' &&
+           strcmp(full_name + len_full - len_alias, alias) == 0;
+}
+
 /** @brief Resolve an MCOS opaque variable into a struct-like matvar_t (common logic)
  *
  * @param ss      Parsed subsystem
@@ -1342,21 +1378,36 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
 
     cls = &ss->class_info[matvar->internal->class_id - 1];
 
-    /* Prefer the active class alias when it is present in FileWrapper__ v4+. */
+    /* Resolve the fully-qualified class name and, for FileWrapper__ v4+, the
+     * active class alias. The alias is only preferred when it is not merely
+     * the unqualified suffix of the fully-qualified name (e.g. "Parameter"
+     * vs "Simulink.Parameter"). */
     {
-        const char *resolved_name = cls->name;
+        char *full_name = BuildClassName(ss, matvar->internal->class_id);
+        const char *resolved_name = full_name != NULL ? full_name : cls->name;
+        const char *alias = NULL;
+
         if ( matvar->internal->class_id > 0 &&
              matvar->internal->class_id <= ss->num_class_aliases &&
              ss->class_aliases[matvar->internal->class_id - 1] != NULL ) {
-            resolved_name = ss->class_aliases[matvar->internal->class_id - 1];
+            alias = ss->class_aliases[matvar->internal->class_id - 1];
         }
+
+        if ( alias != NULL && resolved_name != NULL &&
+             !IsUnqualifiedClassSuffix(resolved_name, alias) ) {
+            resolved_name = alias;
+        }
+
         if ( resolved_name != NULL && (matvar->internal->class_name == NULL ||
                                        strcmp(matvar->internal->class_name, resolved_name) != 0) ) {
             free(matvar->internal->class_name);
             matvar->internal->class_name = strdup(resolved_name);
-            if ( matvar->internal->class_name == NULL )
+            if ( matvar->internal->class_name == NULL ) {
+                free(full_name);
                 return MATIO_E_OUT_OF_MEMORY;
+            }
         }
+        free(full_name);
     }
 
     /* Collect all unique field names across the object graph, including

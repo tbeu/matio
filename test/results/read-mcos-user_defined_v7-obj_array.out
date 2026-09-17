@@ -1,7 +1,7 @@
       Name: obj_array
       Rank: 2
 Dimensions: 2 x 2
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[12] {
       Name: a

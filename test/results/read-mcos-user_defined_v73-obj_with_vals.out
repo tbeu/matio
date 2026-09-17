@@ -1,7 +1,7 @@
       Name: obj_with_vals
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [BasicClass]
+Class Type: Object [TestClasses.BasicClass]
  Data Type: Structure
 Fields[3] {
       Name: a

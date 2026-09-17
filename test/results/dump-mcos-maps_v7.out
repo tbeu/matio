@@ -1,7 +1,7 @@
       Name: map_empty
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Map]
+Class Type: Object [containers.Map]
  Data Type: Structure
 Fields[1] {
       Name: serialization
@@ -53,7 +53,7 @@ any
       Name: map_numeric_keys
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Map]
+Class Type: Object [containers.Map]
  Data Type: Structure
 Fields[1] {
       Name: serialization
@@ -133,7 +133,7 @@ char
       Name: map_char_keys
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Map]
+Class Type: Object [containers.Map]
  Data Type: Structure
 Fields[1] {
       Name: serialization
@@ -213,7 +213,7 @@ double
       Name: map_string_keys
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [Map]
+Class Type: Object [containers.Map]
  Data Type: Structure
 Fields[1] {
       Name: serialization

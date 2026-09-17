@@ -12,6 +12,14 @@ AT_CHECK([cp $srcdir/results/read-mcos-bugv7-la.out expout
           $builddir/test_mat readvar $srcdir/datasets/bugv7.mat la],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS issue365 p])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-issue365-p.out expout
+          $builddir/test_mat readvar $srcdir/datasets/issue365.mat p],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS dynamic v7 obj])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])
@@ -858,6 +866,14 @@ AT_SKIP_IF([test $MCOS -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([cp $srcdir/results/dump-mcos-bugv7-hd.out expout
           $builddir/../tools/matdump -h -d $srcdir/datasets/bugv7.mat],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Dump MCOS issue365 human readable])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/dump-mcos-issue365-hd.out expout
+          $builddir/../tools/matdump -h -d $srcdir/datasets/issue365.mat],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Dump MCOS dynamic v7])

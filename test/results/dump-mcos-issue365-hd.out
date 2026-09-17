@@ -1,0 +1,9 @@
+p = Simulink.Parameter (8 fields)
+    .Value = 123
+    .CoderInfo: [1 mxOPAQUE_CLASS]
+    .Description: [0 mxCHAR_CLASS]
+    .DataType = 'auto'
+    .Min: [0 mxDOUBLE_CLASS]
+    .Max: [0 mxDOUBLE_CLASS]
+    .DocUnits: [0 mxCHAR_CLASS]
+    .Dimensions: [2 mxDOUBLE_CLASS]

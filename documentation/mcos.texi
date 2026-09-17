@@ -245,8 +245,8 @@ Mat_VarFree(C);
 @end verbatim
 
 @section containers.Map
-MATLAB @code{containers.Map} objects use the class name @code{"Map"} and store
-their contents in a nested struct:
+MATLAB @code{containers.Map} objects use the class name @code{"containers.Map"}
+and store their contents in a nested struct:
 
 @table @code
 @item serialization

@@ -963,7 +963,7 @@ print_human_object(const matvar_t *matvar)
     } else if ( 0 == strcmp(cls, "categorical") ) {
         print_human_categorical(matvar);
         return 1;
-    } else if ( 0 == strcmp(cls, "Map") ) {
+    } else if ( 0 == strcmp(cls, "Map") || 0 == strcmp(cls, "containers.Map") ) {
         print_human_map(matvar);
         return 1;
     } else if ( 0 == strcmp(cls, "dictionary") ) {

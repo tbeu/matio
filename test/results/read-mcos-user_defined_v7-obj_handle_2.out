@@ -1,7 +1,7 @@
       Name: obj_handle_2
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [HandleClass]
+Class Type: Object [TestClasses.HandleClass]
  Data Type: Structure
 Fields[1] {
       Name: a

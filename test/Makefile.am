@@ -112,6 +112,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/test_user_defined_v7.mat \
                  $(datasets_dir)/test_user_defined_v73.mat \
                  $(datasets_dir)/issue321_v73_nofields.mat \
+                 $(datasets_dir)/issue365.mat \
                  $(matlab_dir)/test_write_1d_logical.m \
                  $(matlab_dir)/test_write_2d_logical.m \
                  $(matlab_dir)/test_write_1d_numeric.m \
@@ -469,6 +470,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-mcos-bugv7-la.out \
                  $(results_dir)/read-mcos-class_alias-obj.out \
                  $(results_dir)/read-mcos-class_alias-obj1.out \
+                 $(results_dir)/read-mcos-issue365-p.out \
                  $(results_dir)/read-mcos-dynamic_v7-obj.out \
                  $(results_dir)/read-mcos-dynamic_v73-obj.out \
                  $(results_dir)/read-mcos-enum_v7-enum_array.out \
@@ -677,6 +679,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/dump-mcos-bugv7-hd.out \
                  $(results_dir)/dump-mcos-class_alias.out \
                  $(results_dir)/dump-mcos-class_alias-hd.out \
+                 $(results_dir)/dump-mcos-issue365-hd.out \
                  $(results_dir)/dump-mcos-dynamic_v7.out \
                  $(results_dir)/dump-mcos-dynamic_v7-hd.out \
                  $(results_dir)/dump-mcos-dynamic_v73.out \

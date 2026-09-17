@@ -1,4 +1,4 @@
-obj = BasicDynamic (19 fields)
+obj = TestClasses.BasicDynamic (19 fields)
     .Name = 'Example'
     .DynamicName_ = 'DynamicData'
     .DynamicType_ = 'any'
