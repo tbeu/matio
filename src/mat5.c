@@ -222,6 +222,9 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
         case MAT_C_SPARSE: {
             const mat_sparse_t *sparse = (const mat_sparse_t *)matvar->data;
 
+            if ( NULL == sparse )
+                break;
+
             err = Mul(&data_bytes, sparse->nir, sizeof(mat_uint32_t));
             if ( err )
                 return err;
@@ -267,7 +270,7 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
             if ( err )
                 return err;
 
-            if ( matvar->isComplex ) {
+            if ( matvar->isComplex && NULL != sparse->data ) {
                 err = Add(&nBytes, nBytes, tag_size);
                 if ( err )
                     return err;
@@ -2453,15 +2456,20 @@ WriteType(mat_t *mat, matvar_t *matvar)
             err = Mul(&nelems_x_nfields, nelems, nfields);
             if ( err )
                 break;
-            for ( i = 0; i < nelems_x_nfields; i++ ) {
-                err = WriteStructField(mat, fields[i]);
-                if ( err )
-                    break;
+            if ( NULL != fields ) {
+                for ( i = 0; i < nelems_x_nfields; i++ ) {
+                    err = WriteStructField(mat, fields[i]);
+                    if ( err )
+                        break;
+                }
             }
             break;
         }
         case MAT_C_SPARSE: {
             mat_sparse_t *sparse = (mat_sparse_t *)matvar->data;
+
+            if ( NULL == sparse )
+                break;
 
             nBytes = WriteData(mat, sparse->ir, sparse->nir, MAT_T_UINT32);
             if ( nBytes % 8 )
@@ -2471,7 +2479,7 @@ WriteType(mat_t *mat, matvar_t *matvar)
             if ( nBytes % 8 )
                 for ( j = nBytes % 8; j < 8; j++ )
                     fwrite(&pad1, 1, 1, (FILE *)mat->fp);
-            if ( matvar->isComplex ) {
+            if ( matvar->isComplex && NULL != sparse->data ) {
                 const mat_complex_split_t *complex_data = (const mat_complex_split_t *)sparse->data;
                 nBytes = WriteData(mat, complex_data->Re, sparse->ndata, matvar->data_type);
                 if ( nBytes % 8 )
@@ -2523,6 +2531,11 @@ WriteCellArrayField(mat_t *mat, matvar_t *matvar)
     if ( matvar == NULL || mat == NULL )
         return MATIO_E_BAD_ARGUMENT;
 
+    /* A sparse variable requires its data; normalize broken variables
+     * (e.g. read from a corrupt file) to an empty matrix. */
+    if ( matvar->class_type == MAT_C_SPARSE && NULL == matvar->data )
+        matvar->class_type = MAT_C_EMPTY;
+
     fwrite(&matrix_type, 4, 1, (FILE *)mat->fp);
     fwrite(&pad4, 4, 1, (FILE *)mat->fp);
     if ( MAT_C_EMPTY == matvar->class_type ) {
@@ -2539,7 +2552,7 @@ WriteCellArrayField(mat_t *mat, matvar_t *matvar)
         array_flags |= MAT_F_GLOBAL;
     if ( matvar->isLogical )
         array_flags |= MAT_F_LOGICAL;
-    if ( matvar->class_type == MAT_C_SPARSE )
+    if ( matvar->class_type == MAT_C_SPARSE && NULL != matvar->data )
         nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
     if ( mat->byteswap )
@@ -2637,7 +2650,7 @@ WriteCompressedTypeArrayFlags(mat_t *mat, matvar_t *matvar, z_streamp z)
         array_flags |= MAT_F_GLOBAL;
     if ( matvar->isLogical )
         array_flags |= MAT_F_LOGICAL;
-    if ( matvar->class_type == MAT_C_SPARSE )
+    if ( matvar->class_type == MAT_C_SPARSE && NULL != matvar->data )
         nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
     uncomp_buf[0] = array_flags_type;
     uncomp_buf[1] = array_flags_size;
@@ -2843,16 +2856,21 @@ WriteCompressedType(mat_t *mat, matvar_t *matvar, z_streamp z)
                 Mat_Critical("Integer multiplication overflow");
                 return byteswritten;
             }
-            for ( i = 0; i < nelems_x_nfields; i++ )
-                byteswritten += WriteCompressedStructField(mat, fields[i], z);
+            if ( NULL != fields ) {
+                for ( i = 0; i < nelems_x_nfields; i++ )
+                    byteswritten += WriteCompressedStructField(mat, fields[i], z);
+            }
             break;
         }
         case MAT_C_SPARSE: {
             mat_sparse_t *sparse = (mat_sparse_t *)matvar->data;
 
+            if ( NULL == sparse )
+                break;
+
             byteswritten += WriteCompressedData(mat, z, sparse->ir, sparse->nir, MAT_T_UINT32);
             byteswritten += WriteCompressedData(mat, z, sparse->jc, sparse->njc, MAT_T_UINT32);
-            if ( matvar->isComplex ) {
+            if ( matvar->isComplex && NULL != sparse->data ) {
                 mat_complex_split_t *complex_data = (mat_complex_split_t *)sparse->data;
                 byteswritten +=
                     WriteCompressedData(mat, z, complex_data->Re, sparse->ndata, matvar->data_type);
@@ -2891,6 +2909,11 @@ WriteCompressedCellArrayField(mat_t *mat, matvar_t *matvar, z_streamp z)
 
     if ( NULL == matvar || NULL == mat || NULL == z )
         return 0;
+
+    /* A sparse variable requires its data; normalize broken variables
+     * (e.g. read from a corrupt file) to an empty matrix. */
+    if ( matvar->class_type == MAT_C_SPARSE && NULL == matvar->data )
+        matvar->class_type = MAT_C_EMPTY;
 
     memset(uncomp_buf, 0, sizeof(uncomp_buf));
     uncomp_buf[0] = MAT_T_MATRIX;
@@ -2945,6 +2968,11 @@ WriteStructField(mat_t *mat, matvar_t *matvar)
         return MATIO_E_NO_ERROR;
     }
 
+    /* A sparse variable requires its data; normalize broken variables
+     * (e.g. read from a corrupt file) to an empty matrix. */
+    if ( matvar->class_type == MAT_C_SPARSE && NULL == matvar->data )
+        matvar->class_type = MAT_C_EMPTY;
+
     fwrite(&matrix_type, 4, 1, (FILE *)mat->fp);
     fwrite(&pad4, 4, 1, (FILE *)mat->fp);
     if ( MAT_C_EMPTY == matvar->class_type ) {
@@ -2961,7 +2989,7 @@ WriteStructField(mat_t *mat, matvar_t *matvar)
         array_flags |= MAT_F_GLOBAL;
     if ( matvar->isLogical )
         array_flags |= MAT_F_LOGICAL;
-    if ( matvar->class_type == MAT_C_SPARSE )
+    if ( matvar->class_type == MAT_C_SPARSE && NULL != matvar->data )
         nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
     if ( mat->byteswap )
@@ -3029,6 +3057,11 @@ WriteCompressedStructField(mat_t *mat, matvar_t *matvar, z_streamp z)
         byteswritten = Mat_WriteCompressedEmptyVariable5(mat, NULL, 2, dims, z);
         return byteswritten;
     }
+
+    /* A sparse variable requires its data; normalize broken variables
+     * (e.g. read from a corrupt file) to an empty matrix. */
+    if ( matvar->class_type == MAT_C_SPARSE && NULL == matvar->data )
+        matvar->class_type = MAT_C_EMPTY;
 
     memset(uncomp_buf, 0, sizeof(uncomp_buf));
     uncomp_buf[0] = MAT_T_MATRIX;
@@ -3508,8 +3541,18 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 
     if ( matvar == NULL )
         return MATIO_E_BAD_ARGUMENT;
-    if ( matvar->rank == 0 && matvar->class_type != MAT_C_OPAQUE ) /* An empty data set */
+    if ( matvar->rank == 0 && matvar->class_type != MAT_C_OPAQUE ) { /* An empty data set */
+        /* No data was read for this variable, so it must not claim a
+         * data-bearing class.  Discard any empty data container allocated
+         * while reading the variable information and normalize the class
+         * to keep the variable self-consistent (see issue #341). */
+        if ( NULL != matvar->data ) {
+            free(matvar->data);
+            matvar->data = NULL;
+        }
+        matvar->class_type = MAT_C_EMPTY;
         return MATIO_E_NO_ERROR;
+    }
 #if HAVE_ZLIB
     if ( NULL != matvar->internal->data ) {
         /* Data already read in ReadNextStructField or ReadNextCell */
@@ -3753,8 +3796,15 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 
             matvar->data_type = MAT_T_STRUCT;
             err = Mul(&nelems_x_nfields, nelems, matvar->internal->num_fields);
-            if ( err || !matvar->nbytes || !matvar->data_size || NULL == matvar->data )
+            if ( err )
                 break;
+            if ( !matvar->nbytes || !matvar->data_size || NULL == matvar->data ) {
+                if ( nelems_x_nfields > 0 ) {
+                    Mat_Critical("Data is NULL for struct %s", matvar->name);
+                    err = MATIO_E_FILE_FORMAT_VIOLATION;
+                }
+                break;
+            }
             fields = (matvar_t **)matvar->data;
             for ( i = 0; i < nelems_x_nfields; i++ ) {
                 if ( NULL != fields[i] ) {
@@ -3881,8 +3931,10 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
 #endif
             {
                 size_t s_type = Mat_SizeOf(packed_type);
-                if ( s_type == 0 )
+                if ( s_type == 0 ) {
+                    err = MATIO_E_FILE_FORMAT_VIOLATION;
                     break;
+                }
                 sparse->ndata = N / s_type;
             }
             if ( matvar->isComplex ) {
@@ -5463,6 +5515,11 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
     if ( NULL == mat || NULL == matvar )
         return MATIO_E_BAD_ARGUMENT;
 
+    /* A sparse variable requires its data; normalize broken variables
+     * (e.g. read from a corrupt file) to an empty matrix. */
+    if ( matvar->class_type == MAT_C_SPARSE && NULL == matvar->data )
+        matvar->class_type = MAT_C_EMPTY;
+
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
     (void)fseeko((FILE *)mat->fp, 0, SEEK_END); /* Always write at end of file */
 
@@ -5484,7 +5541,7 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
             array_flags |= MAT_F_GLOBAL;
         if ( matvar->isLogical )
             array_flags |= MAT_F_LOGICAL;
-        if ( matvar->class_type == MAT_C_SPARSE )
+        if ( matvar->class_type == MAT_C_SPARSE && NULL != matvar->data )
             nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
         fwrite(&array_flags_type, 4, 1, (FILE *)mat->fp);
@@ -5574,7 +5631,7 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
             array_flags |= MAT_F_GLOBAL;
         if ( matvar->isLogical )
             array_flags |= MAT_F_LOGICAL;
-        if ( matvar->class_type == MAT_C_SPARSE )
+        if ( matvar->class_type == MAT_C_SPARSE && NULL != matvar->data )
             nzmax = ((mat_sparse_t *)matvar->data)->nzmax;
 
         memset(uncomp_buf, 0, sizeof(uncomp_buf));
