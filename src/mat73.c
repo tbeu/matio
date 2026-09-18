@@ -2149,14 +2149,15 @@ Mat_VarWriteChar73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims)
                 size_t i, j = 0;
                 for ( i = 0; i < matvar->nbytes; i++ ) {
                     const mat_uint8_t c = data[i];
-                    if ( c <= 0x7F ) { /* ASCII */
+                    const size_t len = Mat_Utf8SeqLen(c);
+                    if ( len == 1 ) { /* ASCII */
                         u16[j] = (mat_uint16_t)c;
-                    } else if ( c < 0xE0 && i + 1 < matvar->nbytes ) { /* Extended ASCII */
+                    } else if ( len == 2 && i + 2 <= matvar->nbytes ) { /* Extended ASCII */
                         const mat_uint16_t _a = (mat_uint16_t)(c & 0x1F);
                         const mat_uint16_t _b = (mat_uint16_t)(data[i + 1] & 0x3F);
                         u16[j] = (_a << 6) | _b;
                         i = i + 1;
-                    } else if ( (c & 0xF0) == 0xE0 && i + 2 < matvar->nbytes ) { /* BMP */
+                    } else if ( len == 3 && i + 3 <= matvar->nbytes ) { /* BMP */
                         const mat_uint16_t _a = (mat_uint16_t)(c & 0xF);
                         const mat_uint16_t _b = (mat_uint16_t)(data[i + 1] & 0x3C) >> 2;
                         const mat_uint16_t _c = (mat_uint16_t)(data[i + 1] & 0x3);
@@ -2164,7 +2165,7 @@ Mat_VarWriteChar73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims)
                         const mat_uint16_t _e = (mat_uint16_t)(data[i + 2] & 0xF);
                         u16[j] = (_a << 12) | (_b << 8) | (_c << 6) | (_d << 4) | _e;
                         i = i + 2;
-                    } else { /* Full UTF-8 */
+                    } else { /* Full UTF-8 or invalid lead byte */
                         err = MATIO_E_OPERATION_NOT_SUPPORTED;
                         break;
                     }

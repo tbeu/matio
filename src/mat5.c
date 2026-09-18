@@ -3453,6 +3453,40 @@ Mat_VarReadNumeric5(mat_t *mat, matvar_t *matvar, void *data, size_t N)
     return err;
 }
 
+/** @brief Validates a UTF-8 character data element
+ *
+ * Walks @c nbytes bytes of UTF-8 data, verifying that every multi-byte
+ * sequence is complete and that the total number of decoded characters
+ * equals @c expected. Used by the reader to reject malformed character data
+ * before it is handed back to the caller, which may re-wrap the buffer with
+ * Mat_VarCreate (which trusts the buffer bounds while recomputing @c nbytes).
+ *
+ * @ingroup mat_internal
+ * @param data pointer to the UTF-8 data
+ * @param nbytes number of bytes in @c data
+ * @param expected expected number of characters
+ * @retval MATIO_E_NO_ERROR if the data is valid, MATIO_E_FILE_FORMAT_VIOLATION otherwise
+ */
+static int
+ValidateUtf8CharData(const mat_uint8_t *data, size_t nbytes, size_t expected)
+{
+    size_t i = 0;
+    size_t nchars = 0;
+
+    while ( i < nbytes ) {
+        const size_t len = Mat_Utf8SeqLen(data[i]);
+        if ( len == 0 || i + len > nbytes )
+            return MATIO_E_FILE_FORMAT_VIOLATION;
+        i += len;
+        nchars++;
+    }
+
+    if ( nchars != expected )
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+
+    return MATIO_E_NO_ERROR;
+}
+
 /** @if mat_devman
  * @brief Reads the data of a version 5 MAT variable
  *
@@ -3699,6 +3733,18 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     break;
                 }
 #endif
+            }
+            if ( matvar->data_type == MAT_T_UTF8 ) {
+                size_t nchars = 1;
+                err = Mat_MulDims(matvar, &nchars);
+                if ( !err )
+                    err = ValidateUtf8CharData((const mat_uint8_t *)matvar->data, matvar->nbytes,
+                                               nchars);
+                if ( err ) {
+                    free(matvar->data);
+                    matvar->data = NULL;
+                    matvar->nbytes = 0;
+                }
             }
             break;
         case MAT_C_STRUCT: {
