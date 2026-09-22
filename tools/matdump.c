@@ -218,7 +218,7 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
             if ( (byte_idx | 7) >= data_bytes )
                 break;
             ch = (mat_uint16_t)(bytes[byte_idx + 7 - 2 * wi] |
-                    ((mat_uint16_t)bytes[byte_idx + 6 - 2 * wi] << 8));
+                                ((mat_uint16_t)bytes[byte_idx + 6 - 2 * wi] << 8));
 #else
             if ( byte_idx + 1 >= data_bytes )
                 break;
