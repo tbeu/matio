@@ -5791,12 +5791,14 @@ ReadTaggedString(mat_t *mat, char **str, const mat_uint32_t *pre_buf)
             return err;
         if ( mat->byteswap ) {
             (void)Mat_uint32Swap(&tag[0]);
-            (void)Mat_uint32Swap(&tag[1]);
         }
     }
 
     if ( tag[0] == MAT_T_INT8 ) { /* Normal format: type in tag[0], length in tag[1] */
-        mat_uint32_t len = tag[1];
+        mat_uint32_t len;
+        if ( pre_buf == NULL && mat->byteswap )
+            (void)Mat_uint32Swap(&tag[1]);
+        len = tag[1];
         mat_uint32_t len_pad;
         if ( len % 8 == 0 )
             len_pad = len;
@@ -5822,6 +5824,8 @@ ReadTaggedString(mat_t *mat, char **str, const mat_uint32_t *pre_buf)
             *str = (char *)malloc(len + 1);
             if ( *str == NULL )
                 return MATIO_E_OUT_OF_MEMORY;
+            if ( pre_buf != NULL && mat->byteswap )
+                (void)Mat_uint32Swap(&tag[1]);
             memcpy(*str, &tag[1], len);
             (*str)[len] = '\0';
         }
