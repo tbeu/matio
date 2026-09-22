@@ -26,13 +26,13 @@ set(matio_LIB_VERSIONINFO "15:0:1")
 # Remove this block after bumping CMake to v3.21.0
 # PROJECT_IS_TOP_LEVEL is defined then by default
 if(CMAKE_VERSION VERSION_LESS 3.21.0)
-  if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-    set(PROJECT_IS_TOP_LEVEL ON)
-    set(matio_IS_TOP_LEVEL ON)
-  else()
-    set(PROJECT_IS_TOP_LEVEL OFF)
-    set(matio_IS_TOP_LEVEL OFF)
-  endif()
+    if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+        set(PROJECT_IS_TOP_LEVEL ON)
+        set(matio_IS_TOP_LEVEL ON)
+    else()
+        set(PROJECT_IS_TOP_LEVEL OFF)
+        set(matio_IS_TOP_LEVEL OFF)
+    endif()
 endif()
 
 #Remove this block after bumping to 3.26
