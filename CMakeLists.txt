@@ -23,14 +23,21 @@ set(matio_PACKAGE_TARNAME "${PROJECT_NAME}")
 set(matio_PACKAGE_URL "https://sourceforge.net/projects/matio")
 set(matio_LIB_VERSIONINFO "15:0:1")
 
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.21")
-    if(PROJECT_IS_TOP_LEVEL)
-        set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-    endif()
-else()
-    if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-        set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-    endif()
+# Remove this block after bumping CMake to v3.21.0
+# PROJECT_IS_TOP_LEVEL is defined then by default
+if(CMAKE_VERSION VERSION_LESS 3.21.0)
+  if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    set(PROJECT_IS_TOP_LEVEL ON)
+    set(matio_IS_TOP_LEVEL ON)
+  else()
+    set(PROJECT_IS_TOP_LEVEL OFF)
+    set(matio_IS_TOP_LEVEL OFF)
+  endif()
+endif()
+
+#Remove this block after bumping to 3.26
+if(PROJECT_IS_TOP_LEVEL)
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
 
 # Installation options
