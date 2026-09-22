@@ -183,6 +183,10 @@ Table of Contents
               * 'MATIO_EXTENDED_SPARSE:BOOL=ON'
                 This option enables extended sparse matrix data types not
                 supported in MATLAB.
+              * 'MATIO_INSTALL:BOOL=ON'
+                This option enables installation of matio targets and files.
+                It defaults to 'ON' for top-level projects and 'OFF' when
+                matio is used as a subproject.
               * 'MATIO_MCOS:BOOL=ON'
                 This option enables the support for MATLAB Class Object System
                 (MCOS) objects (e.g. table, datetime, string, etc.).

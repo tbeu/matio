@@ -1,5 +1,10 @@
 # Options
 
+include(CMakeDependentOption)
+
+# Option to install matio targets and files
+cmake_dependent_option(MATIO_INSTALL "Whether to install matio" ON PROJECT_IS_TOP_LEVEL OFF)
+
 # Option to utilize Conan 1.x
 option(MATIO_USE_CONAN "Use Conan 1.x to resolve library dependencies" OFF)
 

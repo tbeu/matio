@@ -132,8 +132,6 @@ if(STDINT_MSVC)
 endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${MATIO_PUBLIC_HEADERS}")
 
-include(CMakeDependentOption)
-cmake_dependent_option(MATIO_INSTALL "Whether to install matio" ON PROJECT_IS_TOP_LEVEL OFF)
 if(NOT MATIO_INSTALL)
     return()
 endif()

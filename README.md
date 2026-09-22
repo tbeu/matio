@@ -133,6 +133,9 @@ The following matio specific options for building with CMake are available.
 This option sets the default MAT file version (4,5,7.3) that will be used when writing.
 * `MATIO_EXTENDED_SPARSE:BOOL=ON`
 This option enables extended sparse matrix data types not supported in MATLAB.
+* `MATIO_INSTALL:BOOL=ON`
+This option enables installation of matio targets and files. It defaults to `ON`
+for top-level projects and `OFF` when matio is used as a subproject.
 * `MATIO_MCOS:BOOL=ON`
 This option enables the support for MATLAB Class Object System (MCOS) objects (e.g. table, datetime, string, etc.).
 * `MATIO_MAT73:BOOL=ON`

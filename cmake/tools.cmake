@@ -8,6 +8,10 @@ if(NOT HAVE_GETOPT)
     target_link_libraries(matdump PRIVATE getopt)
 endif()
 
+if(NOT MATIO_INSTALL)
+    return()
+endif()
+
 install(TARGETS matdump
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
