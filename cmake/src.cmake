@@ -132,6 +132,10 @@ if(STDINT_MSVC)
 endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${MATIO_PUBLIC_HEADERS}")
 
+if(NOT MATIO_INSTALL)
+    return()
+endif()
+
 # 'make install' to the correct locations (provided by GNUInstallDirs).
 install(TARGETS ${PROJECT_NAME} EXPORT lib${PROJECT_NAME}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

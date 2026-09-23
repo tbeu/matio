@@ -1,5 +1,8 @@
 # Options
 
+# Option to install matio targets and files
+option(MATIO_INSTALL "Whether to install matio" ${PROJECT_IS_TOP_LEVEL})
+
 # Option to utilize Conan 1.x
 option(MATIO_USE_CONAN "Use Conan 1.x to resolve library dependencies" OFF)
 
