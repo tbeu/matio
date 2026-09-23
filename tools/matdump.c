@@ -8,6 +8,7 @@
 
 #include "matioConfig.h"
 #include "matio.h"
+#include "matio_private.h"
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -207,9 +208,22 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
         for ( j = 0; j < slen && (size_t)pos < bufsz - 1; j++ ) {
             size_t byte_idx = (char_offset + j) * 2;
             mat_uint16_t ch;
+#if defined(MATIO_BE)
+            /* On big-endian hosts the library has called Mat_uint64Swap() on
+             * every uint64 slot in the payload, reversing all 8 bytes in each
+             * group.  The original file byte at position k within a uint64 is
+             * now at position (7-k) in memory.  Reconstruct the UTF-16LE code
+             * unit using the corrected memory indices. */
+            size_t wi = byte_idx & 6; /* byte offset within the uint64, always 0/2/4/6 */
+            if ( (byte_idx | 7) >= data_bytes )
+                break;
+            ch = (mat_uint16_t)(bytes[byte_idx + 7 - 2 * wi] |
+                                ((mat_uint16_t)bytes[byte_idx + 6 - 2 * wi] << 8));
+#else
             if ( byte_idx + 1 >= data_bytes )
                 break;
             ch = (mat_uint16_t)(bytes[byte_idx] | ((mat_uint16_t)bytes[byte_idx + 1] << 8));
+#endif
             if ( ch >= 32 && ch < 127 )
                 buf[pos++] = (char)ch;
             else if ( ch == 0 )
