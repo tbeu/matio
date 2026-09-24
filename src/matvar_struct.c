@@ -14,15 +14,15 @@
 #define strdup _strdup
 #endif
 
-static char** 
-copy_fieldnames(const char *const *fields, size_t nfields) 
+static char **
+copy_fieldnames(const char *const *fields, size_t nfields)
 {
     char **fieldnames = (char **)malloc(nfields * sizeof(char *));
     if ( NULL == fieldnames )
         return NULL;
 
     for ( size_t i = 0; i != nfields; ++i ) {
-        if ( NULL != fields[i] ){
+        if ( NULL != fields[i] ) {
             fieldnames[i] = strdup(fields[i]);
             if ( NULL != fieldnames[i] )
                 continue;
@@ -33,7 +33,6 @@ copy_fieldnames(const char *const *fields, size_t nfields)
         }
         free(fieldnames);
         return NULL;
-        
     }
     return fieldnames;
 }
@@ -54,9 +53,9 @@ VarCreateStruct(const char *name, int rank, const size_t *dims, const char *cons
         matvar->name = strdup(name);
     matvar->rank = rank;
     matvar->dims = (size_t *)malloc(matvar->rank * sizeof(*matvar->dims));
-    
+
     size_t nelems = 1;
-    for (size_t j = 0; j < matvar->rank; ++j ) {
+    for ( size_t j = 0; j < matvar->rank; ++j ) {
         matvar->dims[j] = dims[j];
         nelems *= dims[j];
     }
