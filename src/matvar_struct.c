@@ -125,7 +125,6 @@ Mat_VarCreateStruct2(const char *name, int rank, const size_t *dims, const char 
  * @param matvar Pointer to the Structure MAT variable
  * @param fieldname Name of field to be added
  * @retval 0 on success
- * @deprecated Use Mat_VarAddStructField2 instead.
  */
 int
 Mat_VarAddStructField(matvar_t *matvar, const char *fieldname)

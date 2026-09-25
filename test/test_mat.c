@@ -1766,6 +1766,38 @@ test_write_struct_char(const char *output_name)
         const char *str =
             "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
             "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
+        size_t num_fields = 2;
+        const char *fieldnames[2] = {"field1", "field2"};
+        size_t dims[2];
+        matvar_t *matvar, *struct_matvar;
+
+        dims[0] = 2;
+        dims[1] = 1;
+        struct_matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, num_fields);
+        dims[0] = 4;
+        dims[1] = 26;
+        matvar = Mat_VarCreate(fieldnames[1], MAT_C_CHAR, MAT_T_UTF8, 2, dims, (void *)str, 0);
+        Mat_VarSetStructFieldByName(struct_matvar, fieldnames[1], 1, matvar);
+        Mat_VarWrite(mat, struct_matvar, compression);
+        Mat_VarFree(struct_matvar);
+        Mat_Close(mat);
+    } else {
+        err = 1;
+    }
+    return err;
+}
+
+static int
+test_write_struct2_char(const char *output_name)
+{
+    int err = 0;
+    mat_t *mat;
+
+    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( mat ) {
+        const char *str =
+            "aA1[bB2{cC3]dD4}eE5\\fF6|gG7;hH8:iI9'jJ0\"kK!,lL@<"
+            "mM#.nN$>oO%/pP^?qQ& rR* sS( tT) uU- vV_ wW= xX+ yY` zZ~ ";
         const char *fieldnames[3] = {"field1", "field2", NULL};
         size_t dims[2];
         matvar_t *matvar, *struct_matvar;
@@ -4439,6 +4471,12 @@ main(int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_write_struct_char.mat";
             err += test_write_struct_char(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "write_struct2_char") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_struct2_char.mat";
+            err += test_write_struct2_char(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k], "write_struct_2d_numeric") ) {
             k++;
