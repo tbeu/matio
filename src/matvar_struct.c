@@ -7,12 +7,38 @@
  */
 
 #include "matio_private.h"
-#include <limits.h>
+
 #include <stdlib.h>
 #include <string.h>
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #define strdup _strdup
 #endif
+
+static char **
+copy_fieldnames(const char *const *fields, size_t nfields)
+{
+    char **fieldnames;
+    size_t i, j;
+
+    fieldnames = (char **)malloc(nfields * sizeof(char *));
+    if ( NULL == fieldnames )
+        return NULL;
+
+    for ( i = 0; i != nfields; ++i ) {
+        if ( NULL != fields[i] ) {
+            fieldnames[i] = strdup(fields[i]);
+            if ( NULL != fieldnames[i] )
+                continue;
+        }
+        // Failed to allocate or duplicate fieldname, clean up and return NULL
+        for ( j = 0; j != i; ++j ) {
+            free(fieldnames[j]);
+        }
+        free(fieldnames);
+        return NULL;
+    }
+    return fieldnames;
+}
 
 static matvar_t *
 VarCreateStruct(const char *name, int rank, const size_t *dims, const char *const *fields,
@@ -44,25 +70,14 @@ VarCreateStruct(const char *name, int rank, const size_t *dims, const char *cons
     matvar->data_size = sizeof(matvar_t *);
 
     if ( nfields ) {
-        matvar->internal->num_fields = nfields;
-        matvar->internal->fieldnames =
-            (char **)malloc(nfields * sizeof(*matvar->internal->fieldnames));
+        matvar->internal->fieldnames = copy_fieldnames(fields, nfields);
         if ( NULL == matvar->internal->fieldnames ) {
             Mat_VarFree(matvar);
-            matvar = NULL;
-        } else {
-            size_t i;
-            for ( i = 0; i < nfields; i++ ) {
-                if ( NULL == fields[i] ) {
-                    Mat_VarFree(matvar);
-                    matvar = NULL;
-                    break;
-                } else {
-                    matvar->internal->fieldnames[i] = strdup(fields[i]);
-                }
-            }
+            return NULL;
         }
-        if ( NULL != matvar && nelems > 0 ) {
+        matvar->internal->num_fields = nfields;
+
+        if ( nelems > 0 ) {
             size_t nelems_x_nfields;
             int err = Mul(&nelems_x_nfields, nelems, nfields);
             err |= Mul(&matvar->nbytes, nelems_x_nfields, matvar->data_size);
