@@ -44,8 +44,9 @@ static matvar_t *
 VarCreateStruct(const char *name, int rank, const size_t *dims, const char *const *fields,
                 unsigned nfields)
 {
+    size_t nelems = 1;
+    int j;
     matvar_t *matvar;
-    size_t nelems, j;
 
     if ( NULL == dims )
         return NULL;
@@ -59,9 +60,7 @@ VarCreateStruct(const char *name, int rank, const size_t *dims, const char *cons
         matvar->name = strdup(name);
     matvar->rank = rank;
     matvar->dims = (size_t *)malloc(matvar->rank * sizeof(*matvar->dims));
-
-    nelems = 1;
-    for ( j = 0; j < matvar->rank; ++j ) {
+    for ( j = 0; j < matvar->rank; j++ ) {
         matvar->dims[j] = dims[j];
         nelems *= dims[j];
     }
