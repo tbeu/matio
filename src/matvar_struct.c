@@ -17,18 +17,21 @@
 static char **
 copy_fieldnames(const char *const *fields, size_t nfields)
 {
-    char **fieldnames = (char **)malloc(nfields * sizeof(char *));
+    char **fieldnames;
+    size_t i, j;
+
+    fieldnames = (char **)malloc(nfields * sizeof(char *));
     if ( NULL == fieldnames )
         return NULL;
 
-    for ( size_t i = 0; i != nfields; ++i ) {
+    for ( i = 0; i != nfields; ++i ) {
         if ( NULL != fields[i] ) {
             fieldnames[i] = strdup(fields[i]);
             if ( NULL != fieldnames[i] )
                 continue;
         }
         // Failed to allocate or duplicate fieldname, clean up and return NULL
-        for ( size_t j = 0; j != i; ++j ) {
+        for ( j = 0; j != i; ++j ) {
             free(fieldnames[j]);
         }
         free(fieldnames);
@@ -41,10 +44,13 @@ static matvar_t *
 VarCreateStruct(const char *name, int rank, const size_t *dims, const char *const *fields,
                 unsigned nfields)
 {
+    matvar_t *matvar;
+    size_t nelems, j;
+
     if ( NULL == dims )
         return NULL;
 
-    matvar_t *matvar = Mat_VarCalloc();
+    matvar = Mat_VarCalloc();
     if ( NULL == matvar )
         return NULL;
 
@@ -54,8 +60,8 @@ VarCreateStruct(const char *name, int rank, const size_t *dims, const char *cons
     matvar->rank = rank;
     matvar->dims = (size_t *)malloc(matvar->rank * sizeof(*matvar->dims));
 
-    size_t nelems = 1;
-    for ( size_t j = 0; j < matvar->rank; ++j ) {
+    nelems = 1;
+    for ( j = 0; j < matvar->rank; ++j ) {
         matvar->dims[j] = dims[j];
         nelems *= dims[j];
     }
