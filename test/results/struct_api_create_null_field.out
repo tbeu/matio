@@ -1,0 +1,12 @@
+NULL fieldname rejected
+      Name: b
+      Rank: 2
+Dimensions: 2 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: field1
+      Rank: 0
+      Name: field1
+      Rank: 0
+}

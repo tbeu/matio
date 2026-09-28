@@ -2729,6 +2729,37 @@ test_struct_api_create(void)
 }
 
 static int
+test_struct_api_create_null_field(void)
+{
+    size_t dims[2] = {2, 1};
+    int err = 0;
+    matvar_t *matvar;
+    const char *fieldnames[3] = {"field1", NULL, "field3"};
+
+    /* A NULL fieldname must not lead to invalid frees: creation has to fail cleanly */
+    matvar = Mat_VarCreateStruct("a", 2, dims, fieldnames, 3);
+    if ( NULL != matvar ) {
+        printf("Unexpected non-NULL struct for NULL fieldname\n");
+        Mat_VarFree(matvar);
+        err = 1;
+    } else {
+        printf("NULL fieldname rejected\n");
+    }
+
+    /* The first fieldname is valid, so creation has to succeed */
+    matvar = Mat_VarCreateStruct("b", 2, dims, fieldnames, 1);
+    if ( NULL == matvar ) {
+        printf("Unexpected NULL struct for valid fieldname\n");
+        err = 1;
+    } else {
+        Mat_VarPrint(matvar, 1);
+        Mat_VarFree(matvar);
+    }
+
+    return err;
+}
+
+static int
 test_struct_api_setfield(void)
 {
     size_t dims[2];
@@ -4492,6 +4523,11 @@ main(int argc, char *argv[])
             k++;
             redirect_output(output_name);
             err += test_struct_api_create();
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "struct_api_create_null_field") ) {
+            k++;
+            redirect_output(output_name);
+            err += test_struct_api_create_null_field();
             ntests++;
         } else if ( !strcasecmp(argv[k], "struct_api_setfield") ) {
             k++;

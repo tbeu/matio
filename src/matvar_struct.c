@@ -7,7 +7,7 @@
  */
 
 #include "matio_private.h"
-
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #if defined(_MSC_VER) || defined(__MINGW32__)
@@ -30,7 +30,7 @@ copy_fieldnames(const char *const *fields, size_t nfields)
             if ( NULL != fieldnames[i] )
                 continue;
         }
-        // Failed to allocate or duplicate fieldname, clean up and return NULL
+        /* Failed to allocate or duplicate fieldname, clean up and return NULL */
         for ( j = 0; j != i; ++j ) {
             free(fieldnames[j]);
         }
