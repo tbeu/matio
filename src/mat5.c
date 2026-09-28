@@ -5795,11 +5795,10 @@ ReadTaggedString(mat_t *mat, char **str, const mat_uint32_t *pre_buf)
     }
 
     if ( tag[0] == MAT_T_INT8 ) { /* Normal format: type in tag[0], length in tag[1] */
-        mat_uint32_t len;
+        mat_uint32_t len, len_pad;
         if ( pre_buf == NULL && mat->byteswap )
             (void)Mat_uint32Swap(&tag[1]);
         len = tag[1];
-        mat_uint32_t len_pad;
         if ( len % 8 == 0 )
             len_pad = len;
         else if ( len < UINT32_MAX - 8 + (len % 8) )
