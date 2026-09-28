@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 5
           submodules: recursive
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: s390x
       - name: Configure, build and test with gcc
