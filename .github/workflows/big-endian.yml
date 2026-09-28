@@ -1,0 +1,47 @@
+name: "Big-endian build"
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Runs the test suite on a big-endian architecture (s390x emulated with
+  # QEMU) to catch byte-swapping regressions. MAT73/HDF5 is disabled here since
+  # HDF5 already handles endianness itself.
+  build:
+    name: s390x (big endian)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 5
+          submodules: recursive
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: s390x
+      - name: Configure, build and test with gcc
+        run: |
+          docker run --rm --platform linux/s390x \
+            --volume "${{ github.workspace }}:/workspace" \
+            --workdir /workspace \
+            ubuntu:24.04 \
+            bash -c '
+              set -e
+              uname -m
+              test "$(uname -m)" = "s390x"
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get -y update
+              apt-get -y install --no-install-recommends \
+                build-essential cmake python3 zlib1g-dev
+              cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF -DMATIO_WITH_HDF5=OFF
+              cmake --build build -- -j"$(nproc)"
+              ctest --no-tests=error --test-dir build --build-config Release --parallel "$(nproc)"
+            '
