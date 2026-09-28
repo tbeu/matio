@@ -8,7 +8,6 @@
 
 #include "matioConfig.h"
 #include "matio.h"
-#include "matio_private.h"
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -171,7 +170,6 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
 {
     const mat_uint64_t *u64;
     size_t n = 1, nstrs, header_len, char_offset, slen, j;
-    const unsigned char *bytes;
     int pos = 0;
 
     if ( any == NULL || any->class_type != MAT_C_UINT64 || any->data == NULL )
@@ -194,8 +192,6 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
     if ( header_len >= n )
         return 0;
 
-    bytes = (const unsigned char *)&u64[header_len];
-
     /* Compute char offset for this row */
     char_offset = 0;
     for ( j = 0; j < (size_t)row; j++ )
@@ -204,26 +200,21 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
     slen = (size_t)u64[4 + row];
 
     {
-        size_t data_bytes = (n - header_len) * sizeof(mat_uint64_t);
+        size_t data_elems = n - header_len;
         for ( j = 0; j < slen && (size_t)pos < bufsz - 1; j++ ) {
             size_t byte_idx = (char_offset + j) * 2;
+            size_t elem_idx = byte_idx / sizeof(mat_uint64_t);
+            unsigned shift = (unsigned)(byte_idx % sizeof(mat_uint64_t)) * 8;
             mat_uint16_t ch;
-#if defined(MATIO_BE)
-            /* On big-endian hosts the library has called Mat_uint64Swap() on
-             * every uint64 slot in the payload, reversing all 8 bytes in each
-             * group.  The original file byte at position k within a uint64 is
-             * now at position (7-k) in memory.  Reconstruct the UTF-16LE code
-             * unit using the corrected memory indices. */
-            size_t wi = byte_idx & 6; /* byte offset within the uint64, always 0/2/4/6 */
-            if ( (byte_idx | 7) >= data_bytes )
+            if ( elem_idx >= data_elems )
                 break;
-            ch = (mat_uint16_t)(bytes[byte_idx + 7 - 2 * wi] |
-                                ((mat_uint16_t)bytes[byte_idx + 6 - 2 * wi] << 8));
-#else
-            if ( byte_idx + 1 >= data_bytes )
-                break;
-            ch = (mat_uint16_t)(bytes[byte_idx] | ((mat_uint16_t)bytes[byte_idx + 1] << 8));
-#endif
+            /* u64[] has already been byte-swapped into host order by the
+             * library.  Extract the two UTF-16LE code unit bytes from the
+             * numeric value so the result does not depend on the host byte
+             * order.  byte_idx is always even, so the two bytes never straddle
+             * a uint64 boundary. */
+            ch = (mat_uint16_t)((u64[header_len + elem_idx] >> shift) & 0xff);
+            ch = (mat_uint16_t)(ch | (((u64[header_len + elem_idx] >> (shift + 8)) & 0xff) << 8));
             if ( ch >= 32 && ch < 127 )
                 buf[pos++] = (char)ch;
             else if ( ch == 0 )
