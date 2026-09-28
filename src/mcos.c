@@ -1564,7 +1564,8 @@ IsEnumStruct(const matvar_t *matvar)
         return 0;
 
     tag = Mat_VarGetStructFieldByName(matvar, "EnumerationInstanceTag", 0);
-    if ( tag == NULL || tag->class_type != MAT_C_UINT32 || tag->data == NULL )
+    if ( tag == NULL || tag->class_type != MAT_C_UINT32 || tag->data == NULL ||
+         tag->nbytes < sizeof(mat_uint32_t) )
         return 0;
 
     return ((const mat_uint32_t *)tag->data)[0] == MCOS_REF_VALUE;
