@@ -335,6 +335,9 @@ snprint_categorical_row(const matvar_t *cat, int row, char *buf, size_t bufsz)
     cells = (matvar_t **)names->data;
     ncats = names->nbytes / names->data_size;
 
+    if ( codes->data_size == 0 || (size_t)row >= codes->nbytes / codes->data_size )
+        return 0;
+
     if ( codes->data_type == MAT_T_UINT8 )
         code = ((mat_uint8_t *)codes->data)[row];
     else if ( codes->data_type == MAT_T_UINT16 )
@@ -492,6 +495,8 @@ snprint_table_cell(const matvar_t *col, int col_type, int row, char *buf, size_t
 {
     switch ( col_type ) {
         case COL_TYPE_NUMERIC:
+            if ( col->data_size == 0 || (size_t)row >= col->nbytes / col->data_size )
+                break;
             if ( col->class_type == MAT_C_DOUBLE && col->data != NULL )
                 return mat_snprintf(buf, bufsz, "%g", ((const double *)col->data)[row]);
             if ( col->class_type == MAT_C_SINGLE && col->data != NULL )
@@ -505,7 +510,8 @@ snprint_table_cell(const matvar_t *col, int col_type, int row, char *buf, size_t
 
         case COL_TYPE_DATETIME: {
             const matvar_t *data_f = Mat_VarGetStructFieldByName(col, "data", 0);
-            if ( data_f != NULL && data_f->class_type == MAT_C_DOUBLE && data_f->data != NULL )
+            if ( data_f != NULL && data_f->class_type == MAT_C_DOUBLE && data_f->data != NULL &&
+                 data_f->data_size != 0 && (size_t)row < data_f->nbytes / data_f->data_size )
                 return snprint_datetime_ms(((const double *)data_f->data)[row], buf, bufsz);
             break;
         }
@@ -529,13 +535,15 @@ snprint_table_cell(const matvar_t *col, int col_type, int row, char *buf, size_t
 
         case COL_TYPE_DURATION: {
             const matvar_t *millis = Mat_VarGetStructFieldByName(col, "millis", 0);
-            if ( millis != NULL && millis->class_type == MAT_C_DOUBLE && millis->data != NULL )
+            if ( millis != NULL && millis->class_type == MAT_C_DOUBLE && millis->data != NULL &&
+                 millis->data_size != 0 && (size_t)row < millis->nbytes / millis->data_size )
                 return snprint_duration_ms(((const double *)millis->data)[row], buf, bufsz);
             break;
         }
 
         case COL_TYPE_CELL:
-            if ( col->data != NULL ) {
+            if ( col->data != NULL && col->data_size != 0 &&
+                 (size_t)row < col->nbytes / col->data_size ) {
                 matvar_t **cell_elems = (matvar_t **)col->data;
                 return snprint_cell_value(cell_elems[row], buf, bufsz);
             }
@@ -562,6 +570,7 @@ print_human_table(const matvar_t *matvar)
     matvar_t **cols = NULL;
     matvar_t **vnames = NULL;
     int ncols_actual = 0;
+    int nvarnames = 0;
     int i, row;
 
     f = Mat_VarGetStructFieldByName(matvar, "nrows", 0);
@@ -581,6 +590,8 @@ print_human_table(const matvar_t *matvar)
          NULL == varnames_var->data )
         return;
     vnames = (matvar_t **)varnames_var->data;
+    if ( varnames_var->data_size != 0 )
+        nvarnames = (int)(varnames_var->nbytes / varnames_var->data_size);
 
     if ( NULL != data_var && data_var->class_type == MAT_C_CELL && NULL != data_var->data ) {
         cols = (matvar_t **)data_var->data;
@@ -596,7 +607,7 @@ print_human_table(const matvar_t *matvar)
     for ( i = 0; i < nvars; i++ ) {
         int w;
         hdr[i][0] = '\0';
-        if ( vnames[i] != NULL && vnames[i]->class_type == MAT_C_CHAR )
+        if ( i < nvarnames && vnames[i] != NULL && vnames[i]->class_type == MAT_C_CHAR )
             snprint_char(hdr[i], TABLE_CELL_BUF, vnames[i]);
         w = (int)strlen(hdr[i]);
         if ( w < 4 )
