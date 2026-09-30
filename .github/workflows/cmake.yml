@@ -257,5 +257,5 @@ jobs:
       - name: Test
         run: |
           export PATH=/usr/bin:$PATH
-          ctest --no-tests=error --test-dir build --build-config Release --parallel 8
+          ctest --no-tests=error --test-dir build --build-config Release
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
