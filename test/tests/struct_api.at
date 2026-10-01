@@ -10,6 +10,12 @@ AT_CHECK([cp $srcdir/results/struct_api_create.out expout
           $builddir/test_mat struct_api_create],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Create struct with NULL fieldname])
+AT_KEYWORDS([struct_api])
+AT_CHECK([cp $srcdir/results/struct_api_create_null_field.out expout
+          $builddir/test_mat struct_api_create_null_field],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Set struct field])
 AT_KEYWORDS([struct_api])
 AT_CHECK([cp $srcdir/results/struct_api_setfield.out expout

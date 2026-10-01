@@ -365,6 +365,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/readvar-writeslab-i.out \
                  $(results_dir)/struct_api_addfield.out \
                  $(results_dir)/struct_api_create.out \
+                 $(results_dir)/struct_api_create_null_field.out \
                  $(results_dir)/struct_api_get.out \
                  $(results_dir)/struct_api_getfieldnames.out \
                  $(results_dir)/struct_api_getlinear.out \
