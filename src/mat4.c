@@ -289,6 +289,12 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                 return err;
             }
 
+            /* Every element occupies at least one byte in the file */
+            err = CheckSeekFile((FILE *)mat->fp, (mat_off_t)nelems);
+            if ( err ) {
+                return MATIO_E_FILE_FORMAT_VIOLATION;
+            }
+
             if ( matvar->isComplex ) {
                 mat_complex_split_t *complex_data = ComplexCalloc(matvar->nbytes);
                 if ( NULL != complex_data ) {
@@ -366,6 +372,13 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                     if ( err ) {
                         Mat_Critical("Integer multiplication overflow");
                         return err;
+                    }
+                    /* Every element occupies at least one byte in the file */
+                    err = CheckSeekFile((FILE *)mat->fp, (mat_off_t)sparse->nir);
+                    if ( err ) {
+                        free(matvar->data);
+                        matvar->data = NULL;
+                        return MATIO_E_FILE_FORMAT_VIOLATION;
                     }
                     sparse->ir = (mat_uint32_t *)malloc(nBytes);
                     if ( sparse->ir != NULL ) {
