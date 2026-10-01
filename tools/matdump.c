@@ -48,6 +48,23 @@ MulDims(const matvar_t *matvar, size_t *nelems)
     return 0;
 }
 
+/* Number of elements addressable through matvar->data, or 0 when the element
+ * size is unknown (matvar NULL or data_size <= 0). */
+static size_t
+matvar_elem_count(const matvar_t *matvar)
+{
+    if ( matvar == NULL || matvar->data_size <= 0 )
+        return 0;
+    return matvar->nbytes / (size_t)matvar->data_size;
+}
+
+/* True when row is a valid 0-based element index into matvar->data. */
+static int
+matvar_has_row(const matvar_t *matvar, int row)
+{
+    return row >= 0 && (size_t)row < matvar_elem_count(matvar);
+}
+
 static const char *optstring = "df:hvo:HV";
 static struct option options[] = {
     {"data", no_argument, NULL, 'd'},         {"format", required_argument, NULL, 'f'},
@@ -169,7 +186,7 @@ static int
 snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
 {
     const mat_uint64_t *u64;
-    size_t n = 1, nstrs, header_len, char_offset, slen, j;
+    size_t n = 1, nstrs, header_len, char_offset, slen, j, nbytes_needed;
     int pos = 0;
 
     if ( any == NULL || any->class_type != MAT_C_UINT64 || any->data == NULL )
@@ -179,7 +196,8 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
         return 0;
 
     /* Validate n against actual allocation */
-    if ( n * sizeof(mat_uint64_t) > any->nbytes )
+    if ( !psnip_safe_size_mul(&nbytes_needed, n, sizeof(mat_uint64_t)) ||
+         nbytes_needed > any->nbytes )
         return 0;
 
     u64 = (const mat_uint64_t *)any->data;
@@ -333,7 +351,10 @@ snprint_categorical_row(const matvar_t *cat, int row, char *buf, size_t bufsz)
         return 0;
 
     cells = (matvar_t **)names->data;
-    ncats = names->nbytes / names->data_size;
+    ncats = matvar_elem_count(names);
+
+    if ( !matvar_has_row(codes, row) )
+        return 0;
 
     if ( codes->data_type == MAT_T_UINT8 )
         code = ((mat_uint8_t *)codes->data)[row];
@@ -417,12 +438,14 @@ snprint_cell_value(const matvar_t *v, char *buf, size_t bufsz)
         const char *cls = Mat_VarGetClassName(v);
         if ( cls != NULL && 0 == strcmp(cls, "datetime") ) {
             const matvar_t *data_f = Mat_VarGetStructFieldByName(v, "data", 0);
-            if ( data_f != NULL && data_f->class_type == MAT_C_DOUBLE && data_f->data != NULL )
+            if ( data_f != NULL && data_f->class_type == MAT_C_DOUBLE && data_f->data != NULL &&
+                 matvar_has_row(data_f, 0) )
                 return snprint_datetime_ms(*(const double *)data_f->data, buf, bufsz);
         } else if ( cls != NULL &&
                     (0 == strcmp(cls, "duration") || 0 == strcmp(cls, "calendarDuration")) ) {
             const matvar_t *millis = Mat_VarGetStructFieldByName(v, "millis", 0);
-            if ( millis != NULL && millis->class_type == MAT_C_DOUBLE && millis->data != NULL )
+            if ( millis != NULL && millis->class_type == MAT_C_DOUBLE && millis->data != NULL &&
+                 matvar_has_row(millis, 0) )
                 return snprint_duration_ms(*(const double *)millis->data, buf, bufsz);
         } else if ( cls != NULL && 0 == strcmp(cls, "string") ) {
             const matvar_t *any = Mat_VarGetStructFieldByName(v, "any", 0);
@@ -492,6 +515,8 @@ snprint_table_cell(const matvar_t *col, int col_type, int row, char *buf, size_t
 {
     switch ( col_type ) {
         case COL_TYPE_NUMERIC:
+            if ( !matvar_has_row(col, row) )
+                break;
             if ( col->class_type == MAT_C_DOUBLE && col->data != NULL )
                 return mat_snprintf(buf, bufsz, "%g", ((const double *)col->data)[row]);
             if ( col->class_type == MAT_C_SINGLE && col->data != NULL )
@@ -505,7 +530,8 @@ snprint_table_cell(const matvar_t *col, int col_type, int row, char *buf, size_t
 
         case COL_TYPE_DATETIME: {
             const matvar_t *data_f = Mat_VarGetStructFieldByName(col, "data", 0);
-            if ( data_f != NULL && data_f->class_type == MAT_C_DOUBLE && data_f->data != NULL )
+            if ( data_f != NULL && data_f->class_type == MAT_C_DOUBLE && data_f->data != NULL &&
+                 matvar_has_row(data_f, row) )
                 return snprint_datetime_ms(((const double *)data_f->data)[row], buf, bufsz);
             break;
         }
@@ -529,13 +555,14 @@ snprint_table_cell(const matvar_t *col, int col_type, int row, char *buf, size_t
 
         case COL_TYPE_DURATION: {
             const matvar_t *millis = Mat_VarGetStructFieldByName(col, "millis", 0);
-            if ( millis != NULL && millis->class_type == MAT_C_DOUBLE && millis->data != NULL )
+            if ( millis != NULL && millis->class_type == MAT_C_DOUBLE && millis->data != NULL &&
+                 matvar_has_row(millis, row) )
                 return snprint_duration_ms(((const double *)millis->data)[row], buf, bufsz);
             break;
         }
 
         case COL_TYPE_CELL:
-            if ( col->data != NULL ) {
+            if ( col->data != NULL && matvar_has_row(col, row) ) {
                 matvar_t **cell_elems = (matvar_t **)col->data;
                 return snprint_cell_value(cell_elems[row], buf, bufsz);
             }
@@ -562,6 +589,7 @@ print_human_table(const matvar_t *matvar)
     matvar_t **cols = NULL;
     matvar_t **vnames = NULL;
     int ncols_actual = 0;
+    int nvarnames = 0;
     int i, row;
 
     f = Mat_VarGetStructFieldByName(matvar, "nrows", 0);
@@ -581,10 +609,11 @@ print_human_table(const matvar_t *matvar)
          NULL == varnames_var->data )
         return;
     vnames = (matvar_t **)varnames_var->data;
+    nvarnames = (int)matvar_elem_count(varnames_var);
 
     if ( NULL != data_var && data_var->class_type == MAT_C_CELL && NULL != data_var->data ) {
         cols = (matvar_t **)data_var->data;
-        ncols_actual = (int)(data_var->nbytes / data_var->data_size);
+        ncols_actual = (int)matvar_elem_count(data_var);
     }
 
     if ( nvars > TABLE_MAX_COLS ) {
@@ -596,7 +625,7 @@ print_human_table(const matvar_t *matvar)
     for ( i = 0; i < nvars; i++ ) {
         int w;
         hdr[i][0] = '\0';
-        if ( vnames[i] != NULL && vnames[i]->class_type == MAT_C_CHAR )
+        if ( i < nvarnames && vnames[i] != NULL && vnames[i]->class_type == MAT_C_CHAR )
             snprint_char(hdr[i], TABLE_CELL_BUF, vnames[i]);
         w = (int)strlen(hdr[i]);
         if ( w < 4 )
@@ -684,7 +713,10 @@ print_human_string(const matvar_t *matvar)
     if ( any != NULL && any->class_type == MAT_C_UINT64 && any->data != NULL ) {
         const mat_uint64_t *u64 = (const mat_uint64_t *)any->data;
         size_t n = 1;
-        if ( !MulDims(any, &n) && n > 4 && n * sizeof(mat_uint64_t) <= any->nbytes ) {
+        size_t nbytes_needed;
+        if ( !MulDims(any, &n) && n > 4 &&
+             psnip_safe_size_mul(&nbytes_needed, n, sizeof(mat_uint64_t)) &&
+             nbytes_needed <= any->nbytes ) {
             size_t nstrs = (size_t)u64[2];
             size_t header_len = 4 + nstrs;
             if ( header_len < n && nstrs > 0 && nstrs < 10000 ) {
@@ -711,9 +743,9 @@ print_human_millis(const matvar_t *matvar, const char *label, const char *field)
     if ( f != NULL && f->class_type == MAT_C_DOUBLE && f->data != NULL ) {
         const double *d = (const double *)f->data;
         size_t n = 1;
-        int r;
-        for ( r = 0; r < f->rank; r++ )
-            n *= f->dims[r];
+        size_t ncnt = matvar_elem_count(f);
+        if ( !MulDims(f, &n) && n > ncnt )
+            n = ncnt;
         if ( n > 0 ) {
             size_t i;
             printf("  ");
@@ -746,7 +778,7 @@ print_human_categorical(const matvar_t *matvar)
     Mat_Message("%s = categorical:", matvar->name ? matvar->name : "");
     if ( names != NULL && names->class_type == MAT_C_CELL && names->data != NULL ) {
         matvar_t **cells = (matvar_t **)names->data;
-        size_t ncats = names->nbytes / names->data_size;
+        size_t ncats = matvar_elem_count(names);
         size_t i;
         printf("  Categories: {");
         for ( i = 0; i < ncats; i++ ) {
@@ -760,12 +792,13 @@ print_human_categorical(const matvar_t *matvar)
         /* Map codes to names */
         if ( printdata && codes != NULL && codes->data != NULL ) {
             size_t n = 1;
+            size_t ncodes = matvar_elem_count(codes);
             int r;
             for ( r = 0; r < codes->rank; r++ )
                 n *= codes->dims[r];
             if ( n > 0 ) {
                 printf("  Values: ");
-                for ( i = 0; i < n && i < 10; i++ ) {
+                for ( i = 0; i < n && i < 10 && i < ncodes; i++ ) {
                     mat_uint8_t code = ((mat_uint8_t *)codes->data)[i];
                     if ( i > 0 )
                         printf(", ");
@@ -805,7 +838,7 @@ print_human_map(const matvar_t *matvar)
     vt = Mat_VarGetStructFieldByName(ser, "valueType", 0);
 
     if ( keys != NULL && keys->class_type == MAT_C_CELL && keys->data != NULL )
-        nkeys = keys->nbytes / keys->data_size;
+        nkeys = matvar_elem_count(keys);
 
     printf("  %s = Map (", matvar->name ? matvar->name : "ans");
     if ( kt != NULL && kt->class_type == MAT_C_CHAR && kt->data != NULL )
@@ -823,7 +856,7 @@ print_human_map(const matvar_t *matvar)
         matvar_t **vcells = (values->class_type == MAT_C_CELL && values->data != NULL)
                                 ? (matvar_t **)values->data
                                 : NULL;
-        size_t nvals = (vcells != NULL) ? values->nbytes / values->data_size : 0;
+        size_t nvals = (vcells != NULL) ? matvar_elem_count(values) : 0;
         size_t i;
 
         for ( i = 0; i < nkeys; i++ ) {
@@ -866,19 +899,21 @@ print_human_dictionary(const matvar_t *matvar)
     /* Count keys */
     if ( key_var != NULL ) {
         if ( key_var->class_type == MAT_C_CELL && key_var->data != NULL )
-            nkeys = key_var->nbytes / key_var->data_size;
-        else if ( key_var->class_type == MAT_C_DOUBLE && key_var->data != NULL )
+            nkeys = matvar_elem_count(key_var);
+        else if ( key_var->class_type == MAT_C_DOUBLE && key_var->data != NULL ) {
             nkeys = key_var->dims[0];
-        else if ( key_var->class_type == MAT_C_OBJECT ) {
+            if ( nkeys > matvar_elem_count(key_var) )
+                nkeys = matvar_elem_count(key_var);
+        } else if ( key_var->class_type == MAT_C_OBJECT ) {
             /* String key: count from "any" field */
             matvar_t *any = Mat_VarGetStructFieldByName(key_var, "any", 0);
             if ( any != NULL && any->class_type == MAT_C_UINT64 && any->data != NULL ) {
                 const mat_uint64_t *u64 = (const mat_uint64_t *)any->data;
                 size_t n = 1;
-                int r;
-                for ( r = 0; r < any->rank; r++ )
-                    n *= any->dims[r];
-                if ( n > 4 )
+                size_t nbytes_needed;
+                if ( !MulDims(any, &n) && n > 4 &&
+                     psnip_safe_size_mul(&nbytes_needed, n, sizeof(mat_uint64_t)) &&
+                     nbytes_needed <= any->nbytes )
                     nkeys = (size_t)u64[2];
             }
         }
@@ -900,7 +935,10 @@ print_human_dictionary(const matvar_t *matvar)
                 matvar_t **kcells = (matvar_t **)key_var->data;
                 snprint_cell_value(kcells[i], kbuf, sizeof(kbuf));
             } else if ( key_var->class_type == MAT_C_DOUBLE && key_var->data != NULL ) {
-                mat_snprintf(kbuf, sizeof(kbuf), "%g", ((const double *)key_var->data)[i]);
+                if ( i < matvar_elem_count(key_var) )
+                    mat_snprintf(kbuf, sizeof(kbuf), "%g", ((const double *)key_var->data)[i]);
+                else
+                    mat_snprintf(kbuf, sizeof(kbuf), "...");
             } else if ( key_var->class_type == MAT_C_OBJECT ) {
                 const char *kcls = Mat_VarGetClassName(key_var);
                 if ( kcls != NULL && 0 == strcmp(kcls, "string") ) {
@@ -918,13 +956,16 @@ print_human_dictionary(const matvar_t *matvar)
                 mat_snprintf(vbuf, sizeof(vbuf), "...");
             } else if ( val_var->class_type == MAT_C_CELL && val_var->data != NULL ) {
                 matvar_t **vcells = (matvar_t **)val_var->data;
-                size_t nvals = val_var->nbytes / val_var->data_size;
+                size_t nvals = matvar_elem_count(val_var);
                 if ( i < nvals )
                     snprint_cell_value(vcells[i], vbuf, sizeof(vbuf));
                 else
                     mat_snprintf(vbuf, sizeof(vbuf), "...");
             } else if ( val_var->class_type == MAT_C_DOUBLE && val_var->data != NULL ) {
-                mat_snprintf(vbuf, sizeof(vbuf), "%g", ((const double *)val_var->data)[i]);
+                if ( i < matvar_elem_count(val_var) )
+                    mat_snprintf(vbuf, sizeof(vbuf), "%g", ((const double *)val_var->data)[i]);
+                else
+                    mat_snprintf(vbuf, sizeof(vbuf), "...");
             } else if ( val_var->class_type == MAT_C_OBJECT ) {
                 const char *vcls = Mat_VarGetClassName(val_var);
                 if ( vcls != NULL && 0 == strcmp(vcls, "string") ) {
