@@ -186,7 +186,7 @@ static int
 snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
 {
     const mat_uint64_t *u64;
-    size_t n = 1, nstrs, header_len, char_offset, slen, j;
+    size_t n = 1, nstrs, header_len, char_offset, slen, j, nbytes_needed;
     int pos = 0;
 
     if ( any == NULL || any->class_type != MAT_C_UINT64 || any->data == NULL )
@@ -196,7 +196,8 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
         return 0;
 
     /* Validate n against actual allocation */
-    if ( n * sizeof(mat_uint64_t) > any->nbytes )
+    if ( !psnip_safe_size_mul(&nbytes_needed, n, sizeof(mat_uint64_t)) ||
+         nbytes_needed > any->nbytes )
         return 0;
 
     u64 = (const mat_uint64_t *)any->data;
