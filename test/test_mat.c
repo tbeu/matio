@@ -2764,6 +2764,108 @@ test_struct_api_create_null_field(void)
     return err;
 }
 
+static void
+silent_logfunc(int log_level, const char *message)
+{
+    /* Discard expected diagnostic messages */
+    (void)log_level;
+    (void)message;
+}
+
+static int
+test_var_api_create_overflow_dims(void)
+{
+    size_t dims[2];
+    int err = 0;
+    matvar_t *matvar;
+
+    dims[0] = ~(size_t)0;
+    dims[1] = ~(size_t)0;
+
+    /* The number of elements must not wrap around silently */
+    Mat_LogInitFunc("test_mat", silent_logfunc);
+    matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, NULL, 0);
+    if ( NULL != matvar ) {
+        printf("Unexpected non-NULL variable for overflowing dimensions\n");
+        Mat_VarFree(matvar);
+        err = 1;
+    } else {
+        printf("Overflowing dimensions rejected\n");
+    }
+
+    matvar = Mat_VarCreateStruct("b", 2, dims, NULL, 0);
+    if ( NULL != matvar ) {
+        printf("Unexpected non-NULL struct for overflowing dimensions\n");
+        Mat_VarFree(matvar);
+        err = 1;
+    } else {
+        printf("Overflowing struct dimensions rejected\n");
+    }
+    Mat_LogClose();
+
+    return err;
+}
+
+static int
+test_var_api_create_negative_rank(void)
+{
+    size_t dims[2] = {2, 3};
+    int err = 0;
+    matvar_t *matvar;
+
+    /* A negative rank must be rejected */
+    matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, -1, dims, NULL, 0);
+    if ( NULL != matvar ) {
+        printf("Unexpected non-NULL variable for negative rank\n");
+        Mat_VarFree(matvar);
+        err = 1;
+    } else {
+        printf("Negative rank rejected\n");
+    }
+
+    matvar = Mat_VarCreateStruct("b", -1, dims, NULL, 0);
+    if ( NULL != matvar ) {
+        printf("Unexpected non-NULL struct for negative rank\n");
+        Mat_VarFree(matvar);
+        err = 1;
+    } else {
+        printf("Negative rank rejected for struct\n");
+    }
+
+    return err;
+}
+
+static int
+test_var_api_create_null_fieldname(void)
+{
+    size_t dims[2] = {1, 1};
+    int err = 0;
+    matvar_t *field, *matvar;
+    matvar_t *fields[2];
+
+    field = Mat_VarCreate(NULL, MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, NULL, MAT_F_DONT_COPY_DATA);
+    if ( NULL == field ) {
+        printf("Unexpected NULL field\n");
+        return 1;
+    }
+    fields[0] = field;
+    fields[1] = NULL;
+
+    /* A NULL fieldname must not lead to invalid reads: creation has to fail cleanly */
+    matvar = Mat_VarCreate("a", MAT_C_STRUCT, MAT_T_STRUCT, 2, dims, fields, MAT_F_DONT_COPY_DATA);
+    if ( NULL != matvar ) {
+        printf("Unexpected non-NULL struct for NULL fieldname\n");
+        matvar->data = NULL;
+        Mat_VarFree(matvar);
+        err = 1;
+    } else {
+        printf("NULL fieldname rejected\n");
+    }
+    Mat_VarFree(field);
+
+    return err;
+}
+
 static int
 test_struct_api_setfield(void)
 {
@@ -4558,6 +4660,21 @@ main(int argc, char *argv[])
             k++;
             redirect_output(output_name);
             err += test_struct_api_get();
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "var_api_create_overflow_dims") ) {
+            k++;
+            redirect_output(output_name);
+            err += test_var_api_create_overflow_dims();
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "var_api_create_negative_rank") ) {
+            k++;
+            redirect_output(output_name);
+            err += test_var_api_create_negative_rank();
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "var_api_create_null_fieldname") ) {
+            k++;
+            redirect_output(output_name);
+            err += test_var_api_create_null_fieldname();
             ntests++;
         } else if ( !strcasecmp(argv[k], "cell_api_set") ) {
             k++;

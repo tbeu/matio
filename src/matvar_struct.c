@@ -48,7 +48,7 @@ VarCreateStruct(const char *name, int rank, const size_t *dims, const char *cons
     int j;
     matvar_t *matvar;
 
-    if ( NULL == dims )
+    if ( NULL == dims || rank < 0 )
         return NULL;
 
     matvar = Mat_VarCalloc();
@@ -59,10 +59,26 @@ VarCreateStruct(const char *name, int rank, const size_t *dims, const char *cons
     if ( NULL != name )
         matvar->name = strdup(name);
     matvar->rank = rank;
-    matvar->dims = (size_t *)malloc(matvar->rank * sizeof(*matvar->dims));
-    for ( j = 0; j < matvar->rank; j++ ) {
-        matvar->dims[j] = dims[j];
-        nelems *= dims[j];
+    if ( rank > 0 ) {
+        size_t dims_size;
+        int err = Mul(&dims_size, (size_t)rank, sizeof(*matvar->dims));
+        if ( err ) {
+            Mat_VarFree(matvar);
+            return NULL;
+        }
+        matvar->dims = (size_t *)malloc(dims_size);
+        if ( NULL == matvar->dims ) {
+            Mat_VarFree(matvar);
+            return NULL;
+        }
+        for ( j = 0; j < rank; j++ ) {
+            matvar->dims[j] = dims[j];
+            err = Mul(&nelems, nelems, matvar->dims[j]);
+            if ( err ) {
+                Mat_VarFree(matvar);
+                return NULL;
+            }
+        }
     }
     matvar->class_type = MAT_C_STRUCT;
     matvar->data_type = MAT_T_STRUCT;
