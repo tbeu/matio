@@ -3357,7 +3357,18 @@ Mat_VarReadNumeric5(mat_t *mat, matvar_t *matvar, void *data, size_t N)
     }
     if ( nBytes == 0 ) {
         matvar->nbytes = 0;
+        if ( N > 0 )
+            return MATIO_E_FILE_FORMAT_VIOLATION;
         return err;
+    } else {
+        size_t data_bytes = 0;
+        err = Mul(&data_bytes, N, Mat_SizeOf(packed_type));
+        if ( err )
+            return err;
+        if ( nBytes < data_bytes ) {
+            matvar->nbytes = 0;
+            return MATIO_E_FILE_FORMAT_VIOLATION;
+        }
     }
 
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
