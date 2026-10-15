@@ -205,7 +205,8 @@ Mat_VarWrite4(const mat_t *mat, const matvar_t *matvar)
             fwrite(matvar->name, sizeof(char), x.namelen, (FILE *)mat->fp);
 
             for ( i = 0; i < sparse->njc - 1; i++ ) {
-                for ( j = sparse->jc[i]; j < sparse->jc[i + 1] && j < sparse->ndata; j++ ) {
+                for ( j = sparse->jc[i];
+                      j < sparse->jc[i + 1] && j < sparse->ndata && j < sparse->nir; j++ ) {
                     tmp = sparse->ir[j] + 1;
                     fwrite(&tmp, sizeof(double), 1, (FILE *)mat->fp);
                 }
@@ -213,7 +214,8 @@ Mat_VarWrite4(const mat_t *mat, const matvar_t *matvar)
             tmp = (double)matvar->dims[0];
             fwrite(&tmp, sizeof(double), 1, (FILE *)mat->fp);
             for ( i = 0; i < sparse->njc - 1; i++ ) {
-                for ( j = sparse->jc[i]; j < sparse->jc[i + 1] && j < sparse->ndata; j++ ) {
+                for ( j = sparse->jc[i];
+                      j < sparse->jc[i + 1] && j < sparse->ndata && j < sparse->nir; j++ ) {
                     tmp = i + 1;
                     fwrite(&tmp, sizeof(double), 1, (FILE *)mat->fp);
                 }
@@ -226,20 +228,23 @@ Mat_VarWrite4(const mat_t *mat, const matvar_t *matvar)
                 const char *re = (char *)complex_data->Re;
                 const char *im = (char *)complex_data->Im;
                 for ( i = 0; i < sparse->njc - 1; i++ ) {
-                    for ( j = sparse->jc[i]; j < sparse->jc[i + 1] && j < sparse->ndata; j++ ) {
+                    for ( j = sparse->jc[i];
+                          j < sparse->jc[i + 1] && j < sparse->ndata && j < sparse->nir; j++ ) {
                         fwrite(re + j * stride, stride, 1, (FILE *)mat->fp);
                     }
                 }
                 fwrite(&tmp, stride, 1, (FILE *)mat->fp);
                 for ( i = 0; i < sparse->njc - 1; i++ ) {
-                    for ( j = sparse->jc[i]; j < sparse->jc[i + 1] && j < sparse->ndata; j++ ) {
+                    for ( j = sparse->jc[i];
+                          j < sparse->jc[i + 1] && j < sparse->ndata && j < sparse->nir; j++ ) {
                         fwrite(im + j * stride, stride, 1, (FILE *)mat->fp);
                     }
                 }
             } else {
                 const char *data = (char *)sparse->data;
                 for ( i = 0; i < sparse->njc - 1; i++ ) {
-                    for ( j = sparse->jc[i]; j < sparse->jc[i + 1] && j < sparse->ndata; j++ ) {
+                    for ( j = sparse->jc[i];
+                          j < sparse->jc[i + 1] && j < sparse->ndata && j < sparse->nir; j++ ) {
                         fwrite(data + j * stride, stride, 1, (FILE *)mat->fp);
                     }
                 }
