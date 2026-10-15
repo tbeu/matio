@@ -39,6 +39,7 @@ TESTSUITE_AT = $(srcdir)/testsuite.at \
                $(tests_dir)/struct_api.at \
                $(tests_dir)/cell_api.at \
                $(tests_dir)/subscript_api.at \
+               $(tests_dir)/var_api.at \
                $(tests_dir)/mat4_readslab_be.at \
                $(tests_dir)/mat4_readslab_le.at \
                $(tests_dir)/mat5_compressed_readslab_be.at \
@@ -371,6 +372,9 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/struct_api_getlinear.out \
                  $(results_dir)/struct_api_setfield.out \
                  $(results_dir)/sub2ind.out \
+                 $(results_dir)/var_api_create_negative_rank.out \
+                 $(results_dir)/var_api_create_null_fieldname.out \
+                 $(results_dir)/var_api_create_overflow_dims.out \
                  $(results_dir)/write_1d_numeric-73-l2-logical.out \
                  $(results_dir)/write_1d_numeric-73-l4-logical.out \
                  $(results_dir)/write_1d_numeric-double.out \

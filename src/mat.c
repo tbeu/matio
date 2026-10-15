@@ -1338,7 +1338,8 @@ Mat_VarCalloc(void)
  *       should be a pointer to a mat_complex_split_t type.
  * - MAT_F_GLOBAL to assign the variable as a global variable
  * - MAT_F_LOGICAL to specify that it is a logical variable
- * @return A MAT variable that can be written to a file or otherwise used
+ * @return A MAT variable that can be written to a file or otherwise used,
+ * or NULL on error
  */
 matvar_t *
 Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types data_type, int rank,
@@ -1348,7 +1349,7 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
     matvar_t *matvar = NULL;
     int j, err;
 
-    if ( dims == NULL )
+    if ( NULL == dims || rank < 0 )
         return NULL;
 
     matvar = Mat_VarCalloc();
@@ -1362,10 +1363,27 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
     if ( name )
         matvar->name = strdup(name);
     matvar->rank = rank;
-    matvar->dims = (size_t *)malloc(matvar->rank * sizeof(*matvar->dims));
-    for ( j = 0; j < matvar->rank; j++ ) {
-        matvar->dims[j] = dims[j];
-        nelems *= dims[j];
+    if ( rank > 0 ) {
+        size_t dims_size;
+        err = Mul(&dims_size, (size_t)rank, sizeof(*matvar->dims));
+        if ( err ) {
+            Mat_VarFree(matvar);
+            return NULL;
+        }
+        matvar->dims = (size_t *)malloc(dims_size);
+        if ( NULL == matvar->dims ) {
+            Mat_VarFree(matvar);
+            return NULL;
+        }
+        for ( j = 0; j < rank; j++ ) {
+            matvar->dims[j] = dims[j];
+            err = Mul(&nelems, nelems, matvar->dims[j]);
+            if ( err ) {
+                Mat_Critical("Integer multiplication overflow");
+                Mat_VarFree(matvar);
+                return NULL;
+            }
+        }
     }
     matvar->class_type = class_type;
     matvar->data_type = data_type;
@@ -1426,8 +1444,21 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
                     size_t i;
                     matvar->internal->fieldnames =
                         (char **)calloc(nfields, sizeof(*matvar->internal->fieldnames));
-                    for ( i = 0; i < nfields; i++ )
+                    if ( NULL == matvar->internal->fieldnames ) {
+                        Mat_VarFree(matvar);
+                        return NULL;
+                    }
+                    for ( i = 0; i < nfields; i++ ) {
+                        if ( NULL == fields[i]->name ) {
+                            Mat_VarFree(matvar);
+                            return NULL;
+                        }
                         matvar->internal->fieldnames[i] = strdup(fields[i]->name);
+                        if ( NULL == matvar->internal->fieldnames[i] ) {
+                            Mat_VarFree(matvar);
+                            return NULL;
+                        }
+                    }
                     err = Mul(&nelems, nelems, nfields);
                     if ( err ) {
                         Mat_VarFree(matvar);
@@ -1477,25 +1508,31 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         const mat_sparse_t *sparse_data_in = (const mat_sparse_t *)data;
         mat_sparse_t *sparse_data = (mat_sparse_t *)malloc(sizeof(mat_sparse_t));
         if ( NULL != sparse_data ) {
+            size_t ir_size, jc_size, data_bytes;
             sparse_data->nzmax = sparse_data_in->nzmax;
             sparse_data->nir = sparse_data_in->nir;
             sparse_data->njc = sparse_data_in->njc;
             sparse_data->ndata = sparse_data_in->ndata;
+            err = Mul(&ir_size, sparse_data->nir, sizeof(*sparse_data->ir));
+            err |= Mul(&jc_size, sparse_data->njc, sizeof(*sparse_data->jc));
+            err |= Mul(&data_bytes, sparse_data->ndata, data_size);
+            if ( err ) {
+                Mat_Critical("Integer multiplication overflow");
+                free(sparse_data);
+                Mat_VarFree(matvar);
+                return NULL;
+            }
             if ( NULL != sparse_data_in->ir ) {
-                sparse_data->ir =
-                    (mat_uint32_t *)malloc(sparse_data->nir * sizeof(*sparse_data->ir));
+                sparse_data->ir = (mat_uint32_t *)malloc(ir_size);
                 if ( NULL != sparse_data->ir )
-                    memcpy(sparse_data->ir, sparse_data_in->ir,
-                           sparse_data->nir * sizeof(*sparse_data->ir));
+                    memcpy(sparse_data->ir, sparse_data_in->ir, ir_size);
             } else {
                 sparse_data->ir = NULL;
             }
             if ( NULL != sparse_data_in->jc ) {
-                sparse_data->jc =
-                    (mat_uint32_t *)malloc(sparse_data->njc * sizeof(*sparse_data->jc));
+                sparse_data->jc = (mat_uint32_t *)malloc(jc_size);
                 if ( NULL != sparse_data->jc )
-                    memcpy(sparse_data->jc, sparse_data_in->jc,
-                           sparse_data->njc * sizeof(*sparse_data->jc));
+                    memcpy(sparse_data->jc, sparse_data_in->jc, jc_size);
             } else {
                 sparse_data->jc = NULL;
             }
@@ -1507,20 +1544,17 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
                             (mat_complex_split_t *)sparse_data->data;
                         const mat_complex_split_t *complex_data_in =
                             (mat_complex_split_t *)sparse_data_in->data;
-                        complex_data->Re = malloc(sparse_data->ndata * data_size);
-                        complex_data->Im = malloc(sparse_data->ndata * data_size);
+                        complex_data->Re = malloc(data_bytes);
+                        complex_data->Im = malloc(data_bytes);
                         if ( NULL != complex_data->Re )
-                            memcpy(complex_data->Re, complex_data_in->Re,
-                                   sparse_data->ndata * data_size);
+                            memcpy(complex_data->Re, complex_data_in->Re, data_bytes);
                         if ( NULL != complex_data->Im )
-                            memcpy(complex_data->Im, complex_data_in->Im,
-                                   sparse_data->ndata * data_size);
+                            memcpy(complex_data->Im, complex_data_in->Im, data_bytes);
                     }
                 } else {
-                    sparse_data->data = malloc(sparse_data->ndata * data_size);
+                    sparse_data->data = malloc(data_bytes);
                     if ( NULL != sparse_data->data )
-                        memcpy(sparse_data->data, sparse_data_in->data,
-                               sparse_data->ndata * data_size);
+                        memcpy(sparse_data->data, sparse_data_in->data, data_bytes);
                 }
             } else {
                 sparse_data->data = NULL;

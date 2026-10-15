@@ -1,0 +1,22 @@
+# Copyright (c) 2015-2026, The matio contributors
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+AT_SETUP([Reject overflowing variable dimensions])
+AT_KEYWORDS([var_api])
+AT_CHECK([cp $srcdir/results/var_api_create_overflow_dims.out expout
+          $builddir/test_mat var_api_create_overflow_dims],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Reject negative variable rank])
+AT_KEYWORDS([var_api])
+AT_CHECK([cp $srcdir/results/var_api_create_negative_rank.out expout
+          $builddir/test_mat var_api_create_negative_rank],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Reject NULL struct field name])
+AT_KEYWORDS([var_api])
+AT_CHECK([cp $srcdir/results/var_api_create_null_fieldname.out expout
+          $builddir/test_mat var_api_create_null_fieldname],[0],[expout],[])
+AT_CLEANUP
