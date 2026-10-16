@@ -58,7 +58,7 @@ ParseOpaqueMetadata(const mat_uint32_t *meta, size_t meta_nvals, matvar_t *matva
     ndims = meta[1];
     dim_start = 2;
 
-    if ( (size_t)dim_start + ndims + 1 > meta_nvals )
+    if ( ndims >= meta_nvals - dim_start )
         return MATIO_E_FILE_FORMAT_VIOLATION;
 
     if ( ndims == 0 )
@@ -1661,7 +1661,7 @@ ResolveEncodedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
     }
 
     ndims = meta[1];
-    if ( dim_start + ndims + 1 > n )
+    if ( ndims >= n - dim_start )
         return MATIO_E_NO_ERROR; /* Not enough data */
 
     if ( ndims == 0 )

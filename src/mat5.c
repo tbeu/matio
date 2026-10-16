@@ -5866,7 +5866,7 @@ ProcessOpaqueMetadata(mat_t *mat, matvar_t *matvar, mat_uint32_t *meta, mat_uint
         mat_uint32_t ndims = meta[1];
         mat_uint32_t dim_start = 2;
 
-        if ( dim_start + ndims + 1 <= meta_nvals ) {
+        if ( ndims < meta_nvals - dim_start ) {
             mat_uint32_t d;
             matvar->rank = (int)ndims;
             matvar->dims = (size_t *)malloc(ndims * sizeof(size_t));
