@@ -859,11 +859,14 @@ ParseSubsystem5(mat_t *mat)
         return NULL;
     }
 
-    /* Read the subsystem data element as a regular variable.
-     * It appears as an unnamed mxUINT8 data element.
+    /* Read the subsystem data element as a regular variable.  It is stored as
+     * an unnamed mxUINT8 byte array.  Accept only a leaf byte array.
      */
     subsys_var = Mat_VarReadNextInfo5(mat);
-    if ( subsys_var == NULL ) {
+    if ( subsys_var == NULL ||
+         (subsys_var->class_type != MAT_C_UINT8 && subsys_var->class_type != MAT_C_INT8 &&
+          subsys_var->class_type != MAT_C_CHAR) ) {
+        Mat_VarFree(subsys_var);
         (void)fseeko((FILE *)mat->fp, save_pos, SEEK_SET);
         return NULL;
     }
