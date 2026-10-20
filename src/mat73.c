@@ -3383,6 +3383,18 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     err = MATIO_E_GENERIC_READ_ERROR;
                     goto done;
                 }
+                {
+                    hid_t ir_type_id = H5Dget_type(sparse_dset_id);
+                    int type_err = Mat_H5ValidateDatatype(ir_type_id);
+                    H5Tclose(ir_type_id);
+                    if ( type_err ) {
+                        H5Dclose(sparse_dset_id);
+                        H5Gclose(dset_id);
+                        free(sparse_data);
+                        err = MATIO_E_FILE_FORMAT_VIOLATION;
+                        goto done;
+                    }
+                }
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
                     size_t nbytes = 0;
@@ -3436,9 +3448,25 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id, "jc", H5P_DEFAULT);
                 if ( sparse_dset_id < 0 ) {
                     H5Gclose(dset_id);
+                    if ( sparse_data->ir != NULL )
+                        free(sparse_data->ir);
                     free(sparse_data);
                     err = MATIO_E_GENERIC_READ_ERROR;
                     goto done;
+                }
+                {
+                    hid_t jc_type_id = H5Dget_type(sparse_dset_id);
+                    int type_err = Mat_H5ValidateDatatype(jc_type_id);
+                    H5Tclose(jc_type_id);
+                    if ( type_err ) {
+                        H5Dclose(sparse_dset_id);
+                        H5Gclose(dset_id);
+                        if ( sparse_data->ir != NULL )
+                            free(sparse_data->ir);
+                        free(sparse_data);
+                        err = MATIO_E_FILE_FORMAT_VIOLATION;
+                        goto done;
+                    }
                 }
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
@@ -3565,11 +3593,13 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
             if ( opaque_id > 0 ) {
                 hid_t dtype_id = H5Dget_type(opaque_id);
                 H5T_class_t type_class = H5T_NO_CLASS;
+                int type_err = MATIO_E_FILE_FORMAT_VIOLATION;
                 if ( dtype_id >= 0 ) {
                     type_class = H5Tget_class(dtype_id);
+                    type_err = Mat_H5ValidateDatatype(dtype_id);
                     H5Tclose(dtype_id);
                 }
-                if ( type_class == H5T_INTEGER ) {
+                if ( type_class == H5T_INTEGER && MATIO_E_NO_ERROR == type_err ) {
                     hsize_t nelems = 1;
                     int k;
                     hid_t space_id = H5Dget_space(opaque_id);
