@@ -30,6 +30,14 @@
 #define MCOS_REF_VALUE 0xDD000000U
 #endif
 
+/** @brief Maximum recursion depth for MCOS object resolution
+ *
+ * Bounds the recursive resolution of nested MCOS objects (cells, structs and
+ * encoded references) and the traversal of dynamic-property dependencies
+ * (field collection / lookup), so that crafted files cannot exhaust the stack.
+ */
+#define MCOS_MAX_DEPTH 16
+
 /** @brief Parse MCOS opaque metadata from a uint32 array
  *
  * Extracts rank, dimensions, object IDs, and class ID from the metadata
@@ -237,6 +245,13 @@ ParseLinkingMetadata(const mat_uint8_t *data, size_t len, mcos_subsystem_t *ss, 
     /* Parse null-terminated strings */
     ss->num_strings = num_strings;
     if ( num_strings > 0 ) {
+        /* Every string occupies at least its terminating NUL, so a valid table
+         * cannot declare more strings than there are bytes left in the cell.
+         * Rejecting up front avoids a huge allocation from a corrupt count. */
+        if ( num_strings > len - pos ) {
+            Mat_Critical("MCOS: String table count %u exceeds remaining metadata", num_strings);
+            return MATIO_E_FILE_FORMAT_VIOLATION;
+        }
         ss->strings = (char **)calloc(num_strings, sizeof(char *));
         if ( ss->strings == NULL )
             return MATIO_E_OUT_OF_MEMORY;
@@ -389,6 +404,17 @@ ParseLinkingMetadata(const mat_uint8_t *data, size_t len, mcos_subsystem_t *ss, 
                     Mat_uint32Swap(&nprops);
                 region_pos2 += 4;
 
+                /* Each property record needs 12 bytes; a larger count cannot
+                 * fit in the remaining region and is malformed. */
+                if ( nprops > (region_end_val - region_pos2) / 12 ) {
+                    size_t k;
+                    for ( k = 0; k < count; k++ )
+                        FreePropertySet(&prop_sets[k]);
+                    free(prop_sets);
+                    Mat_Critical("MCOS: Property count %u exceeds region", nprops);
+                    return MATIO_E_FILE_FORMAT_VIOLATION;
+                }
+
                 /* Grow array */
                 if ( count >= capacity ) {
                     size_t new_cap = (capacity == 0) ? 8 : capacity * 2;
@@ -489,6 +515,17 @@ ParseLinkingMetadata(const mat_uint8_t *data, size_t len, mcos_subsystem_t *ss, 
                 if ( byteswap )
                     Mat_uint32Swap(&nprops);
                 region_pos += 4;
+
+                /* Each dependent id is 4 bytes; a larger count cannot fit in
+                 * the remaining region and is malformed. */
+                if ( nprops > (region_end - region_pos) / 4 ) {
+                    size_t k;
+                    for ( k = 0; k < count; k++ )
+                        FreeDynamicPropertySet(&dynamic_sets[k]);
+                    free(dynamic_sets);
+                    Mat_Critical("MCOS: Dynamic property count %u exceeds region", nprops);
+                    return MATIO_E_FILE_FORMAT_VIOLATION;
+                }
 
                 if ( count >= capacity ) {
                     size_t new_cap = (capacity == 0) ? 8 : capacity * 2;
@@ -663,7 +700,7 @@ CollectFieldNamesFromStruct(const matvar_t *matvar, char ***all_fieldnames, size
 
 static int
 CollectFieldNamesFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, char ***all_fieldnames,
-                            size_t *count, size_t *capacity, unsigned char *visited)
+                            size_t *count, size_t *capacity, unsigned char *visited, unsigned depth)
 {
     const mcos_object_info_t *obj_info;
     const mcos_property_set_t *prop_set;
@@ -672,6 +709,8 @@ CollectFieldNamesFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, cha
     int err;
 
     if ( ss == NULL || obj_id < 1 || obj_id > ss->num_objects || visited == NULL )
+        return MATIO_E_NO_ERROR;
+    if ( depth > MCOS_MAX_DEPTH )
         return MATIO_E_NO_ERROR;
     if ( visited[obj_id - 1] )
         return MATIO_E_NO_ERROR;
@@ -697,7 +736,7 @@ CollectFieldNamesFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, cha
             &ss->dynamic_props[obj_info->dependency_id - 1];
         for ( pi = 0; pi < dyn_props->nprop_ids; pi++ ) {
             err = CollectFieldNamesFromObject(ss, dyn_props->prop_ids[pi], all_fieldnames, count,
-                                              capacity, visited);
+                                              capacity, visited, depth + 1);
             if ( err )
                 return err;
         }
@@ -748,7 +787,7 @@ CreateFieldValueFromProperty(const mcos_subsystem_t *ss, const char *fname,
 
 static matvar_t *
 GetFieldValueFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const char *fname,
-                        unsigned char *visited)
+                        unsigned char *visited, unsigned depth)
 {
     const mcos_object_info_t *obj_info;
     const mcos_property_set_t *prop_set;
@@ -756,6 +795,8 @@ GetFieldValueFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const c
     size_t pi;
 
     if ( ss == NULL || fname == NULL || visited == NULL || obj_id < 1 || obj_id > ss->num_objects )
+        return NULL;
+    if ( depth > MCOS_MAX_DEPTH )
         return NULL;
     if ( visited[obj_id - 1] )
         return NULL;
@@ -775,7 +816,7 @@ GetFieldValueFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const c
             &ss->dynamic_props[obj_info->dependency_id - 1];
         for ( pi = 0; pi < dyn_props->nprop_ids; pi++ ) {
             matvar_t *field_val =
-                GetFieldValueFromObject(ss, dyn_props->prop_ids[pi], fname, visited);
+                GetFieldValueFromObject(ss, dyn_props->prop_ids[pi], fname, visited, depth + 1);
             if ( field_val != NULL )
                 return field_val;
         }
@@ -1430,7 +1471,7 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
         }
 
         err = CollectFieldNamesFromObject(ss, obj_id, &all_fieldnames, &all_fieldnames_count,
-                                          &all_fieldnames_cap, visited);
+                                          &all_fieldnames_cap, visited, 0);
         free(visited);
         if ( err ) {
             size_t kk;
@@ -1495,7 +1536,7 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
                 if ( visited == NULL )
                     return MATIO_E_OUT_OF_MEMORY;
 
-                field_val = GetFieldValueFromObject(ss, obj_id, fname, visited);
+                field_val = GetFieldValueFromObject(ss, obj_id, fname, visited, 0);
                 free(visited);
 
                 /* If still no value, create an empty variable */
@@ -1522,9 +1563,6 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
 
     return MATIO_E_NO_ERROR;
 }
-
-/** @brief Maximum recursion depth for nested MCOS resolution */
-#define MCOS_MAX_DEPTH 16
 
 /* Forward declarations for mutual recursion */
 static int ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth);
