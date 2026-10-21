@@ -975,23 +975,19 @@ Mat_Close(mat_t *mat)
                 err = MATIO_E_FILESYSTEM_ERROR_ON_CLOSE;
             }
         }
-        if ( NULL != mat->header )
-            free(mat->header);
-        if ( NULL != mat->subsys_offset )
-            free(mat->subsys_offset);
+        free(mat->header);
+        free(mat->subsys_offset);
 #if defined(MCOS) && MCOS
         if ( NULL != mat->mcos ) {
             Mat_MCOS_Free(mat->mcos);
             mat->mcos = NULL;
         }
 #endif
-        if ( NULL != mat->filename )
-            free(mat->filename);
+        free(mat->filename);
         if ( NULL != mat->dir ) {
             size_t i;
             for ( i = 0; i < mat->num_datasets; i++ ) {
-                if ( NULL != mat->dir[i] )
-                    free(mat->dir[i]);
+                free(mat->dir[i]);
             }
             free(mat->dir);
         }
@@ -2052,10 +2048,8 @@ Mat_VarFree(matvar_t *matvar)
                 if ( !matvar->mem_conserve ) {
                     mat_sparse_t *sparse;
                     sparse = (mat_sparse_t *)matvar->data;
-                    if ( sparse->ir != NULL )
-                        free(sparse->ir);
-                    if ( sparse->jc != NULL )
-                        free(sparse->jc);
+                    free(sparse->ir);
+                    free(sparse->jc);
                     if ( matvar->isComplex && NULL != sparse->data ) {
                         ComplexFree((mat_complex_split_t *)sparse->data);
                     } else if ( sparse->data != NULL ) {
@@ -2131,10 +2125,8 @@ Mat_VarFree(matvar_t *matvar)
             if ( matvar->class_type == MAT_C_SPARSE && NULL != matvar->internal->data ) {
                 mat_sparse_t *sparse;
                 sparse = (mat_sparse_t *)matvar->internal->data;
-                if ( sparse->ir != NULL )
-                    free(sparse->ir);
-                if ( sparse->jc != NULL )
-                    free(sparse->jc);
+                free(sparse->ir);
+                free(sparse->jc);
                 if ( matvar->isComplex && NULL != sparse->data ) {
                     ComplexFree((mat_complex_split_t *)sparse->data);
                 } else if ( sparse->data != NULL ) {
@@ -2167,24 +2159,19 @@ Mat_VarFree(matvar_t *matvar)
         if ( NULL != matvar->internal->fieldnames && matvar->internal->num_fields > 0 ) {
             size_t i;
             for ( i = 0; i < matvar->internal->num_fields; i++ ) {
-                if ( NULL != matvar->internal->fieldnames[i] )
-                    free(matvar->internal->fieldnames[i]);
+                free(matvar->internal->fieldnames[i]);
             }
             free(matvar->internal->fieldnames);
         }
 #if defined(MCOS) && MCOS
-        if ( NULL != matvar->internal->type_name )
-            free(matvar->internal->type_name);
-        if ( NULL != matvar->internal->class_name )
-            free(matvar->internal->class_name);
-        if ( NULL != matvar->internal->object_ids )
-            free(matvar->internal->object_ids);
+        free(matvar->internal->type_name);
+        free(matvar->internal->class_name);
+        free(matvar->internal->object_ids);
 #endif
         free(matvar->internal);
         matvar->internal = NULL;
     }
-    if ( NULL != matvar->name )
-        free(matvar->name);
+    free(matvar->name);
     free(matvar);
 }
 

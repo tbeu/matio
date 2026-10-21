@@ -3433,8 +3433,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 H5Dclose(sparse_dset_id);
                 if ( err ) {
                     H5Gclose(dset_id);
-                    if ( sparse_data->ir != NULL )
-                        free(sparse_data->ir);
+                    free(sparse_data->ir);
                     free(sparse_data);
                     goto done;
                 }
@@ -3448,8 +3447,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id, "jc", H5P_DEFAULT);
                 if ( sparse_dset_id < 0 ) {
                     H5Gclose(dset_id);
-                    if ( sparse_data->ir != NULL )
-                        free(sparse_data->ir);
+                    free(sparse_data->ir);
                     free(sparse_data);
                     err = MATIO_E_GENERIC_READ_ERROR;
                     goto done;
@@ -3461,8 +3459,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     if ( type_err ) {
                         H5Dclose(sparse_dset_id);
                         H5Gclose(dset_id);
-                        if ( sparse_data->ir != NULL )
-                            free(sparse_data->ir);
+                        free(sparse_data->ir);
                         free(sparse_data);
                         err = MATIO_E_FILE_FORMAT_VIOLATION;
                         goto done;
@@ -3476,8 +3473,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     if ( rank != 1 || (hsize_t)sparse_data->njc != nelems ) {
                         H5Dclose(sparse_dset_id);
                         H5Gclose(dset_id);
-                        if ( sparse_data->ir != NULL )
-                            free(sparse_data->ir);
+                        free(sparse_data->ir);
                         free(sparse_data);
                         err = MATIO_E_FILE_FORMAT_VIOLATION;
                         goto done;
@@ -3508,10 +3504,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 H5Dclose(sparse_dset_id);
                 if ( err ) {
                     H5Gclose(dset_id);
-                    if ( sparse_data->jc != NULL )
-                        free(sparse_data->jc);
-                    if ( sparse_data->ir != NULL )
-                        free(sparse_data->ir);
+                    free(sparse_data->jc);
+                    free(sparse_data->ir);
                     free(sparse_data);
                     goto done;
                 }
@@ -3525,10 +3519,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id, "data", H5P_DEFAULT);
                 if ( sparse_dset_id < 0 ) {
                     H5Gclose(dset_id);
-                    if ( sparse_data->jc != NULL )
-                        free(sparse_data->jc);
-                    if ( sparse_data->ir != NULL )
-                        free(sparse_data->ir);
+                    free(sparse_data->jc);
+                    free(sparse_data->ir);
                     free(sparse_data);
                     err = MATIO_E_GENERIC_READ_ERROR;
                     goto done;
@@ -3542,10 +3534,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     if ( rank != 1 || (hsize_t)sparse_data->nzmax != nelems ) {
                         H5Dclose(sparse_dset_id);
                         H5Gclose(dset_id);
-                        if ( sparse_data->jc != NULL )
-                            free(sparse_data->jc);
-                        if ( sparse_data->ir != NULL )
-                            free(sparse_data->ir);
+                        free(sparse_data->jc);
+                        free(sparse_data->ir);
                         free(sparse_data);
                         err = MATIO_E_FILE_FORMAT_VIOLATION;
                         goto done;
@@ -3554,10 +3544,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     if ( err ) {
                         H5Dclose(sparse_dset_id);
                         H5Gclose(dset_id);
-                        if ( sparse_data->jc != NULL )
-                            free(sparse_data->jc);
-                        if ( sparse_data->ir != NULL )
-                            free(sparse_data->ir);
+                        free(sparse_data->jc);
+                        free(sparse_data->ir);
                         free(sparse_data);
                         Mat_Critical("Integer multiplication overflow");
                         goto done;
