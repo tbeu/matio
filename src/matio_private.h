@@ -116,6 +116,7 @@ struct _mat_t
     int mode;            /**< Access mode */
     mat_off_t bof;       /**< Beginning of file not including any header */
     size_t next_index;   /**< Index/File position of next variable to read */
+    int read_depth;      /**< Current recursion depth when reading nested variables */
     size_t num_datasets; /**< Number of datasets in the file */
 #if defined(MAT73) && MAT73
     hid_t refs_id; /**< Id of the /#refs# group in HDF5 */
