@@ -55,7 +55,7 @@ strdup_vprintf(const char *format, va_list ap)
         return NULL;
 
     need = (size_t)size + 1;
-    if ( need > (1ULL << 30) )
+    if ( need > ((size_t)1 << 30) )
         return NULL;
 
     buffer = (char *)malloc(need);

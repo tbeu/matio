@@ -309,12 +309,12 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                         ComplexFree(complex_data);
                         return MATIO_E_FILE_FORMAT_VIOLATION;
                     }
-                } else {
+                } else if ( matvar->nbytes > 0 ) {
                     Mat_Critical("Couldn't allocate memory for the complex data");
                     return MATIO_E_OUT_OF_MEMORY;
                 }
             } else {
-                matvar->data = malloc(matvar->nbytes);
+                matvar->data = matvar->nbytes > 0 ? malloc(matvar->nbytes) : NULL;
                 if ( NULL != matvar->data ) {
                     err = ReadDoubleData(mat, (double *)matvar->data, matvar->data_type, nelems);
                     if ( err ) {
@@ -322,7 +322,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                         matvar->data = NULL;
                         return MATIO_E_FILE_FORMAT_VIOLATION;
                     }
-                } else {
+                } else if ( matvar->nbytes > 0 ) {
                     Mat_Critical("Couldn't allocate memory for the data");
                     return MATIO_E_OUT_OF_MEMORY;
                 }
@@ -333,7 +333,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
         case MAT_C_CHAR:
             matvar->data_size = 1;
             matvar->nbytes = nelems;
-            matvar->data = malloc(matvar->nbytes);
+            matvar->data = matvar->nbytes > 0 ? malloc(matvar->nbytes) : NULL;
             if ( NULL != matvar->data ) {
                 err = ReadUInt8Data(mat, (mat_uint8_t *)matvar->data, matvar->data_type, nelems);
                 if ( err ) {
@@ -341,7 +341,7 @@ Mat_VarRead4(mat_t *mat, matvar_t *matvar)
                     matvar->data = NULL;
                     return MATIO_E_FILE_FORMAT_VIOLATION;
                 }
-            } else {
+            } else if ( matvar->nbytes > 0 ) {
                 Mat_Critical("Couldn't allocate memory for the data");
                 return MATIO_E_OUT_OF_MEMORY;
             }

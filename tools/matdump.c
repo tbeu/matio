@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(_MSC_VER) || defined(__MINGW32__) || (defined(__BORLANDC__) && !defined(__clang__))
 #define SIZE_T_FMTSTR "Iu"
 #else
 #define SIZE_T_FMTSTR "zu"
@@ -1585,7 +1585,7 @@ print_default_number(enum matio_types type, const void *data)
         case MAT_T_INT64:
 #if MATIO_HAVE_INTTYPES_H
             printf("%" PRIi64, *(mat_int64_t *)data);
-#elif defined(_MSC_VER) && _MSC_VER >= 1200
+#elif (defined(_MSC_VER) && _MSC_VER >= 1200) || defined(__BORLANDC__)
             printf("%I64i", *(mat_int64_t *)data);
 #else
             printf("%lld", (long long)(*(mat_int64_t *)data));
@@ -1596,7 +1596,7 @@ print_default_number(enum matio_types type, const void *data)
         case MAT_T_UINT64:
 #if MATIO_HAVE_INTTYPES_H
             printf("%" PRIu64, *(mat_uint64_t *)data);
-#elif defined(_MSC_VER) && _MSC_VER >= 1200
+#elif (defined(_MSC_VER) && _MSC_VER >= 1200) || defined(__BORLANDC__)
             printf("%I64u", *(mat_uint64_t *)data);
 #else
             printf("%llu", (unsigned long long)(*(mat_uint64_t *)data));
@@ -1676,7 +1676,7 @@ print_default_numeric_3d(const matvar_t *matvar)
         const char *rp = (char *)complex_data->Re;
         const char *ip = (char *)complex_data->Im;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
-            Mat_Message("%s(:,:,%zu) = ", matvar->name, k);
+            Mat_Message("%s(:,:,%" SIZE_T_FMTSTR ") = ", matvar->name, k);
             indent++;
             for ( i = 0; i < matvar->dims[0]; i++ ) {
                 for ( l = 0; l < indent; l++ )
@@ -1696,7 +1696,7 @@ print_default_numeric_3d(const matvar_t *matvar)
     } else {
         const char *data = (char *)matvar->data;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
-            Mat_Message("%s(:,:,%zu) = ", matvar->name, k);
+            Mat_Message("%s(:,:,%" SIZE_T_FMTSTR ") = ", matvar->name, k);
             indent++;
             for ( i = 0; i < matvar->dims[0]; i++ ) {
                 for ( l = 0; l < indent; l++ )

@@ -259,3 +259,88 @@ jobs:
           export PATH=/usr/bin:$PATH
           ctest --no-tests=error --test-dir build --build-config Release
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+
+  build-borland:
+    name: windows-borland
+    runs-on: windows-latest
+    # BCC55 is a 32-bit, C89-era compiler without stdint.h or C99 format support;
+    # the source contains the required portability shims so all tests pass.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 5
+          submodules: recursive
+      - name: Install Borland C++ Compiler 5.5
+        shell: pwsh
+        run: |
+          $bccSha = "11ce5576871352a0414fc68332eee1cd1b1d9554"
+          $bccHash = "8BC5293BACD4FB219D5A30153BCB6B4DE6BC2D42FDE6D1DEE2FE57669F69E7E0"
+          $bccArchive = Join-Path $env:RUNNER_TEMP "bcc55.zip"
+          $bccDir = Join-Path $env:RUNNER_TEMP "bcc55"
+          Invoke-WebRequest -Uri "https://github.com/tbeu/bcc55/archive/$bccSha.zip" -OutFile $bccArchive
+          if ( (Get-FileHash -LiteralPath $bccArchive -Algorithm SHA256).Hash -ne $bccHash ) {
+            throw "BCC55 archive checksum mismatch"
+          }
+          Expand-Archive -Path $bccArchive -DestinationPath $bccDir -Force
+          # Use a short folder name: the SHA-named folder makes the Borland
+          # linker's cfg paths exceed its 127-character line limit.
+          $bccRoot = Join-Path $bccDir "bcc55-$bccSha"
+          Rename-Item -LiteralPath $bccRoot -NewName "bcc55"
+          $bccRoot = Join-Path $bccDir "bcc55"
+          $bccBin = Join-Path $bccRoot "Bin"
+          # Point the BCC55 configuration files at the extracted toolchain instead
+          # of the hardcoded D:\devel\bcc55 paths from the source repository.
+          @"
+          -I"$bccRoot\Include"
+          -L"$bccRoot\Lib;$bccRoot\Lib\PSDK"
+          -lj"$bccRoot\Lib;$bccRoot\Lib\PSDK"
+          "@ | Set-Content -Path (Join-Path $bccBin "bcc32.cfg") -Encoding ascii
+          @"
+          -L"$bccRoot\Lib;$bccRoot\Lib\PSDK"
+          "@ | Set-Content -Path (Join-Path $bccBin "ILINK32.CFG") -Encoding ascii
+          "BCC55_ROOT=$bccRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "INCLUDE=$bccRoot\Include" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "LIB=$bccRoot\Lib;$bccRoot\Lib\PSDK" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $bccBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Configure (Release)
+        run: |
+          cmake -S . -B build -G "Borland Makefiles" -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF -DMATIO_WITH_ZLIB=OFF -DMATIO_WITH_HDF5=OFF -DMATIO_EXTENDED_SPARSE=ON -DMATIO_MCOS=ON -DCMAKE_C_FLAGS=-w-8004
+      - name: Build with borland
+        run: cmake --build build
+      - name: Test
+        run: ctest --no-tests=error --test-dir build --build-config Release --parallel 8
+
+  build-borland-embarcadero:
+    name: windows-borland-embarcadero
+    runs-on: windows-latest
+    # Embarcadero C++ 7.30 (BCC102) is the clang-enhanced 32-bit compiler that
+    # ships as the free command-line tool.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 5
+          submodules: recursive
+      - name: Install Embarcadero C++ Compiler 7.30 (BCC102)
+        shell: pwsh
+        run: |
+          $bccHash = "5AFFBE1D75BB64CDE94FAE1A525A968FCA623CEA4CB5B7B6B37EA40F0895CFF0"
+          $bccArchive = Join-Path $env:RUNNER_TEMP "BCC102.zip"
+          $bccDir = Join-Path $env:RUNNER_TEMP "bcc102"
+          Invoke-WebRequest -Uri "https://altd.embarcadero.com/download/bcppbuilder/BCC102.zip" -OutFile $bccArchive
+          if ( (Get-FileHash -LiteralPath $bccArchive -Algorithm SHA256).Hash -ne $bccHash ) {
+            throw "BCC102 archive checksum mismatch"
+          }
+          Expand-Archive -Path $bccArchive -DestinationPath $bccDir -Force
+          $bccRoot = Join-Path $bccDir "BCC102"
+          $bccBin = Join-Path $bccRoot "bin"
+          "BCC102_ROOT=$bccRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $bccBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Configure (Release)
+        run: |
+          cmake -S . -B build -G "Borland Makefiles" -DCMAKE_C_COMPILER=bcc32c -DCMAKE_CXX_COMPILER=bcc32c -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF -DMATIO_WITH_ZLIB=OFF -DMATIO_WITH_HDF5=OFF -DMATIO_EXTENDED_SPARSE=ON -DMATIO_MCOS=ON
+      - name: Build with Embarcadero C++
+        run: cmake --build build
+      - name: Test
+        run: ctest --no-tests=error --test-dir build --build-config Release --parallel 8

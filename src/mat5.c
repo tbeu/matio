@@ -1109,12 +1109,14 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
         return bytesread;
     }
 
-    matvar->data = calloc(nelems, matvar->data_size);
-    if ( NULL == matvar->data ) {
-        matvar->nbytes = 0;
-        if ( NULL != matvar->name )
-            Mat_Critical("Couldn't allocate memory for %s->data", matvar->name);
-        return bytesread;
+    if ( nelems > 0 ) {
+        matvar->data = calloc(nelems, matvar->data_size);
+        if ( NULL == matvar->data ) {
+            matvar->nbytes = 0;
+            if ( NULL != matvar->name )
+                Mat_Critical("Couldn't allocate memory for %s->data", matvar->name);
+            return bytesread;
+        }
     }
     cells = (matvar_t **)matvar->data;
 
@@ -3819,9 +3821,12 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             matvar_t **cells;
             size_t i;
 
+            matvar->data_type = MAT_T_CELL;
             if ( NULL == matvar->data ) {
-                Mat_Critical("Data is NULL for cell array %s", matvar->name);
-                err = MATIO_E_FILE_FORMAT_VIOLATION;
+                if ( nelems > 0 ) {
+                    Mat_Critical("Data is NULL for cell array %s", matvar->name);
+                    err = MATIO_E_FILE_FORMAT_VIOLATION;
+                }
                 break;
             }
             cells = (matvar_t **)matvar->data;
@@ -4539,11 +4544,12 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Integer multiplication overflow");
                     break;
                 }
-
                 complex_data = ComplexCalloc(matvar->nbytes);
                 if ( NULL == complex_data ) {
-                    err = MATIO_E_OUT_OF_MEMORY;
-                    Mat_Critical("Couldn't allocate memory for the complex data");
+                    if ( matvar->nbytes > 0 ) {
+                        err = MATIO_E_OUT_OF_MEMORY;
+                        Mat_Critical("Couldn't allocate memory for the complex data");
+                    }
                     break;
                 }
 
@@ -4565,9 +4571,8 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     Mat_Critical("Integer multiplication overflow");
                     break;
                 }
-
                 data = calloc(matvar->nbytes, 1);
-                if ( NULL == data ) {
+                if ( NULL == data && matvar->nbytes > 0 ) {
                     err = MATIO_E_OUT_OF_MEMORY;
                     Mat_Critical("Couldn't allocate memory for the data");
                     break;
@@ -4868,7 +4873,10 @@ GetDataSlab(void *data_in, void *data_out, enum matio_classes class_type,
     } else {
         int j;
         size_t N = (size_t)edge[0];
-        size_t dimp[10] = {dims[0], 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        size_t dimp[10];
+        dimp[0] = dims[0];
+        for ( j = 1; j < 10; j++ )
+            dimp[j] = 0;
 
         for ( j = 1; j < rank; j++ ) {
             err = Mul(&dimp[j], dimp[j - 1], dims[j]);

@@ -810,6 +810,7 @@ PSNIP_SAFE_DEFINE_UNSIGNED_MUL(unsigned long, ulong, ULONG_MAX)
 PSNIP_SAFE_DEFINE_UNSIGNED_DIV(unsigned long, ulong, ULONG_MAX)
 PSNIP_SAFE_DEFINE_UNSIGNED_MOD(unsigned long, ulong, ULONG_MAX)
 
+#if !defined(__BORLANDC__)
 #if defined(PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW)
 PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(long long, llong, add)
 PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(long long, llong, sub)
@@ -846,6 +847,7 @@ PSNIP_SAFE_DEFINE_UNSIGNED_MUL(unsigned long long, ullong, ULLONG_MAX)
 #endif
 PSNIP_SAFE_DEFINE_UNSIGNED_DIV(unsigned long long, ullong, ULLONG_MAX)
 PSNIP_SAFE_DEFINE_UNSIGNED_MOD(unsigned long long, ullong, ULLONG_MAX)
+#endif /* !defined(__BORLANDC__) */
 
 #if defined(PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW)
 PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(size_t, size, add)

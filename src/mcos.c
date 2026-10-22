@@ -763,7 +763,9 @@ CreateFieldValueFromProperty(const mcos_subsystem_t *ss, const char *fname,
         if ( str_idx > 0 && str_idx <= ss->num_strings ) {
             const char *str_val = ss->strings[str_idx - 1];
             size_t slen = strlen(str_val);
-            const size_t str_dims[2] = {1, slen};
+            size_t str_dims[2];
+            str_dims[0] = 1;
+            str_dims[1] = slen;
             field_val = Mat_VarCreate(fname, MAT_C_CHAR, MAT_T_UINT8, 2, str_dims,
                                       (const void *)str_val, 0);
         }

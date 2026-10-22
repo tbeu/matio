@@ -32,10 +32,13 @@
 #if ( defined(_WIN64) || defined(_WIN32) ) && !defined(__CYGWIN__)
 #include <io.h>
 #endif
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(_MSC_VER) || defined(__MINGW32__) || (defined(__BORLANDC__) && !defined(__clang__))
 #define SIZE_T_FMTSTR "Iu"
+#endif
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #define strdup _strdup
-#else
+#endif
+#if !defined(SIZE_T_FMTSTR)
 #define SIZE_T_FMTSTR "zu"
 #endif
 
@@ -126,7 +129,7 @@ Mat_PrintNumber(enum matio_types type, const void *data)
         case MAT_T_INT64:
 #if HAVE_INTTYPES_H
             printf("%" PRIi64, *(mat_int64_t *)data);
-#elif defined(_MSC_VER) && _MSC_VER >= 1200
+#elif (defined(_MSC_VER) && _MSC_VER >= 1200) || defined(__BORLANDC__)
             printf("%I64i", *(mat_int64_t *)data);
 #elif defined(HAVE_LONG_LONG_INT)
             printf("%lld", (long long)(*(mat_int64_t *)data));
@@ -139,7 +142,7 @@ Mat_PrintNumber(enum matio_types type, const void *data)
         case MAT_T_UINT64:
 #if HAVE_INTTYPES_H
             printf("%" PRIu64, *(mat_uint64_t *)data);
-#elif defined(_MSC_VER) && _MSC_VER >= 1200
+#elif (defined(_MSC_VER) && _MSC_VER >= 1200) || defined(__BORLANDC__)
             printf("%I64u", *(mat_uint64_t *)data);
 #elif defined(HAVE_UNSIGNED_LONG_LONG_INT)
             printf("%llu", (unsigned long long)(*(mat_uint64_t *)data));
@@ -308,7 +311,7 @@ Mat_PrintData(int rank, const size_t *_dims, const void *data, enum matio_classe
                     }
                     if ( err ) {
                         free(idxOffset);
-                        Mat_Message("UTF-8 character data error at index %zu", k);
+                        Mat_Message("UTF-8 character data error at index %" SIZE_T_FMTSTR, k);
                         break;
                     }
                     for ( i = 0; i < dims[0]; i++ ) {
@@ -650,7 +653,7 @@ CheckSeekFile(FILE *fp, mat_off_t offset)
 {
     int err;
     mat_off_t fPos;
-    uint8_t c;
+    mat_uint8_t c;
 
     if ( offset <= 0 ) {
         return MATIO_E_NO_ERROR;

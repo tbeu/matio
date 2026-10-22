@@ -75,6 +75,30 @@ foreach(type ${TYPES})
     endif()
 endforeach()
 
+if(CMAKE_C_COMPILER_ID STREQUAL "Borland")
+    # Borland C++ 5.5.1 (BCC55) predates C99 and ships no <stdint.h>, so use
+    # its native integer types for the matio public types instead.
+    set(_mat_int8_t "signed char")
+    set(_mat_uint8_t "unsigned char")
+    set(_mat_int16_t "signed short")
+    set(_mat_uint16_t "unsigned short")
+    set(_mat_int32_t "signed int")
+    set(_mat_uint32_t "unsigned int")
+    set(_mat_int64_t "__int64")
+    set(_mat_uint64_t "unsigned __int64")
+    set(HAVE_MAT_INT8_T 1)
+    set(HAVE_MAT_UINT8_T 1)
+    set(HAVE_MAT_INT16_T 1)
+    set(HAVE_MAT_UINT16_T 1)
+    set(HAVE_MAT_INT32_T 1)
+    set(HAVE_MAT_UINT32_T 1)
+    set(HAVE_MAT_INT64_T 1)
+    set(HAVE_MAT_UINT64_T 1)
+    # safe-math.h's type-promotion logic uses C99 ULL literals in preprocessor
+    # expressions, which BCC55 cannot parse. Use the portable implementation.
+    add_definitions("-DPSNIP_SAFE_NO_PROMOTIONS")
+endif()
+
 include(CheckLibraryExists)
 check_library_exists(m pow "" HAVE_LIBM)
 
