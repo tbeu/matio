@@ -20,6 +20,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#if defined(_WIN32)
+#include <process.h>
+#endif
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #define strdup _strdup
@@ -945,11 +948,18 @@ ParseSubsystem5(mat_t *mat)
     {
         FILE *tmp_fp;
 #if defined(_WIN32)
-        char tmp_name[L_tmpnam + 1];
-        if ( tmpnam(tmp_name) == NULL ) {
-            Mat_VarFree(subsys_var);
-            return NULL;
-        }
+        /* tmpfile() on Windows (Borland) creates its file in the drive root with a
+         * name that can collide between concurrent processes, so use a name that is
+         * unique per process in TEMP. tmpnam() has the same problem. */
+        char tmp_name[1024];
+        const char *tmp_dir = getenv("TEMP");
+#if defined(__BORLANDC__)
+        const int tmp_pid = getpid();
+#else
+        const int tmp_pid = _getpid();
+#endif
+        mat_snprintf(tmp_name, sizeof(tmp_name), "%s\\matio_subsys_%d.tmp",
+                     tmp_dir != NULL ? tmp_dir : ".", tmp_pid);
         tmp_fp = fopen(tmp_name, "w+b");
 #else
         tmp_fp = tmpfile();
@@ -1721,14 +1731,16 @@ ResolveEncodedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
     if ( obj_start + total_objs >= n )
         return MATIO_E_NO_ERROR; /* Not enough data for object_ids + class_id */
 
-    /* Set up internal MCOS metadata */
+    /* Set up internal MCOS metadata. A zero-element reference (e.g. 0 x 0
+     * dims) needs no object id storage; malloc(0) may return NULL on some
+     * platforms, so avoid allocating in that case. */
     matvar->internal->num_objects = total_objs;
-    matvar->internal->object_ids = (mat_uint32_t *)malloc(total_objs * sizeof(mat_uint32_t));
-    if ( matvar->internal->object_ids == NULL )
-        return MATIO_E_OUT_OF_MEMORY;
-
-    {
+    matvar->internal->object_ids = NULL;
+    if ( total_objs > 0 ) {
         size_t k;
+        matvar->internal->object_ids = (mat_uint32_t *)malloc(total_objs * sizeof(mat_uint32_t));
+        if ( matvar->internal->object_ids == NULL )
+            return MATIO_E_OUT_OF_MEMORY;
         for ( k = 0; k < total_objs; k++ )
             matvar->internal->object_ids[k] = meta[obj_start + k];
     }

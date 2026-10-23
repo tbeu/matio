@@ -339,7 +339,7 @@ jobs:
           $bccBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Configure (Release)
         run: |
-          cmake -S . -B build -G "Borland Makefiles" -DCMAKE_C_COMPILER=bcc32c -DCMAKE_CXX_COMPILER=bcc32c -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF -DMATIO_WITH_ZLIB=OFF -DMATIO_WITH_HDF5=OFF -DMATIO_EXTENDED_SPARSE=ON -DMATIO_MCOS=ON
+          cmake -S . -B build -G "Borland Makefiles" -DCMAKE_C_COMPILER=bcc32c -DCMAKE_CXX_COMPILER=bcc32c -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF -DMATIO_WITH_ZLIB=ON -DMATIO_USE_ZLIB_NG=ON -DMATIO_WITH_HDF5=OFF -DMATIO_EXTENDED_SPARSE=ON -DMATIO_MCOS=ON
       - name: Build with Embarcadero C++
         run: cmake --build build
       - name: Test

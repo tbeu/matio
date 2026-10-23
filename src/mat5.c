@@ -1334,8 +1334,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                         }
                         if ( cells[i]->internal->data != NULL ||
                              cells[i]->class_type == MAT_C_STRUCT ||
-                             cells[i]->class_type == MAT_C_CELL ||
-                             (nBytes <= (1 << MAX_WBITS) && cells[i]->class_type == MAT_C_CHAR) ) {
+                             cells[i]->class_type == MAT_C_CELL || nBytes <= (1 << MAX_WBITS) ) {
                             /* Memory optimization: Free inflate state */
                             inflateEnd(cells[i]->internal->z);
                             free(cells[i]->internal->z);
@@ -1860,8 +1859,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                         }
                         if ( fields[i]->internal->data != NULL ||
                              fields[i]->class_type == MAT_C_STRUCT ||
-                             fields[i]->class_type == MAT_C_CELL ||
-                             (nBytes <= (1 << MAX_WBITS) && fields[i]->class_type == MAT_C_CHAR) ) {
+                             fields[i]->class_type == MAT_C_CELL || nBytes <= (1 << MAX_WBITS) ) {
                             /* Memory optimization: Free inflate state */
                             inflateEnd(fields[i]->internal->z);
                             free(fields[i]->internal->z);
@@ -3560,6 +3558,14 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
         /* Data already read in ReadNextStructField or ReadNextCell */
         matvar->data = matvar->internal->data;
         matvar->internal->data = NULL;
+        return MATIO_E_NO_ERROR;
+    }
+    if ( matvar->compression == MAT_COMPRESSION_ZLIB && NULL == matvar->internal->z &&
+         matvar->class_type != MAT_C_STRUCT && matvar->class_type != MAT_C_CELL &&
+         matvar->class_type != MAT_C_OPAQUE ) {
+        /* Element was already consumed while reading the parent (empty data)
+         * and its inflate state was released: there is no data to read */
+        matvar->nbytes = 0;
         return MATIO_E_NO_ERROR;
     }
 #endif

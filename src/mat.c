@@ -19,6 +19,7 @@
 #endif
 #include "safe-math.h"
 #include <assert.h>
+#include <float.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
@@ -116,14 +117,27 @@ ReadData(mat_t *mat, matvar_t *matvar)
 }
 
 static void
+Mat_PrintDoubleValue(double value)
+{
+    /* Print infinities explicitly: some C runtimes (e.g. Borland) print them
+     * as "INF" with %g, while others print "inf". */
+    if ( value > DBL_MAX )
+        printf("inf");
+    else if ( value < -DBL_MAX )
+        printf("-inf");
+    else
+        printf("%g", value);
+}
+
+static void
 Mat_PrintNumber(enum matio_types type, const void *data)
 {
     switch ( type ) {
         case MAT_T_DOUBLE:
-            printf("%g", *(double *)data);
+            Mat_PrintDoubleValue(*(double *)data);
             break;
         case MAT_T_SINGLE:
-            printf("%g", *(float *)data);
+            Mat_PrintDoubleValue((double)*(float *)data);
             break;
 #ifdef HAVE_MAT_INT64_T
         case MAT_T_INT64:
