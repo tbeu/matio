@@ -40,6 +40,10 @@
 #define MAX_READ_SIZE_WITHOUT_EOF_CHECK (3)
 #endif
 
+/** Maximum recursion depth when reading nested cells, structs and
+ * function handles, so crafted files cannot exhaust the stack. */
+#define MAT5_MAX_DEPTH 256
+
 static mat_complex_split_t null_complex_data = {NULL, NULL};
 
 /*===========================================================================
@@ -58,8 +62,11 @@ static int GetMatrixMaxBufSize(matvar_t *matvar, size_t *size);
 static int GetEmptyMatrixMaxBufSize(const char *name, int rank, size_t *size);
 static size_t WriteCharData(mat_t *mat, void *data, size_t N, enum matio_types data_type);
 static size_t ReadNextCell(mat_t *mat, matvar_t *matvar);
+static size_t ReadNextCell_impl(mat_t *mat, matvar_t *matvar);
 static size_t ReadNextStructField(mat_t *mat, matvar_t *matvar);
+static size_t ReadNextStructField_impl(mat_t *mat, matvar_t *matvar);
 static size_t ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar);
+static size_t ReadNextFunctionHandle_impl(mat_t *mat, matvar_t *matvar);
 static int ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type,
                         mat_uint32_t nbytes, size_t *read_bytes);
 static int WriteType(mat_t *mat, matvar_t *matvar);
@@ -714,6 +721,7 @@ Mat_Create5(const char *matname, const char *hdr_str)
     mat->bof = 128;
     mat->next_index = 0;
     mat->num_datasets = 0;
+    mat->read_depth = 0;
 #if defined(MAT73) && MAT73
     mat->refs_id = -1;
 #endif
@@ -1089,8 +1097,54 @@ WriteCompressedData(mat_t *mat, z_streamp z, void *data, int N, enum matio_types
  * @param matvar MAT variable pointer
  * @return Number of bytes read
  */
+/* Depth-guarded wrappers around the mutually-recursive readers below.  The
+ * nesting of cells, structs and function handles is attacker-controlled, so a
+ * crafted file can drive unbounded recursion and overflow the stack.  Bound
+ * the depth with a per-file counter, mirroring ref_depth in the HDF5 reader. */
 static size_t
 ReadNextCell(mat_t *mat, matvar_t *matvar)
+{
+    size_t bytesread;
+    if ( mat->read_depth >= MAT5_MAX_DEPTH ) {
+        Mat_Critical("Exceeded maximum variable nesting depth");
+        return 0;
+    }
+    mat->read_depth++;
+    bytesread = ReadNextCell_impl(mat, matvar);
+    mat->read_depth--;
+    return bytesread;
+}
+
+static size_t
+ReadNextStructField(mat_t *mat, matvar_t *matvar)
+{
+    size_t bytesread;
+    if ( mat->read_depth >= MAT5_MAX_DEPTH ) {
+        Mat_Critical("Exceeded maximum variable nesting depth");
+        return 0;
+    }
+    mat->read_depth++;
+    bytesread = ReadNextStructField_impl(mat, matvar);
+    mat->read_depth--;
+    return bytesread;
+}
+
+static size_t
+ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
+{
+    size_t bytesread;
+    if ( mat->read_depth >= MAT5_MAX_DEPTH ) {
+        Mat_Critical("Exceeded maximum variable nesting depth");
+        return 0;
+    }
+    mat->read_depth++;
+    bytesread = ReadNextFunctionHandle_impl(mat, matvar);
+    mat->read_depth--;
+    return bytesread;
+}
+
+static size_t
+ReadNextCell_impl(mat_t *mat, matvar_t *matvar)
 {
     size_t bytesread = 0;
     int err;
@@ -1591,7 +1645,7 @@ AllocateStructFields(matvar_t *matvar, size_t nelems, size_t nfields, size_t *ne
  * @return Number of bytes read
  */
 static size_t
-ReadNextStructField(mat_t *mat, matvar_t *matvar)
+ReadNextStructField_impl(mat_t *mat, matvar_t *matvar)
 {
     int err;
     size_t bytesread = 0;
@@ -2230,7 +2284,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
  * @return Number of bytes read
  */
 static size_t
-ReadNextFunctionHandle(mat_t *mat, matvar_t *matvar)
+ReadNextFunctionHandle_impl(mat_t *mat, matvar_t *matvar)
 {
     int err;
     size_t nelems = 1;

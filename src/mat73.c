@@ -3084,6 +3084,7 @@ Mat_Create73(const char *matname, const char *hdr_str)
     mat->bof = 128;
     mat->next_index = 0;
     mat->num_datasets = 0;
+    mat->read_depth = 0;
     mat->refs_id = -1;
     mat->ref_depth = 0;
     mat->dir = NULL;

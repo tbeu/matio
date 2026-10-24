@@ -833,6 +833,7 @@ Mat_Open(const char *matname, int mode)
     mat->version = 0;
     mat->byteswap = 0;
     mat->num_datasets = 0;
+    mat->read_depth = 0;
 #if defined(MAT73) && MAT73
     mat->refs_id = -1;
     mat->ref_depth = 0;
