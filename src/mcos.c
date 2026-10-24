@@ -30,11 +30,14 @@
 #define MCOS_REF_VALUE 0xDD000000U
 #endif
 
-/** @brief Maximum recursion depth for MCOS object resolution
+/** @brief Maximum nesting depth for MCOS variable resolution
  *
- * Bounds the recursive resolution of nested MCOS objects (cells, structs and
- * encoded references) and the traversal of dynamic-property dependencies
- * (field collection / lookup), so that crafted files cannot exhaust the stack.
+ * Bounds the recursion over the matvar tree (cells, struct fields and encoded
+ * references) so that crafted files cannot exhaust the stack. Exceeding it is
+ * reported as MATIO_E_FILE_FORMAT_VIOLATION.
+ *
+ * The dynamic-property dependency graph is not bounded by this limit: it is
+ * walked iteratively and every object is visited at most once.
  */
 #define MCOS_MAX_DEPTH 16
 
@@ -698,9 +701,36 @@ CollectFieldNamesFromStruct(const matvar_t *matvar, char ***all_fieldnames, size
     return MATIO_E_NO_ERROR;
 }
 
+/** @brief Explicit stack frame for the iterative object-graph walks
+ *
+ * The walks visit objects in the same pre-order as a recursive depth-first
+ * traversal, but keep the pending dynamic-property iteration in this frame
+ * instead of on the C stack.
+ */
+typedef struct
+{
+    mat_uint32_t obj_id; /**< Object whose dynamic properties are being iterated */
+    size_t next;         /**< Index of the next dynamic property id to visit */
+} mcos_walk_frame_t;
+
+/** @brief Return the dynamic-property set referenced by an object, or NULL */
+static const mcos_dynamic_property_set_t *
+GetDynamicPropsForObject(const mcos_subsystem_t *ss, const mcos_object_info_t *obj_info)
+{
+    if ( obj_info->dependency_id > 0 && obj_info->dependency_id <= ss->num_dynamic_props )
+        return &ss->dynamic_props[obj_info->dependency_id - 1];
+    return NULL;
+}
+
+/** @brief Mark an object as visited, add its own field names and push it
+ *
+ * Objects that are invalid or already visited are ignored. Each object is
+ * entered at most once, so @p stack never holds more than num_objects frames.
+ */
 static int
-CollectFieldNamesFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, char ***all_fieldnames,
-                            size_t *count, size_t *capacity, unsigned char *visited, unsigned depth)
+EnterFieldNameObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, char ***all_fieldnames,
+                     size_t *count, size_t *capacity, unsigned char *visited,
+                     mcos_walk_frame_t *stack, size_t *top)
 {
     const mcos_object_info_t *obj_info;
     const mcos_property_set_t *prop_set;
@@ -708,11 +738,7 @@ CollectFieldNamesFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, cha
     size_t pi;
     int err;
 
-    if ( ss == NULL || obj_id < 1 || obj_id > ss->num_objects || visited == NULL )
-        return MATIO_E_NO_ERROR;
-    if ( depth > MCOS_MAX_DEPTH )
-        return MATIO_E_NO_ERROR;
-    if ( visited[obj_id - 1] )
+    if ( obj_id < 1 || obj_id > ss->num_objects || visited[obj_id - 1] )
         return MATIO_E_NO_ERROR;
     visited[obj_id - 1] = 1;
 
@@ -731,18 +757,45 @@ CollectFieldNamesFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, cha
     if ( err )
         return err;
 
-    if ( obj_info->dependency_id > 0 && obj_info->dependency_id <= ss->num_dynamic_props ) {
+    stack[*top].obj_id = obj_id;
+    stack[*top].next = 0;
+    (*top)++;
+    return MATIO_E_NO_ERROR;
+}
+
+/** @brief Collect field names of an object and its dynamic-property dependencies
+ *
+ * @param visited Zeroed array of ss->num_objects bytes, owned by the caller
+ * @param stack   Scratch array of ss->num_objects frames, owned by the caller
+ */
+static int
+CollectFieldNamesFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, char ***all_fieldnames,
+                            size_t *count, size_t *capacity, unsigned char *visited,
+                            mcos_walk_frame_t *stack)
+{
+    size_t top = 0;
+    int err;
+
+    if ( ss == NULL || visited == NULL || stack == NULL )
+        return MATIO_E_NO_ERROR;
+
+    err = EnterFieldNameObject(ss, obj_id, all_fieldnames, count, capacity, visited, stack, &top);
+    while ( err == MATIO_E_NO_ERROR && top > 0 ) {
+        mcos_walk_frame_t *frame = &stack[top - 1];
         const mcos_dynamic_property_set_t *dyn_props =
-            &ss->dynamic_props[obj_info->dependency_id - 1];
-        for ( pi = 0; pi < dyn_props->nprop_ids; pi++ ) {
-            err = CollectFieldNamesFromObject(ss, dyn_props->prop_ids[pi], all_fieldnames, count,
-                                              capacity, visited, depth + 1);
-            if ( err )
-                return err;
+            GetDynamicPropsForObject(ss, &ss->object_info[frame->obj_id - 1]);
+
+        if ( dyn_props != NULL && frame->next < dyn_props->nprop_ids ) {
+            mat_uint32_t child_id = dyn_props->prop_ids[frame->next];
+            frame->next++;
+            err = EnterFieldNameObject(ss, child_id, all_fieldnames, count, capacity, visited,
+                                       stack, &top);
+        } else {
+            top--;
         }
     }
 
-    return MATIO_E_NO_ERROR;
+    return err;
 }
 
 static matvar_t *
@@ -787,48 +840,86 @@ CreateFieldValueFromProperty(const mcos_subsystem_t *ss, const char *fname,
     return field_val;
 }
 
-static matvar_t *
-GetFieldValueFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const char *fname,
-                        unsigned char *visited, unsigned depth)
+/** @brief Enter an object while searching for a field value
+ *
+ * Marks the object as visited. If the object defines @p fname itself, the
+ * search is finished and *result receives the value (which may be NULL).
+ * Otherwise the object is pushed so its dynamic properties and class defaults
+ * are searched later.
+ *
+ * @return 1 if the search is finished (*result is set), 0 to continue
+ */
+static int
+EnterFieldValueObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const char *fname,
+                      unsigned char *visited, mcos_walk_frame_t *stack, size_t *top,
+                      matvar_t **result)
 {
     const mcos_object_info_t *obj_info;
     const mcos_property_set_t *prop_set;
-    const matvar_t *default_props;
     size_t pi;
 
-    if ( ss == NULL || fname == NULL || visited == NULL || obj_id < 1 || obj_id > ss->num_objects )
-        return NULL;
-    if ( depth > MCOS_MAX_DEPTH )
-        return NULL;
-    if ( visited[obj_id - 1] )
-        return NULL;
+    if ( obj_id < 1 || obj_id > ss->num_objects || visited[obj_id - 1] )
+        return 0;
     visited[obj_id - 1] = 1;
 
     obj_info = &ss->object_info[obj_id - 1];
     prop_set = GetPropertySetForObject(ss, obj_info);
     if ( prop_set != NULL ) {
         for ( pi = 0; pi < prop_set->nprops; pi++ ) {
-            if ( strcmp(prop_set->props[pi].name, fname) == 0 )
-                return CreateFieldValueFromProperty(ss, fname, &prop_set->props[pi]);
+            if ( strcmp(prop_set->props[pi].name, fname) == 0 ) {
+                *result = CreateFieldValueFromProperty(ss, fname, &prop_set->props[pi]);
+                return 1;
+            }
         }
     }
 
-    if ( obj_info->dependency_id > 0 && obj_info->dependency_id <= ss->num_dynamic_props ) {
-        const mcos_dynamic_property_set_t *dyn_props =
-            &ss->dynamic_props[obj_info->dependency_id - 1];
-        for ( pi = 0; pi < dyn_props->nprop_ids; pi++ ) {
-            matvar_t *field_val =
-                GetFieldValueFromObject(ss, dyn_props->prop_ids[pi], fname, visited, depth + 1);
-            if ( field_val != NULL )
-                return field_val;
-        }
-    }
+    stack[*top].obj_id = obj_id;
+    stack[*top].next = 0;
+    (*top)++;
+    return 0;
+}
 
-    default_props = GetDefaultPropsForClass(ss, obj_info->class_id);
-    if ( default_props != NULL && default_props->class_type == MAT_C_STRUCT ) {
-        const matvar_t *def_field = Mat_VarGetStructFieldByName(default_props, fname, 0);
-        if ( def_field != NULL )
-            return Mat_VarDuplicate(def_field, 1);
+/** @brief Look up a field value in an object and its dynamic-property dependencies
+ *
+ * Objects are searched in the same order as a recursive depth-first walk: the
+ * object's own properties, then its dynamic-property dependencies in order,
+ * then the class defaults of each object once its dependencies are exhausted.
+ *
+ * @param visited Zeroed array of ss->num_objects bytes, owned by the caller
+ * @param stack   Scratch array of ss->num_objects frames, owned by the caller
+ */
+static matvar_t *
+GetFieldValueFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const char *fname,
+                        unsigned char *visited, mcos_walk_frame_t *stack)
+{
+    size_t top = 0;
+    matvar_t *result = NULL;
+
+    if ( ss == NULL || fname == NULL || visited == NULL || stack == NULL )
+        return NULL;
+
+    if ( EnterFieldValueObject(ss, obj_id, fname, visited, stack, &top, &result) )
+        return result;
+
+    while ( top > 0 ) {
+        mcos_walk_frame_t *frame = &stack[top - 1];
+        const mcos_object_info_t *obj_info = &ss->object_info[frame->obj_id - 1];
+        const mcos_dynamic_property_set_t *dyn_props = GetDynamicPropsForObject(ss, obj_info);
+
+        if ( dyn_props != NULL && frame->next < dyn_props->nprop_ids ) {
+            mat_uint32_t child_id = dyn_props->prop_ids[frame->next];
+            frame->next++;
+            if ( EnterFieldValueObject(ss, child_id, fname, visited, stack, &top, &result) )
+                return result;
+        } else {
+            const matvar_t *default_props = GetDefaultPropsForClass(ss, obj_info->class_id);
+            top--;
+            if ( default_props != NULL && default_props->class_type == MAT_C_STRUCT ) {
+                const matvar_t *def_field = Mat_VarGetStructFieldByName(default_props, fname, 0);
+                if ( def_field != NULL )
+                    return Mat_VarDuplicate(def_field, 1);
+            }
+        }
     }
 
     return NULL;
@@ -1410,22 +1501,26 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
     /* Collect all unique field names across the object graph, including
      * class defaults and dynamic-property references.
      */
-    for ( oi = 0; oi < num_objs; oi++ ) {
-        mat_uint32_t obj_id = matvar->internal->object_ids[oi];
-        unsigned char *visited = (unsigned char *)calloc(ss->num_objects, sizeof(unsigned char));
-        int err;
+    {
+        size_t nobjs = ss->num_objects > 0 ? ss->num_objects : 1;
+        unsigned char *visited = (unsigned char *)calloc(nobjs, sizeof(unsigned char));
+        mcos_walk_frame_t *stack = (mcos_walk_frame_t *)calloc(nobjs, sizeof(mcos_walk_frame_t));
+        int err = MATIO_E_NO_ERROR;
 
-        if ( visited == NULL ) {
-            size_t kk;
-            for ( kk = 0; kk < all_fieldnames_count; kk++ )
-                free(all_fieldnames[kk]);
-            free(all_fieldnames);
-            return MATIO_E_OUT_OF_MEMORY;
+        if ( visited == NULL || stack == NULL )
+            err = MATIO_E_OUT_OF_MEMORY;
+
+        for ( oi = 0; err == MATIO_E_NO_ERROR && oi < num_objs; oi++ ) {
+            mat_uint32_t obj_id = matvar->internal->object_ids[oi];
+
+            /* Each root object starts a fresh walk */
+            memset(visited, 0, nobjs);
+            err = CollectFieldNamesFromObject(ss, obj_id, &all_fieldnames, &all_fieldnames_count,
+                                              &all_fieldnames_cap, visited, stack);
         }
 
-        err = CollectFieldNamesFromObject(ss, obj_id, &all_fieldnames, &all_fieldnames_count,
-                                          &all_fieldnames_cap, visited, 0);
         free(visited);
+        free(stack);
         if ( err ) {
             size_t kk;
             for ( kk = 0; kk < all_fieldnames_count; kk++ )
@@ -1473,6 +1568,16 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
     /* Populate each object's fields */
     {
         matvar_t **fields = (matvar_t **)matvar->data;
+        size_t nobjs = ss->num_objects > 0 ? ss->num_objects : 1;
+        unsigned char *visited = (unsigned char *)calloc(nobjs, sizeof(unsigned char));
+        mcos_walk_frame_t *stack = (mcos_walk_frame_t *)calloc(nobjs, sizeof(mcos_walk_frame_t));
+
+        if ( visited == NULL || stack == NULL ) {
+            free(visited);
+            free(stack);
+            return MATIO_E_OUT_OF_MEMORY;
+        }
+
         for ( oi = 0; oi < num_objs; oi++ ) {
             mat_uint32_t obj_id = matvar->internal->object_ids[oi];
             size_t fi;
@@ -1483,14 +1588,10 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
             for ( fi = 0; fi < nfields; fi++ ) {
                 matvar_t *field_val = NULL;
                 const char *fname = all_fieldnames[fi];
-                unsigned char *visited =
-                    (unsigned char *)calloc(ss->num_objects, sizeof(unsigned char));
 
-                if ( visited == NULL )
-                    return MATIO_E_OUT_OF_MEMORY;
-
-                field_val = GetFieldValueFromObject(ss, obj_id, fname, visited, 0);
-                free(visited);
+                /* Each field lookup starts a fresh walk */
+                memset(visited, 0, nobjs);
+                field_val = GetFieldValueFromObject(ss, obj_id, fname, visited, stack);
 
                 /* If still no value, create an empty variable */
                 if ( field_val == NULL ) {
@@ -1505,6 +1606,8 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
                     field_val->name = strdup(fname);
                     if ( field_val->name == NULL ) {
                         Mat_VarFree(field_val);
+                        free(visited);
+                        free(stack);
                         return MATIO_E_OUT_OF_MEMORY;
                     }
                 }
@@ -1512,6 +1615,9 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
                 fields[oi * nfields + fi] = field_val;
             }
         }
+
+        free(visited);
+        free(stack);
     }
 
     return MATIO_E_NO_ERROR;
@@ -1641,7 +1747,9 @@ ResolveEncodedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
     mat_uint32_t obj_start;
     int r;
 
-    if ( ss == NULL || matvar == NULL || matvar->internal == NULL || depth > MCOS_MAX_DEPTH )
+    if ( depth > MCOS_MAX_DEPTH )
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    if ( ss == NULL || matvar == NULL || matvar->internal == NULL )
         return MATIO_E_NO_ERROR;
 
     if ( !IsMCOSEncoded(matvar) )
@@ -1732,7 +1840,9 @@ ResolveEncodedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
 static int
 ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
 {
-    if ( ss == NULL || matvar == NULL || depth > MCOS_MAX_DEPTH )
+    if ( depth > MCOS_MAX_DEPTH )
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    if ( ss == NULL || matvar == NULL )
         return MATIO_E_NO_ERROR;
 
     if ( matvar->class_type == MAT_C_CELL && matvar->data != NULL ) {
@@ -1754,15 +1864,18 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
             ncells = ndata;
 
         for ( i = 0; i < ncells; i++ ) {
+            int err;
             if ( cells[i] == NULL )
                 continue;
             if ( IsEnumStruct(cells[i]) ) {
-                ResolveEnumStruct(ss, cells[i], depth + 1);
+                err = ResolveEnumStruct(ss, cells[i], depth + 1);
             } else if ( IsMCOSEncoded(cells[i]) ) {
-                ResolveEncodedMCOS(ss, cells[i], depth + 1);
+                err = ResolveEncodedMCOS(ss, cells[i], depth + 1);
             } else {
-                ResolveNestedMCOS(ss, cells[i], depth + 1);
+                err = ResolveNestedMCOS(ss, cells[i], depth + 1);
             }
+            if ( err )
+                return err;
         }
     } else if ( (matvar->class_type == MAT_C_OBJECT || matvar->class_type == MAT_C_STRUCT) &&
                 matvar->data != NULL && matvar->internal != NULL ) {
@@ -1786,15 +1899,18 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
             total = ndata;
 
         for ( i = 0; i < total; i++ ) {
+            int err;
             if ( fields[i] == NULL )
                 continue;
             if ( IsEnumStruct(fields[i]) ) {
-                ResolveEnumStruct(ss, fields[i], depth + 1);
+                err = ResolveEnumStruct(ss, fields[i], depth + 1);
             } else if ( IsMCOSEncoded(fields[i]) ) {
-                ResolveEncodedMCOS(ss, fields[i], depth + 1);
+                err = ResolveEncodedMCOS(ss, fields[i], depth + 1);
             } else {
-                ResolveNestedMCOS(ss, fields[i], depth + 1);
+                err = ResolveNestedMCOS(ss, fields[i], depth + 1);
             }
+            if ( err )
+                return err;
         }
     }
 

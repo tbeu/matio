@@ -143,3 +143,10 @@ AT_SKIP_IF([test $MCOS -ne 1])
 AT_CHECK([cp $srcdir/results/dump-mcos-table_v6-hd.out expout
           $builddir/../tools/matdump -h -d $srcdir/datasets/test_table_v6.mat],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read MCOS dependency chain depth 64])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-dependency_chain_depth64-obj.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_mcos_dependency_chain_depth64.mat obj],[0],[expout],[])
+AT_CLEANUP

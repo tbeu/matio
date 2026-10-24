@@ -92,6 +92,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/test_function_handles_v73.mat \
                  $(datasets_dir)/test_maps_v7.mat \
                  $(datasets_dir)/test_maps_v73.mat \
+                 $(datasets_dir)/test_mcos_dependency_chain_depth64.mat \
                  $(datasets_dir)/test_scattered_interpolant_v6.mat \
                  $(datasets_dir)/test_scattered_interpolant_v7.mat \
                  $(datasets_dir)/test_scattered_interpolant_v7.3.mat \
