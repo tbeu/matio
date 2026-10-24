@@ -20,9 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#if defined(_WIN32)
-#include <process.h>
-#endif
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #define strdup _strdup
@@ -931,79 +928,31 @@ ParseSubsystem5(mat_t *mat)
     subsys_data = (mat_uint8_t *)subsys_var->data;
     subsys_len = subsys_var->nbytes;
 
-    if ( subsys_len < 8 ) {
+    if ( subsys_len <= 8 ) {
         Mat_VarFree(subsys_var);
         return NULL;
     }
 
-    /* The subsystem data is formatted like a mini-MAT file.
-     * It has an 8-byte header: version(2) + endian(2) + 4 bytes padding.
-     * Then data elements follow.
-     * We need to parse these data elements to find the struct with MCOS field.
-     *
-     * We create a temporary mat_t that reads from a memory buffer.
-     * Since our existing API reads from FILE*, we write the subsystem data
-     * to a temporary file and re-read it.
+    /* The subsystem data is formatted like a mini-MAT file: an 8-byte header
+     * (version(2) + endian(2) + 4 bytes padding) followed by data elements.
+     * The data elements are parsed directly from the decoded payload held in
+     * memory. The element readers use the Mat* I/O helpers, which read from
+     * the memory source instead of a FILE.
      */
     {
-        FILE *tmp_fp;
-#if defined(_WIN32)
-        /* tmpfile() on Windows (Borland) creates its file in the drive root with a
-         * name that can collide between concurrent processes, so use a name that is
-         * unique per process in TEMP. tmpnam() has the same problem. */
-        char tmp_name[1024];
-        const char *tmp_dir = getenv("TEMP");
-#if defined(__BORLANDC__)
-        const int tmp_pid = getpid();
-#else
-        const int tmp_pid = _getpid();
-#endif
-        mat_snprintf(tmp_name, sizeof(tmp_name), "%s\\matio_subsys_%d.tmp",
-                     tmp_dir != NULL ? tmp_dir : ".", tmp_pid);
-        tmp_fp = fopen(tmp_name, "w+b");
-#else
-        tmp_fp = tmpfile();
-#endif
-        if ( tmp_fp == NULL ) {
-            Mat_VarFree(subsys_var);
-#if defined(_WIN32)
-            (void)remove(tmp_name);
-#endif
-            return NULL;
-        }
+        mat_memfile_t memfile;
 
-        /* Write subsystem data after the 8-byte mini header */
-        if ( subsys_len > 8 ) {
-            /* Write a full 128-byte MAT5 header so Mat_VarReadNextInfo5 works */
-            {
-                char hdr[128];
-                memset(hdr, ' ', 128);
-                /* Copy version and endian from the mini header */
-                /* The mini header is: version(2 bytes) + endian(2 bytes) + 4 padding */
-                /* Map to a full header: 116 text + 8 subsys_offset + 2 version + 2 endian */
-                memcpy(hdr + 124, subsys_data, 2);     /* version */
-                memcpy(hdr + 126, subsys_data + 2, 2); /* endian */
-                fwrite(hdr, 1, 128, tmp_fp);
-            }
-            /* Write the data elements (everything after the 8-byte mini header) */
-            fwrite(subsys_data + 8, 1, subsys_len - 8, tmp_fp);
-            fflush(tmp_fp);
-            rewind(tmp_fp);
-        } else {
-            fclose(tmp_fp);
-#if defined(_WIN32)
-            (void)remove(tmp_name);
-#endif
-            Mat_VarFree(subsys_var);
-            return NULL;
-        }
+        memfile.data = subsys_data + 8;
+        memfile.size = subsys_len - 8;
+        memfile.pos = 0;
+        memfile.eof = 0;
 
-        /* Set up a temporary mat_t to read from the temp file */
         memset(&subsys_mat, 0, sizeof(subsys_mat));
-        subsys_mat.fp = tmp_fp;
+        subsys_mat.fp = &memfile; /* Non-NULL marker, reads use memfile */
+        subsys_mat.memfile = &memfile;
         subsys_mat.version = MAT_FT_MAT5;
         subsys_mat.byteswap = mat->byteswap;
-        subsys_mat.bof = 128;
+        subsys_mat.bof = 0;
         subsys_mat.next_index = 0;
         subsys_mat.header = NULL;
         subsys_mat.subsys_offset = NULL;
@@ -1015,9 +964,6 @@ ParseSubsystem5(mat_t *mat)
 #endif
         subsys_mat.mcos = NULL;
 
-        /* Seek past the 128-byte header */
-        (void)fseeko(tmp_fp, 128, SEEK_SET);
-
         /* Read the first data element: should be a struct */
         struct_var = Mat_VarReadNextInfo5(&subsys_mat);
         if ( struct_var != NULL ) {
@@ -1027,11 +973,6 @@ ParseSubsystem5(mat_t *mat)
                 struct_var = NULL;
             }
         }
-
-        fclose(tmp_fp);
-#if defined(_WIN32)
-        (void)remove(tmp_name);
-#endif
     }
 
     Mat_VarFree(subsys_var);

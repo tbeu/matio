@@ -37,7 +37,7 @@ READ_TYPE_DOUBLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_DOUBLE
-    readCount = fread(data, sizeof(double), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(double), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }
@@ -63,7 +63,7 @@ READ_TYPE_SINGLE_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_SINGLE
-    readCount = fread(data, sizeof(float), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(float), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }
@@ -89,7 +89,7 @@ READ_TYPE_INT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_INT32
-    readCount = fread(data, sizeof(mat_int32_t), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(mat_int32_t), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }
@@ -115,7 +115,7 @@ READ_TYPE_UINT32_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_UINT32
-    readCount = fread(data, sizeof(mat_uint32_t), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(mat_uint32_t), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }
@@ -141,7 +141,7 @@ READ_TYPE_INT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_INT16
-    readCount = fread(data, sizeof(mat_int16_t), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(mat_int16_t), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }
@@ -167,7 +167,7 @@ READ_TYPE_UINT16_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_UINT16
-    readCount = fread(data, sizeof(mat_uint16_t), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(mat_uint16_t), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }
@@ -193,7 +193,7 @@ READ_TYPE_INT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_INT8
-    readCount = fread(data, sizeof(mat_int8_t), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(mat_int8_t), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }
@@ -213,7 +213,7 @@ READ_TYPE_UINT8_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_UINT8
-    readCount = fread(data, sizeof(mat_uint8_t), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(mat_uint8_t), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }
@@ -234,7 +234,7 @@ READ_TYPE_INT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_INT64
-    readCount = fread(data, sizeof(mat_int64_t), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(mat_int64_t), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }
@@ -262,7 +262,7 @@ READ_TYPE_UINT64_DATA(mat_t *mat, READ_TYPE *data, size_t len)
     size_t readCount;
     int err;
 #if READ_TYPE_TYPE == READ_TYPE_UINT64
-    readCount = fread(data, sizeof(mat_uint64_t), len, (FILE *)mat->fp);
+    readCount = MatRead(mat, data, sizeof(mat_uint64_t), len);
     if ( readCount != len ) {
         return MATIO_E_GENERIC_READ_ERROR;
     }

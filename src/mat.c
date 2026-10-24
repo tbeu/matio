@@ -603,19 +603,118 @@ CheckEdgeOverflow(int rank, const int *edge, size_t extra)
     return MATIO_E_NO_ERROR;
 }
 
+/** @brief Read elements from the MAT source (file or in-memory buffer)
+ *
+ * Mirrors fread(): returns the number of complete elements read.
+ *
+ * @param mat MAT file pointer
+ * @param buf Buffer for reading
+ * @param size Element size in bytes
+ * @param count Element count
+ * @return Number of complete elements read
+ */
+size_t
+MatRead(const mat_t *mat, void *buf, size_t size, size_t count)
+{
+    mat_memfile_t *mf = mat->memfile;
+    size_t total, avail, copied;
+
+    if ( mf == NULL )
+        return fread(buf, size, count, (FILE *)mat->fp);
+
+    if ( size == 0 || count == 0 )
+        return 0;
+
+    avail = mf->pos < mf->size ? mf->size - mf->pos : 0;
+    total = size * count;
+    if ( count > (size_t)-1 / size || total > avail ) {
+        copied = avail;
+        mf->eof = 1;
+    } else {
+        copied = total;
+    }
+    if ( copied > 0 )
+        memcpy(buf, mf->data + mf->pos, copied);
+    mf->pos += copied;
+    return copied / size;
+}
+
+/** @brief Seek within the MAT source (file or in-memory buffer)
+ *
+ * @param mat MAT file pointer
+ * @param offset Offset relative to whence
+ * @param whence SEEK_SET, SEEK_CUR or SEEK_END
+ * @retval 0 on success, non-zero on failure
+ */
+int
+MatSeek(const mat_t *mat, mat_off_t offset, int whence)
+{
+    mat_memfile_t *mf = mat->memfile;
+    mat_off_t base, newpos;
+
+    if ( mf == NULL )
+        return fseeko((FILE *)mat->fp, offset, whence);
+
+    switch ( whence ) {
+        case SEEK_SET:
+            base = 0;
+            break;
+        case SEEK_CUR:
+            base = (mat_off_t)mf->pos;
+            break;
+        case SEEK_END:
+            base = (mat_off_t)mf->size;
+            break;
+        default:
+            return -1;
+    }
+    newpos = base + offset;
+    if ( newpos < 0 )
+        return -1;
+    mf->pos = (size_t)newpos;
+    mf->eof = 0;
+    return 0;
+}
+
+/** @brief Get the current position of the MAT source
+ *
+ * @param mat MAT file pointer
+ * @return Current offset, or -1 on failure
+ */
+mat_off_t
+MatTell(const mat_t *mat)
+{
+    if ( mat->memfile == NULL )
+        return ftello((FILE *)mat->fp);
+    return (mat_off_t)mat->memfile->pos;
+}
+
+/** @brief Check whether a previous read hit the end of the MAT source
+ *
+ * @param mat MAT file pointer
+ * @return Non-zero if end-of-file was reached
+ */
+int
+MatEOF(const mat_t *mat)
+{
+    if ( mat->memfile == NULL )
+        return feof((FILE *)mat->fp);
+    return mat->memfile->eof;
+}
+
 /** @brief Read from file and check success
  *
  * @param buf Buffer for reading
  * @param size Element size in bytes
  * @param count Element count
- * @param fp File pointer
+ * @param mat MAT file pointer
  * @param[out] bytesread Number of bytes read from the file
  * @retval 0 on success
  */
 int
-Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread)
+Read(void *buf, size_t size, size_t count, mat_t *mat, size_t *bytesread)
 {
-    const size_t readCount = fread(buf, size, count, fp);
+    const size_t readCount = MatRead(mat, buf, size, count);
     int err = readCount != count;
     if ( NULL != bytesread ) {
         *bytesread += readCount * size;
@@ -630,23 +729,23 @@ Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread)
 
 /** @brief Check for End of file
  *
- * @param fp File pointer
+ * @param mat MAT file pointer
  * @param[out] fpos Current file position
  * @retval 0 on success
  */
 int
-IsEndOfFile(FILE *fp, mat_off_t *fpos)
+IsEndOfFile(mat_t *mat, mat_off_t *fpos)
 {
-    int isEOF = feof(fp);
-    mat_off_t fPos = ftello(fp);
+    int isEOF = MatEOF(mat);
+    mat_off_t fPos = MatTell(mat);
     if ( !isEOF ) {
         if ( fPos == -1L ) {
             Mat_Critical("Couldn't determine file position");
         } else {
-            (void)fseeko(fp, 0, SEEK_END);
-            isEOF = fPos == ftello(fp);
+            (void)MatSeek(mat, 0, SEEK_END);
+            isEOF = fPos == MatTell(mat);
             if ( !isEOF ) {
-                (void)fseeko(fp, fPos, SEEK_SET);
+                (void)MatSeek(mat, fPos, SEEK_SET);
             }
         }
     }
@@ -658,12 +757,12 @@ IsEndOfFile(FILE *fp, mat_off_t *fpos)
 
 /** @brief Check for End of file
  *
- * @param fp File pointer
+ * @param mat MAT file pointer
  * @param[out] offset Desired offset from current file position
  * @retval 0 on success
  */
 int
-CheckSeekFile(FILE *fp, mat_off_t offset)
+CheckSeekFile(mat_t *mat, mat_off_t offset)
 {
     int err;
     mat_off_t fPos;
@@ -673,15 +772,15 @@ CheckSeekFile(FILE *fp, mat_off_t offset)
         return MATIO_E_NO_ERROR;
     }
 
-    fPos = ftello(fp);
+    fPos = MatTell(mat);
     if ( fPos == -1L ) {
         Mat_Critical("Couldn't determine file position");
         return MATIO_E_GENERIC_READ_ERROR;
     }
 
-    (void)fseeko(fp, offset - 1, SEEK_CUR);
-    err = 1 != fread(&c, 1, 1, fp);
-    (void)fseeko(fp, fPos, SEEK_SET);
+    (void)MatSeek(mat, offset - 1, SEEK_CUR);
+    err = 1 != MatRead(mat, &c, 1, 1);
+    (void)MatSeek(mat, fPos, SEEK_SET);
     if ( err ) {
         Mat_Critical("Couldn't set file position");
         return MATIO_E_GENERIC_READ_ERROR;
@@ -812,6 +911,7 @@ Mat_Open(const char *matname, int mode)
         Mat_Critical("Couldn't allocate memory for the MAT file");
         return NULL;
     }
+    mat->memfile = NULL;
 
     mat->fp = fp;
     mat->header = (char *)calloc(128, sizeof(char));
@@ -860,7 +960,7 @@ Mat_Open(const char *matname, int mode)
 
         mat->version = (int)tmp2;
         if ( (mat->version == 0x0100 || mat->version == 0x0200) && -1 != mat->byteswap ) {
-            mat->bof = ftello((FILE *)mat->fp);
+            mat->bof = MatTell(mat);
             if ( mat->bof == -1L ) {
                 free(mat->header);
                 free(mat->subsys_offset);
@@ -1114,13 +1214,13 @@ Mat_GetDir(mat_t *mat, size_t *n)
 #endif
         } else {
             matvar_t *matvar = NULL;
-            mat_off_t fpos = ftello((FILE *)mat->fp);
+            mat_off_t fpos = MatTell(mat);
             if ( fpos == -1L ) {
                 *n = 0;
                 Mat_Critical("Couldn't determine file position");
                 return dir;
             }
-            (void)fseeko((FILE *)mat->fp, mat->bof, SEEK_SET);
+            (void)MatSeek(mat, mat->bof, SEEK_SET);
             mat->num_datasets = 0;
             do {
                 matvar = Mat_VarReadNextInfo(mat);
@@ -1141,12 +1241,12 @@ Mat_GetDir(mat_t *mat, size_t *n)
                         }
                     }
                     Mat_VarFree(matvar);
-                } else if ( !IsEndOfFile((FILE *)mat->fp, NULL) ) {
+                } else if ( !IsEndOfFile(mat, NULL) ) {
                     Mat_Critical("An error occurred in reading the MAT file");
                     break;
                 }
-            } while ( !IsEndOfFile((FILE *)mat->fp, NULL) );
-            (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+            } while ( !IsEndOfFile(mat, NULL) );
+            (void)MatSeek(mat, fpos, SEEK_SET);
             *n = mat->num_datasets;
         }
     } else {
@@ -1181,7 +1281,7 @@ Mat_Rewind(mat_t *mat)
             break;
         case MAT_FT_MAT4:
         case MAT_FT_MAT5:
-            (void)fseeko((FILE *)mat->fp, mat->bof, SEEK_SET);
+            (void)MatSeek(mat, mat->bof, SEEK_SET);
             break;
         default:
             err = MATIO_E_FAIL_TO_IDENTIFY;
@@ -2944,9 +3044,9 @@ Mat_VarReadInfo(mat_t *mat, const char *name)
         }
         mat->next_index = fpos;
     } else {
-        mat_off_t fpos = ftello((FILE *)mat->fp);
+        mat_off_t fpos = MatTell(mat);
         if ( fpos != -1L ) {
-            (void)fseeko((FILE *)mat->fp, mat->bof, SEEK_SET);
+            (void)MatSeek(mat, mat->bof, SEEK_SET);
             do {
                 matvar = Mat_VarReadNextInfo(mat);
                 if ( matvar != NULL ) {
@@ -2954,12 +3054,12 @@ Mat_VarReadInfo(mat_t *mat, const char *name)
                         Mat_VarFree(matvar);
                         matvar = NULL;
                     }
-                } else if ( !IsEndOfFile((FILE *)mat->fp, NULL) ) {
+                } else if ( !IsEndOfFile(mat, NULL) ) {
                     Mat_Critical("An error occurred in reading the MAT file");
                     break;
                 }
-            } while ( NULL == matvar && !IsEndOfFile((FILE *)mat->fp, NULL) );
-            (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+            } while ( NULL == matvar && !IsEndOfFile(mat, NULL) );
+            (void)MatSeek(mat, fpos, SEEK_SET);
         } else {
             Mat_Critical("Couldn't determine file position");
         }
@@ -2986,7 +3086,7 @@ Mat_VarRead(mat_t *mat, const char *name)
         return NULL;
 
     if ( MAT_FT_MAT73 != mat->version ) {
-        mat_off_t fpos = ftello((FILE *)mat->fp);
+        mat_off_t fpos = MatTell(mat);
         if ( fpos == -1L ) {
             Mat_Critical("Couldn't determine file position");
             return NULL;
@@ -2999,7 +3099,7 @@ Mat_VarRead(mat_t *mat, const char *name)
                 matvar = NULL;
             }
         }
-        (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+        (void)MatSeek(mat, fpos, SEEK_SET);
     } else {
         size_t fpos = mat->next_index;
         mat->next_index = 0;
@@ -3051,7 +3151,7 @@ Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data
     do {
         Mat_VarFree(matvar);
         if ( mat->version != MAT_FT_MAT73 ) {
-            if ( IsEndOfFile((FILE *)mat->fp, &fpos) )
+            if ( IsEndOfFile(mat, &fpos) )
                 return NULL;
             if ( fpos == -1L ) {
                 return NULL;
@@ -3068,7 +3168,7 @@ Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data
         } else {
             if ( mat->version != MAT_FT_MAT73 ) {
                 /* Reset the file position */
-                (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+                (void)MatSeek(mat, fpos, SEEK_SET);
             }
             break;
         }
@@ -3164,8 +3264,8 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
 
     /* Record the file position for an unnamed variable (MCOS subsystem) */
     if ( (NULL == matvar->name || '\0' == matvar->name[0]) && mat->version == MAT_FT_MAT5 ) {
-        (void)fseeko((FILE *)mat->fp, 0, SEEK_END);
-        subsys_pos = ftello((FILE *)mat->fp);
+        (void)MatSeek(mat, 0, SEEK_END);
+        subsys_pos = MatTell(mat);
     }
 
     if ( mat->version == MAT_FT_MAT5 )
@@ -3184,16 +3284,16 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
     if ( !err ) {
         /* Update subsystem data offset for unnamed variables (MCOS) */
         if ( subsys_pos > 0 && NULL != mat->subsys_offset ) {
-            mat_off_t save_pos = ftello((FILE *)mat->fp);
+            mat_off_t save_pos = MatTell(mat);
             mat_uint32_t lo = (mat_uint32_t)(subsys_pos & 0xFFFFFFFFU);
             mat_uint32_t hi = (mat_uint32_t)(((mat_uint64_t)subsys_pos >> 32) & 0xFFFFFFFFU);
-            (void)fseeko((FILE *)mat->fp, 116, SEEK_SET);
+            (void)MatSeek(mat, 116, SEEK_SET);
             fwrite(&lo, 4, 1, (FILE *)mat->fp);
             fwrite(&hi, 4, 1, (FILE *)mat->fp);
             memcpy(mat->subsys_offset, &lo, 4);
             memcpy(mat->subsys_offset + 4, &hi, 4);
             if ( save_pos > 0 )
-                (void)fseeko((FILE *)mat->fp, save_pos, SEEK_SET);
+                (void)MatSeek(mat, save_pos, SEEK_SET);
         }
 
         { /* Update directory */

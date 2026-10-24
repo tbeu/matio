@@ -105,18 +105,32 @@
  * @ingroup mat_internal
  * @endif
  */
+/** @brief In-memory byte source used to parse embedded MAT elements
+ *
+ * Used for data that is already decoded into memory (e.g. the MCOS
+ * subsystem payload) so the element readers can run without a temporary file.
+ */
+typedef struct _mat_memfile_t
+{
+    const mat_uint8_t *data; /**< Source bytes (not owned) */
+    size_t size;             /**< Number of bytes in data */
+    size_t pos;              /**< Current read position */
+    int eof;                 /**< Set when a read hit the end, cleared by seek */
+} mat_memfile_t;
+
 struct _mat_t
 {
-    void *fp;            /**< File pointer for the MAT file */
-    char *header;        /**< MAT file header string */
-    char *subsys_offset; /**< Offset */
-    char *filename;      /**< Filename of the MAT file */
-    int version;         /**< MAT file version */
-    int byteswap;        /**< 1 if byte swapping is required, 0 otherwise */
-    int mode;            /**< Access mode */
-    mat_off_t bof;       /**< Beginning of file not including any header */
-    size_t next_index;   /**< Index/File position of next variable to read */
-    size_t num_datasets; /**< Number of datasets in the file */
+    void *fp;               /**< File pointer for the MAT file */
+    mat_memfile_t *memfile; /**< In-memory source; if non-NULL, fp is ignored for reads */
+    char *header;           /**< MAT file header string */
+    char *subsys_offset;    /**< Offset */
+    char *filename;         /**< Filename of the MAT file */
+    int version;            /**< MAT file version */
+    int byteswap;           /**< 1 if byte swapping is required, 0 otherwise */
+    int mode;               /**< Access mode */
+    mat_off_t bof;          /**< Beginning of file not including any header */
+    size_t next_index;      /**< Index/File position of next variable to read */
+    size_t num_datasets;    /**< Number of datasets in the file */
 #if defined(MAT73) && MAT73
     hid_t refs_id; /**< Id of the /#refs# group in HDF5 */
     int ref_depth; /**< Current recursion depth when reading references */
@@ -274,9 +288,13 @@ EXTERN size_t Mat_Utf8SeqLen(mat_uint8_t c);
 EXTERN int Add(size_t *res, size_t a, size_t b);
 EXTERN int Mul(size_t *res, size_t a, size_t b);
 EXTERN int Mat_MulDims(const matvar_t *matvar, size_t *nelems);
-EXTERN int Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread);
-EXTERN int IsEndOfFile(FILE *fp, mat_off_t *fpos);
-EXTERN int CheckSeekFile(FILE *fp, mat_off_t offset);
+EXTERN size_t MatRead(const mat_t *mat, void *buf, size_t size, size_t count);
+EXTERN int MatSeek(const mat_t *mat, mat_off_t offset, int whence);
+EXTERN mat_off_t MatTell(const mat_t *mat);
+EXTERN int MatEOF(const mat_t *mat);
+EXTERN int Read(void *buf, size_t size, size_t count, mat_t *mat, size_t *bytesread);
+EXTERN int IsEndOfFile(mat_t *mat, mat_off_t *fpos);
+EXTERN int CheckSeekFile(mat_t *mat, mat_off_t offset);
 EXTERN int CheckEdgeOverflow(int rank, const int *edge, size_t extra);
 
 /* io.c */

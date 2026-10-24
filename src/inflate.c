@@ -41,7 +41,7 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread)
 
     n = nBytes < READ_BLOCK_SIZE ? nBytes : READ_BLOCK_SIZE;
     if ( !z->avail_in ) {
-        size_t nbytes = fread(comp_buf, 1, n, (FILE *)mat->fp);
+        size_t nbytes = MatRead(mat, comp_buf, 1, n);
         if ( 0 == nbytes ) {
             Mat_Warning("InflateSkip: Unexpected end-of-file: Processed 0 bytes, expected %d bytes",
                         nBytes);
@@ -78,7 +78,7 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread)
     }
     while ( cnt < nBytes ) {
         if ( !z->avail_in ) {
-            size_t nbytes = fread(comp_buf, 1, n, (FILE *)mat->fp);
+            size_t nbytes = MatRead(mat, comp_buf, 1, n);
             if ( 0 == nbytes ) {
                 break;
             }
@@ -113,7 +113,7 @@ InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread)
 
     if ( z->avail_in ) {
         const mat_off_t offset = -(mat_off_t)z->avail_in;
-        (void)fseeko((FILE *)mat->fp, offset, SEEK_CUR);
+        (void)MatSeek(mat, offset, SEEK_CUR);
         if ( NULL != bytesread ) {
             *bytesread -= z->avail_in;
         }
@@ -252,7 +252,7 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesre
         return MATIO_E_BAD_ARGUMENT;
 
     if ( !z->avail_in ) {
-        size_t nbytes = fread(comp_buf, 1, 1, (FILE *)mat->fp);
+        size_t nbytes = MatRead(mat, comp_buf, 1, 1);
         if ( 0 == nbytes ) {
             Mat_Warning("Inflate: Unexpected end-of-file: Processed 0 bytes, expected %u bytes",
                         nBytes);
@@ -276,7 +276,7 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesre
         err = MATIO_E_NO_ERROR;
     }
     while ( z->avail_out && !z->avail_in ) {
-        size_t nbytes = fread(comp_buf, 1, 1, (FILE *)mat->fp);
+        size_t nbytes = MatRead(mat, comp_buf, 1, 1);
         if ( 0 == nbytes ) {
             break;
         }
@@ -297,14 +297,14 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesre
 
     if ( z->avail_in ) {
         const mat_off_t offset = -(mat_off_t)z->avail_in;
-        (void)fseeko((FILE *)mat->fp, offset, SEEK_CUR);
+        (void)MatSeek(mat, offset, SEEK_CUR);
         if ( NULL != bytesread ) {
             *bytesread -= z->avail_in;
         }
         z->avail_in = 0;
     }
 
-    if ( z->avail_out && feof((FILE *)mat->fp) ) {
+    if ( z->avail_out && MatEOF(mat) ) {
         Mat_Warning("Inflate: Unexpected end-of-file: Processed %u bytes, expected %u bytes",
                     nBytes - z->avail_out, nBytes);
         memset(buf, 0, nBytes);
@@ -340,7 +340,7 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
 
     n = nBytes < READ_BLOCK_SIZE ? nBytes : READ_BLOCK_SIZE;
     if ( !z->avail_in ) {
-        size_t nbytes = fread(comp_buf, 1, n, (FILE *)mat->fp);
+        size_t nbytes = MatRead(mat, comp_buf, 1, n);
         if ( 0 == nbytes ) {
             Mat_Warning("InflateData: Unexpected end-of-file: Processed 0 bytes, expected %u bytes",
                         nBytes);
@@ -366,11 +366,11 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     while ( z->avail_out && !z->avail_in ) {
         size_t nbytes;
         if ( nBytes > READ_BLOCK_SIZE + bytesread ) {
-            nbytes = fread(comp_buf, 1, READ_BLOCK_SIZE, (FILE *)mat->fp);
+            nbytes = MatRead(mat, comp_buf, 1, READ_BLOCK_SIZE);
         } else if ( nBytes < 1 + bytesread ) { /* Read a byte at a time */
-            nbytes = fread(comp_buf, 1, 1, (FILE *)mat->fp);
+            nbytes = MatRead(mat, comp_buf, 1, 1);
         } else {
-            nbytes = fread(comp_buf, 1, nBytes - bytesread, (FILE *)mat->fp);
+            nbytes = MatRead(mat, comp_buf, 1, nBytes - bytesread);
         }
         if ( 0 == nbytes ) {
             break;
@@ -394,12 +394,12 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
 
     if ( z->avail_in ) {
         const mat_off_t offset = -(mat_off_t)z->avail_in;
-        (void)fseeko((FILE *)mat->fp, offset, SEEK_CUR);
+        (void)MatSeek(mat, offset, SEEK_CUR);
         /* bytesread -= z->avail_in; */
         z->avail_in = 0;
     }
 
-    if ( z->avail_out && feof((FILE *)mat->fp) ) {
+    if ( z->avail_out && MatEOF(mat) ) {
         Mat_Warning("InflateData: Read beyond EOF error: Processed %u bytes, expected %u bytes",
                     nBytes - z->avail_out, nBytes);
         memset(buf, 0, nBytes);

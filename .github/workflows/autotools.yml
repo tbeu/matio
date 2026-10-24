@@ -78,7 +78,7 @@ jobs:
           fi
           make check
       - name: Analyse coverage
-        if: matrix.toolchain == 'linux-gcc' && github.event_name != 'pull_request' && secrets.COVERALLS_TOKEN != ''
+        if: matrix.toolchain == 'linux-gcc' && github.event_name != 'pull_request' && env.COVERALLS_REPO_TOKEN != ''
         env:
           COVERALLS_SERVICE_NAME: ${{ secrets.COVERALLS_SERVICE }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}

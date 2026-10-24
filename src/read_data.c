@@ -41,108 +41,108 @@
      : (double)(x) >= (double)MAT_TYPE_MAX(T) ? MAT_TYPE_MAX(T) \
                                               : (T)(x))
 
-#define READ_DATA_NOSWAP(T, CVT)                                      \
-    do {                                                              \
-        const size_t block_size = READ_BLOCK_SIZE / data_size;        \
-        err = MATIO_E_NO_ERROR;                                       \
-        if ( len <= block_size ) {                                    \
-            readCount = fread(v, data_size, len, (FILE *)mat->fp);    \
-            if ( readCount == len ) {                                 \
-                for ( i = 0; i < len; i++ ) {                         \
-                    data[i] = CVT(T, v[i]);                           \
-                }                                                     \
-            } else {                                                  \
-                err = MATIO_E_GENERIC_READ_ERROR;                     \
-                break;                                                \
-            }                                                         \
-        } else {                                                      \
-            size_t j;                                                 \
-            readCount = 0;                                            \
-            for ( i = 0; i < len - block_size; i += block_size ) {    \
-                j = fread(v, data_size, block_size, (FILE *)mat->fp); \
-                readCount += j;                                       \
-                if ( j == block_size ) {                              \
-                    for ( j = 0; j < block_size; j++ ) {              \
-                        data[i + j] = CVT(T, v[j]);                   \
-                    }                                                 \
-                } else {                                              \
-                    err = MATIO_E_GENERIC_READ_ERROR;                 \
-                    break;                                            \
-                }                                                     \
-            }                                                         \
-            if ( err ) {                                              \
-                break;                                                \
-            }                                                         \
-            if ( len > i ) {                                          \
-                j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
-                readCount += j;                                       \
-                if ( j == len - i ) {                                 \
-                    for ( j = 0; j < len - i; j++ ) {                 \
-                        data[i + j] = CVT(T, v[j]);                   \
-                    }                                                 \
-                } else {                                              \
-                    err = MATIO_E_GENERIC_READ_ERROR;                 \
-                    break;                                            \
-                }                                                     \
-            }                                                         \
-        }                                                             \
+#define READ_DATA_NOSWAP(T, CVT)                                   \
+    do {                                                           \
+        const size_t block_size = READ_BLOCK_SIZE / data_size;     \
+        err = MATIO_E_NO_ERROR;                                    \
+        if ( len <= block_size ) {                                 \
+            readCount = MatRead(mat, v, data_size, len);           \
+            if ( readCount == len ) {                              \
+                for ( i = 0; i < len; i++ ) {                      \
+                    data[i] = CVT(T, v[i]);                        \
+                }                                                  \
+            } else {                                               \
+                err = MATIO_E_GENERIC_READ_ERROR;                  \
+                break;                                             \
+            }                                                      \
+        } else {                                                   \
+            size_t j;                                              \
+            readCount = 0;                                         \
+            for ( i = 0; i < len - block_size; i += block_size ) { \
+                j = MatRead(mat, v, data_size, block_size);        \
+                readCount += j;                                    \
+                if ( j == block_size ) {                           \
+                    for ( j = 0; j < block_size; j++ ) {           \
+                        data[i + j] = CVT(T, v[j]);                \
+                    }                                              \
+                } else {                                           \
+                    err = MATIO_E_GENERIC_READ_ERROR;              \
+                    break;                                         \
+                }                                                  \
+            }                                                      \
+            if ( err ) {                                           \
+                break;                                             \
+            }                                                      \
+            if ( len > i ) {                                       \
+                j = MatRead(mat, v, data_size, len - i);           \
+                readCount += j;                                    \
+                if ( j == len - i ) {                              \
+                    for ( j = 0; j < len - i; j++ ) {              \
+                        data[i + j] = CVT(T, v[j]);                \
+                    }                                              \
+                } else {                                           \
+                    err = MATIO_E_GENERIC_READ_ERROR;              \
+                    break;                                         \
+                }                                                  \
+            }                                                      \
+        }                                                          \
     } while ( 0 )
 
-#define READ_DATA(T, SwapFunc, CVT)                                       \
-    do {                                                                  \
-        if ( mat->byteswap ) {                                            \
-            const size_t block_size = READ_BLOCK_SIZE / data_size;        \
-            err = MATIO_E_NO_ERROR;                                       \
-            if ( len <= block_size ) {                                    \
-                readCount = fread(v, data_size, len, (FILE *)mat->fp);    \
-                if ( readCount == len ) {                                 \
-                    for ( i = 0; i < len; i++ ) {                         \
-                        (void)SwapFunc(&v[i]);                            \
-                        data[i] = CVT(T, v[i]);                           \
-                    }                                                     \
-                } else {                                                  \
-                    err = MATIO_E_GENERIC_READ_ERROR;                     \
-                    break;                                                \
-                }                                                         \
-            } else {                                                      \
-                size_t j;                                                 \
-                readCount = 0;                                            \
-                for ( i = 0; i < len - block_size; i += block_size ) {    \
-                    j = fread(v, data_size, block_size, (FILE *)mat->fp); \
-                    readCount += j;                                       \
-                    if ( j == block_size ) {                              \
-                        for ( j = 0; j < block_size; j++ ) {              \
-                            (void)SwapFunc(&v[j]);                        \
-                            data[i + j] = CVT(T, v[j]);                   \
-                        }                                                 \
-                    } else {                                              \
-                        err = MATIO_E_GENERIC_READ_ERROR;                 \
-                        break;                                            \
-                    }                                                     \
-                }                                                         \
-                if ( err ) {                                              \
-                    break;                                                \
-                }                                                         \
-                if ( len > i ) {                                          \
-                    j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
-                    readCount += j;                                       \
-                    if ( j == len - i ) {                                 \
-                        for ( j = 0; j < len - i; j++ ) {                 \
-                            (void)SwapFunc(&v[j]);                        \
-                            data[i + j] = CVT(T, v[j]);                   \
-                        }                                                 \
-                    } else {                                              \
-                        err = MATIO_E_GENERIC_READ_ERROR;                 \
-                        break;                                            \
-                    }                                                     \
-                }                                                         \
-            }                                                             \
-        } else {                                                          \
-            READ_DATA_NOSWAP(T, CVT);                                     \
-            if ( err ) {                                                  \
-                break;                                                    \
-            }                                                             \
-        }                                                                 \
+#define READ_DATA(T, SwapFunc, CVT)                                    \
+    do {                                                               \
+        if ( mat->byteswap ) {                                         \
+            const size_t block_size = READ_BLOCK_SIZE / data_size;     \
+            err = MATIO_E_NO_ERROR;                                    \
+            if ( len <= block_size ) {                                 \
+                readCount = MatRead(mat, v, data_size, len);           \
+                if ( readCount == len ) {                              \
+                    for ( i = 0; i < len; i++ ) {                      \
+                        (void)SwapFunc(&v[i]);                         \
+                        data[i] = CVT(T, v[i]);                        \
+                    }                                                  \
+                } else {                                               \
+                    err = MATIO_E_GENERIC_READ_ERROR;                  \
+                    break;                                             \
+                }                                                      \
+            } else {                                                   \
+                size_t j;                                              \
+                readCount = 0;                                         \
+                for ( i = 0; i < len - block_size; i += block_size ) { \
+                    j = MatRead(mat, v, data_size, block_size);        \
+                    readCount += j;                                    \
+                    if ( j == block_size ) {                           \
+                        for ( j = 0; j < block_size; j++ ) {           \
+                            (void)SwapFunc(&v[j]);                     \
+                            data[i + j] = CVT(T, v[j]);                \
+                        }                                              \
+                    } else {                                           \
+                        err = MATIO_E_GENERIC_READ_ERROR;              \
+                        break;                                         \
+                    }                                                  \
+                }                                                      \
+                if ( err ) {                                           \
+                    break;                                             \
+                }                                                      \
+                if ( len > i ) {                                       \
+                    j = MatRead(mat, v, data_size, len - i);           \
+                    readCount += j;                                    \
+                    if ( j == len - i ) {                              \
+                        for ( j = 0; j < len - i; j++ ) {              \
+                            (void)SwapFunc(&v[j]);                     \
+                            data[i + j] = CVT(T, v[j]);                \
+                        }                                              \
+                    } else {                                           \
+                        err = MATIO_E_GENERIC_READ_ERROR;              \
+                        break;                                         \
+                    }                                                  \
+                }                                                      \
+            }                                                          \
+        } else {                                                       \
+            READ_DATA_NOSWAP(T, CVT);                                  \
+            if ( err ) {                                               \
+                break;                                                 \
+            }                                                          \
+        }                                                              \
     } while ( 0 )
 
 #if HAVE_ZLIB
@@ -423,7 +423,7 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
         case MAT_T_UINT8:
         case MAT_T_UTF8: {
             size_t nBytes = 0;
-            err = Read(_data, data_size, len, (FILE *)mat->fp, &nBytes);
+            err = Read(_data, data_size, len, mat, &nBytes);
             break;
         }
         case MAT_T_UINT16:
@@ -457,78 +457,80 @@ ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, size_t len)
             if ( (cnt[j] % edge[j]) == 0 ) {                                                      \
                 cnt[j] = 0;                                                                       \
                 if ( (I % dimp[j]) != 0 ) {                                                       \
-                    (void)fseek((FILE *)mat->fp,                                                  \
-                                data_size * (dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]),   \
-                                SEEK_CUR);                                                        \
+                    (void)MatSeek(mat,                                                            \
+                                  data_size * (dimp[j] - (I % dimp[j]) + dimp[j - 1] * start[j]), \
+                                  SEEK_CUR);                                                      \
                     I += dimp[j] - (I % dimp[j]) + (size_t)dimp[j - 1] * (size_t)start[j];        \
                 } else if ( start[j] ) {                                                          \
-                    (void)fseek((FILE *)mat->fp, data_size * (dimp[j - 1] * start[j]), SEEK_CUR); \
+                    (void)MatSeek(mat, data_size * (dimp[j - 1] * start[j]), SEEK_CUR);           \
                     I += (size_t)dimp[j - 1] * (size_t)start[j];                                  \
                 }                                                                                 \
             } else {                                                                              \
                 I += inc[j];                                                                      \
-                (void)fseek((FILE *)mat->fp, data_size * inc[j], SEEK_CUR);                       \
+                (void)MatSeek(mat, data_size * inc[j], SEEK_CUR);                                 \
                 break;                                                                            \
             }                                                                                     \
         }                                                                                         \
     } while ( 0 )
 
-#define READ_DATA_SLABN(ReadDataFunc)                                                          \
-    do {                                                                                       \
-        inc[0] = stride[0] - 1;                                                                \
-        dimp[0] = dims[0];                                                                     \
-        N = edge[0];                                                                           \
-        I = 0; /* start[0]; */                                                                 \
-        for ( i = 1; i < rank; i++ ) {                                                         \
-            inc[i] = stride[i] - 1;                                                            \
-            dimp[i] = dims[i - 1];                                                             \
-            for ( j = i; j--; ) {                                                              \
-                inc[i] *= dims[j];                                                             \
-                dimp[i] *= dims[j + 1];                                                        \
-            }                                                                                  \
-            N *= edge[i];                                                                      \
-            I += (size_t)dimp[i - 1] * (size_t)start[i];                                       \
-        }                                                                                      \
-        (void)fseek((FILE *)mat->fp, I * data_size, SEEK_CUR);                                 \
-        if ( stride[0] == 1 ) {                                                                \
-            for ( i = 0; i < N; i += edge[0] ) {                                               \
-                if ( start[0] ) {                                                              \
-                    (void)fseek((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);              \
-                    I += start[0];                                                             \
-                }                                                                              \
-                err = ReadDataFunc(mat, ptr + i, data_type, edge[0]);                          \
-                if ( err ) {                                                                   \
-                    break;                                                                     \
-                }                                                                              \
-                I += dims[0] - start[0];                                                       \
-                (void)fseek((FILE *)mat->fp, data_size * (dims[0] - edge[0] - start[0]),       \
-                            SEEK_CUR);                                                         \
-                READ_DATA_SLABN_RANK_LOOP;                                                     \
-            }                                                                                  \
-        } else {                                                                               \
-            for ( i = 0; i < N; i += edge[0] ) {                                               \
-                if ( start[0] ) {                                                              \
-                    (void)fseek((FILE *)mat->fp, start[0] * data_size, SEEK_CUR);              \
-                    I += start[0];                                                             \
-                }                                                                              \
-                for ( j = 0; j < edge[0]; j++ ) {                                              \
-                    err = ReadDataFunc(mat, ptr + i + j, data_type, 1);                        \
-                    if ( err ) {                                                               \
-                        break;                                                                 \
-                    }                                                                          \
-                    (void)fseek((FILE *)mat->fp, data_size * (stride[0] - 1), SEEK_CUR);       \
-                    I += stride[0];                                                            \
-                }                                                                              \
-                if ( err ) {                                                                   \
-                    break;                                                                     \
-                }                                                                              \
-                I += dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0];                      \
-                (void)fseek((FILE *)mat->fp,                                                   \
-                            data_size * (dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0]), \
-                            SEEK_CUR);                                                         \
-                READ_DATA_SLABN_RANK_LOOP;                                                     \
-            }                                                                                  \
-        }                                                                                      \
+#define READ_DATA_SLABN(ReadDataFunc)                                                             \
+    do {                                                                                          \
+        inc[0] = stride[0] - 1;                                                                   \
+        dimp[0] = dims[0];                                                                        \
+        N = edge[0];                                                                              \
+        I = 0; /* start[0]; */                                                                    \
+        for ( i = 1; i < rank; i++ ) {                                                            \
+            inc[i] = stride[i] - 1;                                                               \
+            dimp[i] = dims[i - 1];                                                                \
+            for ( j = i; j--; ) {                                                                 \
+                inc[i] *= dims[j];                                                                \
+                dimp[i] *= dims[j + 1];                                                           \
+            }                                                                                     \
+            N *= edge[i];                                                                         \
+            I += (size_t)dimp[i - 1] * (size_t)start[i];                                          \
+        }                                                                                         \
+        (void)MatSeek(mat, I * data_size, SEEK_CUR);                                              \
+        if ( stride[0] == 1 ) {                                                                   \
+            for ( i = 0; i < N; i += edge[0] ) {                                                  \
+                if ( start[0] ) {                                                                 \
+                    (void)MatSeek(mat, start[0] * data_size, SEEK_CUR);                           \
+                    I += start[0];                                                                \
+                }                                                                                 \
+                err = ReadDataFunc(mat, ptr + i, data_type, edge[0]);                             \
+                if ( err ) {                                                                      \
+                    break;                                                                        \
+                }                                                                                 \
+                I += dims[0] - start[0];                                                          \
+                (void)MatSeek(mat,                                                                \
+                              (mat_off_t)data_size * ((mat_off_t)dims[0] - edge[0] - start[0]),   \
+                              SEEK_CUR);                                                          \
+                READ_DATA_SLABN_RANK_LOOP;                                                        \
+            }                                                                                     \
+        } else {                                                                                  \
+            for ( i = 0; i < N; i += edge[0] ) {                                                  \
+                if ( start[0] ) {                                                                 \
+                    (void)MatSeek(mat, start[0] * data_size, SEEK_CUR);                           \
+                    I += start[0];                                                                \
+                }                                                                                 \
+                for ( j = 0; j < edge[0]; j++ ) {                                                 \
+                    err = ReadDataFunc(mat, ptr + i + j, data_type, 1);                           \
+                    if ( err ) {                                                                  \
+                        break;                                                                    \
+                    }                                                                             \
+                    (void)MatSeek(mat, data_size * (stride[0] - 1), SEEK_CUR);                    \
+                    I += stride[0];                                                               \
+                }                                                                                 \
+                if ( err ) {                                                                      \
+                    break;                                                                        \
+                }                                                                                 \
+                I += dims[0] - (ptrdiff_t)edge[0] * stride[0] - start[0];                         \
+                (void)MatSeek(mat,                                                                \
+                              (mat_off_t)data_size * ((mat_off_t)dims[0] -                        \
+                                                      (mat_off_t)edge[0] * stride[0] - start[0]), \
+                              SEEK_CUR);                                                          \
+                READ_DATA_SLABN_RANK_LOOP;                                                        \
+            }                                                                                     \
+        }                                                                                         \
     } while ( 0 )
 
 static int
@@ -881,19 +883,19 @@ ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data, enum matio_classes 
 #undef READ_COMPRESSED_DATA_SLABN_RANK_LOOP
 #endif
 
-#define READ_DATA_SLAB1(ReadDataFunc)                            \
-    do {                                                         \
-        if ( !stride ) {                                         \
-            err = ReadDataFunc(mat, ptr, data_type, edge);       \
-        } else {                                                 \
-            for ( i = 0; i < edge; i++ ) {                       \
-                err = ReadDataFunc(mat, ptr + i, data_type, 1);  \
-                if ( err ) {                                     \
-                    break;                                       \
-                }                                                \
-                (void)fseeko((FILE *)mat->fp, stride, SEEK_CUR); \
-            }                                                    \
-        }                                                        \
+#define READ_DATA_SLAB1(ReadDataFunc)                           \
+    do {                                                        \
+        if ( !stride ) {                                        \
+            err = ReadDataFunc(mat, ptr, data_type, edge);      \
+        } else {                                                \
+            for ( i = 0; i < edge; i++ ) {                      \
+                err = ReadDataFunc(mat, ptr + i, data_type, 1); \
+                if ( err ) {                                    \
+                    break;                                      \
+                }                                               \
+                (void)MatSeek(mat, stride, SEEK_CUR);           \
+            }                                                   \
+        }                                                       \
     } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 1-D
@@ -921,7 +923,7 @@ ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
     }
 
     data_size = Mat_SizeOf(data_type);
-    (void)fseek((FILE *)mat->fp, start * data_size, SEEK_CUR);
+    (void)MatSeek(mat, start * data_size, SEEK_CUR);
     stride = data_size * (stride - 1);
 
     switch ( class_type ) {
@@ -989,44 +991,44 @@ ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type, enum matio_
 
 #undef READ_DATA_SLAB1
 
-#define READ_DATA_SLAB2(ReadDataFunc)                                                           \
-    do {                                                                                        \
-        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */                   \
-        /* data so get rid of the loops. */                                                     \
-        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) ) {             \
-            err = ReadDataFunc(mat, ptr, data_type, (ptrdiff_t)edge[0] * edge[1]);              \
-        } else {                                                                                \
-            row_stride = (mat_off_t)(stride[0] - 1) * data_size;                                \
-            col_stride = (mat_off_t)stride[1] * dims[0] * data_size;                            \
-            pos = ftello((FILE *)mat->fp);                                                      \
-            if ( pos == -1L ) {                                                                 \
-                Mat_Critical("Couldn't determine file position");                               \
-                return MATIO_E_GENERIC_READ_ERROR;                                              \
-            }                                                                                   \
-            (void)fseeko((FILE *)mat->fp, (mat_off_t)start[1] * dims[0] * data_size, SEEK_CUR); \
-            for ( i = 0; i < edge[1]; i++ ) {                                                   \
-                pos = ftello((FILE *)mat->fp);                                                  \
-                if ( pos == -1L ) {                                                             \
-                    Mat_Critical("Couldn't determine file position");                           \
-                    return MATIO_E_GENERIC_READ_ERROR;                                          \
-                }                                                                               \
-                (void)fseeko((FILE *)mat->fp, (mat_off_t)start[0] * data_size, SEEK_CUR);       \
-                for ( j = 0; j < edge[0]; j++ ) {                                               \
-                    err = ReadDataFunc(mat, ptr++, data_type, 1);                               \
-                    if ( err ) {                                                                \
-                        return err;                                                             \
-                    }                                                                           \
-                    (void)fseeko((FILE *)mat->fp, row_stride, SEEK_CUR);                        \
-                }                                                                               \
-                pos2 = ftello((FILE *)mat->fp);                                                 \
-                if ( pos2 == -1L ) {                                                            \
-                    Mat_Critical("Couldn't determine file position");                           \
-                    return MATIO_E_GENERIC_READ_ERROR;                                          \
-                }                                                                               \
-                pos += col_stride - pos2;                                                       \
-                (void)fseeko((FILE *)mat->fp, pos, SEEK_CUR);                                   \
-            }                                                                                   \
-        }                                                                                       \
+#define READ_DATA_SLAB2(ReadDataFunc)                                                \
+    do {                                                                             \
+        /* If stride[0] is 1 and stride[1] is 1, we are reading all of the */        \
+        /* data so get rid of the loops. */                                          \
+        if ( (stride[0] == 1 && (size_t)edge[0] == dims[0]) && (stride[1] == 1) ) {  \
+            err = ReadDataFunc(mat, ptr, data_type, (ptrdiff_t)edge[0] * edge[1]);   \
+        } else {                                                                     \
+            row_stride = (mat_off_t)(stride[0] - 1) * data_size;                     \
+            col_stride = (mat_off_t)stride[1] * dims[0] * data_size;                 \
+            pos = MatTell(mat);                                                      \
+            if ( pos == -1L ) {                                                      \
+                Mat_Critical("Couldn't determine file position");                    \
+                return MATIO_E_GENERIC_READ_ERROR;                                   \
+            }                                                                        \
+            (void)MatSeek(mat, (mat_off_t)start[1] * dims[0] * data_size, SEEK_CUR); \
+            for ( i = 0; i < edge[1]; i++ ) {                                        \
+                pos = MatTell(mat);                                                  \
+                if ( pos == -1L ) {                                                  \
+                    Mat_Critical("Couldn't determine file position");                \
+                    return MATIO_E_GENERIC_READ_ERROR;                               \
+                }                                                                    \
+                (void)MatSeek(mat, (mat_off_t)start[0] * data_size, SEEK_CUR);       \
+                for ( j = 0; j < edge[0]; j++ ) {                                    \
+                    err = ReadDataFunc(mat, ptr++, data_type, 1);                    \
+                    if ( err ) {                                                     \
+                        return err;                                                  \
+                    }                                                                \
+                    (void)MatSeek(mat, row_stride, SEEK_CUR);                        \
+                }                                                                    \
+                pos2 = MatTell(mat);                                                 \
+                if ( pos2 == -1L ) {                                                 \
+                    Mat_Critical("Couldn't determine file position");                \
+                    return MATIO_E_GENERIC_READ_ERROR;                               \
+                }                                                                    \
+                pos += col_stride - pos2;                                            \
+                (void)MatSeek(mat, pos, SEEK_CUR);                                   \
+            }                                                                        \
+        }                                                                            \
     } while ( 0 )
 
 /** @brief Reads data of type @c data_type by user-defined dimensions for 2-D

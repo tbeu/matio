@@ -3074,6 +3074,7 @@ Mat_Create73(const char *matname, const char *hdr_str)
         return NULL;
     }
 
+    mat->memfile = NULL;
     mat->fp = NULL;
     mat->header = NULL;
     mat->subsys_offset = NULL;

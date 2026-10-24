@@ -535,7 +535,7 @@ ReadSparse(mat_t *mat, const matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v
 #endif
     } else {
         mat_uint32_t tag[2] = {0, 0};
-        err = Read(tag, 4, 1, (FILE *)mat->fp, NULL);
+        err = Read(tag, 4, 1, mat, NULL);
         if ( err ) {
             return err;
         }
@@ -547,7 +547,7 @@ ReadSparse(mat_t *mat, const matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v
             N = (tag[0] & 0xffff0000) >> 16;
         } else {
             data_in_tag = 0;
-            err = Read(&N, 4, 1, (FILE *)mat->fp, NULL);
+            err = Read(&N, 4, 1, mat, NULL);
             if ( err ) {
                 return err;
             }
@@ -579,7 +579,7 @@ ReadSparse(mat_t *mat, const matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v
         if ( data_in_tag )
             nBytes += 4;
         if ( (nBytes % 8) != 0 )
-            (void)fseeko((FILE *)mat->fp, 8 - (nBytes % 8), SEEK_CUR);
+            (void)MatSeek(mat, 8 - (nBytes % 8), SEEK_CUR);
 #if HAVE_ZLIB
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         size_t nBytes;
@@ -704,6 +704,7 @@ Mat_Create5(const char *matname, const char *hdr_str)
         return NULL;
     }
 
+    mat->memfile = NULL;
     mat->fp = NULL;
     mat->header = NULL;
     mat->subsys_offset = NULL;
@@ -1314,7 +1315,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                 if ( cells[i]->internal->z != NULL ) {
                     err = inflateCopy(cells[i]->internal->z, matvar->internal->z);
                     if ( err == Z_OK ) {
-                        cells[i]->internal->datapos = ftello((FILE *)mat->fp);
+                        cells[i]->internal->datapos = MatTell(mat);
                         if ( cells[i]->internal->datapos != -1L ) {
                             cells[i]->internal->datapos -= matvar->internal->z->avail_in;
                             if ( cells[i]->class_type == MAT_C_STRUCT )
@@ -1328,7 +1329,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                                 cells[i]->internal->data = cells[i]->data;
                                 cells[i]->data = NULL;
                             }
-                            (void)fseeko((FILE *)mat->fp, cells[i]->internal->datapos, SEEK_SET);
+                            (void)MatSeek(mat, cells[i]->internal->datapos, SEEK_SET);
                         } else {
                             Mat_Critical("Couldn't determine file position");
                         }
@@ -1352,7 +1353,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                 if ( NULL != cells[i]->internal->z ) {
                     err = inflateCopy(cells[i]->internal->z, matvar->internal->z);
                     if ( err == Z_OK ) {
-                        cells[i]->internal->datapos = ftello((FILE *)mat->fp);
+                        cells[i]->internal->datapos = MatTell(mat);
                         if ( cells[i]->internal->datapos != -1L ) {
                             cells[i]->internal->datapos -= matvar->internal->z->avail_in;
                             err = ReadCompressedOpaqueInfo5(mat, cells[i], &opaque_bytes);
@@ -1361,8 +1362,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                                 free(cells[i]->internal->z);
                                 cells[i]->internal->z = NULL;
                                 bytesread += opaque_bytes;
-                                (void)fseeko((FILE *)mat->fp, cells[i]->internal->datapos,
-                                             SEEK_SET);
+                                (void)MatSeek(mat, cells[i]->internal->datapos, SEEK_SET);
                             } else {
                                 inflateEnd(cells[i]->internal->z);
                                 free(cells[i]->internal->z);
@@ -1406,7 +1406,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
             }
 
             /* Read variable tag for cell */
-            err = Read(buf, 4, 2, (FILE *)mat->fp, &nbytes);
+            err = Read(buf, 4, 2, mat, &nbytes);
 
             /* Empty cells at the end of a file may cause an EOF */
             if ( 0 == err && 0 == nbytes )
@@ -1432,7 +1432,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                 cells[i] = NULL;
 #if HAVE_LONG_LONG_INT
                 Mat_Critical("cells[%zu] not MAT_T_MATRIX, fpos = %lld", i,
-                             (long long)ftello((FILE *)mat->fp));
+                             (long long)MatTell(mat));
 #else
                 Mat_Critical("cells[%zu] not MAT_T_MATRIX", i);
 #endif
@@ -1440,7 +1440,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
             }
 
             /* Read array flags and the dimensions tag */
-            err = Read(buf, 4, 6, (FILE *)mat->fp, &bytesread);
+            err = Read(buf, 4, 6, mat, &bytesread);
             if ( err ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
@@ -1471,7 +1471,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
             if ( cells[i]->class_type == MAT_C_OPAQUE && NULL != mat->filename ) {
                 /* Do NOT go here while processing GetSubsystem5 (mat->filename==NULL) */
                 mat_uint32_t name_tag[2];
-                mat_off_t opaque_data_start = ftello((FILE *)mat->fp);
+                mat_off_t opaque_data_start = MatTell(mat);
                 name_tag[0] = buf[4];
                 name_tag[1] = buf[5];
                 err = ReadOpaqueInfo5(mat, cells[i], name_tag);
@@ -1482,7 +1482,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                 }
                 /* Seek to the end of the cell data */
                 if ( -1L != opaque_data_start )
-                    (void)fseeko((FILE *)mat->fp, opaque_data_start + nBytes, SEEK_SET);
+                    (void)MatSeek(mat, opaque_data_start + nBytes, SEEK_SET);
                 continue;
             }
 
@@ -1497,7 +1497,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                 break;
             }
             /* Variable name tag */
-            if ( 0 != Read(buf, 1, 8, (FILE *)mat->fp, &bytesread) ) {
+            if ( 0 != Read(buf, 1, 8, mat, &bytesread) ) {
                 Mat_VarFree(cells[i]);
                 cells[i] = NULL;
                 break;
@@ -1521,16 +1521,16 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                         }
                     }
                     nBytes -= name_len;
-                    (void)fseeko((FILE *)mat->fp, name_len, SEEK_CUR);
+                    (void)MatSeek(mat, name_len, SEEK_CUR);
                 }
             }
-            cells[i]->internal->datapos = ftello((FILE *)mat->fp);
+            cells[i]->internal->datapos = MatTell(mat);
             if ( cells[i]->internal->datapos != -1L ) {
                 if ( cells[i]->class_type == MAT_C_STRUCT )
                     bytesread += ReadNextStructField(mat, cells[i]);
                 if ( cells[i]->class_type == MAT_C_CELL )
                     bytesread += ReadNextCell(mat, cells[i]);
-                (void)fseeko((FILE *)mat->fp, cells[i]->internal->datapos + nBytes, SEEK_SET);
+                (void)MatSeek(mat, cells[i]->internal->datapos + nBytes, SEEK_SET);
             } else {
                 Mat_Critical("Couldn't determine file position");
             }
@@ -1839,7 +1839,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 if ( fields[i]->internal->z != NULL ) {
                     err = inflateCopy(fields[i]->internal->z, matvar->internal->z);
                     if ( err == Z_OK ) {
-                        fields[i]->internal->datapos = ftello((FILE *)mat->fp);
+                        fields[i]->internal->datapos = MatTell(mat);
                         if ( fields[i]->internal->datapos != -1L ) {
                             fields[i]->internal->datapos -= matvar->internal->z->avail_in;
                             if ( fields[i]->class_type == MAT_C_STRUCT )
@@ -1853,7 +1853,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                                 fields[i]->internal->data = fields[i]->data;
                                 fields[i]->data = NULL;
                             }
-                            (void)fseeko((FILE *)mat->fp, fields[i]->internal->datapos, SEEK_SET);
+                            (void)MatSeek(mat, fields[i]->internal->datapos, SEEK_SET);
                         } else {
                             Mat_Critical("Couldn't determine file position");
                         }
@@ -1882,7 +1882,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 if ( NULL != fields[i]->internal->z ) {
                     err = inflateCopy(fields[i]->internal->z, matvar->internal->z);
                     if ( err == Z_OK ) {
-                        fields[i]->internal->datapos = ftello((FILE *)mat->fp);
+                        fields[i]->internal->datapos = MatTell(mat);
                         if ( fields[i]->internal->datapos != -1L ) {
                             err = ReadCompressedOpaqueInfo5(mat, fields[i], &opaque_bytes);
                             if ( err == Z_OK ) {
@@ -1892,8 +1892,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                                 free(fields[i]->name);
                                 fields[i]->name = name;
                                 bytesread += opaque_bytes;
-                                (void)fseeko((FILE *)mat->fp, fields[i]->internal->datapos,
-                                             SEEK_SET);
+                                (void)MatSeek(mat, fields[i]->internal->datapos, SEEK_SET);
                             } else {
                                 inflateEnd(fields[i]->internal->z);
                                 free(fields[i]->internal->z);
@@ -1933,7 +1932,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
         mat_uint32_t buf[6] = {0, 0, 0, 0, 0, 0};
         mat_uint32_t array_flags, len, fieldname_size;
 
-        err = Read(buf, 4, 2, (FILE *)mat->fp, &bytesread);
+        err = Read(buf, 4, 2, mat, &bytesread);
         if ( err ) {
             return bytesread;
         }
@@ -1949,7 +1948,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
         }
 
         /* Field name tag */
-        err = Read(buf, 4, 2, (FILE *)mat->fp, &bytesread);
+        err = Read(buf, 4, 2, mat, &bytesread);
         if ( err ) {
             return bytesread;
         }
@@ -1965,7 +1964,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
             if ( nfields ) {
                 char *ptr = (char *)malloc(nfields * fieldname_size);
                 if ( NULL != ptr ) {
-                    err = Read(ptr, 1, nfields * fieldname_size, (FILE *)mat->fp, &bytesread);
+                    err = Read(ptr, 1, nfields * fieldname_size, mat, &bytesread);
                     if ( 0 == err ) {
                         SetFieldNames(matvar, ptr, nfields, fieldname_size);
                     } else {
@@ -1975,7 +1974,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                     free(ptr);
                 }
                 if ( (nfields * fieldname_size) % 8 ) {
-                    (void)fseeko((FILE *)mat->fp, 8 - ((nfields * fieldname_size) % 8), SEEK_CUR);
+                    (void)MatSeek(mat, 8 - ((nfields * fieldname_size) % 8), SEEK_CUR);
                     bytesread += 8 - ((nfields * fieldname_size) % 8);
                 }
             } else {
@@ -2015,7 +2014,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
             }
 
             /* Read variable tag for struct field */
-            err = Read(buf, 4, 2, (FILE *)mat->fp, &bytesread);
+            err = Read(buf, 4, 2, mat, &bytesread);
             if ( err ) {
                 Mat_VarFree(fields[i]);
                 fields[i] = NULL;
@@ -2031,7 +2030,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                 fields[i] = NULL;
 #if HAVE_LONG_LONG_INT
                 Mat_Critical("fields[%zu] not MAT_T_MATRIX, fpos = %lld", i,
-                             (long long)ftello((FILE *)mat->fp));
+                             (long long)MatTell(mat));
 #else
                 Mat_Critical("fields[%zu] not MAT_T_MATRIX", i);
 #endif
@@ -2044,11 +2043,11 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
             }
             {
                 /* Save position after the field tag for seeking past opaque fields */
-                mat_off_t field_data_start = ftello((FILE *)mat->fp);
+                mat_off_t field_data_start = MatTell(mat);
                 mat_uint32_t field_data_nBytes = nBytes;
 
                 /* Read array flags and the dimensions tag */
-                err = Read(buf, 4, 6, (FILE *)mat->fp, &bytesread);
+                err = Read(buf, 4, 6, mat, &bytesread);
                 if ( err ) {
                     Mat_VarFree(fields[i]);
                     fields[i] = NULL;
@@ -2087,7 +2086,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                         break;
                     }
                     /* Seek to the end of the field data regardless */
-                    (void)fseeko((FILE *)mat->fp, field_data_start + field_data_nBytes, SEEK_SET);
+                    (void)MatSeek(mat, field_data_start + field_data_nBytes, SEEK_SET);
                 } else if ( fields[i]->class_type == MAT_C_OPAQUE ) {
                     /* For opaque fields, buf[4..5] is the array name tag,
                  * not the rank/dims tag. Read the opaque subelements.
@@ -2118,7 +2117,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                      * containing a cell array, convert the field.
                      */
                             mat_uint32_t ptag[2];
-                            err = Read(ptag, 4, 2, (FILE *)mat->fp, &bytesread);
+                            err = Read(ptag, 4, 2, mat, &bytesread);
                             if ( !err ) {
                                 if ( mat->byteswap ) {
                                     (void)Mat_uint32Swap(&ptag[0]);
@@ -2127,7 +2126,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                                 if ( ptag[0] == MAT_T_MATRIX && ptag[1] > 0 ) {
                                     /* Read inner array flags */
                                     mat_uint32_t inner[6];
-                                    err = Read(inner, 4, 6, (FILE *)mat->fp, &bytesread);
+                                    err = Read(inner, 4, 6, mat, &bytesread);
                                     if ( !err ) {
                                         if ( mat->byteswap ) {
                                             (void)Mat_uint32Swap(&inner[0]);
@@ -2149,11 +2148,9 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                                                 /* Skip inner name tag */
                                                 {
                                                     mat_uint32_t skip_buf[2];
-                                                    Read(skip_buf, 4, 2, (FILE *)mat->fp,
-                                                         &bytesread);
+                                                    Read(skip_buf, 4, 2, mat, &bytesread);
                                                 }
-                                                fields[i]->internal->datapos =
-                                                    ftello((FILE *)mat->fp);
+                                                fields[i]->internal->datapos = MatTell(mat);
                                                 if ( fields[i]->internal->datapos != -1L ) {
                                                     bytesread += ReadNextCell(mat, fields[i]);
                                                 }
@@ -2165,7 +2162,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                         }
                     }
                     /* Seek to the end of the field data regardless */
-                    (void)fseeko((FILE *)mat->fp, field_data_start + field_data_nBytes, SEEK_SET);
+                    (void)MatSeek(mat, field_data_start + field_data_nBytes, SEEK_SET);
                 } else {
                     /* Rank and dimension */
                     {
@@ -2181,21 +2178,20 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                         }
                     }
                     /* Variable name tag */
-                    err = Read(buf, 1, 8, (FILE *)mat->fp, &bytesread);
+                    err = Read(buf, 1, 8, mat, &bytesread);
                     if ( err ) {
                         Mat_VarFree(fields[i]);
                         fields[i] = NULL;
                         break;
                     }
                     nBytes -= 8;
-                    fields[i]->internal->datapos = ftello((FILE *)mat->fp);
+                    fields[i]->internal->datapos = MatTell(mat);
                     if ( fields[i]->internal->datapos != -1L ) {
                         if ( fields[i]->class_type == MAT_C_STRUCT )
                             bytesread += ReadNextStructField(mat, fields[i]);
                         else if ( fields[i]->class_type == MAT_C_CELL )
                             bytesread += ReadNextCell(mat, fields[i]);
-                        (void)fseeko((FILE *)mat->fp, fields[i]->internal->datapos + nBytes,
-                                     SEEK_SET);
+                        (void)MatSeek(mat, fields[i]->internal->datapos + nBytes, SEEK_SET);
                     } else {
                         Mat_Critical("Couldn't determine file position");
                     }
@@ -2293,7 +2289,7 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
             mat_uint32_t buf;
 
             for ( i = 0; i < matvar->rank; i++ ) {
-                err = Read(&buf, sizeof(mat_uint32_t), 1, (FILE *)mat->fp, read_bytes);
+                err = Read(&buf, sizeof(mat_uint32_t), 1, mat, read_bytes);
                 if ( !err ) {
                     if ( mat->byteswap ) {
                         matvar->dims[i] = Mat_uint32Swap(&buf);
@@ -2309,7 +2305,7 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
             }
 
             if ( matvar->rank % 2 != 0 ) {
-                err = Read(&buf, sizeof(mat_uint32_t), 1, (FILE *)mat->fp, read_bytes);
+                err = Read(&buf, sizeof(mat_uint32_t), 1, mat, read_bytes);
                 if ( err ) {
                     free(matvar->dims);
                     matvar->dims = NULL;
@@ -2542,7 +2538,7 @@ WriteCellArrayField(mat_t *mat, matvar_t *matvar)
         /* exit early if this is an empty data */
         return MATIO_E_NO_ERROR;
     }
-    start = ftello((FILE *)mat->fp);
+    start = MatTell(mat);
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -2601,12 +2597,12 @@ WriteCellArrayField(mat_t *mat, matvar_t *matvar)
         if ( err )
             return err;
     }
-    end = ftello((FILE *)mat->fp);
+    end = MatTell(mat);
     if ( start != -1L && end != -1L ) {
         nBytes = (int)(end - start);
-        (void)fseeko((FILE *)mat->fp, (mat_off_t) - (nBytes + 4), SEEK_CUR);
+        (void)MatSeek(mat, (mat_off_t) - (nBytes + 4), SEEK_CUR);
         fwrite(&nBytes, 4, 1, (FILE *)mat->fp);
-        (void)fseeko((FILE *)mat->fp, end, SEEK_SET);
+        (void)MatSeek(mat, end, SEEK_SET);
     } else {
         Mat_Critical("Couldn't determine file position");
     }
@@ -2693,7 +2689,7 @@ WriteCompressedTypeArrayFlags(mat_t *mat, matvar_t *matvar, z_streamp z)
             fwrite(comp_buf, 1, buf_size * sizeof(*comp_buf) - z->avail_out, (FILE *)mat->fp);
     } while ( z->avail_out == 0 );
 
-    matvar->internal->datapos = ftello((FILE *)mat->fp);
+    matvar->internal->datapos = MatTell(mat);
     if ( matvar->internal->datapos == -1L ) {
         Mat_Critical("Couldn't determine file position");
     }
@@ -2979,7 +2975,7 @@ WriteStructField(mat_t *mat, matvar_t *matvar)
         /* exit early if this is an empty data */
         return MATIO_E_NO_ERROR;
     }
-    start = ftello((FILE *)mat->fp);
+    start = MatTell(mat);
 
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -3019,12 +3015,12 @@ WriteStructField(mat_t *mat, matvar_t *matvar)
         if ( err )
             return err;
     }
-    end = ftello((FILE *)mat->fp);
+    end = MatTell(mat);
     if ( start != -1L && end != -1L ) {
         nBytes = (int)(end - start);
-        (void)fseeko((FILE *)mat->fp, (mat_off_t) - (nBytes + 4), SEEK_CUR);
+        (void)MatSeek(mat, (mat_off_t) - (nBytes + 4), SEEK_CUR);
         fwrite(&nBytes, 4, 1, (FILE *)mat->fp);
-        (void)fseeko((FILE *)mat->fp, end, SEEK_SET);
+        (void)MatSeek(mat, end, SEEK_SET);
     } else {
         Mat_Critical("Couldn't determine file position");
     }
@@ -3103,7 +3099,7 @@ Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, const size_t *di
 
     fwrite(&matrix_type, 4, 1, (FILE *)mat->fp);
     fwrite(&pad4, 4, 1, (FILE *)mat->fp);
-    start = ftello((FILE *)mat->fp);
+    start = MatTell(mat);
 
     /* Array Flags */
     array_flags = MAT_C_DOUBLE;
@@ -3155,12 +3151,12 @@ Mat_WriteEmptyVariable5(mat_t *mat, const char *name, int rank, const size_t *di
         for ( i = nBytes % 8; i < 8; i++ )
             byteswritten += fwrite(&pad1, 1, 1, (FILE *)mat->fp);
 
-    end = ftello((FILE *)mat->fp);
+    end = MatTell(mat);
     if ( start != -1L && end != -1L ) {
         nBytes = (int)(end - start);
-        (void)fseeko((FILE *)mat->fp, (mat_off_t) - (nBytes + 4), SEEK_CUR);
+        (void)MatSeek(mat, (mat_off_t) - (nBytes + 4), SEEK_CUR);
         fwrite(&nBytes, 4, 1, (FILE *)mat->fp);
-        (void)fseeko((FILE *)mat->fp, end, SEEK_SET);
+        (void)MatSeek(mat, end, SEEK_SET);
     } else {
         Mat_Critical("Couldn't determine file position");
     }
@@ -3334,7 +3330,7 @@ Mat_VarReadNumeric5(mat_t *mat, matvar_t *matvar, void *data, size_t N)
         }
 #endif
     } else {
-        err = Read(tag, 4, 1, (FILE *)mat->fp, NULL);
+        err = Read(tag, 4, 1, mat, NULL);
         if ( err ) {
             return err;
         }
@@ -3346,7 +3342,7 @@ Mat_VarReadNumeric5(mat_t *mat, matvar_t *matvar, void *data, size_t N)
             nBytes = (tag[0] & 0xffff0000) >> 16;
         } else {
             data_in_tag = 0;
-            err = Read(tag + 1, 4, 1, (FILE *)mat->fp, NULL);
+            err = Read(tag + 1, 4, 1, mat, NULL);
             if ( err ) {
                 return err;
             }
@@ -3414,7 +3410,7 @@ Mat_VarReadNumeric5(mat_t *mat, matvar_t *matvar, void *data, size_t N)
         if ( data_in_tag )
             nBytes += 4;
         if ( (nBytes % 8) != 0 )
-            (void)fseeko((FILE *)mat->fp, 8 - (nBytes % 8), SEEK_CUR);
+            (void)MatSeek(mat, 8 - (nBytes % 8), SEEK_CUR);
 #if HAVE_ZLIB
     } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
         switch ( matvar->class_type ) {
@@ -3569,7 +3565,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
         return MATIO_E_NO_ERROR;
     }
 #endif
-    fpos = ftello((FILE *)mat->fp);
+    fpos = MatTell(mat);
     if ( fpos == -1L ) {
         Mat_Critical("Couldn't determine file position");
         return MATIO_E_GENERIC_READ_ERROR;
@@ -3592,61 +3588,61 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             matvar->dims = (size_t *)calloc(matvar->rank, sizeof(*(matvar->dims)));
             break;
         case MAT_C_DOUBLE:
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(double);
             matvar->data_type = MAT_T_DOUBLE;
             break;
         case MAT_C_SINGLE:
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(float);
             matvar->data_type = MAT_T_SINGLE;
             break;
         case MAT_C_INT64:
 #ifdef HAVE_MAT_INT64_T
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(mat_int64_t);
             matvar->data_type = MAT_T_INT64;
 #endif
             break;
         case MAT_C_UINT64:
 #ifdef HAVE_MAT_UINT64_T
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(mat_uint64_t);
             matvar->data_type = MAT_T_UINT64;
 #endif
             break;
         case MAT_C_INT32:
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(mat_int32_t);
             matvar->data_type = MAT_T_INT32;
             break;
         case MAT_C_UINT32:
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(mat_uint32_t);
             matvar->data_type = MAT_T_UINT32;
             break;
         case MAT_C_INT16:
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(mat_int16_t);
             matvar->data_type = MAT_T_INT16;
             break;
         case MAT_C_UINT16:
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(mat_uint16_t);
             matvar->data_type = MAT_T_UINT16;
             break;
         case MAT_C_INT8:
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(mat_int8_t);
             matvar->data_type = MAT_T_INT8;
             break;
         case MAT_C_UINT8:
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             matvar->data_size = sizeof(mat_uint8_t);
             matvar->data_type = MAT_T_UINT8;
             break;
         case MAT_C_CHAR:
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if HAVE_ZLIB
                 if ( matvar->internal->z == NULL ) {
@@ -3679,7 +3675,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 matvar->data_type = packed_type;
                 matvar->data_size = Mat_SizeOf(matvar->data_type);
             } else {
-                err = Read(tag, 4, 1, (FILE *)mat->fp, &bytesread);
+                err = Read(tag, 4, 1, mat, &bytesread);
                 if ( err ) {
                     break;
                 }
@@ -3691,7 +3687,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     matvar->nbytes = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    err = Read(tag + 1, 4, 1, (FILE *)mat->fp, &bytesread);
+                    err = Read(tag + 1, 4, 1, mat, &bytesread);
                     if ( err ) {
                         break;
                     }
@@ -3750,7 +3746,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 if ( data_in_tag )
                     nBytes += 4;
                 if ( (nBytes % 8) != 0 )
-                    (void)fseeko((FILE *)mat->fp, 8 - (nBytes % 8), SEEK_CUR);
+                    (void)MatSeek(mat, 8 - (nBytes % 8), SEEK_CUR);
 #if HAVE_ZLIB
             } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
                 size_t nBytes;
@@ -3859,7 +3855,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
             }
             sparse = (mat_sparse_t *)matvar->data;
             sparse->nzmax = matvar->nbytes;
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
             /*  Read ir    */
             err = ReadSparse(mat, matvar, &sparse->nir, &sparse->ir);
             if ( err ) {
@@ -3901,7 +3897,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                 }
 #endif
             } else {
-                err = Read(tag, 4, 1, (FILE *)mat->fp, &bytesread);
+                err = Read(tag, 4, 1, mat, &bytesread);
                 if ( err ) {
                     free(sparse->jc);
                     free(sparse->ir);
@@ -3917,7 +3913,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     N = (tag[0] & 0xffff0000) >> 16;
                 } else {
                     data_in_tag = 0;
-                    err = Read(&N, 4, 1, (FILE *)mat->fp, &bytesread);
+                    err = Read(&N, 4, 1, mat, &bytesread);
                     if ( err ) {
                         free(sparse->jc);
                         free(sparse->ir);
@@ -4029,9 +4025,9 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     if ( data_in_tag )
                         nBytes += 4;
                     if ( (nBytes % 8) != 0 )
-                        (void)fseeko((FILE *)mat->fp, 8 - (nBytes % 8), SEEK_CUR);
+                        (void)MatSeek(mat, 8 - (nBytes % 8), SEEK_CUR);
                     /* Complex Data Tag */
-                    err = Read(tag, 4, 1, (FILE *)mat->fp, &bytesread);
+                    err = Read(tag, 4, 1, mat, &bytesread);
                     if ( err ) {
                         ComplexFree(complex_data);
                         break;
@@ -4043,7 +4039,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                         data_in_tag = 1;
                     } else {
                         data_in_tag = 0;
-                        err = Read(tag + 1, 4, 1, (FILE *)mat->fp, &bytesread);
+                        err = Read(tag + 1, 4, 1, mat, &bytesread);
                         if ( err ) {
                             ComplexFree(complex_data);
                             break;
@@ -4117,7 +4113,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     if ( data_in_tag )
                         nBytes += 4;
                     if ( (nBytes % 8) != 0 )
-                        (void)fseeko((FILE *)mat->fp, 8 - (nBytes % 8), SEEK_CUR);
+                        (void)MatSeek(mat, 8 - (nBytes % 8), SEEK_CUR);
 #if HAVE_ZLIB
                 } else if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
 #if defined(EXTENDED_SPARSE)
@@ -4393,7 +4389,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
                     if ( data_in_tag )
                         nBytes += 4;
                     if ( (nBytes % 8) != 0 )
-                        (void)fseeko((FILE *)mat->fp, 8 - (nBytes % 8), SEEK_CUR);
+                        (void)MatSeek(mat, 8 - (nBytes % 8), SEEK_CUR);
 #if HAVE_ZLIB
                 } else if ( matvar->compression == MAT_COMPRESSION_ZLIB && nBytes > 0 ) {
 #if defined(EXTENDED_SPARSE)
@@ -4593,7 +4589,7 @@ Mat_VarRead5(mat_t *mat, matvar_t *matvar)
         default:
             break;
     }
-    (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+    (void)MatSeek(mat, fpos, SEEK_SET);
 
     return err;
 }
@@ -5085,9 +5081,9 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
     int z_copy = 0;
 #endif
 
-    (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+    (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-        err = Read(tag, 4, 2, (FILE *)mat->fp, NULL);
+        err = Read(tag, 4, 2, mat, NULL);
         if ( err ) {
             return err;
         }
@@ -5097,7 +5093,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
         }
         matvar->data_type = TYPE_FROM_TAG(tag[0]);
         if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-            (void)fseeko((FILE *)mat->fp, -4, SEEK_CUR);
+            (void)MatSeek(mat, -4, SEEK_CUR);
             real_bytes = 4 + (tag[0] >> 16);
         } else {
             real_bytes = 8 + tag[1];
@@ -5170,8 +5166,8 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
 
                 ReadDataSlab2(mat, complex_data->Re, matvar->class_type, matvar->data_type,
                               matvar->dims, start, stride, edge);
-                (void)fseeko((FILE *)mat->fp, matvar->internal->datapos + real_bytes, SEEK_SET);
-                err = Read(tag, 4, 2, (FILE *)mat->fp, NULL);
+                (void)MatSeek(mat, matvar->internal->datapos + real_bytes, SEEK_SET);
+                err = Read(tag, 4, 2, mat, NULL);
                 if ( err ) {
                     return err;
                 }
@@ -5181,7 +5177,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                 }
                 matvar->data_type = TYPE_FROM_TAG(tag[0]);
                 if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-                    (void)fseeko((FILE *)mat->fp, -4, SEEK_CUR);
+                    (void)MatSeek(mat, -4, SEEK_CUR);
                 }
                 ReadDataSlab2(mat, complex_data->Im, matvar->class_type, matvar->data_type,
                               matvar->dims, start, stride, edge);
@@ -5198,7 +5194,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                 ReadCompressedDataSlab2(mat, &z, complex_data->Re, matvar->class_type,
                                         matvar->data_type, matvar->dims, start, stride, edge);
 
-                (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+                (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
 
                 /* Reset zlib knowledge to before reading real tag */
                 inflateEnd(&z);
@@ -5241,8 +5237,8 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                 ReadDataSlabN(mat, complex_data->Re, matvar->class_type, matvar->data_type,
                               matvar->rank, matvar->dims, start, stride, edge);
 
-                (void)fseeko((FILE *)mat->fp, matvar->internal->datapos + real_bytes, SEEK_SET);
-                err = Read(tag, 4, 2, (FILE *)mat->fp, NULL);
+                (void)MatSeek(mat, matvar->internal->datapos + real_bytes, SEEK_SET);
+                err = Read(tag, 4, 2, mat, NULL);
                 if ( err ) {
                     return err;
                 }
@@ -5252,7 +5248,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                 }
                 matvar->data_type = TYPE_FROM_TAG(tag[0]);
                 if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-                    (void)fseeko((FILE *)mat->fp, -4, SEEK_CUR);
+                    (void)MatSeek(mat, -4, SEEK_CUR);
                 }
                 ReadDataSlabN(mat, complex_data->Im, matvar->class_type, matvar->data_type,
                               matvar->rank, matvar->dims, start, stride, edge);
@@ -5270,7 +5266,7 @@ Mat_VarReadData5(mat_t *mat, matvar_t *matvar, void *data, const int *start, con
                                         matvar->data_type, matvar->rank, matvar->dims, start,
                                         stride, edge);
 
-                (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+                (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
                 /* Reset zlib knowledge to before reading real tag */
                 inflateEnd(&z);
                 err = inflateCopy(&z, matvar->internal->z);
@@ -5353,9 +5349,9 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
     if ( (size_t)stride * (edge - 1) + start + 1 > nelems )
         return MATIO_E_BAD_ARGUMENT;
 
-    (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+    (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
     if ( matvar->compression == MAT_COMPRESSION_NONE ) {
-        err = Read(tag, 4, 2, (FILE *)mat->fp, NULL);
+        err = Read(tag, 4, 2, mat, NULL);
         if ( err ) {
             return err;
         }
@@ -5365,7 +5361,7 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
         }
         matvar->data_type = (enum matio_types)(tag[0] & 0x000000ff);
         if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-            (void)fseeko((FILE *)mat->fp, -4, SEEK_CUR);
+            (void)MatSeek(mat, -4, SEEK_CUR);
             real_bytes = 4 + (tag[0] >> 16);
         } else {
             real_bytes = 8 + tag[1];
@@ -5432,8 +5428,8 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
 
             ReadDataSlab1(mat, complex_data->Re, matvar->class_type, matvar->data_type, start,
                           stride, edge);
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos + real_bytes, SEEK_SET);
-            err = Read(tag, 4, 2, (FILE *)mat->fp, NULL);
+            (void)MatSeek(mat, matvar->internal->datapos + real_bytes, SEEK_SET);
+            err = Read(tag, 4, 2, mat, NULL);
             if ( err ) {
                 return err;
             }
@@ -5443,7 +5439,7 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
             }
             matvar->data_type = (enum matio_types)(tag[0] & 0x000000ff);
             if ( tag[0] & 0xffff0000 ) { /* Data is packed in the tag */
-                (void)fseeko((FILE *)mat->fp, -4, SEEK_CUR);
+                (void)MatSeek(mat, -4, SEEK_CUR);
             }
             ReadDataSlab1(mat, complex_data->Im, matvar->class_type, matvar->data_type, start,
                           stride, edge);
@@ -5458,7 +5454,7 @@ Mat_VarReadDataLinear5(mat_t *mat, matvar_t *matvar, void *data, int start, int 
             ReadCompressedDataSlab1(mat, &z, complex_data->Re, matvar->class_type,
                                     matvar->data_type, start, stride, edge);
 
-            (void)fseeko((FILE *)mat->fp, matvar->internal->datapos, SEEK_SET);
+            (void)MatSeek(mat, matvar->internal->datapos, SEEK_SET);
 
             /* Reset zlib knowledge to before reading real tag */
             inflateEnd(&z);
@@ -5535,7 +5531,7 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
         matvar->class_type = MAT_C_EMPTY;
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
-    (void)fseeko((FILE *)mat->fp, 0, SEEK_END); /* Always write at end of file */
+    (void)MatSeek(mat, 0, SEEK_END); /* Always write at end of file */
 
 #if HAVE_ZLIB
     if ( compress == MAT_COMPRESSION_NONE ) {
@@ -5545,7 +5541,7 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
         int i;
         fwrite(&matrix_type, 4, 1, (FILE *)mat->fp);
         fwrite(&pad4, 4, 1, (FILE *)mat->fp);
-        start = ftello((FILE *)mat->fp);
+        start = MatTell(mat);
 
         /* Array Flags */
         array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -5600,7 +5596,7 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
         }
 
         if ( NULL != matvar->internal ) {
-            matvar->internal->datapos = ftello((FILE *)mat->fp);
+            matvar->internal->datapos = MatTell(mat);
             if ( matvar->internal->datapos == -1L ) {
                 Mat_Critical("Couldn't determine file position");
                 return MATIO_E_GENERIC_READ_ERROR;
@@ -5635,7 +5631,7 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
         matrix_type = MAT_T_COMPRESSED;
         fwrite(&matrix_type, 4, 1, (FILE *)mat->fp);
         fwrite(&pad4, 4, 1, (FILE *)mat->fp);
-        start = ftello((FILE *)mat->fp);
+        start = MatTell(mat);
 
         /* Array Flags */
         array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -5750,7 +5746,7 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
             }
         }
         if ( NULL != matvar->internal ) {
-            matvar->internal->datapos = ftello((FILE *)mat->fp);
+            matvar->internal->datapos = MatTell(mat);
             if ( matvar->internal->datapos == -1L ) {
                 free(z);
                 Mat_Critical("Couldn't determine file position");
@@ -5773,12 +5769,12 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
         free(z);
 #endif
     }
-    end = ftello((FILE *)mat->fp);
+    end = MatTell(mat);
     if ( start != -1L && end != -1L ) {
         const mat_uint32_t _nBytes = (mat_uint32_t)(end - start);
-        (void)fseeko((FILE *)mat->fp, start - 4, SEEK_SET);
+        (void)MatSeek(mat, start - 4, SEEK_SET);
         fwrite(&_nBytes, 4, 1, (FILE *)mat->fp);
-        (void)fseeko((FILE *)mat->fp, end, SEEK_SET);
+        (void)MatSeek(mat, end, SEEK_SET);
     } else {
         Mat_Critical("Couldn't determine file position");
     }
@@ -5800,7 +5796,7 @@ ReadTaggedString(mat_t *mat, char **str, const mat_uint32_t *pre_buf)
         tag[0] = pre_buf[0];
         tag[1] = pre_buf[1];
     } else {
-        err = Read(tag, 4, 2, (FILE *)mat->fp, NULL);
+        err = Read(tag, 4, 2, mat, NULL);
         if ( err )
             return err;
         if ( mat->byteswap ) {
@@ -5822,7 +5818,7 @@ ReadTaggedString(mat_t *mat, char **str, const mat_uint32_t *pre_buf)
         *str = (char *)malloc(len_pad + 1);
         if ( *str == NULL )
             return MATIO_E_OUT_OF_MEMORY;
-        err = Read(*str, 1, len_pad, (FILE *)mat->fp, NULL);
+        err = Read(*str, 1, len_pad, mat, NULL);
         if ( err ) {
             free(*str);
             *str = NULL;
@@ -5937,7 +5933,7 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
     /* Object metadata: miUINT32 array
      * Contains: reference_value (0xDD000000), ndims, dim1, dim2, ..., obj_id(s), class_id
      */
-    err = Read(tag, 4, 2, (FILE *)mat->fp, NULL);
+    err = Read(tag, 4, 2, mat, NULL);
     if ( err )
         return err;
     if ( mat->byteswap ) {
@@ -5965,7 +5961,7 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
             enum matio_classes inner_class;
 
             /* Array flags: 16 bytes (tag + data) */
-            err = Read(inner, 4, 4, (FILE *)mat->fp, NULL);
+            err = Read(inner, 4, 4, mat, NULL);
             if ( err )
                 return err;
 
@@ -5974,7 +5970,7 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
             inner_class = CLASS_FROM_ARRAY_FLAGS(inner[2]);
 
             /* Rank/dims tag */
-            err = Read(inner_dims_tag, 4, 2, (FILE *)mat->fp, NULL);
+            err = Read(inner_dims_tag, 4, 2, mat, NULL);
             if ( err )
                 return err;
             if ( mat->byteswap ) {
@@ -5993,7 +5989,7 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                     mat_uint32_t *dims_buf = (mat_uint32_t *)malloc(ndims_pad);
                     if ( dims_buf == NULL )
                         return MATIO_E_OUT_OF_MEMORY;
-                    err = Read(dims_buf, 1, ndims_pad, (FILE *)mat->fp, NULL);
+                    err = Read(dims_buf, 1, ndims_pad, mat, NULL);
                     if ( err ) {
                         free(dims_buf);
                         return err;
@@ -6015,7 +6011,7 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                 /* Skip inner matrix name (empty) */
                 {
                     mat_uint32_t name_tag2[2];
-                    err = Read(name_tag2, 4, 2, (FILE *)mat->fp, NULL);
+                    err = Read(name_tag2, 4, 2, mat, NULL);
                     if ( err )
                         return err;
                     if ( mat->byteswap )
@@ -6030,7 +6026,7 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                             mat_uint32_t name_pad =
                                 (name_len % 8 == 0) ? name_len : name_len + 8 - (name_len % 8);
                             if ( name_pad > 0 )
-                                (void)fseeko((FILE *)mat->fp, (mat_off_t)name_pad, SEEK_CUR);
+                                (void)MatSeek(mat, (mat_off_t)name_pad, SEEK_CUR);
                         }
                     }
                 }
@@ -6047,12 +6043,12 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
 
             /* Non-struct inner matrix: skip dims and name, read UINT32 data tag */
             if ( ndims_pad > 0 )
-                (void)fseeko((FILE *)mat->fp, (mat_off_t)ndims_pad, SEEK_CUR);
+                (void)MatSeek(mat, (mat_off_t)ndims_pad, SEEK_CUR);
 
             /* Name tag: skip name */
             {
                 mat_uint32_t data_tag[2];
-                err = Read(data_tag, 4, 2, (FILE *)mat->fp, NULL);
+                err = Read(data_tag, 4, 2, mat, NULL);
                 if ( err )
                     return err;
                 if ( mat->byteswap )
@@ -6066,11 +6062,11 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
                         name_len = data_tag[1];
                     name_pad = (name_len % 8 == 0) ? name_len : name_len + 8 - (name_len % 8);
                     if ( name_pad > 0 )
-                        (void)fseeko((FILE *)mat->fp, (mat_off_t)name_pad, SEEK_CUR);
+                        (void)MatSeek(mat, (mat_off_t)name_pad, SEEK_CUR);
                 }
 
                 /* Data tag: should be our UINT32 data */
-                err = Read(data_tag, 4, 2, (FILE *)mat->fp, NULL);
+                err = Read(data_tag, 4, 2, mat, NULL);
                 if ( err )
                     return err;
                 if ( mat->byteswap ) {
@@ -6095,7 +6091,7 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
             if ( !is_small && meta_nbytes > 0 ) {
                 meta_pad =
                     (meta_nbytes % 8 == 0) ? meta_nbytes : meta_nbytes + 8 - (meta_nbytes % 8);
-                (void)fseeko((FILE *)mat->fp, (mat_off_t)meta_pad, SEEK_CUR);
+                (void)MatSeek(mat, (mat_off_t)meta_pad, SEEK_CUR);
             }
             return MATIO_E_NO_ERROR;
         }
@@ -6117,7 +6113,7 @@ ReadOpaqueInfo5(mat_t *mat, matvar_t *matvar, const mat_uint32_t *name_tag)
             meta = (mat_uint32_t *)malloc(meta_pad);
             if ( meta == NULL )
                 return MATIO_E_OUT_OF_MEMORY;
-            err = Read(meta, 1, meta_pad, (FILE *)mat->fp, NULL);
+            err = Read(meta, 1, meta_pad, mat, NULL);
             if ( err ) {
                 free(meta);
                 return err;
@@ -6451,7 +6447,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
     if ( mat == NULL || mat->fp == NULL )
         return NULL;
 
-    if ( IsEndOfFile((FILE *)mat->fp, &fpos) )
+    if ( IsEndOfFile(mat, &fpos) )
         return NULL;
 
     if ( fpos == -1L )
@@ -6459,11 +6455,11 @@ Mat_VarReadNextInfo5(mat_t *mat)
 
     {
         size_t nbytes = 0;
-        err = Read(&data_type, sizeof(mat_uint32_t), 1, (FILE *)mat->fp, &nbytes);
+        err = Read(&data_type, sizeof(mat_uint32_t), 1, mat, &nbytes);
         if ( err || 0 == nbytes )
             return NULL;
     }
-    err = Read(&nBytes, sizeof(mat_uint32_t), 1, (FILE *)mat->fp, NULL);
+    err = Read(&nBytes, sizeof(mat_uint32_t), 1, mat, NULL);
     if ( err )
         return NULL;
     if ( mat->byteswap ) {
@@ -6507,7 +6503,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                 (void)Mat_uint32Swap(uncomp_buf + 1);
             }
             if ( uncomp_buf[0] != MAT_T_MATRIX ) {
-                (void)fseeko((FILE *)mat->fp, (mat_off_t)(nBytes - bytesread), SEEK_CUR);
+                (void)MatSeek(mat, (mat_off_t)(nBytes - bytesread), SEEK_CUR);
                 Mat_VarFree(matvar);
                 matvar = NULL;
                 Mat_Critical("Uncompressed type not MAT_T_MATRIX");
@@ -6576,7 +6572,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                         if ( do_clean ) {
                             free(dims);
                         }
-                        (void)fseeko((FILE *)mat->fp, (mat_off_t)(nBytes - bytesread), SEEK_CUR);
+                        (void)MatSeek(mat, (mat_off_t)(nBytes - bytesread), SEEK_CUR);
                         Mat_VarFree(matvar);
                         matvar = NULL;
                         Mat_Critical("Integer multiplication overflow");
@@ -6586,7 +6582,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     if ( NULL == matvar->dims ) {
                         if ( do_clean )
                             free(dims);
-                        (void)fseeko((FILE *)mat->fp, (mat_off_t)(nBytes - bytesread), SEEK_CUR);
+                        (void)MatSeek(mat, (mat_off_t)(nBytes - bytesread), SEEK_CUR);
                         Mat_VarFree(matvar);
                         matvar = NULL;
                         Mat_Critical("Couldn't allocate memory");
@@ -6658,8 +6654,8 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     (void)ReadNextStructField(mat, matvar);
                 else if ( matvar->class_type == MAT_C_CELL )
                     (void)ReadNextCell(mat, matvar);
-                (void)fseeko((FILE *)mat->fp, -(mat_off_t)matvar->internal->z->avail_in, SEEK_CUR);
-                matvar->internal->datapos = ftello((FILE *)mat->fp);
+                (void)MatSeek(mat, -(mat_off_t)matvar->internal->z->avail_in, SEEK_CUR);
+                matvar->internal->datapos = MatTell(mat);
                 if ( matvar->internal->datapos == -1L ) {
                     Mat_Critical("Couldn't determine file position");
                 }
@@ -6671,20 +6667,20 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     matvar = NULL;
                     break;
                 }
-                (void)fseeko((FILE *)mat->fp, -(mat_off_t)matvar->internal->z->avail_in, SEEK_CUR);
-                matvar->internal->datapos = ftello((FILE *)mat->fp);
+                (void)MatSeek(mat, -(mat_off_t)matvar->internal->z->avail_in, SEEK_CUR);
+                matvar->internal->datapos = MatTell(mat);
                 if ( matvar->internal->datapos == -1L ) {
                     Mat_Critical("Couldn't determine file position");
                 }
             }
-            (void)fseeko((FILE *)mat->fp, nBytes + 8 + fpos, SEEK_SET);
+            (void)MatSeek(mat, nBytes + 8 + fpos, SEEK_SET);
             break;
 #else
             Mat_Critical(
                 "Compressed variable found in \"%s\", but matio was "
                 "built without zlib support",
                 mat->filename);
-            (void)fseeko((FILE *)mat->fp, nBytes + 8 + fpos, SEEK_SET);
+            (void)MatSeek(mat, nBytes + 8 + fpos, SEEK_SET);
             return NULL;
 #endif
         }
@@ -6692,9 +6688,9 @@ Mat_VarReadNextInfo5(mat_t *mat)
             mat_uint32_t buf[6];
 
             /* Read array flags and the dimensions tag */
-            err = Read(buf, 4, 6, (FILE *)mat->fp, NULL);
+            err = Read(buf, 4, 6, mat, NULL);
             if ( err ) {
-                (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+                (void)MatSeek(mat, fpos, SEEK_SET);
                 break;
             }
             if ( mat->byteswap ) {
@@ -6736,10 +6732,10 @@ Mat_VarReadNextInfo5(mat_t *mat)
                 if ( err ) {
                     Mat_VarFree(matvar);
                     matvar = NULL;
-                    (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+                    (void)MatSeek(mat, fpos, SEEK_SET);
                     break;
                 }
-                matvar->internal->datapos = ftello((FILE *)mat->fp);
+                matvar->internal->datapos = MatTell(mat);
                 if ( matvar->internal->datapos == -1L ) {
                     Mat_Critical("Couldn't determine file position");
                 }
@@ -6751,16 +6747,16 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     if ( err ) {
                         Mat_VarFree(matvar);
                         matvar = NULL;
-                        (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+                        (void)MatSeek(mat, fpos, SEEK_SET);
                         break;
                     }
                 }
                 /* Variable name tag */
-                err = Read(buf, 4, 2, (FILE *)mat->fp, NULL);
+                err = Read(buf, 4, 2, mat, NULL);
                 if ( err ) {
                     Mat_VarFree(matvar);
                     matvar = NULL;
-                    (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+                    (void)MatSeek(mat, fpos, SEEK_SET);
                     break;
                 }
                 if ( mat->byteswap )
@@ -6779,27 +6775,27 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     else {
                         Mat_VarFree(matvar);
                         matvar = NULL;
-                        (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+                        (void)MatSeek(mat, fpos, SEEK_SET);
                         break;
                     }
                     if ( len_pad > MAX_READ_SIZE_WITHOUT_EOF_CHECK ) {
-                        err = CheckSeekFile((FILE *)mat->fp, (mat_off_t)len_pad);
+                        err = CheckSeekFile(mat, (mat_off_t)len_pad);
                         if ( err ) {
                             Mat_VarFree(matvar);
                             matvar = NULL;
-                            (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+                            (void)MatSeek(mat, fpos, SEEK_SET);
                             break;
                         }
                     }
                     matvar->name = (char *)malloc(len_pad + 1);
                     if ( NULL != matvar->name ) {
-                        err = Read(matvar->name, 1, len_pad, (FILE *)mat->fp, NULL);
+                        err = Read(matvar->name, 1, len_pad, mat, NULL);
                         if ( !err ) {
                             matvar->name[len] = '\0';
                         } else {
                             Mat_VarFree(matvar);
                             matvar = NULL;
-                            (void)fseeko((FILE *)mat->fp, fpos, SEEK_SET);
+                            (void)MatSeek(mat, fpos, SEEK_SET);
                             break;
                         }
                     }
@@ -6820,12 +6816,12 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     (void)ReadNextCell(mat, matvar);
                 else if ( matvar->class_type == MAT_C_FUNCTION )
                     (void)ReadNextFunctionHandle(mat, matvar);
-                matvar->internal->datapos = ftello((FILE *)mat->fp);
+                matvar->internal->datapos = MatTell(mat);
                 if ( matvar->internal->datapos == -1L ) {
                     Mat_Critical("Couldn't determine file position");
                 }
             } /* end else (non-opaque) */
-            (void)fseeko((FILE *)mat->fp, nBytes + 8 + fpos, SEEK_SET);
+            (void)MatSeek(mat, nBytes + 8 + fpos, SEEK_SET);
             break;
         }
         default:
