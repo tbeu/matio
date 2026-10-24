@@ -617,26 +617,28 @@ size_t
 MatRead(const mat_t *mat, void *buf, size_t size, size_t count)
 {
     mat_memfile_t *mf = mat->memfile;
-    size_t total, avail, copied;
+    size_t total, avail;
 
-    if ( mf == NULL )
+    if ( mf == NULL ) {
+        if ( mat->fp == NULL )
+            return 0;
         return fread(buf, size, count, (FILE *)mat->fp);
+    }
 
     if ( size == 0 || count == 0 )
         return 0;
 
     avail = mf->pos < mf->size ? mf->size - mf->pos : 0;
-    total = size * count;
-    if ( count > (size_t)-1 / size || total > avail ) {
-        copied = avail;
+    /* Clamp to complete elements before multiplying to avoid overflow */
+    if ( count > avail / size ) {
+        count = avail / size;
         mf->eof = 1;
-    } else {
-        copied = total;
     }
-    if ( copied > 0 )
-        memcpy(buf, mf->data + mf->pos, copied);
-    mf->pos += copied;
-    return copied / size;
+    total = size * count;
+    if ( total > 0 )
+        memcpy(buf, mf->data + mf->pos, total);
+    mf->pos += total;
+    return count;
 }
 
 /** @brief Seek within the MAT source (file or in-memory buffer)
@@ -652,8 +654,11 @@ MatSeek(const mat_t *mat, mat_off_t offset, int whence)
     mat_memfile_t *mf = mat->memfile;
     mat_off_t base, newpos;
 
-    if ( mf == NULL )
+    if ( mf == NULL ) {
+        if ( mat->fp == NULL )
+            return -1;
         return fseeko((FILE *)mat->fp, offset, whence);
+    }
 
     switch ( whence ) {
         case SEEK_SET:
@@ -684,8 +689,11 @@ MatSeek(const mat_t *mat, mat_off_t offset, int whence)
 mat_off_t
 MatTell(const mat_t *mat)
 {
-    if ( mat->memfile == NULL )
+    if ( mat->memfile == NULL ) {
+        if ( mat->fp == NULL )
+            return -1;
         return ftello((FILE *)mat->fp);
+    }
     return (mat_off_t)mat->memfile->pos;
 }
 
@@ -697,8 +705,11 @@ MatTell(const mat_t *mat)
 int
 MatEOF(const mat_t *mat)
 {
-    if ( mat->memfile == NULL )
+    if ( mat->memfile == NULL ) {
+        if ( mat->fp == NULL )
+            return 1;
         return feof((FILE *)mat->fp);
+    }
     return mat->memfile->eof;
 }
 

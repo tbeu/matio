@@ -78,9 +78,14 @@ jobs:
           fi
           make check
       - name: Analyse coverage
-        if: matrix.toolchain == 'linux-gcc' && github.event_name != 'pull_request' && env.COVERALLS_REPO_TOKEN != ''
+        if: matrix.toolchain == 'linux-gcc' && github.event_name != 'pull_request'
         env:
           COVERALLS_SERVICE_NAME: ${{ secrets.COVERALLS_SERVICE }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         run: |
+          # secrets are not available in step-level if:, so gate on the token here
+          if [ -z "${COVERALLS_REPO_TOKEN}" ]; then
+            echo "COVERALLS_TOKEN not set, skipping coverage upload"
+            exit 0
+          fi
           coveralls -e coverity_model.c -e getopt -e test/datasets -e test/matlab -e test/results -e ossfuzz -e share -e hdf5 -e visual_studio -e snprintf --gcov-options '\-lp'
