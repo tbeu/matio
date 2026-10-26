@@ -206,9 +206,10 @@ snprint_mcos_string_row(const matvar_t *any, int row, char *buf, size_t bufsz)
     if ( (size_t)row >= nstrs )
         return 0;
 
-    header_len = 4 + nstrs;
-    if ( header_len >= n )
+    /* n > 4 here, so this cannot wrap like 4 + nstrs can */
+    if ( nstrs >= n - 4 )
         return 0;
+    header_len = 4 + nstrs;
 
     /* Compute char offset for this row */
     char_offset = 0;
