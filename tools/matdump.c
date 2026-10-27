@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <limits.h>
 #if defined(_MSC_VER) || defined(__MINGW32__) || (defined(__BORLANDC__) && !defined(__clang__))
 #define SIZE_T_FMTSTR "Iu"
 #else
@@ -63,6 +64,21 @@ static int
 matvar_has_row(const matvar_t *matvar, int row)
 {
     return row >= 0 && (size_t)row < matvar_elem_count(matvar);
+}
+
+/* Narrow a (possibly file-supplied) double to int, mapping non-finite values
+ * to 0 and clamping to the int range. A direct cast of a NaN or out-of-range
+ * double to int is undefined behavior. */
+static int
+double_to_int(double v)
+{
+    if ( !isfinite(v) )
+        return 0;
+    if ( v >= (double)INT_MAX )
+        return INT_MAX;
+    if ( v <= (double)INT_MIN )
+        return INT_MIN;
+    return (int)v;
 }
 
 static const char *optstring = "df:hvo:HV";
@@ -291,11 +307,13 @@ snprint_datetime_ms(double ms, char *buf, size_t bufsz)
     double sec = ms / 1000.0;
     int days, year, month, day, is_leap, dim;
 
+    if ( !isfinite(sec) )
+        return mat_snprintf(buf, bufsz, "NaT");
+
     /* Convert seconds since Unix epoch to days, rounding toward zero */
-    if ( sec >= 0 )
-        days = (int)(sec / 86400.0);
-    else
-        days = (int)(sec / 86400.0) - 1;
+    days = double_to_int(sec / 86400.0);
+    if ( sec < 0 && days > INT_MIN )
+        days -= 1;
 
     /* Start from 1970-01-01 and advance by years */
     year = 1970;
@@ -390,12 +408,15 @@ snprint_duration_ms(double ms, char *buf, size_t bufsz)
     int hours, minutes, seconds;
     int neg = 0;
 
+    if ( !isfinite(total_sec) )
+        return mat_snprintf(buf, bufsz, "NaN");
+
     if ( total_sec < 0 ) {
         neg = 1;
         total_sec = -total_sec;
     }
 
-    hours = (int)(total_sec / 3600.0);
+    hours = double_to_int(total_sec / 3600.0);
     total_sec -= hours * 3600.0;
     minutes = (int)(total_sec / 60.0);
     total_sec -= minutes * 60.0;
@@ -595,10 +616,10 @@ print_human_table(const matvar_t *matvar)
 
     f = Mat_VarGetStructFieldByName(matvar, "nrows", 0);
     if ( f != NULL && f->class_type == MAT_C_DOUBLE && f->data != NULL )
-        nrows = (int)*(double *)f->data;
+        nrows = double_to_int(*(double *)f->data);
     f = Mat_VarGetStructFieldByName(matvar, "nvars", 0);
     if ( f != NULL && f->class_type == MAT_C_DOUBLE && f->data != NULL )
-        nvars = (int)*(double *)f->data;
+        nvars = double_to_int(*(double *)f->data);
 
     /* Print header */
     printf("\n  %s = %dx%d table\n\n", matvar->name ? matvar->name : "ans", nrows, nvars);
