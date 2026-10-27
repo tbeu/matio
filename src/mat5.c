@@ -2637,6 +2637,13 @@ WriteCompressedTypeArrayFlags(mat_t *mat, matvar_t *matvar, z_streamp z)
         return byteswritten;
     }
 
+    /* The rank/dimensions subelement is packed into the fixed-size
+     * uncomp_buf[512]: 6 header words followed by one word per dimension plus
+     * an optional padding word. Reject a rank that would not fit before it
+     * overflows the stack buffer. */
+    if ( matvar->rank < 0 || matvar->rank > 512 - 7 )
+        return byteswritten;
+
     memset(uncomp_buf, 0, sizeof(uncomp_buf));
     /* Array Flags */
     array_flags = matvar->class_type & CLASS_TYPE_MASK;
@@ -5663,6 +5670,14 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
             return err;
         }
         if ( matrix_max_buf_size > UINT32_MAX ) {
+            free(z);
+            return MATIO_E_INDEX_TOO_BIG;
+        }
+        /* The rank/dimensions subelement is packed into the fixed-size
+         * uncomp_buf[512]: 6 header words followed by one word per dimension
+         * plus an optional padding word. Reject a rank that would not fit
+         * before it overflows the stack buffer. */
+        if ( matvar->rank < 0 || matvar->rank > 512 - 7 ) {
             free(z);
             return MATIO_E_INDEX_TOO_BIG;
         }
