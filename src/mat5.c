@@ -71,7 +71,7 @@ static int Mat_VarReadNumeric5(mat_t *mat, matvar_t *matvar, void *data, size_t 
 #if HAVE_ZLIB
 static size_t WriteCompressedCharData(mat_t *mat, z_streamp z, void *data, size_t N,
                                       enum matio_types data_type);
-static size_t WriteCompressedData(mat_t *mat, z_streamp z, void *data, int N,
+static size_t WriteCompressedData(mat_t *mat, z_streamp z, void *data, size_t N,
                                   enum matio_types data_type);
 static size_t WriteCompressedTypeArrayFlags(mat_t *mat, matvar_t *matvar, z_streamp z);
 static size_t WriteCompressedType(mat_t *mat, matvar_t *matvar, z_streamp z);
@@ -1034,18 +1034,23 @@ WriteData(mat_t *mat, const void *data, size_t N, enum matio_types data_type)
 #if HAVE_ZLIB
 /* Compresses the data buffer and writes it to the file */
 static size_t
-WriteCompressedData(mat_t *mat, z_streamp z, void *data, int N, enum matio_types data_type)
+WriteCompressedData(mat_t *mat, z_streamp z, void *data, size_t N, enum matio_types data_type)
 {
-    int nBytes = 0, data_size, data_tag[2], byteswritten = 0;
+    size_t data_size, nbytes = 0, byteswritten = 0;
+    mat_uint32_t data_tag[2] = {0, 0};
     int buf_size = 1024;
+    int err;
     mat_uint8_t buf[1024] = {0}, pad[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
     if ( mat == NULL || mat->fp == NULL )
         return 0;
 
     data_size = Mat_SizeOf(data_type);
+    err = Mul(&nbytes, N, data_size);
+    if ( err )
+        return 0;
     data_tag[0] = data_type;
-    data_tag[1] = data_size * N;
+    data_tag[1] = (mat_uint32_t)nbytes;
     z->next_in = ZLIB_BYTE_PTR(data_tag);
     z->avail_in = 8;
     do {
@@ -1060,7 +1065,7 @@ WriteCompressedData(mat_t *mat, z_streamp z, void *data, int N, enum matio_types
         return byteswritten;
 
     z->next_in = (Bytef *)data;
-    z->avail_in = N * data_size;
+    z->avail_in = (uInt)nbytes;
     do {
         z->next_out = buf;
         z->avail_out = buf_size;
@@ -1068,9 +1073,9 @@ WriteCompressedData(mat_t *mat, z_streamp z, void *data, int N, enum matio_types
         byteswritten += fwrite(buf, 1, buf_size - z->avail_out, (FILE *)mat->fp);
     } while ( z->avail_out == 0 );
     /* Add/Compress padding to pad to 8-byte boundary */
-    if ( N * data_size % 8 ) {
+    if ( nbytes % 8 ) {
         z->next_in = pad;
-        z->avail_in = 8 - (N * data_size % 8);
+        z->avail_in = (uInt)(8 - (nbytes % 8));
         do {
             z->next_out = buf;
             z->avail_out = buf_size;
@@ -1078,8 +1083,7 @@ WriteCompressedData(mat_t *mat, z_streamp z, void *data, int N, enum matio_types
             byteswritten += fwrite(buf, 1, buf_size - z->avail_out, (FILE *)mat->fp);
         } while ( z->avail_out == 0 );
     }
-    nBytes = byteswritten;
-    return nBytes;
+    return byteswritten;
 }
 #endif
 
