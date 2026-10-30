@@ -1047,7 +1047,7 @@ WriteCompressedData(mat_t *mat, z_streamp z, void *data, size_t N, enum matio_ty
 
     data_size = Mat_SizeOf(data_type);
     err = Mul(&nbytes, N, data_size);
-    if ( err )
+    if ( err || nbytes > UINT32_MAX )
         return 0;
     data_tag[0] = data_type;
     data_tag[1] = (mat_uint32_t)nbytes;
