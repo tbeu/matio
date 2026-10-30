@@ -126,6 +126,17 @@ print_char_as_string(const matvar_t *matvar)
     }
 }
 
+/* Helper: snprintf one \uXXXX escape into buf, returns the length written or 0
+ * if the escape did not fit */
+static int
+snprint_u16_escape(char *buf, size_t bufsz, mat_uint16_t ch)
+{
+    int n = mat_snprintf(buf, bufsz, "\\u%04X", ch);
+    if ( n > 0 && (size_t)n < bufsz )
+        return n;
+    return 0;
+}
+
 /* Helper: snprintf a char field into buf, returns length written */
 static int
 snprint_char(char *buf, size_t bufsz, const matvar_t *matvar)
@@ -141,9 +152,10 @@ snprint_char(char *buf, size_t bufsz, const matvar_t *matvar)
             if ( u16[i] < 128 )
                 buf[pos++] = (char)u16[i];
             else {
-                int n = mat_snprintf(buf + pos, bufsz - pos, "\\u%04X", u16[i]);
-                if ( n > 0 )
-                    pos += n;
+                int n = snprint_u16_escape(buf + pos, bufsz - (size_t)pos, u16[i]);
+                if ( 0 == n )
+                    break;
+                pos += n;
             }
         }
     } else {
