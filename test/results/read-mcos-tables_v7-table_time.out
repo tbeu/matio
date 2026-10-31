@@ -14,7 +14,7 @@ Class Type: Cell Array
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[1] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 3 x 1
@@ -24,6 +24,20 @@ Class Type: Double Precision Array
 1.57784e+12 
 1.57792e+12 
 1.57801e+12 
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+}
+      Name: tz
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
 }
 }
       Rank: 2

@@ -3,7 +3,7 @@
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[2] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 1 x 1
@@ -19,5 +19,12 @@ Class Type: Character Array
  Data Type: Unicode UTF-8 Encoded Character Data
 {
 America/New_York
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
 }
 }

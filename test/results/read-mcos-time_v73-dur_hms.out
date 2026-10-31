@@ -3,7 +3,7 @@
 Dimensions: 1 x 1
 Class Type: Object [duration]
  Data Type: Structure
-Fields[1] {
+Fields[2] {
       Name: millis
       Rank: 2
 Dimensions: 1 x 1
@@ -11,5 +11,13 @@ Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
 {
 3.723e+06 
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+hh:mm:ss
 }
 }

@@ -6,7 +6,9 @@ obj_with_vals = TestClasses.BasicClass (3 fields)
     .a = 10
     .b: [0 mxDOUBLE_CLASS]
     .c: [0 mxDOUBLE_CLASS]
-obj_with_default_val = TestClasses.DefaultClass (0 fields)
+obj_with_default_val = TestClasses.DefaultClass (2 fields)
+    .a: [1 mxOBJECT_CLASS]
+    .b = 10
 obj_with_nested_props = TestClasses.BasicClass (3 fields)
     .a: [1 mxOBJECT_CLASS]
     .b: [1 mxCELL_CLASS]
