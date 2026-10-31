@@ -3,7 +3,7 @@
 Dimensions: 1 x 1
 Class Type: Object [categorical]
  Data Type: Structure
-Fields[2] {
+Fields[4] {
       Name: categoryNames
       Rank: 2
 Dimensions: 3 x 1
@@ -39,5 +39,21 @@ Class Type: 8-bit, unsigned integer array
  Data Type: 8-bit, unsigned integer
 {
 Can't print more than 2 dimensions
+}
+      Name: isProtected
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: isOrdinal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
 }
 }

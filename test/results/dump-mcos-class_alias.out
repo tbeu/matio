@@ -1,7 +1,7 @@
       Name: obj
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [FirstName]
+Class Type: Object [SecondName]
  Data Type: Structure
 Fields[1] {
       Name: a
@@ -15,7 +15,7 @@ Class Type: Double Precision Array
       Name: obj1
       Rank: 2
 Dimensions: 1 x 1
-Class Type: Object [FirstName]
+Class Type: Object [SecondName]
  Data Type: Structure
 Fields[1] {
       Name: a

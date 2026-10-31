@@ -585,7 +585,7 @@ ParseLinkingMetadata(const mat_uint8_t *data, size_t len, mcos_subsystem_t *ss, 
 static int
 ParseClassAliases(const matvar_t *alias_cell, mcos_subsystem_t *ss)
 {
-    size_t naliases = 0;
+    size_t naliases = 1;
     size_t i;
 
     if ( alias_cell == NULL || ss == NULL || ss->num_classes == 0 || alias_cell->data == NULL )
@@ -637,7 +637,7 @@ static matvar_t *
 GetDefaultPropsForClass(const mcos_subsystem_t *ss, mat_uint32_t class_id)
 {
     matvar_t **default_cells = NULL;
-    size_t ndefaults = 0;
+    size_t ndefaults = 1;
 
     if ( ss == NULL || ss->defaults == NULL || ss->defaults->class_type != MAT_C_CELL )
         return NULL;
