@@ -478,3 +478,10 @@ AT_CHECK([cp $srcdir/results/read-issue321.out expout
 AT_CHECK([cp $srcdir/results/dump-issue321.out expout
          $builddir/../tools/matdump -d $srcdir/datasets/issue321_v73_nofields.mat s],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Read struct with MATLAB_fields reference])
+AT_KEYWORDS([structure])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-v73_fieldnames_reference.out expout
+         $builddir/test_mat readvar $srcdir/datasets/test_v73_fieldnames_reference.mat s],[0],[expout],[])
+AT_CLEANUP

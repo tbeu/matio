@@ -114,6 +114,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/test_type_systems_v73.mat \
                  $(datasets_dir)/test_user_defined_v7.mat \
                  $(datasets_dir)/test_user_defined_v73.mat \
+                 $(datasets_dir)/test_v73_fieldnames_reference.mat \
                  $(datasets_dir)/issue321_v73_nofields.mat \
                  $(datasets_dir)/issue365.mat \
                  $(matlab_dir)/test_write_1d_logical.m \
@@ -231,6 +232,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-issue321.out \
                  $(results_dir)/read-packed_field_name.out \
                  $(results_dir)/read-nullpad_class_name.out \
+                 $(results_dir)/read-v73_fieldnames_reference.out \
                  $(results_dir)/readslab-var1.out \
                  $(results_dir)/readslab-var11.out \
                  $(results_dir)/readslab-var28.out \
