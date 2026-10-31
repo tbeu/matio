@@ -1,0 +1,53 @@
+      Name: struct_array
+      Rank: 2
+Dimensions: 1 x 2
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: d
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [duration]
+ Data Type: Structure
+Fields[2] {
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+s
+}
+      Name: millis
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1000 
+}
+}
+      Name: d
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [duration]
+ Data Type: Structure
+Fields[2] {
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+s
+}
+      Name: millis
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2000 
+}
+}
+}

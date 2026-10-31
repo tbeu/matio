@@ -100,6 +100,22 @@ AT_CHECK([cp $srcdir/results/read-mcos-maps_v73-map_string_keys.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_maps_v73.mat map_string_keys],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS nested v73 nested_cell])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-nested_v73-nested_cell.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_mcos_nested_v73.mat nested_cell],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS nested v73 struct_array])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-nested_v73-struct_array.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_mcos_nested_v73.mat struct_array],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS scattered interpolant v73 F])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])
