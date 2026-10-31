@@ -3,7 +3,7 @@
 Dimensions: 1 x 1
 Class Type: Object [calendarDuration]
  Data Type: Structure
-Fields[1] {
+Fields[2] {
       Name: components
       Rank: 2
 Dimensions: 1 x 1
@@ -38,13 +38,21 @@ Class Type: Double Precision Array
 0 0 
 }
 }
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ymdt
+}
 }
       Name: cdur_days
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Object [calendarDuration]
  Data Type: Structure
-Fields[1] {
+Fields[2] {
       Name: components
       Rank: 2
 Dimensions: 1 x 1
@@ -76,13 +84,21 @@ Class Type: Double Precision Array
 0 
 }
 }
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ymdt
+}
 }
       Name: cdur_days_and_months
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Object [calendarDuration]
  Data Type: Structure
-Fields[1] {
+Fields[2] {
       Name: components
       Rank: 2
 Dimensions: 1 x 1
@@ -113,6 +129,14 @@ Class Type: Double Precision Array
 {
 0 
 }
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ymdt
 }
 }
       Name: cdur_days_and_qtrs
@@ -166,14 +190,50 @@ yqmdt
 Dimensions: 1 x 1
 Class Type: Object [calendarDuration]
  Data Type: Structure
-Fields[0] {
+Fields[2] {
+      Name: components
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[3] {
+      Name: months
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: days
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+      Name: millis
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+}
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ymdt
+}
 }
       Name: cdur_millis
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Object [calendarDuration]
  Data Type: Structure
-Fields[1] {
+Fields[2] {
       Name: components
       Rank: 2
 Dimensions: 1 x 1
@@ -205,13 +265,21 @@ Class Type: Double Precision Array
 3.723e+06 
 }
 }
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ymdt
+}
 }
       Name: cdur_months_and_years
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Object [calendarDuration]
  Data Type: Structure
-Fields[1] {
+Fields[2] {
       Name: components
       Rank: 2
 Dimensions: 1 x 1
@@ -242,6 +310,14 @@ Class Type: Double Precision Array
 {
 0 
 }
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ymdt
 }
 }
       Name: cdur_weeks
@@ -295,7 +371,7 @@ ymwdt
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[1] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 2 x 3
@@ -305,13 +381,27 @@ Class Type: Double Precision Array
 1.74347e+12 1.74364e+12 1.74381e+12 
 1.74355e+12 1.74372e+12 1.7439e+12 
 }
+      Name: fmt
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: tz
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
 }
       Name: dt_basic
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[1] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 1 x 1
@@ -320,18 +410,46 @@ Class Type: Double Precision Array
 {
 1.74351e+12 
 }
+      Name: fmt
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: tz
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
 }
       Name: dt_empty
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[1] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
+{
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: tz
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
 {
 }
 }
@@ -340,7 +458,7 @@ Class Type: Double Precision Array
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[2] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 1 x 1
@@ -357,13 +475,20 @@ Class Type: Character Array
 {
 yyyy-MM-dd HH:mm:ss
 }
+      Name: tz
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
 }
       Name: dt_tz
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[2] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 1 x 1
@@ -380,13 +505,20 @@ Class Type: Character Array
 {
 America/New_York
 }
+      Name: fmt
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
 }
       Name: dt_vector
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[1] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 1 x 6
@@ -394,6 +526,20 @@ Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
 {
 1.74347e+12 1.74355e+12 1.74364e+12 1.74372e+12 1.74381e+12 1.7439e+12 
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: tz
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
 }
 }
       Name: dur_array
@@ -448,13 +594,21 @@ d
 Dimensions: 1 x 1
 Class Type: Object [duration]
  Data Type: Structure
-Fields[1] {
+Fields[2] {
       Name: millis
       Rank: 2
 Dimensions: 0 x 0
 Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
 {
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+hh:mm:ss
 }
 }
       Name: dur_h
@@ -485,7 +639,7 @@ h
 Dimensions: 1 x 1
 Class Type: Object [duration]
  Data Type: Structure
-Fields[1] {
+Fields[2] {
       Name: millis
       Rank: 2
 Dimensions: 1 x 1
@@ -493,6 +647,14 @@ Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
 {
 3.723e+06 
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 8
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+hh:mm:ss
 }
 }
       Name: dur_m

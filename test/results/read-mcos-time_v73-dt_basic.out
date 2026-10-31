@@ -3,7 +3,7 @@
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[1] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 1 x 1
@@ -11,5 +11,19 @@ Class Type: Double Precision Array
  Data Type: IEEE 754 double-precision
 {
 1.74351e+12 
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: tz
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
 }
 }

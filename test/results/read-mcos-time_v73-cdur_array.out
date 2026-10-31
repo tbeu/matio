@@ -3,7 +3,7 @@
 Dimensions: 1 x 1
 Class Type: Object [calendarDuration]
  Data Type: Structure
-Fields[1] {
+Fields[2] {
       Name: components
       Rank: 2
 Dimensions: 1 x 1
@@ -37,5 +37,13 @@ Class Type: Double Precision Array
 0 0 
 0 0 
 }
+}
+      Name: fmt
+      Rank: 2
+Dimensions: 1 x 4
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+ymdt
 }
 }

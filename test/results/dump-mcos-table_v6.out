@@ -37,7 +37,7 @@ Class Type: 64-bit, unsigned integer array
 Dimensions: 1 x 1
 Class Type: Object [datetime]
  Data Type: Structure
-Fields[1] {
+Fields[3] {
       Name: data
       Rank: 2
 Dimensions: 3 x 1
@@ -48,12 +48,26 @@ Class Type: Double Precision Array
 1.48228e+12 
 1.48236e+12 
 }
+      Name: fmt
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
+      Name: tz
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+}
 }
       Rank: 2
 Dimensions: 1 x 1
 Class Type: Object [categorical]
  Data Type: Structure
-Fields[2] {
+Fields[4] {
       Name: categoryNames
       Rank: 2
 Dimensions: 3 x 1
@@ -91,6 +105,22 @@ Class Type: 8-bit, unsigned integer array
 2 
 3 
 1 
+}
+      Name: isProtected
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
+}
+      Name: isOrdinal
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: 8-bit, unsigned integer array (logical)
+ Data Type: 8-bit, unsigned integer
+{
+0 
 }
 }
       Rank: 2
