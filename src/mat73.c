@@ -1661,6 +1661,12 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
     }
     mat->ref_depth++;
 
+    if ( MAT_C_OPAQUE == matvar->class_type ) {
+        /* Read full variable data for opaque objects */
+        err = Mat_VarRead73(mat, matvar);
+        goto done_ref;
+    }
+
     /* If the datatype with references is a cell, we've already read info into
      * the variable data, so just loop over each cell element and call
      * Mat_H5ReadNextReferenceData on it.
