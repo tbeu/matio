@@ -1,0 +1,807 @@
+      Name: s
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[100] {
+      Name: measurement_channel_with_a_long_descriptive_name_001
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+1 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_002
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+2 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_003
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+3 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_004
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+4 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_005
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+5 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_006
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+6 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_007
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+7 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_008
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+8 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_009
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+9 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_010
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+10 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_011
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+11 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_012
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+12 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_013
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+13 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_014
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+14 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_015
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+15 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_016
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+16 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_017
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+17 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_018
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+18 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_019
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+19 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_020
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+20 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_021
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+21 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_022
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+22 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_023
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+23 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_024
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+24 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_025
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+25 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_026
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+26 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_027
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+27 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_028
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+28 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_029
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+29 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_030
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+30 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_031
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+31 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_032
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+32 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_033
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+33 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_034
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+34 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_035
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+35 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_036
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+36 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_037
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+37 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_038
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+38 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_039
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+39 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_040
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+40 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_041
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+41 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_042
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+42 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_043
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+43 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_044
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+44 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_045
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+45 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_046
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+46 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_047
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+47 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_048
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+48 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_049
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+49 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_050
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+50 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_051
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+51 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_052
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+52 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_053
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+53 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_054
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+54 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_055
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+55 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_056
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+56 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_057
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+57 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_058
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+58 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_059
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+59 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_060
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+60 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_061
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+61 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_062
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+62 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_063
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+63 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_064
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+64 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_065
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+65 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_066
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+66 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_067
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+67 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_068
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+68 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_069
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+69 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_070
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+70 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_071
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+71 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_072
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+72 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_073
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+73 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_074
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+74 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_075
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+75 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_076
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+76 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_077
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+77 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_078
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+78 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_079
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+79 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_080
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+80 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_081
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+81 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_082
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+82 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_083
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+83 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_084
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+84 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_085
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+85 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_086
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+86 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_087
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+87 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_088
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+88 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_089
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+89 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_090
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+90 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_091
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+91 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_092
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+92 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_093
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+93 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_094
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+94 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_095
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+95 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_096
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+96 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_097
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+97 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_098
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+98 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_099
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+99 
+}
+      Name: measurement_channel_with_a_long_descriptive_name_100
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+100 
+}
+}
