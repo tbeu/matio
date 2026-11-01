@@ -83,6 +83,8 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/test_class_alias.mat \
                  $(datasets_dir)/test_corrupted_mcos_object_metadata.mat \
                  $(datasets_dir)/test_corrupted_subsystem.mat \
+                 $(datasets_dir)/test_dynamic2_v7.mat \
+                 $(datasets_dir)/test_dynamic2_v73.mat \
                  $(datasets_dir)/test_dynamic_v7.mat \
                  $(datasets_dir)/test_dynamic_v73.mat \
                  $(datasets_dir)/test_enum_v7.mat \
@@ -480,6 +482,8 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-mcos-class_alias-obj.out \
                  $(results_dir)/read-mcos-class_alias-obj1.out \
                  $(results_dir)/read-mcos-issue365-p.out \
+                 $(results_dir)/read-mcos-dynamic2_v7-obj.out \
+                 $(results_dir)/read-mcos-dynamic2_v73-obj.out \
                  $(results_dir)/read-mcos-dynamic_v7-obj.out \
                  $(results_dir)/read-mcos-dynamic_v73-obj.out \
                  $(results_dir)/read-mcos-enum_v7-enum_array.out \

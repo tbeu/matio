@@ -1,0 +1,31 @@
+      Name: obj
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [TestClasses.BasicDynamic]
+ Data Type: Structure
+Fields[3] {
+      Name: Name
+      Rank: 2
+Dimensions: 1 x 7
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+Example
+}
+      Name: Second
+      Rank: 2
+Dimensions: 1 x 3
+Class Type: Character Array
+ Data Type: Unicode UTF-8 Encoded Character Data
+{
+two
+}
+      Name: DynamicData
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+42 
+}
+}

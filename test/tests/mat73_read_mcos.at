@@ -12,6 +12,14 @@ AT_CHECK([cp $srcdir/results/read-mcos-dynamic_v73-obj.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_dynamic_v73.mat obj],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS dynamic2 v73 obj])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-dynamic2_v73-obj.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_dynamic2_v73.mat obj],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS enum v73 enum_nested])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])
