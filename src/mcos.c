@@ -1780,6 +1780,14 @@ ResolveEncodedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
     if ( obj_start + total_objs >= n )
         return MATIO_E_NO_ERROR; /* Not enough data for object_ids + class_id */
 
+    /* A handle object can refer back to an object whose properties are still
+     * being resolved (e.g. child.Parent). Keep such a reference encoded. */
+    for ( r = 0; r < (int)total_objs; r++ ) {
+        mat_uint32_t obj_id = meta[obj_start + r];
+        if ( obj_id >= 1 && obj_id <= ss->num_objects && ss->object_info[obj_id - 1].resolving )
+            return MATIO_E_NO_ERROR;
+    }
+
     /* Set up internal MCOS metadata. A zero-element reference (e.g. 0 x 0
      * dims) needs no object id storage; malloc(0) may return NULL on some
      * platforms, so avoid allocating in that case. */
@@ -1900,8 +1908,18 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
 
         for ( i = 0; i < total; i++ ) {
             int err;
+            mcos_object_info_t *obj_info = NULL;
             if ( fields[i] == NULL )
                 continue;
+            /* Fields of object array element i / nfields belong to that object */
+            if ( matvar->class_type == MAT_C_OBJECT && matvar->internal->object_ids != NULL &&
+                 i / nfields < matvar->internal->num_objects ) {
+                mat_uint32_t obj_id = matvar->internal->object_ids[i / nfields];
+                if ( obj_id >= 1 && obj_id <= ss->num_objects )
+                    obj_info = &ss->object_info[obj_id - 1];
+            }
+            if ( obj_info != NULL )
+                obj_info->resolving++;
             if ( IsEnumStruct(fields[i]) ) {
                 err = ResolveEnumStruct(ss, fields[i], depth + 1);
             } else if ( IsMCOSEncoded(fields[i]) ) {
@@ -1909,6 +1927,8 @@ ResolveNestedMCOS(mcos_subsystem_t *ss, matvar_t *matvar, int depth)
             } else {
                 err = ResolveNestedMCOS(ss, fields[i], depth + 1);
             }
+            if ( obj_info != NULL )
+                obj_info->resolving--;
             if ( err )
                 return err;
         }

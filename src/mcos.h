@@ -33,6 +33,7 @@ typedef struct mcos_object_info
     mat_uint32_t saveobj_id;    /**< Index into saveobj (Region 2) properties, 0=unused */
     mat_uint32_t normalobj_id;  /**< Index into normal (Region 4) properties, 0=unused */
     mat_uint32_t dependency_id; /**< Object dependency chain ID */
+    int resolving;              /**< Nonzero while the properties of the object are resolved */
 } mcos_object_info_t;
 
 /** @brief MCOS object property entry
