@@ -39,7 +39,7 @@
  * The dynamic-property dependency graph is not bounded by this limit: it is
  * walked iteratively and every object is visited at most once.
  */
-#define MCOS_MAX_DEPTH 16
+#define MCOS_MAX_DEPTH 32
 
 /** @brief Parse MCOS opaque metadata from a uint32 array
  *
