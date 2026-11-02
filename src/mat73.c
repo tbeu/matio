@@ -1755,11 +1755,10 @@ Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat)
                 matvar->data = ComplexCalloc(matvar->nbytes);
             }
             if ( NULL != matvar->data ) {
-                hid_t mem_space_id = Mat_dims_to_space(matvar->rank, matvar->dims);
-                hid_t dset_space_id = H5Dget_space(matvar->internal->id);
-                err = Mat_H5ReadData(matvar->internal->id, data_type_id, mem_space_id,
-                                     dset_space_id, matvar->isComplex, matvar->data);
-                H5Sclose(dset_space_id);
+                hsize_t hnelems = (hsize_t)nelems;
+                hid_t mem_space_id = H5Screate_simple(1, &hnelems, NULL);
+                err = Mat_H5ReadData(matvar->internal->id, data_type_id, mem_space_id, H5S_ALL,
+                                     matvar->isComplex, matvar->data);
                 H5Sclose(mem_space_id);
                 if ( err ) {
                     if ( !matvar->isComplex ) {
@@ -3281,11 +3280,10 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 matvar->data = ComplexCalloc(matvar->nbytes);
             }
             if ( NULL != matvar->data ) {
-                hid_t mem_space_id = Mat_dims_to_space(matvar->rank, matvar->dims);
-                hid_t dset_space_id = H5Dget_space(dset_id);
+                hsize_t hnelems = (hsize_t)nelems;
+                hid_t mem_space_id = H5Screate_simple(1, &hnelems, NULL);
                 err = Mat_H5ReadData(dset_id, ClassType2H5T(matvar->class_type), mem_space_id,
-                                     dset_space_id, matvar->isComplex, matvar->data);
-                H5Sclose(dset_space_id);
+                                     H5S_ALL, matvar->isComplex, matvar->data);
                 H5Sclose(mem_space_id);
                 if ( err ) {
                     if ( !matvar->isComplex ) {
@@ -3327,11 +3325,10 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 }
                 matvar->data = malloc(matvar->nbytes);
                 if ( NULL != matvar->data ) {
-                    hid_t mem_space_id = Mat_dims_to_space(matvar->rank, matvar->dims);
-                    hid_t dset_space_id = H5Dget_space(dset_id);
+                    hsize_t hnelems = (hsize_t)nelems;
+                    hid_t mem_space_id = H5Screate_simple(1, &hnelems, NULL);
                     herr_t herr = H5Dread(dset_id, DataType2H5T(matvar->data_type), mem_space_id,
-                                          dset_space_id, H5P_DEFAULT, matvar->data);
-                    H5Sclose(dset_space_id);
+                                          H5S_ALL, H5P_DEFAULT, matvar->data);
                     H5Sclose(mem_space_id);
                     if ( herr < 0 ) {
                         free(matvar->data);

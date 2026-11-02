@@ -456,6 +456,13 @@ AT_CHECK([cp $srcdir/results/read-var69-73.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_compressed_hdf_le.mat var69],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read nonsquare complex gzip chunked array])
+AT_KEYWORDS([mat73_compressed_read nonsquare gzip chunked])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-var_nonsquare.out expout
+         $builddir/test_mat readvar $srcdir/datasets/nonsquare_complex_gzip_le.mat var_nonsquare],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read directory])
 AT_KEYWORDS([directory])
 AT_SKIP_IF([test $MAT73 -ne 1])
