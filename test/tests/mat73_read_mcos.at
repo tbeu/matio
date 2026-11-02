@@ -20,6 +20,14 @@ AT_CHECK([cp $srcdir/results/read-mcos-enum_v73-enum_nested.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_enum_v73.mat enum_nested],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS handle cycle v73 cyc])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-handle_cycle_v73-cyc.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_mcos_handle_cycle_v73.mat cyc],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS maps v73 dict_cell_keys])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])

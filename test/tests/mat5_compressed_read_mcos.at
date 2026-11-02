@@ -100,6 +100,14 @@ AT_CHECK([cp $srcdir/results/read-mcos-enum_v7-enum_nested.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_enum_v7.mat enum_nested],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS handle cycle v7 cyc])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-handle_cycle_v7-cyc.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_mcos_handle_cycle_v7.mat cyc],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS maps v7 map_empty])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])
