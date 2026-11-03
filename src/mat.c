@@ -2027,13 +2027,13 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
                     out_sparse->nir = in_sparse->nir;
                     out_sparse->ir =
                         (mat_uint32_t *)malloc(in_sparse->nir * sizeof(*out_sparse->ir));
-                    if ( out_sparse->ir != NULL )
+                    if ( out_sparse->ir != NULL && in_sparse->ir != NULL )
                         memcpy(out_sparse->ir, in_sparse->ir,
                                in_sparse->nir * sizeof(*out_sparse->ir));
                     out_sparse->njc = in_sparse->njc;
                     out_sparse->jc =
                         (mat_uint32_t *)malloc(in_sparse->njc * sizeof(*out_sparse->jc));
-                    if ( out_sparse->jc != NULL )
+                    if ( out_sparse->jc != NULL && in_sparse->jc != NULL )
                         memcpy(out_sparse->jc, in_sparse->jc,
                                in_sparse->njc * sizeof(*out_sparse->jc));
                     out_sparse->ndata = in_sparse->ndata;
@@ -2105,11 +2105,11 @@ Mat_VarDuplicate(const matvar_t *in, int opt)
             out_sparse->nzmax = in_sparse->nzmax;
             out_sparse->nir = in_sparse->nir;
             out_sparse->ir = (mat_uint32_t *)malloc(in_sparse->nir * sizeof(*out_sparse->ir));
-            if ( out_sparse->ir != NULL )
+            if ( out_sparse->ir != NULL && in_sparse->ir != NULL )
                 memcpy(out_sparse->ir, in_sparse->ir, in_sparse->nir * sizeof(*out_sparse->ir));
             out_sparse->njc = in_sparse->njc;
             out_sparse->jc = (mat_uint32_t *)malloc(in_sparse->njc * sizeof(*out_sparse->jc));
-            if ( out_sparse->jc != NULL )
+            if ( out_sparse->jc != NULL && in_sparse->jc != NULL )
                 memcpy(out_sparse->jc, in_sparse->jc, in_sparse->njc * sizeof(*out_sparse->jc));
             out_sparse->ndata = in_sparse->ndata;
             if ( out->isComplex && NULL != in_sparse->data ) {
