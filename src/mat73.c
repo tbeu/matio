@@ -3427,6 +3427,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     hid_t ir_type_id = H5Dget_type(sparse_dset_id);
                     int type_err = Mat_H5ValidateDatatype(ir_type_id);
                     H5Tclose(ir_type_id);
+                    if ( !type_err )
+                        type_err = Mat_H5RejectExternalStorage(sparse_dset_id);
                     if ( type_err ) {
                         H5Dclose(sparse_dset_id);
                         H5Gclose(dset_id);
@@ -3496,6 +3498,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     hid_t jc_type_id = H5Dget_type(sparse_dset_id);
                     int type_err = Mat_H5ValidateDatatype(jc_type_id);
                     H5Tclose(jc_type_id);
+                    if ( !type_err )
+                        type_err = Mat_H5RejectExternalStorage(sparse_dset_id);
                     if ( type_err ) {
                         H5Dclose(sparse_dset_id);
                         H5Gclose(dset_id);
