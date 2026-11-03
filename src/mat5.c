@@ -2189,6 +2189,17 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                         break;
                     }
                     nBytes -= 8;
+                    /* Field arrays normally have an empty name, but some writers store one */
+                    if ( mat->byteswap ) {
+                        (void)Mat_uint32Swap(buf);
+                        (void)Mat_uint32Swap(buf + 1);
+                    }
+                    if ( (buf[0] & 0xffff0000) == 0 && buf[1] > 0 ) {
+                        const mat_uint32_t name_len = buf[1] + (8 - buf[1] % 8) % 8;
+                        (void)MatSeek(mat, name_len, SEEK_CUR);
+                        bytesread += name_len;
+                        nBytes -= name_len;
+                    }
                     fields[i]->internal->datapos = MatTell(mat);
                     if ( fields[i]->internal->datapos != -1L ) {
                         if ( fields[i]->class_type == MAT_C_STRUCT )
