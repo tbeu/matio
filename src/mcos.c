@@ -1140,9 +1140,9 @@ ParseSubsystem5(mat_t *mat)
                 goto cleanup_ss;
             ss->num_prop_cells = total_prop_cells;
             for ( ci = 0; ci < total_prop_cells; ci++ ) {
-                /* Duplicate cells so they persist after struct_var is freed */
-                if ( cells[2 + ci] != NULL )
-                    ss->prop_cells[ci] = Mat_VarDuplicate(cells[2 + ci], 1);
+                /* Take the cells over so they persist after struct_var is freed */
+                ss->prop_cells[ci] = cells[2 + ci];
+                cells[2 + ci] = NULL;
             }
         }
 
@@ -1153,9 +1153,8 @@ ParseSubsystem5(mat_t *mat)
         }
 
         /* Last cell (index ncells-1): Default class properties */
-        if ( cells[ncells - 1] != NULL ) {
-            ss->defaults = Mat_VarDuplicate(cells[ncells - 1], 1);
-        }
+        ss->defaults = cells[ncells - 1];
+        cells[ncells - 1] = NULL;
     }
 
     Mat_VarFree(struct_var);
@@ -1336,8 +1335,8 @@ ParseSubsystem73(mat_t *mat)
                 goto cleanup_ss;
             ss->num_prop_cells = total_prop_cells;
             for ( ci = 0; ci < total_prop_cells; ci++ ) {
-                if ( cells[2 + ci] != NULL )
-                    ss->prop_cells[ci] = Mat_VarDuplicate(cells[2 + ci], 1);
+                ss->prop_cells[ci] = cells[2 + ci];
+                cells[2 + ci] = NULL;
             }
         }
 
@@ -1347,8 +1346,8 @@ ParseSubsystem73(mat_t *mat)
                 goto cleanup_ss;
         }
 
-        if ( cells[ncells - 1] != NULL )
-            ss->defaults = Mat_VarDuplicate(cells[ncells - 1], 1);
+        ss->defaults = cells[ncells - 1];
+        cells[ncells - 1] = NULL;
     }
 
     /* Free the cell matvar_ts */
