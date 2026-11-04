@@ -1833,20 +1833,21 @@ Mat_VarDelete(mat_t *mat, const char *name)
             while ( NULL != (matvar = Mat_VarReadNextInfo(mat)) ) {
                 if ( 0 != strcmp(matvar->name, name) ) {
                     err = Mat_VarReadDataAll(mat, matvar);
-                    if ( err ) {
-                        Mat_VarFree(matvar);
-                        break;
-                    }
-                    err = Mat_VarWrite(tmp, matvar, matvar->compression);
-                } else {
-                    err = MATIO_E_NO_ERROR;
+                    if ( !err )
+                        err = Mat_VarWrite(tmp, matvar, matvar->compression);
                 }
                 Mat_VarFree(matvar);
+                if ( err )
+                    break;
             }
             dir = tmp->dir; /* Keep directory for later assignment */
             tmp->dir = NULL;
             n = tmp->num_datasets;
-            Mat_Close(tmp);
+            {
+                const int close_err = Mat_Close(tmp);
+                if ( !err )
+                    err = close_err;
+            }
 
             if ( !err ) {
                 char *new_name = strdup(mat->filename);
