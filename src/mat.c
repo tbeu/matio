@@ -94,8 +94,13 @@ ReadData(mat_t *mat, matvar_t *matvar)
 
     if ( mat == NULL || matvar == NULL || mat->fp == NULL )
         return MATIO_E_BAD_ARGUMENT;
-    else if ( mat->version == MAT_FT_MAT5 )
+    else if ( mat->version == MAT_FT_MAT5 ) {
+        const int saved = mat->strict_compressed_read;
+        mat->strict_compressed_read = matvar->class_type >= MAT_C_DOUBLE &&
+                                      matvar->class_type <= MAT_C_UINT64;
         err = Mat_VarRead5(mat, matvar);
+        mat->strict_compressed_read = saved;
+    }
 #if defined(MAT73) && MAT73
     else if ( mat->version == MAT_FT_MAT73 )
         err = Mat_VarRead73(mat, matvar);
@@ -999,6 +1004,7 @@ Mat_Open(const char *matname, int mode)
         mat->version = MAT_FT_MAT4;
         mat->byteswap = 0;
         mat->mode = mode;
+        mat->strict_compressed_read = 0;
         mat->bof = 0;
         mat->next_index = 0;
 #if defined(MAT73) && MAT73
@@ -1024,6 +1030,7 @@ Mat_Open(const char *matname, int mode)
 
     mat->filename = strdup(matname);
     mat->mode = mode;
+    mat->strict_compressed_read = 0;
 
     if ( mat->version == 0x0200 ) {
         fclose((FILE *)mat->fp);
@@ -1818,11 +1825,18 @@ Mat_VarDelete(mat_t *mat, const char *name)
             size_t n;
 
             Mat_Rewind(mat);
-            while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
-                if ( 0 != strcmp(matvar->name, name) )
+            err = MATIO_E_NO_ERROR;
+            while ( NULL != (matvar = Mat_VarReadNextInfo(mat)) ) {
+                if ( 0 != strcmp(matvar->name, name) ) {
+                    err = Mat_VarReadDataAll(mat, matvar);
+                    if ( err ) {
+                        Mat_VarFree(matvar);
+                        break;
+                    }
                     err = Mat_VarWrite(tmp, matvar, matvar->compression);
-                else
+                } else {
                     err = MATIO_E_NO_ERROR;
+                }
                 Mat_VarFree(matvar);
             }
             dir = tmp->dir; /* Keep directory for later assignment */
@@ -1901,12 +1915,16 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     }
                 }
                 free(new_name);
-            } else if ( (err = remove(path_buf)) != 0 ) {
-                err = MATIO_E_UNKNOWN_ERROR;
-                Mat_Critical("Cannot remove file \"%s\"", path_buf);
-            } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) != 0 ) {
-                err = MATIO_E_UNKNOWN_ERROR;
-                Mat_Critical("Cannot remove directory \"%s\"", dir_buf);
+            } else {
+                if ( NULL != dir ) {
+                    size_t i;
+                    for ( i = 0; i < n; i++ )
+                        free(dir[i]);
+                    free(dir);
+                }
+                (void)remove(path_buf);
+                if ( *dir_buf != '\0' )
+                    (void)remove(dir_buf);
             }
         } else {
             err = MATIO_E_UNKNOWN_ERROR;
