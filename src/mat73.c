@@ -118,8 +118,8 @@ static int Mat_VarWriteAppendNext73(hid_t id, matvar_t *matvar, const char *name
                                     int dim);
 static int Mat_VarWriteNextType73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
                                   hsize_t *dims);
-static int Mat_VarWriteAppendNextType73(hid_t id, matvar_t *matvar, const char *name,
-                                        mat_t *mat, hsize_t *dims, int dim);
+static int Mat_VarWriteAppendNextType73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
+                                        hsize_t *dims, int dim);
 static herr_t Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info,
                                          void *op_data);
 static herr_t Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *info,
@@ -2752,8 +2752,8 @@ Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat, h
                                 for ( k = 0; k < nelems; k++ ) {
                                     for ( l = 0; l < nfields; l++ ) {
                                         err = Mat_VarWriteRef(id, fields[k * nfields + l],
-                                                              matvar->compression, mat,
-                                                              refs[l] + k, &num_refs);
+                                                              matvar->compression, mat, refs[l] + k,
+                                                              &num_refs);
                                         if ( err )
                                             break;
                                     }
@@ -2822,8 +2822,8 @@ Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat, h
 }
 
 static int
-Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
-                           hsize_t *dims, int dim)
+Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat, hsize_t *dims,
+                           int dim)
 {
     int err = MATIO_E_NO_ERROR;
     hsize_t nelems = 1;
