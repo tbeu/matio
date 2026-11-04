@@ -4807,5 +4807,6 @@ main(int argc, char *argv[])
         }
     }
 
-    return err;
+    /* A POSIX exit status keeps only 8 bits, so a sum of error codes could wrap to 0 */
+    return err ? EXIT_FAILURE : EXIT_SUCCESS;
 }
