@@ -146,6 +146,7 @@ static const char *helptestsstr[] = {
     "directory               - Retrieves the list of variable names from a file",
     "read_truncated          - Reject an incomplete compressed variable",
     "open_truncated          - Reject an incomplete HDF5 file",
+    "write_errors            - Report stream write and close errors",
     "readvar                 - Reads a specific variable from a file",
     "getstructfield          - Tests Mat_VarGetStructField getting fields from a",
     "                          structure",
@@ -1772,6 +1773,32 @@ test_open_truncated(const char *output_name)
         }
     }
     return 0;
+}
+
+static int
+test_write_errors(const char *output_name)
+{
+    size_t dims[2] = {1024, 1};
+    double values[1024] = {1};
+    mat_t *mat;
+    matvar_t *matvar;
+    int err, write_err, close_err;
+
+    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( NULL == mat )
+        return 1;
+    err = Mat_Close(mat);
+    if ( err )
+        return 1;
+    mat = Mat_Open(output_name, MAT_ACC_RDONLY);
+    if ( NULL == mat )
+        return 1;
+    matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, values, 0);
+    write_err = Mat_VarWrite(mat, matvar, compression);
+    Mat_VarFree(matvar);
+    close_err = Mat_Close(mat);
+    return write_err != MATIO_E_GENERIC_WRITE_ERROR ||
+           close_err != MATIO_E_FILESYSTEM_ERROR_ON_CLOSE;
 }
 
 static int
@@ -4719,6 +4746,12 @@ main(int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_open_truncated.mat";
             err += test_open_truncated(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "write_errors") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_errors.mat";
+            err += test_write_errors(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k], "readvar") ) {
             k++;
