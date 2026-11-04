@@ -143,6 +143,7 @@ struct _mat_t
     hid_t refs_id; /**< Id of the /#refs# group in HDF5 */
     int ref_depth; /**< Current recursion depth when reading references */
 #endif
+    int strict_compressed_read; /**< Report incomplete full numeric reads */
     char **dir; /**< Names of the datasets in the file */
 #if defined(MCOS) && MCOS
     void *mcos; /**< Parsed MCOS subsystem data (lazy, may be NULL) */
