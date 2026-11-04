@@ -1644,7 +1644,7 @@ write_prefix(const char *output_name, const unsigned char *buffer, size_t length
 static int
 test_read_truncated(const char *output_name, int kind, size_t count)
 {
-    size_t dims[2] = {count, 1}, i, length;
+    size_t dims[2], i, length;
     double values[8192];
     unsigned char buffer[sizeof(values) + 512], actual[sizeof(buffer)];
     mat_t *mat;
@@ -1654,6 +1654,8 @@ test_read_truncated(const char *output_name, int kind, size_t count)
     FILE *fp;
     int err;
 
+    dims[0] = count;
+    dims[1] = 1;
     for ( i = 0; i < count; i++ )
         values[i] = (double)i + 1;
     mat = Mat_CreateVer(output_name, NULL, MAT_FT_MAT5);
