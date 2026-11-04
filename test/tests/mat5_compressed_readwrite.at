@@ -142,3 +142,9 @@ AT_CHECK([$builddir/test_mat -v 5 -z -o test_mat5_compressed_copy_large.mat copy
 AT_CHECK([cp $srcdir/results/dump-large_struct_compressed.out expout
           $builddir/../tools/matdump -f whos -d test_mat5_compressed_copy_large.mat],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Reject truncated compressed data])
+AT_KEYWORDS([read truncated])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat read_truncated],[0],[ignore],[ignore])
+AT_CLEANUP
