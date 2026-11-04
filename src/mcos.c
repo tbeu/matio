@@ -1523,9 +1523,9 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
 
             /* Each root object starts a fresh walk */
             StartWalk(ss);
-            err = CollectFieldNamesFromObject(ss, obj_id, &all_fieldnames, &all_fieldnames_count,
-                                              &all_fieldnames_cap, ss->walk_visited,
-                                              ss->walk_stack);
+            err =
+                CollectFieldNamesFromObject(ss, obj_id, &all_fieldnames, &all_fieldnames_count,
+                                            &all_fieldnames_cap, ss->walk_visited, ss->walk_stack);
         }
 
         if ( err ) {
@@ -1589,8 +1589,8 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
 
                 /* Each field lookup starts a fresh walk */
                 StartWalk(ss);
-                field_val = GetFieldValueFromObject(ss, obj_id, fname, ss->walk_visited,
-                                                    ss->walk_stack);
+                field_val =
+                    GetFieldValueFromObject(ss, obj_id, fname, ss->walk_visited, ss->walk_stack);
 
                 /* If still no value, create an empty variable */
                 if ( field_val == NULL ) {
