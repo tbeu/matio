@@ -145,3 +145,9 @@ AT_CHECK([$builddir/test_mat -v 7.3 -a 1 -o test_mat73_append_mcos.mat copy $src
 AT_CHECK([cp $srcdir/results/dump-mat_copy-mcos-73.out expout
           $builddir/../tools/matdump -f whos test_mat73_append_mcos.mat],[0],[expout],[])
 AT_CLEANUP
+
+AT_SETUP([Incomplete HDF5 open])
+AT_KEYWORDS([errors])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([$builddir/test_mat open_truncated],[0],[ignore],[ignore])
+AT_CLEANUP
