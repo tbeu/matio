@@ -472,6 +472,9 @@ DataType(hid_t h5_type, int isComplex)
     return h5_dtype;
 }
 
+/* Below this size fixed-size datasets avoid chunk index overhead. */
+#define MAT_H5_COMPRESS_MIN_BYTES 2048
+
 static void
 Mat_H5GetChunkSize(size_t rank, const hsize_t *dims, hsize_t *chunk_dims)
 {
@@ -2299,7 +2302,7 @@ Mat_VarWriteLogical73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dim
         nelems *= dims[k];
     }
 
-    if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
+    if ( matvar->compression == MAT_COMPRESSION_ZLIB && nelems >= MAT_H5_COMPRESS_MIN_BYTES ) {
         plist = H5Pcreate(H5P_DATASET_CREATE);
         if ( MAX_RANK >= matvar->rank ) {
             hsize_t chunk_dims[MAX_RANK];
@@ -2385,7 +2388,7 @@ static int
 Mat_VarWriteNumeric73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims,
                       hsize_t *max_dims)
 {
-    int err = MATIO_E_NO_ERROR, k;
+    int err = MATIO_E_NO_ERROR, k, use_compression;
     hsize_t nelems = 1;
     hid_t plist;
 
@@ -2393,7 +2396,12 @@ Mat_VarWriteNumeric73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dim
         nelems *= dims[k];
     }
 
-    if ( matvar->compression || NULL != max_dims ) {
+    /* Tiny fixed-size datasets do not need chunk indexes. */
+    use_compression = matvar->compression == MAT_COMPRESSION_ZLIB &&
+                      (NULL != max_dims ||
+                       nelems * Mat_SizeOfClass(matvar->class_type) * (matvar->isComplex ? 2 : 1) >=
+                           MAT_H5_COMPRESS_MIN_BYTES);
+    if ( use_compression || NULL != max_dims ) {
         plist = H5Pcreate(H5P_DATASET_CREATE);
         if ( MAX_RANK >= matvar->rank ) {
             hsize_t chunk_dims[MAX_RANK];
@@ -2410,7 +2418,7 @@ Mat_VarWriteNumeric73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dim
                 return MATIO_E_OUT_OF_MEMORY;
             }
         }
-        if ( matvar->compression == MAT_COMPRESSION_ZLIB )
+        if ( use_compression )
             H5Pset_deflate(plist, 9);
     } else {
         plist = H5P_DEFAULT;

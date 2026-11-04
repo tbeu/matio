@@ -1124,6 +1124,18 @@ test_write_numeric(enum matio_classes matvar_class, const char *output_name, int
 
     Mat_Close(mat);
 
+    if ( MAT_FT_MAT73 == mat_file_ver && 0 != dim_append ) {
+        mat = Mat_Open(output_name, MAT_ACC_RDONLY);
+        if ( NULL == mat )
+            return err + 1;
+        matvar = Mat_VarReadInfo(mat, "a");
+        if ( NULL == matvar || matvar->class_type != matvar_class ||
+             matvar->compression != compression )
+            err++;
+        Mat_VarFree(matvar);
+        Mat_Close(mat);
+    }
+
     return err;
 }
 
