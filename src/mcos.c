@@ -195,6 +195,9 @@ Mat_MCOS_Free(void *mcos)
 
     Mat_VarFree(ss->defaults);
 
+    free(ss->walk_visited);
+    free(ss->walk_stack);
+
     free(ss);
 }
 
@@ -701,18 +704,6 @@ CollectFieldNamesFromStruct(const matvar_t *matvar, char ***all_fieldnames, size
     return MATIO_E_NO_ERROR;
 }
 
-/** @brief Explicit stack frame for the iterative object-graph walks
- *
- * The walks visit objects in the same pre-order as a recursive depth-first
- * traversal, but keep the pending dynamic-property iteration in this frame
- * instead of on the C stack.
- */
-typedef struct
-{
-    mat_uint32_t obj_id; /**< Object whose dynamic properties are being iterated */
-    size_t next;         /**< Index of the next dynamic property id to visit */
-} mcos_walk_frame_t;
-
 /** @brief Return the dynamic-property set referenced by an object, or NULL */
 static const mcos_dynamic_property_set_t *
 GetDynamicPropsForObject(const mcos_subsystem_t *ss, const mcos_object_info_t *obj_info)
@@ -729,7 +720,7 @@ GetDynamicPropsForObject(const mcos_subsystem_t *ss, const mcos_object_info_t *o
  */
 static int
 EnterFieldNameObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, char ***all_fieldnames,
-                     size_t *count, size_t *capacity, unsigned char *visited,
+                     size_t *count, size_t *capacity, mat_uint32_t *visited,
                      mcos_walk_frame_t *stack, size_t *top)
 {
     const mcos_object_info_t *obj_info;
@@ -738,9 +729,9 @@ EnterFieldNameObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, char ***al
     size_t pi;
     int err;
 
-    if ( obj_id < 1 || obj_id > ss->num_objects || visited[obj_id - 1] )
+    if ( obj_id < 1 || obj_id > ss->num_objects || visited[obj_id - 1] == ss->walk_id )
         return MATIO_E_NO_ERROR;
-    visited[obj_id - 1] = 1;
+    visited[obj_id - 1] = ss->walk_id;
 
     obj_info = &ss->object_info[obj_id - 1];
     prop_set = GetPropertySetForObject(ss, obj_info);
@@ -765,12 +756,12 @@ EnterFieldNameObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, char ***al
 
 /** @brief Collect field names of an object and its dynamic-property dependencies
  *
- * @param visited Zeroed array of ss->num_objects bytes, owned by the caller
+ * @param visited ss->walk_visited, marks the objects of the current walk
  * @param stack   Scratch array of ss->num_objects frames, owned by the caller
  */
 static int
 CollectFieldNamesFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, char ***all_fieldnames,
-                            size_t *count, size_t *capacity, unsigned char *visited,
+                            size_t *count, size_t *capacity, mat_uint32_t *visited,
                             mcos_walk_frame_t *stack)
 {
     size_t top = 0;
@@ -851,16 +842,16 @@ CreateFieldValueFromProperty(const mcos_subsystem_t *ss, const char *fname,
  */
 static int
 EnterFieldValueObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const char *fname,
-                      unsigned char *visited, mcos_walk_frame_t *stack, size_t *top,
+                      mat_uint32_t *visited, mcos_walk_frame_t *stack, size_t *top,
                       matvar_t **result)
 {
     const mcos_object_info_t *obj_info;
     const mcos_property_set_t *prop_set;
     size_t pi;
 
-    if ( obj_id < 1 || obj_id > ss->num_objects || visited[obj_id - 1] )
+    if ( obj_id < 1 || obj_id > ss->num_objects || visited[obj_id - 1] == ss->walk_id )
         return 0;
-    visited[obj_id - 1] = 1;
+    visited[obj_id - 1] = ss->walk_id;
 
     obj_info = &ss->object_info[obj_id - 1];
     prop_set = GetPropertySetForObject(ss, obj_info);
@@ -885,12 +876,12 @@ EnterFieldValueObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const cha
  * object's own properties, then its dynamic-property dependencies in order,
  * then the class defaults of each object once its dependencies are exhausted.
  *
- * @param visited Zeroed array of ss->num_objects bytes, owned by the caller
+ * @param visited ss->walk_visited, marks the objects of the current walk
  * @param stack   Scratch array of ss->num_objects frames, owned by the caller
  */
 static matvar_t *
 GetFieldValueFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const char *fname,
-                        unsigned char *visited, mcos_walk_frame_t *stack)
+                        mat_uint32_t *visited, mcos_walk_frame_t *stack)
 {
     size_t top = 0;
     matvar_t *result = NULL;
@@ -1432,6 +1423,20 @@ IsUnqualifiedClassSuffix(const char *full_name, const char *alias)
            strcmp(full_name + len_full - len_alias, alias) == 0;
 }
 
+/** @brief Start an object-graph walk: no object counts as visited afterwards
+ *
+ * A file can hold many objects with one walk per field of each object, so
+ * walks must not cost time proportional to the number of objects.
+ */
+static void
+StartWalk(mcos_subsystem_t *ss)
+{
+    if ( ++ss->walk_id == 0 ) {
+        memset(ss->walk_visited, 0, ss->num_objects * sizeof(mat_uint32_t));
+        ss->walk_id = 1;
+    }
+}
+
 /** @brief Resolve an MCOS opaque variable into a struct-like matvar_t (common logic)
  *
  * @param ss      Parsed subsystem
@@ -1465,6 +1470,16 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
     }
 
     cls = &ss->class_info[matvar->internal->class_id - 1];
+
+    {
+        size_t nobjs = ss->num_objects > 0 ? ss->num_objects : 1;
+        if ( ss->walk_visited == NULL )
+            ss->walk_visited = (mat_uint32_t *)calloc(nobjs, sizeof(mat_uint32_t));
+        if ( ss->walk_stack == NULL )
+            ss->walk_stack = (mcos_walk_frame_t *)calloc(nobjs, sizeof(mcos_walk_frame_t));
+        if ( ss->walk_visited == NULL || ss->walk_stack == NULL )
+            return MATIO_E_OUT_OF_MEMORY;
+    }
 
     /* Resolve the fully-qualified class name and, for FileWrapper__ v4+, the
      * active class alias. The alias is only preferred when it is not merely
@@ -1502,25 +1517,18 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
      * class defaults and dynamic-property references.
      */
     {
-        size_t nobjs = ss->num_objects > 0 ? ss->num_objects : 1;
-        unsigned char *visited = (unsigned char *)calloc(nobjs, sizeof(unsigned char));
-        mcos_walk_frame_t *stack = (mcos_walk_frame_t *)calloc(nobjs, sizeof(mcos_walk_frame_t));
         int err = MATIO_E_NO_ERROR;
-
-        if ( visited == NULL || stack == NULL )
-            err = MATIO_E_OUT_OF_MEMORY;
 
         for ( oi = 0; err == MATIO_E_NO_ERROR && oi < num_objs; oi++ ) {
             mat_uint32_t obj_id = matvar->internal->object_ids[oi];
 
             /* Each root object starts a fresh walk */
-            memset(visited, 0, nobjs);
+            StartWalk(ss);
             err = CollectFieldNamesFromObject(ss, obj_id, &all_fieldnames, &all_fieldnames_count,
-                                              &all_fieldnames_cap, visited, stack);
+                                              &all_fieldnames_cap, ss->walk_visited,
+                                              ss->walk_stack);
         }
 
-        free(visited);
-        free(stack);
         if ( err ) {
             size_t kk;
             for ( kk = 0; kk < all_fieldnames_count; kk++ )
@@ -1568,15 +1576,6 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
     /* Populate each object's fields */
     {
         matvar_t **fields = (matvar_t **)matvar->data;
-        size_t nobjs = ss->num_objects > 0 ? ss->num_objects : 1;
-        unsigned char *visited = (unsigned char *)calloc(nobjs, sizeof(unsigned char));
-        mcos_walk_frame_t *stack = (mcos_walk_frame_t *)calloc(nobjs, sizeof(mcos_walk_frame_t));
-
-        if ( visited == NULL || stack == NULL ) {
-            free(visited);
-            free(stack);
-            return MATIO_E_OUT_OF_MEMORY;
-        }
 
         for ( oi = 0; oi < num_objs; oi++ ) {
             mat_uint32_t obj_id = matvar->internal->object_ids[oi];
@@ -1590,8 +1589,9 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
                 const char *fname = all_fieldnames[fi];
 
                 /* Each field lookup starts a fresh walk */
-                memset(visited, 0, nobjs);
-                field_val = GetFieldValueFromObject(ss, obj_id, fname, visited, stack);
+                StartWalk(ss);
+                field_val = GetFieldValueFromObject(ss, obj_id, fname, ss->walk_visited,
+                                                    ss->walk_stack);
 
                 /* If still no value, create an empty variable */
                 if ( field_val == NULL ) {
@@ -1606,8 +1606,6 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
                     field_val->name = strdup(fname);
                     if ( field_val->name == NULL ) {
                         Mat_VarFree(field_val);
-                        free(visited);
-                        free(stack);
                         return MATIO_E_OUT_OF_MEMORY;
                     }
                 }
@@ -1615,9 +1613,6 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
                 fields[oi * nfields + fi] = field_val;
             }
         }
-
-        free(visited);
-        free(stack);
     }
 
     return MATIO_E_NO_ERROR;
