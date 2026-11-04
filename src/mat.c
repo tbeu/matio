@@ -94,8 +94,13 @@ ReadData(mat_t *mat, matvar_t *matvar)
 
     if ( mat == NULL || matvar == NULL || mat->fp == NULL )
         return MATIO_E_BAD_ARGUMENT;
-    else if ( mat->version == MAT_FT_MAT5 )
+    else if ( mat->version == MAT_FT_MAT5 ) {
+        const int saved = mat->strict_compressed_read;
+        mat->strict_compressed_read = matvar->class_type >= MAT_C_DOUBLE &&
+                                      matvar->class_type <= MAT_C_UINT64;
         err = Mat_VarRead5(mat, matvar);
+        mat->strict_compressed_read = saved;
+    }
 #if defined(MAT73) && MAT73
     else if ( mat->version == MAT_FT_MAT73 )
         err = Mat_VarRead73(mat, matvar);
@@ -999,6 +1004,7 @@ Mat_Open(const char *matname, int mode)
         mat->version = MAT_FT_MAT4;
         mat->byteswap = 0;
         mat->mode = mode;
+        mat->strict_compressed_read = 0;
         mat->bof = 0;
         mat->next_index = 0;
 #if defined(MAT73) && MAT73
@@ -1024,6 +1030,7 @@ Mat_Open(const char *matname, int mode)
 
     mat->filename = strdup(matname);
     mat->mode = mode;
+    mat->strict_compressed_read = 0;
 
     if ( mat->version == 0x0200 ) {
         fclose((FILE *)mat->fp);
@@ -1820,11 +1827,14 @@ Mat_VarDelete(mat_t *mat, const char *name)
 
             Mat_Rewind(mat);
             err = MATIO_E_NO_ERROR;
-            while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
-                if ( matvar->name == NULL || 0 != strcmp(matvar->name, name) )
-                    err = Mat_VarWrite(tmp, matvar, matvar->compression);
-                else
+            while ( NULL != (matvar = Mat_VarReadNextInfo(mat)) ) {
+                if ( matvar->name == NULL || 0 != strcmp(matvar->name, name) ) {
+                    err = Mat_VarReadDataAll(mat, matvar);
+                    if ( !err )
+                        err = Mat_VarWrite(tmp, matvar, matvar->compression);
+                } else {
                     err = MATIO_E_NO_ERROR;
+                }
                 Mat_VarFree(matvar);
                 /* Keep the file if a variable cannot be copied */
                 if ( err )
