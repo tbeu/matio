@@ -1106,8 +1106,9 @@ Mat_Close(mat_t *mat)
         }
 #endif
         if ( NULL != mat->fp ) {
+            const int had_error = ferror((FILE *)mat->fp);
             err = fclose((FILE *)mat->fp);
-            if ( 0 == err ) {
+            if ( 0 == err && !had_error ) {
                 err = MATIO_E_NO_ERROR;
             } else {
                 err = MATIO_E_FILESYSTEM_ERROR_ON_CLOSE;
@@ -3350,6 +3351,12 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
     else
         err = MATIO_E_FAIL_TO_IDENTIFY;
 
+    /* fwrite results are not checked one by one, the stream error flag stays set */
+    if ( !err && mat->version != MAT_FT_MAT73 && ferror((FILE *)mat->fp) ) {
+        Mat_Critical("Could not write variable to \"%s\"", mat->filename);
+        err = MATIO_E_GENERIC_WRITE_ERROR;
+    }
+
     if ( !err ) {
         /* Update subsystem data offset for unnamed variables (MCOS) */
         if ( subsys_pos > 0 && NULL != mat->subsys_offset ) {
@@ -3364,7 +3371,12 @@ Mat_VarWrite(mat_t *mat, matvar_t *matvar, enum matio_compression compress)
             if ( save_pos > 0 )
                 (void)MatSeek(mat, save_pos, SEEK_SET);
         }
+    }
 
+    if ( !err && mat->version != MAT_FT_MAT73 && ferror((FILE *)mat->fp) )
+        err = MATIO_E_GENERIC_WRITE_ERROR;
+
+    if ( !err ) {
         { /* Update directory */
             char **dir;
             if ( NULL == mat->dir ) {

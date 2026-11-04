@@ -148,3 +148,9 @@ AT_KEYWORDS([read truncated])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat read_truncated],[0],[ignore],[ignore])
 AT_CLEANUP
+
+AT_SETUP([Compressed MAT5 stream errors])
+AT_KEYWORDS([errors])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 5 -z write_errors],[0],[ignore],[ignore])
+AT_CLEANUP
