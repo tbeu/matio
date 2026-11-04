@@ -96,8 +96,8 @@ ReadData(mat_t *mat, matvar_t *matvar)
         return MATIO_E_BAD_ARGUMENT;
     else if ( mat->version == MAT_FT_MAT5 ) {
         const int saved = mat->strict_compressed_read;
-        mat->strict_compressed_read = matvar->class_type >= MAT_C_DOUBLE &&
-                                      matvar->class_type <= MAT_C_UINT64;
+        mat->strict_compressed_read =
+            matvar->class_type >= MAT_C_DOUBLE && matvar->class_type <= MAT_C_UINT64;
         err = Mat_VarRead5(mat, matvar);
         mat->strict_compressed_read = saved;
     }
