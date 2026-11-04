@@ -1069,6 +1069,9 @@ Mat_Open(const char *matname, int mode)
                 mat->refs_id = H5I_INVALID_HID;
                 mat->ref_depth = 0;
             }
+        } else {
+            Mat_Close(mat);
+            mat = NULL;
         }
 #else
         mat->fp = NULL;

@@ -145,6 +145,7 @@ static const char *helptestsstr[] = {
     "delete                  - Deletes a specific variable from a file",
     "directory               - Retrieves the list of variable names from a file",
     "read_truncated          - Reject an incomplete compressed variable",
+    "open_truncated          - Reject an incomplete HDF5 file",
     "readvar                 - Reads a specific variable from a file",
     "getstructfield          - Tests Mat_VarGetStructField getting fields from a",
     "                          structure",
@@ -1732,6 +1733,45 @@ test_read_truncated(const char *output_name, int kind, size_t count)
     Mat_VarFree(matvar);
     err |= Mat_Close(mat);
     return err;
+}
+
+static int
+test_open_truncated(const char *output_name)
+{
+    mat_t *mat;
+    matvar_t *matvar;
+    size_t dims[2] = {1024, 1}, n;
+    double values[1024] = {1};
+    unsigned char buffer[512];
+    FILE *fp;
+    int err, mode;
+
+    mat = Mat_CreateVer(output_name, NULL, MAT_FT_MAT73);
+    if ( NULL == mat )
+        return 1;
+    matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, values, 0);
+    err = Mat_VarWrite(mat, matvar, MAT_COMPRESSION_NONE);
+    Mat_VarFree(matvar);
+    err |= Mat_Close(mat);
+    if ( err )
+        return 1;
+    fp = fopen(output_name, "rb");
+    if ( NULL == fp )
+        return 1;
+    n = fread(buffer, 1, sizeof(buffer), fp);
+    err = fclose(fp);
+    if ( n != sizeof(buffer) || err )
+        return 1;
+    if ( write_prefix(output_name, buffer, n) )
+        return 1;
+    for ( mode = MAT_ACC_RDONLY; mode <= MAT_ACC_RDWR; mode++ ) {
+        mat = Mat_Open(output_name, mode);
+        if ( NULL != mat ) {
+            Mat_Close(mat);
+            return 1;
+        }
+    }
+    return 0;
 }
 
 static int
@@ -4673,6 +4713,12 @@ main(int argc, char *argv[])
             err += test_read_truncated(output_name, 2, 1024);
             err += test_read_truncated(output_name, 1, 8192);
             err += test_read_truncated(output_name, 2, 8192);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "open_truncated") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_open_truncated.mat";
+            err += test_open_truncated(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k], "readvar") ) {
             k++;
