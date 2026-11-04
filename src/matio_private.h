@@ -136,7 +136,7 @@ struct _mat_t
     int ref_depth; /**< Current recursion depth when reading references */
 #endif
     int strict_compressed_read; /**< Report incomplete full numeric reads */
-    char **dir; /**< Names of the datasets in the file */
+    char **dir;                 /**< Names of the datasets in the file */
 #if defined(MCOS) && MCOS
     void *mcos; /**< Parsed MCOS subsystem data (lazy, may be NULL) */
 #endif

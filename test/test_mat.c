@@ -1692,11 +1692,10 @@ test_read_truncated(const char *output_name, int kind, size_t count)
     if ( NULL == mat )
         return 1;
     matvar = Mat_VarReadInfo(mat, "a");
-    err = NULL == matvar || Mat_VarReadDataAll(mat, matvar) !=
-                               (kind ? MATIO_E_NO_ERROR : MATIO_E_GENERIC_READ_ERROR);
+    err = NULL == matvar ||
+          Mat_VarReadDataAll(mat, matvar) != (kind ? MATIO_E_NO_ERROR : MATIO_E_GENERIC_READ_ERROR);
     if ( kind && NULL != matvar ) {
-        child = kind == 1 ? Mat_VarGetStructFieldByIndex(matvar, 0, 0)
-                          : Mat_VarGetCell(matvar, 0);
+        child = kind == 1 ? Mat_VarGetStructFieldByIndex(matvar, 0, 0) : Mat_VarGetCell(matvar, 0);
         err |= NULL == child || NULL == child->data;
     }
     Mat_VarFree(matvar);
@@ -1714,8 +1713,7 @@ test_read_truncated(const char *output_name, int kind, size_t count)
     fp = fopen(output_name, "rb");
     if ( NULL == fp )
         return 1;
-    err |= fread(actual, 1, sizeof(actual), fp) != length ||
-           memcmp(buffer, actual, length) != 0;
+    err |= fread(actual, 1, sizeof(actual), fp) != length || memcmp(buffer, actual, length) != 0;
     err |= fclose(fp);
     if ( err )
         return err;
