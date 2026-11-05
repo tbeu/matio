@@ -67,6 +67,8 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/matio_test_cases_compressed_le.mat \
                  $(datasets_dir)/matio_test_cases_hdf_be.mat \
                  $(datasets_dir)/matio_test_cases_compressed_hdf_le.mat \
+                 $(datasets_dir)/nonsquare_complex_gzip_le.mat \
+                 $(datasets_dir)/make_nonsquare_complex_gzip.m \
                  $(datasets_dir)/matio_test_cases_uncompressed_hdf_le.mat \
                  $(datasets_dir)/matio_test_cases_uncompressed_be.mat \
                  $(datasets_dir)/matio_test_cases_uncompressed_le.mat \
@@ -250,6 +252,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var9.out \
                  $(results_dir)/read-var10.out \
                  $(results_dir)/read-var11.out \
+                 $(results_dir)/read-var_nonsquare.out \
                  $(results_dir)/read-var12.out \
                  $(results_dir)/read-var13.out \
                  $(results_dir)/read-var14.out \
