@@ -1625,6 +1625,25 @@ Mat_H5ValidateDatatype(hid_t type_id)
     }
 }
 
+/* Number of elements a read or write touches: the memory selection, or the whole dataset */
+static int
+Mat_H5SelectedPoints(hid_t dset_id, hid_t mem_space, hsize_t *nelems)
+{
+    hssize_t n;
+
+    if ( H5S_ALL == mem_space ) {
+        hid_t space_id = H5Dget_space(dset_id);
+        n = H5Sget_select_npoints(space_id);
+        H5Sclose(space_id);
+    } else {
+        n = H5Sget_select_npoints(mem_space);
+    }
+    if ( n < 0 )
+        return 1;
+    *nelems = (hsize_t)n;
+    return 0;
+}
+
 static int
 Mat_H5ReadData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space, int isComplex,
                void *data)
@@ -1656,6 +1675,31 @@ Mat_H5ReadData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space, 
         mat_complex_split_t *complex_data = (mat_complex_split_t *)data;
         hid_t h5_complex;
         size_t h5_size = H5Tget_size(h5_type);
+        hsize_t nelems = 0, i;
+        char *buf = NULL;
+
+        /* One read of the compound: beyond the chunk cache, a second read decompresses
+         * chunks again */
+        if ( 0 == Mat_H5SelectedPoints(dset_id, mem_space, &nelems) )
+            buf = (char *)calloc((size_t)nelems, 2 * h5_size);
+        if ( NULL != buf ) {
+            h5_complex = H5Tcreate(H5T_COMPOUND, 2 * h5_size);
+            H5Tinsert(h5_complex, "real", 0, h5_type);
+            H5Tinsert(h5_complex, "imag", h5_size, h5_type);
+            herr = H5Dread(dset_id, h5_complex, mem_space, dset_space, H5P_DEFAULT, buf);
+            H5Tclose(h5_complex);
+            if ( herr < 0 ) {
+                free(buf);
+                return MATIO_E_GENERIC_READ_ERROR;
+            }
+            for ( i = 0; i < nelems; i++ ) {
+                memcpy((char *)complex_data->Re + i * h5_size, buf + 2 * i * h5_size, h5_size);
+                memcpy((char *)complex_data->Im + i * h5_size, buf + (2 * i + 1) * h5_size,
+                       h5_size);
+            }
+            free(buf);
+            return MATIO_E_NO_ERROR;
+        }
 
         h5_complex = H5Tcreate(H5T_COMPOUND, h5_size);
         H5Tinsert(h5_complex, "real", 0, h5_type);
@@ -1819,6 +1863,28 @@ Mat_H5WriteData(hid_t dset_id, hid_t h5_type, hid_t mem_space, hid_t dset_space,
         mat_complex_split_t *complex_data = (mat_complex_split_t *)data;
         hid_t h5_complex;
         size_t h5_size = H5Tget_size(h5_type);
+        hsize_t nelems = 0, i;
+        char *buf = NULL;
+
+        /* One write of the compound: beyond the chunk cache, a second write compresses
+         * chunks again */
+        if ( 0 == Mat_H5SelectedPoints(dset_id, mem_space, &nelems) )
+            buf = (char *)calloc((size_t)nelems, 2 * h5_size);
+        if ( NULL != buf ) {
+            for ( i = 0; i < nelems; i++ ) {
+                memcpy(buf + 2 * i * h5_size, (const char *)complex_data->Re + i * h5_size,
+                       h5_size);
+                memcpy(buf + (2 * i + 1) * h5_size, (const char *)complex_data->Im + i * h5_size,
+                       h5_size);
+            }
+            h5_complex = H5Tcreate(H5T_COMPOUND, 2 * h5_size);
+            H5Tinsert(h5_complex, "real", 0, h5_type);
+            H5Tinsert(h5_complex, "imag", h5_size, h5_type);
+            err = Mat_H5WriteData(dset_id, h5_complex, mem_space, dset_space, 0, buf);
+            H5Tclose(h5_complex);
+            free(buf);
+            return err;
+        }
 
         /* Write real part of dataset */
         h5_complex = H5Tcreate(H5T_COMPOUND, h5_size);
