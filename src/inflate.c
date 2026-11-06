@@ -257,7 +257,7 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesre
             Mat_Warning("Inflate: Unexpected end-of-file: Processed 0 bytes, expected %u bytes",
                         nBytes);
             memset(buf, 0, nBytes);
-            return err;
+            return mat->strict_compressed_read ? MATIO_E_GENERIC_READ_ERROR : MATIO_E_NO_ERROR;
         }
         if ( NULL != bytesread ) {
             *bytesread += nbytes;
@@ -308,6 +308,8 @@ Inflate(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes, size_t *bytesre
         Mat_Warning("Inflate: Unexpected end-of-file: Processed %u bytes, expected %u bytes",
                     nBytes - z->avail_out, nBytes);
         memset(buf, 0, nBytes);
+        if ( mat->strict_compressed_read )
+            err = MATIO_E_GENERIC_READ_ERROR;
     }
 
     return err;
@@ -345,7 +347,7 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
             Mat_Warning("InflateData: Unexpected end-of-file: Processed 0 bytes, expected %u bytes",
                         nBytes);
             memset(buf, 0, nBytes);
-            return err;
+            return mat->strict_compressed_read ? MATIO_E_GENERIC_READ_ERROR : MATIO_E_NO_ERROR;
         }
         bytesread += nbytes;
         z->avail_in = (uInt)nbytes;
@@ -403,6 +405,8 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
         Mat_Warning("InflateData: Read beyond EOF error: Processed %u bytes, expected %u bytes",
                     nBytes - z->avail_out, nBytes);
         memset(buf, 0, nBytes);
+        if ( mat->strict_compressed_read )
+            err = MATIO_E_GENERIC_READ_ERROR;
     }
 
     return err;

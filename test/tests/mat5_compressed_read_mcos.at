@@ -4,6 +4,13 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
+AT_SETUP([Keep MCOS file when deleting])
+AT_KEYWORDS([mcos delete])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -o test_delete_objects_v7.mat delete_objects $srcdir/datasets/test_dynamic_v7.mat obj],[0],[],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS bugv7 la])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])
