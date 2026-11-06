@@ -1831,8 +1831,14 @@ Mat_VarDelete(mat_t *mat, const char *name)
             Mat_Rewind(mat);
             err = MATIO_E_NO_ERROR;
             while ( NULL != (matvar = Mat_VarReadNextInfo(mat)) ) {
-                if ( matvar->name == NULL || 0 != strcmp(matvar->name, name) ) {
+                if ( NULL == matvar->name ) {
+                    /* The unnamed subsystem of MATLAB objects cannot be copied */
+                    err = MATIO_E_OPERATION_NOT_SUPPORTED;
+                } else if ( 0 != strcmp(matvar->name, name) ) {
                     err = Mat_VarReadDataAll(mat, matvar);
+                    /* Function handles would be written back unreadable */
+                    if ( !err && MAT_C_FUNCTION == matvar->class_type )
+                        err = MATIO_E_OPERATION_NOT_SUPPORTED;
                     if ( !err )
                         err = Mat_VarWrite(tmp, matvar, matvar->compression);
                 }
@@ -1840,6 +1846,11 @@ Mat_VarDelete(mat_t *mat, const char *name)
                 if ( err )
                     break;
             }
+#if defined(MCOS) && MCOS
+            /* MATLAB objects would be written back empty, and their cache refers to this file */
+            if ( !err && NULL != mat->mcos )
+                err = MATIO_E_OPERATION_NOT_SUPPORTED;
+#endif
             dir = tmp->dir; /* Keep directory for later assignment */
             tmp->dir = NULL;
             n = tmp->num_datasets;
