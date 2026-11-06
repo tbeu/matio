@@ -143,6 +143,7 @@ static const char *helptestsstr[] = {
     "================================================================",
     "copy                    - Copies one matlab file to another",
     "delete                  - Deletes a specific variable from a file",
+    "delete_objects          - Keep a file with MATLAB objects when deleting",
     "directory               - Retrieves the list of variable names from a file",
     "read_truncated          - Reject an incomplete compressed variable",
     "open_truncated          - Reject an incomplete HDF5 file",
@@ -4458,6 +4459,60 @@ test_delete(char *file, const char *name)
 }
 
 static int
+test_delete_objects(const char *output_name, const char *input_name, const char *name)
+{
+    unsigned char *original, *actual;
+    long length;
+    size_t n;
+    FILE *fp;
+    mat_t *mat;
+    int err;
+
+    fp = fopen(input_name, "rb");
+    if ( NULL == fp )
+        return 1;
+    err = fseek(fp, 0, SEEK_END) != 0;
+    length = ftell(fp);
+    err |= fseek(fp, 0, SEEK_SET) != 0;
+    if ( err || length <= 0 ) {
+        fclose(fp);
+        return 1;
+    }
+    original = (unsigned char *)malloc(2 * (size_t)length);
+    if ( NULL == original ) {
+        fclose(fp);
+        return 1;
+    }
+    actual = original + length;
+    n = fread(original, 1, (size_t)length, fp);
+    err = fclose(fp) != 0 || n != (size_t)length;
+    if ( !err )
+        err = write_prefix(output_name, original, (size_t)length);
+
+    /* Objects cannot be written back, so the file must stay as it is, also after reading them */
+    if ( !err ) {
+        mat = Mat_Open(output_name, MAT_ACC_RDWR);
+        err = NULL == mat;
+        if ( !err ) {
+            Mat_VarFree(Mat_VarRead(mat, name));
+            err = Mat_VarDelete(mat, name) != MATIO_E_OPERATION_NOT_SUPPORTED;
+            err |= Mat_Close(mat) != MATIO_E_NO_ERROR;
+        }
+    }
+    if ( !err ) {
+        fp = fopen(output_name, "rb");
+        err = NULL == fp;
+        if ( !err ) {
+            n = fread(actual, 1, (size_t)length, fp);
+            err = n != (size_t)length || fgetc(fp) != EOF || memcmp(original, actual, n) != 0;
+            err |= fclose(fp) != 0;
+        }
+    }
+    free(original);
+    return err;
+}
+
+static int
 test_directory(char *file)
 {
     int err = 0;
@@ -4630,6 +4685,13 @@ main(int argc, char *argv[])
         } else if ( !strcasecmp(argv[k], "delete") ) {
             k++;
             err += test_delete(argv[k], argv[k + 1]);
+            k += 2;
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "delete_objects") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_delete_objects.mat";
+            err += test_delete_objects(output_name, argv[k], argv[k + 1]);
             k += 2;
             ntests++;
         } else if ( !strcasecmp(argv[k], "directory") ) {
