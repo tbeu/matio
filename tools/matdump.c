@@ -1188,7 +1188,10 @@ slab_select_valid(int rank, int *start, const int *stride, int *edge, matvar_t *
 {
     int valid = 1, i, nmemb = 1;
 
-    if ( (matvar->rank != rank) && (rank != 1) ) {
+    if ( matvar->rank < 1 || matvar->dims == NULL ) {
+        /* A variable without dimensions has no elements to select */
+        valid = 0;
+    } else if ( (matvar->rank != rank) && (rank != 1) ) {
         valid = 0;
     } else if ( rank == 1 ) {
         for ( i = 0; i < matvar->rank; i++ )
@@ -1351,9 +1354,16 @@ read_selected_data(mat_t *mat, matvar_t **_matvar, char *index_str)
                     } else if ( matvar->rank == 2 && matvar->dims[1] == 1 ) {
                         matvar->dims[0] = *edge;
                     } else {
-                        matvar->rank = 2;
-                        matvar->dims[0] = *edge;
-                        matvar->dims[1] = 1;
+                        size_t *dims = matvar->dims;
+                        /* A rank-1 variable has room for one dimension only */
+                        if ( matvar->rank < 2 )
+                            dims = (size_t *)realloc(dims, 2 * sizeof(*dims));
+                        if ( dims != NULL ) {
+                            matvar->dims = dims;
+                            matvar->rank = 2;
+                            matvar->dims[0] = *edge;
+                            matvar->dims[1] = 1;
+                        }
                     }
                 } else {
                     int i;
