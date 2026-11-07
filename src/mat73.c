@@ -630,7 +630,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
              */
 #if defined(MCOS) && MCOS
             if ( H5Iget_type(dset_id) == H5I_DATASET && 0 != strcmp(class_str, "logical") &&
-                 0 != strcmp(class_str, "unknown") ) {
+                 0 != strcmp(class_str, "unknown") && 0 != strcmp(class_str, "canonical empty") ) {
                 /* Likely an MCOS object - store class name and mark as opaque */
                 matvar->class_type = MAT_C_OPAQUE;
                 matvar->internal->class_name = strdup(class_str);

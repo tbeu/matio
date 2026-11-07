@@ -1,0 +1,43 @@
+      Name: var94
+      Rank: 2
+Dimensions: 3 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[6] {
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Undefined
+{
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Undefined
+{
+}
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Undefined
+{
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Undefined
+{
+}
+      Name: field1
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Undefined
+{
+}
+      Name: field2
+      Rank: 2
+Dimensions: 0 x 0
+Class Type: Undefined
+{
+}
+}

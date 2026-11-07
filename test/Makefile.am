@@ -322,6 +322,8 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var90.out \
                  $(results_dir)/read-var91.out \
                  $(results_dir)/read-var92.out \
+                 $(results_dir)/read-var93-73.out \
+                 $(results_dir)/read-var94-73.out \
                  $(results_dir)/read-var95-5.out \
                  $(results_dir)/read-var95-73.out \
                  $(results_dir)/read-x.out \
