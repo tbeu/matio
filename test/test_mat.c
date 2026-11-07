@@ -4440,7 +4440,11 @@ main(int argc, char *argv[])
                     matvar_t *copy = Mat_VarDuplicate(matvar, 1);
                     Mat_VarFree(matvar);
                     if ( NULL != copy ) {
-                        err += Mat_VarWrite(mat, copy, compression);
+                        /* Skip variables that cannot be written to MAT5, e.g. objects */
+                        int write_err = Mat_VarWrite(mat, copy, compression);
+                        if ( MATIO_E_OPERATION_NOT_SUPPORTED != write_err ||
+                             MAT_FT_MAT5 != Mat_GetVersion(mat) )
+                            err += write_err;
                         Mat_VarFree(copy);
                     } else {
                         err++;

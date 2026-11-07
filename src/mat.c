@@ -1818,12 +1818,16 @@ Mat_VarDelete(mat_t *mat, const char *name)
             size_t n;
 
             Mat_Rewind(mat);
+            err = MATIO_E_NO_ERROR;
             while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
                 if ( matvar->name == NULL || 0 != strcmp(matvar->name, name) )
                     err = Mat_VarWrite(tmp, matvar, matvar->compression);
                 else
                     err = MATIO_E_NO_ERROR;
                 Mat_VarFree(matvar);
+                /* Keep the file if a variable cannot be copied */
+                if ( err )
+                    break;
             }
             dir = tmp->dir; /* Keep directory for later assignment */
             tmp->dir = NULL;
@@ -1901,11 +1905,10 @@ Mat_VarDelete(mat_t *mat, const char *name)
                     }
                 }
                 free(new_name);
-            } else if ( (err = remove(path_buf)) != 0 ) {
-                err = MATIO_E_UNKNOWN_ERROR;
+            } else if ( remove(path_buf) != 0 ) {
+                /* Keep the error of the copy */
                 Mat_Critical("Cannot remove file \"%s\"", path_buf);
-            } else if ( *dir_buf != '\0' && (err = remove(dir_buf)) != 0 ) {
-                err = MATIO_E_UNKNOWN_ERROR;
+            } else if ( *dir_buf != '\0' && remove(dir_buf) != 0 ) {
                 Mat_Critical("Cannot remove directory \"%s\"", dir_buf);
             }
         } else {

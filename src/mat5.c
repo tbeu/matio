@@ -311,6 +311,11 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
             }
 
             break;
+        case MAT_C_FUNCTION:
+        case MAT_C_OBJECT:
+        case MAT_C_OPAQUE:
+            /* Writing their data is not supported */
+            return MATIO_E_OPERATION_NOT_SUPPORTED;
         default:
             err = Mul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
             if ( err )
@@ -5564,6 +5569,14 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
      * (e.g. read from a corrupt file) to an empty matrix. */
     if ( matvar->class_type == MAT_C_SPARSE && NULL == matvar->data )
         matvar->class_type = MAT_C_EMPTY;
+
+    /* Fail before writing anything, also for nested objects, so the file stays readable */
+    {
+        size_t type_buf_size;
+        int err = GetTypeBufSize(matvar, &type_buf_size);
+        if ( err )
+            return err;
+    }
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
     (void)MatSeek(mat, 0, SEEK_END); /* Always write at end of file */

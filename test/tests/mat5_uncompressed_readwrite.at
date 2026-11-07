@@ -20,6 +20,15 @@ AT_CHECK([cp $srcdir/results/dump-mat_copy-5.out expout
           $builddir/../tools/matdump -f whos -h -d test_mat5_uncompressed_copy.mat],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Copy variables with MCOS objects])
+AT_KEYWORDS([copy mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 5 -o test_mat5_uncompressed_copy_mcos.mat copy $srcdir/datasets/test_string_v7.mat],[0],[],[])
+AT_CHECK([cp $srcdir/results/dump-mat_copy-mcos-5.out expout
+          $builddir/../tools/matdump -f whos test_mat5_uncompressed_copy_mcos.mat],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Delete variables])
 AT_KEYWORDS([delete])
 AT_CHECK([$builddir/test_mat -v 5 -o test_mat5_uncompressed_delete.mat copy $srcdir/datasets/matio_test_cases_uncompressed_le.mat],[0],[],[])
