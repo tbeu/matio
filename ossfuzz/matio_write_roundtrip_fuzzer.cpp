@@ -44,11 +44,11 @@
 namespace
 {
 
-constexpr size_t kMaxVars = 16;       /* variables read from the input file */
-constexpr size_t kMaxOutVars = 8;     /* variables written per pass */
-constexpr size_t kMaxVarBytes = 1u << 20; /* 1 MiB per variable */
+    constexpr size_t kMaxVars = 16;           /* variables read from the input file */
+    constexpr size_t kMaxOutVars = 8;         /* variables written per pass */
+    constexpr size_t kMaxVarBytes = 1u << 20; /* 1 MiB per variable */
 
-} // namespace
+}  // namespace
 
 extern "C" int
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
@@ -93,12 +93,17 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     /* Options (consumed from the tail of the input). */
     enum mat_ft version = MAT_FT_MAT5;
     switch ( fdp.ConsumeIntegralInRange<int>(0, 2) ) {
-        case 0:  version = MAT_FT_MAT4;  break;
-        case 1:  version = MAT_FT_MAT5;  break;
-        default: version = MAT_FT_MAT73; break;
+        case 0:
+            version = MAT_FT_MAT4;
+            break;
+        case 1:
+            version = MAT_FT_MAT5;
+            break;
+        default:
+            version = MAT_FT_MAT73;
+            break;
     }
-    enum matio_compression comp =
-        fdp.ConsumeBool() ? MAT_COMPRESSION_ZLIB : MAT_COMPRESSION_NONE;
+    enum matio_compression comp = fdp.ConsumeBool() ? MAT_COMPRESSION_ZLIB : MAT_COMPRESSION_NONE;
 
     /* Stage 2: serialise the first batch into a fresh file. */
     char out_name[] = "/tmp/matio_wrt_rt.XXXXXX";
