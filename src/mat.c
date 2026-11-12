@@ -3395,7 +3395,7 @@ Mat_VarWriteAppend(mat_t *mat, matvar_t *matvar, enum matio_compression compress
     if ( mat->version == MAT_FT_MAT73 ) {
 #if defined(MAT73) && MAT73
         int append = 0;
-        {
+        if ( NULL != matvar->name ) {
             /* Check if MAT variable already exists in MAT file */
             size_t i;
             for ( i = 0; i < mat->num_datasets; i++ ) {
