@@ -23,14 +23,14 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/madler/zlib.git zlib
           git clone --depth 1 https://github.com/tbeu/matio.git matio
-          git clone --depth 1 --branch hdf5_2_1_1 https://github.com/HDFGroup/hdf5.git hdf5
+          git clone --depth 1 https://github.com/HDFGroup/hdf5.git hdf5
           git clone --depth 1 https://git.code.sf.net/p/matio/matio_test_datasets matio_test_datasets
       - name: Test ossfuzz build script
         run: |
           mkdir -p work
           cd matio
           rm ./ossfuzz/*_fuzzer.cpp
-          sudo -E ./ossfuzz/build.sh
+          ./ossfuzz/build.sh
         env:
           CFLAGS: -g -Wno-unused-function
           LIB_FUZZING_ENGINE: DUMMY
