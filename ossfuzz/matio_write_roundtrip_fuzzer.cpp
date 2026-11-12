@@ -6,19 +6,19 @@
  * ------------
  * - Untrusted input: the raw bytes of a MAT file, i.e. an attacker-supplied
  *   document (the same trust boundary as the existing read-only harnesses).
- * - Trust boundary: Mat_VarReadNext() parsing that file into matvar_t
- *   structures. Variable names, field names, dimensions, ranks, classes,
- *   sparsity patterns and values are all attacker-controlled.
+ * - Trust boundary: Mat_VarReadNextInfo() / Mat_VarReadDataAll() parsing that
+ *   file into matvar_t structures. Variable names, field names, dimensions,
+ *   ranks, classes, sparsity patterns and values are all attacker-controlled.
  * - What this harness adds: every existing matio fuzz target opens files
  *   MAT_ACC_RDONLY only, so the entire serialise direction — Mat_CreateVer,
- *   Mat_VarWrite, Mat_VarWriteAppend, Mat_VarWriteInfo, Mat_VarDelete for the
- *   v4 / v5 (plain and zlib-compressed) and v7.3 (HDF5) containers — was
- *   dark. Here the attacker-influenced structures are serialised into a new
- *   file (version and compression chosen from the input), appended to with
- *   the read-write append machinery, partially deleted, and finally
- *   re-opened and re-parsed. Serialising attacker-influenced content and
- *   re-reading the result also exercises read-side edge branches with
- *   structurally valid but unusual files.
+ *   Mat_VarWrite, Mat_VarWriteAppend, Mat_VarDelete for the v4 / v5 (plain and
+ *   zlib-compressed) and v7.3 (HDF5) containers — was dark. Here the
+ *   attacker-influenced structures are serialised into a new file (version and
+ *   compression chosen from the input), appended to with the read-write append
+ *   machinery, partially deleted, and finally re-opened and re-parsed.
+ *   Serialising attacker-influenced content and re-reading the result also
+ *   exercises read-side edge branches with structurally valid but unusual
+ *   files.
  * - What counts as a bug: any memory-safety violation (ASan/MSan/UBSan
  *   finding) while serialising or re-parsing attacker-influenced content.
  *
@@ -68,8 +68,12 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     std::vector<matvar_t *> vars;
     matvar_t *matvar;
-    while ( vars.size() < kMaxVars && (matvar = Mat_VarReadNext(src)) != NULL ) {
+    while ( vars.size() < kMaxVars && (matvar = Mat_VarReadNextInfo(src)) != NULL ) {
         if ( Mat_VarGetSize(matvar) > kMaxVarBytes ) {
+            Mat_VarFree(matvar);
+            continue;
+        }
+        if ( Mat_VarReadDataAll(src, matvar) != 0 ) {
             Mat_VarFree(matvar);
             continue;
         }
@@ -124,9 +128,6 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     if ( out != NULL ) {
         for ( size_t i = 0; i < nout; i++ )
             Mat_VarWrite(out, vars[i], comp);
-        /* Info-only (placeholder) write of the last variable. */
-        if ( nout > 0 )
-            Mat_VarWriteInfo(out, vars[nout - 1]);
         Mat_Close(out);
     }
 
