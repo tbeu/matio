@@ -752,38 +752,54 @@ Mat_H5ReadDims(hid_t dset_id, hsize_t *nelems, int *rank)
             hsize_t dims[MAX_RANK];
             int k;
             size_t tmp = 1;
-            (void)H5Sget_simple_extent_dims(space_id, dims, NULL);
-            /* Permute dimensions */
-            for ( k = 0; k < *rank; k++ ) {
-                perm_dims[k] = (size_t)dims[*rank - k - 1];
-                err |= Mul(&tmp, tmp, perm_dims[k]);
-            }
-            if ( err ) {
-                Mat_Critical("Integer multiplication overflow");
-                free(perm_dims);
-                perm_dims = NULL;
-                *rank = 0;
-            }
-            *nelems = (hsize_t)tmp;
-            H5Sclose(space_id);
-        } else {
-            hsize_t *dims = (hsize_t *)malloc(*rank * sizeof(hsize_t));
-            if ( NULL != dims ) {
-                int k;
-                size_t tmp = 1;
-                (void)H5Sget_simple_extent_dims(space_id, dims, NULL);
+            herr_t herr = H5Sget_simple_extent_dims(space_id, dims, NULL);
+            if ( herr >= 0 ) {
                 /* Permute dimensions */
                 for ( k = 0; k < *rank; k++ ) {
                     perm_dims[k] = (size_t)dims[*rank - k - 1];
                     err |= Mul(&tmp, tmp, perm_dims[k]);
                 }
                 if ( err ) {
-                    Mat_Critical("Integer multiplication overflow");
                     free(perm_dims);
                     perm_dims = NULL;
                     *rank = 0;
+                    Mat_Critical("Integer multiplication overflow");
                 }
                 *nelems = (hsize_t)tmp;
+            } else {
+                *nelems = 0;
+                *rank = 0;
+                free(perm_dims);
+                perm_dims = NULL;
+                Mat_Critical("H5Sget_simple_extent_dims failed");
+            }
+            H5Sclose(space_id);
+        } else {
+            hsize_t *dims = (hsize_t *)malloc(*rank * sizeof(hsize_t));
+            if ( NULL != dims ) {
+                int k;
+                size_t tmp = 1;
+                herr_t herr = H5Sget_simple_extent_dims(space_id, dims, NULL);
+                if ( herr >= 0 ) {
+                    /* Permute dimensions */
+                    for ( k = 0; k < *rank; k++ ) {
+                        perm_dims[k] = (size_t)dims[*rank - k - 1];
+                        err |= Mul(&tmp, tmp, perm_dims[k]);
+                    }
+                    if ( err ) {
+                        free(perm_dims);
+                        perm_dims = NULL;
+                        *rank = 0;
+                        Mat_Critical("Integer multiplication overflow");
+                    }
+                    *nelems = (hsize_t)tmp;
+                } else {
+                    *nelems = 0;
+                    *rank = 0;
+                    free(perm_dims);
+                    perm_dims = NULL;
+                    Mat_Critical("H5Sget_simple_extent_dims failed");
+                }
                 free(dims);
                 H5Sclose(space_id);
             } else {
@@ -846,7 +862,9 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
         return MATIO_E_GENERIC_READ_ERROR;
     }
     err = MATIO_E_NO_ERROR;
-    (void)H5Sget_simple_extent_dims(space_id, nfields, NULL);
+    if ( H5Sget_simple_extent_dims(space_id, nfields, NULL) < 0 ) {
+        *nfields = 0;
+    }
     matvar->internal->num_fields = 0;
     if ( *nfields > 0 ) {
         hid_t type_id, super_id;
@@ -1861,22 +1879,25 @@ Mat_H5WriteAppendData(hid_t id, hid_t h5_type, int mrank, const char *name, cons
             hid_t mspace_id;
             int k;
 
-            (void)H5Sget_simple_extent_dims(space_id, size_offset_dims, NULL);
-            offset = size_offset_dims[rank - dim];
-            size_offset_dims[rank - dim] += mdims[dim - 1];
-            H5Dset_extent(dset_id, size_offset_dims);
-            for ( k = 0; k < rank; k++ ) {
-                size_offset_dims[k] = 0;
+            if ( H5Sget_simple_extent_dims(space_id, size_offset_dims, NULL) >= 0 ) {
+                offset = size_offset_dims[rank - dim];
+                size_offset_dims[rank - dim] += mdims[dim - 1];
+                H5Dset_extent(dset_id, size_offset_dims);
+                for ( k = 0; k < rank; k++ ) {
+                    size_offset_dims[k] = 0;
+                }
+                size_offset_dims[rank - dim] = offset;
+                /* Need to reopen */
+                H5Sclose(space_id);
+                space_id = H5Dget_space(dset_id);
+                H5Sselect_hyperslab(space_id, H5S_SELECT_SET, size_offset_dims, NULL, dims, NULL);
+                free(size_offset_dims);
+                mspace_id = H5Screate_simple(rank, dims, NULL);
+                err = Mat_H5WriteData(dset_id, h5_type, mspace_id, space_id, isComplex, data);
+                H5Sclose(mspace_id);
+            } else {
+                err = MATIO_E_GENERIC_WRITE_ERROR;
             }
-            size_offset_dims[rank - dim] = offset;
-            /* Need to reopen */
-            H5Sclose(space_id);
-            space_id = H5Dget_space(dset_id);
-            H5Sselect_hyperslab(space_id, H5S_SELECT_SET, size_offset_dims, NULL, dims, NULL);
-            free(size_offset_dims);
-            mspace_id = H5Screate_simple(rank, dims, NULL);
-            err = Mat_H5WriteData(dset_id, h5_type, mspace_id, space_id, isComplex, data);
-            H5Sclose(mspace_id);
         } else {
             err = MATIO_E_OUT_OF_MEMORY;
         }
@@ -3629,31 +3650,47 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                     H5Tclose(dtype_id);
                 }
                 if ( type_class == H5T_INTEGER && MATIO_E_NO_ERROR == type_err ) {
-                    hsize_t nelems = 1;
+                    /* Largest representable element count for an hsize_t,
+                     * used to guard the dimension product below. */
+                    const hsize_t HSIZE_MAX = (hsize_t)(-1);
+                    hsize_t nelems = 0;
                     int k;
+                    int nelems_valid = 0;
                     hid_t space_id = H5Dget_space(opaque_id);
                     if ( space_id >= 0 ) {
                         int ndims = H5Sget_simple_extent_ndims(space_id);
                         if ( ndims > 0 ) {
                             hsize_t *h5dims = (hsize_t *)malloc((size_t)ndims * sizeof(hsize_t));
                             if ( h5dims != NULL ) {
-                                H5Sget_simple_extent_dims(space_id, h5dims, NULL);
-                                for ( k = 0; k < ndims; k++ )
-                                    nelems *= h5dims[k];
+                                if ( H5Sget_simple_extent_dims(space_id, h5dims, NULL) >= 0 ) {
+                                    nelems = 1;
+                                    for ( k = 0; k < ndims; k++ ) {
+                                        if ( h5dims[k] > 0 && nelems > (HSIZE_MAX / h5dims[k]) ) {
+                                            nelems = 0;
+                                            break;
+                                        }
+                                        nelems *= h5dims[k];
+                                    }
+                                    nelems_valid = 1;
+                                }
                                 free(h5dims);
                             }
                         }
                         H5Sclose(space_id);
                     }
+                    if ( !nelems_valid )
+                        nelems = 0;
                     if ( nelems > 0 ) {
                         /* Size the buffer with a checked multiply so it matches
-                         * the element count passed to H5Screate_simple below. */
+                         * the element count passed to H5Screate_simple below.
+                         * Zero-initialize so that a short or failed H5Dread can
+                         * never expose uninitialized bytes to the metadata parser. */
                         size_t meta_size = 0;
                         mat_uint32_t *meta = NULL;
                         if ( (hsize_t)(size_t)nelems == nelems &&
                              MATIO_E_NO_ERROR ==
                                  Mul(&meta_size, (size_t)nelems, sizeof(mat_uint32_t)) ) {
-                            meta = (mat_uint32_t *)malloc(meta_size);
+                            meta = (mat_uint32_t *)calloc(1, meta_size);
                         }
                         if ( meta != NULL ) {
                             hid_t mem_space_id = H5Screate_simple(1, &nelems, NULL);
