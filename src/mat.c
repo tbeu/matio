@@ -2281,9 +2281,12 @@ Mat_VarFree(matvar_t *matvar)
 
     if ( NULL != matvar->internal ) {
 #if HAVE_ZLIB
-        if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
+        if ( NULL != matvar->internal->z ) {
             inflateEnd(matvar->internal->z);
             free(matvar->internal->z);
+            matvar->internal->z = NULL;
+        }
+        if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
             if ( matvar->class_type == MAT_C_SPARSE && NULL != matvar->internal->data ) {
                 mat_sparse_t *sparse;
                 sparse = (mat_sparse_t *)matvar->internal->data;
