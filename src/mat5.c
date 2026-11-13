@@ -1281,6 +1281,12 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                     if ( uncomp_buf[0] == MAT_T_INT8 ) { /* Name not in tag */
                         mat_uint32_t len = uncomp_buf[1];
 
+                        if ( len > nBytes ) {
+                            /* Name longer than the remaining cell data */
+                            Mat_VarFree(cells[i]);
+                            cells[i] = NULL;
+                            break;
+                        }
                         if ( len % 8 > 0 ) {
                             if ( len < UINT32_MAX - 8 + (len % 8) )
                                 len = len + 8 - (len % 8);
