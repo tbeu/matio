@@ -99,7 +99,7 @@ static int Mat_H5ReadGroupInfo(mat_t *mat, matvar_t *matvar, hid_t dset_id);
 static int Mat_H5ReadNextReferenceInfo(hid_t ref_id, matvar_t *matvar, mat_t *mat);
 static int Mat_H5ReadNextReferenceData(matvar_t *matvar, mat_t *mat);
 static int Mat_VarWriteEmpty(hid_t id, matvar_t *matvar, const char *name, const char *class_name);
-static int Mat_VarWriteCell73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
+static int Mat_VarWriteCell73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
                               hsize_t *dims);
 static int Mat_VarWriteChar73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims);
 static int Mat_WriteEmptyVariable73(hid_t id, const char *name, hsize_t rank, size_t *dims);
@@ -109,17 +109,17 @@ static int Mat_VarWriteNumeric73(hid_t id, matvar_t *matvar, const char *name, h
 static int Mat_VarWriteAppendNumeric73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims,
                                        int dim);
 static int Mat_VarWriteSparse73(hid_t id, matvar_t *matvar, const char *name);
-static int Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
+static int Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
                                 hsize_t *dims, hsize_t *max_dims);
-static int Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
+static int Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
                                       hsize_t *dims, int dim);
-static int Mat_VarWriteNext73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id);
-static int Mat_VarWriteAppendNext73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
+static int Mat_VarWriteNext73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat);
+static int Mat_VarWriteAppendNext73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
                                     int dim);
-static int Mat_VarWriteNextType73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
+static int Mat_VarWriteNextType73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
                                   hsize_t *dims);
-static int Mat_VarWriteAppendNextType73(hid_t id, matvar_t *matvar, const char *name,
-                                        hid_t *refs_id, hsize_t *dims, int dim);
+static int Mat_VarWriteAppendNextType73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
+                                        hsize_t *dims, int dim);
 static herr_t Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info,
                                          void *op_data);
 static herr_t Mat_H5ReadGroupInfoIterate(hid_t dset_id, const char *name, const H5L_info_t *info,
@@ -132,7 +132,7 @@ static int Mat_H5WriteAppendData(hid_t id, hid_t h5_type, int mrank, const char 
                                  const size_t *mdims, hsize_t *dims, int dim, int isComplex,
                                  void *data);
 static int Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression,
-                           hid_t *refs_id, hobj_ref_t *ref, hsize_t *num_refs_p);
+                           mat_t *mat, hobj_ref_t *ref, hsize_t *num_refs_p);
 
 /** Maximum recursion depth when reading HDF5 references */
 #define MAX_REF_DEPTH 32
@@ -159,6 +159,21 @@ Mat_dims_to_space(int rank, const size_t *dims)
     space_id = H5Screate_simple(rank, h5dims, NULL);
     free(h5dims);
     return space_id;
+}
+
+/* Cache reference counts for one public write call, including nested cells and structs. */
+static int
+Mat_H5RefsCount(mat_t *mat, hsize_t *count)
+{
+    if ( !mat->refs_count_valid ) {
+        H5G_info_t group_info = {0};
+        if ( H5Gget_info(mat->refs_id, &group_info) < 0 )
+            return 1;
+        mat->refs_count = group_info.nlinks;
+        mat->refs_count_valid = 1;
+    }
+    *count = mat->refs_count;
+    return 0;
 }
 
 /** @brief Create the /#refs# group with properties optimized for many members */
@@ -471,6 +486,9 @@ DataType(hid_t h5_type, int isComplex)
     }
     return h5_dtype;
 }
+
+/* Below this size fixed-size datasets avoid chunk index overhead. */
+#define MAT_H5_COMPRESS_MIN_BYTES 2048
 
 static void
 Mat_H5GetChunkSize(size_t rank, const hsize_t *dims, hsize_t *chunk_dims)
@@ -1913,7 +1931,7 @@ Mat_H5WriteAppendData(hid_t id, hid_t h5_type, int mrank, const char *name, cons
 }
 
 static int
-Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression, hid_t *refs_id,
+Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression, mat_t *mat,
                 hobj_ref_t *ref, hsize_t *num_refs_p)
 {
     int err;
@@ -1922,27 +1940,25 @@ Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression, 
 
     if ( NULL != num_refs_p ) {
         num_refs = *num_refs_p;
-    } else {
-        H5G_info_t group_info = {0};
-        if ( H5Gget_info(*refs_id, &group_info) < 0 )
-            return MATIO_E_BAD_ARGUMENT;
-        num_refs = group_info.nlinks;
+    } else if ( Mat_H5RefsCount(mat, &num_refs) ) {
+        return MATIO_E_BAD_ARGUMENT;
     }
 
     mat_snprintf(obj_name, sizeof(obj_name), "%llu", (unsigned long long)num_refs);
     if ( NULL != matvar )
         matvar->compression = compression;
-    err = Mat_VarWriteNext73(*refs_id, matvar, obj_name, refs_id);
+    /* The link exists before any nested reference is written */
+    mat->refs_count_valid = 1;
+    mat->refs_count = num_refs + 1;
+    err = Mat_VarWriteNext73(mat->refs_id, matvar, obj_name, mat);
     if ( !err ) {
         mat_snprintf(obj_name, sizeof(obj_name), "/#refs#/%llu", (unsigned long long)num_refs);
         H5Rcreate(ref, id, obj_name, H5R_OBJECT, -1);
         if ( NULL != num_refs_p ) {
             if ( NULL != matvar &&
                  (matvar->class_type == MAT_C_STRUCT || matvar->class_type == MAT_C_CELL) ) {
-                /* Compound types may recursively add refs; re-query actual count */
-                H5G_info_t group_info = {0};
-                H5Gget_info(*refs_id, &group_info);
-                *num_refs_p = group_info.nlinks;
+                /* Compound types may recursively add references */
+                Mat_H5RefsCount(mat, num_refs_p);
             } else {
                 (*num_refs_p)++;
             }
@@ -2047,13 +2063,13 @@ Mat_VarWriteEmpty(hid_t id, matvar_t *matvar, const char *name, const char *clas
  * @param id HDF id of the parent object
  * @param matvar pointer to the cell array variable
  * @param name Name of the HDF dataset
- * @param refs_id pointer to the id of the /#refs# group in HDF5
+ * @param mat MAT file context
  * @param dims array of permuted dimensions
  * @retval 0 on success
  * @endif
  */
 static int
-Mat_VarWriteCell73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id, hsize_t *dims)
+Mat_VarWriteCell73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat, hsize_t *dims)
 {
     int k;
     hsize_t nelems = 1, l;
@@ -2067,26 +2083,24 @@ Mat_VarWriteCell73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
     if ( 0 == nelems || NULL == matvar->data ) {
         err = Mat_VarWriteEmpty(id, matvar, name, ClassNames[matvar->class_type]);
     } else {
-        if ( *refs_id < 0 ) {
+        if ( mat->refs_id < 0 ) {
             if ( H5Lexists(id, "/#refs#", H5P_DEFAULT) ) {
-                *refs_id = H5Gopen(id, "/#refs#", H5P_DEFAULT);
+                mat->refs_id = H5Gopen(id, "/#refs#", H5P_DEFAULT);
             } else {
-                *refs_id = Mat_CreateRefsGroup(id);
+                mat->refs_id = Mat_CreateRefsGroup(id);
             }
         }
-        if ( *refs_id > -1 ) {
+        if ( mat->refs_id > -1 ) {
             hobj_ref_t *refs = (hobj_ref_t *)malloc((size_t)nelems * sizeof(*refs));
             if ( NULL != refs ) {
                 hid_t mspace_id = H5Screate_simple(matvar->rank, dims, NULL);
                 hid_t dset_id = H5Dcreate(id, name, H5T_STD_REF_OBJ, mspace_id, H5P_DEFAULT,
                                           H5P_DEFAULT, H5P_DEFAULT);
-                H5G_info_t group_info = {0};
-                hsize_t num_refs;
-                H5Gget_info(*refs_id, &group_info);
-                num_refs = group_info.nlinks;
+                hsize_t num_refs = 0;
+                Mat_H5RefsCount(mat, &num_refs);
 
                 for ( l = 0; l < nelems; l++ ) {
-                    err = Mat_VarWriteRef(id, cells[l], matvar->compression, refs_id, refs + l,
+                    err = Mat_VarWriteRef(id, cells[l], matvar->compression, mat, refs + l,
                                           &num_refs);
                     if ( err )
                         break;
@@ -2321,7 +2335,7 @@ Mat_VarWriteLogical73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dim
         nelems *= dims[k];
     }
 
-    if ( matvar->compression == MAT_COMPRESSION_ZLIB ) {
+    if ( matvar->compression == MAT_COMPRESSION_ZLIB && nelems >= MAT_H5_COMPRESS_MIN_BYTES ) {
         plist = H5Pcreate(H5P_DATASET_CREATE);
         if ( MAX_RANK >= matvar->rank ) {
             hsize_t chunk_dims[MAX_RANK];
@@ -2407,7 +2421,7 @@ static int
 Mat_VarWriteNumeric73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dims,
                       hsize_t *max_dims)
 {
-    int err = MATIO_E_NO_ERROR, k;
+    int err = MATIO_E_NO_ERROR, k, use_compression;
     hsize_t nelems = 1;
     hid_t plist;
 
@@ -2415,7 +2429,12 @@ Mat_VarWriteNumeric73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dim
         nelems *= dims[k];
     }
 
-    if ( matvar->compression || NULL != max_dims ) {
+    /* Tiny fixed-size datasets do not need chunk indexes. */
+    use_compression = matvar->compression == MAT_COMPRESSION_ZLIB &&
+                      (NULL != max_dims ||
+                       nelems * Mat_SizeOfClass(matvar->class_type) * (matvar->isComplex ? 2 : 1) >=
+                           MAT_H5_COMPRESS_MIN_BYTES);
+    if ( use_compression || NULL != max_dims ) {
         plist = H5Pcreate(H5P_DATASET_CREATE);
         if ( MAX_RANK >= matvar->rank ) {
             hsize_t chunk_dims[MAX_RANK];
@@ -2432,7 +2451,7 @@ Mat_VarWriteNumeric73(hid_t id, matvar_t *matvar, const char *name, hsize_t *dim
                 return MATIO_E_OUT_OF_MEMORY;
             }
         }
-        if ( matvar->compression == MAT_COMPRESSION_ZLIB )
+        if ( use_compression )
             H5Pset_deflate(plist, 9);
     } else {
         plist = H5P_DEFAULT;
@@ -2647,14 +2666,14 @@ Mat_VarWriteSparse73(hid_t id, matvar_t *matvar, const char *name)
  * @param id HDF id of the parent object
  * @param matvar pointer to the structure variable
  * @param name Name of the HDF dataset
- * @param refs_id pointer to the id of the /#refs# group in HDF5
+ * @param mat MAT file context
  * @param dims array of permuted dimensions
  * @param max_dims maximum dimensions
  * @retval 0 on success
  * @endif
  */
 static int
-Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id, hsize_t *dims,
+Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat, hsize_t *dims,
                      hsize_t *max_dims)
 {
     int err;
@@ -2727,17 +2746,17 @@ Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_i
                         if ( NULL != fields[k] )
                             fields[k]->compression = matvar->compression;
                         err = Mat_VarWriteNext73(struct_id, fields[k],
-                                                 matvar->internal->fieldnames[k], refs_id);
+                                                 matvar->internal->fieldnames[k], mat);
                     }
                 } else {
-                    if ( *refs_id < 0 ) {
+                    if ( mat->refs_id < 0 ) {
                         if ( H5Lexists(id, "/#refs#", H5P_DEFAULT) ) {
-                            *refs_id = H5Gopen(id, "/#refs#", H5P_DEFAULT);
+                            mat->refs_id = H5Gopen(id, "/#refs#", H5P_DEFAULT);
                         } else {
-                            *refs_id = Mat_CreateRefsGroup(id);
+                            mat->refs_id = Mat_CreateRefsGroup(id);
                         }
                     }
-                    if ( *refs_id > -1 ) {
+                    if ( mat->refs_id > -1 ) {
                         hid_t plist = H5P_DEFAULT;
                         hobj_ref_t **refs = (hobj_ref_t **)calloc((size_t)nfields, sizeof(*refs));
                         if ( NULL != refs ) {
@@ -2753,13 +2772,13 @@ Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_i
                             if ( !err ) {
                                 H5G_info_t group_info = {0};
                                 hsize_t num_refs;
-                                H5Gget_info(*refs_id, &group_info);
+                                H5Gget_info(mat->refs_id, &group_info);
                                 num_refs = group_info.nlinks;
                                 for ( k = 0; k < nelems; k++ ) {
                                     for ( l = 0; l < nfields; l++ ) {
                                         err = Mat_VarWriteRef(id, fields[k * nfields + l],
-                                                              matvar->compression, refs_id,
-                                                              refs[l] + k, &num_refs);
+                                                              matvar->compression, mat, refs[l] + k,
+                                                              &num_refs);
                                         if ( err )
                                             break;
                                     }
@@ -2828,8 +2847,8 @@ Mat_VarWriteStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_i
 }
 
 static int
-Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
-                           hsize_t *dims, int dim)
+Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat, hsize_t *dims,
+                           int dim)
 {
     int err = MATIO_E_NO_ERROR;
     hsize_t nelems = 1;
@@ -2847,7 +2866,7 @@ Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *
             hsize_t nfields = matvar->internal->num_fields;
             matvar_t **fields = (matvar_t **)matvar->data;
 
-            if ( *refs_id <= -1 )
+            if ( mat->refs_id <= -1 )
                 return MATIO_E_OUTPUT_BAD_DATA;
 
             refs = (hobj_ref_t **)calloc((size_t)nfields, sizeof(*refs));
@@ -2865,12 +2884,12 @@ Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *
                     hsize_t k;
                     H5G_info_t group_info = {0};
                     hsize_t num_refs;
-                    H5Gget_info(*refs_id, &group_info);
+                    H5Gget_info(mat->refs_id, &group_info);
                     num_refs = group_info.nlinks;
                     for ( k = 0; k < nelems; k++ ) {
                         for ( l = 0; l < nfields; l++ ) {
                             err = Mat_VarWriteRef(id, fields[k * nfields + l], matvar->compression,
-                                                  refs_id, refs[l] + k, &num_refs);
+                                                  mat, refs[l] + k, &num_refs);
                             if ( err )
                                 break;
                         }
@@ -2906,7 +2925,7 @@ Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *
                 for ( k = 0; k < matvar->rank; k++ ) {
                     max_dims[k] = H5S_UNLIMITED;
                 }
-                err = Mat_VarWriteStruct73(id, matvar, name, refs_id, dims, max_dims);
+                err = Mat_VarWriteStruct73(id, matvar, name, mat, dims, max_dims);
             } else {
                 hsize_t *max_dims = (hsize_t *)malloc(matvar->rank * sizeof(hsize_t));
                 if ( NULL != max_dims ) {
@@ -2914,7 +2933,7 @@ Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *
                     for ( k = 0; k < matvar->rank; k++ ) {
                         max_dims[k] = H5S_UNLIMITED;
                     }
-                    err = Mat_VarWriteStruct73(id, matvar, name, refs_id, dims, max_dims);
+                    err = Mat_VarWriteStruct73(id, matvar, name, mat, dims, max_dims);
                     free(max_dims);
                 } else {
                     err = MATIO_E_OUT_OF_MEMORY;
@@ -2927,7 +2946,7 @@ Mat_VarWriteAppendStruct73(hid_t id, matvar_t *matvar, const char *name, hid_t *
 }
 
 static int
-Mat_VarWriteNext73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id)
+Mat_VarWriteNext73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat)
 {
     int err;
 
@@ -2938,11 +2957,11 @@ Mat_VarWriteNext73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id)
 
     if ( MAX_RANK >= matvar->rank ) {
         hsize_t perm_dims[MAX_RANK];
-        err = Mat_VarWriteNextType73(id, matvar, name, refs_id, perm_dims);
+        err = Mat_VarWriteNextType73(id, matvar, name, mat, perm_dims);
     } else {
         hsize_t *perm_dims = (hsize_t *)malloc(matvar->rank * sizeof(hsize_t));
         if ( NULL != perm_dims ) {
-            err = Mat_VarWriteNextType73(id, matvar, name, refs_id, perm_dims);
+            err = Mat_VarWriteNextType73(id, matvar, name, mat, perm_dims);
             free(perm_dims);
         } else {
             err = MATIO_E_OUT_OF_MEMORY;
@@ -2953,17 +2972,17 @@ Mat_VarWriteNext73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id)
 }
 
 static int
-Mat_VarWriteAppendNext73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id, int dim)
+Mat_VarWriteAppendNext73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat, int dim)
 {
     int err;
 
     if ( MAX_RANK >= matvar->rank ) {
         hsize_t perm_dims[MAX_RANK];
-        err = Mat_VarWriteAppendNextType73(id, matvar, name, refs_id, perm_dims, dim);
+        err = Mat_VarWriteAppendNextType73(id, matvar, name, mat, perm_dims, dim);
     } else {
         hsize_t *perm_dims = (hsize_t *)malloc(matvar->rank * sizeof(hsize_t));
         if ( NULL != perm_dims ) {
-            err = Mat_VarWriteAppendNextType73(id, matvar, name, refs_id, perm_dims, dim);
+            err = Mat_VarWriteAppendNextType73(id, matvar, name, mat, perm_dims, dim);
             free(perm_dims);
         } else {
             err = MATIO_E_OUT_OF_MEMORY;
@@ -2974,7 +2993,7 @@ Mat_VarWriteAppendNext73(hid_t id, matvar_t *matvar, const char *name, hid_t *re
 }
 
 static int
-Mat_VarWriteNextType73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id, hsize_t *dims)
+Mat_VarWriteNextType73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat, hsize_t *dims)
 {
     int err, k;
 
@@ -3003,10 +3022,10 @@ Mat_VarWriteNextType73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs
                 err = Mat_VarWriteChar73(id, matvar, name, dims);
                 break;
             case MAT_C_STRUCT:
-                err = Mat_VarWriteStruct73(id, matvar, name, refs_id, dims, NULL);
+                err = Mat_VarWriteStruct73(id, matvar, name, mat, dims, NULL);
                 break;
             case MAT_C_CELL:
-                err = Mat_VarWriteCell73(id, matvar, name, refs_id, dims);
+                err = Mat_VarWriteCell73(id, matvar, name, mat, dims);
                 break;
             case MAT_C_SPARSE:
                 err = Mat_VarWriteSparse73(id, matvar, name);
@@ -3029,7 +3048,7 @@ Mat_VarWriteNextType73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs
 }
 
 static int
-Mat_VarWriteAppendNextType73(hid_t id, matvar_t *matvar, const char *name, hid_t *refs_id,
+Mat_VarWriteAppendNextType73(hid_t id, matvar_t *matvar, const char *name, mat_t *mat,
                              hsize_t *dims, int dim)
 {
     int err, k;
@@ -3054,7 +3073,7 @@ Mat_VarWriteAppendNextType73(hid_t id, matvar_t *matvar, const char *name, hid_t
                 err = Mat_VarWriteAppendNumeric73(id, matvar, name, dims, dim);
                 break;
             case MAT_C_STRUCT:
-                err = Mat_VarWriteAppendStruct73(id, matvar, name, refs_id, dims, dim);
+                err = Mat_VarWriteAppendStruct73(id, matvar, name, mat, dims, dim);
                 break;
             case MAT_C_EMPTY:
             case MAT_C_CHAR:
@@ -3063,7 +3082,7 @@ Mat_VarWriteAppendNextType73(hid_t id, matvar_t *matvar, const char *name, hid_t
             case MAT_C_FUNCTION:
             case MAT_C_OBJECT:
             case MAT_C_OPAQUE:
-                err = Mat_VarWriteNextType73(id, matvar, name, refs_id, dims);
+                err = Mat_VarWriteNextType73(id, matvar, name, mat, dims);
                 break;
             default:
                 err = MATIO_E_OUTPUT_BAD_DATA;
@@ -4138,7 +4157,8 @@ Mat_VarWrite73(mat_t *mat, matvar_t *matvar, int compress)
     matvar->compression = (enum matio_compression)compress;
 
     id = *(hid_t *)mat->fp;
-    return Mat_VarWriteNext73(id, matvar, matvar->name, &(mat->refs_id));
+    mat->refs_count_valid = 0;
+    return Mat_VarWriteNext73(id, matvar, matvar->name, mat);
 }
 
 /** @if mat_devman
@@ -4167,7 +4187,8 @@ Mat_VarWriteAppend73(mat_t *mat, matvar_t *matvar, int compress, int dim)
     matvar->compression = (enum matio_compression)compress;
 
     id = *(hid_t *)mat->fp;
-    return Mat_VarWriteAppendNext73(id, matvar, matvar->name, &(mat->refs_id), dim);
+    mat->refs_count_valid = 0;
+    return Mat_VarWriteAppendNext73(id, matvar, matvar->name, mat, dim);
 }
 
 /** @brief Determines a list of the variables of version 7.3 matlab file
