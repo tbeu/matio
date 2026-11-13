@@ -752,7 +752,10 @@ EnterFieldNameObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, char ***al
         }
     }
 
-    default_props = GetDefaultPropsForClass(ss, obj_info->class_id);
+    /* A saveobj return value replaces the object, so class defaults do not apply */
+    default_props = obj_info->saveobj_id > 0 && obj_info->saveobj_id <= ss->num_saveobj_props
+                        ? NULL
+                        : GetDefaultPropsForClass(ss, obj_info->class_id);
     err = CollectFieldNamesFromStruct(default_props, all_fieldnames, count, capacity);
     if ( err )
         return err;
@@ -912,7 +915,10 @@ GetFieldValueFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const c
             if ( EnterFieldValueObject(ss, child_id, fname, visited, stack, &top, &result) )
                 return result;
         } else {
-            const matvar_t *default_props = GetDefaultPropsForClass(ss, obj_info->class_id);
+            const matvar_t *default_props =
+                obj_info->saveobj_id > 0 && obj_info->saveobj_id <= ss->num_saveobj_props
+                    ? NULL
+                    : GetDefaultPropsForClass(ss, obj_info->class_id);
             top--;
             if ( default_props != NULL && default_props->class_type == MAT_C_STRUCT ) {
                 const matvar_t *def_field = Mat_VarGetStructFieldByName(default_props, fname, 0);
