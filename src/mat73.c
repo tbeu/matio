@@ -837,7 +837,9 @@ Mat_H5ReadFieldNames(matvar_t *matvar, hid_t dset_id, hsize_t *nfields)
         hobj_ref_t ref;
         H5O_type_t obj_type;
         hid_t ref_type_id = H5Aget_type(attr_id);
+        const size_t ref_size = H5Tget_size(ref_type_id);
         if ( H5T_REFERENCE == H5Tget_class(ref_type_id) &&
+             ref_size == H5Tget_size(H5T_STD_REF_OBJ) &&
              MATIO_E_NO_ERROR == Mat_H5ReadScalarAttribute(attr_id, H5T_STD_REF_OBJ, &ref) &&
              H5Rget_obj_type2(dset_id, H5R_OBJECT, &ref, &obj_type) >= 0 &&
              H5O_TYPE_DATASET == obj_type )
