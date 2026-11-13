@@ -1819,7 +1819,7 @@ Mat_VarDelete(mat_t *mat, const char *name)
 
             Mat_Rewind(mat);
             while ( NULL != (matvar = Mat_VarReadNext(mat)) ) {
-                if ( 0 != strcmp(matvar->name, name) )
+                if ( matvar->name == NULL || 0 != strcmp(matvar->name, name) )
                     err = Mat_VarWrite(tmp, matvar, matvar->compression);
                 else
                     err = MATIO_E_NO_ERROR;
