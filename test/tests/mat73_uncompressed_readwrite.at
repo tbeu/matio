@@ -133,3 +133,12 @@ AT_CHECK([cp $srcdir/results/dump-mat_copy-partial.out expout
 AT_CHECK([$builddir/test_mat delete test_mat73_uncompressed_delete.mat var1],[0],[],[])
 AT_CHECK([$builddir/test_mat delete test_mat73_uncompressed_delete.mat var24],[0],[],[])
 AT_CLEANUP
+
+AT_SETUP([Copy variables with MCOS objects])
+AT_KEYWORDS([copy mcos])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -o test_mat73_copy_mcos.mat copy $srcdir/datasets/test_mcos_nested_v73.mat],[0],[],[])
+AT_CHECK([cp $srcdir/results/dump-mat_copy-mcos-73.out expout
+          $builddir/../tools/matdump -f whos test_mat73_copy_mcos.mat],[0],[expout],[])
+AT_CLEANUP

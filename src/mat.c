@@ -1833,6 +1833,14 @@ Mat_VarDelete(mat_t *mat, const char *name)
             tmp->dir = NULL;
             n = tmp->num_datasets;
             Mat_Close(tmp);
+            if ( err && NULL != dir ) {
+                size_t i;
+                for ( i = 0; i < n; i++ ) {
+                    if ( dir[i] )
+                        free(dir[i]);
+                }
+                free(dir);
+            }
 
             if ( !err ) {
                 char *new_name = strdup(mat->filename);

@@ -4120,6 +4120,40 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
     return 1;
 }
 
+/* Objects and function handles have no MAT7.3 writer, also not inside structs or cells */
+static int
+Mat_VarHasUnsupported73(const matvar_t *matvar)
+{
+    size_t i, n;
+    matvar_t **v;
+
+    if ( NULL == matvar )
+        return 0;
+    switch ( matvar->class_type ) {
+        case MAT_C_OBJECT:
+        case MAT_C_OPAQUE: {
+            /* Empty objects are written as [] */
+            size_t nelems = 1;
+            return Mat_MulDims(matvar, &nelems) == 0 && nelems > 0;
+        }
+        case MAT_C_FUNCTION:
+            return 1;
+        case MAT_C_STRUCT:
+        case MAT_C_CELL:
+            if ( NULL == matvar->data || 0 == matvar->data_size )
+                return 0;
+            v = (matvar_t **)matvar->data;
+            n = matvar->nbytes / matvar->data_size;
+            for ( i = 0; i < n; i++ ) {
+                if ( Mat_VarHasUnsupported73(v[i]) )
+                    return 1;
+            }
+            return 0;
+        default:
+            return 0;
+    }
+}
+
 /** @if mat_devman
  * @brief Writes a matlab variable to a version 7.3 matlab file
  *
@@ -4140,6 +4174,8 @@ Mat_VarWrite73(mat_t *mat, matvar_t *matvar, int compress)
         return MATIO_E_BAD_ARGUMENT;
     if ( NULL == matvar->name )
         return MATIO_E_OUTPUT_BAD_DATA;
+    if ( Mat_VarHasUnsupported73(matvar) )
+        return MATIO_E_OPERATION_NOT_SUPPORTED;
 
     matvar->compression = (enum matio_compression)compress;
 
