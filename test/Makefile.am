@@ -327,6 +327,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-var95-5.out \
                  $(results_dir)/read-var95-73.out \
                  $(results_dir)/read-x.out \
+                 $(results_dir)/readvar-copy_var93-73.out \
                  $(results_dir)/readvar-write_cell_empty_struct-var1.out \
                  $(results_dir)/readvar-write_char_unicode_1d-a-5.out \
                  $(results_dir)/readvar-write_char_unicode_1d-a-73.out \
