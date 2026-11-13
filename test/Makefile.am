@@ -152,6 +152,8 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/cell_api_set.out \
                  $(results_dir)/dir-4.out \
                  $(results_dir)/dir-4_be.out \
+                 $(results_dir)/dir_string_v73.out \
+                 $(results_dir)/dir_table_v6.out \
                  $(results_dir)/dir_le.out \
                  $(results_dir)/dir-5_be.out \
                  $(results_dir)/dir-73_be.out \
