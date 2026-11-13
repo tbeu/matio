@@ -1224,7 +1224,7 @@ ReadNextCell(mat_t *mat, matvar_t *matvar)
                     cells[i]->rank = uncomp_buf[1];
                     nBytes -= cells[i]->rank;
                     cells[i]->rank /= 4;
-                    if ( 0 == do_clean && cells[i]->rank > 13 ) {
+                    if ( 0 == do_clean && cells[i]->rank > MATIO_MAX_RANK ) {
                         int rank = cells[i]->rank;
                         cells[i]->rank = 0;
                         Mat_Critical("%d is not a valid rank", rank);
@@ -1792,7 +1792,7 @@ ReadNextStructField(mat_t *mat, matvar_t *matvar)
                     fields[i]->rank = uncomp_buf[1];
                     nBytes -= fields[i]->rank;
                     fields[i]->rank /= 4;
-                    if ( 0 == do_clean && fields[i]->rank > 13 ) {
+                    if ( 0 == do_clean && fields[i]->rank > MATIO_MAX_RANK ) {
                         int rank = fields[i]->rank;
                         fields[i]->rank = 0;
                         Mat_Critical("%d is not a valid rank", rank);
@@ -2287,6 +2287,13 @@ ReadRankDims(mat_t *mat, matvar_t *matvar, enum matio_types data_type, mat_uint3
     /* Rank and dimension */
     if ( data_type == MAT_T_INT32 ) {
         matvar->rank = nbytes / sizeof(mat_uint32_t);
+        if ( matvar->rank > MATIO_MAX_RANK ) {
+            /* Bounds the dims allocation */
+            int rank = matvar->rank;
+            matvar->rank = 0;
+            Mat_Critical("%d is not a valid rank", rank);
+            return MATIO_E_FILE_FORMAT_VIOLATION;
+        }
         matvar->dims = (size_t *)malloc(matvar->rank * sizeof(*matvar->dims));
         if ( NULL != matvar->dims ) {
             int i;
@@ -6591,7 +6598,7 @@ Mat_VarReadNextInfo5(mat_t *mat)
                     size_t size;
                     int nbytes = uncomp_buf[1];
                     matvar->rank = nbytes / 4;
-                    if ( 0 == do_clean && matvar->rank > 13 ) {
+                    if ( 0 == do_clean && matvar->rank > MATIO_MAX_RANK ) {
                         int rank = matvar->rank;
                         matvar->rank = 0;
                         Mat_Critical("%d is not a valid rank", rank);

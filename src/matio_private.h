@@ -57,6 +57,14 @@
 #include <hdf5.h>
 #endif
 
+/* Maximum number of dimensions accepted when reading MAT variables.
+ * Matches HDF5's H5S_MAX_RANK when HDF5 is available. */
+#if defined(MAT73) && MAT73
+#define MATIO_MAX_RANK H5S_MAX_RANK
+#else
+#define MATIO_MAX_RANK 32
+#endif
+
 #ifndef EXTERN
 #ifdef __cplusplus
 #define EXTERN extern "C"
