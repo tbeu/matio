@@ -67,6 +67,18 @@ typedef struct mcos_dynamic_property_set
     size_t nprop_ids;       /**< Number of dynamic property object IDs */
 } mcos_dynamic_property_set_t;
 
+/** @brief Explicit stack frame for the iterative object-graph walks
+ *
+ * The walks visit objects in the same pre-order as a recursive depth-first
+ * traversal, but keep the pending dynamic-property iteration in this frame
+ * instead of on the C stack.
+ */
+typedef struct
+{
+    mat_uint32_t obj_id; /**< Object whose dynamic properties are being iterated */
+    size_t next;         /**< Index of the next dynamic property id to visit */
+} mcos_walk_frame_t;
+
 /** @brief Parsed MCOS subsystem data
  *
  * Contains all parsed information from the MAT file subsystem
@@ -109,6 +121,11 @@ typedef struct mcos_subsystem
 
     /* Default class properties (last cell of FileWrapper__) */
     matvar_t *defaults; /**< Cell array of structs, one per class */
+
+    /* Scratch space of the object-graph walks, shared because walks never nest */
+    mat_uint32_t *walk_visited;    /**< Last walk that visited an object, indexed by object_id-1 */
+    mcos_walk_frame_t *walk_stack; /**< Stack of num_objects frames */
+    mat_uint32_t walk_id;          /**< Number of the current walk */
 } mcos_subsystem_t;
 
 #endif /* MCOS */
