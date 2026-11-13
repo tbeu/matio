@@ -2545,6 +2545,9 @@ Mat_VarWriteSparse73(hid_t id, matvar_t *matvar, const char *name)
     int err = MATIO_E_NO_ERROR;
     hid_t sparse_id;
 
+    if ( NULL == matvar->data )
+        return MATIO_E_OUTPUT_BAD_DATA;
+
     sparse_id = H5Gcreate(id, name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     if ( sparse_id < 0 ) {
         Mat_Critical("Error creating group for sparse array %s", matvar->name);
