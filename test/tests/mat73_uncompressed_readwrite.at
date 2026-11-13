@@ -125,3 +125,9 @@ AT_CHECK([cp $srcdir/results/dump-mat_copy-partial.out expout
 AT_CHECK([$builddir/test_mat delete test_mat73_uncompressed_delete.mat var1],[0],[],[])
 AT_CHECK([$builddir/test_mat delete test_mat73_uncompressed_delete.mat var24],[0],[],[])
 AT_CLEANUP
+
+AT_SETUP([Incomplete HDF5 open])
+AT_KEYWORDS([errors])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([$builddir/test_mat open_truncated],[0],[ignore],[ignore])
+AT_CLEANUP
