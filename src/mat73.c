@@ -4156,6 +4156,8 @@ Mat_VarWriteAppend73(mat_t *mat, matvar_t *matvar, int compress, int dim)
 
     if ( NULL == mat || NULL == matvar )
         return MATIO_E_BAD_ARGUMENT;
+    if ( NULL == matvar->name )
+        return MATIO_E_OUTPUT_BAD_DATA;
 
     matvar->compression = (enum matio_compression)compress;
 
