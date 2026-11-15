@@ -346,6 +346,20 @@ AT_CHECK([cp $srcdir/results/read-var52.out expout
          $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_hdf_le.mat var52],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read cell array with unassigned elements])
+AT_KEYWORDS([empty])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-var93-73.out expout
+         $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_hdf_le.mat var93],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read struct array with unassigned fields])
+AT_KEYWORDS([empty])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-var94-73.out expout
+         $builddir/test_mat readvar $srcdir/datasets/matio_test_cases_uncompressed_hdf_le.mat var94],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read cell array with double arrays])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/read-var53.out expout

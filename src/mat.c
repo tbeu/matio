@@ -2669,7 +2669,7 @@ void
 Mat_VarPrint(const matvar_t *matvar, int printdata)
 {
     size_t nelems = 0, i;
-    const char *class_type_desc[18] = {"Undefined",
+    const char *class_type_desc[18] = {"Empty",
                                        "Cell Array",
                                        "Structure",
                                        "Object",
