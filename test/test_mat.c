@@ -163,8 +163,14 @@ static const char *helptestsstr[] = {
     NULL};
 
 static const char *helptest_copy[] = {
-    "TEST: copy", "",  "Usage: test_mat copy FILE", "", "Copies FILE to test_mat_copy.mat",
-    "",           NULL};
+    "TEST: copy",
+    "",
+    "Usage: test_mat copy FILE",
+    "",
+    "Copies FILE to test_mat_copy.mat. With -a, the variables are written with Mat_VarWriteAppend",
+    "(MAT7.3 only).",
+    "",
+    NULL};
 
 static const char *helptest_delete[] = {"TEST: delete",
                                         "",
@@ -4497,7 +4503,9 @@ main(int argc, char *argv[])
                     Mat_VarFree(matvar);
                     if ( NULL != copy ) {
                         /* Skip variables that cannot be written, e.g. objects */
-                        int write_err = Mat_VarWrite(mat, copy, compression);
+                        int write_err = dim_append
+                                            ? Mat_VarWriteAppend(mat, copy, compression, dim_append)
+                                            : Mat_VarWrite(mat, copy, compression);
                         if ( MATIO_E_OPERATION_NOT_SUPPORTED != write_err )
                             err += write_err;
                         Mat_VarFree(copy);
