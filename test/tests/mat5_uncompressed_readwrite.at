@@ -121,3 +121,8 @@ AT_CHECK([cp $srcdir/results/dump-mat_copy-partial.out expout
 AT_CHECK([$builddir/test_mat delete test_mat5_uncompressed_delete.mat var1],[0],[],[])
 AT_CHECK([$builddir/test_mat delete test_mat5_uncompressed_delete.mat var24],[0],[],[])
 AT_CLEANUP
+
+AT_SETUP([MAT5 stream errors])
+AT_KEYWORDS([errors])
+AT_CHECK([$builddir/test_mat -v 5 write_errors],[0],[ignore],[ignore])
+AT_CLEANUP
