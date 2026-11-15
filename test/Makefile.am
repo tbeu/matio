@@ -165,7 +165,6 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/dump-mat_copy-73.out \
                  $(results_dir)/dump-mat_copy-73_32.out \
                  $(results_dir)/dump-mat_copy-mcos-5.out \
-                 $(results_dir)/dump-mat_copy-mcos-5z.out \
                  $(results_dir)/dump-mat_copy-mcos-73.out \
                  $(results_dir)/dump-write_after_failure.out \
                  $(results_dir)/dump-mat_copy-partial.out \

@@ -27,7 +27,7 @@ AT_KEYWORDS([copy mcos])
 AT_SKIP_IF([test $MCOS -ne 1])
 AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
 AT_CHECK([$builddir/test_mat -v 5 -z -o test_mat5_compressed_copy_mcos.mat copy $srcdir/datasets/test_string_v7.mat],[0],[],[])
-AT_CHECK([cp $srcdir/results/dump-mat_copy-mcos-5z.out expout
+AT_CHECK([cp $srcdir/results/dump-mat_copy-mcos-5.out expout
           $builddir/../tools/matdump -f whos test_mat5_compressed_copy_mcos.mat],[0],[expout],[])
 AT_CLEANUP
 
