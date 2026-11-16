@@ -3195,6 +3195,7 @@ Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data
 {
     mat_off_t fpos = 0;
     matvar_t *matvar = NULL;
+    int accepted = 1;
 
     do {
         Mat_VarFree(matvar);
@@ -3207,7 +3208,11 @@ Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data
         }
         matvar = Mat_VarReadNextInfoPredicate(mat, pred, user_data);
         if ( matvar ) {
-            const int err = ReadData(mat, matvar);
+            /* The predicate only needs the name, a rejected variable is not read */
+            int err = MATIO_E_NO_ERROR;
+            accepted = NULL == pred || 0 != pred(matvar->name, user_data);
+            if ( accepted )
+                err = ReadData(mat, matvar);
             if ( err ) {
                 Mat_VarFree(matvar);
                 matvar = NULL;
@@ -3220,7 +3225,7 @@ Mat_VarReadNextPredicate(mat_t *mat, mat_iter_pred_t pred, const void *user_data
             }
             break;
         }
-    } while ( (NULL != pred) && 0 == pred(matvar->name, user_data) );
+    } while ( !accepted );
     /* for 7.3 the predicate will be called one extra time */
 
     return matvar;
