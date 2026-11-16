@@ -141,9 +141,12 @@ snprint_char(char *buf, size_t bufsz, const matvar_t *matvar)
             if ( u16[i] < 128 )
                 buf[pos++] = (char)u16[i];
             else {
-                int n = mat_snprintf(buf + pos, bufsz - pos, "\\u%04X", u16[i]);
-                if ( n > 0 )
+                size_t remaining = bufsz - (size_t)pos;
+                int n = mat_snprintf(buf + pos, remaining, "\\u%04X", u16[i]);
+                if ( n > 0 && (size_t)n < remaining )
                     pos += n;
+                else
+                    break;
             }
         }
     } else {
