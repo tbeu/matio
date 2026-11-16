@@ -591,7 +591,8 @@ ParseClassAliases(const matvar_t *alias_cell, mcos_subsystem_t *ss)
     if ( alias_cell == NULL || ss == NULL || ss->num_classes == 0 || alias_cell->data == NULL )
         return MATIO_E_NO_ERROR;
 
-    if ( alias_cell->data_type != MAT_T_INT32 && alias_cell->data_type != MAT_T_UINT32 )
+    if ( (alias_cell->class_type != MAT_C_INT32 && alias_cell->class_type != MAT_C_UINT32) ||
+         alias_cell->isComplex )
         return MATIO_E_NO_ERROR;
 
     if ( Mat_MulDims(alias_cell, &naliases) )
@@ -604,7 +605,7 @@ ParseClassAliases(const matvar_t *alias_cell, mcos_subsystem_t *ss)
 
     for ( i = 1; i < naliases && i <= ss->num_classes; i++ ) {
         mat_uint32_t alias_idx;
-        if ( alias_cell->data_type == MAT_T_INT32 )
+        if ( alias_cell->class_type == MAT_C_INT32 )
             alias_idx = (mat_uint32_t)((const mat_int32_t *)alias_cell->data)[i];
         else
             alias_idx = ((const mat_uint32_t *)alias_cell->data)[i];
@@ -997,7 +998,7 @@ ParseSubsystem5(mat_t *mat)
      * an unnamed mxUINT8 byte array.  Accept only a leaf byte array.
      */
     subsys_var = Mat_VarReadNextInfo5(mat);
-    if ( subsys_var == NULL ||
+    if ( subsys_var == NULL || subsys_var->isComplex ||
          (subsys_var->class_type != MAT_C_UINT8 && subsys_var->class_type != MAT_C_INT8 &&
           subsys_var->class_type != MAT_C_CHAR) ) {
         Mat_VarFree(subsys_var);
@@ -1113,7 +1114,8 @@ ParseSubsystem5(mat_t *mat)
 
         /* Cell 1 (index 0): Linking metadata as uint8 array */
         cell1 = cells[0];
-        if ( cell1 == NULL || cell1->data == NULL )
+        if ( cell1 == NULL || cell1->data == NULL || cell1->class_type != MAT_C_UINT8 ||
+             cell1->isComplex )
             goto cleanup_ss;
 
         err = ParseLinkingMetadata((const mat_uint8_t *)cell1->data, cell1->nbytes, ss,
@@ -1308,7 +1310,8 @@ ParseSubsystem73(mat_t *mat)
 
         /* Cell 0: Linking metadata as uint8 array */
         cell1 = cells[0];
-        if ( cell1 == NULL || cell1->data == NULL )
+        if ( cell1 == NULL || cell1->data == NULL || cell1->class_type != MAT_C_UINT8 ||
+             cell1->isComplex )
             goto cleanup;
 
         ss = (mcos_subsystem_t *)calloc(1, sizeof(mcos_subsystem_t));
@@ -2006,7 +2009,7 @@ ResolveStringIndices(mcos_subsystem_t *ss, matvar_t *matvar)
     size_t nelems = 1;
     matvar_t *res = NULL;
 
-    if ( ss == NULL || matvar == NULL || matvar->class_type != MAT_C_UINT32 ||
+    if ( ss == NULL || matvar == NULL || matvar->class_type != MAT_C_UINT32 || matvar->isComplex ||
          matvar->data == NULL )
         return NULL;
 
