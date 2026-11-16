@@ -144,6 +144,9 @@ static const char *helptestsstr[] = {
     "copy                    - Copies one matlab file to another",
     "delete                  - Deletes a specific variable from a file",
     "directory               - Retrieves the list of variable names from a file",
+    "read_truncated          - Reject an incomplete compressed variable",
+    "open_truncated          - Reject an incomplete HDF5 file",
+    "write_errors            - Report stream write and close errors",
     "readvar                 - Reads a specific variable from a file",
     "getstructfield          - Tests Mat_VarGetStructField getting fields from a",
     "                          structure",
@@ -1624,6 +1627,178 @@ test_write_char_utf8_2d(const char *output_name)
 {
     const size_t dims[2] = {2, 4};
     return test_write_char_utf8(output_name, 2, dims);
+}
+
+static int
+write_prefix(const char *output_name, const unsigned char *buffer, size_t length)
+{
+    FILE *fp = fopen(output_name, "wb");
+    int err;
+    if ( NULL == fp )
+        return 1;
+    err = fwrite(buffer, 1, length, fp) != length;
+    err |= fclose(fp);
+    return err;
+}
+
+static int
+test_read_truncated(const char *output_name, int kind, size_t count)
+{
+    size_t dims[2], i, length;
+    double values[8192];
+    unsigned char buffer[sizeof(values) + 512], actual[sizeof(buffer)];
+    mat_t *mat;
+    matvar_t *matvar, *child;
+    const char *fields[] = {"field"};
+    size_t one[2] = {1, 1};
+    FILE *fp;
+    int err;
+
+    dims[0] = count;
+    dims[1] = 1;
+    for ( i = 0; i < count; i++ )
+        values[i] = (double)i + 1;
+    mat = Mat_CreateVer(output_name, NULL, MAT_FT_MAT5);
+    if ( NULL == mat )
+        return 1;
+    matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, values, 0);
+    if ( kind ) {
+        child = matvar;
+        matvar = kind == 1 ? Mat_VarCreateStruct("a", 2, one, fields, 1)
+                           : Mat_VarCreate("a", MAT_C_CELL, MAT_T_CELL, 2, one, NULL, 0);
+        if ( kind == 1 )
+            Mat_VarSetStructFieldByIndex(matvar, 0, 0, child);
+        else
+            Mat_VarSetCell(matvar, 0, child);
+    }
+    err = Mat_VarWrite(mat, matvar, MAT_COMPRESSION_ZLIB);
+    Mat_VarFree(matvar);
+    err |= Mat_Close(mat);
+    if ( err )
+        return 1;
+
+    /* Keep a prefix of the file, as an interrupted copy would. */
+    fp = fopen(output_name, "rb");
+    if ( NULL == fp )
+        return 1;
+    length = fread(buffer, 1, sizeof(buffer), fp);
+    err = ferror(fp) || !feof(fp);
+    err |= fclose(fp);
+    if ( err || length < 256 )
+        return 1;
+    length = length / 10 * 9;
+    if ( write_prefix(output_name, buffer, length) )
+        return 1;
+
+    mat = Mat_Open(output_name, MAT_ACC_RDONLY);
+    if ( NULL == mat )
+        return 1;
+    matvar = Mat_VarReadInfo(mat, "a");
+    err = NULL == matvar ||
+          Mat_VarReadDataAll(mat, matvar) != (kind ? MATIO_E_NO_ERROR : MATIO_E_GENERIC_READ_ERROR);
+    if ( kind && NULL != matvar ) {
+        child = kind == 1 ? Mat_VarGetStructFieldByIndex(matvar, 0, 0) : Mat_VarGetCell(matvar, 0);
+        err |= NULL == child || NULL == child->data;
+    }
+    Mat_VarFree(matvar);
+    Mat_Close(mat);
+    if ( err )
+        return 1;
+
+    if ( kind )
+        return 0;
+    mat = Mat_Open(output_name, MAT_ACC_RDWR);
+    if ( NULL == mat )
+        return 1;
+    err = Mat_VarDelete(mat, "b") == MATIO_E_NO_ERROR;
+    err |= Mat_Close(mat);
+    fp = fopen(output_name, "rb");
+    if ( NULL == fp )
+        return 1;
+    err |= fread(actual, 1, sizeof(actual), fp) != length || memcmp(buffer, actual, length) != 0;
+    err |= fclose(fp);
+    if ( err )
+        return err;
+
+    /* Removing the incomplete variable does not require reading its data. */
+    mat = Mat_Open(output_name, MAT_ACC_RDWR);
+    if ( NULL == mat )
+        return 1;
+    err = Mat_VarDelete(mat, "a");
+    err |= Mat_Close(mat);
+    mat = Mat_Open(output_name, MAT_ACC_RDONLY);
+    if ( NULL == mat )
+        return 1;
+    matvar = Mat_VarReadNextInfo(mat);
+    err |= NULL != matvar;
+    Mat_VarFree(matvar);
+    err |= Mat_Close(mat);
+    return err;
+}
+
+static int
+test_open_truncated(const char *output_name)
+{
+    mat_t *mat;
+    matvar_t *matvar;
+    size_t dims[2] = {1024, 1}, n;
+    double values[1024] = {1};
+    unsigned char buffer[512];
+    FILE *fp;
+    int err, mode;
+
+    mat = Mat_CreateVer(output_name, NULL, MAT_FT_MAT73);
+    if ( NULL == mat )
+        return 1;
+    matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, values, 0);
+    err = Mat_VarWrite(mat, matvar, MAT_COMPRESSION_NONE);
+    Mat_VarFree(matvar);
+    err |= Mat_Close(mat);
+    if ( err )
+        return 1;
+    fp = fopen(output_name, "rb");
+    if ( NULL == fp )
+        return 1;
+    n = fread(buffer, 1, sizeof(buffer), fp);
+    err = fclose(fp);
+    if ( n != sizeof(buffer) || err )
+        return 1;
+    if ( write_prefix(output_name, buffer, n) )
+        return 1;
+    for ( mode = MAT_ACC_RDONLY; mode <= MAT_ACC_RDWR; mode++ ) {
+        mat = Mat_Open(output_name, mode);
+        if ( NULL != mat ) {
+            Mat_Close(mat);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int
+test_write_errors(const char *output_name)
+{
+    size_t dims[2] = {1024, 1};
+    double values[1024] = {1};
+    mat_t *mat;
+    matvar_t *matvar;
+    int err, write_err, close_err;
+
+    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( NULL == mat )
+        return 1;
+    err = Mat_Close(mat);
+    if ( err )
+        return 1;
+    mat = Mat_Open(output_name, MAT_ACC_RDONLY);
+    if ( NULL == mat )
+        return 1;
+    matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, values, 0);
+    write_err = Mat_VarWrite(mat, matvar, compression);
+    Mat_VarFree(matvar);
+    close_err = Mat_Close(mat);
+    return write_err != MATIO_E_GENERIC_WRITE_ERROR ||
+           close_err != MATIO_E_FILESYSTEM_ERROR_ON_CLOSE;
 }
 
 static int
@@ -4555,6 +4730,28 @@ main(int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_writeinf.mat";
             err += test_writeinf(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "read_truncated") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_read_truncated.mat";
+            err += test_read_truncated(output_name, 0, 1024);
+            err += test_read_truncated(output_name, 1, 1024);
+            err += test_read_truncated(output_name, 2, 1024);
+            err += test_read_truncated(output_name, 1, 8192);
+            err += test_read_truncated(output_name, 2, 8192);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "open_truncated") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_open_truncated.mat";
+            err += test_open_truncated(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "write_errors") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_errors.mat";
+            err += test_write_errors(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k], "readvar") ) {
             k++;
