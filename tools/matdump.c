@@ -1534,7 +1534,7 @@ print_whos(const matvar_t *matvar)
         printf("%-20s       %-10s     %-10s     %-18s\n\n", "Name", "Size", "Bytes", "Class");
         print_whos_first = 0;
     }
-    printf("%-20s", matvar->name);
+    printf("%-20s", matvar->name ? matvar->name : "");
     if ( matvar->rank > 0 ) {
         int cnt = 0, i;
         char size[32] = {
@@ -1687,7 +1687,7 @@ print_default_numeric_3d(const matvar_t *matvar)
         const char *rp = (char *)complex_data->Re;
         const char *ip = (char *)complex_data->Im;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
-            Mat_Message("%s(:,:,%" SIZE_T_FMTSTR ") = ", matvar->name, k);
+            Mat_Message("%s(:,:,%" SIZE_T_FMTSTR ") = ", matvar->name ? matvar->name : "", k);
             indent++;
             for ( i = 0; i < matvar->dims[0]; i++ ) {
                 for ( l = 0; l < indent; l++ )
@@ -1707,7 +1707,7 @@ print_default_numeric_3d(const matvar_t *matvar)
     } else {
         const char *data = (char *)matvar->data;
         for ( k = 0; k < matvar->dims[2]; k++ ) {
-            Mat_Message("%s(:,:,%" SIZE_T_FMTSTR ") = ", matvar->name, k);
+            Mat_Message("%s(:,:,%" SIZE_T_FMTSTR ") = ", matvar->name ? matvar->name : "", k);
             indent++;
             for ( i = 0; i < matvar->dims[0]; i++ ) {
                 for ( l = 0; l < indent; l++ )

@@ -1147,3 +1147,11 @@ AT_CHECK([cp $srcdir/matlab/test_write_cell_empty_struct.m .
           $MATLABEXE -nosplash -nojvm -r "test_write_cell_empty_struct" | $GREP PASSED],[0],[PASSED
 ],[])
 AT_CLEANUP
+
+AT_SETUP([Write after a failed write])
+AT_KEYWORDS([write])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([$builddir/test_mat -v 5 -z write_after_failure],[0],[],[])
+AT_CHECK([cp $srcdir/results/dump-write_after_failure.out expout
+          $builddir/../tools/matdump -f whos test_write_after_failure.mat],[0],[expout],[])
+AT_CLEANUP

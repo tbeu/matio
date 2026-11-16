@@ -112,6 +112,7 @@ static const char *helptestsstr[] = {
     "                                  to a matlab file.",
     "write_empty_struct              - Write empty structure and structure with",
     "                                  empty fields",
+    "write_after_failure             - Write a variable after writes that fail",
     "",
     "    Cell Array Variable Tests",
     "================================================================",
@@ -162,8 +163,14 @@ static const char *helptestsstr[] = {
     NULL};
 
 static const char *helptest_copy[] = {
-    "TEST: copy", "",  "Usage: test_mat copy FILE", "", "Copies FILE to test_mat_copy.mat",
-    "",           NULL};
+    "TEST: copy",
+    "",
+    "Usage: test_mat copy FILE",
+    "",
+    "Copies FILE to test_mat_copy.mat. With -a, the variables are written with Mat_VarWriteAppend",
+    "(MAT7.3 only).",
+    "",
+    NULL};
 
 static const char *helptest_delete[] = {"TEST: delete",
                                         "",
@@ -586,6 +593,17 @@ static const char *helptest_write_struct_char[] = {
     "",
     NULL};
 
+static const char *helptest_write_after_failure[] = {
+    "TEST: write_after_failure",
+    "",
+    "Usage: test_mat write_after_failure",
+    "",
+    "Writes a variable named a, then a cell array with unset elements and a variable of 4 GiB",
+    "that both must fail, then a variable named b to the file test_write_after_failure.mat.",
+    "a and b must be readable afterwards.",
+    "",
+    NULL};
+
 static const char *helptest_write_empty_struct[] = {
     "TEST: write_empty_struct",
     "",
@@ -840,6 +858,8 @@ help_test(const char *test)
         Mat_Help(helptest_write_struct_char);
     else if ( !strcmp(test, "write_empty_struct") )
         Mat_Help(helptest_write_empty_struct);
+    else if ( !strcmp(test, "write_after_failure") )
+        Mat_Help(helptest_write_after_failure);
     else if ( !strcmp(test, "write_cell_2d_numeric") )
         Mat_Help(helptest_write_cell_2d_numeric);
     else if ( !strcmp(test, "write_cell_complex_2d_numeric") )
@@ -1706,6 +1726,50 @@ test_write_empty_struct(const char *output_name)
     } else {
         err = 1;
     }
+    return err;
+}
+
+static int
+test_write_after_failure(const char *output_name)
+{
+    size_t dims[2] = {1, 1};
+    size_t huge_dims[2] = {1, 536870907};
+    double a = 1.0, b = 2.0;
+    int err = 0;
+    mat_t *mat;
+    matvar_t *matvar;
+
+    mat = Mat_CreateVer(output_name, NULL, mat_file_ver);
+    if ( NULL == mat )
+        return 1;
+
+    matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, &a, 0);
+    if ( Mat_VarWrite(mat, matvar, compression) )
+        err++;
+    Mat_VarFree(matvar);
+
+    /* This write must fail: a cell array with unset elements cannot be written */
+    dims[1] = 2;
+    matvar = Mat_VarCreate("c", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
+    if ( MATIO_E_NO_ERROR == Mat_VarWrite(mat, matvar, compression) )
+        err++;
+    Mat_VarFree(matvar);
+
+    /* This write must fail: the data fit in 32 bits, the whole element with its tags does not */
+    matvar =
+        Mat_VarCreate("huge", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, huge_dims, &a, MAT_F_DONT_COPY_DATA);
+    if ( MATIO_E_NO_ERROR == Mat_VarWrite(mat, matvar, compression) )
+        err++;
+    Mat_VarFree(matvar);
+
+    /* Variables written after the failed ones stay readable */
+    dims[1] = 1;
+    matvar = Mat_VarCreate("b", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, &b, 0);
+    if ( Mat_VarWrite(mat, matvar, compression) )
+        err++;
+    Mat_VarFree(matvar);
+
+    Mat_Close(mat);
     return err;
 }
 
@@ -4440,7 +4504,13 @@ main(int argc, char *argv[])
                     matvar_t *copy = Mat_VarDuplicate(matvar, 1);
                     Mat_VarFree(matvar);
                     if ( NULL != copy ) {
-                        err += Mat_VarWrite(mat, copy, compression);
+                        /* Skip variables that cannot be written, e.g. objects */
+                        int write_err = dim_append
+                                            ? Mat_VarWriteAppend(mat, copy, compression, dim_append)
+                                            : Mat_VarWrite(mat, copy, compression);
+                        if ( MATIO_E_NO_ERROR != write_err &&
+                             MATIO_E_OPERATION_NOT_SUPPORTED != write_err )
+                            err++;
                         Mat_VarFree(copy);
                     } else {
                         err++;
@@ -4595,6 +4665,12 @@ main(int argc, char *argv[])
             if ( NULL == output_name )
                 output_name = "test_write_empty_struct.mat";
             err += test_write_empty_struct(output_name);
+            ntests++;
+        } else if ( !strcasecmp(argv[k], "write_after_failure") ) {
+            k++;
+            if ( NULL == output_name )
+                output_name = "test_write_after_failure.mat";
+            err += test_write_after_failure(output_name);
             ntests++;
         } else if ( !strcasecmp(argv[k], "write_cell_2d_logical") ) {
             k++;
