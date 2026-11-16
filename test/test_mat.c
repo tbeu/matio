@@ -598,8 +598,8 @@ static const char *helptest_write_after_failure[] = {
     "",
     "Usage: test_mat write_after_failure",
     "",
-    "Writes a, then a cell array with unset elements and a variable of 4 GiB",
-    "that both must fail, then b to the file test_write_after_failure.mat.",
+    "Writes a variable named a, then a cell array with unset elements and a variable of 4 GiB",
+    "that both must fail, then a variable named b to the file test_write_after_failure.mat.",
     "a and b must be readable afterwards.",
     "",
     NULL};
@@ -1744,17 +1744,18 @@ test_write_after_failure(const char *output_name)
         return 1;
 
     matvar = Mat_VarCreate("a", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, &a, 0);
-    err += Mat_VarWrite(mat, matvar, compression);
+    if ( Mat_VarWrite(mat, matvar, compression) )
+        err++;
     Mat_VarFree(matvar);
 
-    /* A cell array with unset elements cannot be written */
+    /* This write must fail: a cell array with unset elements cannot be written */
     dims[1] = 2;
     matvar = Mat_VarCreate("c", MAT_C_CELL, MAT_T_CELL, 2, dims, NULL, 0);
     if ( MATIO_E_NO_ERROR == Mat_VarWrite(mat, matvar, compression) )
         err++;
     Mat_VarFree(matvar);
 
-    /* The data of this variable fit in 32 bits, the whole element with its tags does not */
+    /* This write must fail: the data fit in 32 bits, the whole element with its tags does not */
     matvar =
         Mat_VarCreate("huge", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, huge_dims, &a, MAT_F_DONT_COPY_DATA);
     if ( MATIO_E_NO_ERROR == Mat_VarWrite(mat, matvar, compression) )
@@ -1764,7 +1765,8 @@ test_write_after_failure(const char *output_name)
     /* Variables written after the failed ones stay readable */
     dims[1] = 1;
     matvar = Mat_VarCreate("b", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, dims, &b, 0);
-    err += Mat_VarWrite(mat, matvar, compression);
+    if ( Mat_VarWrite(mat, matvar, compression) )
+        err++;
     Mat_VarFree(matvar);
 
     Mat_Close(mat);
@@ -4506,8 +4508,9 @@ main(int argc, char *argv[])
                         int write_err = dim_append
                                             ? Mat_VarWriteAppend(mat, copy, compression, dim_append)
                                             : Mat_VarWrite(mat, copy, compression);
-                        if ( MATIO_E_OPERATION_NOT_SUPPORTED != write_err )
-                            err += write_err;
+                        if ( MATIO_E_NO_ERROR != write_err &&
+                             MATIO_E_OPERATION_NOT_SUPPORTED != write_err )
+                            err++;
                         Mat_VarFree(copy);
                     } else {
                         err++;
