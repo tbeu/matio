@@ -4206,8 +4206,8 @@ Mat_CalcDirIterate(hid_t id, const char *name, const H5L_info_t *info, void *op_
 
     iter_data->dir[iter_data->n] = strdup(name);
     if ( NULL == iter_data->dir[iter_data->n] ) {
-        Mat_Critical("Couldn't allocate memory");
         iter_data->err = MATIO_E_OUT_OF_MEMORY;
+        Mat_Critical("Couldn't allocate memory");
         return -1;
     }
     iter_data->n++;
