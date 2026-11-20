@@ -188,6 +188,14 @@ AT_CHECK([cp $srcdir/results/read-mcos-maps_v7-dict_val_scalar.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_maps_v7.mat dict_val_scalar],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS saveobj v7 obj_saveobj])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-saveobj_v7-obj_saveobj.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_saveobj_v7.mat obj_saveobj],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS scattered interpolant v7 F])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])
