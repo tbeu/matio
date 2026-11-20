@@ -630,7 +630,7 @@ Mat_H5ReadVarInfo(matvar_t *matvar, hid_t dset_id)
              */
 #if defined(MCOS) && MCOS
             if ( H5Iget_type(dset_id) == H5I_DATASET && 0 != strcmp(class_str, "logical") &&
-                 0 != strcmp(class_str, "unknown") ) {
+                 0 != strcmp(class_str, "unknown") && 0 != strcmp(class_str, "canonical empty") ) {
                 /* Likely an MCOS object - store class name and mark as opaque */
                 matvar->class_type = MAT_C_OPAQUE;
                 matvar->internal->class_name = strdup(class_str);
@@ -2255,8 +2255,14 @@ Mat_WriteEmptyVariable73(hid_t id, const char *name, hsize_t rank, size_t *dims)
 {
     int err = MATIO_E_NO_ERROR;
     unsigned empty = 1;
+    size_t zero_dims[2] = {0, 0};
     hid_t mspace_id, dset_id;
 
+    if ( 0 == rank || NULL == dims ) {
+        /* An unassigned element arrives without dimensions, MATLAB stores [0 0] */
+        rank = 2;
+        dims = zero_dims;
+    }
     mspace_id = H5Screate_simple(1, &rank, NULL);
     dset_id =
         H5Dcreate(id, name, H5T_NATIVE_HSIZE, mspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);

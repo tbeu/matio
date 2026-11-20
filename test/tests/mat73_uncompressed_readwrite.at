@@ -23,6 +23,14 @@ AT_CHECK([cp $srcdir/results/dump-mat_copy-73.out expout
           $builddir/../tools/matdump -f whos -h -d test_mat73_uncompressed_copy.mat],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Copy cell with unassigned elements to MAT7.3])
+AT_KEYWORDS([empty])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([$builddir/test_mat -v 7.3 -o test_mat73_uncompressed_copy_var93.mat copy $srcdir/datasets/matio_test_cases_uncompressed_le.mat],[0],[ignore],[ignore])
+AT_CHECK([cp $srcdir/results/readvar-copy_var93-73.out expout
+          $builddir/test_mat readvar test_mat73_uncompressed_copy_var93.mat var93],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Delete variables])
 AT_KEYWORDS([delete])
 AT_SKIP_IF([test $MAT73 -ne 1])
