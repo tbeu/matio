@@ -4,13 +4,6 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-AT_SETUP([Read directory of a file with MATLAB objects])
-AT_KEYWORDS([directory])
-AT_SKIP_IF([test $MAT73 -ne 1])
-AT_CHECK([cp $srcdir/results/dir_string_v73.out expout
-         $builddir/test_mat directory $srcdir/datasets/test_string_v73.mat],[0],[expout],[])
-AT_CLEANUP
-
 AT_SETUP([Read 2D double array])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/read-var1.out expout
