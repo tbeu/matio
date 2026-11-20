@@ -74,6 +74,13 @@ AT_CHECK([cp $srcdir/results/read-mcos-table_v6-T.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_table_v6.mat T],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS directory table v6])
+AT_KEYWORDS([mcos directory])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_CHECK([cp $srcdir/results/dir_table.out expout
+          $builddir/test_mat directory $srcdir/datasets/test_table_v6.mat],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Dump MCOS bugv6])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])

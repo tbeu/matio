@@ -4022,6 +4022,15 @@ Mat_VarReadNextInfo73(mat_t *mat, mat_iter_pred_t pred, const void *user_data)
     return iter_data.matvar;
 }
 
+/* The groups MATLAB writes next to the variables. A variable of its own can have
+ * a name starting with '#', so the names are checked one by one. */
+static int
+Mat_IsInternalGroup73(const char *name)
+{
+    return 0 == strcmp(name, "#refs#") || 0 == strcmp(name, "#subsystem#") ||
+           0 == strcmp(name, "#sigstream#");
+}
+
 static herr_t
 Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, void *op_data)
 {
@@ -4034,8 +4043,8 @@ Mat_VarReadNextInfoIterate(hid_t id, const char *name, const H5L_info_t *info, v
 
     iter_data = (struct ReadNextIterData *)op_data;
 
-    /* Check that this is not the /#refs# or /"#subsystem#" group */
-    if ( 0 == strcmp(name, "#refs#") || 0 == strcmp(name, "#subsystem#") )
+    /* Check that this is not one of the internal groups such as /#refs# */
+    if ( Mat_IsInternalGroup73(name) )
         return 0;
     if ( (NULL != iter_data) && (NULL != iter_data->pred) &&
          0 == iter_data->pred(name, iter_data->pred_user_data) ) /* do we need to skip it? */
@@ -4176,6 +4185,35 @@ Mat_VarWriteAppend73(mat_t *mat, matvar_t *matvar, int compress, int dim)
     return Mat_VarWriteAppendNext73(id, matvar, matvar->name, &(mat->refs_id), dim);
 }
 
+struct CalcDirIterData
+{
+    char **dir;
+    size_t n;
+    size_t max;
+    int err;
+};
+
+static herr_t
+Mat_CalcDirIterate(hid_t id, const char *name, const H5L_info_t *info, void *op_data)
+{
+    struct CalcDirIterData *iter_data = (struct CalcDirIterData *)op_data;
+
+    (void)id;
+    (void)info;
+
+    if ( Mat_IsInternalGroup73(name) || iter_data->n >= iter_data->max )
+        return 0;
+
+    iter_data->dir[iter_data->n] = strdup(name);
+    if ( NULL == iter_data->dir[iter_data->n] ) {
+        iter_data->err = MATIO_E_OUT_OF_MEMORY;
+        Mat_Critical("Couldn't allocate memory");
+        return -1;
+    }
+    iter_data->n++;
+    return 0;
+}
+
 /** @brief Determines a list of the variables of version 7.3 matlab file
  *
  * Determines a list of the variables of a MAT file
@@ -4187,7 +4225,8 @@ Mat_VarWriteAppend73(mat_t *mat, matvar_t *matvar, int compress, int dim)
 int
 Mat_CalcDir73(mat_t *mat, size_t *n)
 {
-    hsize_t i;
+    struct CalcDirIterData iter_data;
+    hsize_t idx = 0;
 
     if ( NULL == mat || NULL == n )
         return MATIO_E_BAD_ARGUMENT;
@@ -4199,29 +4238,18 @@ Mat_CalcDir73(mat_t *mat, size_t *n)
         return MATIO_E_OUT_OF_MEMORY;
     }
 
-    for ( i = 0; i < (hsize_t)mat->num_datasets; i++ ) {
-        char *name;
-        ssize_t name_len = H5Lget_name_by_idx(*(hid_t *)mat->fp, "/", H5_INDEX_NAME, H5_ITER_INC, i,
-                                              NULL, 0, H5P_DEFAULT);
-        if ( name_len < 1 ) {
-            return MATIO_E_FAIL_TO_IDENTIFY;
-        }
-        name = (char *)malloc(name_len + 1);
-        if ( NULL == name ) {
-            *n = 0;
-            *n = 0;
-            Mat_Critical("Couldn't allocate memory");
-            return MATIO_E_OUT_OF_MEMORY;
-        }
-        H5Lget_name_by_idx(*(hid_t *)mat->fp, "/", H5_INDEX_NAME, H5_ITER_INC, i, name,
-                           name_len + 1, H5P_DEFAULT);
-        if ( 0 != strcmp(name, "#refs#") ) {
-            mat->dir[*n] = name;
-            (*n)++;
-        } else {
-            free(name);
-        }
+    /* One pass over the root group: looking a name up by index searches the
+     * symbol table from the start, which is quadratic in the variable count */
+    iter_data.dir = mat->dir;
+    iter_data.n = 0;
+    iter_data.max = mat->num_datasets;
+    iter_data.err = MATIO_E_NO_ERROR;
+    if ( H5Literate(*(hid_t *)mat->fp, H5_INDEX_NAME, H5_ITER_INC, &idx, Mat_CalcDirIterate,
+                    &iter_data) < 0 ) {
+        *n = iter_data.n;
+        return iter_data.err != MATIO_E_NO_ERROR ? iter_data.err : MATIO_E_FAIL_TO_IDENTIFY;
     }
+    *n = iter_data.n;
     return MATIO_E_NO_ERROR;
 }
 

@@ -1236,7 +1236,8 @@ Mat_GetDir(mat_t *mat, size_t *n)
             do {
                 matvar = Mat_VarReadNextInfo(mat);
                 if ( NULL != matvar ) {
-                    if ( NULL != matvar->name ) {
+                    /* The subsystem of an uncompressed MAT5 file has a name tag of length 0 */
+                    if ( NULL != matvar->name && '\0' != matvar->name[0] ) {
                         if ( NULL == mat->dir ) {
                             dir = (char **)calloc(1, sizeof(char *));
                         } else {
