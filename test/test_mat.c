@@ -1765,7 +1765,7 @@ test_open_truncated(const char *output_name)
     double values[1024] = {1};
     unsigned char buffer[512];
     FILE *fp;
-    int err, mode;
+    int err;
 
     mat = Mat_CreateVer(output_name, NULL, MAT_FT_MAT73);
     if ( NULL == mat )
@@ -1785,12 +1785,15 @@ test_open_truncated(const char *output_name)
         return 1;
     if ( write_prefix(output_name, buffer, n) )
         return 1;
-    for ( mode = MAT_ACC_RDONLY; mode <= MAT_ACC_RDWR; mode++ ) {
-        mat = Mat_Open(output_name, mode);
-        if ( NULL != mat ) {
-            Mat_Close(mat);
-            return 1;
-        }
+    mat = Mat_Open(output_name, MAT_ACC_RDONLY);
+    if ( NULL != mat ) {
+        Mat_Close(mat);
+        return 1;
+    }
+    mat = Mat_Open(output_name, MAT_ACC_RDWR);
+    if ( NULL != mat ) {
+        Mat_Close(mat);
+        return 1;
     }
     return 0;
 }
