@@ -52,9 +52,7 @@ static int GetCellArrayFieldBufSize(matvar_t *matvar, size_t *size);
 static void SetFieldNames(matvar_t *matvar, const char *buf, size_t nfields,
                           mat_uint32_t fieldname_length);
 static int ReadSparse(mat_t *mat, const matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v);
-#if HAVE_ZLIB
 static int GetMatrixMaxBufSize(matvar_t *matvar, size_t *size);
-#endif
 static int GetEmptyMatrixMaxBufSize(const char *name, int rank, size_t *size);
 static size_t WriteCharData(mat_t *mat, void *data, size_t N, enum matio_types data_type);
 static size_t ReadNextCell(mat_t *mat, matvar_t *matvar);
@@ -311,6 +309,11 @@ GetTypeBufSize(matvar_t *matvar, size_t *size)
             }
 
             break;
+        case MAT_C_FUNCTION:
+        case MAT_C_OBJECT:
+        case MAT_C_OPAQUE:
+            /* Writing their data is not supported */
+            return MATIO_E_OPERATION_NOT_SUPPORTED;
         default:
             err = Mul(&data_bytes, nelems, Mat_SizeOf(matvar->data_type));
             if ( err )
@@ -605,7 +608,6 @@ ReadSparse(mat_t *mat, const matvar_t *matvar, mat_uint32_t *n, mat_uint32_t **v
     return err;
 }
 
-#if HAVE_ZLIB
 /** @brief determines the number of bytes needed to store the given variable
  *
  * @ingroup mat_internal
@@ -657,7 +659,6 @@ GetMatrixMaxBufSize(matvar_t *matvar, size_t *size)
     *size = nBytes;
     return MATIO_E_NO_ERROR;
 }
-#endif
 
 /** @if mat_devman
  * @brief Creates a new Matlab MAT version 5 file
@@ -5564,6 +5565,17 @@ Mat_VarWrite5(mat_t *mat, matvar_t *matvar, int compress)
      * (e.g. read from a corrupt file) to an empty matrix. */
     if ( matvar->class_type == MAT_C_SPARSE && NULL == matvar->data )
         matvar->class_type = MAT_C_EMPTY;
+
+    /* Fail before writing anything, also for nested objects, so the file stays readable */
+    {
+        size_t matrix_buf_size;
+        int err = GetMatrixMaxBufSize(matvar, &matrix_buf_size);
+        if ( err )
+            return err;
+        /* The size of a MAT5 data element is stored in 32 bits */
+        if ( matrix_buf_size > UINT32_MAX )
+            return MATIO_E_INDEX_TOO_BIG;
+    }
 
     /* FIXME: SEEK_END is not Guaranteed by the C standard */
     (void)MatSeek(mat, 0, SEEK_END); /* Always write at end of file */
