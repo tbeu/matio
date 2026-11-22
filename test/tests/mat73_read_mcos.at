@@ -156,6 +156,14 @@ AT_CHECK([cp $srcdir/results/read-mcos-string_v73-string_scalar.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_string_v73.mat string_scalar],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS directory string v73])
+AT_KEYWORDS([mcos directory])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/dir_string_v73.out expout
+          $builddir/test_mat directory $srcdir/datasets/test_string_v73.mat],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS table_all v73 Comment])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])
@@ -202,6 +210,14 @@ AT_SKIP_IF([test $MCOS -ne 1])
 AT_SKIP_IF([test $MAT73 -ne 1])
 AT_CHECK([cp $srcdir/results/read-mcos-table_v73-T.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_table_v7.3.mat T],[0],[expout],[])
+AT_CLEANUP
+
+AT_SETUP([Read MCOS directory table v73])
+AT_KEYWORDS([mcos directory])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/dir_table.out expout
+          $builddir/test_mat directory $srcdir/datasets/test_table_v7.3.mat],[0],[expout],[])
 AT_CLEANUP
 
 AT_SETUP([Read MCOS tables v73 cat_3D])
