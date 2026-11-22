@@ -28,6 +28,14 @@ AT_CHECK([cp $srcdir/results/read-mcos-dynamic_v7-obj.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_dynamic_v7.mat obj],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS dynamic2 v7 obj])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $COMPRESSION_ZLIB -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-dynamic2_v7-obj.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_dynamic2_v7.mat obj],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS function handles v7 builtin_fh])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])

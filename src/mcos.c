@@ -722,6 +722,67 @@ GetDynamicPropsForObject(const mcos_subsystem_t *ss, const mcos_object_info_t *o
     return NULL;
 }
 
+/** @brief Return the saved property @p name of an object, or NULL */
+static const mcos_property_t *
+GetObjectProperty(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const char *name)
+{
+    const mcos_property_set_t *prop_set;
+    size_t pi;
+
+    if ( obj_id < 1 || obj_id > ss->num_objects )
+        return NULL;
+    prop_set = GetPropertySetForObject(ss, &ss->object_info[obj_id - 1]);
+    for ( pi = 0; prop_set != NULL && pi < prop_set->nprops; pi++ ) {
+        if ( strcmp(prop_set->props[pi].name, name) == 0 )
+            return &prop_set->props[pi];
+    }
+    return NULL;
+}
+
+/** @brief Return the name of a meta.DynamicProperty object, or NULL
+ *
+ * MATLAB saves the name as char array in DynamicName_, as UTF-8 in v7 and as
+ * UTF-16 in v7.3. Property names are MATLAB identifiers and thus ASCII.
+ *
+ * @return malloc'd string, or NULL if the object has no such name
+ */
+static char *
+GetDynamicPropertyName(const mcos_subsystem_t *ss, mat_uint32_t obj_id)
+{
+    const mcos_property_t *prop = GetObjectProperty(ss, obj_id, "DynamicName_");
+    const matvar_t *name_var;
+    size_t width, len, i;
+    char *name;
+
+    if ( prop == NULL || prop->field_type != 1 || prop->value >= ss->num_prop_cells )
+        return NULL;
+    name_var = ss->prop_cells[prop->value];
+    if ( name_var == NULL || name_var->class_type != MAT_C_CHAR || name_var->data == NULL )
+        return NULL;
+    if ( name_var->data_type == MAT_T_UTF8 || name_var->data_type == MAT_T_UINT8 )
+        width = 1;
+    else if ( name_var->data_type == MAT_T_UTF16 || name_var->data_type == MAT_T_UINT16 )
+        width = 2;
+    else
+        return NULL;
+
+    len = name_var->nbytes / width;
+    name = (char *)malloc(len + 1);
+    if ( name == NULL )
+        return NULL;
+    for ( i = 0; i < len; i++ ) {
+        const unsigned c = width == 1 ? ((const mat_uint8_t *)name_var->data)[i]
+                                      : ((const mat_uint16_t *)name_var->data)[i];
+        if ( c == 0 || c > 127 ) {
+            free(name);
+            return NULL;
+        }
+        name[i] = (char)c;
+    }
+    name[len] = '\0';
+    return name;
+}
+
 /** @brief Mark an object as visited, add its own field names and push it
  *
  * Objects that are invalid or already visited are ignored. Each object is
@@ -787,9 +848,16 @@ CollectFieldNamesFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, cha
 
         if ( dyn_props != NULL && frame->next < dyn_props->nprop_ids ) {
             mat_uint32_t child_id = dyn_props->prop_ids[frame->next];
+            char *dyn_name = GetDynamicPropertyName(ss, child_id);
             frame->next++;
-            err = EnterFieldNameObject(ss, child_id, all_fieldnames, count, capacity, visited,
-                                       stack, &top);
+            if ( dyn_name != NULL ) {
+                /* A dynamic property becomes one field named after it */
+                err = AddUniqueFieldName(all_fieldnames, count, capacity, dyn_name);
+                free(dyn_name);
+            } else {
+                err = EnterFieldNameObject(ss, child_id, all_fieldnames, count, capacity, visited,
+                                           stack, &top);
+            }
         } else {
             top--;
         }
@@ -908,9 +976,19 @@ GetFieldValueFromObject(const mcos_subsystem_t *ss, mat_uint32_t obj_id, const c
 
         if ( dyn_props != NULL && frame->next < dyn_props->nprop_ids ) {
             mat_uint32_t child_id = dyn_props->prop_ids[frame->next];
+            char *dyn_name = GetDynamicPropertyName(ss, child_id);
             frame->next++;
-            if ( EnterFieldValueObject(ss, child_id, fname, visited, stack, &top, &result) )
+            if ( dyn_name != NULL ) {
+                const int match = strcmp(dyn_name, fname) == 0;
+                free(dyn_name);
+                if ( match ) {
+                    const mcos_property_t *value = GetObjectProperty(ss, child_id, "DynamicValue_");
+                    return value != NULL ? CreateFieldValueFromProperty(ss, fname, value) : NULL;
+                }
+            } else if ( EnterFieldValueObject(ss, child_id, fname, visited, stack, &top,
+                                              &result) ) {
                 return result;
+            }
         } else {
             const matvar_t *default_props = GetDefaultPropsForClass(ss, obj_info->class_id);
             top--;
@@ -1597,7 +1675,7 @@ ResolveMCOS(mcos_subsystem_t *ss, matvar_t *matvar)
                 if ( field_val == NULL ) {
                     const size_t empty_dims[2] = {0, 0};
                     field_val =
-                        Mat_VarCreate(fname, MAT_C_EMPTY, MAT_T_UNKNOWN, 2, empty_dims, NULL, 0);
+                        Mat_VarCreate(fname, MAT_C_DOUBLE, MAT_T_DOUBLE, 2, empty_dims, NULL, 0);
                 }
 
                 if ( field_val != NULL ) {
