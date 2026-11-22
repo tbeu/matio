@@ -124,6 +124,14 @@ AT_CHECK([cp $srcdir/results/read-mcos-nested_v73-struct_array.out expout
           $builddir/test_mat readvar $srcdir/datasets/test_mcos_nested_v73.mat struct_array],[0],[expout],[])
 AT_CLEANUP
 
+AT_SETUP([Read MCOS saveobj v73 obj_saveobj])
+AT_KEYWORDS([mcos])
+AT_SKIP_IF([test $MCOS -ne 1])
+AT_SKIP_IF([test $MAT73 -ne 1])
+AT_CHECK([cp $srcdir/results/read-mcos-saveobj_v73-obj_saveobj.out expout
+          $builddir/test_mat readvar $srcdir/datasets/test_saveobj_v73.mat obj_saveobj],[0],[expout],[])
+AT_CLEANUP
+
 AT_SETUP([Read MCOS scattered interpolant v73 F])
 AT_KEYWORDS([mcos])
 AT_SKIP_IF([test $MCOS -ne 1])

@@ -1,0 +1,30 @@
+      Name: obj_saveobj
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Object [TestClasses.SaveObjClass]
+ Data Type: Structure
+Fields[1] {
+      Name: any
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Structure
+ Data Type: Structure
+Fields[2] {
+      Name: gain
+      Rank: 2
+Dimensions: 1 x 1
+Class Type: Double Precision Array
+ Data Type: IEEE 754 double-precision
+{
+5 
+}
+      Name: name
+      Rank: 2
+Dimensions: 1 x 5
+Class Type: Character Array
+ Data Type: 16-bit, unsigned integer
+{
+motor
+}
+}
+}

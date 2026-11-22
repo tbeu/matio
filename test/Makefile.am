@@ -98,6 +98,8 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/test_mcos_handle_cycle_v7.mat \
                  $(datasets_dir)/test_mcos_handle_cycle_v73.mat \
                  $(datasets_dir)/test_mcos_nested_v73.mat \
+                 $(datasets_dir)/test_saveobj_v7.mat \
+                 $(datasets_dir)/test_saveobj_v73.mat \
                  $(datasets_dir)/test_scattered_interpolant_v6.mat \
                  $(datasets_dir)/test_scattered_interpolant_v7.mat \
                  $(datasets_dir)/test_scattered_interpolant_v7.3.mat \
@@ -541,6 +543,8 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/read-mcos-maps_v73-map_string_keys.out \
                  $(results_dir)/read-mcos-nested_v73-nested_cell.out \
                  $(results_dir)/read-mcos-nested_v73-struct_array.out \
+                 $(results_dir)/read-mcos-saveobj_v7-obj_saveobj.out \
+                 $(results_dir)/read-mcos-saveobj_v73-obj_saveobj.out \
                  $(results_dir)/read-mcos-scattered_interpolant_v6-F.out \
                  $(results_dir)/read-mcos-scattered_interpolant_v7-F.out \
                  $(results_dir)/read-mcos-scattered_interpolant_v73-F.out \
