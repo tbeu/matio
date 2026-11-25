@@ -18,6 +18,22 @@ namespace
     constexpr int kMaxRank = 4;
     constexpr int kMaxVars = 16;
 
+    // Complex variables expect a mat_complex_split_t holding separate Re/Im
+    // buffers instead of a plain data buffer.
+    struct OutBuf
+    {
+        OutBuf(const matvar_t *matvar, size_t bytes)
+            : re(bytes, 0), im(matvar->isComplex ? bytes : 0, 0)
+        {
+            split.Re = re.data();
+            split.Im = im.data();
+            ptr = matvar->isComplex ? static_cast<void *>(&split) : static_cast<void *>(re.data());
+        }
+        std::vector<uint8_t> re, im;
+        mat_complex_split_t split;
+        void *ptr;
+    };
+
     void
     TryHyperslab(mat_t *mat, matvar_t *matvar, FuzzedDataProvider &fdp)
     {
@@ -49,8 +65,8 @@ namespace
         }
 
         size_t elem = (matvar->data_size > 0) ? (size_t)matvar->data_size : 8;
-        std::vector<uint8_t> buf(buf_elems * elem * 2 + 16, 0);
-        Mat_VarReadData(mat, matvar, buf.data(), starts, strides, edges);
+        OutBuf buf(matvar, buf_elems * elem * 2 + 16);
+        Mat_VarReadData(mat, matvar, buf.ptr, starts, strides, edges);
 
         // Linear variant: pack start/stride/edge into single ints across the
         // total flattened space.
@@ -75,8 +91,8 @@ namespace
             0, static_cast<int>(
                    std::min<size_t>(64, (total > (size_t)lstart) ? (total - lstart) : 0)));
         if ( ledge > 0 ) {
-            std::vector<uint8_t> lbuf(((size_t)ledge) * elem * 2 + 16, 0);
-            Mat_VarReadDataLinear(mat, matvar, lbuf.data(), lstart, lstride, ledge);
+            OutBuf lbuf(matvar, ((size_t)ledge) * elem * 2 + 16);
+            Mat_VarReadDataLinear(mat, matvar, lbuf.ptr, lstart, lstride, ledge);
         }
     }
 
