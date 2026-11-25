@@ -22,7 +22,8 @@ namespace
     // buffers instead of a plain data buffer.
     struct OutBuf
     {
-        OutBuf(const matvar_t *matvar, size_t bytes) : re(bytes, 0), im(matvar->isComplex ? bytes : 0, 0)
+        OutBuf(const matvar_t *matvar, size_t bytes)
+            : re(bytes, 0), im(matvar->isComplex ? bytes : 0, 0)
         {
             split.Re = re.data();
             split.Im = im.data();
