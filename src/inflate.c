@@ -196,6 +196,12 @@ InflateRankDims(mat_t *mat, z_streamp z, void *buf, size_t nBytes, mat_uint32_t 
         return MATIO_E_FILE_FORMAT_VIOLATION;
     }
     rank = tag[1];
+    /* rank is the byte count of the dims payload. MATLAB allows at most 32
+     * dimensions (32 * 4 bytes). Reject file-controlled sizes before calloc. */
+    if ( rank > 32U * sizeof(mat_uint32_t) ) {
+        Mat_Critical("InflateRankDims: Reading dimensions expected rank <= 32");
+        return MATIO_E_FILE_FORMAT_VIOLATION;
+    }
     if ( rank % 8 != 0 )
         i = 8 - (rank % 8);
     else
